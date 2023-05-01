@@ -1,0 +1,42 @@
+{
+  "name": "html-living-framework",
+  "version": "1.0.0",
+  "description": "Relish framework for HTML games",
+  "main": "./lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "lint": "tslint -c tslint.json \"src/**/*.ts\"",
+    "docs": "typedoc --ignoreCompilerErrors --mode modules --out docs src",
+    "prepare": "node ./build_scripts/version.ts && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/relishinc/hlf.git"
+  },
+  "keywords": [
+    "game",
+    "dev",
+    "html"
+  ],
+  "author": "Relish Interactive",
+  "license": "UNLICENSED",
+  "homepage": "https://bitbucket.org/relishinc/html-living-framework#readme",
+  "devDependencies": {
+    "@types/howler": "latest",
+    "@types/pubsub-js": "latest",
+    "tslint": "latest",
+    "typedoc": "latest",
+    "typescript": "latest"
+  },
+  "dependencies": {
+    "@pixi/filter-outline": "^5.2.0",
+    "gsap": "latest",
+    "howler": "latest",
+    "keycode": "latest",
+    "pixi-spine": "latest",
+    "pixi.js": "latest",
+    "pubsub-js": "latest",
+    "typescript-collections": "latest"
+  }
+}

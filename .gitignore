@@ -1,0 +1,16 @@
+
+# dependencies
+/node_modules
+
+# production
+/deploy
+/docs
+
+# misc
+.DS_Store
+.idea
+*.iml
+
+npm-debug.log*
+/src/version.ts
+/lib

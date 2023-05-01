@@ -1,0 +1,17 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
+        "no-console": [false],
+        "object-literal-sort-keys": [false],
+        "member-ordering": [true, {"order": "fields-first"}],
+		"one-line": [true, "check-open-brace"],
+		"max-line-length": [ true,  240],
+        "prefer-for-of": false
+    },
+    "rulesDirectory": []
+}
