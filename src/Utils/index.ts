@@ -8,7 +8,11 @@ export * as PointUtils from "./PointUtils";
 export * as Random from "./Random";
 export * as RectUtils from "./RectUtils";
 export * as StringUtils from "./StringUtils";
-export {MakeFactory} from "./Make";
-export {AddFactory} from "./Add";
+export * from "./OrientationManager";
+export * from "./ResizeManager";
+export * from "./WebEventsManager";
+export * as Factory from "./Factory";
+export * from "./Anchor";
+export {Delay} from "./Delay";
 
 export * from "./AssetUtils";

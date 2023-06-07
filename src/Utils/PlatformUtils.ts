@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js";
+import {isMobile as PixiUtilsIsMobile} from '@pixi/utils'
 /*
  * @todo Relish GM =>
  * - Create constants for all the renderers
@@ -233,60 +233,60 @@ export const DISPLAY_ZOOM: string = "(display zoom)";
  * @returns A string or comma seperated string that contains the device type const.
  */
 export function getiPadModel(): string {
-    // Create a canvas element which can be used to retreive information about the GPU.
-    const renderer = getRenderer();
+	// Create a canvas element which can be used to retreive information about the GPU.
+	const renderer = getRenderer();
 
-    if (window.screen.height / window.screen.width === 1024 / 768) {
-        // iPad, iPad 2, iPad Mini
-        if (window.devicePixelRatio === 1) {
-            switch (renderer) {
-                case "PowerVR SGX 535":
-                    return IPAD;
-                case "PowerVR SGX 543":
-                    return IPAD_2 + "," + IPAD_MINI;
-                default:
-                    return IPAD + "," + IPAD_2 + "," + IPAD_MINI;
-            }
-        } else {
-            switch (renderer) {
-                case "PowerVR SGX 543":
-                    return IPAD_3;
-                case "PowerVR SGX 554":
-                    return IPAD_4;
-                case "Apple A7 GPU":
-                    return IPAD_AIR + "," + IPAD_MINI_2 + "," + IPAD_MINI_3;
-                case "Apple A8X GPU":
-                    return IPAD_AIR_2;
-                case "Apple A8 GPU":
-                    return IPAD_MINI_4;
-                case "Apple A9 GPU":
-                    return IPAD_5 + "," + IPAD_PRO_9_7;
-                case "Apple A10 GPU":
-                    return IPAD_6;
-                default:
-                    return IPAD_3 + "," + IPAD_4 + "," + IPAD_5 + "," + IPAD_6 + "," + IPAD_MINI_2 +
-                        "," + IPAD_MINI_3 + "," + IPAD_MINI_4 + "," + IPAD_AIR + "," + IPAD_AIR_2;
-            }
-        }
-    } else if (window.screen.height / window.screen.width === 1112 / 834) {
-        return "iPad Pro 10.5";
-    } else if (window.screen.height / window.screen.width === 2388 / 1668) {
-        return "iPad Pro 11";
-    } else if (window.screen.height / window.screen.width === 1366 / 1024) {
-        switch (renderer) {
-            case "Apple A12X GPU":
-                return IPAD_PRO_3RD_GEN;
-            case "Apple A10X GPU":
-                return IPAD_PRO_2ND_GEN;
-            case "Apple A9 GPU":
-            case "Apple A9X GPU":
-                return IPAD_PRO;
-            default:
-                return IPAD_PRO + "," + IPAD_PRO_2ND_GEN + "," + IPAD_PRO_3RD_GEN;
-        }
-    } else {
-        return "false " + renderer;
-    }
+	if (window.screen.height / window.screen.width === 1024 / 768) {
+		// iPad, iPad 2, iPad Mini
+		if (window.devicePixelRatio === 1) {
+			switch (renderer) {
+				case "PowerVR SGX 535":
+					return IPAD;
+				case "PowerVR SGX 543":
+					return IPAD_2 + "," + IPAD_MINI;
+				default:
+					return IPAD + "," + IPAD_2 + "," + IPAD_MINI;
+			}
+		} else {
+			switch (renderer) {
+				case "PowerVR SGX 543":
+					return IPAD_3;
+				case "PowerVR SGX 554":
+					return IPAD_4;
+				case "Apple A7 GPU":
+					return IPAD_AIR + "," + IPAD_MINI_2 + "," + IPAD_MINI_3;
+				case "Apple A8X GPU":
+					return IPAD_AIR_2;
+				case "Apple A8 GPU":
+					return IPAD_MINI_4;
+				case "Apple A9 GPU":
+					return IPAD_5 + "," + IPAD_PRO_9_7;
+				case "Apple A10 GPU":
+					return IPAD_6;
+				default:
+					return IPAD_3 + "," + IPAD_4 + "," + IPAD_5 + "," + IPAD_6 + "," + IPAD_MINI_2 +
+						"," + IPAD_MINI_3 + "," + IPAD_MINI_4 + "," + IPAD_AIR + "," + IPAD_AIR_2;
+			}
+		}
+	} else if (window.screen.height / window.screen.width === 1112 / 834) {
+		return "iPad Pro 10.5";
+	} else if (window.screen.height / window.screen.width === 2388 / 1668) {
+		return "iPad Pro 11";
+	} else if (window.screen.height / window.screen.width === 1366 / 1024) {
+		switch (renderer) {
+			case "Apple A12X GPU":
+				return IPAD_PRO_3RD_GEN;
+			case "Apple A10X GPU":
+				return IPAD_PRO_2ND_GEN;
+			case "Apple A9 GPU":
+			case "Apple A9X GPU":
+				return IPAD_PRO;
+			default:
+				return IPAD_PRO + "," + IPAD_PRO_2ND_GEN + "," + IPAD_PRO_3RD_GEN;
+		}
+	} else {
+		return "false " + renderer;
+	}
 }
 
 /**
@@ -294,127 +294,127 @@ export function getiPadModel(): string {
  * @returns A string that contains the device type const.
  */
 export function getiPhoneModel(): string {
-    const renderer = getRenderer();
+	const renderer = getRenderer();
 
-    const ratio = window.devicePixelRatio;
-    // iPhone XR, iPhone XS Max
-    if (window.screen.height / window.screen.width === 896 / 414) {
-        switch (ratio) {
-            case 2:
-                return IPHONE_XR;
-            case 3:
-                return IPHONE_XS_MAX;
-            default:
-                return IPHONE_XR + "," + IPHONE_XS_MAX;
-        }
-    }
-    // iPhone X, iPhone XS
-    else if (window.screen.height / window.screen.width === 812 / 375) {
-        switch (renderer) {
-            case "Apple A11 GPU":
-                return IPHONE_X;
-            case "Apple A12 GPU":
-                return IPHONE_XS;
-            default:
-                return IPHONE_X + "," + IPHONE_XS;
-        }
-    }
-    // iPhone 6+, iPhone 6s+, iPhone 7+, iPhone 8+
-    else if (window.screen.height / window.screen.width === 736 / 414) {
-        switch (renderer) {
-            case "Apple A8 GPU":
-                return IPHONE_6_PLUS;
-            case "Apple A9 GPU":
-                return IPHONE_6S_PLUS;
-            case "Apple A10 GPU":
-                return IPHONE_7_PLUS;
-            case "Apple A11 GPU":
-                return IPHONE_8_PLUS;
-            default:
-                return IPHONE_6_PLUS + "," + IPHONE_6S_PLUS + "," + IPHONE_7_PLUS + "," + IPHONE_8_PLUS;
-        }
-    }
-    // iPhone 6, iPhone 6s, iPhone 7, iPhone 8
-    else if (window.screen.height / window.screen.width === 667 / 375) {
-        if (ratio === 2) {
-            switch (renderer) {
-                case "Apple A8 GPU":
-                    return IPHONE_6;
-                case "Apple A9 GPU":
-                    return IPHONE_6S;
-                case "Apple A10 GPU":
-                    return IPHONE_7;
-                case "Apple A11 GPU":
-                    return IPHONE_8;
-                default:
-                    return IPHONE_6 + "," + IPHONE_6S + "," + IPHONE_7 + "," + IPHONE_8;
-            }
-        } else {
-            // or in zoom mode: iPhone 6+, iPhone 6S+, iPhone 7+, iPhone 8+
-            switch (renderer) {
-                case "Apple A8 GPU":
-                    return IPHONE_6_PLUS + " " + DISPLAY_ZOOM;
-                case "Apple A9 GPU":
-                    return IPHONE_6S_PLUS + " " + DISPLAY_ZOOM;
-                case "Apple A10 GPU":
-                    return IPHONE_7_PLUS + " " + DISPLAY_ZOOM;
-                case "Apple A11 GPU":
-                    return IPHONE_8_PLUS + " " + DISPLAY_ZOOM;
-                default:
-                    return IPHONE_6_PLUS + " " + DISPLAY_ZOOM + "," + IPHONE_6S_PLUS + " " + DISPLAY_ZOOM + "," +
-                        IPHONE_7_PLUS + " " + DISPLAY_ZOOM + "," + IPHONE_8_PLUS + " " + DISPLAY_ZOOM;
-            }
-        }
-    }
-    // iPhone 5, iPhone 5C, iPhone 5S, iPhone SE
-    // or in zoom mode: iPhone 5, iPhone 5C, iPhone 5S, iPhone SE, iPhone 6, iPhone 6S, iPhone 7 or iPhone 8
-    else if (window.screen.height / window.screen.width === 1.775) {
-        switch (renderer) {
-            case "PowerVR SGX 543":
-                return IPHONE_5_OR_5C;
-            case "Apple A7 GPU":
-                return IPHONE_5S;
-            case "Apple A8 GPU":
-                return IPHONE_6 + " " + DISPLAY_ZOOM;
-            case "Apple A9 GPU":
-                return IPHONE_SE + "," + IPHONE_6S + " " + DISPLAY_ZOOM;
-            case "Apple A10 GPU":
-                return IPHONE_7 + " " + DISPLAY_ZOOM;
-            case "Apple A11 GPU":
-                return IPHONE_8 + " " + DISPLAY_ZOOM;
-            default:
-                return IPHONE_5_OR_5C + "," + IPHONE_5S + "," + IPHONE_SE + "," + IPHONE_6 + " " + DISPLAY_ZOOM +
-                    IPHONE_6S + " " + DISPLAY_ZOOM + "," + IPHONE_7 + " " + DISPLAY_ZOOM + "," +
-                    IPHONE_8 + " " + DISPLAY_ZOOM;
-        }
-    }
-    // iPhone 4 or 4s
-    else if ((window.screen.height / window.screen.width === 1.5) && (ratio === 2)) {
+	const ratio = window.devicePixelRatio;
+	// iPhone XR, iPhone XS Max
+	if (window.screen.height / window.screen.width === 896 / 414) {
+		switch (ratio) {
+			case 2:
+				return IPHONE_XR;
+			case 3:
+				return IPHONE_XS_MAX;
+			default:
+				return IPHONE_XR + "," + IPHONE_XS_MAX;
+		}
+	}
+	// iPhone X, iPhone XS
+	else if (window.screen.height / window.screen.width === 812 / 375) {
+		switch (renderer) {
+			case "Apple A11 GPU":
+				return IPHONE_X;
+			case "Apple A12 GPU":
+				return IPHONE_XS;
+			default:
+				return IPHONE_X + "," + IPHONE_XS;
+		}
+	}
+	// iPhone 6+, iPhone 6s+, iPhone 7+, iPhone 8+
+	else if (window.screen.height / window.screen.width === 736 / 414) {
+		switch (renderer) {
+			case "Apple A8 GPU":
+				return IPHONE_6_PLUS;
+			case "Apple A9 GPU":
+				return IPHONE_6S_PLUS;
+			case "Apple A10 GPU":
+				return IPHONE_7_PLUS;
+			case "Apple A11 GPU":
+				return IPHONE_8_PLUS;
+			default:
+				return IPHONE_6_PLUS + "," + IPHONE_6S_PLUS + "," + IPHONE_7_PLUS + "," + IPHONE_8_PLUS;
+		}
+	}
+	// iPhone 6, iPhone 6s, iPhone 7, iPhone 8
+	else if (window.screen.height / window.screen.width === 667 / 375) {
+		if (ratio === 2) {
+			switch (renderer) {
+				case "Apple A8 GPU":
+					return IPHONE_6;
+				case "Apple A9 GPU":
+					return IPHONE_6S;
+				case "Apple A10 GPU":
+					return IPHONE_7;
+				case "Apple A11 GPU":
+					return IPHONE_8;
+				default:
+					return IPHONE_6 + "," + IPHONE_6S + "," + IPHONE_7 + "," + IPHONE_8;
+			}
+		} else {
+			// or in zoom mode: iPhone 6+, iPhone 6S+, iPhone 7+, iPhone 8+
+			switch (renderer) {
+				case "Apple A8 GPU":
+					return IPHONE_6_PLUS + " " + DISPLAY_ZOOM;
+				case "Apple A9 GPU":
+					return IPHONE_6S_PLUS + " " + DISPLAY_ZOOM;
+				case "Apple A10 GPU":
+					return IPHONE_7_PLUS + " " + DISPLAY_ZOOM;
+				case "Apple A11 GPU":
+					return IPHONE_8_PLUS + " " + DISPLAY_ZOOM;
+				default:
+					return IPHONE_6_PLUS + " " + DISPLAY_ZOOM + "," + IPHONE_6S_PLUS + " " + DISPLAY_ZOOM + "," +
+						IPHONE_7_PLUS + " " + DISPLAY_ZOOM + "," + IPHONE_8_PLUS + " " + DISPLAY_ZOOM;
+			}
+		}
+	}
+		// iPhone 5, iPhone 5C, iPhone 5S, iPhone SE
+	// or in zoom mode: iPhone 5, iPhone 5C, iPhone 5S, iPhone SE, iPhone 6, iPhone 6S, iPhone 7 or iPhone 8
+	else if (window.screen.height / window.screen.width === 1.775) {
+		switch (renderer) {
+			case "PowerVR SGX 543":
+				return IPHONE_5_OR_5C;
+			case "Apple A7 GPU":
+				return IPHONE_5S;
+			case "Apple A8 GPU":
+				return IPHONE_6 + " " + DISPLAY_ZOOM;
+			case "Apple A9 GPU":
+				return IPHONE_SE + "," + IPHONE_6S + " " + DISPLAY_ZOOM;
+			case "Apple A10 GPU":
+				return IPHONE_7 + " " + DISPLAY_ZOOM;
+			case "Apple A11 GPU":
+				return IPHONE_8 + " " + DISPLAY_ZOOM;
+			default:
+				return IPHONE_5_OR_5C + "," + IPHONE_5S + "," + IPHONE_SE + "," + IPHONE_6 + " " + DISPLAY_ZOOM +
+					IPHONE_6S + " " + DISPLAY_ZOOM + "," + IPHONE_7 + " " + DISPLAY_ZOOM + "," +
+					IPHONE_8 + " " + DISPLAY_ZOOM;
+		}
+	}
+	// iPhone 4 or 4s
+	else if ((window.screen.height / window.screen.width === 1.5) && (ratio === 2)) {
 
-        switch (renderer) {
-            case "PowerVR SGX 535":
-                return IPHONE_4;
-            case "PowerVR SGX 543":
-                return IPHONE_4S;
-            default:
-                return IPHONE_4 + "," + IPHONE_4S;
-        }
+		switch (renderer) {
+			case "PowerVR SGX 535":
+				return IPHONE_4;
+			case "PowerVR SGX 543":
+				return IPHONE_4S;
+			default:
+				return IPHONE_4 + "," + IPHONE_4S;
+		}
 
-    }
-    // iPhone 1, 3G or 3GS
-    else if ((window.screen.height / window.screen.width === 1.5) && (ratio === 1)) {
-        switch (renderer) {
-            case "ALP0298C05":
-                return IPHONE_3GS;
-            case "S5L8900":
-                return IPHONE_1 + "," + IPHONE_3G;
-            default:
-                return IPHONE_1 + "," + IPHONE_3G + "," + IPHONE_3GS;
-        }
-        // Not an iPhone.
-    } else {
-        return "false " + renderer;
-    }
+	}
+	// iPhone 1, 3G or 3GS
+	else if ((window.screen.height / window.screen.width === 1.5) && (ratio === 1)) {
+		switch (renderer) {
+			case "ALP0298C05":
+				return IPHONE_3GS;
+			case "S5L8900":
+				return IPHONE_1 + "," + IPHONE_3G;
+			default:
+				return IPHONE_1 + "," + IPHONE_3G + "," + IPHONE_3GS;
+		}
+		// Not an iPhone.
+	} else {
+		return "false " + renderer;
+	}
 }
 
 /**
@@ -422,22 +422,22 @@ export function getiPhoneModel(): string {
  * @returns The name of the renderer if available and a blank string otherwise.
  */
 export function getRenderer(): string {
-    // Get renderer info from cavas.
-    const canvas = document.createElement("canvas");
-    let renderer = "";
-    if (canvas) {
-        const context = canvas.getContext("webgl2") ||
-                        canvas.getContext("webgl") ||
-                        canvas.getContext("experimental-webgl");
-        if (context) {
-            const info = (context as WebGL2RenderingContext | WebGLRenderingContext).getExtension("WEBGL_debug_renderer_info");
-            if (info) {
-                renderer = (context as WebGL2RenderingContext | WebGLRenderingContext).getParameter(info.UNMASKED_RENDERER_WEBGL);
-            }
-        }
-    }
+	// Get renderer info from cavas.
+	const canvas = document.createElement("canvas");
+	let renderer = "";
+	if (canvas) {
+		const context = canvas.getContext("webgl2") ||
+			canvas.getContext("webgl") ||
+			canvas.getContext("experimental-webgl");
+		if (context) {
+			const info = (context as WebGL2RenderingContext | WebGLRenderingContext).getExtension("WEBGL_debug_renderer_info");
+			if (info) {
+				renderer = (context as WebGL2RenderingContext | WebGLRenderingContext).getParameter(info.UNMASKED_RENDERER_WEBGL);
+			}
+		}
+	}
 
-    return renderer;
+	return renderer;
 }
 
 /**
@@ -445,15 +445,15 @@ export function getRenderer(): string {
  * @returns True if the platform is retina.
  */
 export function isRetina(): boolean {
-    const mediaQuery = "(-webkit-min-device-pixel-ratio: 1.5),\
+	const mediaQuery = "(-webkit-min-device-pixel-ratio: 1.5),\
             (min--moz-device-pixel-ratio: 1.5),\
             (-o-min-device-pixel-ratio: 3/2),\
             (min-resolution: 1.5dppx)";
-    if (window.devicePixelRatio > 1) {
-        return true;
-    }
+	if (window.devicePixelRatio > 1) {
+		return true;
+	}
 
-    return (window.matchMedia && window.matchMedia(mediaQuery).matches) === null;
+	return (window.matchMedia && window.matchMedia(mediaQuery).matches) === null;
 }
 
 /**
@@ -465,26 +465,26 @@ export function isRetina(): boolean {
  * PlatformUtils.IPHONE_3G, PlatformUtils.IPAD_AIR_2]);
  */
 export function isSupportedDevice(pToExclude: any): boolean {
-    const iOS = ["iPad", "iPhone", "iPod"].indexOf(navigator.platform) >= 0;
-    const deviceList = new Array()
-        .concat(getiPhoneModel().split(","))
-        .concat(getiPadModel().split(","));
+	const iOS = ["iPad", "iPhone", "iPod"].indexOf(navigator.platform) >= 0;
+	const deviceList = new Array()
+		.concat(getiPhoneModel().split(","))
+		.concat(getiPadModel().split(","));
 
-    let found: boolean = false;
-    for (let i = deviceList.length - 1; i >= 0; --i) {
-        if (pToExclude.includes(deviceList[i])) {
-            found = true;
-            break;
-        }
-    }
-    const isSupported = found === false;
-    if (iOS) {
-        return isSupported;
-    }
-    // Current catch all for supported vs unsupported Android devices.
-    else {
-        return isRetina();
-    }
+	let found: boolean = false;
+	for (let i = deviceList.length - 1; i >= 0; --i) {
+		if (pToExclude.includes(deviceList[i])) {
+			found = true;
+			break;
+		}
+	}
+	const isSupported = found === false;
+	if (iOS) {
+		return isSupported;
+	}
+	// Current catch all for supported vs unsupported Android devices.
+	else {
+		return isRetina();
+	}
 }
 
 /**
@@ -494,14 +494,14 @@ export function isSupportedDevice(pToExclude: any): boolean {
  * @returns True if the current platform is Safari.
  */
 export function isSafari(): boolean {
-    const result = navigator.vendor && navigator.vendor.indexOf("Apple") > -1 &&
-        navigator.userAgent &&
-        navigator.userAgent.indexOf("CriOS") === -1 &&
-        navigator.userAgent.indexOf("FxiOS") === -1;
-    if (result === "") {
-        return false;
-    }
-    return result;
+	const result = navigator.vendor && navigator.vendor.indexOf("Apple") > -1 &&
+		navigator.userAgent &&
+		navigator.userAgent.indexOf("CriOS") === -1 &&
+		navigator.userAgent.indexOf("FxiOS") === -1;
+	if (result === "") {
+		return false;
+	}
+	return result;
 }
 
 /**
@@ -510,12 +510,12 @@ export function isSafari(): boolean {
  * @returns True is the current platform is Amazon OS
  */
 export function isAmazonOS(): boolean {
-    const match = /(?:; ([^;)]+) Build\/.*)?\bSilk\/([0-9._-]+)\b(.*\bMobile Safari\b)?/.exec(navigator.userAgent);
-    if (match) {
-        return true;
-    }
+	const match = /(?:; ([^;)]+) Build\/.*)?\bSilk\/([0-9._-]+)\b(.*\bMobile Safari\b)?/.exec(navigator.userAgent);
+	if (match) {
+		return true;
+	}
 
-    return false;
+	return false;
 }
 
 /**
@@ -524,12 +524,12 @@ export function isAmazonOS(): boolean {
  * @returns True is the app is running on a mobile device.
  */
 export function isMobile(): boolean {
-    return PIXI.utils.isMobile.any;
+	return PixiUtilsIsMobile.any;
 }
 
 /**
  * Checks whether the app is running on an `https` url
  */
 export function isHTTPS(): boolean {
-    return window.location.protocol === "https";
+	return window.location.protocol === "https";
 }

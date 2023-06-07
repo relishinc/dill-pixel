@@ -1,14 +1,14 @@
-import * as PIXI from "pixi.js";
+import {IPoint, Point, Rectangle} from "pixi.js";
 
 /**
  *
  * @param pRect
  * @param pDelta
  */
-export function offset(pRect: PIXI.Rectangle, pDelta: PIXI.Point): PIXI.Rectangle {
-    pRect.x += pDelta.x;
-    pRect.y += pDelta.y;
-    return pRect;
+export function offset(pRect: Rectangle, pDelta: Point): Rectangle {
+	pRect.x += pDelta.x;
+	pRect.y += pDelta.y;
+	return pRect;
 }
 
 /**
@@ -16,12 +16,12 @@ export function offset(pRect: PIXI.Rectangle, pDelta: PIXI.Point): PIXI.Rectangl
  * @param pRect
  * @param pOutput
  */
-export function center(pRect: PIXI.Rectangle, pOutput?: PIXI.Point): PIXI.Point {
-    if (pOutput === undefined) {
-        pOutput = new PIXI.Point();
-    }
-    pOutput.set(pRect.x + pRect.width * 0.5, pRect.y + pRect.height * 0.5);
-    return pOutput;
+export function center(pRect: Rectangle, pOutput?: Point): Point {
+	if (pOutput === undefined) {
+		pOutput = new Point();
+	}
+	pOutput.set(pRect.x + pRect.width * 0.5, pRect.y + pRect.height * 0.5);
+	return pOutput;
 }
 
 /**
@@ -29,23 +29,23 @@ export function center(pRect: PIXI.Rectangle, pOutput?: PIXI.Point): PIXI.Point 
  * @param pRect
  * @param pScale
  */
-export function scale(pRect: PIXI.Rectangle, pScale: number): PIXI.Rectangle {
-    pRect.x *= pScale;
-    pRect.y *= pScale;
-    pRect.width *= pScale;
-    pRect.height *= pScale;
-    return pRect;
+export function scale(pRect: Rectangle, pScale: number): Rectangle {
+	pRect.x *= pScale;
+	pRect.y *= pScale;
+	pRect.width *= pScale;
+	pRect.height *= pScale;
+	return pRect;
 }
 
 /**
- * Returns a `PIXI.Point` representing the width and height of the input Rectangle
+ * Returns a `Point` representing the width and height of the input Rectangle
  * @param pRect
  * @param pOutput
  */
-export function size(pRect: PIXI.Rectangle, pOutput?: PIXI.Point): PIXI.IPoint {
-    if (pOutput === undefined) {
-        pOutput = new PIXI.Point();
-    }
-    pOutput.set(pRect.width, pRect.height);
-    return pOutput;
+export function size(pRect: Rectangle, pOutput?: Point): IPoint {
+	if (pOutput === undefined) {
+		pOutput = new Point();
+	}
+	pOutput.set(pRect.width, pRect.height);
+	return pOutput;
 }

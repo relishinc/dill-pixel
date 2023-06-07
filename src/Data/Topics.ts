@@ -1,9 +1,12 @@
 export const LOAD_ASSETS: string = "LoadAssets";
+export const LOAD_COMPLETE: string = "LoadComplete";
 export const UNLOAD_ASSETS: string = "UnloadAssets";
 export const SHOW_LOAD_SCREEN: string = "ShowLoadScreen";
 export const HIDE_LOAD_SCREEN: string = "HideLoadScreen";
+export const STATE_INIT: string = "StateInit";
 export const STATE_TRANSITION_HALTED: string = "StateTransitionHalted";
-export const STATE_TRANSITION_RESUME_FROM_HALT: string = "StateTransitionResumeFromHalt";
+export const STATE_TRANSITION_RESUME_FROM_HALT: string =
+  "StateTransitionResumeFromHalt";
 export const STATE_LOAD_STATE: string = "StateLoadState";
 export const LOAD_SCREEN_HIDDEN: string = "LoadScreenHidden";
 

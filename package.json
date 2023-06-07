@@ -37,6 +37,7 @@
     "pixi-spine": "latest",
     "pixi.js": "latest",
     "pubsub-js": "latest",
-    "typescript-collections": "latest"
+    "typescript-collections": "latest",
+    "vite-plugin-static-copy": "^0.14.0"
   }
 }
