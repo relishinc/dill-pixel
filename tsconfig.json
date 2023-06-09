@@ -10,6 +10,7 @@
         "skipLibCheck": true,
         "esModuleInterop": true,
         "useDefineForClassFields": false,
+        "strictPropertyInitialization": false
     },
     "include": [
         "src"

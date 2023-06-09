@@ -1,4 +1,27 @@
-import {Assets, ITextStyle, Resource, Sprite, Text, TextStyle, Texture} from "pixi.js";
+import {Geometry, State} from "@pixi/core";
+import {
+	Assets,
+	BitmapText,
+	Container,
+	DRAW_MODES,
+	Graphics,
+	IBitmapTextStyle,
+	ITextStyle,
+	Mesh,
+	ObservablePoint,
+	Point,
+	Resource,
+	Shader,
+	SimpleMesh,
+	SimplePlane,
+	SimpleRope,
+	Sprite,
+	Text,
+	TextStyle,
+	Texture,
+	TilingSprite
+} from "pixi.js";
+import {SpritesheetLike} from "../Types";
 
 /**
  * Gets a `PIXI.Texture` asset.
@@ -7,7 +30,7 @@ import {Assets, ITextStyle, Resource, Sprite, Text, TextStyle, Texture} from "pi
  */
 
 export class MakeFactory {
-	texture(pAsset: string, pSheet?: string | string[]): Texture {
+	texture(pAsset: string, pSheet: SpritesheetLike): Texture {
 		// tslint:disable-next-line:no-shadowed-variable
 		let texture: Texture<Resource> | undefined;
 
@@ -59,7 +82,7 @@ export class MakeFactory {
 		return texture || new Sprite().texture;
 	}
 
-	sprite(pAsset: string, pSheet?: string | string[]): Sprite {
+	sprite(pAsset: string, pSheet?: string | string[] | undefined): Sprite {
 		let sprite: Sprite | undefined;
 		sprite = new Sprite(this.texture(pAsset, pSheet));
 		return sprite;
@@ -69,5 +92,57 @@ export class MakeFactory {
 		let text: Text | undefined;
 		text = new Text(pText, pStyle);
 		return text;
+	}
+
+	bitmapText(pText: string = ``, pStyle?: IBitmapTextStyle): BitmapText {
+		let bitmapText: BitmapText | undefined;
+		bitmapText = new BitmapText(pText, pStyle);
+		return bitmapText;
+	}
+
+	container(): Container {
+		let container: Container | undefined;
+		container = new Container();
+		return container;
+	}
+
+	graphics(): Graphics {
+		let graphics: Graphics | undefined;
+		graphics = new Graphics();
+		return graphics;
+	}
+
+	tiledSprite(pTexture: string, pSheet: string | string[] | undefined, pWidth: number, pHeight: number, pTilePosition?: ObservablePoint): TilingSprite {
+		let tilingSprite: TilingSprite | undefined;
+		tilingSprite = new TilingSprite(this.texture(pTexture, pSheet), pWidth, pHeight);
+		if (pTilePosition) {
+			tilingSprite.tilePosition = pTilePosition;
+		}
+		return tilingSprite;
+	}
+
+	mesh(pGeometry: Geometry, pShader: Shader, pState?: State, pDrawMode?: DRAW_MODES): Mesh<Shader> {
+		let mesh: Mesh<Shader> | undefined;
+		mesh = new Mesh<Shader>(pGeometry, pShader, pState, pDrawMode);
+		return mesh;
+	}
+
+	simpleRope(pTexture: string, pSheet: string | string[] | undefined, pPoints: (Point | ObservablePoint)[], pAutoUpdate?: boolean): SimpleRope {
+		let simpleRope: SimpleRope | undefined;
+		simpleRope = new SimpleRope(this.texture(pTexture, pSheet), pPoints);
+		simpleRope.autoUpdate = pAutoUpdate !== false;
+		return simpleRope;
+	}
+
+	simplePlane(pTexture: string, pSheet: string | string[] | undefined, pVertsWidth: number, pVertsHeight: number): SimplePlane {
+		let simplePlane: SimplePlane | undefined;
+		simplePlane = new SimplePlane(this.texture(pTexture, pSheet), pVertsWidth, pVertsHeight);
+		return simplePlane;
+	}
+
+	simpleMesh(pTexture: string, pSheet: string | string[] | undefined, pVertices?: Float32Array, pUvs?: Float32Array, pIndices?: Uint16Array, pDrawMode?: number): SimpleMesh {
+		let simpleMesh: SimpleMesh | undefined;
+		simpleMesh = new SimpleMesh(this.texture(pTexture, pSheet), pVertices, pUvs, pIndices, pDrawMode);
+		return simpleMesh;
 	}
 }

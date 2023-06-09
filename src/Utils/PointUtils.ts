@@ -1,7 +1,5 @@
-import {IPoint, ObservablePoint, Point as PIXIPoint} from "pixi.js";
+import {IPoint, Point} from "pixi.js";
 import * as MathUtils from "../Utils/MathUtils";
-
-type Point = PIXIPoint | ObservablePoint | IPoint;
 
 /**
  * Add the x and the y values of two Points together and return a new point.
@@ -9,8 +7,8 @@ type Point = PIXIPoint | ObservablePoint | IPoint;
  * @param pB
  * @returns Point
  */
-export function add(pA: Point, pB: Point): Point {
-	return new PIXIPoint(pA.x + pB.x, pA.y + pB.y);
+export function add(pA: IPoint, pB: IPoint): Point {
+	return new Point(pA.x + pB.x, pA.y + pB.y);
 }
 
 /**
@@ -18,7 +16,7 @@ export function add(pA: Point, pB: Point): Point {
  * @param pA
  * @param pB
  */
-export function addToPoint(pA: Point, pB: Point): void {
+export function addToPoint(pA: IPoint, pB: IPoint): void {
 	pA.x += pB.x;
 	pA.y += pB.y;
 }
@@ -28,8 +26,8 @@ export function addToPoint(pA: Point, pB: Point): void {
  * @param pA
  * @param pB
  */
-export function subtract(pA: Point, pB: Point): Point {
-	return new PIXIPoint(pA.x - pB.x, pA.y - pB.y);
+export function subtract(pA: IPoint, pB: IPoint): Point {
+	return new Point(pA.x - pB.x, pA.y - pB.y);
 }
 
 /**
@@ -37,7 +35,7 @@ export function subtract(pA: Point, pB: Point): Point {
  * @param pA
  * @param pB
  */
-export function subtractFromPoint(pA: Point, pB: Point): void {
+export function subtractFromPoint(pA: IPoint, pB: IPoint): void {
 	pA.x -= pB.x;
 	pA.y -= pB.y;
 }
@@ -47,8 +45,8 @@ export function subtractFromPoint(pA: Point, pB: Point): void {
  * @param pA
  * @param pMult
  */
-export function multiply(pA: Point, pMult: number): Point {
-	const point: Point = new PIXIPoint(pA.x, pA.y);
+export function multiply(pA: IPoint, pMult: number): Point {
+	const point: Point = new Point(pA.x, pA.y);
 	point.x *= pMult;
 	point.y *= pMult;
 	return point;
@@ -59,7 +57,7 @@ export function multiply(pA: Point, pMult: number): Point {
  * @param pPoint
  * @param pPerc
  */
-export function lerp(pPoint: Point, pPerc: number): number {
+export function lerp(pPoint: IPoint, pPerc: number): number {
 	return MathUtils.lerp(pPoint.x, pPoint.y, pPerc);
 }
 
@@ -68,7 +66,7 @@ export function lerp(pPoint: Point, pPerc: number): number {
  * @param pA
  * @param pB
  */
-export function distance(pA: Point, pB: Point): number {
+export function distance(pA: IPoint, pB: Point): number {
 	return Math.sqrt(distanceSq(pA, pB));
 }
 
@@ -77,7 +75,7 @@ export function distance(pA: Point, pB: Point): number {
  * @param pA
  * @param pB
  */
-export function distanceSq(pA: Point, pB: Point): number {
+export function distanceSq(pA: IPoint, pB: Point): number {
 	return (pB.x - pA.x) * (pB.x - pA.x) + (pB.y - pA.y) * (pB.y - pA.y);
 }
 
@@ -85,6 +83,6 @@ export function distanceSq(pA: Point, pB: Point): number {
  * Gets the magnitude of a point.
  * @param pPoint
  */
-export function magnitude(pPoint: Point): number {
+export function magnitude(pPoint: IPoint): number {
 	return Math.sqrt((pPoint.x * pPoint.x) + (pPoint.y * pPoint.y));
 }

@@ -13,6 +13,7 @@ export * from "./ResizeManager";
 export * from "./WebEventsManager";
 export * as Factory from "./Factory";
 export * from "./Anchor";
+export * as Types from "./Types";
 export {Delay} from "./Delay";
 
 export * from "./AssetUtils";

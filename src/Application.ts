@@ -1,5 +1,4 @@
-import * as PIXI from "pixi.js";
-import {Assets, Container, Sprite} from "pixi.js";
+import {Application as PIXIApplication, Assets, Container, IApplicationOptions, Point, Sprite, Ticker} from "pixi.js";
 import * as PubSub from "pubsub-js";
 import {AudioToken, HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverManager,} from "./Audio";
 import {CopyManager} from "./Copy";
@@ -7,27 +6,32 @@ import {AppConfig} from "./Data";
 import * as Topics from "./Data/Topics";
 import {HitAreaRenderer, KeyboardManager, MouseManager} from "./Input";
 import {AssetMap, AssetMapData, LoadManager, SplashScreen} from "./Load";
+import {Physics} from "./Physics";
 import {PopupManager} from "./Popup";
 import {SaveManager} from "./Save";
 import {StateManager} from "./State";
 import {
-  AnchorManager,
-  AnchorPosition,
-  AssetUtils,
-  Delay,
-  IPadding,
-  OrientationManager,
-  ResizeManager,
-  WebEventsManager,
+	AnchorManager,
+	AnchorPosition,
+	AssetUtils,
+	Delay,
+	IPadding,
+	OrientationManager,
+	ResizeManager,
+	WebEventsManager,
 } from "./Utils";
-import * as Factory from './Utils/Factory'
+import * as Factory from './Utils/Factory';
 
-export abstract class Application extends PIXI.Application {
-	protected static readonly SIZE_MIN_DEFAULT: PIXI.Point = new PIXI.Point(
+export interface HLFApplicationOptions extends IApplicationOptions {
+	physics?: boolean;
+}
+
+export abstract class Application extends PIXIApplication {
+	protected static readonly SIZE_MIN_DEFAULT: Point = new Point(
 		1024,
 		768
 	);
-	protected static readonly SIZE_MAX_DEFAULT: PIXI.Point = new PIXI.Point(
+	protected static readonly SIZE_MAX_DEFAULT: Point = new Point(
 		1365,
 		768
 	);
@@ -51,7 +55,7 @@ export abstract class Application extends PIXI.Application {
 	protected _mouseManager: MouseManager;
 	protected _webEventsManager: WebEventsManager;
 	protected _screenSizeRatio!: number;
-	protected _size: PIXI.Point;
+	protected _size: Point;
 	protected _hitAreaRenderer!: HitAreaRenderer;
 	protected _saveManager!: SaveManager;
 	protected _orientationManager!: OrientationManager;
@@ -64,31 +68,36 @@ export abstract class Application extends PIXI.Application {
 	protected startSplashProcess: OmitThisParameter<
 		(pPersistentAssets: AssetMapData[], pOnComplete: () => void) => void
 	>;
+	protected _physics: Physics;
 
 	/**
 	 * The config passed in can be a json object, or an `AppConfig` object.
 	 * @param pConfig
 	 * @see `AppConfig` for what can be contained in the passed in config.
 	 * @default autoResize: true
-	 * @default resolution: PIXI.utils.isMobile.any === false ? 2 : (window.devicePixelRatio > 1 ? 2 : 1);
+	 * @default resolution: utils.isMobile.any === false ? 2 : (window.devicePixelRatio > 1 ? 2 : 1);
 	 */
 	protected constructor(
-		pConfig?: PIXI.IApplicationOptions & { [key: string]: any }
+		pConfig?: HLFApplicationOptions & { [key: string]: any }
 	) {
 		// TODO Relish GM => Look into what might be added to the AppConfig class and if there is reason to cache it.
 		super(new AppConfig(pConfig));
 
+		// set the resolution suffix for loading assets
+		AssetUtils.resolutionSuffix = this.resolutionSuffix;
+
+		// bind functions
+		this.update = this.update.bind(this);
 		this.onRequiredAssetsLoaded = this.onRequiredAssetsLoaded.bind(this);
 
+		// create factories
 		this._makeFactory = new Factory.MakeFactory();
 		this._addFactory = new Factory.AddFactory(this.stage);
 		this._anchorManager = new AnchorManager(this, this.stage);
 
-		// TODO:SH: Find a better alternative to having this be assigned here (rework ResourceUtils?)
-		AssetUtils.resolutionSuffix = "@" + this.renderer.resolution + "x";
-		this._size = new PIXI.Point();
+		this._size = new Point();
 
-		PIXI.Ticker.shared.add(this.update.bind(this));
+		Ticker.shared.add(this.update);
 
 		this._webEventsManager = new WebEventsManager(this);
 		this._mouseManager = new MouseManager(this.renderer.plugins.interaction);
@@ -126,6 +135,11 @@ export abstract class Application extends PIXI.Application {
 		return Application._instance;
 	}
 
+	// override this to set a custom resolution suffix;
+	get resolutionSuffix(): string {
+		return "@" + this.renderer.resolution + "x";
+	}
+
 	get add(): Factory.AddFactory {
 		return this._addFactory;
 	}
@@ -161,7 +175,7 @@ export abstract class Application extends PIXI.Application {
 		return this._voiceoverManager;
 	}
 
-	public get size(): PIXI.Point {
+	public get size(): Point {
 		return this._size;
 	}
 
@@ -199,6 +213,14 @@ export abstract class Application extends PIXI.Application {
 
 	public get defaultState(): string | undefined {
 		return undefined;
+	}
+
+	public get physics(): Physics {
+		return this._physics;
+	}
+
+	public async addPhysics(): Promise<void> {
+		this._physics = new Physics(this);
 	}
 
 	public broadcast(message: string, data?: any | undefined) {
@@ -258,11 +280,12 @@ export abstract class Application extends PIXI.Application {
 	 * Called once per frame. Updates the `StateManager`, `PopupManager`, `LoadManager` and `HitAreaRenderer`.
 	 */
 	protected update(): void {
-		const deltaTime: number = PIXI.Ticker.shared.elapsedMS / 1000;
+		const deltaTime: number = Ticker.shared.elapsedMS / 1000;
 		this._stateManager.update(deltaTime);
 		this._popupManager.update(deltaTime);
 		this._loadManager.update(deltaTime);
 		this._hitAreaRenderer.update(deltaTime);
+		this._physics?.update(deltaTime);
 	}
 
 	/**
@@ -312,8 +335,9 @@ export abstract class Application extends PIXI.Application {
 	 * @default 0
 	 */
 	protected async onResize(pDelay: number = 0): Promise<void> {
-		// await the delay
-		await Delay(pDelay);
+		if (pDelay > 0) {
+			await Delay(pDelay);
+		}
 
 		this._size.copyFrom(this._resizeManager.getSize());
 		const stageScale: number = this._resizeManager.getStageScale();
