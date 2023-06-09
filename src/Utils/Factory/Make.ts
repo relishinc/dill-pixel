@@ -84,9 +84,9 @@ export class MakeFactory {
 		return texture || new Sprite().texture;
 	}
 
-	sprite(pAsset: string, pSheet?: string | string[] | undefined): Sprite {
+	sprite(pTexture: string | Texture, pSheet?: string | string[] | undefined): Sprite {
 		let sprite: Sprite | undefined;
-		sprite = new Sprite(this.texture(pAsset, pSheet));
+		sprite = new Sprite(typeof pTexture === 'string' ? this.texture(pTexture, pSheet) : pTexture);
 		return sprite;
 	}
 

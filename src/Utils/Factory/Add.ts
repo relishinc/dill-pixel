@@ -1,4 +1,5 @@
-import {Container, IBitmapTextStyle, ITextStyle, TextStyle, Texture} from "pixi.js";
+import {Container, Graphics, IBitmapTextStyle, ITextStyle, TextStyle, Texture} from "pixi.js";
+import {Application} from "../../Application";
 import {BodyType, PhysicsSprite} from "../../GameObjects/PhysicsSprite";
 import {MakeFactory} from "./Make";
 import {ObjectOrArrayXY, resolveXYFromObjectOrArray} from "./utils";
@@ -12,6 +13,33 @@ export class AddFactory {
 
 	existing(pObject: any) {
 		return this.defaultContainer.addChild(pObject);
+	}
+
+	coloredSprite(color: number = 0x0, alpha: number = 1, position: ObjectOrArrayXY = {
+		x: 0,
+		y: 0
+	}, anchor: ObjectOrArrayXY = {x: 0.5, y: 0.5}, scale: ObjectOrArrayXY = {x: 1, y: 1}) {
+		const gfx = new Graphics();
+		gfx.beginFill(color);
+		gfx.drawRect(0, 0, 1, 1);
+		gfx.endFill();
+
+		const sprite = this._make.sprite(Application.instance.renderer.generateTexture(gfx));
+		sprite.tint = color;
+		sprite.alpha = alpha;
+
+		const resolvedPosition = resolveXYFromObjectOrArray(position);
+		const resolvedAnchor = resolveXYFromObjectOrArray(anchor);
+		const resolvedScale = resolveXYFromObjectOrArray(scale);
+
+		sprite.x = resolvedPosition.x;
+		sprite.y = resolvedPosition.y;
+		sprite.anchor.x = resolvedAnchor.x;
+		sprite.anchor.y = resolvedAnchor.y;
+		sprite.scale.x = resolvedScale.x;
+		sprite.scale.y = resolvedScale.y
+
+		return this.defaultContainer.addChild(sprite);
 	}
 
 	sprite(
