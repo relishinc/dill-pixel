@@ -12,6 +12,14 @@ export abstract class State extends Container {
     public static DEFAULT_LAYOUT_STYLES: LayoutStyles = {
         root: {
             position: "center",
+            textAlign: "center"
+        },
+        main: {
+            display: 'block',
+            height: '100%',
+            width: "100%",
+            position: "center",
+            verticalAlign: "center",
         },
         header: {
             display: 'block',
@@ -34,6 +42,10 @@ export abstract class State extends Container {
         content: {
             header: {
                 id: "header",
+                content: {}
+            },
+            main: {
+                id: "main",
                 content: {}
             },
             footer: {
@@ -96,6 +108,13 @@ export abstract class State extends Container {
      */
     get layout(): Layout {
         return this._layout;
+    }
+
+    getLayoutById(id: string): Layout | null {
+        if (!this._layout) {
+            return null;
+        }
+        return this._layout.content.getByID(id) as Layout;
     }
 
     /**
