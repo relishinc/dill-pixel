@@ -1,4 +1,5 @@
-import {Container, IBitmapTextStyle, ITextStyle, TextStyle} from "pixi.js";
+import {Container, IBitmapTextStyle, ITextStyle, TextStyle, Texture} from "pixi.js";
+import {BodyType, PhysicsSprite} from "../../GameObjects/PhysicsSprite";
 import {MakeFactory} from "./Make";
 import {ObjectOrArrayXY, resolveXYFromObjectOrArray} from "./utils";
 
@@ -63,8 +64,7 @@ export class AddFactory {
 		return this.defaultContainer.addChild(text);
 	}
 
-
-// Add BitmapText
+	// Add BitmapText
 	bitmapText(
 		pText: string,
 		pStyle?: IBitmapTextStyle,
@@ -90,7 +90,7 @@ export class AddFactory {
 		return this.defaultContainer.addChild(bitmapText);
 	}
 
-// Add Container
+	// Add Container
 	container(
 		alpha: number = 1,
 		position: ObjectOrArrayXY = {x: 0, y: 0},
@@ -110,7 +110,7 @@ export class AddFactory {
 		return this.defaultContainer.addChild(container);
 	}
 
-// Add Graphics
+	// Add Graphics
 	graphics(
 		alpha: number = 1,
 		position: ObjectOrArrayXY = {x: 0, y: 0},
@@ -128,6 +128,22 @@ export class AddFactory {
 		graphics.scale.y = resolvedScale.y;
 
 		return this.defaultContainer.addChild(graphics);
+	}
+
+	// add physics sprite
+	physicsSprite(pTexture: string | Texture,
+	              pSheet?: string | string[] | undefined,
+	              pSize?: ObjectOrArrayXY,
+	              pType: BodyType = BodyType.RECTANGLE,
+	              pAlpha: number = 1,
+	              pPosition: ObjectOrArrayXY = {x: 0, y: 0},
+	): PhysicsSprite {
+		const sprite = this._make.physicsSprite(pTexture, pSheet, pSize, pType);
+		sprite.alpha = pAlpha;
+		const resolvedPosition = resolveXYFromObjectOrArray(pPosition);
+		sprite.x = resolvedPosition.x;
+		sprite.y = resolvedPosition.y;
+		return this.defaultContainer.addChild(sprite);
 	}
 
 }

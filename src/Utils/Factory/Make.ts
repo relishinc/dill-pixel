@@ -21,7 +21,9 @@ import {
 	Texture,
 	TilingSprite
 } from "pixi.js";
+import {BodyType, PhysicsSprite} from "../../GameObjects/PhysicsSprite";
 import {SpritesheetLike} from "../Types";
+import {ObjectOrArrayXY} from "./utils";
 
 /**
  * Gets a `PIXI.Texture` asset.
@@ -144,5 +146,11 @@ export class MakeFactory {
 		let simpleMesh: SimpleMesh | undefined;
 		simpleMesh = new SimpleMesh(this.texture(pTexture, pSheet), pVertices, pUvs, pIndices, pDrawMode);
 		return simpleMesh;
+	}
+
+	physicsSprite(pTexture: string | Texture, pSheet?: SpritesheetLike, pSize?: ObjectOrArrayXY, pBodyType: BodyType = BodyType.RECTANGLE): PhysicsSprite {
+		let physicsSprite: PhysicsSprite | undefined;
+		physicsSprite = new PhysicsSprite(pTexture, pSheet, pSize, pBodyType);
+		return physicsSprite;
 	}
 }

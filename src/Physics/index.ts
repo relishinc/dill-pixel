@@ -7,7 +7,7 @@ export type BodyLike = Matter.Body | Matter.Composite | Matter.Constraint | Matt
 
 export interface IPhysicsObject {
 	body: BodyLike;
-
+	debugColor:number
 	update(): void;
 }
 
@@ -31,7 +31,20 @@ export class Physics {
 		return this._engine;
 	}
 
-	async init(pAutoStart: boolean = false, pEngineOptions: Matter.IEngineDefinition = {}, pDebug: boolean = false, autoCreateBounds: boolean = true) {
+	public set debug(pDebug:boolean){
+		this._debug = pDebug;
+		if (!this._debug){
+			this._debugContainer?.parent.removeChild(this._debugContainer);
+			this._debugGraphics?.destroy({children:true});
+			this._debugContainer?.destroy({children:true});
+		}
+	}
+
+	public get debug():boolean{
+		return this._debug
+	}
+
+	async init( pAutoStart: boolean = false, pDebug: boolean = false, autoCreateBounds: boolean = true, pEngineOptions: Matter.IEngineDefinition = {}) {
 		// don't load the matter js module until we need it
 		await import('matter-js').then((module) => {
 			globalThis.Matter = module;
@@ -42,12 +55,12 @@ export class Physics {
 		this._debug = pDebug;
 		this._engine = Matter.Engine.create(opts);
 
-		if (pAutoStart) {
-			this.start();
-		}
-
 		if (autoCreateBounds) {
 			this.createWorldBounds();
+		}
+
+		if (pAutoStart) {
+			this.start();
 		}
 
 		return Promise.resolve();
@@ -103,8 +116,7 @@ export class Physics {
 	}
 
 	drawDebug() {
-		const bodies = Matter.Composite.allBodies(this._engine.world);
-		if (!this._debugGraphics) {
+		if (!this._debugGraphics || !this._debugContainer || !this._debugGraphics.parent) {
 			this._debugContainer = this.app.make.container();
 			this.app.add.existing(this._debugContainer);
 			this._debugGraphics = this.app.make.graphics();
@@ -113,13 +125,17 @@ export class Physics {
 			this._debugContainer.y = this.app.resizer.getSize().y * 0.5;
 			this.app.stage.setChildIndex(this._debugContainer, this.app.stage.children.length - 1);
 		}
+
 		this._debugGraphics.clear();
 
-		for (let i = 0; i < bodies.length; i++) {
-			const vertices = bodies[i].vertices;
+		for (let i = 0; i < this._updateables.length; i++) {
+			const updateable = this._updateables[i];
+			const body = this._updateables[i].body as Matter.Body;
+			const color = updateable?.debugColor || 0x29c5f6;
+			const vertices = body.vertices;
 
 			this._debugGraphics.lineStyle(1, 0x00ff00, 1);
-			this._debugGraphics.beginFill(0xff0000, 0.5);
+			this._debugGraphics.beginFill(color, 0.5);
 			this._debugGraphics.moveTo(vertices[0].x, vertices[0].y);
 
 			for (let j = 1; j < vertices.length; j++) {
@@ -139,13 +155,14 @@ export class Physics {
 			return;
 		}
 		if (this._engine) {
-			Matter.Engine.update(this._engine, 16.666666666666668, 1);
 			this._updateables.forEach((obj) => {
 				obj.update();
 			})
+			if (this._debug) {
+				this.drawDebug();
+			}
+			Matter.Engine.update(this._engine, 16.666666666666668, 1);
 		}
-		if (this._debug) {
-			this.drawDebug();
-		}
+
 	}
 }
