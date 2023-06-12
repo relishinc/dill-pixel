@@ -1,4 +1,3 @@
-import {AssetInitOptions} from "@pixi/assets/lib/Assets";
 import {ISkeletonData} from "pixi-spine";
 import {AssetType, AssetUtils} from "../../Utils";
 import {AssetMapData} from "../AssetMapData";
@@ -20,7 +19,7 @@ export class SpineAsset extends AssetMapData implements IAsset<ISkeletonData> {
 		return this.getResource().spineData!;
 	}
 
-	public getLoaderOptions(): Partial<AssetInitOptions & { metadata: any }> | undefined {
+	public getLoaderOptions(): Partial<any & { metadata: any }> | undefined {
 		if (this.atlasPath) {
 			const atlasPath = this.atlasPath.indexOf("/") >= 0
 				? AssetUtils.replaceResolutionToken(this.atlasPath)

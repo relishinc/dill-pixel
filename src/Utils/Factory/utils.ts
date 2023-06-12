@@ -1,6 +1,4 @@
-export type ObjectOrArrayXY = { x: number; y: number } | [number, number?] | number;
-
-export function resolveXYFromObjectOrArray(position: ObjectOrArrayXY) {
+export function resolveXYFromObjectOrArray(position: { x: number; y: number } | [number, number?] | number) {
 	let x = 0;
 	let y = 0;
 
@@ -12,7 +10,7 @@ export function resolveXYFromObjectOrArray(position: ObjectOrArrayXY) {
 		const obj = position as { x: number; y: number };
 		x = obj.x || 0;
 		y = obj.y || 0;
-	} else if (typeof position === 'number') {
+	} else {
 		x = position;
 		y = position;
 	}

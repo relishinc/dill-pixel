@@ -1,21 +1,32 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
-        "declaration": true,
-        "declarationMap": true,
-        "outDir": "./lib",
-        "strict": true,
-        "sourceMap": true,
-        "skipLibCheck": true,
-        "esModuleInterop": true,
-        "useDefineForClassFields": false,
-        "strictPropertyInitialization": false
-    },
-    "include": [
-        "src"
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "lib": [
+      "dom",
+      "es2015",
+      "es2016",
+      "es2017"
     ],
-    "exclude": [
-        "node_modules",
-    ]
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./lib",
+    "strict": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "useDefineForClassFields": false,
+    "strictPropertyInitialization": false,
+    /* Experimental Options */
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowJs": true
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

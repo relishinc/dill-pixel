@@ -2,7 +2,6 @@ import { Geometry, State } from "@pixi/core";
 import { BitmapText, Container, DRAW_MODES, Graphics, IBitmapTextStyle, ITextStyle, Mesh, ObservablePoint, Point, Shader, SimpleMesh, SimplePlane, SimpleRope, Sprite, Text, TextStyle, Texture, TilingSprite } from "pixi.js";
 import { BodyType, PhysicsSprite } from "../../GameObjects/PhysicsSprite";
 import { SpritesheetLike } from "../Types";
-import { ObjectOrArrayXY } from "./utils";
 /**
  * Gets a `PIXI.Texture` asset.
  * @param pAsset The name of the texture to get.
@@ -20,6 +19,9 @@ export declare class MakeFactory {
     simpleRope(pTexture: string, pSheet: string | string[] | undefined, pPoints: (Point | ObservablePoint)[], pAutoUpdate?: boolean): SimpleRope;
     simplePlane(pTexture: string, pSheet: string | string[] | undefined, pVertsWidth: number, pVertsHeight: number): SimplePlane;
     simpleMesh(pTexture: string, pSheet: string | string[] | undefined, pVertices?: Float32Array, pUvs?: Float32Array, pIndices?: Uint16Array, pDrawMode?: number): SimpleMesh;
-    physicsSprite(pTexture: string | Texture, pSheet?: SpritesheetLike, pSize?: ObjectOrArrayXY, pBodyType?: BodyType): PhysicsSprite;
+    physicsSprite(pTexture: string | Texture, pSheet?: SpritesheetLike, pSize?: {
+        x: number;
+        y: number;
+    } | [number, number?] | number, pBodyType?: BodyType): PhysicsSprite;
 }
 //# sourceMappingURL=Make.d.ts.map

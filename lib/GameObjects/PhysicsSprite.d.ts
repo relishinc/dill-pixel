@@ -2,7 +2,6 @@
 import { Container, Sprite, Texture } from "pixi.js";
 import { Application } from "../Application";
 import { IPhysicsObject } from "../Physics";
-import { ObjectOrArrayXY } from "../Utils/Factory/utils";
 import { SpritesheetLike } from "../Utils/Types";
 export declare enum BodyType {
     RECTANGLE = "rectangle",
@@ -21,7 +20,10 @@ export declare class PhysicsSprite extends Container implements IPhysicsObject {
         y: number;
     };
     _bodyType: BodyType;
-    constructor(pTexture: string | Texture, pSheet?: SpritesheetLike, pSize?: ObjectOrArrayXY, pBodyType?: BodyType);
+    constructor(pTexture: string | Texture, pSheet?: SpritesheetLike, pSize?: {
+        x: number;
+        y: number;
+    } | [number, number?] | number, pBodyType?: BodyType);
     get debugColor(): number;
     get app(): Application;
     onAdded(): void;

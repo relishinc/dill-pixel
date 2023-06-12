@@ -1,6 +1,5 @@
 import { AssetType } from "../Utils";
 import { AssetMapData } from "./AssetMapData";
-import { AssetInitOptions } from "@pixi/assets/lib/Assets";
 /**
  *
  */
@@ -13,7 +12,7 @@ export declare class AssetMapSpineData extends AssetMapData {
      * @param pAssetType Json or binary (*.skel) format of spine skeleton data
      */
     constructor(pName: string, pAtlasName?: string, pAssetType?: AssetType.SPINE_SKEL | AssetType.SPINE_JSON);
-    getLoaderOptions(): Partial<AssetInitOptions & {
+    getLoaderOptions(): Partial<any & {
         metadata: any;
     }> | undefined;
 }

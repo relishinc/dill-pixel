@@ -2,7 +2,7 @@ import {Container, Graphics, IBitmapTextStyle, ITextStyle, TextStyle, Texture} f
 import {Application} from "../../Application";
 import {BodyType, PhysicsSprite} from "../../GameObjects/PhysicsSprite";
 import {MakeFactory} from "./Make";
-import {ObjectOrArrayXY, resolveXYFromObjectOrArray} from "./utils";
+import {resolveXYFromObjectOrArray} from "./utils";
 
 export class AddFactory {
 	private _make: MakeFactory;
@@ -15,10 +15,16 @@ export class AddFactory {
 		return this.defaultContainer.addChild(pObject);
 	}
 
-	coloredSprite(color: number = 0x0, alpha: number = 1, position: ObjectOrArrayXY = {
+	coloredSprite(color: number = 0x0, alpha: number = 1, position: {
+		x: number;
+		y: number
+	} | [number, number?] | number = {
 		x: 0,
 		y: 0
-	}, anchor: ObjectOrArrayXY = {x: 0.5, y: 0.5}, scale: ObjectOrArrayXY = {x: 1, y: 1}) {
+	}, anchor: { x: number; y: number } | [number, number?] | number = {x: 0.5, y: 0.5}, scale: {
+		x: number;
+		y: number
+	} | [number, number?] | number = {x: 1, y: 1}) {
 		const gfx = new Graphics();
 		gfx.beginFill(color);
 		gfx.drawRect(0, 0, 1, 1);
@@ -46,9 +52,9 @@ export class AddFactory {
 		pAsset: string,
 		pSheet?: string | string[] | undefined,
 		alpha: number = 1,
-		position: ObjectOrArrayXY = {x: 0, y: 0},
-		anchor: ObjectOrArrayXY = {x: 0.5, y: 0.5},
-		scale: ObjectOrArrayXY = {x: 1, y: 1},
+		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
+		anchor: { x: number; y: number } | [number, number?] | number = {x: 0.5, y: 0.5},
+		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
 	) {
 		const sprite = this._make.sprite(pAsset, pSheet);
 		sprite.alpha = alpha;
@@ -71,9 +77,9 @@ export class AddFactory {
 		pText: string = ``,
 		pStyle?: Partial<ITextStyle> | TextStyle,
 		alpha: number = 1,
-		position: ObjectOrArrayXY = {x: 0, y: 0},
-		anchor: ObjectOrArrayXY = {x: 0.5, y: 0.5},
-		scale: ObjectOrArrayXY = {x: 1, y: 1},
+		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
+		anchor: { x: number; y: number } | [number, number?] | number = {x: 0.5, y: 0.5},
+		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
 	) {
 		const text = this._make.text(pText, pStyle);
 		text.alpha = alpha;
@@ -97,9 +103,9 @@ export class AddFactory {
 		pText: string,
 		pStyle?: IBitmapTextStyle,
 		alpha: number = 1,
-		position: ObjectOrArrayXY = {x: 0, y: 0},
-		anchor: ObjectOrArrayXY = {x: 0.5, y: 0.5},
-		scale: ObjectOrArrayXY = {x: 1, y: 1},
+		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
+		anchor: { x: number; y: number } | [number, number?] | number = {x: 0.5, y: 0.5},
+		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
 	) {
 		const bitmapText = this._make.bitmapText(pText, pStyle);
 		bitmapText.alpha = alpha;
@@ -121,8 +127,8 @@ export class AddFactory {
 	// Add Container
 	container(
 		alpha: number = 1,
-		position: ObjectOrArrayXY = {x: 0, y: 0},
-		scale: ObjectOrArrayXY = {x: 1, y: 1},
+		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
+		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
 	) {
 		const container = this._make.container();
 		container.alpha = alpha;
@@ -141,8 +147,8 @@ export class AddFactory {
 	// Add Graphics
 	graphics(
 		alpha: number = 1,
-		position: ObjectOrArrayXY = {x: 0, y: 0},
-		scale: ObjectOrArrayXY = {x: 1, y: 1},
+		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
+		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
 	) {
 		const graphics = this._make.graphics();
 		graphics.alpha = alpha;
@@ -161,10 +167,10 @@ export class AddFactory {
 	// add physics sprite
 	physicsSprite(pTexture: string | Texture,
 	              pSheet?: string | string[] | undefined,
-	              pSize?: ObjectOrArrayXY,
+	              pSize?: { x: number; y: number } | [number, number?] | number,
 	              pType: BodyType = BodyType.RECTANGLE,
 	              pAlpha: number = 1,
-	              pPosition: ObjectOrArrayXY = {x: 0, y: 0},
+	              pPosition: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
 	): PhysicsSprite {
 		const sprite = this._make.physicsSprite(pTexture, pSheet, pSize, pType);
 		sprite.alpha = pAlpha;

@@ -2,7 +2,7 @@ import {Bodies} from "matter-js";
 import {Container, Sprite, Texture} from "pixi.js";
 import {Application} from "../Application";
 import {IPhysicsObject} from "../Physics";
-import {ObjectOrArrayXY, resolveXYFromObjectOrArray} from "../Utils/Factory/utils";
+import {resolveXYFromObjectOrArray} from "../Utils/Factory/utils";
 import {SpritesheetLike} from "../Utils/Types";
 
 export enum BodyType {
@@ -21,7 +21,10 @@ export class PhysicsSprite extends Container implements IPhysicsObject {
 	_size: { x: number, y: number };
 	_bodyType: BodyType;
 
-	constructor(pTexture: string | Texture, pSheet?: SpritesheetLike, pSize?: ObjectOrArrayXY, pBodyType: BodyType = BodyType.RECTANGLE) {
+	constructor(pTexture: string | Texture, pSheet?: SpritesheetLike, pSize?: {
+		x: number;
+		y: number
+	} | [number, number?] | number, pBodyType: BodyType = BodyType.RECTANGLE) {
 		super();
 		this.onAdded = this.onAdded.bind(this);
 		this.sprite = typeof pTexture === 'string' ? this.addChild(this.app.make.sprite(pTexture, pSheet)) : this.addChild(new Sprite(pTexture));

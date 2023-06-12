@@ -1,1 +1,1 @@
-{"version":3,"file":"SplashScreen.js","sourceRoot":"","sources":["../../src/Load/SplashScreen.ts"],"names":[],"mappings":";;;AAAA,6CAAwC;AAExC,MAAa,YAAa,SAAQ,uBAAU;;AACjB,iBAAI,GAAW,aAAa,CAAC;AAD3C,oCAAY"}
+{"version":3,"file":"SplashScreen.js","sourceRoot":"","sources":["../../src/Load/SplashScreen.ts"],"names":[],"mappings":"AAAA,OAAO,EAAC,UAAU,EAAC,MAAM,cAAc,CAAC;AAExC,MAAa,YAAa,SAAQ,UAAU;;AACjB,iBAAI,GAAW,aAAa,CAAC;SAD3C,YAAY"}

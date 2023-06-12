@@ -1,5 +1,4 @@
 import { AssetType } from "../Utils";
-import { AssetInitOptions } from "@pixi/assets/lib/Assets";
 /**
  * Stores data used to load and unload assets.
  */
@@ -27,7 +26,7 @@ export declare class AssetMapData {
      */
     constructor(pAssetName: string, pAssetType: AssetType);
     getResource(): any;
-    getLoaderOptions(): Partial<AssetInitOptions> | undefined;
+    getLoaderOptions(): Partial<any> | undefined;
     isLoaded(): boolean;
     destroy(): void;
 }

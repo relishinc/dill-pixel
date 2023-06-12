@@ -1,8 +1,7 @@
-export type ObjectOrArrayXY = {
+export declare function resolveXYFromObjectOrArray(position: {
     x: number;
     y: number;
-} | [number, number?] | number;
-export declare function resolveXYFromObjectOrArray(position: ObjectOrArrayXY): {
+} | [number, number?] | number): {
     x: number;
     y: number;
 };

@@ -23,7 +23,6 @@ import {
 } from "pixi.js";
 import {BodyType, PhysicsSprite} from "../../GameObjects/PhysicsSprite";
 import {SpritesheetLike} from "../Types";
-import {ObjectOrArrayXY} from "./utils";
 
 /**
  * Gets a `PIXI.Texture` asset.
@@ -148,7 +147,10 @@ export class MakeFactory {
 		return simpleMesh;
 	}
 
-	physicsSprite(pTexture: string | Texture, pSheet?: SpritesheetLike, pSize?: ObjectOrArrayXY, pBodyType: BodyType = BodyType.RECTANGLE): PhysicsSprite {
+	physicsSprite(pTexture: string | Texture, pSheet?: SpritesheetLike, pSize?: {
+		x: number;
+		y: number
+	} | [number, number?] | number, pBodyType: BodyType = BodyType.RECTANGLE): PhysicsSprite {
 		let physicsSprite: PhysicsSprite | undefined;
 		physicsSprite = new PhysicsSprite(pTexture, pSheet, pSize, pBodyType);
 		return physicsSprite;

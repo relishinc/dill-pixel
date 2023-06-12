@@ -1,14 +1,13 @@
+import { Layout, LayoutStyles } from "@pixi/layout";
 import { Container, Point } from 'pixi.js';
 import { Application } from "../Application";
 import * as Factory from "../Utils/Factory";
-import { Layout, LayoutStyles } from "@pixi/layout";
-import { LayoutOptions } from "@pixi/layout/lib/utils/types";
 /**
  * State
  */
 export declare abstract class State extends Container {
     static DEFAULT_LAYOUT_STYLES: LayoutStyles;
-    static DEFAULT_LAYOUT_OPTIONS: LayoutOptions;
+    static DEFAULT_LAYOUT_OPTIONS: any;
     protected _layout: Layout;
     protected _size: Point;
     protected _addFactory: Factory.AddFactory;
@@ -34,11 +33,11 @@ export declare abstract class State extends Container {
      * Gets the current layout for the state, if it exists
      */
     get layout(): Layout;
-    getLayoutById(id: string): Layout | null;
     /**
      * Gets default layout options
      */
-    get defaultLayoutOptions(): LayoutOptions;
+    get defaultLayoutOptions(): any;
+    getLayoutById(id: string): Layout | null;
     /**
      * Inits state
      * @param pSize{Point}
@@ -50,7 +49,7 @@ export declare abstract class State extends Container {
      * see https://pixijs.io/layout/storybook/?path=/story/complex--application-layout for more info
      * @param options
      */
-    createLayout(options?: LayoutOptions): void;
+    createLayout(options?: any): void;
     /**
      * Updates state
      * @param pDeltaTime

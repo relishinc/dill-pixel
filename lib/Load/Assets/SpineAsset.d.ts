@@ -1,4 +1,3 @@
-import { AssetInitOptions } from "@pixi/assets/lib/Assets";
 import { ISkeletonData } from "pixi-spine";
 import { AssetType } from "../../Utils";
 import { AssetMapData } from "../AssetMapData";
@@ -7,7 +6,7 @@ export declare class SpineAsset extends AssetMapData implements IAsset<ISkeleton
     readonly atlasPath?: string;
     constructor(assetName: string, assetPathOrType?: string | AssetType.SPINE_SKEL | AssetType.SPINE_JSON, atlasPathOrName?: string);
     getAsset(): ISkeletonData;
-    getLoaderOptions(): Partial<AssetInitOptions & {
+    getLoaderOptions(): Partial<any & {
         metadata: any;
     }> | undefined;
 }
