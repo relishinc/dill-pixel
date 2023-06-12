@@ -1,0 +1,1 @@
+{"version":3,"file":"LoadToken.js","sourceRoot":"","sources":["../../src/Load/LoadToken.ts"],"names":[],"mappings":";;;AAEA;;GAEG;AACH,MAAa,SAAS;IAKlB,YAAY,OAAmC,EAAE,SAAqB,EAAE,WAAoB;QACxF,IAAI,CAAC,MAAM,GAAG,OAAO,CAAC;QACtB,IAAI,CAAC,QAAQ,GAAG,SAAS,CAAC;QAC1B,IAAI,CAAC,UAAU,GAAG,WAAW,CAAC;IAClC,CAAC;CACJ;AAVD,8BAUC"}
