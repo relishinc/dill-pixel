@@ -72,7 +72,7 @@ export declare abstract class Application extends PIXIApplication {
     get topics(): typeof Topics;
     get defaultState(): string | undefined;
     get physics(): Physics;
-    addPhysics(): Promise<void>;
+    addPhysics(): Physics;
     broadcast(message: string, data?: any | undefined): boolean;
     subscribe<T, M>(message: string, callback: (message: T, data: M) => void): string;
     /**
