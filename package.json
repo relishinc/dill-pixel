@@ -21,7 +21,7 @@
   ],
   "author": "Relish Interactive",
   "license": "UNLICENSED",
-  "homepage": "https://bitbucket.org/relishinc/html-living-framework#readme",
+  "homepage": "https://github.com/relishinc/hlf#readme",
   "devDependencies": {
     "@types/howler": "latest",
     "@types/matter-js": "^0.18.5",
