@@ -53,6 +53,14 @@ export class Application extends PIXIApplication {
 	>;
 	protected _physics: any;
 
+	static get containerElement(): HTMLElement | null {
+		return document.getElementById(Application.containerID);
+	}
+
+	static get containerID(): string {
+		return "game-container";
+	}
+
 	/**
 	 * The config passed in can be a json object, or an `AppConfig` object.
 	 * @param pConfig
@@ -131,7 +139,7 @@ export class Application extends PIXIApplication {
 	}
 
 	// static creation method that calls createContainer and instantiates the game
-	public static create(pElement: string | HTMLElement): Application | null {
+	public static create(pElement: string | HTMLElement = Application.containerID): Application | null {
 		let el: HTMLElement | null = null;
 		if (typeof pElement === "string") {
 			const id = pElement;

@@ -8,7 +8,8 @@
     "build:watch": "tsc --watch",
     "lint": "tslint -c tslint.json \"src/**/*.ts\"",
     "docs": "typedoc --ignoreCompilerErrors --mode modules --out docs src",
-    "copy": "copyfiles ./src/**/* ../hlf-example-template/relish-hlf"
+    "copy": "copyfiles ./src/**/* ../hlf-example-template/relish-hlf",
+    "release": "standard-version"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
     "@types/howler": "latest",
     "@types/matter-js": "^0.18.5",
     "@types/pubsub-js": "latest",
+    "standard-version": "^9.5.0",
     "tslint": "latest",
     "typedoc": "latest",
     "typescript": "latest"
