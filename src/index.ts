@@ -3,7 +3,7 @@ import {sayHello} from "./hello"; // (window as any).PIXI = PIXI; // for pixi-sp
 
 // (window as any).PIXI = PIXI; // for pixi-spine
 declare global {
-    var Matter: typeof import('matter-js');
+	var Matter: typeof import('matter-js');
 }
 
 export * from "./Application";
@@ -13,6 +13,7 @@ export * from "./Data";
 export * from "./GameObjects";
 export * as Input from "./Input";
 export * from "./Load";
+export * from "./Physics"
 export * from "./Popup";
 export * from "./State";
 export * from "./Utils";

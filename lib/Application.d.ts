@@ -4,7 +4,7 @@ import { CopyManager } from "./Copy";
 import * as Topics from "./Data/Topics";
 import { HitAreaRenderer, KeyboardManager, MouseManager } from "./Input";
 import { AssetMapData, LoadManager, SplashScreen } from "./Load";
-import { Physics } from "./Physics";
+import * as Physics from "./Physics";
 import { PopupManager } from "./Popup";
 import { SaveManager } from "./Save";
 import { StateManager } from "./State";
@@ -35,7 +35,7 @@ export declare abstract class Application extends PIXIApplication {
     protected _makeFactory: Factory.MakeFactory;
     protected _addFactory: Factory.AddFactory;
     protected startSplashProcess: OmitThisParameter<(pPersistentAssets: AssetMapData[], pOnComplete: () => void) => void>;
-    protected _physics: Physics;
+    protected _physics: any;
     /**
      * The config passed in can be a json object, or an `AppConfig` object.
      * @param pConfig
@@ -71,8 +71,8 @@ export declare abstract class Application extends PIXIApplication {
     get load(): LoadManager;
     get topics(): typeof Topics;
     get defaultState(): string | undefined;
-    get physics(): Physics;
-    addPhysics(): Physics;
+    get physics(): any;
+    addPhysics(type: Physics.EngineType): any;
     broadcast(message: string, data?: any | undefined): boolean;
     subscribe<T, M>(message: string, callback: (message: T, data: M) => void): string;
     /**

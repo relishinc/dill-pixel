@@ -7,15 +7,32 @@ export class ResizeManager {
 	private _sizeMax: Point;
 	private _ratioMin!: number;
 	private _ratioMax!: number;
+	private _useAspectRatio: boolean = false;
 
 	constructor(
 		private app: Application,
-		pSizeMin: Point,
-		pSizeMax: Point
+		pSizeMin?: Point | undefined,
+		pSizeMax?: Point | undefined
 	) {
-		this._sizeMin = pSizeMin;
-		this._sizeMax = pSizeMax;
-		this.updateRatio();
+		if (pSizeMin) {
+			this._useAspectRatio = true;
+			this._sizeMin = pSizeMin;
+			if (pSizeMax) {
+				this._sizeMax = pSizeMax;
+			} else {
+				this._sizeMax = pSizeMin;
+			}
+		}
+		if (this._useAspectRatio) {
+			this.updateRatio();
+		} else {
+			this._sizeMin = new Point(0, 0);
+			this._sizeMax = new Point(0, 0);
+		}
+	}
+
+	public get useAspectRatio(): boolean {
+		return this._useAspectRatio;
 	}
 
 	public set sizeMin(pSize: Point) {
@@ -42,7 +59,6 @@ export class ResizeManager {
 
 	public getSize(): Point {
 		const size: Point = new Point();
-		// TODO:SH: Y scaling is currently not supported. Look into a more flexible solution
 		size.y = this._sizeMax.y;
 		size.x = size.y * this.gameAspectRatio;
 		return size;

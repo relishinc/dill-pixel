@@ -6,7 +6,8 @@ import {AppConfig} from "./Data";
 import * as Topics from "./Data/Topics";
 import {HitAreaRenderer, KeyboardManager, MouseManager} from "./Input";
 import {AssetMap, AssetMapData, LoadManager, SplashScreen} from "./Load";
-import {Physics} from "./Physics";
+import * as Physics from "./Physics";
+import {PhysicsEngineType} from "./Physics";
 import {PopupManager} from "./Popup";
 import {SaveManager} from "./Save";
 import {StateManager} from "./State";
@@ -17,7 +18,7 @@ export interface HLFApplicationOptions extends IApplicationOptions {
 	physics?: boolean;
 }
 
-export abstract class Application extends PIXIApplication {
+export class Application extends PIXIApplication {
 	protected static readonly SIZE_MIN_DEFAULT: Point = new Point(
 		1024,
 		768
@@ -50,7 +51,7 @@ export abstract class Application extends PIXIApplication {
 	protected startSplashProcess: OmitThisParameter<
 		(pPersistentAssets: AssetMapData[], pOnComplete: () => void) => void
 	>;
-	protected _physics: Physics;
+	protected _physics: any;
 
 	/**
 	 * The config passed in can be a json object, or an `AppConfig` object.
@@ -87,11 +88,17 @@ export abstract class Application extends PIXIApplication {
 		this._loadManager = new LoadManager(this, this.createSplashScreen());
 		this._audioManager = new HowlerManager(this);
 		this._keyboardManager = new KeyboardManager(this);
-		this._resizeManager = new ResizeManager(
-			this,
-			Application.SIZE_MIN_DEFAULT,
-			Application.SIZE_MAX_DEFAULT
-		);
+
+		if (this.resizeTo) {
+			this._resizeManager = new ResizeManager(this);
+		} else {
+			this._resizeManager = new ResizeManager(
+				this,
+				pConfig?.sizeMin || Application.SIZE_MIN_DEFAULT,
+				pConfig?.sizeMax || Application.SIZE_MAX_DEFAULT
+			);
+		}
+
 		this._copyManager = new CopyManager(this);
 		this._saveManager = new SaveManager(this);
 		this._orientationManager = new OrientationManager(this);
@@ -113,6 +120,34 @@ export abstract class Application extends PIXIApplication {
 			);
 		}
 		return Application._instance;
+	}
+
+	// create a canvas container element with a given id and append it to the DOM
+	public static createContainer(pId: string) {
+		const container = document.createElement("div");
+		container.setAttribute("id", pId);
+		document.body.appendChild(container);
+		return container;
+	}
+
+	// static creation method that calls createContainer and instantiates the game
+	public static create(pElement: string | HTMLElement): Application | null {
+		let el: HTMLElement | null = null;
+		if (typeof pElement === "string") {
+			const id = pElement;
+			el = document.getElementById(id);
+			if (!el) {
+				el = Application.createContainer(pElement);
+			}
+		} else if (pElement instanceof HTMLElement) {
+			el = pElement;
+		}
+		if (!el) {
+			// no element to use
+			console.error(`You passed in a DOM Element, but none was found. If you instead pass in a string, a container will be created for you, using the string for its id.`);
+			return null;
+		}
+		return this.instance.create(el);
 	}
 
 	// override this to set a custom resolution suffix;
@@ -195,12 +230,14 @@ export abstract class Application extends PIXIApplication {
 		return undefined;
 	}
 
-	public get physics(): Physics {
+	public get physics(): any {
 		return this._physics;
 	}
 
-	public addPhysics(): Physics {
-		this._physics = new Physics(this);
+	public addPhysics(type: Physics.PhysicsEngineType = PhysicsEngineType.MATTER): any {
+		if (type === PhysicsEngineType.MATTER) {
+			this._physics = new Physics.MatterPhysics.Base(this);
+		}
 		return this._physics;
 	}
 
@@ -230,11 +267,27 @@ export abstract class Application extends PIXIApplication {
 	}
 
 	/**
+	 * initialize the Application singleton
+	 * and append the view to the DOM
+	 * @param pElement{String|HTMLElement}
+	 */
+	public create(pElement: HTMLElement): Application | null {
+		if (pElement) {
+			pElement.appendChild(Application.instance.view as HTMLCanvasElement);
+		} else {
+			console.error("No element found to append the view to.");
+			return null;
+		}
+
+		Application.instance.init();
+		return Application.instance;
+	}
+
+	/**
 	 * Initializes all managers and starts the splash screen process.
 	 */
 	public init(): void {
 		this.onPlayAudio = this.onPlayAudio.bind(this);
-
 		this.addToStage(this._stateManager);
 		this.addToStage(this._popupManager);
 		this.addToStage(this._loadManager);
@@ -320,11 +373,29 @@ export abstract class Application extends PIXIApplication {
 			await Delay(pDelay);
 		}
 
-		this._size.copyFrom(this._resizeManager.getSize());
-		const stageScale: number = this._resizeManager.getStageScale();
+		if (this._resizeManager.useAspectRatio) {
+			this._size.copyFrom(this._resizeManager.getSize());
+			const stageScale: number = this._resizeManager.getStageScale();
+			this.stage.scale.set(stageScale);
+			this.renderer.resize(this._size.x * stageScale, this._size.y * stageScale);
+		} else {
+			let w = this._size.x;
+			let h = this._size.y;
+			if ((this.resizeTo as HTMLElement)?.getBoundingClientRect) {
+				const el = this.resizeTo as HTMLElement;
+				w = el.getBoundingClientRect().width;
+				h = el.getBoundingClientRect().height
+			} else if ((this.resizeTo as Window)?.innerWidth) {
+				const el = this.resizeTo as Window;
+				w = el.innerWidth;
+				h = el.innerHeight;
+			}
+			this._size = new Point(w, h);
+			this._resizeManager.sizeMin = this._size;
+			this._resizeManager.sizeMax = this._size;
+			this.renderer.resize(w, h);
+		}
 
-		this.stage.scale.set(stageScale);
-		this.renderer.resize(this._size.x * stageScale, this._size.y * stageScale);
 
 		this._stateManager.onResize(this._size);
 		this._loadManager.onResize(this._size);
