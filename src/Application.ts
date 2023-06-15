@@ -82,7 +82,7 @@ export class Application extends PIXIApplication {
 		Ticker.shared.add(this.update);
 
 		this._webEventsManager = new WebEventsManager(this);
-		this._mouseManager = new MouseManager(this.renderer.plugins.interaction);
+		this._mouseManager = new MouseManager(this.renderer.events);
 		this._stateManager = new StateManager(this);
 		this._popupManager = new PopupManager(this);
 		this._loadManager = new LoadManager(this, this.createSplashScreen());
