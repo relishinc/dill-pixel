@@ -286,7 +286,9 @@ export class Application extends PIXIApplication {
 	/**
 	 * Initializes all managers and starts the splash screen process.
 	 */
-	public init(): void {
+	public async init(awaitFontsLoaded: boolean = true): Promise<void> {
+
+
 		this.onPlayAudio = this.onPlayAudio.bind(this);
 		this.addToStage(this._stateManager);
 		this.addToStage(this._popupManager);
@@ -428,7 +430,12 @@ export class Application extends PIXIApplication {
 	 * Override to specify what should happen after all persistent assets have been loaded.
 	 * @override
 	 */
-	protected onRequiredAssetsLoaded(): void {
+	protected async onRequiredAssetsLoaded(): Promise<void> {
+		// check if document.fonts is supported
+		if (document?.fonts) {
+			await document.fonts.ready;
+		}
+
 		if (this.state.default) {
 			this.state.transitionTo(this.state.default, SplashScreen.NAME);
 		}
