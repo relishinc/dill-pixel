@@ -1,4 +1,4 @@
-# HTML Living Framework #
+# HTML Living Framework (2023)#
 
 Framework for HTML game development, made by Relish Digital [https://reli.sh].
 
@@ -6,14 +6,15 @@ Framework for HTML game development, made by Relish Digital [https://reli.sh].
 
 #### Why make this game framework?
 
-PIXI.js is a great rendering engine, but it is not a game engine. It is not opinionated about how you should structure
-your project, and it does not provide any tools for common game development tasks. This framework is designed to fill
+PIXI.js is a great rendering engine, but it is not a game engine. It is not opinionated about projectr structure, and it
+does not provide any common game development tools. This framework is designed to fill
 that gap. It is Relish's opinionated approach to game development using PIXI.js.
 
 ### Documentation
 
 * Available here: [Docs]
-* Documentation is a work in progress and is incomplete. Speak to Anthony or Rick if the information needed is not
+* Documentation is a work in progress and is incomplete. Speak to [Anthony](mailto:anthony@reli.sh)
+  or [Rick](mailto:rick@reli.sh) if the information needed is not
   present.
 
 ### Development / Release Process
@@ -41,7 +42,7 @@ that gap. It is Relish's opinionated approach to game development using PIXI.js.
 
 ### Who do I talk to? ###
 
-Anthony Sapp or Rick Mason
+[Anthony Sapp](mailto:anthony@reli.sh) or [Rick Mason](mailto:rick@reli.sh)
 
 #### Vite
 
