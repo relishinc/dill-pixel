@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/relishinc/hlf/compare/v1.1.0...v1.1.1) (2023-06-16)
+
+
+### Bug Fixes
+
+* typo in readme ([30d5df8](https://github.com/relishinc/hlf/commit/30d5df8606a846243e4dcb205bce1dd8e574aa4d))
+
 ## [1.1.0](https://github.com/relishinc/hlf/compare/v1.0.0...v1.1.0) (2023-06-16)
 
 
