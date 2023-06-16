@@ -2,6 +2,14 @@
 
 Framework for HTML game development, made by Relish Digital [https://reli.sh].
 
+### Introduction
+
+#### Why make this game framework?
+
+PIXI.js is a great rendering engine, but it is not a game engine. It is not opinionated about how you should structure
+your project, and it does not provide any tools for common game development tasks. This framework is designed to fill
+that gap. It is Relish's opinionated approach to game development using PIXI.js.
+
 ### Documentation
 
 * Available here: [Docs]
@@ -35,11 +43,6 @@ Framework for HTML game development, made by Relish Digital [https://reli.sh].
 
 Anthony Sapp or Rick Mason
 
-#### Changelog
-
-Updates and changes should all be noted and explained in the `CHANGELOG.md` file. All instructions for format and
-structure are linked in that file.
-
 #### Vite
 
 Vite is used to build and bundle your project.
@@ -65,21 +68,16 @@ Vite is used to build and bundle your project.
 * A static instance getter is required in all projects that are based on this framework. The getter should return the
   instance cast as the project's `Application` type. The application is created in the `src/index.ts` file.
 
-```Typescript
+```ts
 import {Application} from "./scripts/Application";
-
-const canvasDiv = document.createElement("div");
-canvasDiv.setAttribute("id", "gameTarget");
-document.body.appendChild(canvasDiv);
-canvasDiv.appendChild(Application.instance.view);
-
-Application.instance.init();
+// create the application with default settings
+Application.create();
 ```
 
 * Since the instance is used to retrieve the `Application`, the easiest way to tie this all together is to create a
   getter in the project `Application.ts` that looks like:
 
-```Typescript
+```ts
 public static get
 instance()
 {
@@ -102,13 +100,13 @@ instance()
 * Some managers have formatted and coloured debug logs. Those that do can have them enabled by turning on their `debug`
   flag. This will show logs and warnings. Errors are always shown.
 
-#### Package.json
+#### package.json
 
 * Available npm commands can be found in the scripts section near the top.
 * The commands in the framework include:
     * `build`
         * Builds the project by compiling all `ts` files to `js` files.
-        * This is done using Babel.
+        * This is done using Vite.
     * `build:watch`
         * Runs the above `build` command and then watches for any source changes. It rebuilds the framework on change.
     * `lint`
@@ -118,8 +116,8 @@ instance()
     * `docs`
         * Generates html documention using [Typedoc][typedoc].
     * `start`
-        * Starts the webpack dev server using the info in the `webpack.config.js` file.
-        * Opens a browser window/tab at the url of the dev server.
+        * Starts the vite dev server using the info in the `vite.config.js` file.
+        * Opens a browser window/tab at the url of the dev server (localhost:3000 by default).
     * `build:debug`
         * Runs the `lint` command below.
         * Runs the webpack build process with the `env.dev` variable.
@@ -139,11 +137,11 @@ instance()
           deleted and remade during this command. The future plan is to have this command only generate output for any
           source that hasn't already been generated.
 
-#### Tsconfig.json
+#### tsconfig.json
 
 * Holds all of the typescript compiler options. The full set can be found [here][typescript-compiler-options].
 
-#### Tslint.json
+#### tslint.json
 
 * Describes the ruleset used for the typescript linter.
 * Boilerplate and Framework ruleset both extend the recommended ruleset [here][typescript-recommended-ruleset].
@@ -151,7 +149,8 @@ instance()
 
 #### Audio
 
-* All audio files need to be in the `src/audio/source` folder. Any folder structure beyond that is purely organizational
+* All audio files need to be in the `src/assets/audio/source` folder. Any folder structure beyond that is purely
+  organizational
   and will not affect the outcome of the `audio` command. This means that all audio files need to have a unique name.
   Currently, all audio tracks must be in the `.wav` format.
 
@@ -227,11 +226,9 @@ instance()
     * AUDIO
 * The map is populated in `Application.createAssetMap`
 
-```Typescript
-protected
+```ts
 createAssetMap()
-:
-void {
+{
 	HLF.AssetMap.addAssetGroup(HLF.SplashScreen.NAME, [
 		new HLF.AssetMapData("splash", HLF.AssetType.JPG),
 		new HLF.AssetMapData(Constants.FONT_LUNA, HLF.AssetType.FONT),
@@ -277,12 +274,6 @@ void {
 	]);
 }
 ```
-
-#### Babel
-
-* This is what compiles the `ts` files down to a single `js` file.
-* There is more that this can be used for.
-    * Rick has more info.
 
 #### Splashscreen
 
@@ -401,20 +392,20 @@ void {
 
 * Use the latest release of HLF:
 
-```JSON
-"html-living-framework": "git+https://relishdev:eAYbfZs7WV4kjzxahddQ@bitbucket.org/relishinc/html-living-framework.git#release",
+```npm
+"html-living-framework":"git+https://github.com/relishinc/hlf#release",
 ```
 
 * Use a specific version of HLF:
 
-```JSON
-"html-living-framework": "git+https://relishdev:eAYbfZs7WV4kjzxahddQ@bitbucket.org/relishinc/html-living-framework/src#0.12.5",
+```npm
+"html-living-framework": "git+https://github.com/relishinc/hlf#0.12.5",
 ```
 
 * Use a local version of HLF:
 
-```JSON
-"html-living-framework": "file:../html-living-framework",
+```npm
+"html-living-framework": "file:../hlf",
 ```
 
 * **Note** - Committing the local url to your repo will always cause a jenkins build to fail.
