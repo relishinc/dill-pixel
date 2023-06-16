@@ -1,4 +1,4 @@
-# HTML Living Framework (2023)#
+# HTML Living Framework (2023)
 
 Framework for HTML game development, made by Relish Digital [https://reli.sh].
 
