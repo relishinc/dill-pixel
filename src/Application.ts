@@ -120,6 +120,9 @@ export class Application extends PIXIApplication {
 		);
 	}
 
+	/**
+	 * gets the current singleton instance
+	 */
 	static get instance() {
 		if (Application._instance === undefined) {
 			console.error(
@@ -130,7 +133,10 @@ export class Application extends PIXIApplication {
 		return Application._instance;
 	}
 
-	// create a canvas container element with a given id and append it to the DOM
+	/**
+	 * Creates a container element with the given id and appends it to the DOM.
+	 * @param pId{string} - The id of the element to create.
+	 */
 	public static createContainer(pId: string) {
 		const container = document.createElement("div");
 		container.setAttribute("id", pId);
@@ -138,12 +144,14 @@ export class Application extends PIXIApplication {
 		return container;
 	}
 
-	// static creation method that calls createContainer and instantiates the game
+	/**
+	 * Creates a new instance of the Application class and returns it.
+	 * @param pElement{string | HTMLElement} - The id of the element to use as the container, or the element itself.
+	 */
 	public static create(pElement: string | HTMLElement = Application.containerID): Application | null {
 		let el: HTMLElement | null = null;
 		if (typeof pElement === "string") {
-			const id = pElement;
-			el = document.getElementById(id);
+			el = document.getElementById(pElement);
 			if (!el) {
 				el = Application.createContainer(pElement);
 			}
