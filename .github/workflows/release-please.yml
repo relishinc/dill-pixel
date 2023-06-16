@@ -1,2 +1,3 @@
+---
 - name: release-please-action
   uses: google-github-actions/release-please-action@v3.1.2
