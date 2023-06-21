@@ -32,10 +32,12 @@ jobs:
         run: npm run docs
 
       - name: Deploy to Remote Host via SFTP
-        uses: easingthemes/gh-action-sftp-deploy@v2
+        uses: JamsRepos/SFTP-Deploy-Action@v2.1
         with:
-          host: ${{ secrets.DOCS_SFTP_HOST }}
+          server: ${{ secrets.DOCS_SFTP_HOST }}
           username: ${{ secrets.DOCS_SFTP_USERNAME }}
-          password: ${{ secrets.DOCS_SFTP_PASSWORD }}
-          local_dir: ./docs
-          remote_dir: /docs
+          ssh_password: ${{ secrets.DOCS_SFTP_PASSWORD }}
+          port: ${{ secrets.DOCS_SFTP_PORT }}
+          local_path: '/docs/*'
+          remote_path: '/docs'
+          args: '-o ConnectTimeout=5'

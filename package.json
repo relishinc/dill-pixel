@@ -24,9 +24,12 @@
   "license": "UNLICENSED",
   "homepage": "https://github.com/relishinc/hlf#readme",
   "devDependencies": {
+    "@commitlint/cli": "^17.6.5",
+    "@commitlint/config-conventional": "^17.6.5",
     "@types/howler": "^2.2.7",
     "@types/matter-js": "^0.18.5",
     "@types/pubsub-js": "^1.8.3",
+    "husky": "^8.0.3",
     "relish-hlf-debugger": "file:../relish-hlf-debugger",
     "standard-version": "^9.5.0",
     "tslint": "^6.1.3",
