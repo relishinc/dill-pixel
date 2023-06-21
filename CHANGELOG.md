@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.6](https://github.com/relishinc/hlf/compare/v1.2.5...v1.2.6) (2023-06-21)
+
+
+### Bug Fixes
+
+* added fetch-depth:0 to notification action ([fbd2fc3](https://github.com/relishinc/hlf/commit/fbd2fc31a192f7accab6688827516f34e29cf54e))
+
 ## [1.2.5](https://github.com/relishinc/hlf/compare/v1.2.4...v1.2.5) (2023-06-21)
 
 
