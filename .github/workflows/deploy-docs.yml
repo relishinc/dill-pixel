@@ -1,12 +1,19 @@
 name: Deploy TypeScript Docs
 
 on:
-  push:
+  pull_request:
+    types: [ closed ]
+    paths:
+      - '**.json'
+      - '**.yaml'
+      - '**.yml'
     branches:
       - main
 
 jobs:
   build:
+    if:
+      github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'chore(main): release')
     runs-on: ubuntu-latest
 
     steps:
