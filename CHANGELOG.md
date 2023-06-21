@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.7](https://github.com/relishinc/hlf/compare/v1.2.6...v1.2.7) (2023-06-21)
+
+
+### Bug Fixes
+
+* changed notification action ([cab4492](https://github.com/relishinc/hlf/commit/cab44929ce277523b0db8535a5b4959b93197a18))
+
 ## [1.2.6](https://github.com/relishinc/hlf/compare/v1.2.5...v1.2.6) (2023-06-21)
 
 
