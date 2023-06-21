@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/relishinc/hlf/compare/v1.2.0...v1.2.1) (2023-06-21)
+
+
+### Bug Fixes
+
+* added release google chat notification ([26b3ce8](https://github.com/relishinc/hlf/commit/26b3ce835d022f46719152974201d4cf1f05e92f))
+
 ## [1.2.0](https://github.com/relishinc/hlf/compare/v1.1.1...v1.2.0) (2023-06-21)
 
 
