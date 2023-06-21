@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/relishinc/hlf/compare/v1.1.1...v1.2.0) (2023-06-21)
+
+
+### Features
+
+* added commitlint, docs:added a different github action for docs ([8ee69e3](https://github.com/relishinc/hlf/commit/8ee69e337c7e89e7fd35eef6fae2b7781c4b1f1a))
+
 ## [1.1.1](https://github.com/relishinc/hlf/compare/v1.1.0...v1.1.1) (2023-06-16)
 
 
