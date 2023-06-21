@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.5](https://github.com/relishinc/hlf/compare/v1.2.4...v1.2.5) (2023-06-21)
+
+
+### Bug Fixes
+
+* docs deploy and release notifications should only run when PR is merged ([809ff1e](https://github.com/relishinc/hlf/commit/809ff1ecb77384a554cfd369802b156c2d0f368b))
+
 ## [1.2.4](https://github.com/relishinc/hlf/compare/v1.2.3...v1.2.4) (2023-06-21)
 
 
