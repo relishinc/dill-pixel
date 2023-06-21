@@ -2,6 +2,7 @@ import {Layout, LayoutStyles} from "@pixi/layout";
 import {gsap} from 'gsap';
 import {Container, Point} from 'pixi.js';
 import {Application} from "../Application";
+import {AssetMapData} from "../Load";
 import * as Factory from "../Utils/Factory";
 
 /**
@@ -66,6 +67,14 @@ export abstract class State extends Container {
 		this._addFactory = new Factory.AddFactory(this);
 
 		this.gsapContextRevert = this.gsapContextRevert.bind(this);
+	}
+
+	public static get ID(): string {
+		return "State";
+	}
+
+	public static get Assets(): AssetMapData[] {
+		return [];
 	}
 
 	/**

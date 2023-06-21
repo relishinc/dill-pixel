@@ -5,6 +5,9 @@ import {sayHello} from "./hello"; // (window as any).PIXI = PIXI; // for pixi-sp
 declare global {
 	var Matter: typeof import('matter-js');
 }
+declare global {
+	var planck: typeof import('planck');
+}
 
 export * from "./Application";
 export * from "./Audio";
