@@ -32,12 +32,11 @@ jobs:
         run: npm run docs
 
       - name: Deploy to Remote Host via SFTP
-        uses: JamsRepos/SFTP-Deploy-Action@v2.1
+        uses: ticoraap/sftp-mirror@v1.6
         with:
           server: ${{ secrets.DOCS_SFTP_HOST }}
-          username: ${{ secrets.DOCS_SFTP_USERNAME }}
-          ssh_password: ${{ secrets.DOCS_SFTP_PASSWORD }}
+          user: ${{ secrets.DOCS_SFTP_USERNAME }}
+          password: ${{ secrets.DOCS_SFTP_PASSWORD }}
           port: ${{ secrets.DOCS_SFTP_PORT }}
-          local_path: './docs/*'
-          remote_path: '/docs'
-          args: '-o ConnectTimeout=5'
+          local: './docs/'
+          remote: '/docs/'
