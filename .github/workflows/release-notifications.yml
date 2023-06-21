@@ -16,8 +16,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Delay
+        run: sleep 10
+
       - name: Checkout repo
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Fetch tags
         run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
@@ -27,7 +32,7 @@ jobs:
           WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
 
         run: |
-          TAG_NAME=$(curl --silent "https://api.github.com/repos/${{ github.repository }}/tags" | jq -r '.[0].name')
+          TAG_NAME=$(git describe --tags $(git rev-list --tags --max-count=1))
           curl -X POST -H 'Content-Type: application/json' $WEBHOOK_URL -d "{
               \"text\": \"A new HLF release was just added. Check it out here: https://github.com/relishinc/hlf/releases/tag/$TAG_NAME\"
           }"
