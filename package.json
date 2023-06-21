@@ -7,7 +7,7 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "lint": "tslint -c tslint.json \"src/**/*.ts\"",
-    "docs": "typedoc --ignoreCompilerErrors --mode modules --out docs src",
+    "docs": "typedoc --out docs src",
     "copy": "copyfiles ./src/**/* ../hlf-example-template/relish-hlf",
     "release": "standard-version"
   },

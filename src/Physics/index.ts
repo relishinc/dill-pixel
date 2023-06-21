@@ -1,6 +1,6 @@
 import {DisplayObject} from "pixi.js";
 
-export enum PhysicsEngineType {MATTER = "matter", PLANCK = "planck"}
+export enum PhysicsEngineType {MATTER = "matter", RAPIER = "rapier"}
 
 export interface IPhysicsObject {
 	visual: DisplayObject;
@@ -10,4 +10,3 @@ export interface IPhysicsObject {
 export type PointLike = { x: number, y: number };
 
 export * as MatterPhysics from './MatterPhysics'
-export * as PlanckPhysics from './PlanckPhysics';
