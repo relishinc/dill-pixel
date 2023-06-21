@@ -16,7 +16,7 @@ export enum BodyType {
 
 export class PhysicsSprite extends Container implements IPhysicsObject {
 	public static readonly DEFAULT_DEBUG_COLOR: number = 0x29c5f6;
-	sprite: Sprite;
+	visual: Sprite;
 	body: Matter.Body;
 	_size: { x: number, y: number };
 	_bodyType: BodyType;
@@ -27,19 +27,13 @@ export class PhysicsSprite extends Container implements IPhysicsObject {
 	} | [number, number?] | number, pBodyType: BodyType = BodyType.RECTANGLE) {
 		super();
 		this.onAdded = this.onAdded.bind(this);
-		this.sprite = typeof pTexture === 'string' ? this.addChild(this.app.make.sprite(pTexture, pSheet)) : this.addChild(new Sprite(pTexture));
-		this.sprite.anchor.set(0.5, 0.5);
-
-		// if (pPosition) {
-		// 	const resolvedPosition = resolveXYFromObjectOrArray(pPosition);
-		// 	this.x = resolvedPosition.x;
-		// 	this.y = resolvedPosition.y;
-		// }
+		this.visual = typeof pTexture === 'string' ? this.addChild(this.app.make.sprite(pTexture, pSheet)) : this.addChild(new Sprite(pTexture));
+		this.visual.anchor.set(0.5, 0.5);
 
 		if (pSize) {
 			this._size = resolveXYFromObjectOrArray(pSize);
-			this.sprite.width = this._size.x;
-			this.sprite.height = this._size.y;
+			this.visual.width = this._size.x;
+			this.visual.height = this._size.y;
 		}
 
 		this._bodyType = pBodyType;
@@ -69,22 +63,22 @@ export class PhysicsSprite extends Container implements IPhysicsObject {
 	createBody() {
 		switch (this._bodyType) {
 			case BodyType.RECTANGLE:
-				this.body = Bodies.rectangle(this.x, this.y, this.sprite.width, this.sprite.height);
+				this.body = Bodies.rectangle(this.x, this.y, this.visual.width, this.visual.height);
 				break;
 			case BodyType.CIRCLE:
-				this.body = Bodies.circle(this.x, this.y, this.sprite.width * 0.5);
+				this.body = Bodies.circle(this.x, this.y, this.visual.width * 0.5);
 				break;
 			case BodyType.CONVEX:
 				// this.body = Bodies.fromVertices(this.sprite.x, this.sprite.y, this.sprite.width, this.sprite.height);
 				break;
 			case BodyType.TRAPEZOID:
-				this.body = Bodies.trapezoid(this.x, this.y, this.sprite.width, this.sprite.height, 0.5);
+				this.body = Bodies.trapezoid(this.x, this.y, this.visual.width, this.visual.height, 0.5);
 				break
 		}
 	}
 
 	update() {
-		if (this.sprite && this.body) {
+		if (this.visual && this.body) {
 			this.x = this.body.position.x;
 			this.y = this.body.position.y;
 			this.rotation = this.body.angle;

@@ -4,13 +4,14 @@ import {AudioToken, HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverMa
 import {CopyManager} from "./Copy";
 import {AppConfig} from "./Data";
 import * as Topics from "./Data/Topics";
+import {Debugger} from "./Debugger";
 import {HitAreaRenderer, KeyboardManager, MouseManager} from "./Input";
 import {AssetMap, AssetMapData, LoadManager, SplashScreen} from "./Load";
 import * as Physics from "./Physics";
 import {PhysicsEngineType} from "./Physics";
 import {PopupManager} from "./Popup";
 import {SaveManager} from "./Save";
-import {StateManager} from "./State";
+import {State, StateManager} from "./State";
 import {AssetUtils, Delay, OrientationManager, ResizeManager, WebEventsManager,} from "./Utils";
 import * as Factory from './Utils/Factory';
 
@@ -51,15 +52,9 @@ export class Application extends PIXIApplication {
 	protected startSplashProcess: OmitThisParameter<
 		(pPersistentAssets: AssetMapData[], pOnComplete: () => void) => void
 	>;
+
+	protected _debugger: Debugger;
 	protected _physics: any;
-
-	static get containerElement(): HTMLElement | null {
-		return document.getElementById(Application.containerID);
-	}
-
-	static get containerID(): string {
-		return "game-container";
-	}
 
 	/**
 	 * The config passed in can be a json object, or an `AppConfig` object.
@@ -118,6 +113,14 @@ export class Application extends PIXIApplication {
 		this.startSplashProcess = this._loadManager.startSplashProcess.bind(
 			this._loadManager
 		);
+	}
+
+	static get containerElement(): HTMLElement | null {
+		return document.getElementById(Application.containerID);
+	}
+
+	static get containerID(): string {
+		return "game-container";
 	}
 
 	/**
@@ -250,9 +253,22 @@ export class Application extends PIXIApplication {
 		return this._physics;
 	}
 
+	public get debugger(): Debugger {
+		if (!this._debugger) {
+			this.addDebugger();
+		}
+		return this._debugger;
+	}
+
 	public addPhysics(type: Physics.PhysicsEngineType = PhysicsEngineType.MATTER): any {
-		if (type === PhysicsEngineType.MATTER) {
-			this._physics = new Physics.MatterPhysics.Base(this);
+		switch (type) {
+			case PhysicsEngineType.PLANCK:
+				this._physics = new Physics.PlanckPhysics.Base(this);
+				break;
+			case PhysicsEngineType.MATTER:
+			default:
+				this._physics = new Physics.MatterPhysics.Base(this);
+				break;
 		}
 		return this._physics;
 	}
@@ -274,8 +290,14 @@ export class Application extends PIXIApplication {
 	 * @param pAssets
 	 * proxy function for @link {AssetMap.addAssetGroup}
 	 */
-	public addAssetGroup(pGroupId: string, pAssets: AssetMapData[]): void {
-		return AssetMap.addAssetGroup(pGroupId, pAssets);
+	public addAssetGroup(pGroupIdOrClass: string | typeof State, pAssets?: AssetMapData[]): void {
+		if (typeof pGroupIdOrClass === "string") {
+			return AssetMap.addAssetGroup(pGroupIdOrClass as string, pAssets as AssetMapData[]);
+		} else {
+			const Klass: typeof State = pGroupIdOrClass as typeof State;
+			return AssetMap.addAssetGroup(Klass.ID, Klass.Assets);
+		}
+
 	}
 
 	public hasAsset(pAssetName: string) {
@@ -326,6 +348,10 @@ export class Application extends PIXIApplication {
 		// Delayed to fix incorrect iOS resizing in WKWebView. See: https://bugs.webkit.org/show_bug.cgi?id=170595
 		this.onResize(0.5);
 		this._webEventsManager.registerResizeCallback(() => this.onResize(0.5));
+	}
+
+	protected addDebugger() {
+		this._debugger = new Debugger(this);
 	}
 
 	/**
