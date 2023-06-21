@@ -12,19 +12,21 @@ on:
 
 jobs:
   build:
-    if:
-      github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'chore(main): release')
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Use Node.js
+        if:
+          github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'chore(main): release')
         uses: actions/setup-node@v2
         with:
           node-version: '18'
 
       - name: Cache dependencies
+        if:
+          github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'chore(main): release')
         uses: actions/cache@v2
         with:
           path: ~/.npm
@@ -33,12 +35,18 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install Dependencies
+        if:
+          github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'chore(main): release')
         run: npm ci
 
       - name: Build Docs
+        if:
+          github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'chore(main): release')
         run: npm run docs
 
       - name: Deploy to Remote Host via SFTP
+        if:
+          github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'chore(main): release')
         uses: ticoraap/sftp-mirror@v1.6
         with:
           server: ${{ secrets.DOCS_SFTP_HOST }}
