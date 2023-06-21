@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.8](https://github.com/relishinc/hlf/compare/v1.2.7...v1.2.8) (2023-06-21)
+
+
+### Bug Fixes
+
+* fixing the notification action to pull the latest tag ([ebf3a1e](https://github.com/relishinc/hlf/commit/ebf3a1ef592deef24fbc8de3f0659b855738778d))
+
 ## [1.2.7](https://github.com/relishinc/hlf/compare/v1.2.6...v1.2.7) (2023-06-21)
 
 
