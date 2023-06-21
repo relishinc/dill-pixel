@@ -1,0 +1,23 @@
+name: Release Notifications
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Send Google chat notification
+        env:
+          WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
+        run: |
+          TAG_NAME=$(git describe --tags $(git rev-list --tags --max-count=1))
+          curl -X POST -H 'Content-Type: application/json' $WEBHOOK_URL -d "{
+              \"text\": \"A new release was just added: $TAG_NAME\"
+          }"

@@ -1,4 +1,4 @@
-name: Deploy TS Docs to hlf.reli.sh/docs
+name: Deploy TypeScript Docs
 
 on:
   push:
