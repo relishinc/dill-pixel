@@ -22,7 +22,7 @@ jobs:
         env:
           WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
         if:
-          github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'chore(main): release')
+          github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'chore\\(main\\): release')
         run: |
           TAG_NAME=$(git describe --tags $(git rev-list --tags --max-count=1))
           curl -X POST -H 'Content-Type: application/json' $WEBHOOK_URL -d "{
