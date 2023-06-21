@@ -28,5 +28,5 @@ jobs:
         run: |
           TAG_NAME=$(git describe --tags $(git rev-list --tags --max-count=1))
           curl -X POST -H 'Content-Type: application/json' $WEBHOOK_URL -d "{
-              \"text\": \"A new release was just added: $TAG_NAME\"
+              \"text\": \"A new HLF release was just added. Check it out here: https://github.com/relishinc/hlf/releases/tag/$TAG_NAME\"
           }"
