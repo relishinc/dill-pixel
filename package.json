@@ -4,12 +4,13 @@
   "description": "Relish framework for HTML games",
   "main": "./src/index.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "npm run version && tsc",
     "build:watch": "tsc --watch",
     "lint": "tslint -c tslint.json \"src/**/*.ts\"",
-    "docs": "typedoc --out docs src",
+    "docs": "npm run version && typedoc --out docs src",
     "copy": "copyfiles ./src/**/* ../hlf-example-template/relish-hlf",
-    "release": "standard-version"
+    "release": "standard-version",
+    "version": "node build_scripts/version.ts"
   },
   "repository": {
     "type": "git",
