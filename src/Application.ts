@@ -262,8 +262,8 @@ export class Application extends PIXIApplication {
 
 	public addPhysics(type: Physics.PhysicsEngineType = PhysicsEngineType.MATTER): any {
 		switch (type) {
-			case PhysicsEngineType.PLANCK:
-				this._physics = new Physics.PlanckPhysics.Base(this);
+			case PhysicsEngineType.RAPIER:
+				// nothing yet
 				break;
 			case PhysicsEngineType.MATTER:
 			default:
