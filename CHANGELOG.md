@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.11](https://github.com/relishinc/hlf/compare/v1.2.10...v1.2.11) (2023-06-21)
+
+
+### Bug Fixes
+
+* trying release notification hook using a delay ([97c10f5](https://github.com/relishinc/hlf/commit/97c10f5906d4e3aad6b99343119af1e4f1c7e804))
+
 ## [1.2.10](https://github.com/relishinc/hlf/compare/v1.2.9...v1.2.10) (2023-06-21)
 
 
