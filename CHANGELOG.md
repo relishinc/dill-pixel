@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.10](https://github.com/relishinc/hlf/compare/v1.2.9...v1.2.10) (2023-06-21)
+
+
+### Bug Fixes
+
+* trying release notification hook using github api ([db5ffa7](https://github.com/relishinc/hlf/commit/db5ffa760150b5584ff8feb2d5c5fc61b0c9b44e))
+
 ## [1.2.9](https://github.com/relishinc/hlf/compare/v1.2.8...v1.2.9) (2023-06-21)
 
 
