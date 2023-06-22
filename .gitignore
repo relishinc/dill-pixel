@@ -5,6 +5,7 @@
 # production
 /deploy
 /docs
+/dist
 
 # misc
 .DS_Store
