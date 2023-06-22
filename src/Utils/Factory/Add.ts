@@ -1,7 +1,5 @@
-import {Container, Graphics, IBitmapTextStyle, ITextStyle, TextStyle, Texture} from "pixi.js";
+import {Container, Graphics, IBitmapTextStyle, ITextStyle, TextStyle} from "pixi.js";
 import {Application} from "../../Application";
-import {BodyType} from "../../GameObjects/PhysicsSprite";
-import {IPhysicsObject} from "../../Physics";
 import {MakeFactory} from "./Make";
 import {resolveXYFromObjectOrArray} from "./utils";
 
@@ -165,20 +163,5 @@ export class AddFactory {
 		return this.defaultContainer.addChild(graphics);
 	}
 
-	// add physics sprite
-	physicsSprite(pTexture: string | Texture,
-	              pSheet?: string | string[] | undefined,
-	              pSize?: { x: number; y: number } | [number, number?] | number,
-	              pType: BodyType = BodyType.RECTANGLE,
-	              pAlpha: number = 1,
-	              pPosition: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
-	): IPhysicsObject {
-		const sprite = this._make.physicsSprite(pTexture, pSheet, pSize, pType);
-		sprite.alpha = pAlpha;
-		const resolvedPosition = resolveXYFromObjectOrArray(pPosition);
-		sprite.x = resolvedPosition.x;
-		sprite.y = resolvedPosition.y;
-		return this.defaultContainer.addChild(sprite);
-	}
 
 }

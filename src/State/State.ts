@@ -9,6 +9,7 @@ import * as Factory from "../Utils/Factory";
  * State
  */
 export abstract class State extends Container {
+	public static NAME: string = "State";
 	public static DEFAULT_LAYOUT_STYLES: LayoutStyles = {
 		root: {
 			position: "center",
@@ -61,7 +62,7 @@ export abstract class State extends Container {
 	protected _addFactory: Factory.AddFactory;
 	private _gsapContext: gsap.Context | null = null;
 
-	protected constructor() {
+	constructor() {
 		super();
 		this._size = new Point();
 		this._addFactory = new Factory.AddFactory(this);

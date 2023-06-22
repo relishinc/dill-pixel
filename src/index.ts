@@ -2,12 +2,6 @@ import "@pixi-spine/base";
 import {sayHello} from "./hello"; // (window as any).PIXI = PIXI; // for pixi-spine
 
 // (window as any).PIXI = PIXI; // for pixi-spine
-declare global {
-	var Matter: typeof import('matter-js');
-}
-declare global {
-	var planck: typeof import('planck');
-}
 
 export * from "./Application";
 export * from "./Audio";

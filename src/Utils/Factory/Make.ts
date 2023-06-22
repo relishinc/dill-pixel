@@ -21,8 +21,8 @@ import {
 	Texture,
 	TilingSprite
 } from "pixi.js";
-import {BodyType, PhysicsSprite} from "../../GameObjects";
 import {SpritesheetLike} from "../Types";
+import {setObjectName} from "./utils";
 
 /**
  * Gets a `PIXI.Texture` asset.
@@ -31,30 +31,6 @@ import {SpritesheetLike} from "../Types";
  */
 
 export class MakeFactory {
-	getSheetLikeString(pSheet: SpritesheetLike) {
-		if (Array.isArray(pSheet)) {
-			return pSheet.join("/");
-		} else {
-			return pSheet;
-		}
-	}
-
-	setObjectName(object: any, pTexture: string | Texture, pSheet: SpritesheetLike) {
-		if (pSheet && pTexture) {
-			object.name = `${this.getSheetLikeString(pSheet)}/${pTexture}`
-		} else if (typeof pTexture === 'string') {
-			object.name = `${pTexture}`
-		}
-		if (typeof pTexture === "string") {
-			object.__textureString = pTexture;
-		}
-		if (Array.isArray(pSheet)) {
-			object.__textureSheetArray = pSheet;
-		} else if (pSheet) {
-			object.__textureSheet = pSheet;
-		}
-	}
-
 	texture(pAsset: string, pSheet: SpritesheetLike): Texture {
 		// tslint:disable-next-line:no-shadowed-variable
 		let texture: Texture<Resource> | undefined;
@@ -110,7 +86,7 @@ export class MakeFactory {
 	sprite(pTexture: string | Texture, pSheet?: SpritesheetLike): Sprite {
 		let sprite: Sprite | undefined;
 		sprite = new Sprite(typeof pTexture === 'string' ? this.texture(pTexture, pSheet) : pTexture);
-		this.setObjectName(sprite, pTexture, pSheet);
+		setObjectName(sprite, pTexture, pSheet);
 		return sprite;
 	}
 
@@ -141,7 +117,7 @@ export class MakeFactory {
 	tiledSprite(pTexture: string, pSheet: SpritesheetLike, pWidth: number, pHeight: number, pTilePosition?: ObservablePoint): TilingSprite {
 		let tilingSprite: TilingSprite | undefined;
 		tilingSprite = new TilingSprite(this.texture(pTexture, pSheet), pWidth, pHeight);
-		this.setObjectName(tilingSprite, pTexture, pSheet);
+		setObjectName(tilingSprite, pTexture, pSheet);
 		if (pTilePosition) {
 			tilingSprite.tilePosition = pTilePosition;
 		}
@@ -157,7 +133,7 @@ export class MakeFactory {
 	simpleRope(pTexture: string, pSheet: SpritesheetLike, pPoints: (Point | ObservablePoint)[], pAutoUpdate?: boolean): SimpleRope {
 		let simpleRope: SimpleRope | undefined;
 		simpleRope = new SimpleRope(this.texture(pTexture, pSheet), pPoints);
-		this.setObjectName(simpleRope, pTexture, pSheet);
+		setObjectName(simpleRope, pTexture, pSheet);
 		simpleRope.autoUpdate = pAutoUpdate !== false;
 		return simpleRope;
 	}
@@ -165,24 +141,14 @@ export class MakeFactory {
 	simplePlane(pTexture: string, pSheet: SpritesheetLike, pVertsWidth: number, pVertsHeight: number): SimplePlane {
 		let simplePlane: SimplePlane | undefined;
 		simplePlane = new SimplePlane(this.texture(pTexture, pSheet), pVertsWidth, pVertsHeight);
-		this.setObjectName(simplePlane, pTexture, pSheet);
+		setObjectName(simplePlane, pTexture, pSheet);
 		return simplePlane;
 	}
 
 	simpleMesh(pTexture: string, pSheet: SpritesheetLike, pVertices?: Float32Array, pUvs?: Float32Array, pIndices?: Uint16Array, pDrawMode?: number): SimpleMesh {
 		let simpleMesh: SimpleMesh | undefined;
 		simpleMesh = new SimpleMesh(this.texture(pTexture, pSheet), pVertices, pUvs, pIndices, pDrawMode);
-		this.setObjectName(simpleMesh, pTexture, pSheet);
+		setObjectName(simpleMesh, pTexture, pSheet);
 		return simpleMesh;
-	}
-
-	physicsSprite(pTexture: string | Texture, pSheet?: SpritesheetLike, pSize?: {
-		x: number;
-		y: number
-	} | [number, number?] | number, pBodyType: BodyType = BodyType.RECTANGLE): PhysicsSprite {
-		let physicsSprite: PhysicsSprite | undefined;
-		physicsSprite = new PhysicsSprite(pTexture, pSheet, pSize, pBodyType);
-		this.setObjectName(physicsSprite, pTexture, pSheet);
-		return physicsSprite;
 	}
 }

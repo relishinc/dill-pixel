@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "html-living-framework/*": [
+        "../src/*"
+      ]
+    },
+    "strict": true,
+    "strictNullChecks": false,
+    "module": "ES6",
+    "outDir": "dist",
+    "target": "ES5",
+    "rootDir": ".",
+    "moduleResolution": "node",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "lib": [
+      "dom",
+      "es2015",
+      "es2016",
+      "es2017"
+    ]
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "build_scripts",
+    "node_modules",
+    "lib"
+  ]
+}
