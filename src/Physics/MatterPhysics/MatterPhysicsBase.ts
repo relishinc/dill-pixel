@@ -1,33 +1,22 @@
-import {Bodies} from "matter-js";
+import Matter from 'matter-js';
 import {Container, Graphics} from "pixi.js";
-import {Application} from "../Application";
-import {PointLike} from "./index";
+import {Application} from "../../Application";
+import {PhysicsBase, PointLike} from "../index";
+import {Factory} from "./Factory";
+import {IMatterPhysicsObject, MatterBodyLike} from "./index";
 
-export type MatterBodyLike =
-	Matter.Body
-	| Matter.Composite
-	| Matter.Constraint
-	| Matter.MouseConstraint
-	| Matter.World;
-
-export interface IMatterPhysicsObject {
-	body: MatterBodyLike;
-	debugColor: number
-
-	update(): void;
-}
-
-
-export class Base {
+export default class MatterPhysicsBase extends PhysicsBase {
+	protected _debug: boolean = false;
 	private _updateables: IMatterPhysicsObject[] = [];
-	private _debug: boolean = true;
 	private _engine: Matter.Engine;
 	private _debugGraphics: Graphics;
 	private _debugContainer: Container;
 	private _bounds: PointLike = {x: 0, y: 0};
 	private _isRunning: boolean = false;
 
-	constructor(private app: Application) {
+	constructor(protected app: Application) {
+		super(app);
+		this._factory = new Factory()
 	}
 
 	public get engine() {
@@ -48,11 +37,6 @@ export class Base {
 	}
 
 	async init(pAutoStart: boolean = false, pDebug: boolean = false, autoCreateBounds: boolean = true, pEngineOptions: Matter.IEngineDefinition = {}) {
-		// don't load the matter js module until we need it
-		await import('matter-js').then((module) => {
-			globalThis.Matter = module;
-		});
-
 		const opts = pEngineOptions || {};
 
 		this._debug = pDebug;
@@ -65,8 +49,6 @@ export class Base {
 		if (pAutoStart) {
 			this.start();
 		}
-
-		return Promise.resolve();
 	}
 
 	public createWorldBounds(useStage: boolean = true) {
@@ -75,19 +57,19 @@ export class Base {
 		const height = useStage ? this.app.size.y : this._bounds.y
 
 		// Top boundary
-		const top = Bodies.rectangle(-thickness / 2, -height / 2 - thickness / 2, width + thickness, thickness, {isStatic: true});
+		const top = Matter.Bodies.rectangle(-thickness / 2, -height / 2 - thickness / 2, width + thickness, thickness, {isStatic: true});
 
 		// Bottom boundary
-		const bottom = Bodies.rectangle(-thickness / 2, height / 2 + thickness / 2, width + thickness, thickness, {isStatic: true});
+		const bottom = Matter.Bodies.rectangle(-thickness / 2, height / 2 + thickness / 2, width + thickness, thickness, {isStatic: true});
 
 		// Left boundary
-		const left = Bodies.rectangle(-width / 2 - thickness / 2, -thickness / 2, thickness, height + thickness, {isStatic: true});
+		const left = Matter.Bodies.rectangle(-width / 2 - thickness / 2, -thickness / 2, thickness, height + thickness, {isStatic: true});
 
 		// Right boundary
-		const right = Bodies.rectangle(width / 2 + thickness / 2, -thickness / 2, thickness, height + thickness, {isStatic: true});
+		const right = Matter.Bodies.rectangle(width / 2 + thickness / 2, -thickness / 2, thickness, height + thickness, {isStatic: true});
 
 		// Add these bodies to the world
-		this.add(top, bottom, left, right);
+		this.addToWorld(top, bottom, left, right);
 	}
 
 	public start() {
@@ -98,7 +80,7 @@ export class Base {
 		this._isRunning = false;
 	}
 
-	add(...objects: (IMatterPhysicsObject | MatterBodyLike)[]) {
+	addToWorld(...objects: (IMatterPhysicsObject | MatterBodyLike)[]) {
 		objects.forEach((obj) => {
 			let body: MatterBodyLike;
 			if (obj.hasOwnProperty("body")) {
@@ -112,7 +94,7 @@ export class Base {
 
 	}
 
-	remove(...bodies: MatterBodyLike[]) {
+	removeFromWorld(...bodies: MatterBodyLike[]) {
 		bodies.forEach((body) => {
 			Matter.World.remove(this._engine.world, body);
 		});

@@ -1,3 +1,6 @@
+import {Texture} from "pixi.js";
+import {SpritesheetLike} from "../Types";
+
 export function resolveXYFromObjectOrArray(position: { x: number; y: number } | [number, number?] | number) {
 	let x = 0;
 	let y = 0;
@@ -16,4 +19,28 @@ export function resolveXYFromObjectOrArray(position: { x: number; y: number } | 
 	}
 
 	return {x, y};
+}
+
+export function getSheetLikeString(pSheet: SpritesheetLike) {
+	if (Array.isArray(pSheet)) {
+		return pSheet.join("/");
+	} else {
+		return pSheet;
+	}
+}
+
+export function setObjectName(object: any, pTexture: string | Texture, pSheet: SpritesheetLike) {
+	if (pSheet && pTexture) {
+		object.name = `${getSheetLikeString(pSheet)}/${pTexture}`
+	} else if (typeof pTexture === 'string') {
+		object.name = `${pTexture}`
+	}
+	if (typeof pTexture === "string") {
+		object.__textureString = pTexture;
+	}
+	if (Array.isArray(pSheet)) {
+		object.__textureSheetArray = pSheet;
+	} else if (pSheet) {
+		object.__textureSheet = pSheet;
+	}
 }

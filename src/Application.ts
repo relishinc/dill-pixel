@@ -4,11 +4,9 @@ import {AudioToken, HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverMa
 import {CopyManager} from "./Copy";
 import {AppConfig} from "./Data";
 import * as Topics from "./Data/Topics";
-import {Debugger} from "./Debugger";
 import {HitAreaRenderer, KeyboardManager, MouseManager} from "./Input";
 import {AssetMap, AssetMapData, LoadManager, SplashScreen} from "./Load";
-import * as Physics from "./Physics";
-import {PhysicsEngineType} from "./Physics";
+import {PhysicsBase, PhysicsEngineType} from "./Physics";
 import {PopupManager} from "./Popup";
 import {SaveManager} from "./Save";
 import {State, StateManager} from "./State";
@@ -18,6 +16,8 @@ import * as Factory from './Utils/Factory';
 export interface HLFApplicationOptions extends IApplicationOptions {
 	physics?: boolean;
 }
+
+type DebuggerType = typeof import("./Debugger").Debugger;
 
 export class Application extends PIXIApplication {
 	protected static readonly SIZE_MIN_DEFAULT: Point = new Point(
@@ -53,8 +53,8 @@ export class Application extends PIXIApplication {
 		(pPersistentAssets: AssetMapData[], pOnComplete: () => void) => void
 	>;
 
-	protected _debugger: Debugger;
-	protected _physics: any;
+	protected _debugger: any;
+	protected _physics: PhysicsBase;
 
 	/**
 	 * The config passed in can be a json object, or an `AppConfig` object.
@@ -249,27 +249,29 @@ export class Application extends PIXIApplication {
 		return undefined;
 	}
 
-	public get physics(): any {
+	public get physics(): PhysicsBase {
 		return this._physics;
 	}
 
-	public get debugger(): Debugger {
+	public get debugger(): DebuggerType {
 		if (!this._debugger) {
 			this.addDebugger();
 		}
-		return this._debugger;
+		return this._debugger as DebuggerType;
 	}
 
-	public addPhysics(type: Physics.PhysicsEngineType = PhysicsEngineType.MATTER): any {
+	public async addPhysics(type: PhysicsEngineType = PhysicsEngineType.MATTER): Promise<PhysicsBase> {
+		let PhysicsModule: any;
 		switch (type) {
 			case PhysicsEngineType.RAPIER:
-				// nothing yet
+				PhysicsModule = await import ('./Physics/RapierPhysics/RapierPhysicsBase');
 				break;
 			case PhysicsEngineType.MATTER:
 			default:
-				this._physics = new Physics.MatterPhysics.Base(this);
+				PhysicsModule = await import ('./Physics/MatterPhysics/MatterPhysicsBase');
 				break;
 		}
+		this._physics = new PhysicsModule.default(this);
 		return this._physics;
 	}
 
@@ -295,7 +297,13 @@ export class Application extends PIXIApplication {
 			return AssetMap.addAssetGroup(pGroupIdOrClass as string, pAssets as AssetMapData[]);
 		} else {
 			const Klass: typeof State = pGroupIdOrClass as typeof State;
-			return AssetMap.addAssetGroup(Klass.ID, Klass.Assets);
+			if (!Klass.NAME) {
+				throw new Error(`You tried to add an asset group for ${Klass}, but it has no NAME defined.`);
+			}
+			if (!Klass.Assets) {
+				throw new Error(`You tried to add an asset group for ${Klass.NAME}, but it has no assets defined.`);
+			}
+			return AssetMap.addAssetGroup(Klass.NAME, Klass.Assets);
 		}
 
 	}
@@ -325,8 +333,6 @@ export class Application extends PIXIApplication {
 	 * Initializes all managers and starts the splash screen process.
 	 */
 	public async init(awaitFontsLoaded: boolean = true): Promise<void> {
-
-
 		this.onPlayAudio = this.onPlayAudio.bind(this);
 		this.addToStage(this._stateManager);
 		this.addToStage(this._popupManager);
@@ -350,8 +356,9 @@ export class Application extends PIXIApplication {
 		this._webEventsManager.registerResizeCallback(() => this.onResize(0.5));
 	}
 
-	protected addDebugger() {
-		this._debugger = new Debugger(this);
+	public async addDebugger() {
+		const DebuggerClass = await import('./Debugger').then((m) => m.Debugger);
+		this._debugger = new DebuggerClass(this);
 	}
 
 	/**

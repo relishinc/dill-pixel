@@ -1,9 +1,9 @@
-import {Bodies} from "matter-js";
 import {Container, Sprite, Texture} from "pixi.js";
-import {Application} from "../Application";
-import {IPhysicsObject} from "../Physics";
-import {resolveXYFromObjectOrArray} from "../Utils/Factory/utils";
-import {SpritesheetLike} from "../Utils/Types";
+import {Application} from "../../../Application";
+import {resolveXYFromObjectOrArray} from "../../../Utils";
+import {SpritesheetLike} from "../../../Utils/Types";
+import {IPhysicsObject} from "../../index";
+import MatterPhysicsBase from "../MatterPhysicsBase";
 
 export enum BodyType {
 	RECTANGLE = 'rectangle',
@@ -14,7 +14,7 @@ export enum BodyType {
 	CHAMFER = 'chamfer',
 }
 
-export class PhysicsSprite extends Container implements IPhysicsObject {
+export class MatterPhysicsSprite extends Container implements IPhysicsObject {
 	public static readonly DEFAULT_DEBUG_COLOR: number = 0x29c5f6;
 	visual: Sprite;
 	body: Matter.Body;
@@ -42,9 +42,13 @@ export class PhysicsSprite extends Container implements IPhysicsObject {
 		this.on('removed', this.onRemoved);
 	}
 
+	get physics(): MatterPhysicsBase {
+		return this.app.physics as MatterPhysicsBase;
+	}
+
 
 	public get debugColor(): number {
-		return PhysicsSprite.DEFAULT_DEBUG_COLOR;
+		return MatterPhysicsSprite.DEFAULT_DEBUG_COLOR;
 	}
 
 	get app(): Application {
@@ -53,26 +57,26 @@ export class PhysicsSprite extends Container implements IPhysicsObject {
 
 	onAdded() {
 		this.createBody();
-		this.app.physics.add(this);
+		this.physics.addToWorld(this);
 	}
 
 	onRemoved(): void {
-		this.app.physics.remove(this.body);
+		this.physics.removeFromWorld(this.body);
 	}
 
 	createBody() {
 		switch (this._bodyType) {
 			case BodyType.RECTANGLE:
-				this.body = Bodies.rectangle(this.x, this.y, this.visual.width, this.visual.height);
+				this.body = Matter.Bodies.rectangle(this.x, this.y, this.visual.width, this.visual.height);
 				break;
 			case BodyType.CIRCLE:
-				this.body = Bodies.circle(this.x, this.y, this.visual.width * 0.5);
+				this.body = Matter.Bodies.circle(this.x, this.y, this.visual.width * 0.5);
 				break;
 			case BodyType.CONVEX:
 				// this.body = Bodies.fromVertices(this.sprite.x, this.sprite.y, this.sprite.width, this.sprite.height);
 				break;
 			case BodyType.TRAPEZOID:
-				this.body = Bodies.trapezoid(this.x, this.y, this.visual.width, this.visual.height, 0.5);
+				this.body = Matter.Bodies.trapezoid(this.x, this.y, this.visual.width, this.visual.height, 0.5);
 				break
 		}
 	}

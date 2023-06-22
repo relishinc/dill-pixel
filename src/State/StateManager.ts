@@ -136,11 +136,17 @@ export class StateManager extends Container {
 
 	/**
 	 * Registers a state so that it can be transitioned to.
-	 * @param pId The id of the new state.
+	 * @param pIdOrClass The id of the new state or the class of the new state.
 	 * @param pCreate A function that constructs the state.
 	 */
-	public register(pId: string, pCreate: () => State) {
-		this._stateData.setValue(pId, {create: pCreate});
+	public register(pIdOrClass: string | typeof State, pCreate?: () => State) {
+		if (typeof pIdOrClass === "string") {
+			this._stateData.setValue(pIdOrClass, {create: pCreate as () => State});
+		} else {
+			const Klass: typeof State = pIdOrClass as typeof State;
+			// @ts-ignore
+			this._stateData.setValue(Klass.NAME, {create: () => new Klass()});
+		}
 	}
 
 	/**
