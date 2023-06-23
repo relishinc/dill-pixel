@@ -1,5 +1,5 @@
 import {BaseState} from "@/state/BaseState.ts";
-import {MPS} from "@/state/GameObjects/Test.ts";
+import {MatterPhysicsSpriteExample} from "@/state/GameObjects/MatterPhysicsSpriteExample.ts";
 import {AssetMapData, AssetType, BodyType, TextureAsset} from "html-living-framework";
 import MatterPhysics from "html-living-framework/Physics/MatterPhysics";
 import {Point} from "pixi.js";
@@ -66,17 +66,13 @@ export class MatterPhysicsExample extends BaseState {
 				gfx.drawCircle(0, 0, (size as number) * 0.5);
 				gfx.endFill();
 				const useLogo = Math.random() > 0.5;
-				const spr: MPS = new MPS(useLogo ? 'relish-logo-circle' : this.app.renderer.generateTexture(gfx), undefined, size, type);
+
+				// test with a sprite that extends the base MatterPhysicsSprite
+				const spr: MatterPhysicsSpriteExample = new MatterPhysicsSpriteExample(useLogo ? 'relish-logo-circle' : this.app.renderer.generateTexture(gfx), undefined, size, type);
 				spr.position.set(pt.x, pt.y);
+
+				// test adding an existing sprite
 				this.physics.add.existing(spr);
-				// this.app.physics.add.physicsSprite(
-				// 	useLogo ? "relish-logo-circle" : this.app.renderer.generateTexture(gfx),
-				// 	undefined,
-				// 	size,
-				// 	type,
-				// 	1,
-				// 	pt
-				// );
 			} else {
 				gfx.drawRect(
 					0,
