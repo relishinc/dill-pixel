@@ -1,5 +1,4 @@
-import { Container, Graphics, IBitmapTextStyle, ITextStyle, TextStyle, Texture } from "pixi.js";
-import { BodyType, PhysicsSprite } from "../../GameObjects/PhysicsSprite";
+import { Container, Graphics, IBitmapTextStyle, ITextStyle, TextStyle } from "pixi.js";
 export declare class AddFactory {
     private defaultContainer;
     private _make;
@@ -59,12 +58,5 @@ export declare class AddFactory {
         x: number;
         y: number;
     } | [number, number?] | number): Graphics;
-    physicsSprite(pTexture: string | Texture, pSheet?: string | string[] | undefined, pSize?: {
-        x: number;
-        y: number;
-    } | [number, number?] | number, pType?: BodyType, pAlpha?: number, pPosition?: {
-        x: number;
-        y: number;
-    } | [number, number?] | number): PhysicsSprite;
 }
 //# sourceMappingURL=Add.d.ts.map

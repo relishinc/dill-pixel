@@ -6,7 +6,9 @@ export declare class ResizeManager {
     private _sizeMax;
     private _ratioMin;
     private _ratioMax;
-    constructor(app: Application, pSizeMin: Point, pSizeMax: Point);
+    private _useAspectRatio;
+    constructor(app: Application, pSizeMin?: Point | undefined, pSizeMax?: Point | undefined);
+    get useAspectRatio(): boolean;
     set sizeMin(pSize: Point);
     set sizeMax(pSize: Point);
     private get windowAspectRatio();

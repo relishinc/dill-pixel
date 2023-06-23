@@ -1,15 +1,11 @@
-/// <reference types="matter-js" />
-import { Application } from "../Application";
-export type MatterBodyLike = Matter.Body | Matter.Composite | Matter.Constraint | Matter.MouseConstraint | Matter.World;
-export interface IMatterPhysicsObject {
-    body: MatterBodyLike;
-    debugColor: number;
-    update(): void;
-}
-export declare class Base {
-    private app;
+import Matter from 'matter-js';
+import { Application } from "../../Application";
+import { PhysicsBase } from "../index";
+import { IMatterPhysicsObject, MatterBodyLike } from "./index";
+export default class MatterPhysics extends PhysicsBase {
+    protected app: Application;
+    protected _debug: boolean;
     private _updateables;
-    private _debug;
     private _engine;
     private _debugGraphics;
     private _debugContainer;
@@ -23,8 +19,8 @@ export declare class Base {
     createWorldBounds(useStage?: boolean): void;
     start(): void;
     stop(): void;
-    add(...objects: (IMatterPhysicsObject | MatterBodyLike)[]): void;
-    remove(...bodies: MatterBodyLike[]): void;
+    addToWorld(...objects: (IMatterPhysicsObject | MatterBodyLike)[]): void;
+    removeFromWorld(...bodies: MatterBodyLike[]): void;
     drawDebug(): void;
     update(deltaTime: number): void;
 }

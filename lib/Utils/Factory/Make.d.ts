@@ -1,6 +1,5 @@
 import { Geometry, State } from "@pixi/core";
 import { BitmapText, Container, DRAW_MODES, Graphics, IBitmapTextStyle, ITextStyle, Mesh, ObservablePoint, Point, Shader, SimpleMesh, SimplePlane, SimpleRope, Sprite, Text, TextStyle, Texture, TilingSprite } from "pixi.js";
-import { BodyType, PhysicsSprite } from "../../GameObjects/PhysicsSprite";
 import { SpritesheetLike } from "../Types";
 /**
  * Gets a `PIXI.Texture` asset.
@@ -9,19 +8,15 @@ import { SpritesheetLike } from "../Types";
  */
 export declare class MakeFactory {
     texture(pAsset: string, pSheet: SpritesheetLike): Texture;
-    sprite(pTexture: string | Texture, pSheet?: string | string[] | undefined): Sprite;
+    sprite(pTexture: string | Texture, pSheet?: SpritesheetLike): Sprite;
     text(pText?: string, pStyle?: Partial<ITextStyle> | TextStyle): Text;
     bitmapText(pText?: string, pStyle?: IBitmapTextStyle): BitmapText;
     container(): Container;
     graphics(): Graphics;
-    tiledSprite(pTexture: string, pSheet: string | string[] | undefined, pWidth: number, pHeight: number, pTilePosition?: ObservablePoint): TilingSprite;
+    tiledSprite(pTexture: string, pSheet: SpritesheetLike, pWidth: number, pHeight: number, pTilePosition?: ObservablePoint): TilingSprite;
     mesh(pGeometry: Geometry, pShader: Shader, pState?: State, pDrawMode?: DRAW_MODES): Mesh<Shader>;
-    simpleRope(pTexture: string, pSheet: string | string[] | undefined, pPoints: (Point | ObservablePoint)[], pAutoUpdate?: boolean): SimpleRope;
-    simplePlane(pTexture: string, pSheet: string | string[] | undefined, pVertsWidth: number, pVertsHeight: number): SimplePlane;
-    simpleMesh(pTexture: string, pSheet: string | string[] | undefined, pVertices?: Float32Array, pUvs?: Float32Array, pIndices?: Uint16Array, pDrawMode?: number): SimpleMesh;
-    physicsSprite(pTexture: string | Texture, pSheet?: SpritesheetLike, pSize?: {
-        x: number;
-        y: number;
-    } | [number, number?] | number, pBodyType?: BodyType): PhysicsSprite;
+    simpleRope(pTexture: string, pSheet: SpritesheetLike, pPoints: (Point | ObservablePoint)[], pAutoUpdate?: boolean): SimpleRope;
+    simplePlane(pTexture: string, pSheet: SpritesheetLike, pVertsWidth: number, pVertsHeight: number): SimplePlane;
+    simpleMesh(pTexture: string, pSheet: SpritesheetLike, pVertices?: Float32Array, pUvs?: Float32Array, pIndices?: Uint16Array, pDrawMode?: number): SimpleMesh;
 }
 //# sourceMappingURL=Make.d.ts.map

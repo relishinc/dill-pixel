@@ -1,5 +1,6 @@
 import {Interstitial} from "@/state/Interstitial";
 import {MatterPhysicsExample} from "@/state/MatterPhysicsExample";
+import {RapierPhysicsExample} from "@/state/RapierPhysicsExample.ts";
 import {SplashScreen} from "@/state/SplashScreen";
 import {
 	Application as HLFApplication,
@@ -34,7 +35,7 @@ export default class Application extends HLFApplication {
 	}
 
 	public get defaultState(): string {
-		return MatterPhysicsExample.NAME;
+		return RapierPhysicsExample.NAME;
 	}
 
 
@@ -53,12 +54,14 @@ export default class Application extends HLFApplication {
 	protected registerStates(): void {
 		// alternate / old way : this.state.register(MatterPhysicsExample.NAME, ()=> new MatterPhysicsExample());
 		this.state.register(MatterPhysicsExample);
+		this.state.register(RapierPhysicsExample);
 		// this.state.register(SpriteDebugExample);
 	}
 
 	protected createAssetMap(): void {
 		this.addAssetGroup(HLFSplashScreen.NAME, SplashScreen.Assets);
 		this.addAssetGroup(MatterPhysicsExample);
+		this.addAssetGroup(RapierPhysicsExample);
 		// this.addAssetGroup(SpriteDebugExample);
 	}
 }

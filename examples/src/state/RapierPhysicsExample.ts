@@ -1,5 +1,6 @@
 import {BaseState} from "@/state/BaseState.ts";
-import {AssetMapData, AssetType, BodyType, TextureAsset} from "html-living-framework";
+import {AssetMapData, AssetType, BodyType, PhysicsEngineType, TextureAsset} from "html-living-framework";
+import RapierPhysics from "html-living-framework/Physics/RapierPhysics/RapierPhysics.ts";
 import {Point} from "pixi.js";
 
 export class RapierPhysicsExample extends BaseState {
@@ -13,9 +14,13 @@ export class RapierPhysicsExample extends BaseState {
 		return [new TextureAsset("relish-logo-circle", AssetType.PNG)];
 	}
 
+	public get physics(): RapierPhysics {
+		return this.app.physics as unknown as RapierPhysics;
+	}
+
 	public init(pSize: Point) {
 		super.init(pSize);
-		this.setHeaderText("Matter Physics Example");
+		this.setHeaderText("Rapier Physics Example");
 		this.setMainText(
 			"Click anywhere to add a physics enabled sprite.\nPress the 'D' key to toggle debug mode."
 		);
@@ -28,8 +33,10 @@ export class RapierPhysicsExample extends BaseState {
 	}
 
 	protected async startPhysics() {
-		this.app.addPhysics();
-		await this.app.physics.init(true, false);
+		await this.app.addPhysics(PhysicsEngineType.RAPIER);
+		this.app.physics.init(true, false);
+		this.physics.container = this;
+
 		const gfx = this.make.graphics();
 
 		// if the D key is pressed, toggle debug mode
@@ -56,7 +63,7 @@ export class RapierPhysicsExample extends BaseState {
 				gfx.drawCircle(0, 0, (size as number) * 0.5);
 				gfx.endFill();
 				const useLogo = Math.random() > 0.5;
-				this.add.physicsSprite(
+				this.physics.add.physicsSprite(
 					useLogo ? "relish-logo-circle" : this.app.renderer.generateTexture(gfx),
 					undefined,
 					size,
@@ -72,7 +79,7 @@ export class RapierPhysicsExample extends BaseState {
 					(size as [number, number])[1]
 				);
 				gfx.endFill();
-				this.add.physicsSprite(
+				this.physics.add.physicsSprite(
 					this.app.renderer.generateTexture(gfx),
 					undefined,
 					size,
