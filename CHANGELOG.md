@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/relishinc/hlf/compare/v1.3.0...v1.4.0) (2023-06-23)
+
+
+### Features
+
+* added bare bones rapier physics example ([04dbef8](https://github.com/relishinc/hlf/commit/04dbef858f4c20d15cf881be098f542917e9fcb3))
+
 ## [1.3.0](https://github.com/relishinc/hlf/compare/v1.2.11...v1.3.0) (2023-06-23)
 
 
