@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/relishinc/hlf/compare/v1.2.11...v1.3.0) (2023-06-23)
+
+
+### Features
+
+* workin on adding opt-in physics libraries - making sure they code-split properly ([83b764a](https://github.com/relishinc/hlf/commit/83b764ab71630bd49d3473b5e325bcfbf42732c7))
+
+
+### Bug Fixes
+
+* proper code splitting from physics libraries (tested with builds) ([0ce2c4b](https://github.com/relishinc/hlf/commit/0ce2c4bec53d42928fce74a664427c3a1d90b8d3))
+* removed examples/dist folder from git ([7b2a4c8](https://github.com/relishinc/hlf/commit/7b2a4c8ff5f35ce7ff40a30bb4038c5e0b14be16))
+
 ## [1.2.11](https://github.com/relishinc/hlf/compare/v1.2.10...v1.2.11) (2023-06-21)
 
 
