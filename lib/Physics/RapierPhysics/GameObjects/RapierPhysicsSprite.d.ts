@@ -1,8 +1,9 @@
-/// <reference types="matter-js" />
+import RAPIER from "@dimforge/rapier2d";
 import { Container, Sprite, Texture } from "pixi.js";
-import { Application } from "../Application";
-import { IPhysicsObject } from "../Physics";
-import { SpritesheetLike } from "../Utils/Types";
+import { Application } from "../../../Application";
+import { SpritesheetLike } from "../../../Utils/Types";
+import { IPhysicsObject } from "../../index";
+import RapierPhysics from "../RapierPhysics";
 export declare enum BodyType {
     RECTANGLE = "rectangle",
     CIRCLE = "circle",
@@ -11,10 +12,11 @@ export declare enum BodyType {
     POLYGON = "polygon",
     CHAMFER = "chamfer"
 }
-export declare class PhysicsSprite extends Container implements IPhysicsObject {
+export declare class RapierPhysicsSprite extends Container implements IPhysicsObject {
     static readonly DEFAULT_DEBUG_COLOR: number;
-    sprite: Sprite;
-    body: Matter.Body;
+    visual: Sprite;
+    body: RAPIER.RigidBody;
+    collider: RAPIER.Collider;
     _size: {
         x: number;
         y: number;
@@ -24,11 +26,13 @@ export declare class PhysicsSprite extends Container implements IPhysicsObject {
         x: number;
         y: number;
     } | [number, number?] | number, pBodyType?: BodyType);
+    get physics(): RapierPhysics;
     get debugColor(): number;
     get app(): Application;
+    get world(): RAPIER.World;
     onAdded(): void;
     onRemoved(): void;
     createBody(): void;
     update(): void;
 }
-//# sourceMappingURL=PhysicsSprite.d.ts.map
+//# sourceMappingURL=RapierPhysicsSprite.d.ts.map

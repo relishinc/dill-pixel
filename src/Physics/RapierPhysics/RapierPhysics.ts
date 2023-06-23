@@ -1,7 +1,8 @@
 import RAPIER from "@dimforge/rapier2d";
 import {Container, Graphics} from "pixi.js";
 import {Application} from "../../Application";
-import {PointLike} from "../index";
+import {PhysicsBase, PointLike} from "../index";
+import {Factory} from "./Factory";
 import {IRapierPhysicsObject, RapierBodyLike} from "./index";
 
 export interface WallDefinition {
@@ -10,16 +11,23 @@ export interface WallDefinition {
 	angle?: number;
 }
 
-export default class RapierPhysicsBase {
+export default class RapierPhysics extends PhysicsBase {
+	protected _debug: boolean = true;
 	private _updateables: IRapierPhysicsObject[] = [];
-	private _debug: boolean = true;
 	private _world: RAPIER.World;
 	private _debugGraphics: Graphics;
 	private _debugContainer: Container;
 	private _bounds: PointLike = {x: 0, y: 0};
 	private _isRunning: boolean = false;
+	private _siScaleFactor: number = 50;
 
-	constructor(private app: Application) {
+	constructor(protected app: Application) {
+		super(app);
+		this._factory = new Factory();
+	}
+
+	public get SIScaleFactor(): number {
+		return this._siScaleFactor;
 	}
 
 	public get world(): RAPIER.World {
@@ -39,13 +47,17 @@ export default class RapierPhysicsBase {
 		return this._debug
 	}
 
-	async init(pAutoStart: boolean = false, pDebug: boolean = false, autoCreateBounds: boolean = true, pEngineOptions = {
-		x: 0.0,
-		y: -9.81
+	async init(pAutoStart: boolean = false, pDebug: boolean = false, autoCreateBounds: boolean = true, pEngineOptions?: {
+		gravity: RAPIER.Vector2,
+		siScaleFactor: number
 	}) {
-		const opts = pEngineOptions || {x: 0.0, y: -9.81};
+		const opts = Object.assign({}, {
+			gravity: new RAPIER.Vector2(0.0, 9.81 * 50),
+			siScaleFactor: 50
+		}, pEngineOptions);
+		this._siScaleFactor = opts.siScaleFactor;
 		this._debug = pDebug;
-		this._world = new RAPIER.World(opts);
+		this._world = new RAPIER.World(opts.gravity);
 
 		if (autoCreateBounds) {
 			this.createWorldBounds();
@@ -60,10 +72,10 @@ export default class RapierPhysicsBase {
 	}
 
 	public makeWall(def: WallDefinition) {
-		const bodyDesc = RAPIER.RigidBodyDesc.newStatic().setTranslation(def.position.x, def.position.y).setRotation(def.angle || 0);
-		const body = this._world.createRigidBody(bodyDesc);
-		const colliderDesc = RAPIER.ColliderDesc.cuboid(def.size.x / 2, def.size.y / 2).setTranslation(0, 0);
-		const collider = this._world.createCollider(colliderDesc, body);
+		const bodyDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(def.position.x, def.position.y).setRotation(def.angle || 0);
+		const body = this.world.createRigidBody(bodyDesc);
+		const colliderDesc = RAPIER.ColliderDesc.cuboid(def.size.x / 2, def.size.y / 2).setTranslation(0, 0).setRestitution(0);
+		const collider = this.world.createCollider(colliderDesc, body);
 
 		return {body, collider, definition: def}
 	}
@@ -73,25 +85,23 @@ export default class RapierPhysicsBase {
 		const width = useStage ? this.app.size.x : this._bounds.x;
 		const height = useStage ? this.app.size.y : this._bounds.y
 
-		const bottom = this.makeWall({
-			size: {y: window.innerHeight, x: thickness},
-			position: {x: 0, y: window.innerHeight / 2},
-		})
+		this.makeWall({
+			size: {x: width, y: thickness},
+			position: {x: 0, y: -height / 2 - thickness / 2},
+		});
+		this.makeWall({
+			size: {x: width, y: thickness},
+			position: {x: 0, y: height / 2 + thickness / 2},
+		});
+		this.makeWall({
+			size: {x: thickness, y: height},
+			position: {x: -width / 2 - thickness / 2, y: 0},
+		});
 
-		// // Top boundary
-		// const top = Bodies.rectangle(-thickness / 2, -height / 2 - thickness / 2, width + thickness, thickness, {isStatic: true});
-		//
-		// // Bottom boundary
-		// const bottom = Bodies.rectangle(-thickness / 2, height / 2 + thickness / 2, width + thickness, thickness, {isStatic: true});
-		//
-		// // Left boundary
-		// const left = Bodies.rectangle(-width / 2 - thickness / 2, -thickness / 2, thickness, height + thickness, {isStatic: true});
-		//
-		// // Right boundary
-		// const right = Bodies.rectangle(width / 2 + thickness / 2, -thickness / 2, thickness, height + thickness, {isStatic: true});
-		//
-		// // Add these bodies to the world
-		// this.add(top, bottom, left, right);
+		this.makeWall({
+			size: {x: thickness, y: height},
+			position: {x: width / 2 + thickness / 2, y: 0},
+		});
 	}
 
 	public start() {
@@ -102,7 +112,7 @@ export default class RapierPhysicsBase {
 		this._isRunning = false;
 	}
 
-	add(...objects: (IRapierPhysicsObject | RapierBodyLike)[]) {
+	addToWorld(...objects: (IRapierPhysicsObject | RapierBodyLike)[]) {
 		objects.forEach((obj) => {
 			let body: RapierBodyLike;
 			if (obj.hasOwnProperty("body")) {
@@ -115,7 +125,7 @@ export default class RapierPhysicsBase {
 
 	}
 
-	remove(...bodies: RapierBodyLike[]) {
+	removeFromWorld(...bodies: RapierBodyLike[]) {
 		bodies.forEach((body) => {
 			this.world.removeRigidBody(body);
 		});
@@ -129,31 +139,19 @@ export default class RapierPhysicsBase {
 			this._debugContainer.addChild(this._debugGraphics);
 			this._debugContainer.x = this.app.resizer.getSize().x * 0.5;
 			this._debugContainer.y = this.app.resizer.getSize().y * 0.5;
+			this._debugContainer.scale.set(1, -1);
 			this.app.stage.setChildIndex(this._debugContainer, this.app.stage.children.length - 1);
 		}
 
 		this._debugGraphics.clear();
-		for (let i = 0; i < this._updateables.length; i++) {
-			const updateable = this._updateables[i];
-			const body = this._updateables[i].body as RAPIER.RigidBody;
-			const color = updateable?.debugColor || 0x29c5f6;
-			const numColliders = body.numColliders();
-			for (let j = 0; j < numColliders; j++) {
-				const collider = body.collider(j);
-				const vertices = collider.vertices() as unknown as RAPIER.Vector[];
-				if (vertices && vertices.length > 0) {
-					this._debugGraphics.lineStyle(1, 0x00ff00, 1);
-					this._debugGraphics.beginFill(color, 0.5);
-					this._debugGraphics.moveTo(vertices[0].x, vertices[0].y);
-
-					for (let k = 1; k < vertices.length; k++) {
-						this._debugGraphics.lineTo(vertices[k].x, vertices[k].y);
-					}
-
-					this._debugGraphics.lineTo(vertices[0].x, vertices[0].y);
-					this._debugGraphics.endFill();
-				}
-			}
+		const buffers = this.world.debugRender();
+		const vtx = buffers.vertices;
+		const cls = buffers.colors;
+		const color = 0xff0000;
+		for (let i = 0; i < vtx.length / 4; i += 1) {
+			this._debugGraphics.lineStyle(1.0, color, cls[i * 8 + 3], 0.5, true);
+			this._debugGraphics.moveTo(vtx[i * 4], -vtx[i * 4 + 1]);
+			this._debugGraphics.lineTo(vtx[i * 4 + 2], -vtx[i * 4 + 3]);
 		}
 	}
 
@@ -163,6 +161,9 @@ export default class RapierPhysicsBase {
 		}
 
 		if (this.world) {
+			if (deltaTime) {
+				this.world.timestep = deltaTime;
+			}
 			this._updateables.forEach((obj) => {
 				obj.update();
 			})

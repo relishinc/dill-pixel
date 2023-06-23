@@ -1,0 +1,1 @@
+{"version":3,"file":"MakeFactory.js","sourceRoot":"","sources":["../../../../src/Physics/MatterPhysics/Factory/MakeFactory.ts"],"names":[],"mappings":"AACA,OAAO,EAAW,mBAAmB,EAAC,MAAM,sBAAsB,CAAC;AAInE,MAAM,CAAC,OAAO,OAAO,WAAW;IACxB,aAAa,CAAC,QAA0B,EAAE,MAAwB,EAAE,KAG7C,EAAE,SAAoB;QACnD,OAAO,IAAI,mBAAmB,CAAC,QAAQ,EAAE,MAAM,EAAE,KAAK,EAAE,SAAS,CAAC,CAAC;IACpE,CAAC;CACD"}

@@ -4,16 +4,17 @@ import { CopyManager } from "./Copy";
 import * as Topics from "./Data/Topics";
 import { HitAreaRenderer, KeyboardManager, MouseManager } from "./Input";
 import { AssetMapData, LoadManager, SplashScreen } from "./Load";
-import * as Physics from "./Physics";
+import { PhysicsBase, PhysicsEngineType } from "./Physics";
 import { PopupManager } from "./Popup";
 import { SaveManager } from "./Save";
-import { StateManager } from "./State";
+import { State, StateManager } from "./State";
 import { OrientationManager, ResizeManager, WebEventsManager } from "./Utils";
 import * as Factory from './Utils/Factory';
 export interface HLFApplicationOptions extends IApplicationOptions {
     physics?: boolean;
 }
-export declare abstract class Application extends PIXIApplication {
+type DebuggerType = typeof import("./Debugger").Debugger;
+export declare class Application extends PIXIApplication {
     protected static readonly SIZE_MIN_DEFAULT: Point;
     protected static readonly SIZE_MAX_DEFAULT: Point;
     protected static _instance: Application;
@@ -35,7 +36,8 @@ export declare abstract class Application extends PIXIApplication {
     protected _makeFactory: Factory.MakeFactory;
     protected _addFactory: Factory.AddFactory;
     protected startSplashProcess: OmitThisParameter<(pPersistentAssets: AssetMapData[], pOnComplete: () => void) => void>;
-    protected _physics: any;
+    protected _debugger: any;
+    protected _physics: PhysicsBase;
     /**
      * The config passed in can be a json object, or an `AppConfig` object.
      * @param pConfig
@@ -46,7 +48,22 @@ export declare abstract class Application extends PIXIApplication {
     protected constructor(pConfig?: Partial<HLFApplicationOptions> & {
         [key: string]: any;
     });
+    static get containerElement(): HTMLElement | null;
+    static get containerID(): string;
+    /**
+     * gets the current singleton instance
+     */
     static get instance(): Application;
+    /**
+     * Creates a container element with the given id and appends it to the DOM.
+     * @param pId{string} - The id of the element to create.
+     */
+    static createContainer(pId: string): HTMLDivElement;
+    /**
+     * Creates a new instance of the Application class and returns it.
+     * @param pElement{string | HTMLElement} - The id of the element to use as the container, or the element itself.
+     */
+    static create(pElement?: string | HTMLElement): Application | null;
     get resolutionSuffix(): string;
     get add(): Factory.AddFactory;
     get make(): Factory.MakeFactory;
@@ -71,8 +88,9 @@ export declare abstract class Application extends PIXIApplication {
     get load(): LoadManager;
     get topics(): typeof Topics;
     get defaultState(): string | undefined;
-    get physics(): any;
-    addPhysics(type: Physics.EngineType): any;
+    get physics(): PhysicsBase;
+    get debugger(): DebuggerType;
+    addPhysics(type?: PhysicsEngineType): Promise<PhysicsBase>;
     broadcast(message: string, data?: any | undefined): boolean;
     subscribe<T, M>(message: string, callback: (message: T, data: M) => void): string;
     /**
@@ -81,12 +99,19 @@ export declare abstract class Application extends PIXIApplication {
      * @param pAssets
      * proxy function for @link {AssetMap.addAssetGroup}
      */
-    addAssetGroup(pGroupId: string, pAssets: AssetMapData[]): void;
+    addAssetGroup(pGroupIdOrClass: string | typeof State, pAssets?: AssetMapData[]): void;
     hasAsset(pAssetName: string): boolean;
+    /**
+     * initialize the Application singleton
+     * and append the view to the DOM
+     * @param pElement{String|HTMLElement}
+     */
+    create(pElement: HTMLElement): Application | null;
     /**
      * Initializes all managers and starts the splash screen process.
      */
-    init(): void;
+    init(awaitFontsLoaded?: boolean): Promise<void>;
+    addDebugger(): Promise<void>;
     /**
      * Called once per frame. Updates the `StateManager`, `PopupManager`, `LoadManager` and `HitAreaRenderer`.
      */
@@ -132,6 +157,7 @@ export declare abstract class Application extends PIXIApplication {
      * Override to specify what should happen after all persistent assets have been loaded.
      * @override
      */
-    protected onRequiredAssetsLoaded(): void;
+    protected onRequiredAssetsLoaded(): Promise<void>;
 }
+export {};
 //# sourceMappingURL=Application.d.ts.map

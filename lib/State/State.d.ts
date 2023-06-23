@@ -1,18 +1,22 @@
 import { Layout, LayoutStyles } from "@pixi/layout";
 import { Container, Point } from 'pixi.js';
 import { Application } from "../Application";
+import { AssetMapData } from "../Load";
 import * as Factory from "../Utils/Factory";
 /**
  * State
  */
 export declare abstract class State extends Container {
+    static NAME: string;
     static DEFAULT_LAYOUT_STYLES: LayoutStyles;
     static DEFAULT_LAYOUT_OPTIONS: any;
     protected _layout: Layout;
     protected _size: Point;
     protected _addFactory: Factory.AddFactory;
     private _gsapContext;
-    protected constructor();
+    constructor();
+    static get ID(): string;
+    static get Assets(): AssetMapData[];
     /**
      * gets the Applicationinstance
      */

@@ -264,7 +264,7 @@ export class Application extends PIXIApplication {
 		let PhysicsModule: any;
 		switch (type) {
 			case PhysicsEngineType.RAPIER:
-				PhysicsModule = await import ('./Physics/RapierPhysics/RapierPhysicsBase');
+				PhysicsModule = await import ('./Physics/RapierPhysics/RapierPhysics');
 				break;
 			case PhysicsEngineType.MATTER:
 			default:

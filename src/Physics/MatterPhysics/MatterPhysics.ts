@@ -21,10 +21,6 @@ export default class MatterPhysics extends PhysicsBase {
 		this._factory = new Factory();
 	}
 
-	public get foo(): boolean {
-		return true;
-	}
-
 	public get engine() {
 		return this._engine;
 	}

@@ -87,10 +87,10 @@ export declare class StateManager extends Container {
     onResize(pSize: Point): void;
     /**
      * Registers a state so that it can be transitioned to.
-     * @param pId The id of the new state.
+     * @param pIdOrClass The id of the new state or the class of the new state.
      * @param pCreate A function that constructs the state.
      */
-    register(pId: string, pCreate: () => State): void;
+    register(pIdOrClass: string | typeof State, pCreate?: () => State): void;
     /**
      * Method to transition states instead of using PubSub variant
      * instead call this.app.state.transitionTo(stateId, loadScreenId)
