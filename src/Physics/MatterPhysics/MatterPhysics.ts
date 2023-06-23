@@ -5,7 +5,9 @@ import {PhysicsBase, PointLike} from "../index";
 import {Factory} from "./Factory";
 import {IMatterPhysicsObject, MatterBodyLike} from "./index";
 
-export default class MatterPhysicsBase extends PhysicsBase {
+globalThis.Matter = Matter;
+
+export default class MatterPhysics extends PhysicsBase {
 	protected _debug: boolean = false;
 	private _updateables: IMatterPhysicsObject[] = [];
 	private _engine: Matter.Engine;
@@ -16,7 +18,11 @@ export default class MatterPhysicsBase extends PhysicsBase {
 
 	constructor(protected app: Application) {
 		super(app);
-		this._factory = new Factory()
+		this._factory = new Factory();
+	}
+
+	public get foo(): boolean {
+		return true;
 	}
 
 	public get engine() {
@@ -37,6 +43,8 @@ export default class MatterPhysicsBase extends PhysicsBase {
 	}
 
 	async init(pAutoStart: boolean = false, pDebug: boolean = false, autoCreateBounds: boolean = true, pEngineOptions: Matter.IEngineDefinition = {}) {
+
+
 		const opts = pEngineOptions || {};
 
 		this._debug = pDebug;

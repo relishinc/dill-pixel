@@ -1,3 +1,5 @@
+import MatterPhysics from "./MatterPhysics";
+
 export type MatterBodyLike =
 	Matter.Body
 	| Matter.Composite
@@ -11,5 +13,8 @@ export interface IMatterPhysicsObject {
 
 	update(): void;
 }
+
+
+export default MatterPhysics;
 
 

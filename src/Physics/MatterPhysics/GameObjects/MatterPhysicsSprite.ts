@@ -3,7 +3,7 @@ import {Application} from "../../../Application";
 import {resolveXYFromObjectOrArray} from "../../../Utils";
 import {SpritesheetLike} from "../../../Utils/Types";
 import {IPhysicsObject} from "../../index";
-import MatterPhysicsBase from "../MatterPhysicsBase";
+import MatterPhysicsBase from "../MatterPhysics";
 
 export enum BodyType {
 	RECTANGLE = 'rectangle',

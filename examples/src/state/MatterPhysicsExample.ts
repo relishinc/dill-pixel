@@ -1,5 +1,7 @@
 import {BaseState} from "@/state/BaseState.ts";
+import {MPS} from "@/state/GameObjects/Test.ts";
 import {AssetMapData, AssetType, BodyType, TextureAsset} from "html-living-framework";
+import MatterPhysics from "html-living-framework/Physics/MatterPhysics";
 import {Point} from "pixi.js";
 
 export class MatterPhysicsExample extends BaseState {
@@ -11,6 +13,10 @@ export class MatterPhysicsExample extends BaseState {
 
 	public static get Assets(): AssetMapData[] {
 		return [new TextureAsset("relish-logo-circle", AssetType.PNG)];
+	}
+
+	public get physics(): MatterPhysics {
+		return this.app.physics as MatterPhysics;
 	}
 
 	public init(pSize: Point) {
@@ -29,8 +35,9 @@ export class MatterPhysicsExample extends BaseState {
 
 	protected async startPhysics() {
 		await this.app.addPhysics();
-		this.app.physics.init(true, false);
-		this.app.physics.container = this;
+
+		this.physics.init(true, false);
+		this.physics.container = this;
 
 		const gfx = this.make.graphics();
 
@@ -59,14 +66,17 @@ export class MatterPhysicsExample extends BaseState {
 				gfx.drawCircle(0, 0, (size as number) * 0.5);
 				gfx.endFill();
 				const useLogo = Math.random() > 0.5;
-				this.app.physics.add.physicsSprite(
-					useLogo ? "relish-logo-circle" : this.app.renderer.generateTexture(gfx),
-					undefined,
-					size,
-					type,
-					1,
-					pt
-				);
+				const spr: MPS = new MPS(useLogo ? 'relish-logo-circle' : this.app.renderer.generateTexture(gfx), undefined, size, type);
+				spr.position.set(pt.x, pt.y);
+				this.physics.add.existing(spr);
+				// this.app.physics.add.physicsSprite(
+				// 	useLogo ? "relish-logo-circle" : this.app.renderer.generateTexture(gfx),
+				// 	undefined,
+				// 	size,
+				// 	type,
+				// 	1,
+				// 	pt
+				// );
 			} else {
 				gfx.drawRect(
 					0,
@@ -75,7 +85,7 @@ export class MatterPhysicsExample extends BaseState {
 					(size as [number, number])[1]
 				);
 				gfx.endFill();
-				this.app.physics.add.physicsSprite(
+				this.physics.add.physicsSprite(
 					this.app.renderer.generateTexture(gfx),
 					undefined,
 					size,
