@@ -37,6 +37,7 @@ export default class Application extends HLFApplication {
 		return MatterPhysicsExample.NAME;
 	}
 
+
 	protected createSplashScreen(): HLFSplashScreen {
 		return new SplashScreen();
 	}

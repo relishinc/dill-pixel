@@ -268,7 +268,7 @@ export class Application extends PIXIApplication {
 				break;
 			case PhysicsEngineType.MATTER:
 			default:
-				PhysicsModule = await import ('./Physics/MatterPhysics/MatterPhysicsBase');
+				PhysicsModule = await import ('./Physics/MatterPhysics');
 				break;
 		}
 		this._physics = new PhysicsModule.default(this);

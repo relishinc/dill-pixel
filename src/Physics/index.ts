@@ -72,6 +72,8 @@ export interface IPhysicsAddFactory {
 	              pType?: BodyType,
 	              pAlpha?: number,
 	              pPosition?: { x: number; y: number } | [number, number?] | number): IPhysicsObject
+
+	existing(pSprite: DisplayObject): IPhysicsObject
 }
 
 export interface IPhysicsMakeFactory {
