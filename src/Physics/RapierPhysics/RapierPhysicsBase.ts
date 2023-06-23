@@ -10,7 +10,6 @@ export interface WallDefinition {
 	angle?: number;
 }
 
-
 export default class RapierPhysicsBase {
 	private _updateables: IRapierPhysicsObject[] = [];
 	private _debug: boolean = true;
