@@ -2,7 +2,7 @@ import RAPIER from "@dimforge/rapier2d";
 import {Container, DisplayObject, Sprite} from "pixi.js";
 import {Application} from "../../../Application";
 import {resolveXYFromObjectOrArray} from "../../../Utils";
-import {IPhysicsObject} from "../../index";
+import {IPhysicsObject, PhysicsBodyType} from "../../index";
 import RapierPhysics from "../RapierPhysics";
 
 export class RapierPhysicsComposite extends Container implements IPhysicsObject {
@@ -54,8 +54,9 @@ export class RapierPhysicsComposite extends Container implements IPhysicsObject 
 		return 0xff0000;
 	}
 
-	addVisual(color: number, size: [number, number], position: [number, number] = [0, 0]): Sprite {
-		const visual = this.app.make.coloredSprite(color, size);
+	addVisual(color: number, size: [number, number], position: [number, number] = [0,
+		0], type: PhysicsBodyType = PhysicsBodyType.RECTANGLE): Sprite {
+		const visual = this.app.make.coloredSprite(color, size, type === PhysicsBodyType.CIRCLE ? 'circle' : 'rectangle');
 		visual.position = resolveXYFromObjectOrArray(position);
 		visual.anchor.set(0.5, 0.5);
 		this.addChild(visual);
@@ -71,10 +72,22 @@ export class RapierPhysicsComposite extends Container implements IPhysicsObject 
 		this.physics.removeFromWorld(this.body);
 	}
 
-	createCollider(visual: Sprite, body: RAPIER.RigidBody): RAPIER.Collider {
-		const colliderDesc = RAPIER.ColliderDesc.cuboid(visual.width / 2, visual.height / 2)
-			.setDensity(visual.width * visual.height)
-			.setTranslation(0, 0)
+	createCollider(visual: Sprite, body: RAPIER.RigidBody, type: PhysicsBodyType = PhysicsBodyType.RECTANGLE): RAPIER.Collider {
+		let colliderDesc: RAPIER.ColliderDesc;
+		switch (type) {
+			case PhysicsBodyType.CIRCLE:
+				colliderDesc = RAPIER.ColliderDesc.ball(visual.width / 2)
+					.setDensity(visual.width * visual.width)
+					.setTranslation(0, 0);
+				break;
+			case PhysicsBodyType.RECTANGLE:
+			default:
+				colliderDesc = RAPIER.ColliderDesc.cuboid(visual.width / 2, visual.height / 2)
+					.setDensity(visual.width * visual.height)
+					.setTranslation(0, 0);
+				break;
+		}
+
 
 		let collider: RAPIER.Collider;
 
@@ -90,14 +103,18 @@ export class RapierPhysicsComposite extends Container implements IPhysicsObject 
 	}
 
 	createPiece(color: number, size: [number, number], position: [number, number] = [0,
-		0], angle: number = 0, data?: any): { visual: Sprite, body: RAPIER.RigidBody, collider: RAPIER.Collider } {
-		const visual = this.addVisual(color, size, position);
+		0], angle: number = 0, type: PhysicsBodyType = PhysicsBodyType.RECTANGLE, data?: any): {
+		visual: Sprite,
+		body: RAPIER.RigidBody,
+		collider: RAPIER.Collider
+	} {
+		const visual = this.addVisual(color, size, position, type);
 		const bodyDesc = RAPIER.RigidBodyDesc.dynamic()
 			.setTranslation(this.x + position[0], this.y + position[1])
 			.setRotation(this.angle + angle);
 
 		const body = this.world.createRigidBody(bodyDesc);
-		const collider = this.createCollider(visual, body);
+		const collider = this.createCollider(visual, body, type);
 
 		this.visuals.push(visual);
 		this.bodies.push(body);
@@ -108,13 +125,13 @@ export class RapierPhysicsComposite extends Container implements IPhysicsObject 
 	}
 
 	createBody() {
-		const main = this.createPiece(0x00fff0, [50, 150], [0, 0], 0, {isMain: true})
+		const main = this.createPiece(0x00fff0, [50, 150], [0, 0], 0, PhysicsBodyType.RECTANGLE, {isMain: true})
 
 		// head
-		const head = this.createPiece(0x0ff000, [40, 40], [0, -95], 0, {isHead: true});
+		const head = this.createPiece(0x0ff000, [25, 25], [0, -100], 0, PhysicsBodyType.CIRCLE);
 		const headParams = RAPIER.JointData.fixed({x: 0, y: -75}, 0.0, {
 			x: 0,
-			y: 20
+			y: 25
 		}, 0.0)
 		this.world.createImpulseJoint(headParams, main.body, head.body, true);
 

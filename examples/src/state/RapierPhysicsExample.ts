@@ -101,7 +101,6 @@ export class RapierPhysicsExample extends BaseState {
 					composite.y = pt.y;
 					this.physics.add.existing(composite);
 					break;
-
 			}
 
 		});
