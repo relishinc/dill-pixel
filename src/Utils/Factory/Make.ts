@@ -21,8 +21,9 @@ import {
 	Texture,
 	TilingSprite
 } from "pixi.js";
+import {Application} from "../../Application";
 import {SpritesheetLike} from "../Types";
-import {setObjectName} from "./utils";
+import {resolveXYFromObjectOrArray, setObjectName} from "./utils";
 
 /**
  * Gets a `PIXI.Texture` asset.
@@ -81,6 +82,19 @@ export class MakeFactory {
 		}
 
 		return texture || new Sprite().texture;
+	}
+
+	coloredSprite(color: number = 0x0, size: {
+		x: number;
+		y: number
+	} | [number, number?] | number = {x: 1, y: 1}): Sprite {
+		const gfx = new Graphics();
+		const resolvedSize = resolveXYFromObjectOrArray(size);
+		gfx.beginFill(color, 1);
+		gfx.drawRect(0, 0, resolvedSize.x, resolvedSize.y);
+		gfx.endFill();
+
+		return this.sprite(Application.instance.renderer.generateTexture(gfx));
 	}
 
 	sprite(pTexture: string | Texture, pSheet?: SpritesheetLike): Sprite {

@@ -1,6 +1,6 @@
 import {BaseState} from "@/state/BaseState.ts";
 import {MatterPhysicsSpriteExample} from "@/state/GameObjects/MatterPhysicsSpriteExample.ts";
-import {AssetMapData, AssetType, BodyType, TextureAsset} from "html-living-framework";
+import {AssetMapData, AssetType, PhysicsBodyType, TextureAsset} from "html-living-framework";
 import MatterPhysics from "html-living-framework/Physics/MatterPhysics";
 import {Point} from "pixi.js";
 
@@ -52,9 +52,9 @@ export class MatterPhysicsExample extends BaseState {
 		this.eventMode = "static";
 		this.on("pointerdown", (e) => {
 			const pt = e.getLocalPosition(this);
-			const type = Math.random() > 0.5 ? BodyType.CIRCLE : BodyType.RECTANGLE;
+			const type = Math.random() > 0.5 ? PhysicsBodyType.CIRCLE : PhysicsBodyType.RECTANGLE;
 			const size: [number, number?] | number =
-				type === BodyType.CIRCLE
+				type === PhysicsBodyType.CIRCLE
 					? this.getObjectSize()
 					: [this.getObjectSize(), this.getObjectSize()];
 
@@ -62,7 +62,7 @@ export class MatterPhysicsExample extends BaseState {
 			gfx.clear();
 			gfx.beginFill(Math.floor(Math.random() * 0xffffff));
 
-			if (type === BodyType.CIRCLE) {
+			if (type === PhysicsBodyType.CIRCLE) {
 				gfx.drawCircle(0, 0, (size as number) * 0.5);
 				gfx.endFill();
 				const useLogo = Math.random() > 0.5;

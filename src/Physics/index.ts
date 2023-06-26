@@ -1,9 +1,17 @@
 import {Container, DisplayObject, Texture} from "pixi.js";
 import {Application} from "../Application";
-import {BodyType} from "../GameObjects";
 import {SpritesheetLike} from "../Utils/Types";
 
 export enum PhysicsEngineType {MATTER = "matter", RAPIER = "rapier"}
+
+export enum PhysicsBodyType {
+	RECTANGLE = 'rectangle',
+	CIRCLE = 'circle',
+	CONVEX = 'convex',
+	TRAPEZOID = 'trapezoid',
+	POLYGON = 'polygon',
+	CHAMFER = 'chamfer',
+}
 
 export interface IPhysicsBase {
 	update: (pDeltaTime: number) => void;
@@ -60,6 +68,7 @@ export class PhysicsBase implements IPhysicsBase {
 
 export interface IPhysicsObject extends Container {
 	visual: DisplayObject;
+	visuals?: DisplayObject[]
 	body: any;
 }
 
@@ -69,7 +78,7 @@ export interface IPhysicsAddFactory {
 	physicsSprite(pTexture: string | Texture,
 	              pSheet?: string | string[] | undefined,
 	              pSize?: { x: number; y: number } | [number, number?] | number,
-	              pType?: BodyType,
+	              pType?: PhysicsBodyType,
 	              pAlpha?: number,
 	              pPosition?: { x: number; y: number } | [number, number?] | number): IPhysicsObject
 
@@ -80,7 +89,7 @@ export interface IPhysicsMakeFactory {
 	physicsSprite(pTexture: string | Texture, pSheet?: SpritesheetLike, pSize?: {
 		x: number;
 		y: number
-	} | [number, number?] | number, pBodyType?: BodyType): IPhysicsObject
+	} | [number, number?] | number, pBodyType?: PhysicsBodyType): IPhysicsObject
 }
 
 export interface IPhysicsFactory {

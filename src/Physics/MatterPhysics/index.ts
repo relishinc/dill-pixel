@@ -14,6 +14,7 @@ export interface IMatterPhysicsObject {
 	update(): void;
 }
 
+export * from './GameObjects';
 
 export default MatterPhysics;
 

@@ -19,15 +19,15 @@ export default class RapierPhysics extends PhysicsBase {
 	private _debugContainer: Container;
 	private _bounds: PointLike = {x: 0, y: 0};
 	private _isRunning: boolean = false;
-	private _siScaleFactor: number = 50;
+	private _systemOfUnitsFactor: number = 500;
 
 	constructor(protected app: Application) {
 		super(app);
 		this._factory = new Factory();
 	}
 
-	public get SIScaleFactor(): number {
-		return this._siScaleFactor;
+	public get SIFactor(): number {
+		return this._systemOfUnitsFactor;
 	}
 
 	public get world(): RAPIER.World {
@@ -49,13 +49,14 @@ export default class RapierPhysics extends PhysicsBase {
 
 	async init(pAutoStart: boolean = false, pDebug: boolean = false, autoCreateBounds: boolean = true, pEngineOptions?: {
 		gravity: RAPIER.Vector2,
-		siScaleFactor: number
+		systemOfUnitsFactor: number,
 	}) {
+		const defaults = {systemOfUnitsFactor: this._systemOfUnitsFactor}
+		pEngineOptions = Object.assign({}, defaults, pEngineOptions)
 		const opts = Object.assign({}, {
-			gravity: new RAPIER.Vector2(0.0, 9.81 * 50),
-			siScaleFactor: 50
+			gravity: new RAPIER.Vector2(0.0, 9.81 * pEngineOptions.systemOfUnitsFactor),
 		}, pEngineOptions);
-		this._siScaleFactor = opts.siScaleFactor;
+		this._systemOfUnitsFactor = pEngineOptions.systemOfUnitsFactor;
 		this._debug = pDebug;
 		this._world = new RAPIER.World(opts.gravity);
 
@@ -149,7 +150,7 @@ export default class RapierPhysics extends PhysicsBase {
 		const cls = buffers.colors;
 		const color = 0xff0000;
 		for (let i = 0; i < vtx.length / 4; i += 1) {
-			this._debugGraphics.lineStyle(1.0, color, cls[i * 8 + 3], 0.5, true);
+			this._debugGraphics.lineStyle(1.0, color, cls[i * 8 + 3], 1, true);
 			this._debugGraphics.moveTo(vtx[i * 4], -vtx[i * 4 + 1]);
 			this._debugGraphics.lineTo(vtx[i * 4 + 2], -vtx[i * 4 + 3]);
 		}
@@ -172,6 +173,5 @@ export default class RapierPhysics extends PhysicsBase {
 			}
 			this.world.step();
 		}
-
 	}
 }
