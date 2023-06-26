@@ -1,0 +1,1 @@
+export {MatterPhysicsSprite} from './MatterPhysicsSprite'

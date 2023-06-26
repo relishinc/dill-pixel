@@ -2,29 +2,20 @@ import {Container, Sprite, Texture} from "pixi.js";
 import {Application} from "../../../Application";
 import {resolveXYFromObjectOrArray} from "../../../Utils";
 import {SpritesheetLike} from "../../../Utils/Types";
-import {IPhysicsObject} from "../../index";
+import {IPhysicsObject, PhysicsBodyType} from "../../index";
 import MatterPhysicsBase from "../MatterPhysics";
-
-export enum BodyType {
-	RECTANGLE = 'rectangle',
-	CIRCLE = 'circle',
-	CONVEX = 'convex',
-	TRAPEZOID = 'trapezoid',
-	POLYGON = 'polygon',
-	CHAMFER = 'chamfer',
-}
 
 export class MatterPhysicsSprite extends Container implements IPhysicsObject {
 	public static readonly DEFAULT_DEBUG_COLOR: number = 0x29c5f6;
 	visual: Sprite;
 	body: Matter.Body;
 	_size: { x: number, y: number };
-	_bodyType: BodyType;
+	_bodyType: PhysicsBodyType;
 
 	constructor(pTexture: string | Texture, pSheet?: SpritesheetLike, pSize?: {
 		x: number;
 		y: number
-	} | [number, number?] | number, pBodyType: BodyType = BodyType.RECTANGLE) {
+	} | [number, number?] | number, pBodyType: PhysicsBodyType = PhysicsBodyType.RECTANGLE) {
 		super();
 		this.onAdded = this.onAdded.bind(this);
 		this.visual = typeof pTexture === 'string' ? this.addChild(this.app.make.sprite(pTexture, pSheet)) : this.addChild(new Sprite(pTexture));
@@ -66,16 +57,16 @@ export class MatterPhysicsSprite extends Container implements IPhysicsObject {
 
 	createBody() {
 		switch (this._bodyType) {
-			case BodyType.RECTANGLE:
+			case PhysicsBodyType.RECTANGLE:
 				this.body = Matter.Bodies.rectangle(this.x, this.y, this.visual.width, this.visual.height);
 				break;
-			case BodyType.CIRCLE:
+			case PhysicsBodyType.CIRCLE:
 				this.body = Matter.Bodies.circle(this.x, this.y, this.visual.width * 0.5);
 				break;
-			case BodyType.CONVEX:
+			case PhysicsBodyType.CONVEX:
 				// this.body = Bodies.fromVertices(this.sprite.x, this.sprite.y, this.sprite.width, this.sprite.height);
 				break;
-			case BodyType.TRAPEZOID:
+			case PhysicsBodyType.TRAPEZOID:
 				this.body = Matter.Bodies.trapezoid(this.x, this.y, this.visual.width, this.visual.height, 0.5);
 				break
 		}

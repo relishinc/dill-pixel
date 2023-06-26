@@ -3,17 +3,8 @@ import {Container, Sprite, Texture} from "pixi.js";
 import {Application} from "../../../Application";
 import {resolveXYFromObjectOrArray} from "../../../Utils";
 import {SpritesheetLike} from "../../../Utils/Types";
-import {IPhysicsObject} from "../../index";
+import {IPhysicsObject, PhysicsBodyType} from "../../index";
 import RapierPhysics from "../RapierPhysics";
-
-export enum BodyType {
-	RECTANGLE = 'rectangle',
-	CIRCLE = 'circle',
-	CONVEX = 'convex',
-	TRAPEZOID = 'trapezoid',
-	POLYGON = 'polygon',
-	CHAMFER = 'chamfer',
-}
 
 export class RapierPhysicsSprite extends Container implements IPhysicsObject {
 	public static readonly DEFAULT_DEBUG_COLOR: number = 0x29c5f6;
@@ -22,12 +13,12 @@ export class RapierPhysicsSprite extends Container implements IPhysicsObject {
 	collider: RAPIER.Collider;
 
 	_size: { x: number, y: number };
-	_bodyType: BodyType;
+	_bodyType: PhysicsBodyType;
 
 	constructor(pTexture: string | Texture, pSheet?: SpritesheetLike, pSize?: {
 		x: number;
 		y: number
-	} | [number, number?] | number, pBodyType: BodyType = BodyType.RECTANGLE) {
+	} | [number, number?] | number, pBodyType: PhysicsBodyType = PhysicsBodyType.RECTANGLE) {
 		super();
 		this.onAdded = this.onAdded.bind(this);
 		this.visual = typeof pTexture === 'string' ? this.addChild(this.app.make.sprite(pTexture, pSheet)) : this.addChild(new Sprite(pTexture));
@@ -63,6 +54,21 @@ export class RapierPhysicsSprite extends Container implements IPhysicsObject {
 		return (this.app.physics as RapierPhysics).world;
 	}
 
+	get activeCollisionTypes(): RAPIER.ActiveCollisionTypes {
+		// tslint:disable-next-line:no-bitwise
+		return RAPIER.ActiveCollisionTypes.DEFAULT |
+			RAPIER.ActiveCollisionTypes.KINEMATIC_FIXED
+	}
+
+	get activeEvents(): RAPIER.ActiveEvents {
+		// tslint:disable-next-line:no-bitwise
+		return RAPIER.ActiveEvents.COLLISION_EVENTS;
+	}
+
+	get activeHooks(): RAPIER.ActiveHooks {
+		return RAPIER.ActiveHooks.FILTER_CONTACT_PAIRS;
+	}
+
 	onAdded() {
 		this.createBody();
 		this.physics.addToWorld(this);
@@ -86,27 +92,31 @@ export class RapierPhysicsSprite extends Container implements IPhysicsObject {
 		this.body = this.world.createRigidBody(bodyDesc);
 
 		switch (this._bodyType) {
-			case BodyType.RECTANGLE:
+			case PhysicsBodyType.RECTANGLE:
 				// this.body = Matter.Bodies.rectangle(this.x, this.y, this.visual.width, this.visual.height);
 				colliderDesc = RAPIER.ColliderDesc.cuboid(this.visual.width / 2, this.visual.height / 2)
 					.setDensity(this.visual.width * this.visual.height)
 					.setTranslation(0, 0)
 				break;
-			case BodyType.CIRCLE:
+			case PhysicsBodyType.CIRCLE:
 				// this.body = Matter.Bodies.circle(this.x, this.y, this.visual.width * 0.5);
 				colliderDesc = RAPIER.ColliderDesc.ball(this.visual.width * 0.5)
 					.setDensity(this.visual.width * this.visual.width)
 					.setTranslation(0, 0);
 				break;
-			case BodyType.CONVEX:
+			case PhysicsBodyType.CONVEX:
 				// this.body = Bodies.fromVertices(this.sprite.x, this.sprite.y, this.sprite.width, this.sprite.height);
 				break;
-			case BodyType.TRAPEZOID:
+			case PhysicsBodyType.TRAPEZOID:
 				// this.body = Matter.Bodies.trapezoid(this.x, this.y, this.visual.width, this.visual.height, 0.5);
 				break
 		}
 
 		if (colliderDesc) {
+			// tslint:disable-next-line:no-bitwise
+			colliderDesc.setActiveEvents(this.activeEvents);
+			colliderDesc.setActiveCollisionTypes(this.activeCollisionTypes);
+			colliderDesc.setActiveHooks(this.activeHooks);
 			this.collider = this.world.createCollider(colliderDesc, this.body);
 		}
 	}

@@ -1,5 +1,4 @@
-import {Container, Graphics, IBitmapTextStyle, ITextStyle, TextStyle} from "pixi.js";
-import {Application} from "../../Application";
+import {Container, IBitmapTextStyle, ITextStyle, TextStyle} from "pixi.js";
 import {MakeFactory} from "./Make";
 import {resolveXYFromObjectOrArray} from "./utils";
 
@@ -14,7 +13,10 @@ export class AddFactory {
 		return this.defaultContainer.addChild(pObject);
 	}
 
-	coloredSprite(color: number = 0x0, alpha: number = 1, position: {
+	coloredSprite(color: number = 0x0, size: {
+		x: number;
+		y: number
+	} | [number, number?] | number = {x: 1, y: 1}, alpha: number = 1, position: {
 		x: number;
 		y: number
 	} | [number, number?] | number = {
@@ -24,13 +26,8 @@ export class AddFactory {
 		x: number;
 		y: number
 	} | [number, number?] | number = {x: 1, y: 1}) {
-		const gfx = new Graphics();
-		gfx.beginFill(color);
-		gfx.drawRect(0, 0, 1, 1);
-		gfx.endFill();
 
-		const sprite = this._make.sprite(Application.instance.renderer.generateTexture(gfx));
-		sprite.tint = color;
+		const sprite = this._make.coloredSprite(color, size);
 		sprite.alpha = alpha;
 
 		const resolvedPosition = resolveXYFromObjectOrArray(position);

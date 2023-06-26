@@ -1,7 +1,6 @@
 import {Container, Texture} from "pixi.js";
-import {BodyType} from "../../../GameObjects";
 import {resolveXYFromObjectOrArray} from "../../../Utils";
-import {IPhysicsAddFactory, IPhysicsObject} from "../../index";
+import {IPhysicsAddFactory, IPhysicsObject, PhysicsBodyType} from "../../index";
 import MakeFactory from "./MakeFactory";
 
 export default class AddFactory implements IPhysicsAddFactory {
@@ -23,7 +22,7 @@ export default class AddFactory implements IPhysicsAddFactory {
 	physicsSprite(pTexture: string | Texture,
 	              pSheet?: string | string[] | undefined,
 	              pSize?: { x: number; y: number } | [number, number?] | number,
-	              pType: BodyType = BodyType.RECTANGLE,
+	              pType: PhysicsBodyType = PhysicsBodyType.RECTANGLE,
 	              pAlpha: number = 1,
 	              pPosition: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
 	): IPhysicsObject {

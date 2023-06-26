@@ -1,6 +1,6 @@
 import {BaseState} from "@/state/BaseState.ts";
-import {AssetMapData, AssetType, BodyType, PhysicsEngineType, TextureAsset} from "html-living-framework";
-import RapierPhysics from "html-living-framework/Physics/RapierPhysics/RapierPhysics.ts";
+import {AssetMapData, AssetType, PhysicsBodyType, PhysicsEngineType, TextureAsset} from "html-living-framework";
+import RapierPhysics, {RapierPhysicsComposite} from "html-living-framework/Physics/RapierPhysics";
 import {Point} from "pixi.js";
 
 export class RapierPhysicsExample extends BaseState {
@@ -50,45 +50,60 @@ export class RapierPhysicsExample extends BaseState {
 		this.eventMode = "static";
 		this.on("pointerdown", (e) => {
 			const pt = e.getLocalPosition(this);
-			const type = Math.random() > 0.5 ? BodyType.CIRCLE : BodyType.RECTANGLE;
-			const size: [number, number?] | number =
-				type === BodyType.CIRCLE
-					? this.getObjectSize()
-					: [this.getObjectSize(), this.getObjectSize()];
 
-			// make a random colored texture from graphics
-			gfx.clear();
-			gfx.beginFill(Math.floor(Math.random() * 0xffffff));
-			if (type === BodyType.CIRCLE) {
-				gfx.drawCircle(0, 0, (size as number) * 0.5);
-				gfx.endFill();
-				const useLogo = Math.random() > 0.5;
-				this.physics.add.physicsSprite(
-					useLogo ? "relish-logo-circle" : this.app.renderer.generateTexture(gfx),
-					undefined,
-					size,
-					type,
-					1,
-					pt
-				);
-			} else {
-				gfx.drawRect(
-					0,
-					0,
-					(size as [number, number])[0],
-					(size as [number, number])[1]
-				);
-				gfx.endFill();
-				this.physics.add.physicsSprite(
-					this.app.renderer.generateTexture(gfx),
-					undefined,
-					size,
-					type,
-					1,
-					pt
-				);
+			const rnd = Math.random();
+			switch (true) {
+				case rnd < 0.5:
+					const type = Math.random() > 0.5 ? PhysicsBodyType.CIRCLE : PhysicsBodyType.RECTANGLE;
+
+					const size: [number, number?] | number =
+						type === PhysicsBodyType.CIRCLE
+							? this.getObjectSize()
+							: [this.getObjectSize(), this.getObjectSize()];
+
+					// make a random colored texture from graphics
+					gfx.clear();
+					gfx.beginFill(Math.floor(Math.random() * 0xffffff));
+					if (type === PhysicsBodyType.CIRCLE) {
+						gfx.drawCircle(0, 0, (size as number) * 0.5);
+						gfx.endFill();
+						const useLogo = Math.random() > 0.5;
+						this.physics.add.physicsSprite(
+							useLogo ? "relish-logo-circle" : this.app.renderer.generateTexture(gfx),
+							undefined,
+							size,
+							type,
+							1,
+							pt
+						);
+					} else {
+						gfx.drawRect(
+							0,
+							0,
+							(size as [number, number])[0],
+							(size as [number, number])[1]
+						);
+						gfx.endFill();
+						this.physics.add.physicsSprite(
+							this.app.renderer.generateTexture(gfx),
+							undefined,
+							size,
+							type,
+							1,
+							pt
+						);
+					}
+					gfx.clear();
+					break;
+				default:
+					const composite = new RapierPhysicsComposite();
+					composite.x = pt.x;
+					composite.y = pt.y;
+					this.physics.add.existing(composite);
+					break;
+
 			}
-			gfx.clear();
+
 		});
 	}
 }
