@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/relishinc/hlf/compare/v1.4.0...v1.5.0) (2023-06-26)
+
+
+### Features
+
+* rapier physics settings, composite gameobject ([759b935](https://github.com/relishinc/hlf/commit/759b935c414b959da4481dc1a80d12b56f5b5c22))
+
 ## [1.4.0](https://github.com/relishinc/hlf/compare/v1.3.0...v1.4.0) (2023-06-23)
 
 
