@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/relishinc/hlf/compare/v1.5.0...v1.6.0) (2023-06-26)
+
+
+### Features
+
+* add circular graphics based sprite, more work on rapier composite gameobject ([f55b44b](https://github.com/relishinc/hlf/commit/f55b44b8566134888c1ad3712c5e486f5a37df27))
+
 ## [1.5.0](https://github.com/relishinc/hlf/compare/v1.4.0...v1.5.0) (2023-06-26)
 
 
