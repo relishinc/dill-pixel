@@ -16,7 +16,10 @@ export class AddFactory {
 	coloredSprite(color: number = 0x0, size: {
 		x: number;
 		y: number
-	} | [number, number?] | number = {x: 1, y: 1}, alpha: number = 1, position: {
+	} | [number, number?] | number = {
+		x: 1,
+		y: 1
+	}, shape: "rectangle" | "circle" = "rectangle", alpha: number = 1, position: {
 		x: number;
 		y: number
 	} | [number, number?] | number = {
@@ -27,7 +30,7 @@ export class AddFactory {
 		y: number
 	} | [number, number?] | number = {x: 1, y: 1}) {
 
-		const sprite = this._make.coloredSprite(color, size);
+		const sprite = this._make.coloredSprite(color, size, shape);
 		sprite.alpha = alpha;
 
 		const resolvedPosition = resolveXYFromObjectOrArray(position);

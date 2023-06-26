@@ -87,11 +87,20 @@ export class MakeFactory {
 	coloredSprite(color: number = 0x0, size: {
 		x: number;
 		y: number
-	} | [number, number?] | number = {x: 1, y: 1}): Sprite {
+	} | [number, number?] | number = {x: 1, y: 1}, shape: "rectangle" | "circle" = "rectangle"): Sprite {
 		const gfx = new Graphics();
 		const resolvedSize = resolveXYFromObjectOrArray(size);
 		gfx.beginFill(color, 1);
-		gfx.drawRect(0, 0, resolvedSize.x, resolvedSize.y);
+		switch (shape) {
+			case "circle":
+				gfx.drawCircle(0, 0, resolvedSize.x);
+				break;
+			case "rectangle":
+			default:
+				gfx.drawRect(0, 0, resolvedSize.x, resolvedSize.y);
+				break;
+		}
+
 		gfx.endFill();
 
 		return this.sprite(Application.instance.renderer.generateTexture(gfx));
