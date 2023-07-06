@@ -13,4 +13,3 @@
 *.iml
 
 npm-debug.log*
-/src/version.ts

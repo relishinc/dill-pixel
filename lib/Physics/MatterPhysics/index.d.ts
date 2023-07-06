@@ -6,5 +6,6 @@ export interface IMatterPhysicsObject {
     debugColor: number;
     update(): void;
 }
+export * from './GameObjects';
 export default MatterPhysics;
 //# sourceMappingURL=index.d.ts.map

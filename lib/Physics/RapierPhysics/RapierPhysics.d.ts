@@ -16,15 +16,15 @@ export default class RapierPhysics extends PhysicsBase {
     private _debugContainer;
     private _bounds;
     private _isRunning;
-    private _siScaleFactor;
+    private _systemOfUnitsFactor;
     constructor(app: Application);
-    get SIScaleFactor(): number;
+    get SIFactor(): number;
     get world(): RAPIER.World;
     set debug(pDebug: boolean);
     get debug(): boolean;
     init(pAutoStart?: boolean, pDebug?: boolean, autoCreateBounds?: boolean, pEngineOptions?: {
         gravity: RAPIER.Vector2;
-        siScaleFactor: number;
+        systemOfUnitsFactor: number;
     }): Promise<void>;
     makeWall(def: WallDefinition): {
         body: RAPIER.RigidBody;

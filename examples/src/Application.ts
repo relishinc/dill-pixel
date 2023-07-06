@@ -35,7 +35,7 @@ export default class Application extends HLFApplication {
 	}
 
 	public get defaultState(): string {
-		return RapierPhysicsExample.NAME;
+		return window.location.hash === '#matter' ? MatterPhysicsExample.NAME : RapierPhysicsExample.NAME;
 	}
 
 
