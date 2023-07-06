@@ -2,16 +2,8 @@ import RAPIER from "@dimforge/rapier2d";
 import { Container, Sprite, Texture } from "pixi.js";
 import { Application } from "../../../Application";
 import { SpritesheetLike } from "../../../Utils/Types";
-import { IPhysicsObject } from "../../index";
+import { IPhysicsObject, PhysicsBodyType } from "../../index";
 import RapierPhysics from "../RapierPhysics";
-export declare enum BodyType {
-    RECTANGLE = "rectangle",
-    CIRCLE = "circle",
-    CONVEX = "convex",
-    TRAPEZOID = "trapezoid",
-    POLYGON = "polygon",
-    CHAMFER = "chamfer"
-}
 export declare class RapierPhysicsSprite extends Container implements IPhysicsObject {
     static readonly DEFAULT_DEBUG_COLOR: number;
     visual: Sprite;
@@ -21,15 +13,18 @@ export declare class RapierPhysicsSprite extends Container implements IPhysicsOb
         x: number;
         y: number;
     };
-    _bodyType: BodyType;
+    _bodyType: PhysicsBodyType;
     constructor(pTexture: string | Texture, pSheet?: SpritesheetLike, pSize?: {
         x: number;
         y: number;
-    } | [number, number?] | number, pBodyType?: BodyType);
+    } | [number, number?] | number, pBodyType?: PhysicsBodyType);
     get physics(): RapierPhysics;
     get debugColor(): number;
     get app(): Application;
     get world(): RAPIER.World;
+    get activeCollisionTypes(): RAPIER.ActiveCollisionTypes;
+    get activeEvents(): RAPIER.ActiveEvents;
+    get activeHooks(): RAPIER.ActiveHooks;
     onAdded(): void;
     onRemoved(): void;
     createBody(): void;

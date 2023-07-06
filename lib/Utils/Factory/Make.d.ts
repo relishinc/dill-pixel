@@ -8,6 +8,10 @@ import { SpritesheetLike } from "../Types";
  */
 export declare class MakeFactory {
     texture(pAsset: string, pSheet: SpritesheetLike): Texture;
+    coloredSprite(color?: number, size?: {
+        x: number;
+        y: number;
+    } | [number, number?] | number, shape?: "rectangle" | "circle"): Sprite;
     sprite(pTexture: string | Texture, pSheet?: SpritesheetLike): Sprite;
     text(pText?: string, pStyle?: Partial<ITextStyle> | TextStyle): Text;
     bitmapText(pText?: string, pStyle?: IBitmapTextStyle): BitmapText;

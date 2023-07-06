@@ -1,10 +1,13 @@
-import { Container, Graphics, IBitmapTextStyle, ITextStyle, TextStyle } from "pixi.js";
+import { Container, IBitmapTextStyle, ITextStyle, TextStyle } from "pixi.js";
 export declare class AddFactory {
     private defaultContainer;
     private _make;
     constructor(defaultContainer: Container);
     existing(pObject: any): any;
-    coloredSprite(color?: number, alpha?: number, position?: {
+    coloredSprite(color?: number, size?: {
+        x: number;
+        y: number;
+    } | [number, number?] | number, shape?: "rectangle" | "circle", alpha?: number, position?: {
         x: number;
         y: number;
     } | [number, number?] | number, anchor?: {
@@ -57,6 +60,6 @@ export declare class AddFactory {
     } | [number, number?] | number, scale?: {
         x: number;
         y: number;
-    } | [number, number?] | number): Graphics;
+    } | [number, number?] | number): import("pixi.js").Graphics;
 }
 //# sourceMappingURL=Add.d.ts.map

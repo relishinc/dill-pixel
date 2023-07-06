@@ -10,5 +10,4 @@ export * from "./Physics";
 export * from "./Popup";
 export * from "./State";
 export * from "./Utils";
-export * from "./version";
 //# sourceMappingURL=index.d.ts.map

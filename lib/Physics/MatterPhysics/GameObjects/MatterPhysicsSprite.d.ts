@@ -2,16 +2,8 @@
 import { Container, Sprite, Texture } from "pixi.js";
 import { Application } from "../../../Application";
 import { SpritesheetLike } from "../../../Utils/Types";
-import { IPhysicsObject } from "../../index";
+import { IPhysicsObject, PhysicsBodyType } from "../../index";
 import MatterPhysicsBase from "../MatterPhysics";
-export declare enum BodyType {
-    RECTANGLE = "rectangle",
-    CIRCLE = "circle",
-    CONVEX = "convex",
-    TRAPEZOID = "trapezoid",
-    POLYGON = "polygon",
-    CHAMFER = "chamfer"
-}
 export declare class MatterPhysicsSprite extends Container implements IPhysicsObject {
     static readonly DEFAULT_DEBUG_COLOR: number;
     visual: Sprite;
@@ -20,11 +12,11 @@ export declare class MatterPhysicsSprite extends Container implements IPhysicsOb
         x: number;
         y: number;
     };
-    _bodyType: BodyType;
+    _bodyType: PhysicsBodyType;
     constructor(pTexture: string | Texture, pSheet?: SpritesheetLike, pSize?: {
         x: number;
         y: number;
-    } | [number, number?] | number, pBodyType?: BodyType);
+    } | [number, number?] | number, pBodyType?: PhysicsBodyType);
     get physics(): MatterPhysicsBase;
     get debugColor(): number;
     get app(): Application;
