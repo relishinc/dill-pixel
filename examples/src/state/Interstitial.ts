@@ -4,23 +4,21 @@ import * as PIXI from "pixi.js";
 
 export class Interstitial extends HLF.LoadScreen {
 	public static NAME: string = "Interstitial";
-	
+
 	private _bg!: PIXI.Sprite;
 	private _loaded: boolean = false;
 
 	public init(pSize: PIXI.Point, pData?: any) {
 		super.init(pSize, pData);
-		if (!this._loaded) {
-			this._loaded = true;
-			this._bg = this.add.sprite(
-				"black2x2",
-				null,
-				0,
-				0,
-				0.5,
-				[this._size.x, this._size.y]
-			);
-		}
+		console.log('initi interstitial')
+		this._bg = this.add.sprite(
+			"black2x2",
+			null,
+			0,
+			0,
+			0.5,
+			[this._size.x, this._size.y]
+		);
 	}
 
 	public onLoadProgress(progress: number) {
@@ -44,6 +42,7 @@ export class Interstitial extends HLF.LoadScreen {
 			alpha: 0,
 			ease: Sine.easeInOut,
 		});
+		console.log('got to oncomplete');
 		pOnComplete();
 	}
 
