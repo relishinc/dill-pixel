@@ -3,7 +3,7 @@ import { IAudioManager, IVoiceOverManager } from "./Audio";
 import { CopyManager } from "./Copy";
 import * as Topics from "./Data/Topics";
 import { HitAreaRenderer, KeyboardManager, MouseManager } from "./Input";
-import { AssetMapData, LoadManager, SplashScreen } from "./Load";
+import { AssetMapData, LoadManager, LoadScreen, LoadScreenProvider, SplashScreen } from "./Load";
 import { PhysicsBase, PhysicsEngineType } from "./Physics";
 import { PopupManager } from "./Popup";
 import { SaveManager } from "./Save";
@@ -111,6 +111,7 @@ export declare class Application extends PIXIApplication {
      * Initializes all managers and starts the splash screen process.
      */
     init(awaitFontsLoaded?: boolean): Promise<void>;
+    protected setup(): void;
     addDebugger(): Promise<void>;
     /**
      * Called once per frame. Updates the `StateManager`, `PopupManager`, `LoadManager` and `HitAreaRenderer`.
@@ -126,6 +127,7 @@ export declare class Application extends PIXIApplication {
      * @override
      */
     protected createAssetMap(): void;
+    protected registerDefaultLoadScreen(pIdOrClass: string | typeof LoadScreen, pScreen?: LoadScreenProvider): void;
     /**
      * Override to register any and all loading screens needed for this application.
      * @override
