@@ -40,6 +40,7 @@ export class LoadManager extends Container {
 	 * The default load screen to use.
 	 */
 	private _defaultLoadScreen: LoadScreenProvider | undefined;
+	private _defaultLoadScreenId: string | undefined;
 	/**
 	 * The current active load complete callback.
 	 */
@@ -77,6 +78,14 @@ export class LoadManager extends Container {
 		this.app.subscribe(Topics.HIDE_LOAD_SCREEN, this.hideLoadScreen);
 		this.app.subscribe(Topics.LOAD_ASSETS, this.onLoadRequested);
 		this.app.subscribe(Topics.UNLOAD_ASSETS, this.onUnloadRequested);
+	}
+
+	public get defaultLoadScreen(): LoadScreenProvider | undefined {
+		return this._defaultLoadScreen;
+	}
+
+	public get defaultLoadScreenId(): string | undefined {
+		return this._defaultLoadScreenId;
 	}
 
 	/**
@@ -148,18 +157,29 @@ export class LoadManager extends Container {
 
 	/**
 	 * Registers a load screen.
-	 * @param pKey The id of the load screen.
+	 * @param pIdOrClass The id of the new state or the class of the new state.
 	 * @param pScreen The load screen.
 	 * @param [pDefault] Is the new load screen the default one.
 	 */
-	public registerLoadScreen(
-		pKey: string,
-		pScreen: LoadScreenProvider,
-		pDefault: boolean = false
-	) {
-		this._loadScreens.setValue(pKey, pScreen);
-		if (pDefault) {
-			this._defaultLoadScreen = pScreen;
+	public registerLoadScreen(pIdOrClass: string | typeof LoadScreen, pScreen?: LoadScreenProvider, pDefault: boolean = false) {
+		if (typeof pIdOrClass === "string") {
+			if (!pScreen) {
+				throw new Error(`Load screen provider must be defined when supplying a string id.`);
+			}
+			this._loadScreens.setValue(pIdOrClass, pScreen);
+			if (pDefault) {
+				this._defaultLoadScreen = pScreen;
+				this._defaultLoadScreenId = pIdOrClass;
+			}
+		} else {
+			const Klass: typeof LoadScreen = pIdOrClass as typeof LoadScreen;
+			pScreen = new Klass();
+			this._loadScreens.setValue(Klass.NAME, pScreen);
+			if (pDefault) {
+				this._defaultLoadScreen = pScreen;
+				this._defaultLoadScreenId = Klass.NAME;
+			}
+			this.app.state.register(Klass);
 		}
 	}
 
@@ -188,7 +208,7 @@ export class LoadManager extends Container {
 			LogUtils.STYLE_RED_BOLD,
 			pData.loadScreen
 		);
-		this._currentLoadScreen = this.getLoadScreen(pData.loadScreen);
+		this._currentLoadScreen = this.getLoadScreen(pData.loadScreen || this._defaultLoadScreenId);
 		if (this._currentLoadScreen !== undefined) {
 			this._currentLoadScreen.init(this._size, pData.stateData);
 			this.addChild(this._currentLoadScreen);
