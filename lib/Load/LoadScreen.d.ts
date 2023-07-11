@@ -2,7 +2,7 @@ import { State } from "../State";
 /**
  * Load screen
  */
-export declare abstract class LoadScreen extends State {
+export declare class LoadScreen extends State {
     protected _autoProgress: boolean;
     constructor();
     /**

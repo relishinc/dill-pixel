@@ -68,8 +68,11 @@ export declare class StateManager extends Container {
      * The internal flag for print log statements.
      */
     private _debug;
+    private _first;
     private _defaultStateId?;
+    private _defaultTransitionType;
     constructor(app: Application);
+    set defaultTransitionType(pTransitionType: TransitionStep[]);
     get default(): string | undefined;
     /**
      * Enabling this will print all debug logs.
