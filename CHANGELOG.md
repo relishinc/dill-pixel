@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.1](https://github.com/relishinc/hlf/compare/v1.6.0...v1.6.1) (2023-07-11)
+
+
+### Bug Fixes
+
+* default load screen in state manager ([22ace40](https://github.com/relishinc/hlf/commit/22ace405dde487275d75c7fb1bf403b967dc58fe))
+* merged ([7810dfd](https://github.com/relishinc/hlf/commit/7810dfdf3c9d137d8deb386a548fefa7a860b70f))
+
 ## [1.6.0](https://github.com/relishinc/hlf/compare/v1.5.0...v1.6.0) (2023-06-26)
 
 
