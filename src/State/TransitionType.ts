@@ -9,10 +9,11 @@ import {TransitionStep} from "./TransitionStep";
  * 4. AnimNewIn
  */
 export const TRANSITION_FIRST_VIEW: TransitionStep[] = [
-  TransitionStep.LoadAssets,
-  TransitionStep.AttachNewBehind,
-  TransitionStep.HideLoadScreen,
-  TransitionStep.AnimNewIn,
+	TransitionStep.LoadAssets,
+	TransitionStep.AttachNewBehind,
+	TransitionStep.AnimCurrentOut,
+	TransitionStep.HideLoadScreen,
+	TransitionStep.AnimNewIn,
 ];
 
 /**
@@ -28,14 +29,14 @@ export const TRANSITION_FIRST_VIEW: TransitionStep[] = [
  * 8. UnloadUnusedAssets
  */
 export const TRANSITION_SIMPLE_INTERSTITIAL: TransitionStep[] = [
-  TransitionStep.ShowLoadScreen,
-  TransitionStep.RemoveCurrent,
-  TransitionStep.UnloadAssets,
-  TransitionStep.LoadAssets,
-  TransitionStep.AttachNewInFront,
-  TransitionStep.HideLoadScreen,
-  TransitionStep.AnimNewIn,
-  TransitionStep.UnloadUnusedAssets,
+	TransitionStep.ShowLoadScreen,
+	TransitionStep.RemoveCurrent,
+	TransitionStep.UnloadAssets,
+	TransitionStep.LoadAssets,
+	TransitionStep.AttachNewInFront,
+	TransitionStep.HideLoadScreen,
+	TransitionStep.AnimNewIn,
+	TransitionStep.UnloadUnusedAssets,
 ];
 
 /**
@@ -50,13 +51,13 @@ export const TRANSITION_SIMPLE_INTERSTITIAL: TransitionStep[] = [
  * 7. UnloadUnusedAssets
  */
 export const TRANSITION_ANIM_SEQUENTIAL_PRE_ASSETS: TransitionStep[] = [
-  TransitionStep.LoadAssets,
-  TransitionStep.AnimCurrentOut,
-  TransitionStep.RemoveCurrent,
-  TransitionStep.UnloadAssets,
-  TransitionStep.AttachNewInFront,
-  TransitionStep.AnimNewIn,
-  TransitionStep.UnloadUnusedAssets,
+	TransitionStep.LoadAssets,
+	TransitionStep.AnimCurrentOut,
+	TransitionStep.RemoveCurrent,
+	TransitionStep.UnloadAssets,
+	TransitionStep.AttachNewInFront,
+	TransitionStep.AnimNewIn,
+	TransitionStep.UnloadUnusedAssets,
 ];
 
 /**
@@ -71,13 +72,13 @@ export const TRANSITION_ANIM_SEQUENTIAL_PRE_ASSETS: TransitionStep[] = [
  * 7. UnloadUnusedAssets
  */
 export const TRANSITION_ANIM_SEQUENTIAL_MID_ASSETS: TransitionStep[] = [
-  TransitionStep.AnimCurrentOut,
-  TransitionStep.RemoveCurrent,
-  TransitionStep.UnloadAssets,
-  TransitionStep.LoadAssets,
-  TransitionStep.AttachNewInFront,
-  TransitionStep.AnimNewIn,
-  TransitionStep.UnloadUnusedAssets,
+	TransitionStep.AnimCurrentOut,
+	TransitionStep.RemoveCurrent,
+	TransitionStep.UnloadAssets,
+	TransitionStep.LoadAssets,
+	TransitionStep.AttachNewInFront,
+	TransitionStep.AnimNewIn,
+	TransitionStep.UnloadUnusedAssets,
 ];
 
 /**
@@ -91,12 +92,12 @@ export const TRANSITION_ANIM_SEQUENTIAL_MID_ASSETS: TransitionStep[] = [
  * 6. UnloadUnusedAssets
  */
 export const TRANSITION_ANIM_NEW_IN_FRONT: TransitionStep[] = [
-  TransitionStep.LoadAssets,
-  TransitionStep.AttachNewInFront,
-  TransitionStep.AnimNewIn,
-  TransitionStep.RemoveCurrent,
-  TransitionStep.UnloadAssets,
-  TransitionStep.UnloadUnusedAssets,
+	TransitionStep.LoadAssets,
+	TransitionStep.AttachNewInFront,
+	TransitionStep.AnimNewIn,
+	TransitionStep.RemoveCurrent,
+	TransitionStep.UnloadAssets,
+	TransitionStep.UnloadUnusedAssets,
 ];
 
 /**
@@ -111,13 +112,13 @@ export const TRANSITION_ANIM_NEW_IN_FRONT: TransitionStep[] = [
  * 7. UnloadUnusedAssets
  */
 export const TRANSITION_ANIM_OLD_OUT_REVEAL: TransitionStep[] = [
-  TransitionStep.LoadAssets,
-  TransitionStep.AttachNewBehind,
-  TransitionStep.AnimCurrentOut,
-  TransitionStep.RemoveCurrent,
-  TransitionStep.UnloadAssets,
-  TransitionStep.AnimNewIn,
-  TransitionStep.UnloadUnusedAssets,
+	TransitionStep.LoadAssets,
+	TransitionStep.AttachNewBehind,
+	TransitionStep.AnimCurrentOut,
+	TransitionStep.RemoveCurrent,
+	TransitionStep.UnloadAssets,
+	TransitionStep.AnimNewIn,
+	TransitionStep.UnloadUnusedAssets,
 ];
 
 /**
@@ -131,12 +132,12 @@ export const TRANSITION_ANIM_OLD_OUT_REVEAL: TransitionStep[] = [
  * 6. UnloadUnusedAssets
  */
 export const TRANSITION_ANIM_SIMULTANEOUSLY_NEW_BEHIND: TransitionStep[] = [
-  TransitionStep.LoadAssets,
-  TransitionStep.AttachNewBehind,
-  TransitionStep.AnimSimultaneously,
-  TransitionStep.RemoveCurrent,
-  TransitionStep.UnloadAssets,
-  TransitionStep.UnloadUnusedAssets,
+	TransitionStep.LoadAssets,
+	TransitionStep.AttachNewBehind,
+	TransitionStep.AnimSimultaneously,
+	TransitionStep.RemoveCurrent,
+	TransitionStep.UnloadAssets,
+	TransitionStep.UnloadUnusedAssets,
 ];
 
 /**
@@ -150,10 +151,10 @@ export const TRANSITION_ANIM_SIMULTANEOUSLY_NEW_BEHIND: TransitionStep[] = [
  * 6. UnloadUnusedAssets
  */
 export const TRANSITION_ANIM_SIMULTANEOUSLY_NEW_IN_FRONT: TransitionStep[] = [
-  TransitionStep.LoadAssets,
-  TransitionStep.AttachNewInFront,
-  TransitionStep.AnimSimultaneously,
-  TransitionStep.RemoveCurrent,
-  TransitionStep.UnloadAssets,
-  TransitionStep.UnloadUnusedAssets,
+	TransitionStep.LoadAssets,
+	TransitionStep.AttachNewInFront,
+	TransitionStep.AnimSimultaneously,
+	TransitionStep.RemoveCurrent,
+	TransitionStep.UnloadAssets,
+	TransitionStep.UnloadUnusedAssets,
 ];

@@ -14,6 +14,10 @@ export class BaseState extends State {
 		super();
 	}
 
+	public static get Assets(): AssetMapData[] {
+		return [new TextureAsset("black2x2", AssetType.PNG)]
+	}
+
 	public get app(): Application {
 		return Application.instance;
 	}
@@ -86,14 +90,6 @@ export class BaseState extends State {
 		footer.addContent(this._footerTitle);
 	}
 
-	protected setHeaderText(pText: string) {
-		this._title.text = pText;
-	}
-
-	protected setMainText(pText: string) {
-		this._mainTitle.text = pText;
-	}
-
 	public async animateIn(pOnComplete: () => void): Promise<void> {
 		const timeline = gsap.timeline();
 		await timeline.to(this.layout, {
@@ -132,7 +128,11 @@ export class BaseState extends State {
 		super.destroy()
 	}
 
-	public static get Assets(): AssetMapData[] {
-		return [new TextureAsset("black2x2", AssetType.PNG)]
+	protected setHeaderText(pText: string) {
+		this._title.text = pText;
+	}
+
+	protected setMainText(pText: string) {
+		this._mainTitle.text = pText;
 	}
 }
