@@ -85,7 +85,11 @@ export class StateManager extends Container {
 	 */
 	private _debug: boolean = false;
 
+	private _first: boolean = true;
+
 	private _defaultStateId?: string | undefined;
+
+	private _defaultTransitionType: TransitionStep[] = TransitionType.TRANSITION_ANIM_NEW_IN_FRONT;
 
 	constructor(private app: Application) {
 		super();
@@ -100,6 +104,10 @@ export class StateManager extends Container {
 		this.onStateLoadRequested = this.onStateLoadRequested.bind(this);
 
 		this.app.subscribe(Topics.STATE_LOAD_STATE, this.onStateLoadRequested);
+	}
+
+	set defaultTransitionType(pTransitionType: TransitionStep[]) {
+		this._defaultTransitionType = pTransitionType;
 	}
 
 	public get default() {
@@ -168,15 +176,18 @@ export class StateManager extends Container {
 	): void {
 		const stateObj = pStateIdAndData as { id: string; data: any };
 		const stateStr: string = pStateIdAndData as string;
+
 		if (!pTransitionSteps) {
-			pTransitionSteps = TransitionType.TRANSITION_FIRST_VIEW;
+			pTransitionSteps = this._first ? TransitionType.TRANSITION_FIRST_VIEW : this._defaultTransitionType;
 		}
+		this._first = false;
 
 		let token: StateToken;
+		const loadScreen = pLoadScreen || this.app.load.defaultLoadScreenId;
 		if (stateObj?.id) {
-			token = new StateToken(stateObj, pLoadScreen, ...pTransitionSteps);
+			token = new StateToken(stateObj, loadScreen, ...pTransitionSteps);
 		} else {
-			token = new StateToken(stateStr, pLoadScreen, ...pTransitionSteps);
+			token = new StateToken(stateStr, loadScreen, ...pTransitionSteps);
 		}
 
 		this._newStateToken = token;

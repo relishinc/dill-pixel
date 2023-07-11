@@ -5,7 +5,7 @@ import {CopyManager} from "./Copy";
 import {AppConfig} from "./Data";
 import * as Topics from "./Data/Topics";
 import {HitAreaRenderer, KeyboardManager, MouseManager} from "./Input";
-import {AssetMap, AssetMapData, LoadManager, SplashScreen} from "./Load";
+import {AssetMap, AssetMapData, LoadManager, LoadScreen, LoadScreenProvider, SplashScreen} from "./Load";
 import {PhysicsBase, PhysicsEngineType} from "./Physics";
 import {PopupManager} from "./Popup";
 import {SaveManager} from "./Save";
@@ -354,6 +354,12 @@ export class Application extends PIXIApplication {
 		// Delayed to fix incorrect iOS resizing in WKWebView. See: https://bugs.webkit.org/show_bug.cgi?id=170595
 		this.onResize(0.5);
 		this._webEventsManager.registerResizeCallback(() => this.onResize(0.5));
+
+		this.setup();
+	}
+
+	protected setup() {
+		// override me to set up application specific stuff
 	}
 
 	public async addDebugger() {
@@ -388,6 +394,15 @@ export class Application extends PIXIApplication {
 	 */
 	protected createAssetMap(): void {
 		// override
+	}
+
+
+	protected registerDefaultLoadScreen(pIdOrClass: string | typeof LoadScreen, pScreen?: LoadScreenProvider): void {
+		this.load.registerLoadScreen(
+			pIdOrClass,
+			pScreen,
+			true
+		);
 	}
 
 	/**

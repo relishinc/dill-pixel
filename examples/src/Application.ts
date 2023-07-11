@@ -1,4 +1,4 @@
-import {Interstitial} from "@/state/Interstitial";
+import {Interstitial} from "@/state/Interstitial.ts";
 import {MatterPhysicsExample} from "@/state/MatterPhysicsExample";
 import {RapierPhysicsExample} from "@/state/RapierPhysicsExample.ts";
 import {SplashScreen} from "@/state/SplashScreen";
@@ -7,7 +7,8 @@ import {
 	AssetMapData,
 	AssetType,
 	SplashScreen as HLFSplashScreen,
-	TextureAsset
+	TextureAsset,
+	TransitionType
 } from "html-living-framework";
 
 export default class Application extends HLFApplication {
@@ -35,7 +36,7 @@ export default class Application extends HLFApplication {
 	}
 
 	public get defaultState(): string {
-		return window.location.hash === '#matter' ? MatterPhysicsExample.NAME : RapierPhysicsExample.NAME;
+		return MatterPhysicsExample.NAME
 	}
 
 
@@ -43,12 +44,9 @@ export default class Application extends HLFApplication {
 		return new SplashScreen();
 	}
 
-	protected registerLoadingScreens(): void {
-		this.load.registerLoadScreen(
-			Interstitial.NAME,
-			new Interstitial(),
-			true
-		);
+	protected setup() {
+		this.registerDefaultLoadScreen(Interstitial);
+		this.state.defaultTransitionType = TransitionType.TRANSITION_SIMPLE_INTERSTITIAL;
 	}
 
 	protected registerStates(): void {
