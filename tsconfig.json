@@ -27,6 +27,7 @@
     "src"
   ],
   "exclude": [
+    "lib",
     "node_modules"
   ]
 }
