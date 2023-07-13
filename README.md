@@ -2,6 +2,10 @@
 
 Framework for HTML game development, made by Relish Digital [https://reli.sh].
 
+### Migration Guide
+
+HLF is changing! View the [Migration Guide](./MIGRATION_GUIDE.md) for more information.
+
 ### Introduction
 
 #### Why make this game framework?
