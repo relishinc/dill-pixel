@@ -2,4 +2,4 @@
 export const PACKAGE_NAME: string = "html-living-framework";
 export const PACKAGE_VERSION: string = "1.6.1";
 export const GIT_BRANCH: string | undefined = "main";
-export const GIT_COMMIT: string | undefined = "2edb437575d87314cabadc1f6484cadd34c3bf48";
+export const GIT_COMMIT: string | undefined = "3a455f3671f10fcc41b5f6d02c845c465026e57d";
