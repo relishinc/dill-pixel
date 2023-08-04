@@ -2,7 +2,7 @@ import {Assets, Container, Point} from "pixi.js";
 import {Dictionary} from "typescript-collections";
 import {Application} from "../Application";
 import * as Topics from "../Data/Topics";
-import {AssetUtils} from "../Utils";
+import {AssetUtils, broadcast, subscribe} from "../Utils";
 import * as LogUtils from "../Utils/LogUtils";
 import {AssetMap} from "./AssetMap";
 import {AssetMapAudioData} from "./AssetMapAudioData";
@@ -74,10 +74,10 @@ export class LoadManager extends Container {
 		this.onPixiLoadProgress = this.onPixiLoadProgress.bind(this);
 		this.onPixiLoadError = this.onPixiLoadError.bind(this);
 
-		this.app.subscribe(Topics.SHOW_LOAD_SCREEN, this.showLoadScreen)
-		this.app.subscribe(Topics.HIDE_LOAD_SCREEN, this.hideLoadScreen);
-		this.app.subscribe(Topics.LOAD_ASSETS, this.onLoadRequested);
-		this.app.subscribe(Topics.UNLOAD_ASSETS, this.onUnloadRequested);
+		subscribe(Topics.SHOW_LOAD_SCREEN, this.showLoadScreen)
+		subscribe(Topics.HIDE_LOAD_SCREEN, this.hideLoadScreen);
+		subscribe(Topics.LOAD_ASSETS, this.onLoadRequested);
+		subscribe(Topics.UNLOAD_ASSETS, this.onUnloadRequested);
 	}
 
 	public get defaultLoadScreen(): LoadScreenProvider | undefined {
@@ -414,7 +414,7 @@ export class LoadManager extends Container {
 					audioAssets.map((asset) => asset.getResource().src),
 					this.onPixiLoadProgress
 				);
-				this.app.broadcast(Topics.LOAD_AUDIO_FROM_ASSET_MAP, {
+				broadcast(Topics.LOAD_AUDIO_FROM_ASSET_MAP, {
 					assets: audioAssets,
 					progressCallback: this.onAudioLoadProgress,
 					callback: this.onAllLoadsComplete
@@ -525,7 +525,7 @@ export class LoadManager extends Container {
 		} else {
 			this.onLoadScreenComplete();
 		}
-		this.app.broadcast(Topics.LOAD_COMPLETE);
+		broadcast(Topics.LOAD_COMPLETE);
 	}
 
 	/**
@@ -555,7 +555,7 @@ export class LoadManager extends Container {
 			}
 		}
 		this._currentLoadScreen = undefined;
-		this.app.broadcast(Topics.LOAD_SCREEN_HIDDEN);
+		broadcast(Topics.LOAD_SCREEN_HIDDEN);
 	}
 
 	/**

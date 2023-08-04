@@ -1,5 +1,6 @@
 import {Container, Graphics, Point} from "pixi.js";
 import * as Topics from "../Data/Topics";
+import {broadcast} from "../Utils";
 import {IPopup} from "./IPopup";
 import {IPopupToken} from "./PopupToken";
 
@@ -161,6 +162,6 @@ export abstract class Popup extends Container implements IPopup {
 			this._callback = undefined;
 			callback();
 		}
-		PubSub.publishSync(Topics.HIDE_POPUP_COMPLETE, this as IPopup);
+		broadcast(Topics.HIDE_POPUP_COMPLETE, this as IPopup);
 	}
 }

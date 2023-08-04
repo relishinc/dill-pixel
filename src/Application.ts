@@ -1,5 +1,4 @@
 import {Application as PIXIApplication, Assets, IApplicationOptions, Point, Ticker} from "pixi.js";
-import * as PubSub from "pubsub-js";
 import {AudioToken, HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverManager,} from "./Audio";
 import {CopyManager} from "./Copy";
 import {AppConfig} from "./Data";
@@ -10,7 +9,7 @@ import {PhysicsBase, PhysicsEngineType} from "./Physics";
 import {PopupManager} from "./Popup";
 import {SaveManager} from "./Save";
 import {State, StateManager} from "./State";
-import {AssetUtils, Delay, OrientationManager, ResizeManager, WebEventsManager,} from "./Utils";
+import {AssetUtils, broadcast, Delay, OrientationManager, ResizeManager, subscribe, WebEventsManager,} from "./Utils";
 import * as Factory from './Utils/Factory';
 
 export interface HLFApplicationOptions extends IApplicationOptions {
@@ -275,17 +274,6 @@ export class Application extends PIXIApplication {
 		return this._physics;
 	}
 
-	public broadcast(message: string, data?: any | undefined) {
-		return PubSub.publishSync(message, data);
-	}
-
-	public subscribe<T, M>(
-		message: string,
-		callback: (message: T, data: M) => void
-	) {
-		return PubSub.subscribe(message, callback as () => void);
-	}
-
 	/**
 	 *
 	 * @param pGroupId
@@ -341,7 +329,7 @@ export class Application extends PIXIApplication {
 
 		this._audioManager.init();
 
-		this.subscribe(this.topics.PLAY_AUDIO, this.onPlayAudio);
+		subscribe(this.topics.PLAY_AUDIO, this.onPlayAudio);
 
 		this.createAssetMap();
 		this.registerStates();
@@ -358,13 +346,13 @@ export class Application extends PIXIApplication {
 		this.setup();
 	}
 
-	protected setup() {
-		// override me to set up application specific stuff
-	}
-
 	public async addDebugger() {
 		const DebuggerClass = await import('./Debugger').then((m) => m.Debugger);
 		this._debugger = new DebuggerClass(this);
+	}
+
+	protected setup() {
+		// override me to set up application specific stuff
 	}
 
 	/**
@@ -468,7 +456,7 @@ export class Application extends PIXIApplication {
 		this._popupManager.onResize(this._size);
 		this._orientationManager.onResize(this._size);
 
-		this.broadcast(this.topics.KEYBOARD_REFOCUS);
+		broadcast(this.topics.KEYBOARD_REFOCUS);
 
 		if (this._hitAreaRenderer.active) {
 			this._hitAreaRenderer.renderHitAreas();

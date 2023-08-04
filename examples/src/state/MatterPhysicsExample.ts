@@ -1,6 +1,14 @@
 import {BaseState} from "@/state/BaseState.ts";
 import {MatterPhysicsSpriteExample} from "@/state/GameObjects/MatterPhysicsSpriteExample.ts";
-import {AssetMapData, AssetType, PhysicsBodyType, TextureAsset} from "html-living-framework";
+import {
+	AssetMapData,
+	AssetType,
+	broadcast,
+	Delay,
+	PhysicsBodyType,
+	subscribe,
+	TextureAsset
+} from "html-living-framework";
 import MatterPhysics from "html-living-framework/Physics/MatterPhysics";
 import {Point} from "pixi.js";
 
@@ -35,14 +43,14 @@ export class MatterPhysicsExample extends BaseState {
 		// 	this.app.state.transitionTo(RapierPhysicsExample.NAME);
 		// }
 		//
-		// type test = { foo: string, bar: number };
-		//
-		// this.app.subscribe<string, test>('resize', (message, data) => {
-		// 	console.log(message, data.foo, data.bar);
-		// });
-		//
-		// await Delay(2);
-		// this.app.broadcast('resize', {foo: 'bar', bar: 123})
+		type TestType = { foo: string, bar: number };
+
+		subscribe<string, TestType>('resize', (message, data) => {
+			console.log(message, data.foo, data.bar);
+		});
+
+		await Delay(2);
+		broadcast('resize', {foo: 'bar', bar: 123})
 	}
 
 	protected getObjectSize() {
