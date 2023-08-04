@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.2](https://github.com/relishinc/hlf/compare/v1.6.1...v1.6.2) (2023-08-04)
+
+
+### Bug Fixes
+
+* changed pubsub implementation ([cd006e9](https://github.com/relishinc/hlf/commit/cd006e96b05804aaab38f01d0c21a1ba4595da80))
+
 ## [1.6.1](https://github.com/relishinc/hlf/compare/v1.6.0...v1.6.1) (2023-07-11)
 
 
