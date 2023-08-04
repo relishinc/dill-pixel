@@ -40,7 +40,7 @@ export interface IPopup extends PIXI.DisplayObject {
 
 	/**
 	 * Hide the popup.
-	 * When implementing, make sure to call `PubSub.publishSync(Topics.HIDE_POPUP_COMPLETE, this as IPopup)` afterwards
+	 * When implementing, make sure to call `broadcast(Topics.HIDE_POPUP_COMPLETE, this as IPopup)` afterwards
 	 */
 	hide(): void;
 

@@ -5,6 +5,7 @@ import {Application} from "../Application";
 import {STATE_INIT} from "../Data";
 import * as Topics from "../Data/Topics";
 import {AssetMap, AssetMapData, LoadToken} from "../Load";
+import {broadcast, subscribe} from "../Utils";
 import * as LogUtils from "../Utils/LogUtils";
 import {State} from "./State";
 import {StateToken} from "./StateToken";
@@ -103,7 +104,7 @@ export class StateManager extends Container {
 
 		this.onStateLoadRequested = this.onStateLoadRequested.bind(this);
 
-		this.app.subscribe(Topics.STATE_LOAD_STATE, this.onStateLoadRequested);
+		subscribe(Topics.STATE_LOAD_STATE, this.onStateLoadRequested);
 	}
 
 	set defaultTransitionType(pTransitionType: TransitionStep[]) {
@@ -581,7 +582,7 @@ export class StateManager extends Container {
 			// Attach state as child of manager.
 			this.addChild(this._newState);
 			this._newState.init(this._size, this._newStateToken!.data);
-			this.app.broadcast(STATE_INIT, this._newStateToken!.data);
+			broadcast(STATE_INIT, this._newStateToken!.data);
 
 			// Caller requests the new view to be added in front or behind the existing view.
 			if (pNewInFront) {
@@ -663,7 +664,7 @@ export class StateManager extends Container {
 				this.handleLoadAssetsComplete.bind(this),
 				this._loadScreen
 			);
-			this.app.broadcast(Topics.LOAD_ASSETS, token);
+			broadcast(Topics.LOAD_ASSETS, token);
 		} else {
 			// No assets to load.
 			this.logW(
@@ -695,7 +696,7 @@ export class StateManager extends Container {
 					this.handleUnloadAssetsComplete.bind(this),
 					this._loadScreen
 				);
-				this.app.broadcast(Topics.UNLOAD_ASSETS, token);
+				broadcast(Topics.UNLOAD_ASSETS, token);
 			} else {
 				// No assets to unload
 				this.performNextTransitionStep();
@@ -722,7 +723,7 @@ export class StateManager extends Container {
 	private performStepShowLoadScreen(): void {
 		this.log("performStepShowLoadScreen");
 		if (this._loadScreen !== undefined) {
-			this.app.broadcast(Topics.SHOW_LOAD_SCREEN, {
+			broadcast(Topics.SHOW_LOAD_SCREEN, {
 				callback: this.handleLoadScreenAnimateInComplete.bind(this),
 				loadScreen: this._loadScreen,
 				stateData:
@@ -748,7 +749,7 @@ export class StateManager extends Container {
 	private performStepHideLoadScreen(): void {
 		this.log("performStepHideLoadScreen");
 		if (this._loadScreen !== undefined) {
-			this.app.broadcast(Topics.HIDE_LOAD_SCREEN, {
+			broadcast(Topics.HIDE_LOAD_SCREEN, {
 				callback: this.handleLoadScreenAnimateOutComplete.bind(this),
 				loadScreen: this._loadScreen,
 			});
@@ -768,7 +769,7 @@ export class StateManager extends Container {
 	 */
 	private performStepHalt(): void {
 		this.log("performStepHalt");
-		this.app.broadcast(Topics.STATE_TRANSITION_HALTED, this._newStateToken);
+		broadcast(Topics.STATE_TRANSITION_HALTED, this._newStateToken);
 	}
 
 	/**

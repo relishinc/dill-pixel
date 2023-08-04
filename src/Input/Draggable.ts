@@ -2,6 +2,7 @@ import * as PIXI from "pixi.js";
 import {Point} from "pixi.js";
 import * as Topics from "../Data/Topics";
 import * as InputUtils from "../Input/InputUtils";
+import {broadcast} from "../Utils";
 import * as PixiUtils from "../Utils/PixiUtils";
 import * as PointUtils from "../Utils/PointUtils";
 import {Selectable} from "./Selectable";
@@ -75,7 +76,7 @@ export class Draggable extends Selectable {
 	 */
 	public select(): void {
 		super.select();
-		PubSub.publishSync(Topics.DRAGGABLE_SELECTED, this);
+		broadcast(Topics.DRAGGABLE_SELECTED, this);
 	}
 
 	/**
@@ -83,7 +84,7 @@ export class Draggable extends Selectable {
 	 */
 	public deselect(): void {
 		super.deselect();
-		PubSub.publishSync(Topics.DRAGGABLE_DESELECTED, this);
+		broadcast(Topics.DRAGGABLE_DESELECTED, this);
 	}
 
 	/**
@@ -155,7 +156,7 @@ export class Draggable extends Selectable {
 			this.onDragBegin[i](this);
 		}
 		this._isDrag = true;
-		PubSub.publishSync(Topics.DRAG_BEGIN, this);
+		broadcast(Topics.DRAG_BEGIN, this);
 	}
 
 	/**
@@ -167,7 +168,7 @@ export class Draggable extends Selectable {
 		}
 		this._isDrag = false;
 		this._eventData = undefined;
-		PubSub.publishSync(Topics.DRAG_END, this);
+		broadcast(Topics.DRAG_END, this);
 	}
 
 	/**

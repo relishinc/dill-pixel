@@ -2,11 +2,12 @@ import {Point} from "pixi.js";
 import {Application} from "../Application";
 import {LANDSCAPE_ORIENTATION, PORTRAIT_ORIENTATION} from "../Data";
 import * as PixiUtils from "./PixiUtils";
+import {broadcast} from "./PubSub";
 
 export class OrientationManager {
-	/** @deprecated use PubSub.subscribe(LANDSCAPE_ORIENTATION) */
+	/** @deprecated use subscribe(LANDSCAPE_ORIENTATION) */
 	public onLandscapeOrientation!: () => void;
-	/** @deprecated use PubSub.subscribe(PORTRAIT_ORIENTATION) */
+	/** @deprecated use subscribe(PORTRAIT_ORIENTATION) */
 	public onPortraitOrientation!: () => void;
 
 	private _promptImage?: HTMLImageElement;
@@ -54,7 +55,7 @@ export class OrientationManager {
 					if (this.onLandscapeOrientation !== undefined) {
 						this.onLandscapeOrientation();
 					}
-					PubSub.publish(LANDSCAPE_ORIENTATION, undefined);
+					broadcast(LANDSCAPE_ORIENTATION, undefined);
 				}
 				break;
 			default:
@@ -65,7 +66,7 @@ export class OrientationManager {
 					if (this.onPortraitOrientation !== undefined) {
 						this.onPortraitOrientation();
 					}
-					PubSub.publish(PORTRAIT_ORIENTATION, undefined);
+					broadcast(PORTRAIT_ORIENTATION, undefined);
 				}
 				break;
 		}
