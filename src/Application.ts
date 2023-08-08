@@ -200,6 +200,10 @@ export class Application extends PIXIApplication {
 		return this._stateManager;
 	}
 
+	public get popups(): PopupManager {
+		return this._popupManager;
+	}
+
 	public get audio(): IAudioManager {
 		return this._audioManager;
 	}

@@ -3,10 +3,14 @@ import {MakeFactory} from "./Make";
 import {resolveXYFromObjectOrArray} from "./utils";
 
 export class AddFactory {
-	private _make: MakeFactory;
+	private readonly _make: MakeFactory;
 
 	constructor(private defaultContainer: Container) {
 		this._make = new MakeFactory();
+	}
+
+	public get makeFactory() {
+		return this._make;
 	}
 
 	existing(pObject: any) {
@@ -19,7 +23,7 @@ export class AddFactory {
 	} | [number, number?] | number = {
 		x: 1,
 		y: 1
-	}, shape: "rectangle" | "circle" = "rectangle", alpha: number = 1, position: {
+	}, shape: "rectangle" | "rounded_rectangle" | "circle" = "rectangle", alpha: number = 1, position: {
 		x: number;
 		y: number
 	} | [number, number?] | number = {
@@ -28,9 +32,11 @@ export class AddFactory {
 	}, anchor: { x: number; y: number } | [number, number?] | number = {x: 0.5, y: 0.5}, scale: {
 		x: number;
 		y: number
-	} | [number, number?] | number = {x: 1, y: 1}) {
+	} | [number, number?] | number = {x: 1, y: 1}, opts?: {
+		[key: string]: string | number
+	}) {
 
-		const sprite = this._make.coloredSprite(color, size, shape);
+		const sprite = this._make.coloredSprite(color, size, shape, opts);
 		sprite.alpha = alpha;
 
 		const resolvedPosition = resolveXYFromObjectOrArray(position);

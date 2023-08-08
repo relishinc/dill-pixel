@@ -1,6 +1,7 @@
 import {Container, Graphics, Point} from "pixi.js";
 import * as Topics from "../Data/Topics";
 import {broadcast} from "../Utils";
+import {AddFactory, MakeFactory} from "../Utils/Factory";
 import {IPopup} from "./IPopup";
 import {IPopupToken} from "./PopupToken";
 
@@ -15,7 +16,8 @@ export enum POPUP_STATE {
  * This is an abstract class from which all Popups should inherit.
  * However, you can also make your own implementation of {@link IPopup} if necessary.
  */
-export abstract class Popup extends Container implements IPopup {
+export class Popup extends Container implements IPopup {
+	public static readonly NAME: string = '__Popup';
 	/** @inheritdoc */
 	public blackout?: Graphics;
 	/** This is where we keep the callback that we call when closing the popup  */
@@ -28,6 +30,9 @@ export abstract class Popup extends Container implements IPopup {
 	protected _clickBackdropToClose: boolean | "static" = true;
 	/** Private backing field for {@link keyboardToClose} */
 	protected _keyboardToClose: boolean = true;
+
+	protected _addFactory: AddFactory = new AddFactory(this);
+	protected _makeFactory: MakeFactory = new MakeFactory();
 
 	/** Private backing field for {@link id} */
 	private _id?: string;
@@ -48,6 +53,14 @@ export abstract class Popup extends Container implements IPopup {
 
 	get popupData() {
 		return this._popupData;
+	}
+
+	protected get add(): AddFactory {
+		return this._addFactory;
+	}
+
+	protected get make(): MakeFactory {
+		return this.add.makeFactory;
 	}
 
 	/** Hide the popup, but only if it's open */
@@ -111,13 +124,19 @@ export abstract class Popup extends Container implements IPopup {
 	 * Called by {@link show}
 	 * Don't forget to call the callback when complete
 	 */
-	protected abstract AnimateIn(pCallback: () => void): void;
+	protected async AnimateIn(pCallback: () => void): Promise<void> {
+		console.log('default AnimateIn');
+		pCallback();
+	}
 
 	/**
 	 * Called by {@link hide}
 	 * Don't forget to call the callback when complete
 	 */
-	protected abstract AnimateOut(pCallback: () => void): void;
+	protected async AnimateOut(pCallback: () => void): Promise<void> {
+		console.log('default AnimateOut');
+		pCallback();
+	}
 
 	/**
 	 * Click handler for {@link blackout}
