@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.0](https://github.com/relishinc/hlf/compare/v1.6.2...v2.0.0) (2023-08-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* changed Popup class to be non-abstract
+
+### Features
+
+* added access to popupmanager via app.popups, ([eaf5a5a](https://github.com/relishinc/hlf/commit/eaf5a5a88bd4d6d4dd06e730a618073ace86633f))
+
+
+### Bug Fixes
+
+* fixed StateManager error on initial transition ([eaf5a5a](https://github.com/relishinc/hlf/commit/eaf5a5a88bd4d6d4dd06e730a618073ace86633f))
+
 ## [1.6.2](https://github.com/relishinc/hlf/compare/v1.6.1...v1.6.2) (2023-08-04)
 
 
