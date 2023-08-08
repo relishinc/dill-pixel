@@ -6,14 +6,13 @@ import * as Input from "../Input";
 import {broadcast, subscribe} from "../Utils";
 import * as LogUtils from "../Utils/LogUtils";
 import {IPopup} from "./IPopup";
+import {Popup} from "./Popup";
 import {IPopupToken} from "./PopupToken";
-
-type PopupConstructor = () => IPopup;
 
 export class PopupManager extends Container {
 
 	private _activePopups: IPopup[];
-	private _popups: Dictionary<string, PopupConstructor>;
+	private _popups: Dictionary<string, typeof Popup>;
 	private _size!: Point;
 	private _debug: boolean = false;
 	private _overlayColor: number;
@@ -25,30 +24,39 @@ export class PopupManager extends Container {
 		pOverlayAlpha: number = 0.75
 	) {
 		super();
-		this._popups = new Dictionary<string, PopupConstructor>();
+		this._popups = new Dictionary<string, typeof Popup>();
 		this._activePopups = new Array<IPopup>();
 		this._overlayColor = pOverlayColor;
 		this._overlayAlpha = pOverlayAlpha;
 
-		subscribe(Topics.SHOW_POPUP, this.handleShowPopup.bind(this));
-		subscribe(Topics.HIDE_POPUP, this.handleHidePopup.bind(this));
+		// bind internal methods
+		this.handleShowPopup = this.handleShowPopup.bind(this);
+		this.handleHidePopup = this.handleHidePopup.bind(this);
+		this.handleHideAllPopups = this.handleHideAllPopups.bind(this);
+		this.handleHideTopmostPopup = this.handleHideTopmostPopup.bind(this);
+		this.handleHidePopupComplete = this.handleHidePopupComplete.bind(this);
+		this.handleKeyDown = this.handleKeyDown.bind(this);
+
+		// subscribe to popup topics
+		subscribe(Topics.SHOW_POPUP, this.handleShowPopup);
+		subscribe(Topics.HIDE_POPUP, this.handleHidePopup);
 		subscribe(
 			Topics.HIDE_ALL_POPUPS,
-			this.handleHideAllPopups.bind(this)
+			this.handleHideAllPopups
 		);
 		subscribe(
 			Topics.HIDE_TOPMOST_POPUP,
-			this.handleHideTopmostPopup.bind(this)
+			this.handleHideTopmostPopup
 		);
-
 		subscribe(
 			Topics.HIDE_POPUP_COMPLETE,
-			this.handleHidePopupComplete.bind(this)
+			this.handleHidePopupComplete
 		);
 
+		// subscribe to global keyboard events
 		window.addEventListener(
 			Input.Events.KEY_DOWN,
-			this.handleKeyDown.bind(this),
+			this.handleKeyDown,
 			false
 		);
 	}
@@ -64,11 +72,15 @@ export class PopupManager extends Container {
 	/**
 	 * Register a popup, so that it can be spawned later.
 	 * @description Expectation is that this is called in {@link Application.registerPopups}
-	 * @param pPopup A function that returns an {@link IPopup}
+	 * @param pPopupClass
 	 * @param pId Unique ID for this type of popup
 	 */
-	public registerPopup(pPopup: PopupConstructor, pId: string): void {
-		this._popups.setValue(pId, pPopup);
+	public register(pPopupClass: typeof Popup, pId?: string): void {
+		const id = pPopupClass.NAME === '__Popup' ? pId : pPopupClass.NAME;
+		if (!id || id === '__Popup') {
+			throw new Error('PopupManager.register: Popup class should have a NAME property, or you should pass an id parameter');
+		}
+		this._popups.setValue(id, pPopupClass);
 		this.log('registerPopup: Registered popup with ID "' + pId + '"');
 	}
 
@@ -115,7 +127,7 @@ export class PopupManager extends Container {
 			this.log('ShowPopup: Creating popup from ID: "' + pToken.id + '"');
 
 			// TODO: Create / return a unique ID
-			const popup = popupConstructor();
+			const popup = new popupConstructor();
 
 			if (pToken.backdrop !== false) {
 				// TODO: pool overlays
@@ -291,7 +303,7 @@ export class PopupManager extends Container {
 		overlay.drawRect(0, 0, 2, 2);
 		overlay.endFill();
 		overlay.blendMode = BLEND_MODES.OVERLAY;
-		(overlay as DisplayObject).interactive = true;
+		(overlay as DisplayObject).eventMode = 'static';
 		overlay.x = -this._size.x / 2;
 		overlay.y = -this._size.y / 2;
 		overlay.width = this._size.x;

@@ -87,6 +87,7 @@ export class StateManager extends Container {
 	private _debug: boolean = false;
 
 	private _first: boolean = true;
+	private _firstComplete: boolean = false;
 
 	private _defaultStateId?: string | undefined;
 
@@ -418,6 +419,7 @@ export class StateManager extends Container {
 			this._isTransitioning = false;
 			this._simultaneousCheckAnimInComplete = false;
 			this._simultaneousCheckAnimOutComplete = false;
+			this._firstComplete = true;
 		}
 	}
 
@@ -507,10 +509,13 @@ export class StateManager extends Container {
 	private performStepAnimCurrentOut(): void {
 		this.log("performStepAnimCurrentOut");
 		if (this._currentState === undefined) {
-			this.logE("The current view is null. Review your transition steps.");
+			if (this._firstComplete) {
+				this.logE("The current view is null. Review your transition steps.");
+			}
+
 			this.performNextTransitionStep();
 		} else {
-			this._currentState.animateOut(
+			this._currentState?.animateOut(
 				this.handleViewAnimateOutComplete.bind(this)
 			);
 		}

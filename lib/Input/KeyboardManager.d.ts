@@ -19,7 +19,6 @@ interface IKeyboardBinding {
  */
 export declare class KeyboardManager {
     private app;
-    set debug(pEnabled: boolean);
     private _maps;
     private _isActive;
     private _isEnabled;
@@ -29,6 +28,7 @@ export declare class KeyboardManager {
     static bindingToString(pBinding: IKeyboardBinding): string;
     protected static doesEventMatchBinding(pEvent: KeyboardEvent, pBinding: IKeyboardBinding): boolean;
     private static areEqual;
+    set debug(pEnabled: boolean);
     addKeyBinding(pDirection: Direction | "Enter", pKeyCode: KeyCodes, pModifiers?: Partial<{
         altKey: boolean;
         shiftKey: boolean;

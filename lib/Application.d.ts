@@ -91,8 +91,6 @@ export declare class Application extends PIXIApplication {
     get physics(): PhysicsBase;
     get debugger(): DebuggerType;
     addPhysics(type?: PhysicsEngineType): Promise<PhysicsBase>;
-    broadcast(message: string, data?: any | undefined): boolean;
-    subscribe<T, M>(message: string, callback: (message: T, data: M) => void): string;
     /**
      *
      * @param pGroupId
@@ -111,8 +109,8 @@ export declare class Application extends PIXIApplication {
      * Initializes all managers and starts the splash screen process.
      */
     init(awaitFontsLoaded?: boolean): Promise<void>;
-    protected setup(): void;
     addDebugger(): Promise<void>;
+    protected setup(): void;
     /**
      * Called once per frame. Updates the `StateManager`, `PopupManager`, `LoadManager` and `HitAreaRenderer`.
      */
