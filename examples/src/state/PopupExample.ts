@@ -1,7 +1,6 @@
 import ExamplePopup from "@/popups/ExamplePopup.ts";
 import {BaseState} from "@/state/BaseState.ts";
-import * as Topics from "html-living-framework";
-import {broadcast, PopupToken} from "html-living-framework";
+import {broadcast, PopupToken, Topics} from "html-living-framework";
 import {Point} from "pixi.js";
 
 class PopupExample extends BaseState {

@@ -2,7 +2,6 @@ import {gsap} from "gsap";
 import {Container, Point} from "pixi.js";
 import {Dictionary} from "typescript-collections";
 import {Application} from "../Application";
-import {STATE_INIT} from "../Data";
 import * as Topics from "../Data/Topics";
 import {AssetMap, AssetMapData, LoadToken} from "../Load";
 import {broadcast, subscribe} from "../Utils";
@@ -587,7 +586,7 @@ export class StateManager extends Container {
 			// Attach state as child of manager.
 			this.addChild(this._newState);
 			this._newState.init(this._size, this._newStateToken!.data);
-			broadcast(STATE_INIT, this._newStateToken!.data);
+			broadcast(Topics.STATE_INIT, this._newStateToken!.data);
 
 			// Caller requests the new view to be added in front or behind the existing view.
 			if (pNewInFront) {

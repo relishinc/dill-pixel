@@ -1,7 +1,6 @@
 import { Container, Point } from "pixi.js";
 import { Application } from "../Application";
-import { IPopup } from "./IPopup";
-type PopupConstructor = () => IPopup;
+import { Popup } from "./Popup";
 export declare class PopupManager extends Container {
     private app;
     private _activePopups;
@@ -16,10 +15,10 @@ export declare class PopupManager extends Container {
     /**
      * Register a popup, so that it can be spawned later.
      * @description Expectation is that this is called in {@link Application.registerPopups}
-     * @param pPopup A function that returns an {@link IPopup}
+     * @param pPopupClass
      * @param pId Unique ID for this type of popup
      */
-    registerPopup(pPopup: PopupConstructor, pId: string): void;
+    register(pPopupClass: typeof Popup, pId?: string): void;
     /**
      * Tick update on all open popups
      * @description Expectation is that this is called in {@link Application.update}
@@ -112,5 +111,4 @@ export declare class PopupManager extends Container {
      */
     private logE;
 }
-export {};
 //# sourceMappingURL=PopupManager.d.ts.map
