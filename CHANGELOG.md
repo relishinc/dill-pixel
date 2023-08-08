@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/relishinc/hlf/compare/v2.0.0...v2.0.1) (2023-08-08)
+
+
+### Bug Fixes
+
+* topics export weirdness ([636b8c8](https://github.com/relishinc/hlf/commit/636b8c8cc9562a7f1f4f6705321b389ac90dd2e7))
+
 ## [2.0.0](https://github.com/relishinc/hlf/compare/v1.6.2...v2.0.0) (2023-08-08)
 
 
