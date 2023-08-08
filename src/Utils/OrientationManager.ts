@@ -1,6 +1,6 @@
 import {Point} from "pixi.js";
 import {Application} from "../Application";
-import {LANDSCAPE_ORIENTATION, PORTRAIT_ORIENTATION} from "../Data";
+import {LANDSCAPE_ORIENTATION, PORTRAIT_ORIENTATION} from "../Data/Topics";
 import * as PixiUtils from "./PixiUtils";
 import {broadcast} from "./PubSub";
 

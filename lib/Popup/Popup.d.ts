@@ -1,4 +1,5 @@
 import { Container, Graphics, Point } from "pixi.js";
+import { AddFactory, MakeFactory } from "../Utils/Factory";
 import { IPopup } from "./IPopup";
 import { IPopupToken } from "./PopupToken";
 export declare enum POPUP_STATE {
@@ -11,7 +12,8 @@ export declare enum POPUP_STATE {
  * This is an abstract class from which all Popups should inherit.
  * However, you can also make your own implementation of {@link IPopup} if necessary.
  */
-export declare abstract class Popup extends Container implements IPopup {
+export declare class Popup extends Container implements IPopup {
+    static readonly NAME: string;
     /** @inheritdoc */
     blackout?: Graphics;
     /** This is where we keep the callback that we call when closing the popup  */
@@ -24,6 +26,8 @@ export declare abstract class Popup extends Container implements IPopup {
     protected _clickBackdropToClose: boolean | "static";
     /** Private backing field for {@link keyboardToClose} */
     protected _keyboardToClose: boolean;
+    protected _addFactory: AddFactory;
+    protected _makeFactory: MakeFactory;
     /** Private backing field for {@link id} */
     private _id?;
     /** @inheritdoc */
@@ -33,6 +37,8 @@ export declare abstract class Popup extends Container implements IPopup {
     /** @inheritdoc */
     get keyboardToClose(): boolean;
     get popupData(): any;
+    protected get add(): AddFactory;
+    protected get make(): MakeFactory;
     /** Hide the popup, but only if it's open */
     hide(): void;
     /** @inheritdoc */
@@ -57,12 +63,12 @@ export declare abstract class Popup extends Container implements IPopup {
      * Called by {@link show}
      * Don't forget to call the callback when complete
      */
-    protected abstract AnimateIn(pCallback: () => void): void;
+    protected AnimateIn(pCallback: () => void): Promise<void>;
     /**
      * Called by {@link hide}
      * Don't forget to call the callback when complete
      */
-    protected abstract AnimateOut(pCallback: () => void): void;
+    protected AnimateOut(pCallback: () => void): Promise<void>;
     /**
      * Click handler for {@link blackout}
      * Feel free to override this

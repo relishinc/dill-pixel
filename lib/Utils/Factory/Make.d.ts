@@ -11,7 +11,9 @@ export declare class MakeFactory {
     coloredSprite(color?: number, size?: {
         x: number;
         y: number;
-    } | [number, number?] | number, shape?: "rectangle" | "circle"): Sprite;
+    } | [number, number?] | number, shape?: "rectangle" | "rounded_rectangle" | "circle", opts?: {
+        [key: string]: string | number;
+    }): Sprite;
     sprite(pTexture: string | Texture, pSheet?: SpritesheetLike): Sprite;
     text(pText?: string, pStyle?: Partial<ITextStyle> | TextStyle): Text;
     bitmapText(pText?: string, pStyle?: IBitmapTextStyle): BitmapText;

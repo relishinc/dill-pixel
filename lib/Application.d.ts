@@ -76,6 +76,7 @@ export declare class Application extends PIXIApplication {
      */
     get requiredAssets(): AssetMapData[];
     get state(): StateManager;
+    get popups(): PopupManager;
     get audio(): IAudioManager;
     get voiceover(): IVoiceOverManager;
     get size(): Point;

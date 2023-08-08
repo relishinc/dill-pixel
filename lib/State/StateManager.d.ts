@@ -69,6 +69,7 @@ export declare class StateManager extends Container {
      */
     private _debug;
     private _first;
+    private _firstComplete;
     private _defaultStateId?;
     private _defaultTransitionType;
     constructor(app: Application);
