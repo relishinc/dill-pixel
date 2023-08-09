@@ -32,28 +32,28 @@ export default defineConfig((config) => ({
 			watch: true,
 			targets: [
 				{
-					src: "src/assets/images/spritesheets/_output/*",
-					dest: "images/spritesheets",
+					src: "assets/images/spritesheets/_output/*",
+					dest: "assets/images/spritesheets",
 					globOptions: {dot: false},
 				},
 				{
-					src: "src/assets/images/static/**/*",
-					dest: "images/static",
+					src: "assets/images/static/**/*",
+					dest: "assets/images/static",
 					globOptions: {dot: false},
 				},
 				{
-					src: "src/assets/audio/output/**/*",
-					dest: "audio",
+					src: "assets/audio/output/**/*",
+					dest: "assets/audio",
 					globOptions: {dot: false},
 				},
 				{
-					src: "src/assets/fonts/**/*",
-					dest: "fonts",
+					src: "assets/fonts/**/*",
+					dest: "assets/fonts",
 					globOptions: {dot: false, ignore: ["**/*.bmfc"]},
 				},
 				{
-					src: "src/assets/json/**/*",
-					dest: "json",
+					src: "assets/json/**/*",
+					dest: "assets/json",
 					globOptions: {dot: false, ignore: ["**/*.ogmo"]},
 				},
 			],

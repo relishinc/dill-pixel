@@ -10,7 +10,6 @@ export class Interstitial extends HLF.LoadScreen {
 
 	public init(pSize: PIXI.Point, pData?: any) {
 		super.init(pSize, pData);
-		console.log('initi interstitial')
 		this._bg = this.add.sprite(
 			"black2x2",
 			null,
