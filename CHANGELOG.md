@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/relishinc/hlf/compare/v2.0.1...v2.0.2) (2023-08-09)
+
+
+### Bug Fixes
+
+* ticker not starting in some cases ([34169e3](https://github.com/relishinc/hlf/commit/34169e3958d154edd9ce13640e4af63f93e4d6ca))
+
 ## [2.0.1](https://github.com/relishinc/hlf/compare/v2.0.0...v2.0.1) (2023-08-08)
 
 
