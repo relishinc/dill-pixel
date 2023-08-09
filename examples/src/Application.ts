@@ -3,6 +3,7 @@ import {MatterPhysicsExample} from "@/state/MatterPhysicsExample";
 import PopupExample from "@/state/PopupExample.ts";
 import {RapierPhysicsExample} from "@/state/RapierPhysicsExample.ts";
 import {SplashScreen} from "@/state/SplashScreen";
+import SpriteExample from "@/state/SpriteExample.ts";
 import {
 	Application as HLFApplication,
 	AssetMapData,
@@ -37,15 +38,15 @@ export default class Application extends HLFApplication {
 	}
 
 	public get defaultState(): string {
-		return window.location.hash === '#matter' ? MatterPhysicsExample.NAME : PopupExample.NAME;
+		return window.location.hash === '#matter' ? MatterPhysicsExample.NAME : SpriteExample.NAME;
 	}
-
 
 	protected createSplashScreen(): HLFSplashScreen {
 		return new SplashScreen();
 	}
 
 	protected setup() {
+		(globalThis as any).__PIXI_APP__ = this;
 		this.registerDefaultLoadScreen(Interstitial);
 		this.state.defaultTransitionType = TransitionType.TRANSITION_SIMPLE_INTERSTITIAL;
 	}
@@ -55,6 +56,7 @@ export default class Application extends HLFApplication {
 		this.state.register(MatterPhysicsExample);
 		this.state.register(RapierPhysicsExample);
 		this.state.register(PopupExample);
+		this.state.register(SpriteExample);
 		// this.state.register(SpriteDebugExample);
 	}
 
@@ -63,6 +65,7 @@ export default class Application extends HLFApplication {
 		this.addAssetGroup(MatterPhysicsExample);
 		this.addAssetGroup(RapierPhysicsExample);
 		this.addAssetGroup(PopupExample);
+		this.addAssetGroup(SpriteExample);
 		// this.addAssetGroup(SpriteDebugExample);
 	}
 }

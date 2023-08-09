@@ -7,7 +7,7 @@ export function resolveXYFromObjectOrArray(position: { x: number; y: number } | 
 
 	if (Array.isArray(position)) {
 		x = position[0];
-		y = position[1] || position[0];
+		y = position[1] === undefined ? position[0] : position[1];
 	} else if (typeof position === 'object') {
 		// cast as an object
 		const obj = position as { x: number; y: number };

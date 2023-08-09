@@ -68,6 +68,11 @@ export class Application extends PIXIApplication {
 		// TODO Relish GM => Look into what might be added to the AppConfig class and if there is reason to cache it.
 		super(new AppConfig(pConfig));
 
+		// start the ticker if it hasn't been started yet
+		if (!this.ticker.started) {
+			this.ticker.start();
+		}
+
 		// set the resolution suffix for loading assets
 		AssetUtils.resolutionSuffix = this.resolutionSuffix;
 
@@ -492,6 +497,7 @@ export class Application extends PIXIApplication {
 			await document.fonts.ready;
 		}
 
+		// transition to the default state, if set
 		if (this.state.default) {
 			this.state.transitionTo(this.state.default, SplashScreen.NAME);
 		}
