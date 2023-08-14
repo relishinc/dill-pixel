@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.4](https://github.com/relishinc/hlf/compare/v2.0.3...v2.0.4) (2023-08-14)
+
+
+### Bug Fixes
+
+* spritesheet multipack implementation pulling texture from multipack implementation ([ee539bc](https://github.com/relishinc/hlf/commit/ee539bca6108f947342bd49b830990d103a023c1))
+
 ## [2.0.3](https://github.com/relishinc/hlf/compare/v2.0.2...v2.0.3) (2023-08-14)
 
 
