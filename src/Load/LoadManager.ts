@@ -401,6 +401,7 @@ export class LoadManager extends Container {
 				if (asset instanceof AssetMapAudioData) {
 					audioAssets.push(asset as AssetMapAudioData);
 				} else {
+
 					const src = asset.assetPath
 						? AssetUtils.replaceResolutionToken(asset.assetPath)
 						: AssetUtils.getPathToAsset(asset);
@@ -420,10 +421,12 @@ export class LoadManager extends Container {
 					callback: this.onAllLoadsComplete
 				});
 			} else {
+				console.log('starting asset load');
 				const loaderResult = await Assets.load(
 					defaultAssets,
 					this.onPixiLoadProgress
 				).catch((e) => this.onPixiLoadError(e));
+				console.log('asset load complete');
 				this.onAllLoadsComplete();
 			}
 		} else {
@@ -497,6 +500,7 @@ export class LoadManager extends Container {
 	 * @param pResource The resource that was loaded.
 	 */
 	private onPixiLoadProgress(progress: number): void {
+		console.log('progress', progress, Assets.loader);
 		if (this._currentLoadScreen !== undefined) {
 			this._currentLoadScreen.onLoadProgress(progress);
 		}
@@ -520,6 +524,7 @@ export class LoadManager extends Container {
 	 * Called once both audio and PIXI have finished loading assets
 	 */
 	private onAllLoadsComplete(): void {
+		console.log('onAllLoadsComplete');
 		if (this._currentLoadScreen !== undefined) {
 			this._currentLoadScreen.onLoadComplete(this.onLoadScreenComplete);
 		} else {

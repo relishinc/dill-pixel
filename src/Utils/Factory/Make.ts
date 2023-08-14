@@ -48,10 +48,10 @@ export class MakeFactory {
 			const numSheets = pSheet.length;
 			for (let i = 0; i < numSheets; i++) {
 				const sheet = pSheet[i];
-				if (!Assets.get(pAsset)) {
+				if (!Assets.get(sheet)) {
 					throw new Error("Spritesheet \"" + sheet + "\" not loaded into Pixi cache");
 				} else {
-					const textures = Assets.get(pAsset).textures;
+					const textures = Assets.get(sheet).textures;
 					if (textures !== undefined) {
 						texture = textures[pAsset];
 						if (texture !== undefined) {
