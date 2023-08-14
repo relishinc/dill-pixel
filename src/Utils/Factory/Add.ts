@@ -55,7 +55,7 @@ export class AddFactory {
 
 	sprite(
 		pAsset: string,
-		pSheet?: string | string[] | undefined,
+		pSheet?: string | undefined,
 		alpha: number = 1,
 		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
 		anchor: { x: number; y: number } | [number, number?] | number = {x: 0.5, y: 0.5},

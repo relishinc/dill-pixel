@@ -20,7 +20,7 @@ export default class AddFactory implements IPhysicsAddFactory {
 
 	// add physics sprite
 	physicsSprite(pTexture: string | Texture,
-	              pSheet?: string | string[] | undefined,
+	              pSheet?: string | undefined,
 	              pSize?: { x: number; y: number } | [number, number?] | number,
 	              pType: PhysicsBodyType = PhysicsBodyType.RECTANGLE,
 	              pAlpha: number = 1,

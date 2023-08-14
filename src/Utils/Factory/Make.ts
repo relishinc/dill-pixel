@@ -16,6 +16,7 @@ import {
 	SimplePlane,
 	SimpleRope,
 	Sprite,
+	Spritesheet,
 	Text,
 	TextStyle,
 	Texture,
@@ -35,7 +36,6 @@ export class MakeFactory {
 	texture(pAsset: string, pSheet: SpritesheetLike): Texture {
 		// tslint:disable-next-line:no-shadowed-variable
 		let texture: Texture<Resource> | undefined;
-
 		if (!pSheet || pSheet?.length === 0) {
 			if (Assets.cache.has(pAsset)) {
 				texture = Assets.get(pAsset)!;
@@ -44,43 +44,33 @@ export class MakeFactory {
 			} else {
 				throw new Error("Asset \"" + pAsset + "\" not loaded into Pixi cache");
 			}
-		} else if (pSheet instanceof Array) {
-			const numSheets = pSheet.length;
-			for (let i = 0; i < numSheets; i++) {
-				const sheet = pSheet[i];
-				if (!Assets.get(sheet)) {
-					throw new Error("Spritesheet \"" + sheet + "\" not loaded into Pixi cache");
-				} else {
-					const textures = Assets.get(sheet).textures;
-					if (textures !== undefined) {
-						texture = textures[pAsset];
-						if (texture !== undefined) {
-							break;
-						}
-					} else {
-						throw new Error("Spritesheet \"" + sheet + "\" loaded but textures arent!");
-					}
-				}
-			}
-			if (texture === undefined) {
-				throw new Error("Asset \"" + pAsset + "\" not found inside spritesheets \"" + pSheet.toString() + "\'");
-			}
 		} else {
 			if (!Assets.get(pSheet)) {
 				throw new Error("Spritesheet \"" + pSheet + "\" not loaded into Pixi cache");
 			} else {
-				const textures = Assets.get(pSheet).textures;
+				const sheet: Spritesheet = Assets.get(pSheet) as Spritesheet;
+				const textures = sheet.textures;
 				if (textures !== undefined) {
-					if (!textures.hasOwnProperty(pAsset)) {
+					if (textures.hasOwnProperty(pAsset)) {
+						texture = textures[pAsset];
+					} else if (sheet.linkedSheets !== undefined && sheet.linkedSheets.length > 0) {
+						for (const linkedSheet of sheet.linkedSheets) {
+							if (linkedSheet.textures !== undefined && linkedSheet.textures.hasOwnProperty(pAsset)) {
+								texture = linkedSheet.textures[pAsset];
+								break;
+							}
+						}
+						if (texture === undefined) {
+							throw new Error("Asset \"" + pAsset + "\" not found inside spritesheet \"" + pAsset + "\' or any of its linked sheets");
+						}
+					} else {
 						throw new Error("Asset \"" + pAsset + "\" not found inside spritesheet \"" + pSheet + "\'");
 					}
-					texture = textures[pAsset];
 				} else {
 					throw new Error("Spritesheet \"" + pSheet + "\" loaded but textures arent?!");
 				}
 			}
 		}
-
 		return texture || new Sprite().texture;
 	}
 
