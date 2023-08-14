@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.3](https://github.com/relishinc/hlf/compare/v2.0.2...v2.0.3) (2023-08-14)
+
+
+### Bug Fixes
+
+* spritesheet multipack implementation ([a2ae5b4](https://github.com/relishinc/hlf/commit/a2ae5b43969e8ced4286f4e87cdb60ec048b146c))
+
 ## [2.0.2](https://github.com/relishinc/hlf/compare/v2.0.1...v2.0.2) (2023-08-09)
 
 
