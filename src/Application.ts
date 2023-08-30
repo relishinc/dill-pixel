@@ -1,16 +1,24 @@
+// @ts-ignore
+import FontFaceObserver from "fontfaceobserver";
 import {Application as PIXIApplication, Assets, IApplicationOptions, Point, Ticker} from "pixi.js";
 import {AudioToken, HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverManager,} from "./Audio";
 import {CopyManager} from "./Copy";
 import {AppConfig} from "./Data";
-import * as Topics from "./Data/Topics";
-import {HitAreaRenderer, KeyboardManager, MouseManager} from "./Input";
+import {
+	DefaultKeyboardFocusManagerSprite,
+	HitAreaRenderer,
+	KeyboardFocusManager,
+	KeyboardManager,
+	MouseManager
+} from "./Input";
 import {AssetMap, AssetMapData, LoadManager, LoadScreen, LoadScreenProvider, SplashScreen} from "./Load";
 import {PhysicsBase, PhysicsEngineType} from "./Physics";
 import {PopupManager} from "./Popup";
 import {SaveManager} from "./Save";
+import {keyboardReFocus, Signals} from "./Signals";
 import {State, StateManager} from "./State";
-import {AssetUtils, broadcast, Delay, OrientationManager, ResizeManager, subscribe, WebEventsManager,} from "./Utils";
-import * as Factory from './Utils/Factory';
+import {AssetUtils, Delay, OrientationManager, ResizeManager, WebEventsManager,} from "./Utils";
+import {Add, Make} from "./Utils/Factory";
 
 export interface HLFApplicationOptions extends IApplicationOptions {
 	physics?: boolean;
@@ -34,6 +42,7 @@ export class Application extends PIXIApplication {
 	protected _popupManager: PopupManager;
 	protected _loadManager: LoadManager;
 	protected _keyboardManager: KeyboardManager;
+	protected _keyboardFocusManager: KeyboardFocusManager<DefaultKeyboardFocusManagerSprite>;
 	protected _resizeManager: ResizeManager;
 	protected _copyManager: CopyManager;
 	protected _mouseManager: MouseManager;
@@ -45,8 +54,7 @@ export class Application extends PIXIApplication {
 	protected _orientationManager!: OrientationManager;
 	protected _voiceoverManager!: IVoiceOverManager;
 
-	protected _makeFactory: Factory.MakeFactory;
-	protected _addFactory: Factory.AddFactory;
+	protected _addFactory: Add;
 
 	protected startSplashProcess: OmitThisParameter<
 		(pPersistentAssets: AssetMapData[], pOnComplete: () => void) => void
@@ -81,9 +89,7 @@ export class Application extends PIXIApplication {
 		this.onRequiredAssetsLoaded = this.onRequiredAssetsLoaded.bind(this);
 
 		// create factories
-		this._makeFactory = new Factory.MakeFactory();
-		this._addFactory = new Factory.AddFactory(this.stage);
-
+		this._addFactory = new Add(this.stage);
 		this._size = new Point();
 
 		Ticker.shared.add(this.update);
@@ -95,6 +101,7 @@ export class Application extends PIXIApplication {
 		this._loadManager = new LoadManager(this, this.createSplashScreen());
 		this._audioManager = new HowlerManager(this);
 		this._keyboardManager = new KeyboardManager(this);
+		this.addFocusManager();
 
 		if (this.resizeTo) {
 			this._resizeManager = new ResizeManager(this);
@@ -167,7 +174,7 @@ export class Application extends PIXIApplication {
 		}
 		if (!el) {
 			// no element to use
-			console.error(`You passed in a DOM Element, but none was found. If you instead pass in a string, a container will be created for you, using the string for its id.`);
+			console.error("You passed in a DOM Element, but none was found. If you instead pass in a string, a container will be created for you, using the string for its id.");
 			return null;
 		}
 		return this.instance.create(el);
@@ -178,12 +185,12 @@ export class Application extends PIXIApplication {
 		return "@" + this.renderer.resolution + "x";
 	}
 
-	get add(): Factory.AddFactory {
+	get add(): Add {
 		return this._addFactory;
 	}
 
-	get make(): Factory.MakeFactory {
-		return this._makeFactory;
+	get make(): typeof Make {
+		return Make
 	}
 
 	get addToStage() {
@@ -203,6 +210,10 @@ export class Application extends PIXIApplication {
 
 	public get state(): StateManager {
 		return this._stateManager;
+	}
+
+	public get keyboard(): KeyboardManager {
+		return this._keyboardManager;
 	}
 
 	public get popups(): PopupManager {
@@ -249,11 +260,7 @@ export class Application extends PIXIApplication {
 		return this._loadManager;
 	}
 
-	public get topics() {
-		return Topics;
-	}
-
-	public get defaultState(): string | undefined {
+	public get defaultState(): string | typeof State | undefined {
 		return undefined;
 	}
 
@@ -268,15 +275,20 @@ export class Application extends PIXIApplication {
 		return this._debugger as DebuggerType;
 	}
 
+	public addFocusManager() {
+		this._keyboardFocusManager = new KeyboardFocusManager(DefaultKeyboardFocusManagerSprite);
+	}
+
+
 	public async addPhysics(type: PhysicsEngineType = PhysicsEngineType.MATTER): Promise<PhysicsBase> {
 		let PhysicsModule: any;
 		switch (type) {
 			case PhysicsEngineType.RAPIER:
-				PhysicsModule = await import ('./Physics/RapierPhysics/RapierPhysics');
+				PhysicsModule = await import ("./Physics/RapierPhysics/RapierPhysics");
 				break;
 			case PhysicsEngineType.MATTER:
 			default:
-				PhysicsModule = await import ('./Physics/MatterPhysics');
+				PhysicsModule = await import ("./Physics/MatterPhysics");
 				break;
 		}
 		this._physics = new PhysicsModule.default(this);
@@ -334,16 +346,23 @@ export class Application extends PIXIApplication {
 		this.addToStage(this._stateManager);
 		this.addToStage(this._popupManager);
 		this.addToStage(this._loadManager);
-		this.addToStage((this._hitAreaRenderer = new HitAreaRenderer(this.stage)));
+		this._hitAreaRenderer = this.addToStage(new HitAreaRenderer(this.stage));
+		this.addToStage(this._keyboardFocusManager);
 
 		this._audioManager.init();
 
-		subscribe(this.topics.PLAY_AUDIO, this.onPlayAudio);
+		Signals.playAudio.connect(this.onPlayAudio);
 
+		this.addAssetGroups();
 		this.createAssetMap();
+
 		this.registerStates();
+		this.state.statesRegistered();
+
 		this.registerPopups();
 		this.registerLoadingScreens();
+
+		await this.loadDocumentFonts();
 
 		this.startSplashProcess(this.requiredAssets, this.onRequiredAssetsLoaded);
 
@@ -355,8 +374,17 @@ export class Application extends PIXIApplication {
 		this.setup();
 	}
 
+	public async loadDocumentFonts() {
+		// check if document.fonts is supported
+		if (document?.fonts) {
+			await document.fonts.ready;
+
+			await this.allFontsLoaded();
+		}
+	}
+
 	public async addDebugger() {
-		const DebuggerClass = await import('./Debugger').then((m) => m.Debugger);
+		const DebuggerClass = await import("./Debugger").then((m) => m.Debugger);
 		this._debugger = new DebuggerClass(this);
 	}
 
@@ -389,6 +417,10 @@ export class Application extends PIXIApplication {
 	 * Override to setup the asset map for this application.
 	 * @override
 	 */
+	protected addAssetGroups(): void {
+		// override
+	}
+
 	protected createAssetMap(): void {
 		// override
 	}
@@ -459,13 +491,15 @@ export class Application extends PIXIApplication {
 			this.renderer.resize(w, h);
 		}
 
-
 		this._stateManager.onResize(this._size);
 		this._loadManager.onResize(this._size);
 		this._popupManager.onResize(this._size);
 		this._orientationManager.onResize(this._size);
 
-		broadcast(this.topics.KEYBOARD_REFOCUS);
+		// emit a global resize signal that anything can listen to
+		Signals.onResize.emit(this._size);
+
+		keyboardReFocus();
 
 		if (this._hitAreaRenderer.active) {
 			this._hitAreaRenderer.renderHitAreas();
@@ -474,8 +508,7 @@ export class Application extends PIXIApplication {
 		this.onResizeComplete();
 	}
 
-	protected onPlayAudio(message: string, data: any) {
-		const token: AudioToken = data as AudioToken;
+	protected onPlayAudio(token: AudioToken) {
 		this.audio.play(token.id, token.volume, token.loop, token.category);
 	}
 
@@ -487,19 +520,35 @@ export class Application extends PIXIApplication {
 		// override
 	}
 
+
+	protected getFontsList(): { family: string, data?: { weight?: number | string } }[] {
+		return [];
+	}
+
+	protected allFontsLoaded() {
+		const fonts = this.getFontsList();
+		if (fonts?.length > 0) {
+			return Promise.all(fonts.map(ff => {
+				const font = new FontFaceObserver(ff.family, ff.data);
+				return font.load();
+			})).catch(e => {
+				console.error("Error loading fonts", e);
+			});
+		} else {
+			return Promise.resolve();
+		}
+	}
+
 	/**
 	 * Override to specify what should happen after all persistent assets have been loaded.
 	 * @override
 	 */
 	protected async onRequiredAssetsLoaded(): Promise<void> {
-		// check if document.fonts is supported
-		if (document?.fonts) {
-			await document.fonts.ready;
-		}
-
 		// transition to the default state, if set
 		if (this.state.default) {
-			this.state.transitionTo(this.state.default, SplashScreen.NAME);
+			this.state.transitionTo(this.state.default);
 		}
 	}
+
+
 }

@@ -39,6 +39,16 @@ export const TRANSITION_SIMPLE_INTERSTITIAL: TransitionStep[] = [
 	TransitionStep.UnloadUnusedAssets,
 ];
 
+export const TRANSITION_INTERSTITIAL_OVERLAY: TransitionStep[] = [
+	TransitionStep.ShowLoadScreen,
+	TransitionStep.RemoveCurrent,
+	TransitionStep.UnloadAssets,
+	TransitionStep.LoadAssets,
+	TransitionStep.AttachNewInFront,
+	TransitionStep.HideLoadScreenAndAnimnNewIn,
+	TransitionStep.UnloadUnusedAssets,
+];
+
 /**
  * Animate out old state and then animate in new state with assets loaded first.
  * @description Steps:

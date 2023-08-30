@@ -1,1 +1,0 @@
-{"version":3,"file":"MakeFactory.js","sourceRoot":"","sources":["../../../../src/Physics/RapierPhysics/Factory/MakeFactory.ts"],"names":[],"mappings":"AAGA,OAAO,EAAC,mBAAmB,EAAC,MAAM,oCAAoC,CAAC;AAEvE,MAAM,CAAC,OAAO,OAAO,WAAW;IACxB,aAAa,CAAC,QAA0B,EAAE,MAAwB,EAAE,KAG7C,EAAE,SAA2B;QAC1D,OAAO,IAAI,mBAAmB,CAAC,QAAQ,EAAE,MAAM,EAAE,KAAK,EAAE,SAAS,CAAC,CAAC;IACpE,CAAC;CACD"}

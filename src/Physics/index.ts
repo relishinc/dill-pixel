@@ -5,12 +5,12 @@ import {SpritesheetLike} from "../Utils/Types";
 export enum PhysicsEngineType {MATTER = "matter", RAPIER = "rapier"}
 
 export enum PhysicsBodyType {
-	RECTANGLE = 'rectangle',
-	CIRCLE = 'circle',
-	CONVEX = 'convex',
-	TRAPEZOID = 'trapezoid',
-	POLYGON = 'polygon',
-	CHAMFER = 'chamfer',
+	RECTANGLE = "rectangle",
+	CIRCLE = "circle",
+	CONVEX = "convex",
+	TRAPEZOID = "trapezoid",
+	POLYGON = "polygon",
+	CHAMFER = "chamfer",
 }
 
 export interface IPhysicsBase {
@@ -75,12 +75,13 @@ export interface IPhysicsObject extends Container {
 export interface IPhysicsAddFactory {
 	set container(value: Container);
 
-	physicsSprite(pTexture: string | Texture,
-	              pSheet?: string | string[] | undefined,
-	              pSize?: { x: number; y: number } | [number, number?] | number,
-	              pType?: PhysicsBodyType,
-	              pAlpha?: number,
-	              pPosition?: { x: number; y: number } | [number, number?] | number): IPhysicsObject
+	physicsSprite(pTexture: string | Texture, pSheet?: string | string[] | undefined, pSize?: {
+		x: number;
+		y: number
+	} | [number, number?] | number, pType?: PhysicsBodyType, pAlpha?: number, pPosition?: {
+		x: number;
+		y: number
+	} | [number, number?] | number): IPhysicsObject
 
 	existing(pSprite: DisplayObject): IPhysicsObject
 }

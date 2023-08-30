@@ -1,4 +1,4 @@
-import Matter from 'matter-js';
+import Matter from "matter-js";
 import {Container, Graphics} from "pixi.js";
 import {Application} from "../../Application";
 import {PhysicsBase, PointLike} from "../index";
@@ -87,6 +87,7 @@ export default class MatterPhysics extends PhysicsBase {
 	addToWorld(...objects: (IMatterPhysicsObject | MatterBodyLike)[]) {
 		objects.forEach((obj) => {
 			let body: MatterBodyLike;
+			// eslint-disable-next-line no-prototype-builtins
 			if (obj.hasOwnProperty("body")) {
 				body = (obj as IMatterPhysicsObject).body;
 				this._updateables.push(obj as IMatterPhysicsObject);
@@ -140,7 +141,7 @@ export default class MatterPhysics extends PhysicsBase {
 		if (!this._isRunning) {
 			return;
 		}
-		if (typeof Matter === `undefined` || !this._engine) {
+		if (typeof Matter === "undefined" || !this._engine) {
 			return;
 		}
 		if (this._engine) {

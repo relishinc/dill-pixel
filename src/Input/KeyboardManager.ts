@@ -1,10 +1,10 @@
-import * as KeyCode from "keycode";
+import {isMobile} from "pixi.js";
 import {Dictionary} from "typescript-collections";
 import {Application} from "../Application";
-import * as Topics from "../Data/Topics";
-import {subscribe} from "../Utils";
+import {setKeyboardEnabled, Signals} from "../Signals";
 import * as LogUtils from "../Utils/LogUtils";
 import {IFocusable} from "./IFocusable";
+import {KeyCode} from "./index";
 import * as InputUtils from "./InputUtils";
 import {Direction, KeyboardMap} from "./KeyboardMap";
 import {KeyboardMapToken} from "./KeyboardMapToken";
@@ -28,16 +28,34 @@ interface IKeyboardBinding {
  * Keyboard manager
  */
 export class KeyboardManager {
-
+	private _downKeys: Set<KeyCodes | string> = new Set<KeyCodes | string>();
 	private _maps: KeyboardMap[];
 	private _isActive: boolean;
 	private _isEnabled: boolean;
+	private _tabEnabled: boolean = true;
 	private _debug: boolean = false;
 
 	private _keyBindings: Dictionary<Direction | "Enter", IKeyboardBinding[]> =
 		new Dictionary();
 
 	constructor(private app: Application) {
+		// bind internal methods
+		this.onRegisterFocusable = this.onRegisterFocusable.bind(this);
+		this.onRegisterFocusables = this.onRegisterFocusables.bind(this);
+		this.onUnregisterFocusable = this.onUnregisterFocusable.bind(this);
+		this.onUnregisterFocusables = this.onUnregisterFocusables.bind(this);
+		this.onUnregisterAllFocusables = this.onUnregisterAllFocusables.bind(this);
+		this.onClearFocus = this.onClearFocus.bind(this);
+		this.onForceFocus = this.onForceFocus.bind(this);
+		this.onForceNeighbours = this.onForceNeighbours.bind(this);
+		this.onClearNeighbours = this.onClearNeighbours.bind(this);
+		this.onSetKeyboardEnabled = this.onSetKeyboardEnabled.bind(this);
+		this.onGetKeyboardStatus = this.onGetKeyboardStatus.bind(this);
+		this.pushMapLayer = this.pushMapLayer.bind(this);
+		this.popMapLayer = this.popMapLayer.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
+
 		this._isActive = false;
 		this._isEnabled = true;
 
@@ -50,59 +68,46 @@ export class KeyboardManager {
 			this.onKeyDown.bind(this),
 			false
 		);
+
 		window.addEventListener(
-			InputUtils.Events.MOUSE_DOWN,
+			InputUtils.Events.POINTER_DOWN,
 			this.onMouseDown.bind(this),
 			false
 		);
+
+		window.addEventListener(
+			InputUtils.Events.KEY_UP,
+			this.onKeyUp.bind(this),
+			false
+		);
+
 		window.addEventListener(
 			InputUtils.Events.FOCUS,
 			this.onBrowserFocus.bind(this)
 		);
+
 		window.addEventListener(
 			InputUtils.Events.BLUR,
 			this.onBrowserBlur.bind(this)
 		);
-		subscribe(
-			Topics.REGISTER_FOCUSABLE,
-			this.onRegisterFocusable.bind(this)
-		);
-		subscribe(
-			Topics.REGISTER_FOCUSABLES,
-			this.onRegisterFocusable.bind(this)
-		);
-		subscribe(
-			Topics.UNREGISTER_FOCUSABLE,
-			this.onUnregisterFocusable.bind(this)
-		);
-		subscribe(
-			Topics.UNREGISTER_FOCUSABLES,
-			this.onUnregisterFocusable.bind(this)
-		);
-		subscribe(
-			Topics.UNREGISTER_ALL_FOCUSABLES,
-			this.onUnregisterAllFocusables.bind(this)
-		);
-		subscribe(Topics.CLEAR_FOCUS, this.onClearFocus.bind(this));
-		subscribe(Topics.FORCE_FOCUS, this.onForceFocus.bind(this));
-		subscribe(
-			Topics.KEYBOARD_FORCE_NEIGHBOURS,
-			this.onForceNeighbours.bind(this)
-		);
-		subscribe(
-			Topics.KEYBOARD_CLEAR_NEIGHBOURS,
-			this.onClearNeighbours.bind(this)
-		);
-		subscribe(Topics.PUSH_KEYBOARD_LAYER, this.pushMapLayer.bind(this));
-		subscribe(Topics.POP_KEYBOARD_LAYER, this.popMapLayer.bind(this));
-		subscribe(
-			Topics.SET_KEYBOARD_ENABLED,
-			this.onSetKeyboardEnabled.bind(this)
-		);
-		subscribe(
-			Topics.GET_KEYBOARD_STATUS,
-			this.onGetKeyboardStatus.bind(this)
-		);
+
+		Signals.registerFocusable.connect(this.onRegisterFocusable);
+		Signals.registerFocusables.connect(this.onRegisterFocusables);
+		Signals.unregisterFocusable.connect(this.onUnregisterFocusable);
+		Signals.unregisterFocusables.connect(this.onUnregisterFocusables);
+		Signals.unregisterAllFocusables.connect(this.onUnregisterAllFocusables);
+		Signals.clearFocus.connect(this.onClearFocus);
+		Signals.forceFocus.connect(this.onForceFocus);
+		Signals.forceNeighbours.connect(this.onForceNeighbours);
+		Signals.clearNeighbours.connect(this.onClearNeighbours);
+		Signals.pushKeyboardLayer.connect(this.pushMapLayer);
+		Signals.popKeyboardLayer.connect(this.popMapLayer);
+		Signals.setKeyboardEnabled.connect(this.onSetKeyboardEnabled);
+		Signals.getKeyboardStatus.connect(this.onGetKeyboardStatus);
+
+		if (!isMobile.any) {
+			setKeyboardEnabled(true);
+		}
 	}
 
 	public static bindingToString(pBinding: IKeyboardBinding): string {
@@ -154,8 +159,13 @@ export class KeyboardManager {
 		}
 		return false;
 	}
+
 	public set debug(pEnabled: boolean) {
 		this._debug = pEnabled;
+	}
+
+	public get isActive(): boolean {
+		return this._isActive;
 	}
 
 	public addKeyBinding(
@@ -173,18 +183,12 @@ export class KeyboardManager {
 		if (existingDirection !== false) {
 			if (existingDirection.direction === pDirection) {
 				this.log(
-					`addKeyBinding: Ignoring duplicate mapping. "` +
-					KeyboardManager.bindingToString(binding) +
-					`" is already mapped to "` +
-					pDirection.toString() +
-					`"`
+					`addKeyBinding: Ignoring duplicate mapping. "${KeyboardManager.bindingToString(binding)}" is already mapped to "${pDirection.toString()}"`
 				);
 				return;
 			} else {
 				this.logW(
-					`addKeyBinding: Key "` +
-					KeyboardManager.bindingToString(binding) +
-					`" was already mapped to a different function. Un-mapping it before adding new binding.`
+					`addKeyBinding: Key "${KeyboardManager.bindingToString(binding)}" was already mapped to a different function. Un-mapping it before adding new binding.`
 				);
 				this.removeKeyBinding(
 					existingDirection.direction,
@@ -201,11 +205,7 @@ export class KeyboardManager {
 		}
 
 		this.log(
-			`addKeyBinding: Key "` +
-			KeyboardManager.bindingToString(binding) +
-			`" is now mapped to "` +
-			pDirection.toString() +
-			`"`
+			`addKeyBinding: Key "${KeyboardManager.bindingToString(binding)}" is now mapped to "${pDirection.toString()}"`
 		);
 	}
 
@@ -213,9 +213,7 @@ export class KeyboardManager {
 	public removeKeyBindings(pDirection: Direction | "Enter") {
 		this._keyBindings.remove(pDirection);
 		this.log(
-			`removeKeyBindings: Cleared all mappings for "` +
-			pDirection.toString() +
-			`"`
+			`removeKeyBindings: Cleared all mappings for "${pDirection.toString()}"`
 		);
 	}
 
@@ -246,32 +244,22 @@ export class KeyboardManager {
 		if (found) {
 			this._keyBindings.setValue(pDirection, bindings);
 			this.log(
-				`removeKeyBinding: Key "` +
-				KeyboardManager.bindingToString({code: pKeyCode, ...pModifiers}) +
-				`" is no longer mapped to "` +
-				pDirection.toString() +
-				`"`
+				`removeKeyBinding: Key "${KeyboardManager.bindingToString({code: pKeyCode, ...pModifiers})}" is no longer mapped to "${pDirection.toString()}"`
 			);
 		} else if (this.isKeyBound(pKeyCode, pModifiers)) {
 			this.logE(
-				`removeKeyBinding: Key "` +
-				KeyboardManager.bindingToString({code: pKeyCode, ...pModifiers}) +
-				`" was not mapped to mapped to direction "` +
-				pDirection.toString() +
-				`", so nothing has been removed`
+				`removeKeyBinding: Key "${KeyboardManager.bindingToString({code: pKeyCode, ...pModifiers})}" was not mapped to mapped to direction "${pDirection.toString()}", so nothing has been removed.`
 			);
 		} else {
 			this.logE(
-				`removeKeyBinding: Key "` +
-				KeyboardManager.bindingToString({code: pKeyCode, ...pModifiers}) +
-				`" is not mapped to any direction, so nothing has been removed`
+				`removeKeyBinding: Key "${KeyboardManager.bindingToString({code: pKeyCode, ...pModifiers})}" is not mapped to any direction, so nothing has been removed.`
 			);
 		}
 	}
 
 	public removeAllKeyBindings() {
 		this._keyBindings.clear();
-		this.log(`removeAllKeyBindings: All key mappings have been cleared`);
+		this.log("removeAllKeyBindings: All key mappings have been cleared");
 	}
 
 	public getKeyBindings(pDirection: Direction | "Enter"): IKeyboardBinding[] {
@@ -309,15 +297,15 @@ export class KeyboardManager {
 	public addDefaultBindings() {
 		this.log("addDefaultBindings: Adding default key bindings");
 
-		this.addKeyBinding(Direction.UP, KeyCodes.UP);
-		this.addKeyBinding(Direction.DOWN, KeyCodes.DOWN);
-		this.addKeyBinding(Direction.LEFT, KeyCodes.LEFT);
-		this.addKeyBinding(Direction.RIGHT, KeyCodes.RIGHT);
-
-		this.addKeyBinding(Direction.UP, KeyCodes.W);
-		this.addKeyBinding(Direction.DOWN, KeyCodes.S);
-		this.addKeyBinding(Direction.LEFT, KeyCodes.A);
-		this.addKeyBinding(Direction.RIGHT, KeyCodes.D);
+		// this.addKeyBinding(Direction.UP, KeyCodes.UP);
+		// this.addKeyBinding(Direction.DOWN, KeyCodes.DOWN);
+		// this.addKeyBinding(Direction.LEFT, KeyCodes.LEFT);
+		// this.addKeyBinding(Direction.RIGHT, KeyCodes.RIGHT);
+		//
+		// this.addKeyBinding(Direction.UP, KeyCodes.W);
+		// this.addKeyBinding(Direction.DOWN, KeyCodes.S);
+		// this.addKeyBinding(Direction.LEFT, KeyCodes.A);
+		// this.addKeyBinding(Direction.RIGHT, KeyCodes.D);
 
 		this.addKeyBinding(Direction.FORWARDS, KeyCodes.TAB);
 		this.addKeyBinding(Direction.BACKWARDS, KeyCodes.TAB, {shiftKey: true});
@@ -350,6 +338,25 @@ export class KeyboardManager {
 		});
 
 		return found ?? false;
+		return found ?? false;
+	}
+
+	public isKeyDown(...args: (string | KeyCodes)[]): boolean {
+		for (let i = 0; i < args.length; i++) {
+			if (this._downKeys.has(args[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * onKeyUp
+	 * @param pEvent
+	 */
+	private onKeyUp(pEvent: KeyboardEvent): void {
+		this._downKeys.delete(pEvent.keyCode);
+		this._downKeys.delete(pEvent.key);
 	}
 
 	/**
@@ -360,7 +367,14 @@ export class KeyboardManager {
 		if (!this._isEnabled) {
 			return;
 		}
-		if (this._isActive === false) {
+
+		if (!this._downKeys.has(pEvent.keyCode) || !this._downKeys.has(pEvent.key)) {
+			this._downKeys.add(pEvent.keyCode);
+			this._downKeys.add(pEvent.keyCode);
+			this._downKeys.add(pEvent.key);
+		}
+
+		if (this._isActive === false && pEvent.keyCode === KeyCodes.TAB) {
 			if (this._maps.length > 0) {
 				this._isActive = true;
 				this._maps[0].isActive = true;
@@ -399,6 +413,7 @@ export class KeyboardManager {
 	 * onMouseDown
 	 */
 	private onMouseDown(): void {
+		this._downKeys.clear();
 		if (this._isActive === true) {
 			this._isActive = false;
 			if (this._maps.length > 0) {
@@ -426,8 +441,15 @@ export class KeyboardManager {
 	}
 
 	private onRegisterFocusable(
-		pTopic: string,
-		pData: IFocusable | IFocusable[]
+		pData: IFocusable
+	) {
+		if (this._maps.length > 0) {
+			this._maps[0].registerFocusable(pData);
+		}
+	}
+
+	private onRegisterFocusables(
+		pData: IFocusable[]
 	) {
 		if (this._maps.length > 0) {
 			this._maps[0].registerFocusable(pData);
@@ -435,10 +457,15 @@ export class KeyboardManager {
 	}
 
 	private onUnregisterFocusable(
-		pTopic: string,
-		pData:
-			| (IFocusable | ((it: IFocusable) => boolean))
-			| (IFocusable | ((it: IFocusable) => boolean))[]
+		pData: (IFocusable | ((it: IFocusable) => boolean))
+	) {
+		for (const map of this._maps) {
+			map.unregisterFocusable(pData);
+		}
+	}
+
+	private onUnregisterFocusables(
+		pData: (IFocusable | ((it: IFocusable) => boolean))[]
 	) {
 		for (const map of this._maps) {
 			map.unregisterFocusable(pData);
@@ -457,14 +484,13 @@ export class KeyboardManager {
 		}
 	}
 
-	private onForceFocus(pTopic: string, pData: IFocusable) {
+	private onForceFocus(pData: IFocusable) {
 		if (this._isActive && this._maps.length > 0) {
 			this._maps[0].setFocus(pData);
 		}
 	}
 
 	private onForceNeighbours(
-		pTopic: string,
 		pData: KeyboardMapToken | KeyboardMapToken[]
 	) {
 		if (this._maps.length > 0) {
@@ -488,12 +514,11 @@ export class KeyboardManager {
 		}
 	}
 
-	private onSetKeyboardEnabled(pTopic: string, pData: boolean) {
+	private onSetKeyboardEnabled(pData: boolean) {
 		this._isEnabled = pData;
 	}
 
 	private onGetKeyboardStatus(
-		pTopic: string,
 		pData: (status: IKeyboardStatus) => void
 	) {
 		pData({

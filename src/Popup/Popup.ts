@@ -1,7 +1,6 @@
-import {Container, Graphics, Point} from "pixi.js";
-import * as Topics from "../Data/Topics";
-import {broadcast} from "../Utils";
-import {AddFactory, MakeFactory} from "../Utils/Factory";
+import {Graphics, Point} from "pixi.js";
+import {Container} from "../GameObjects/Container";
+import {hidePopupComplete} from "../Signals";
 import {IPopup} from "./IPopup";
 import {IPopupToken} from "./PopupToken";
 
@@ -17,7 +16,7 @@ export enum POPUP_STATE {
  * However, you can also make your own implementation of {@link IPopup} if necessary.
  */
 export class Popup extends Container implements IPopup {
-	public static readonly NAME: string = '__Popup';
+	public static readonly NAME: string = "__Popup";
 	/** @inheritdoc */
 	public blackout?: Graphics;
 	/** This is where we keep the callback that we call when closing the popup  */
@@ -30,9 +29,6 @@ export class Popup extends Container implements IPopup {
 	protected _clickBackdropToClose: boolean | "static" = true;
 	/** Private backing field for {@link keyboardToClose} */
 	protected _keyboardToClose: boolean = true;
-
-	protected _addFactory: AddFactory = new AddFactory(this);
-	protected _makeFactory: MakeFactory = new MakeFactory();
 
 	/** Private backing field for {@link id} */
 	private _id?: string;
@@ -53,14 +49,6 @@ export class Popup extends Container implements IPopup {
 
 	get popupData() {
 		return this._popupData;
-	}
-
-	protected get add(): AddFactory {
-		return this._addFactory;
-	}
-
-	protected get make(): MakeFactory {
-		return this.add.makeFactory;
 	}
 
 	/** Hide the popup, but only if it's open */
@@ -125,7 +113,7 @@ export class Popup extends Container implements IPopup {
 	 * Don't forget to call the callback when complete
 	 */
 	protected async AnimateIn(pCallback: () => void): Promise<void> {
-		console.log('default AnimateIn');
+		console.log("default AnimateIn");
 		pCallback();
 	}
 
@@ -134,7 +122,7 @@ export class Popup extends Container implements IPopup {
 	 * Don't forget to call the callback when complete
 	 */
 	protected async AnimateOut(pCallback: () => void): Promise<void> {
-		console.log('default AnimateOut');
+		console.log("default AnimateOut");
 		pCallback();
 	}
 
@@ -181,6 +169,7 @@ export class Popup extends Container implements IPopup {
 			this._callback = undefined;
 			callback();
 		}
-		broadcast(Topics.HIDE_POPUP_COMPLETE, this as IPopup);
+
+		hidePopupComplete(this)
 	}
 }

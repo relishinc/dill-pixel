@@ -1,8 +1,8 @@
 import {Assets, Container, Point} from "pixi.js";
 import {Dictionary} from "typescript-collections";
 import {Application} from "../Application";
-import * as Topics from "../Data/Topics";
-import {AssetUtils, broadcast, subscribe} from "../Utils";
+import {loadAudioFromAssetMap, loadComplete, loadScreenHidden, Signals} from "../Signals";
+import {AssetUtils} from "../Utils";
 import * as LogUtils from "../Utils/LogUtils";
 import {AssetMap} from "./AssetMap";
 import {AssetMapAudioData} from "./AssetMapAudioData";
@@ -74,10 +74,10 @@ export class LoadManager extends Container {
 		this.onPixiLoadProgress = this.onPixiLoadProgress.bind(this);
 		this.onPixiLoadError = this.onPixiLoadError.bind(this);
 
-		subscribe(Topics.SHOW_LOAD_SCREEN, this.showLoadScreen)
-		subscribe(Topics.HIDE_LOAD_SCREEN, this.hideLoadScreen);
-		subscribe(Topics.LOAD_ASSETS, this.onLoadRequested);
-		subscribe(Topics.UNLOAD_ASSETS, this.onUnloadRequested);
+		Signals.showLoadScreen.connect(this.showLoadScreen);
+		Signals.hideLoadScreen.connect(this.hideLoadScreen);
+		Signals.loadAssets.connect(this.onLoadRequested);
+		Signals.unloadAssets.connect(this.onUnloadRequested);
 	}
 
 	public get defaultLoadScreen(): LoadScreenProvider | undefined {
@@ -164,7 +164,7 @@ export class LoadManager extends Container {
 	public registerLoadScreen(pIdOrClass: string | typeof LoadScreen, pScreen?: LoadScreenProvider, pDefault: boolean = false) {
 		if (typeof pIdOrClass === "string") {
 			if (!pScreen) {
-				throw new Error(`Load screen provider must be defined when supplying a string id.`);
+				throw new Error("Load screen provider must be defined when supplying a string id.");
 			}
 			this._loadScreens.setValue(pIdOrClass, pScreen);
 			if (pDefault) {
@@ -200,7 +200,6 @@ export class LoadManager extends Container {
 	 * @param pData Data containing what loadscreen to show and what to call when it is shown.
 	 */
 	private showLoadScreen(
-		pTopic: string,
 		pData: { loadScreen: string; stateData?: any; callback: () => void }
 	): void {
 		this.log(
@@ -233,7 +232,6 @@ export class LoadManager extends Container {
 	 * @param pData Data containing what loadscreen to hide and what to call when it is hidden.
 	 */
 	private hideLoadScreen(
-		pTopic: string,
 		pData: { loadScreen: string; callback: () => void }
 	): void {
 		this.log(
@@ -405,7 +403,7 @@ export class LoadManager extends Container {
 					const src = asset.assetPath
 						? AssetUtils.replaceResolutionToken(asset.assetPath)
 						: AssetUtils.getPathToAsset(asset);
-					Assets.add(asset.assetName, src);
+					Assets.add(asset.assetName, src, asset?.data || null);
 					defaultAssets.push(asset.assetName);
 				}
 			}
@@ -415,18 +413,16 @@ export class LoadManager extends Container {
 					audioAssets.map((asset) => asset.getResource().src),
 					this.onPixiLoadProgress
 				);
-				broadcast(Topics.LOAD_AUDIO_FROM_ASSET_MAP, {
+				loadAudioFromAssetMap({
 					assets: audioAssets,
 					progressCallback: this.onAudioLoadProgress,
 					callback: this.onAllLoadsComplete
-				});
+				})
 			} else {
-				console.log('starting asset load');
 				const loaderResult = await Assets.load(
 					defaultAssets,
 					this.onPixiLoadProgress
 				).catch((e) => this.onPixiLoadError(e));
-				console.log('asset load complete');
 				this.onAllLoadsComplete();
 			}
 		} else {
@@ -500,7 +496,6 @@ export class LoadManager extends Container {
 	 * @param pResource The resource that was loaded.
 	 */
 	private onPixiLoadProgress(progress: number): void {
-		console.log('progress', progress, Assets.loader);
 		if (this._currentLoadScreen !== undefined) {
 			this._currentLoadScreen.onLoadProgress(progress);
 		}
@@ -524,13 +519,12 @@ export class LoadManager extends Container {
 	 * Called once both audio and PIXI have finished loading assets
 	 */
 	private onAllLoadsComplete(): void {
-		console.log('onAllLoadsComplete');
 		if (this._currentLoadScreen !== undefined) {
 			this._currentLoadScreen.onLoadComplete(this.onLoadScreenComplete);
 		} else {
 			this.onLoadScreenComplete();
 		}
-		broadcast(Topics.LOAD_COMPLETE);
+		loadComplete();
 	}
 
 	/**
@@ -560,7 +554,7 @@ export class LoadManager extends Container {
 			}
 		}
 		this._currentLoadScreen = undefined;
-		broadcast(Topics.LOAD_SCREEN_HIDDEN);
+		loadScreenHidden();
 	}
 
 	/**
@@ -568,7 +562,7 @@ export class LoadManager extends Container {
 	 * @param pTopic The PubSub message id.
 	 * @param pToken The data defining the load request.
 	 */
-	private onLoadRequested(pTopic: string, pToken: LoadToken): void {
+	private onLoadRequested(pToken: LoadToken): void {
 		this.log("Load requested");
 		this.load(pToken.assets, pToken.callback);
 	}
@@ -578,7 +572,7 @@ export class LoadManager extends Container {
 	 * @param pTopic The PubSub message id.
 	 * @param pToken The data defining the unload request.
 	 */
-	private onUnloadRequested(pTopic: string, pToken: LoadToken): void {
+	private onUnloadRequested(pToken: LoadToken): void {
 		this.log("Unload requested");
 		this.unload(pToken.assets, pToken.callback);
 	}
