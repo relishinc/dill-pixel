@@ -112,7 +112,6 @@ export class WebEventsManager {
 	 * Called when the browser resizes.
 	 */
 	private onResize(): void {
-   
 		this._resizeCallbacks.forEach((callback) => {
 			callback();
 		});

@@ -47,6 +47,21 @@ export class AssetUtils {
 	private static _resolutionSuffix: string;
 
 	/**
+	 * Gets resolution suffix
+	 */
+	public static get resolutionSuffix(): string {
+		return this._resolutionSuffix;
+	}
+
+	/**
+	 * Sets resolution suffix
+	 * @param pValue
+	 */
+	public static set resolutionSuffix(pValue: string) {
+		this._resolutionSuffix = pValue;
+	}
+
+	/**
 	 * Return an asset's path based on it's file extension.
 	 * @param pAssetName
 	 * @param pAssetType
@@ -84,21 +99,6 @@ export class AssetUtils {
 			default:
 				return "";
 		}
-	}
-
-	/**
-	 * Gets resolution suffix
-	 */
-	public static get resolutionSuffix(): string {
-		return this._resolutionSuffix;
-	}
-
-	/**
-	 * Sets resolution suffix
-	 * @param pValue
-	 */
-	public static set resolutionSuffix(pValue: string) {
-		this._resolutionSuffix = pValue;
 	}
 
 	public static replaceResolutionToken(url: string, token: string | RegExp = "@x"): string {

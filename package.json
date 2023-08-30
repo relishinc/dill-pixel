@@ -5,13 +5,13 @@
   "main": "./src/index.ts",
   "scripts": {
     "dev": "cd ./examples && npm run dev",
-    "build:examples": "cd ./examples && npm run build",
     "build": "npm run version",
+    "build:examples": "cd ./examples && npm run build",
     "build:watch": "tsc --watch",
     "lint": "tslint -c tslint.json \"src/**/*.ts\"",
     "docs": "npm run version && typedoc --out docs src",
     "copy": "copyfiles ./src/**/* ../hlf-example-template/relish-hlf",
-    "version": "node build_scripts/version.ts"
+    "version": "node build_scripts/version.mjs"
   },
   "repository": {
     "type": "git",

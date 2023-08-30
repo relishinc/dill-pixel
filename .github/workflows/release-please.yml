@@ -13,7 +13,36 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: google-github-actions/release-please-action@v3
+      # Step to checkout code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Fetch all git tags and branches
+      - run: git fetch --prune --unshallow
+
+      - name: Run Release Please
+        uses: google-github-actions/release-please-action@v3
         with:
           release-type: node
           package-name: release-please-action
+
+      # Step to create version.ts file based on package.json version and git information
+      - name: Create Version File
+        run: |
+          PACKAGE_VERSION=$(jq -r ".version" package.json)
+          GIT_BRANCH=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
+          GIT_COMMIT=$(git rev-parse HEAD)
+          
+          echo "export const PACKAGE_NAME: string = \"html-living-framework\";" > ./src/version.ts
+          echo "export const PACKAGE_VERSION: string = \"$PACKAGE_VERSION\";" >> ./src/version.ts
+          echo "export const GIT_BRANCH: string | undefined = \"$GIT_BRANCH\";" >> ./src/version.ts
+          echo "export const GIT_COMMIT: string | undefined = \"$GIT_COMMIT\";" >> ./src/version.ts
+
+      # Step to commit and push the version.ts file
+      - name: Commit and push version file
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add ./src/version.ts
+          git commit -m "Add version.ts file"
+          git push
