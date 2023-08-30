@@ -8,10 +8,10 @@ export declare class SaveManager {
     private _debug;
     private _cookieStorage;
     private _localStorage;
+    constructor(app: Application);
     get hasLocalStorageData(): boolean;
     get hasCookieData(): boolean;
     set debug(pValue: boolean);
-    constructor(app: Application);
     /**
      * Stores a Bool
      * @param pID The ID to store the bool

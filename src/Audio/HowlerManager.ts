@@ -3,9 +3,9 @@ import {Dictionary} from "typescript-collections";
 import {Application} from "../Application";
 import * as AudioCategory from "../Audio/AudioCategory";
 import * as HowlerUtils from "../Audio/HowlerUtils";
-import * as Topics from "../Data/Topics";
 import {AssetMapAudioData} from "../Load";
-import {LogUtils, MathUtils, subscribe} from "../Utils";
+import {Signals} from "../Signals";
+import {LogUtils, MathUtils} from "../Utils";
 import {AudioCollection} from "./AudioCollection";
 import {AudioToken} from "./AudioToken";
 import {HowlerTrack} from "./HowlerTrack";
@@ -45,6 +45,11 @@ export class HowlerManager implements IAudioManager {
 		this._previousMasterVolume = this._masterVolume;
 		this._collections = new Dictionary<string, AudioCollection>();
 		this._audioLoadTokens = new Array<AssetMapAudioData>();
+
+		this.onPlayRequested = this.onPlayRequested.bind(this);
+		this.loadFromIds = this.loadFromIds.bind(this);
+		this.loadFromAssetMapData = this.loadFromAssetMapData.bind(this);
+		this.onAudioLoadError = this.onAudioLoadError.bind(this);
 	}
 
 	/**
@@ -68,16 +73,10 @@ export class HowlerManager implements IAudioManager {
 			this.onVisibilityChanged.bind(this)
 		);
 
-		subscribe(Topics.PLAY_AUDIO, this.onPlayRequested.bind(this));
-		subscribe(Topics.LOAD_AUDIO, this.loadFromIds.bind(this));
-		subscribe(
-			Topics.LOAD_AUDIO_FROM_ASSET_MAP,
-			this.loadFromAssetMapData.bind(this)
-		);
-		subscribe(
-			Topics.AUDIO_LOAD_ERROR,
-			this.onAudioLoadError.bind(this)
-		);
+		Signals.playAudio.connect(this.onPlayRequested);
+		Signals.loadAudio.connect(this.loadFromIds);
+		Signals.loadAudioFromAssetMap.connect(this.loadFromAssetMapData);
+		Signals.audioLoadError.connect(this.onAudioLoadError);
 	}
 
 	public getCategoryVolume(pCategory: string): number {
@@ -273,11 +272,9 @@ export class HowlerManager implements IAudioManager {
 
 	/**
 	 * Loads a group of audio tracks and adds them to the same category.
-	 * @param pTopic The pubsub message id.
 	 * @param pToken The token with the load data.
 	 */
 	private loadFromIds(
-		pTopic: string,
 		pToken: { assets: string[]; category: string; callback: () => void }
 	): void {
 		this.load(pToken.assets, pToken.category, pToken.callback);
@@ -289,7 +286,6 @@ export class HowlerManager implements IAudioManager {
 	 * @param pData The token with the load data.
 	 */
 	private loadFromAssetMapData(
-		pTopic: string,
 		pData: {
 			assets: AssetMapAudioData[];
 			callback: () => void;
@@ -377,7 +373,7 @@ export class HowlerManager implements IAudioManager {
 		this._collections.setValue(pCategory, new AudioCollection());
 	}
 
-	private onPlayRequested(pTopic: string, pToken: AudioToken): void {
+	private onPlayRequested(pToken: AudioToken): void {
 		this.play(pToken.id, pToken.volume, pToken.loop, pToken.category);
 	}
 
@@ -393,7 +389,6 @@ export class HowlerManager implements IAudioManager {
 	}
 
 	private onAudioLoadError(
-		pTopic = Topics.AUDIO_LOAD_ERROR,
 		pData: {
 			id: string;
 			category: string;

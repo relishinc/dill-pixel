@@ -1,5 +1,5 @@
-import { Container, Graphics, Point } from "pixi.js";
-import { AddFactory, MakeFactory } from "../Utils/Factory";
+import { Graphics, Point } from "pixi.js";
+import { Container } from "../GameObjects/Container";
 import { IPopup } from "./IPopup";
 import { IPopupToken } from "./PopupToken";
 export declare enum POPUP_STATE {
@@ -26,8 +26,6 @@ export declare class Popup extends Container implements IPopup {
     protected _clickBackdropToClose: boolean | "static";
     /** Private backing field for {@link keyboardToClose} */
     protected _keyboardToClose: boolean;
-    protected _addFactory: AddFactory;
-    protected _makeFactory: MakeFactory;
     /** Private backing field for {@link id} */
     private _id?;
     /** @inheritdoc */
@@ -37,8 +35,6 @@ export declare class Popup extends Container implements IPopup {
     /** @inheritdoc */
     get keyboardToClose(): boolean;
     get popupData(): any;
-    protected get add(): AddFactory;
-    protected get make(): MakeFactory;
     /** Hide the popup, but only if it's open */
     hide(): void;
     /** @inheritdoc */

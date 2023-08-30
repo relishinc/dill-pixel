@@ -1,19 +1,17 @@
-import { Layout, LayoutStyles } from "@pixi/layout";
-import { Container, Point } from 'pixi.js';
+import { Point } from "pixi.js";
+import { SignalConnections } from "typed-signals";
 import { Application } from "../Application";
+import { Container } from "../GameObjects";
 import { AssetMapData } from "../Load";
-import * as Factory from "../Utils/Factory";
+import { Add, Make } from "../Utils/Factory";
 /**
  * State
  */
 export declare abstract class State extends Container {
     static NAME: string;
-    static DEFAULT_LAYOUT_STYLES: LayoutStyles;
-    static DEFAULT_LAYOUT_OPTIONS: any;
-    protected _layout: Layout;
     protected _size: Point;
-    protected _addFactory: Factory.AddFactory;
-    private _gsapContext;
+    protected _gsapContext: gsap.Context | null;
+    protected _connections: SignalConnections;
     constructor();
     static get ID(): string;
     static get Assets(): AssetMapData[];
@@ -24,36 +22,21 @@ export declare abstract class State extends Container {
     /**
      * gets the Add factory
      */
-    get add(): Factory.AddFactory;
+    get add(): Add;
     /**
      * gets the Make factory
      */
-    get make(): Factory.MakeFactory;
+    get make(): typeof Make;
     /**
      * Gets the GSAP animation context for this state
      */
     get animationContext(): gsap.Context;
-    /**
-     * Gets the current layout for the state, if it exists
-     */
-    get layout(): Layout;
-    /**
-     * Gets default layout options
-     */
-    get defaultLayoutOptions(): any;
-    getLayoutById(id: string): Layout | null;
     /**
      * Inits state
      * @param pSize{Point}
      * @param pData
      */
     init(pSize: Point, pData?: any): void;
-    /**
-     * Creates layout
-     * see https://pixijs.io/layout/storybook/?path=/story/complex--application-layout for more info
-     * @param options
-     */
-    createLayout(options?: any): void;
     /**
      * Updates state
      * @param pDeltaTime
@@ -85,5 +68,6 @@ export declare abstract class State extends Container {
      * @protected
      */
     protected gsapContextRevert(): void;
+    protected gsapContextAdd(func: () => void): void;
 }
 //# sourceMappingURL=State.d.ts.map

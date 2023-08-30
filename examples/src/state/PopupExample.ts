@@ -1,6 +1,6 @@
 import ExamplePopup from "@/popups/ExamplePopup.ts";
 import {BaseState} from "@/state/BaseState.ts";
-import {AssetMapData, broadcast, PopupToken, TextureAtlasAsset, Topics} from "html-living-framework";
+import {AssetMapData, PopupToken, showPopup, TextureAtlasAsset} from "html-living-framework";
 import {Point} from "pixi.js";
 
 class PopupExample extends BaseState {
@@ -16,28 +16,21 @@ class PopupExample extends BaseState {
 
 	init(pSize: Point) {
 		super.init(pSize);
-		this.initClickToOpen = this.initClickToOpen.bind(this);
-
-
+		//
 		this.setHeaderText("Popup Example");
 		this.setMainText("Click anywhere to open a popup.");
 
 		// register the popup
 		this.app.popups.register(ExamplePopup);
-
 		this.eventMode = 'static';
 
-
-		// this.initClickToOpen();
-
-		const spr = this.add.sprite('lab', 'buildings');
-		spr.width = 100;
-		spr.height = 100;
+		console.log("hiihihihiih");
+		this.initClickToOpen();
 	}
 
 	initClickToOpen() {
-		this.once("pointerdown", (e) => {
-			broadcast(Topics.SHOW_POPUP, new PopupToken(ExamplePopup.NAME, this.initClickToOpen))
+		this.on("pointerdown", (e) => {
+			showPopup(new PopupToken(ExamplePopup.NAME))
 		});
 	}
 }

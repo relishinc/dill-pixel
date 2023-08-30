@@ -1,40 +1,42 @@
-import * as PIXI from "pixi.js";
-import * as Topics from "../Data/Topics";
-import {subscribe, unsubscribe} from "../Utils";
+import {Container, DisplayObject} from "pixi.js";
+import {SignalConnections} from "typed-signals";
+import {Signals} from "../Signals";
 import {IFocusable} from "./IFocusable";
 import {IKeyboardFocus} from "./IKeyboardFocus";
 
-export class KeyboardFocusManager<T extends PIXI.DisplayObject & IKeyboardFocus> extends PIXI.Container {
-	protected _pubSubTokens: any[];
+export class KeyboardFocusManager<T extends DisplayObject & IKeyboardFocus> extends Container {
 	protected _activeFocus?: T;
 	protected _focusPool: T[];
+	private _connections: SignalConnections;
 
 	constructor(protected _T: new (...args: any[]) => T) {
 		super();
 
-		this._pubSubTokens = new Array<any>();
-		this._focusPool = new Array<T>();
+		this.onFocusBegin = this.onFocusBegin.bind(this);
+		this.onFocusEnd = this.onFocusEnd.bind(this);
+		this.reFocus = this.reFocus.bind(this);
 
-		this._pubSubTokens.push(subscribe(Topics.KEYBOARD_FOCUS_BEGIN, this.onFocusBegin.bind(this)));
-		this._pubSubTokens.push(subscribe(Topics.KEYBOARD_FOCUS_END, this.onFocusEnd.bind(this)));
-		this._pubSubTokens.push(subscribe(Topics.KEYBOARD_REFOCUS, this.reFocus.bind(this)));
+		this._focusPool = [];
+
+		this._connections = new SignalConnections();
+		this._connections.add(Signals.keyboardFocusBegin.connect(this.onFocusBegin))
+		this._connections.add(Signals.keyboardFocusEnd.connect(this.onFocusEnd));
+		this._connections.add(Signals.keyboardReFocus.connect(this.reFocus))
 	}
 
-	public destroy(pOptions?: Parameters<typeof PIXI.Container.prototype.destroy>[0]): void {
-		for (let i = 0; i < this._pubSubTokens.length; ++i) {
-			unsubscribe(this._pubSubTokens[i]);
-		}
+	public destroy(pOptions?: Parameters<typeof Container.prototype.destroy>[0]): void {
+		this._connections.disconnectAll();
 		super.destroy(pOptions);
 	}
 
-	protected onFocusBegin(pTopic: string, pFocusable: IFocusable): void {
-		const focus: T = this.getFocus();
+	protected onFocusBegin(pFocusable: IFocusable): void {
+		const focus = this.getFocus();
 		this.addChild(focus);
-		focus.show(pFocusable);
+		(focus as unknown as IKeyboardFocus).show(pFocusable);
 		this._activeFocus = focus;
 	}
 
-	protected onFocusEnd(pTopic: string, pFocusable: IFocusable): void {
+	protected onFocusEnd(pFocusable: IFocusable): void {
 		if (this._activeFocus === undefined) {
 			return;
 		}

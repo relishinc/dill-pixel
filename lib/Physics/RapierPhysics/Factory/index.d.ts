@@ -1,13 +1,12 @@
 import { Container } from "pixi.js";
-import AddFactory from "./AddFactory";
-import MakeFactory from "./MakeFactory";
+import { Add } from "./Add";
+import { Make } from "./Make";
 export declare class Factory {
     private app;
-    private _addFactory;
-    private _makeFactory;
+    private _add;
     constructor();
     set container(value: Container);
-    get add(): AddFactory;
-    get make(): MakeFactory;
+    get add(): Add;
+    get make(): typeof Make;
 }
 //# sourceMappingURL=index.d.ts.map

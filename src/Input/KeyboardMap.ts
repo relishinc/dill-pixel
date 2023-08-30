@@ -1,6 +1,6 @@
-import * as PIXI from "pixi.js";
-import * as Topics from "../Data/Topics";
-import {broadcast, LogUtils} from "../Utils";
+import {Container, IPoint} from "pixi.js";
+import {keyboardFocusBegin, keyboardFocusEnd} from "../Signals";
+import {LogUtils} from "../Utils";
 import {IFocusable} from "./IFocusable";
 
 export enum Direction {
@@ -23,6 +23,11 @@ interface INeighbourMap {
  */
 export class KeyboardMap {
 
+	private _isActive: boolean = false;
+	private _currentFocusable: IFocusable | undefined;
+	private _focusables: IFocusable[] = [];
+	private _neighbours: INeighbourMap[] = [];
+
 	/**
 	 * Sets whether is active
 	 * @param pValue
@@ -39,11 +44,6 @@ export class KeyboardMap {
 	get currentFocusable(): IFocusable | undefined {
 		return this._currentFocusable;
 	}
-
-	private _isActive: boolean = false;
-	private _currentFocusable: IFocusable | undefined;
-	private _focusables: IFocusable[] = [];
-	private _neighbours: INeighbourMap[] = [];
 
 	/**
 	 * Clears keyboard map
@@ -76,7 +76,7 @@ export class KeyboardMap {
 	 * Unregisters focusable
 	 * @param pFocusable
 	 */
-	public unregisterFocusable(pFocusable: (IFocusable | ((it: IFocusable) => boolean)) | Array<IFocusable | ((it: IFocusable) => boolean)>): void {
+	public unregisterFocusable(pFocusable: (IFocusable | ((it: IFocusable) => boolean)) | (IFocusable | ((it: IFocusable) => boolean))[]): void {
 		if (!Array.isArray(pFocusable)) {
 			pFocusable = [pFocusable];
 		}
@@ -123,7 +123,7 @@ export class KeyboardMap {
 	public clearFocus(): void {
 		if (this._currentFocusable !== undefined) {
 			this._currentFocusable.onFocusEnd();
-			broadcast(Topics.KEYBOARD_FOCUS_END, this._currentFocusable);
+			keyboardFocusEnd(this._currentFocusable)
 			this._currentFocusable = undefined;
 		}
 	}
@@ -136,11 +136,11 @@ export class KeyboardMap {
 		if (this._currentFocusable !== pFocusable) {
 			if (this._currentFocusable !== undefined) {
 				this._currentFocusable.onFocusEnd();
-				broadcast(Topics.KEYBOARD_FOCUS_END, this._currentFocusable);
+				keyboardFocusEnd(this._currentFocusable)
 			}
 			this._currentFocusable = pFocusable;
 			this._currentFocusable.onFocusBegin();
-			broadcast(Topics.KEYBOARD_FOCUS_BEGIN, this._currentFocusable);
+			keyboardFocusBegin(this._currentFocusable)
 		}
 	}
 
@@ -249,7 +249,7 @@ export class KeyboardMap {
 	 * @param pDirection
 	 * @returns weight
 	 */
-	private calculateWeight(posA: PIXI.IPoint, posB: PIXI.IPoint, pDirection: Direction): number {
+	private calculateWeight(posA: IPoint, posB: IPoint, pDirection: Direction): number {
 		const xDiff: number = posB.x - posA.x;
 		const yDiff: number = posB.y - posA.y;
 
@@ -279,6 +279,6 @@ export class KeyboardMap {
 	private isFocusable(focusable: IFocusable) {
 		return focusable.isFocusable ?
 			focusable.isFocusable() :
-			(focusable instanceof PIXI.Container) ? (focusable.interactive && focusable.worldVisible) : false;
+			(focusable instanceof Container) ? ((focusable.interactive || focusable.eventMode !== "none") && focusable.worldVisible) : false;
 	}
 }

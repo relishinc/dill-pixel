@@ -48,7 +48,6 @@ export declare class HowlerManager implements IAudioManager {
     createAudioTrack(pId: string, pCategory?: string, pVolume?: number, pLoop?: boolean): IAudioTrack;
     /**
      * Loads a group of audio tracks and adds them to the same category.
-     * @param pTopic The pubsub message id.
      * @param pToken The token with the load data.
      */
     private loadFromIds;

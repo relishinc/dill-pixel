@@ -1,8 +1,7 @@
 import {Howl} from "howler";
-import {Assets} from 'pixi.js';
+import {Assets} from "pixi.js";
 import * as HowlerUtils from "../Audio/HowlerUtils";
-import * as Topics from "../Data/Topics";
-import {broadcast} from "../Utils";
+import {audioLoadError} from "../Signals";
 import {AssetUtils} from "../Utils/AssetUtils";
 import {IAudioManager} from "./IAudioManager";
 import {IAudioTrack} from "./IAudioTrack";
@@ -170,12 +169,12 @@ export class HowlerTrack implements IAudioTrack {
 			}
 		}
 		this._urls = this._urls.slice(this._urls.indexOf(currentSrc) + 1); // any files earlier in the array were skipped by Howler anyway (e.g. unsupported formats)
-		broadcast(Topics.AUDIO_LOAD_ERROR, {
+		audioLoadError({
 			id: this._id,
 			category: this._category,
 			src: currentSrc,
 			fallback: [...this._urls],
 			error: pError,
-		});
+		})
 	}
 }

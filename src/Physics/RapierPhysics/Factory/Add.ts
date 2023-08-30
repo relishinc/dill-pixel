@@ -1,21 +1,19 @@
 import {Container, Texture} from "pixi.js";
 import {resolveXYFromObjectOrArray} from "../../../Utils";
 import {IPhysicsAddFactory, IPhysicsObject, PhysicsBodyType} from "../../index";
-import MakeFactory from "./MakeFactory";
+import {Make} from "./Make";
 
-export default class AddFactory implements IPhysicsAddFactory {
-	protected _make: MakeFactory;
+export class Add implements IPhysicsAddFactory {
 
 	constructor(private defaultContainer: Container) {
-		this._make = new MakeFactory();
 	}
 
 	set container(value: Container) {
 		this.defaultContainer = value;
 	}
 
-	get make(): MakeFactory {
-		return this._make;
+	get make(): typeof Make {
+		return Make;
 	}
 
 	// add physics sprite
@@ -26,7 +24,7 @@ export default class AddFactory implements IPhysicsAddFactory {
 	              pAlpha: number = 1,
 	              pPosition: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
 	): IPhysicsObject {
-		const sprite = this._make.physicsSprite(pTexture, pSheet, pSize, pType);
+		const sprite = this.make.physicsSprite(pTexture, pSheet, pSize, pType);
 		sprite.alpha = pAlpha;
 		const resolvedPosition = resolveXYFromObjectOrArray(pPosition);
 		sprite.x = resolvedPosition.x;

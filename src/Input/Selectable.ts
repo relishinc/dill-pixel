@@ -1,10 +1,8 @@
 import {OutlineFilter} from "@pixi/filter-outline";
-import * as PIXI from "pixi.js";
+import {Container, FederatedPointerEvent, IPoint, Point, Rectangle, settings as pixiSettings} from "pixi.js"
 import {AudioToken} from "../Audio";
 import * as AudioCategory from "../Audio/AudioCategory";
-import * as Topics from "../Data/Topics";
-import * as InputUtils from "../Input/InputUtils";
-import {broadcast} from "../Utils";
+import {playAudio} from "../Signals";
 import * as PixiUtils from "../Utils/PixiUtils";
 import * as RectUtils from "../Utils/RectUtils";
 import {IFocusable} from "./IFocusable";
@@ -13,13 +11,13 @@ import {ISelectable} from "./ISelectable";
 /**
  * Selectable
  */
-export abstract class Selectable extends PIXI.Container implements ISelectable, IFocusable {
+export abstract class Selectable extends Container implements ISelectable, IFocusable {
 	public readonly onSelected: ((p: ISelectable) => void)[];
 	public readonly onDeselected: ((p: ISelectable) => void)[];
 
 	protected _isSelected: boolean;
-	protected _visuals: PIXI.Container;
-	protected _eventData: PIXI.FederatedPointerEvent | undefined;
+	protected _visuals: Container;
+	protected _eventData: FederatedPointerEvent | undefined;
 	protected _outlineFilter: OutlineFilter;
 	protected _isFocussed: boolean;
 	protected _hoverVo: string | undefined;
@@ -31,13 +29,13 @@ export abstract class Selectable extends PIXI.Container implements ISelectable, 
 		this._isFocussed = false;
 		this._isSelected = false;
 
-		this._visuals = new PIXI.Container();
+		this._visuals = new Container();
 		this.addChild(this._visuals);
 
 		this._outlineFilter = new OutlineFilter();
 
-		if (PIXI.settings.FILTER_RESOLUTION !== undefined) {
-			this._outlineFilter.resolution = PIXI.settings.FILTER_RESOLUTION;
+		if (pixiSettings.FILTER_RESOLUTION !== undefined) {
+			this._outlineFilter.resolution = pixiSettings.FILTER_RESOLUTION;
 		}
 
 		this._outlineFilter.uniforms.thickness = [0.025, 0.025];
@@ -47,15 +45,15 @@ export abstract class Selectable extends PIXI.Container implements ISelectable, 
 		this.onSelected = [];
 		this.onDeselected = [];
 
-		this.on(InputUtils.Events.POINTER_OVER, this.onPointerOver);
-		this.on(InputUtils.Events.POINTER_DOWN, this.onPointerDown);
-		this.on(InputUtils.Events.POINTER_UP, this.onPointerUp);
-		this.on(InputUtils.Events.POINTER_UP_OUTSIDE, this.onPointerUpOutside);
-		this.on(InputUtils.Events.POINTER_OUT, this.onPointerOut);
+		this.on("pointerover", this.onPointerOver);
+		this.on("pointerdown", this.onPointerDown);
+		this.on("pointerup", this.onPointerUp);
+		this.on("pointerupoutside", this.onPointerUpOutside);
+		this.on("pointerout", this.onPointerOut);
 
 		this.interactive = true;
 		this.cursor = "pointer";
-		this.hitArea = new PIXI.Rectangle(-25, -25, 50, 50);
+		this.hitArea = new Rectangle(-25, -25, 50, 50);
 	}
 
 	/**
@@ -124,9 +122,9 @@ export abstract class Selectable extends PIXI.Container implements ISelectable, 
 	 * Gets focus position
 	 * @returns PIXI.Point
 	 */
-	public getFocusPosition(): PIXI.Point {
-		if (this.hitArea instanceof PIXI.Rectangle) {
-			return new PIXI.Point().copyFrom(this.toGlobal(RectUtils.center(this.hitArea)));
+	public getFocusPosition(): Point {
+		if (this.hitArea instanceof Rectangle) {
+			return new Point().copyFrom(this.toGlobal(RectUtils.center(this.hitArea)));
 		} else {
 			return this.getGlobalPosition();
 		}
@@ -136,9 +134,9 @@ export abstract class Selectable extends PIXI.Container implements ISelectable, 
 	 * Gets focus size
 	 * @returns PIXI.Point
 	 */
-	public getFocusSize(): PIXI.IPoint {
-		let bounds: PIXI.Rectangle;
-		if (this.hitArea instanceof PIXI.Rectangle) {
+	public getFocusSize(): IPoint {
+		let bounds: Rectangle;
+		if (this.hitArea instanceof Rectangle) {
 			bounds = PixiUtils.getGlobalBounds(this, this.hitArea.clone());
 		} else {
 			bounds = PixiUtils.getGlobalBounds(this);
@@ -151,9 +149,7 @@ export abstract class Selectable extends PIXI.Container implements ISelectable, 
 	 */
 	protected playHoverVo(): void {
 		if (this._hoverVo !== undefined) {
-			broadcast(Topics.PLAY_AUDIO, new AudioToken(
-				this._hoverVo, 1, false, AudioCategory.VO.toString(),
-			));
+			playAudio(new AudioToken(this._hoverVo, 1, false, AudioCategory.VO.toString()));
 		}
 	}
 
@@ -162,9 +158,7 @@ export abstract class Selectable extends PIXI.Container implements ISelectable, 
 	 */
 	protected playClickedSFX(): void {
 		if (this._clickedSfx !== undefined) {
-			broadcast(Topics.PLAY_AUDIO, new AudioToken(
-				this._clickedSfx, 1, false, AudioCategory.SFX.toString(),
-			));
+			playAudio(new AudioToken(this._clickedSfx, 1, false, AudioCategory.SFX.toString()));
 		}
 	}
 
@@ -179,7 +173,7 @@ export abstract class Selectable extends PIXI.Container implements ISelectable, 
 	/**
 	 * onPointerDown
 	 */
-	protected onPointerDown(pEvent: PIXI.FederatedPointerEvent): void {
+	protected onPointerDown(pEvent: FederatedPointerEvent): void {
 		this._eventData = pEvent;
 		this._visuals.scale.set(0.95);
 	}
@@ -187,7 +181,7 @@ export abstract class Selectable extends PIXI.Container implements ISelectable, 
 	/**
 	 * onPointerUp
 	 */
-	protected onPointerUp(pEvent: PIXI.FederatedPointerEvent): void {
+	protected onPointerUp(pEvent: FederatedPointerEvent): void {
 		if (this._eventData !== undefined && this._eventData.pointerId === pEvent.pointerId) {
 			this.toggleSelected();
 			this._eventData = undefined;
@@ -199,7 +193,7 @@ export abstract class Selectable extends PIXI.Container implements ISelectable, 
 	/**
 	 * onPointerUpOutside
 	 */
-	protected onPointerUpOutside(pEvent: PIXI.FederatedPointerEvent): void {
+	protected onPointerUpOutside(pEvent: FederatedPointerEvent): void {
 		this._eventData = undefined;
 	}
 

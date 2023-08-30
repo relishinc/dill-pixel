@@ -2,10 +2,6 @@ import { Point } from "pixi.js";
 import { Application } from "../Application";
 export declare class OrientationManager {
     private app;
-    /** @deprecated use subscribe(LANDSCAPE_ORIENTATION) */
-    onLandscapeOrientation: () => void;
-    /** @deprecated use subscribe(PORTRAIT_ORIENTATION) */
-    onPortraitOrientation: () => void;
     private _promptImage?;
     private _isPortrait?;
     private _enabled;

@@ -1,3 +1,4 @@
+import Matter from "matter-js";
 import {Container, Sprite, Texture} from "pixi.js";
 import {Application} from "../../../Application";
 import {resolveXYFromObjectOrArray} from "../../../Utils";
@@ -18,7 +19,7 @@ export class MatterPhysicsSprite extends Container implements IPhysicsObject {
 	} | [number, number?] | number, pBodyType: PhysicsBodyType = PhysicsBodyType.RECTANGLE) {
 		super();
 		this.onAdded = this.onAdded.bind(this);
-		this.visual = typeof pTexture === 'string' ? this.addChild(this.app.make.sprite(pTexture, pSheet)) : this.addChild(new Sprite(pTexture));
+		this.visual = typeof pTexture === "string" ? this.addChild(this.app.make.sprite(pTexture, pSheet)) : this.addChild(new Sprite(pTexture));
 		this.visual.anchor.set(0.5, 0.5);
 
 		if (pSize) {
@@ -29,8 +30,8 @@ export class MatterPhysicsSprite extends Container implements IPhysicsObject {
 
 		this._bodyType = pBodyType;
 
-		this.on('added', this.onAdded);
-		this.on('removed', this.onRemoved);
+		this.on("added", this.onAdded);
+		this.on("removed", this.onRemoved);
 	}
 
 	get physics(): MatterPhysicsBase {

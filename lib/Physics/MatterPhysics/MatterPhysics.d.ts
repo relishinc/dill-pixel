@@ -1,4 +1,4 @@
-import Matter from 'matter-js';
+import Matter from "matter-js";
 import { Application } from "../../Application";
 import { PhysicsBase } from "../index";
 import { IMatterPhysicsObject, MatterBodyLike } from "./index";
