@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.1.0](https://github.com/relishinc/hlf/compare/v2.0.4...v2.1.0) (2023-08-30)
+
+
+### Features
+
+* adding the creation and saving of version.ts to the release-please workflow ([76ed31f](https://github.com/relishinc/hlf/commit/76ed31fd9ca801c96d31348e6161ef42bb1fab60))
+* merged cavlfo upgrades ([980c6eb](https://github.com/relishinc/hlf/commit/980c6eb546d97c44baf44edaa01bcc8afa25bd95))
+* remove the need for the lib folder ([5fabdb7](https://github.com/relishinc/hlf/commit/5fabdb780af312f2c0b206d7b2f80fc28d9a2577))
+* switched from pubsub to signals, feat: re-vamped state manager a bit, chore: code cleanup ([874881b](https://github.com/relishinc/hlf/commit/874881b91a594e7fbc43bc0ead2c8d862058da4f))
+
+
+### Bug Fixes
+
+* github action ([b562ced](https://github.com/relishinc/hlf/commit/b562ced12712adfb7c854628f7169bfc3b1f57f6))
+
 ## [2.0.4](https://github.com/relishinc/hlf/compare/v2.0.3...v2.0.4) (2023-08-14)
 
 
