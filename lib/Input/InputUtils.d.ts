@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js";
+import { Rectangle, Sprite } from "pixi.js";
 /**
  * eNum Events
  */
@@ -39,5 +39,5 @@ export declare enum Events {
  * @param pSprite
  * @returns area from sprite
  */
-export declare function hitAreaFromSprite(pSprite: PIXI.Sprite): PIXI.Rectangle;
+export declare function hitAreaFromSprite(pSprite: Sprite): Rectangle;
 //# sourceMappingURL=InputUtils.d.ts.map

@@ -1,19 +1,19 @@
 import {Spine} from "@pixi-spine/runtime-4.1";
 import {
-    Assets,
-    BitmapText,
-    Circle,
-    Container,
-    DisplayObject,
-    Ellipse,
-    IHitArea,
-    Point,
-    Polygon,
-    Rectangle,
-    Resource,
-    RoundedRectangle,
-    Sprite,
-    Texture
+	Assets,
+	BitmapText,
+	Circle,
+	Container,
+	DisplayObject,
+	Ellipse,
+	IHitArea,
+	Point,
+	Polygon,
+	Rectangle,
+	Resource,
+	RoundedRectangle,
+	Sprite,
+	Texture
 } from "pixi.js";
 
 import * as PointUtils from "../Utils/PointUtils";
@@ -269,4 +269,19 @@ export function getGlobalBounds(pTarget: DisplayObject, pRect?: Rectangle): Rect
 	bounds.width = maxX - minX;
 	bounds.height = maxY - minY;
 	return bounds;
+}
+
+export function scaleUniform(obj: any, scaleNum: number, scaleProp: "width" | "height" = "width") {
+	const scaleVal: "x" | "y" = scaleProp === "width" ? "y" : "x";
+	const otherScaleVal: "x" | "y" = scaleProp === "width" ? "x" : "y";
+	obj[scaleProp] = scaleNum;
+	obj.scale[scaleVal] = obj.scale[otherScaleVal]
+}
+
+export function scaleToWidth(obj: Container, width: number) {
+	scaleUniform(obj, width, "width")
+}
+
+export function scaleToHeight(obj: Container, height: number) {
+	scaleUniform(obj, height, "height")
 }

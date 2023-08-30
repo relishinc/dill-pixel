@@ -1,24 +1,21 @@
 import path from "path";
-import {defineConfig} from "vite";
+import {defineConfig, normalizePath} from "vite";
 import {createHtmlPlugin} from "vite-plugin-html"
 import {viteStaticCopy} from "vite-plugin-static-copy";
 import topLevelAwait from "vite-plugin-top-level-await";
 import wasm from "vite-plugin-wasm";
 
+/** @type {import("vite").UserConfig} */
 export default defineConfig((config) => ({
 	...config,
-	build: {
-		outDir: "../dist",
-		cssMinify: true,
-		emptyOutDir: true,
-		manifest: true,
-	},
+	target: "esnext",
+	cacheDir: ".cache",
 	logLevel: "info",
-	root: "src",
-	base: process.env.NODE_ENV === "development" ? "/" : "/",
+	base: process.env.NODE_ENV === "development" ? "/" : "./",
 	server: {
 		port: 3000,
 		host: true,
+		open: true
 	},
 	preview: {
 		host: true,
@@ -29,35 +26,26 @@ export default defineConfig((config) => ({
 		topLevelAwait(),
 		createHtmlPlugin(),
 		viteStaticCopy({
-			watch: true,
+			watch: {reloadPageOnChange: true},
 			targets: [
 				{
-					src: "src/assets/images/spritesheets/_output/*",
-					dest: "images/spritesheets",
-					globOptions: {dot: false},
+					src: normalizePath(path.resolve(__dirname, "./src/assets/images/spritesheets/_output/*")),
+					dest: "./assets/images/spritesheets"
 				},
 				{
-					src: "src/assets/images/static/**/*",
-					dest: "images/static",
-					globOptions: {dot: false},
+					src: normalizePath(path.resolve(__dirname, "./src/assets/images/static/**/*")),
+					dest: "./assets/images/static"
 				},
 				{
-					src: "src/assets/audio/output/**/*",
-					dest: "audio",
-					globOptions: {dot: false},
+					src: normalizePath(path.resolve(__dirname, "./src/assets/json/*")),
+					dest: "./assets/json"
 				},
 				{
-					src: "src/assets/fonts/**/*",
-					dest: "fonts",
-					globOptions: {dot: false, ignore: ["**/*.bmfc"]},
+					src: normalizePath(path.resolve(__dirname, "./src/assets/fonts/*")),
+					dest: "./assets/fonts"
 				},
-				{
-					src: "src/assets/json/**/*",
-					dest: "json",
-					globOptions: {dot: false, ignore: ["**/*.ogmo"]},
-				},
-			],
-		}),
+			]
+		})
 	],
 	resolve: {
 		alias: {

@@ -1,5 +1,6 @@
-import {Container, Graphics, Point} from "pixi.js";
-import * as Topics from "../Data/Topics";
+import {Graphics, Point} from "pixi.js";
+import {Container} from "../GameObjects/Container";
+import {hidePopupComplete} from "../Signals";
 import {IPopup} from "./IPopup";
 import {IPopupToken} from "./PopupToken";
 
@@ -14,7 +15,8 @@ export enum POPUP_STATE {
  * This is an abstract class from which all Popups should inherit.
  * However, you can also make your own implementation of {@link IPopup} if necessary.
  */
-export abstract class Popup extends Container implements IPopup {
+export class Popup extends Container implements IPopup {
+	public static readonly NAME: string = "__Popup";
 	/** @inheritdoc */
 	public blackout?: Graphics;
 	/** This is where we keep the callback that we call when closing the popup  */
@@ -110,13 +112,19 @@ export abstract class Popup extends Container implements IPopup {
 	 * Called by {@link show}
 	 * Don't forget to call the callback when complete
 	 */
-	protected abstract AnimateIn(pCallback: () => void): void;
+	protected async AnimateIn(pCallback: () => void): Promise<void> {
+		console.log("default AnimateIn");
+		pCallback();
+	}
 
 	/**
 	 * Called by {@link hide}
 	 * Don't forget to call the callback when complete
 	 */
-	protected abstract AnimateOut(pCallback: () => void): void;
+	protected async AnimateOut(pCallback: () => void): Promise<void> {
+		console.log("default AnimateOut");
+		pCallback();
+	}
 
 	/**
 	 * Click handler for {@link blackout}
@@ -161,6 +169,7 @@ export abstract class Popup extends Container implements IPopup {
 			this._callback = undefined;
 			callback();
 		}
-		PubSub.publishSync(Topics.HIDE_POPUP_COMPLETE, this as IPopup);
+
+		hidePopupComplete(this)
 	}
 }

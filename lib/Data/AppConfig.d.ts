@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js";
+import { IApplicationOptions } from "pixi.js";
 export declare class AppConfig {
     [key: string]: any;
     autoStart?: boolean;
@@ -18,7 +18,7 @@ export declare class AppConfig {
     sharedTicker?: boolean;
     sharedLoader?: boolean;
     resizeTo?: Window | HTMLElement;
-    constructor(pConfig?: Partial<PIXI.IApplicationOptions> & {
+    constructor(pConfig?: Partial<IApplicationOptions> & {
         [key: string]: any;
     });
 }

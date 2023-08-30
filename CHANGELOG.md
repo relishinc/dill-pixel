@@ -1,5 +1,64 @@
 # Changelog
 
+## [2.0.4](https://github.com/relishinc/hlf/compare/v2.0.3...v2.0.4) (2023-08-14)
+
+
+### Bug Fixes
+
+* spritesheet multipack implementation pulling texture from multipack implementation ([ee539bc](https://github.com/relishinc/hlf/commit/ee539bca6108f947342bd49b830990d103a023c1))
+
+## [2.0.3](https://github.com/relishinc/hlf/compare/v2.0.2...v2.0.3) (2023-08-14)
+
+
+### Bug Fixes
+
+* spritesheet multipack implementation ([a2ae5b4](https://github.com/relishinc/hlf/commit/a2ae5b43969e8ced4286f4e87cdb60ec048b146c))
+
+## [2.0.2](https://github.com/relishinc/hlf/compare/v2.0.1...v2.0.2) (2023-08-09)
+
+
+### Bug Fixes
+
+* ticker not starting in some cases ([34169e3](https://github.com/relishinc/hlf/commit/34169e3958d154edd9ce13640e4af63f93e4d6ca))
+
+## [2.0.1](https://github.com/relishinc/hlf/compare/v2.0.0...v2.0.1) (2023-08-08)
+
+
+### Bug Fixes
+
+* topics export weirdness ([636b8c8](https://github.com/relishinc/hlf/commit/636b8c8cc9562a7f1f4f6705321b389ac90dd2e7))
+
+## [2.0.0](https://github.com/relishinc/hlf/compare/v1.6.2...v2.0.0) (2023-08-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* changed Popup class to be non-abstract
+
+### Features
+
+* added access to popupmanager via app.popups, ([eaf5a5a](https://github.com/relishinc/hlf/commit/eaf5a5a88bd4d6d4dd06e730a618073ace86633f))
+
+
+### Bug Fixes
+
+* fixed StateManager error on initial transition ([eaf5a5a](https://github.com/relishinc/hlf/commit/eaf5a5a88bd4d6d4dd06e730a618073ace86633f))
+
+## [1.6.2](https://github.com/relishinc/hlf/compare/v1.6.1...v1.6.2) (2023-08-04)
+
+
+### Bug Fixes
+
+* changed pubsub implementation ([cd006e9](https://github.com/relishinc/hlf/commit/cd006e96b05804aaab38f01d0c21a1ba4595da80))
+
+## [1.6.1](https://github.com/relishinc/hlf/compare/v1.6.0...v1.6.1) (2023-07-11)
+
+
+### Bug Fixes
+
+* default load screen in state manager ([22ace40](https://github.com/relishinc/hlf/commit/22ace405dde487275d75c7fb1bf403b967dc58fe))
+* merged ([7810dfd](https://github.com/relishinc/hlf/commit/7810dfdf3c9d137d8deb386a548fefa7a860b70f))
+
 ## [1.6.0](https://github.com/relishinc/hlf/compare/v1.5.0...v1.6.0) (2023-06-26)
 
 

@@ -1,7 +1,7 @@
 import { Container, Point } from "pixi.js";
 import { Application } from "../Application";
 import { AssetMapData } from "./AssetMapData";
-import { LoadScreenProvider } from "./LoadScreen";
+import { LoadScreen, LoadScreenProvider } from "./LoadScreen";
 import { SplashScreen } from "./SplashScreen";
 /**
  * Manages all asset loading.
@@ -33,6 +33,7 @@ export declare class LoadManager extends Container {
      * The default load screen to use.
      */
     private _defaultLoadScreen;
+    private _defaultLoadScreenId;
     /**
      * The current active load complete callback.
      */
@@ -47,6 +48,8 @@ export declare class LoadManager extends Container {
      * @param pSplashScreen The splashscreen instance to use.
      */
     constructor(app: Application, pSplashScreen: SplashScreen);
+    get defaultLoadScreen(): LoadScreenProvider | undefined;
+    get defaultLoadScreenId(): string | undefined;
     /**
      * Enabling this will print all debug logs.
      */
@@ -69,11 +72,11 @@ export declare class LoadManager extends Container {
     startSplashProcess(pPersistentAssets: AssetMapData[], pOnComplete: () => void): void;
     /**
      * Registers a load screen.
-     * @param pKey The id of the load screen.
+     * @param pIdOrClass The id of the new state or the class of the new state.
      * @param pScreen The load screen.
      * @param [pDefault] Is the new load screen the default one.
      */
-    registerLoadScreen(pKey: string, pScreen: LoadScreenProvider, pDefault?: boolean): void;
+    registerLoadScreen(pIdOrClass: string | typeof LoadScreen, pScreen?: LoadScreenProvider, pDefault?: boolean): void;
     /**
      * Called when the window is resized.
      * @param pSize The new size.

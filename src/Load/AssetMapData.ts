@@ -23,6 +23,8 @@ export class AssetMapData {
 	 */
 	public resolutionSuffix: string = "";
 
+	public data: any;
+
 	/**
 	 * @deprecated use asset classes from Load/Assets package
 	 * @param pAssetName
@@ -43,7 +45,7 @@ export class AssetMapData {
 
 	public getLoaderOptions(): Partial<any> | undefined {
 		return {
-			texturePreference: {resolution: this.resolutionSuffix === `@1x` ? 1 : 2, format: ['avif', 'webp', 'png']}
+			texturePreference: {resolution: this.resolutionSuffix === "@1x" ? 1 : 2, format: ["avif", "webp", "png"]}
 		};
 	}
 

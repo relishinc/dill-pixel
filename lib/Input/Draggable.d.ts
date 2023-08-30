@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js";
+import { Container, FederatedPointerEvent, Point } from "pixi.js";
 import { Selectable } from "./Selectable";
 /**
  * Draggable
@@ -9,7 +9,7 @@ export declare class Draggable extends Selectable {
     readonly onDrag: ((p: Draggable) => void)[];
     readonly onDragEnd: ((p: Draggable) => void)[];
     protected _isDrag: boolean;
-    protected _pointerOffset: PIXI.Point;
+    protected _pointerOffset: Point;
     private _dragThresholdSq;
     constructor();
     /**
@@ -19,7 +19,7 @@ export declare class Draggable extends Selectable {
     /**
      * Gets visuals
      */
-    get visuals(): PIXI.Container;
+    get visuals(): Container;
     /**
      * Sets drag threshold
      * @param pValue
@@ -45,19 +45,19 @@ export declare class Draggable extends Selectable {
      * onPointerDown
      * @param pEvent
      */
-    protected onPointerDown(pEvent: PIXI.FederatedPointerEvent): void;
+    protected onPointerDown(pEvent: FederatedPointerEvent): void;
     /**
      * onPointerUp
      */
-    protected onPointerUp(pEvent: PIXI.FederatedPointerEvent): void;
+    protected onPointerUp(pEvent: FederatedPointerEvent): void;
     /**
      * onPointerUpOutside
      */
-    protected onPointerUpOutside(pEvent: PIXI.FederatedPointerEvent): void;
+    protected onPointerUpOutside(pEvent: FederatedPointerEvent): void;
     /**
      * onPointerMove
      */
-    protected onPointerMove(pEvent: PIXI.FederatedPointerEvent): void;
+    protected onPointerMove(pEvent: FederatedPointerEvent): void;
     /**
      * Drag begin
      */

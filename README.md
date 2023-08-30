@@ -2,11 +2,16 @@
 
 Framework for HTML game development, made by Relish Digital [https://reli.sh].
 
+### Migration Guide
+
+HLF is changing! View the [Migration Guide](./MIGRATION_GUIDE.md) for more information.
+
 ### Introduction
 
 #### Why make this game framework?
 
-PIXI.js is a great rendering engine, but it is not a game engine. It is not opinionated about projectr structure, and it
+PIXI.js is a great rendering engine, but it is not a game engine. It is not opinionated about projectr structure, and
+it.
 does not provide any common game development tools. This framework is designed to fill
 that gap. It is Relish's opinionated approach to game development using PIXI.js.
 

@@ -7,7 +7,7 @@ export default class AddFactory implements IPhysicsAddFactory {
     constructor(defaultContainer: Container);
     set container(value: Container);
     get make(): MakeFactory;
-    physicsSprite(pTexture: string | Texture, pSheet?: string | string[] | undefined, pSize?: {
+    physicsSprite(pTexture: string | Texture, pSheet?: string | undefined, pSize?: {
         x: number;
         y: number;
     } | [number, number?] | number, pType?: PhysicsBodyType, pAlpha?: number, pPosition?: {

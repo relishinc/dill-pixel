@@ -68,8 +68,16 @@ export declare class StateManager extends Container {
      * The internal flag for print log statements.
      */
     private _debug;
+    private _first;
+    private _firstComplete;
     private _defaultStateId?;
+    private _defaultTransitionType;
+    private _useHash;
+    private _statesMenu;
+    private _excluded;
     constructor(app: Application);
+    set useHash(value: boolean);
+    set defaultTransitionType(pTransitionType: TransitionStep[]);
     get default(): string | undefined;
     /**
      * Enabling this will print all debug logs.
@@ -91,14 +99,20 @@ export declare class StateManager extends Container {
      * @param pCreate A function that constructs the state.
      */
     register(pIdOrClass: string | typeof State, pCreate?: () => State): void;
+    statesRegistered(): void;
+    showDebugMenu(): void;
     /**
-     * Method to transition states instead of using PubSub variant
+     * Method to transition states
      * instead call this.app.state.transitionTo(stateId, loadScreenId)
      * @param pStateIdAndData
      * @param pLoadScreen
      * @param pTransitionSteps
      */
-    transitionTo(pStateIdAndData: string, pLoadScreen?: string | undefined, pTransitionSteps?: TransitionStep[]): void;
+    transitionTo(pStateIdAndData: string | typeof State, pLoadScreen?: string | undefined, pTransitionSteps?: TransitionStep[]): boolean;
+    getRegisteredStateIds(): string[];
+    getStateFromHash(): string | null;
+    excludeFromDebugList(name: string): void;
+    protected listenForHashChange(): void;
     /**
      * Transitions to a new state.
      * @param pStateId The new state to transition to.

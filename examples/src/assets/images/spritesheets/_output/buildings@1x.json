@@ -1,0 +1,21 @@
+{"frames": {
+
+"lab":
+{
+	"frame": {"x":3,"y":3,"w":225,"h":210},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":225,"h":210},
+	"sourceSize": {"w":225,"h":210},
+	"anchor": {"x":0,"y":0}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.1",
+	"image": "buildings@1x.png",
+	"format": "RGBA8888",
+	"size": {"w":231,"h":216},
+	"scale": "0.5",
+	"smartupdate": "$TexturePacker:SmartUpdate:4de3d1852c1d66be440b9e46683f6baf:d7dfef7e35b6f23678a18c770f86360b:e01ee0f20274bcfc7745838397bf469c$"
+}
+}

@@ -1,4 +1,5 @@
-import { Container, Graphics, Point } from "pixi.js";
+import { Graphics, Point } from "pixi.js";
+import { Container } from "../GameObjects/Container";
 import { IPopup } from "./IPopup";
 import { IPopupToken } from "./PopupToken";
 export declare enum POPUP_STATE {
@@ -11,7 +12,8 @@ export declare enum POPUP_STATE {
  * This is an abstract class from which all Popups should inherit.
  * However, you can also make your own implementation of {@link IPopup} if necessary.
  */
-export declare abstract class Popup extends Container implements IPopup {
+export declare class Popup extends Container implements IPopup {
+    static readonly NAME: string;
     /** @inheritdoc */
     blackout?: Graphics;
     /** This is where we keep the callback that we call when closing the popup  */
@@ -57,12 +59,12 @@ export declare abstract class Popup extends Container implements IPopup {
      * Called by {@link show}
      * Don't forget to call the callback when complete
      */
-    protected abstract AnimateIn(pCallback: () => void): void;
+    protected AnimateIn(pCallback: () => void): Promise<void>;
     /**
      * Called by {@link hide}
      * Don't forget to call the callback when complete
      */
-    protected abstract AnimateOut(pCallback: () => void): void;
+    protected AnimateOut(pCallback: () => void): Promise<void>;
     /**
      * Click handler for {@link blackout}
      * Feel free to override this

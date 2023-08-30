@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js";
+import {IApplicationOptions} from "pixi.js";
 import {MathUtils, PlatformUtils} from "../Utils";
 
 export class AppConfig {
@@ -23,7 +23,7 @@ export class AppConfig {
 	public sharedLoader?: boolean;
 	public resizeTo?: Window | HTMLElement;
 
-	constructor(pConfig?: Partial<PIXI.IApplicationOptions> & { [key: string]: any }) {
+	constructor(pConfig?: Partial<IApplicationOptions> & { [key: string]: any }) {
 		// If no config is provided, create a default one
 		if (pConfig === undefined) {
 			pConfig = {
@@ -92,6 +92,7 @@ export class AppConfig {
 
 		// If properties exist in the json, set them in the config
 		for (const key in pConfig) {
+			// eslint-disable-next-line no-prototype-builtins
 			if (pConfig.hasOwnProperty(key)) {
 				if (key === "resolution" ||
 					/**

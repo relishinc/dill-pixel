@@ -1,2 +1,2 @@
-export { MatterPhysicsSprite } from './MatterPhysicsSprite';
+export { MatterPhysicsSprite } from "./MatterPhysicsSprite";
 //# sourceMappingURL=index.d.ts.map

@@ -1,18 +1,18 @@
-import * as PIXI from "pixi.js";
+import { BitmapText, Circle, Container, Ellipse, FederatedPointerEvent, IHitArea, IPoint, Point, Polygon, Rectangle, RoundedRectangle, Sprite, Texture } from "pixi.js";
 import { IFocusable } from "../Input";
 /**
  * Button
  */
-export declare class Button extends PIXI.Container implements IFocusable {
-    protected _image: PIXI.Sprite | undefined;
-    protected _enabledTexture: PIXI.Texture | undefined;
-    protected _disabledTexture: PIXI.Texture | undefined;
-    protected _icon: PIXI.Sprite | undefined;
+export declare class Button extends Container implements IFocusable {
+    protected _image: Sprite | undefined;
+    protected _enabledTexture: Texture | undefined;
+    protected _disabledTexture: Texture | undefined;
+    protected _icon: Sprite | undefined;
     protected _callback: () => void;
-    protected _hitArea: PIXI.Rectangle | PIXI.Circle | PIXI.Ellipse | PIXI.Polygon | PIXI.RoundedRectangle | PIXI.IHitArea;
-    protected _visuals: PIXI.Container;
-    protected _text: PIXI.BitmapText | undefined;
-    protected _eventData: PIXI.FederatedPointerEvent | undefined;
+    protected _hitArea: Rectangle | Circle | Ellipse | Polygon | RoundedRectangle | IHitArea;
+    protected _visuals: Container;
+    protected _text: BitmapText | undefined;
+    protected _eventData: FederatedPointerEvent | undefined;
     /**
      * Creates an instance of button.
      * @todo SH: Look into "buttonifying" an object, similar to how Dijon did it.
@@ -24,8 +24,8 @@ export declare class Button extends PIXI.Container implements IFocusable {
     onFocusBegin(): void;
     onFocusEnd(): void;
     onFocusActivated(): void;
-    getFocusPosition(): PIXI.Point;
-    getFocusSize(): PIXI.IPoint;
+    getFocusPosition(): Point;
+    getFocusSize(): IPoint;
     /**
      * Adds text to the centre of the button.
      * @param pText The text to be displayed.
@@ -44,7 +44,7 @@ export declare class Button extends PIXI.Container implements IFocusable {
      * @param pCallback
      */
     setCallback(pCallback: () => void): void;
-    setDisabledImage(pTexture: PIXI.Texture | string, pSheet?: string): void;
+    setDisabledImage(pTexture: Texture | string, pSheet?: string): void;
     /**
      * Sets the interactive flag and tries to change the default texture to enabled or disabled if those textures exist.
      * @param pInteractive Should this button be interactive or not.
@@ -53,19 +53,19 @@ export declare class Button extends PIXI.Container implements IFocusable {
     /**
      * Event fired when pointer is over button
      */
-    protected onPointerOver(pEvent: PIXI.FederatedPointerEvent): void;
-    /**
+    protected onPointerOver(pEvent: FederatedPointerEvent): void;
+    /**`
      * Event fired when pointer pressed on button
      * @param pEvent
      */
-    protected onPointerDown(pEvent: PIXI.FederatedPointerEvent): void;
+    protected onPointerDown(pEvent: FederatedPointerEvent): void;
     /**
      * Event fired when pointer released on button
      */
-    protected onPointerUp(pEvent: PIXI.FederatedPointerEvent): void;
+    protected onPointerUp(pEvent: FederatedPointerEvent): void;
     /**
      * Event fired when pointer no longer over button
      */
-    protected onPointerOut(pEvent: PIXI.FederatedPointerEvent): void;
+    protected onPointerOut(pEvent: FederatedPointerEvent): void;
 }
 //# sourceMappingURL=Button.d.ts.map

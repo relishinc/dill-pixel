@@ -1,7 +1,7 @@
 import {Assets, Container, Point} from "pixi.js";
 import {Dictionary} from "typescript-collections";
 import {Application} from "../Application";
-import * as Topics from "../Data/Topics";
+import {loadAudioFromAssetMap, loadComplete, loadScreenHidden, Signals} from "../Signals";
 import {AssetUtils} from "../Utils";
 import * as LogUtils from "../Utils/LogUtils";
 import {AssetMap} from "./AssetMap";
@@ -74,10 +74,10 @@ export class LoadManager extends Container {
 		this.onPixiLoadProgress = this.onPixiLoadProgress.bind(this);
 		this.onPixiLoadError = this.onPixiLoadError.bind(this);
 
-		this.app.subscribe(Topics.SHOW_LOAD_SCREEN, this.showLoadScreen)
-		this.app.subscribe(Topics.HIDE_LOAD_SCREEN, this.hideLoadScreen);
-		this.app.subscribe(Topics.LOAD_ASSETS, this.onLoadRequested);
-		this.app.subscribe(Topics.UNLOAD_ASSETS, this.onUnloadRequested);
+		Signals.showLoadScreen.connect(this.showLoadScreen);
+		Signals.hideLoadScreen.connect(this.hideLoadScreen);
+		Signals.loadAssets.connect(this.onLoadRequested);
+		Signals.unloadAssets.connect(this.onUnloadRequested);
 	}
 
 	public get defaultLoadScreen(): LoadScreenProvider | undefined {
@@ -164,7 +164,7 @@ export class LoadManager extends Container {
 	public registerLoadScreen(pIdOrClass: string | typeof LoadScreen, pScreen?: LoadScreenProvider, pDefault: boolean = false) {
 		if (typeof pIdOrClass === "string") {
 			if (!pScreen) {
-				throw new Error(`Load screen provider must be defined when supplying a string id.`);
+				throw new Error("Load screen provider must be defined when supplying a string id.");
 			}
 			this._loadScreens.setValue(pIdOrClass, pScreen);
 			if (pDefault) {
@@ -200,7 +200,6 @@ export class LoadManager extends Container {
 	 * @param pData Data containing what loadscreen to show and what to call when it is shown.
 	 */
 	private showLoadScreen(
-		pTopic: string,
 		pData: { loadScreen: string; stateData?: any; callback: () => void }
 	): void {
 		this.log(
@@ -233,7 +232,6 @@ export class LoadManager extends Container {
 	 * @param pData Data containing what loadscreen to hide and what to call when it is hidden.
 	 */
 	private hideLoadScreen(
-		pTopic: string,
 		pData: { loadScreen: string; callback: () => void }
 	): void {
 		this.log(
@@ -401,10 +399,11 @@ export class LoadManager extends Container {
 				if (asset instanceof AssetMapAudioData) {
 					audioAssets.push(asset as AssetMapAudioData);
 				} else {
+
 					const src = asset.assetPath
 						? AssetUtils.replaceResolutionToken(asset.assetPath)
 						: AssetUtils.getPathToAsset(asset);
-					Assets.add(asset.assetName, src);
+					Assets.add(asset.assetName, src, asset?.data || null);
 					defaultAssets.push(asset.assetName);
 				}
 			}
@@ -414,11 +413,11 @@ export class LoadManager extends Container {
 					audioAssets.map((asset) => asset.getResource().src),
 					this.onPixiLoadProgress
 				);
-				this.app.broadcast(Topics.LOAD_AUDIO_FROM_ASSET_MAP, {
+				loadAudioFromAssetMap({
 					assets: audioAssets,
 					progressCallback: this.onAudioLoadProgress,
 					callback: this.onAllLoadsComplete
-				});
+				})
 			} else {
 				const loaderResult = await Assets.load(
 					defaultAssets,
@@ -525,7 +524,7 @@ export class LoadManager extends Container {
 		} else {
 			this.onLoadScreenComplete();
 		}
-		this.app.broadcast(Topics.LOAD_COMPLETE);
+		loadComplete();
 	}
 
 	/**
@@ -555,7 +554,7 @@ export class LoadManager extends Container {
 			}
 		}
 		this._currentLoadScreen = undefined;
-		this.app.broadcast(Topics.LOAD_SCREEN_HIDDEN);
+		loadScreenHidden();
 	}
 
 	/**
@@ -563,7 +562,7 @@ export class LoadManager extends Container {
 	 * @param pTopic The PubSub message id.
 	 * @param pToken The data defining the load request.
 	 */
-	private onLoadRequested(pTopic: string, pToken: LoadToken): void {
+	private onLoadRequested(pToken: LoadToken): void {
 		this.log("Load requested");
 		this.load(pToken.assets, pToken.callback);
 	}
@@ -573,7 +572,7 @@ export class LoadManager extends Container {
 	 * @param pTopic The PubSub message id.
 	 * @param pToken The data defining the unload request.
 	 */
-	private onUnloadRequested(pTopic: string, pToken: LoadToken): void {
+	private onUnloadRequested(pToken: LoadToken): void {
 		this.log("Unload requested");
 		this.unload(pToken.assets, pToken.callback);
 	}

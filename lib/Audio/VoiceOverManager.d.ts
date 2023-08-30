@@ -9,9 +9,9 @@ export declare enum PlayMode {
     New = "new"
 }
 export interface IPlayOptions {
-    /** If true, do not fire the {@link Topics.PLAY_CAPTION} event */
+    /** If true, do not trigger the {@link Signals.playCaption} signal */
     skipCC?: boolean;
-    /** Override the data that is sent to the {@link Topics.PLAY_CAPTION} event */
+    /** Override the data that is sent to the {@link Signals.playCaption} signal */
     caption?: {
         id: string;
         args: {

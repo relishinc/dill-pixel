@@ -28,13 +28,13 @@ export declare class HowlerManager implements IAudioManager {
      */
     private _debug;
     constructor(app: Application);
-    init(): void;
     /**
      * Enabling this will print all debug logs.
      */
     set debug(pEnabled: boolean);
     get masterVolume(): number;
     set masterVolume(pVolume: number);
+    init(): void;
     getCategoryVolume(pCategory: string): number;
     setCategoryVolume(pCategory: string, pVolume: number): void;
     getDuration(pId: string, pCategory: string): number | undefined;
@@ -48,7 +48,6 @@ export declare class HowlerManager implements IAudioManager {
     createAudioTrack(pId: string, pCategory?: string, pVolume?: number, pLoop?: boolean): IAudioTrack;
     /**
      * Loads a group of audio tracks and adds them to the same category.
-     * @param pTopic The pubsub message id.
      * @param pToken The token with the load data.
      */
     private loadFromIds;

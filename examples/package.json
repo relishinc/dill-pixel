@@ -2,7 +2,7 @@
   "name": "relish-hlf-testing",
   "version": "0.0.0",
   "description": "Testing Project for ongoing work on HLF",
-  "main": "src/index.html",
+  "main": "index.html",
   "scripts": {
     "start": "vite",
     "dev": "vite",
@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@pixi/layout": "^0.1.8",
+    "@pixi/ui": "^0.9.0",
     "gsap": "^3.11.5",
     "hlf-debugger": "file:../../relish-hlf-debugger",
     "html-living-framework": "file:..",

@@ -4,15 +4,16 @@ export declare enum AssetType {
     PNG = 1,
     JPG = 2,
     FONT = 3,
+    WEB_FONT = 4,
     /** @deprecated please use SPINE_JSON or AssetMapSpineData instead */
-    SPINE = 4,
-    SPINE_JSON = 5,
-    SPINE_SKEL = 6,
-    SPINE_ATLAS = 7,
-    AUDIO = 8,
-    JSON = 9,
-    NONE = 10,
-    NUM_ELEMENTS = 11
+    SPINE = 5,
+    SPINE_JSON = 6,
+    SPINE_SKEL = 7,
+    SPINE_ATLAS = 8,
+    AUDIO = 9,
+    JSON = 10,
+    NONE = 11,
+    NUM_ELEMENTS = 12
 }
 /**
  * Asset Utilities

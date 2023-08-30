@@ -1,6 +1,5 @@
 import {BaseState} from "@/state/BaseState.ts";
 import {MatterPhysicsSpriteExample} from "@/state/GameObjects/MatterPhysicsSpriteExample.ts";
-import {RapierPhysicsExample} from "@/state/RapierPhysicsExample.ts";
 import {AssetMapData, AssetType, PhysicsBodyType, TextureAsset} from "html-living-framework";
 import MatterPhysics from "html-living-framework/Physics/MatterPhysics";
 import {Point} from "pixi.js";
@@ -20,21 +19,14 @@ export class MatterPhysicsExample extends BaseState {
 		return this.app.physics as MatterPhysics;
 	}
 
-	public init(pSize: Point) {
+	public async init(pSize: Point) {
 		super.init(pSize);
 		this.setHeaderText("Matter Physics Example");
 		this.setMainText(
 			"Click anywhere to add a physics enabled sprite.\nPress the 'D' key to toggle debug mode."
 		);
 
-		this.startPhysics();
-
-		const button = this.add.coloredSprite(0xff0000, [100, 100], 'rectangle', 1, [this.app.size.x * 0.2,
-			-this.app.size.y * 0.2], [0, 0]);
-		button.eventMode = 'static';
-		button.onclick = () => {
-			this.app.state.transitionTo(RapierPhysicsExample.NAME);
-		}
+		await this.startPhysics();
 	}
 
 	protected getObjectSize() {
@@ -57,7 +49,7 @@ export class MatterPhysicsExample extends BaseState {
 		});
 
 		// on pointer down, add a random colored rect or circle
-		//this.eventMode = "static";
+		this.eventMode = "static";
 		this.on("pointerdown", (e) => {
 			const pt = e.getLocalPosition(this);
 			const type = Math.random() > 0.5 ? PhysicsBodyType.CIRCLE : PhysicsBodyType.RECTANGLE;

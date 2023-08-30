@@ -8,6 +8,7 @@ export * from "./IKeyboardFocus";
 export * from "./InputUtils";
 export * from "./ISelectable";
 export * from "./KeyboardFocusManager";
+export * from "./DefaultKeyboardFocusManagerSprite";
 export * from "./KeyboardMapToken";
 export {Direction} from "./KeyboardMap";
 export * from "./KeyCodes";
@@ -19,4 +20,4 @@ export * from "./Receptacle";
 export * from "./Selectable";
 export * from "./TouchManager";
 
-export { KeyCode };
+export {KeyCode};
