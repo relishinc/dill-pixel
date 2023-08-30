@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "cd ./examples && npm run dev",
     "build:examples": "cd ./examples && npm run build",
-    "build": "npm run version && tsc",
+    "build": "npm run version",
     "build:watch": "tsc --watch",
     "lint": "tslint -c tslint.json \"src/**/*.ts\"",
     "docs": "npm run version && typedoc --out docs src",
