@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/relishinc/hlf/compare/v2.1.0...v2.1.1) (2023-08-30)
+
+
+### Bug Fixes
+
+* release-please flow ([34a17e4](https://github.com/relishinc/hlf/commit/34a17e4d71a6ca6f7607bfb734444ac373a1175a))
+
 ## [2.1.0](https://github.com/relishinc/hlf/compare/v2.0.4...v2.1.0) (2023-08-30)
 
 
