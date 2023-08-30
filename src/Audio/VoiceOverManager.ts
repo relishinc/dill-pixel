@@ -1,7 +1,7 @@
 import {gsap} from "gsap";
 import {Application} from "../Application";
-import * as Topics from "../Data/Topics";
-import {broadcast, LogUtils, subscribe} from "../Utils";
+import {playCaption, Signals, stopCaption, voiceoverEnded, voiceoverStarted} from "../Signals";
+import {LogUtils} from "../Utils";
 import * as AudioCategory from "./AudioCategory";
 import {HowlerTrack} from "./HowlerTrack";
 import * as HowlerUtils from "./HowlerUtils";
@@ -22,9 +22,9 @@ export enum PlayMode {
 }
 
 export interface IPlayOptions {
-	/** If true, do not fire the {@link Topics.PLAY_CAPTION} event */
+	/** If true, do not trigger the {@link Signals.playCaption} signal */
 	skipCC?: boolean;
-	/** Override the data that is sent to the {@link Topics.PLAY_CAPTION} event */
+	/** Override the data that is sent to the {@link Signals.playCaption} signal */
 	caption?: {
 		id: string;
 		args: { [key: string]: string };
@@ -118,8 +118,11 @@ export class VoiceOverManager implements IVoiceOverManager {
 
 	constructor(private app: Application) {
 		// TODO: Pause and unpause are not actually part of the framework
-		subscribe(Topics.GAME_PAUSED, this.onPause.bind(this));
-		subscribe(Topics.GAME_UNPAUSED, this.onResume.bind(this));
+		this.onPause = this.onPause.bind(this);
+		this.onResume = this.onResume.bind(this);
+
+		Signals.pause.connect(this.onPause);
+		Signals.unpause.connect(this.onResume);
 	}
 
 	private get activeVO(): HowlerTrack | undefined {
@@ -251,13 +254,12 @@ export class VoiceOverManager implements IVoiceOverManager {
 				});
 				if (activeItem && !activeItem.skipCC) {
 					// TODO: Captions are not actually part of the framework
-					broadcast(Topics.STOP_CAPTION, {id: activeVO.id});
+					stopCaption({id: activeVO.id});
 				}
 			} else {
 				activeVO.stop();
 			}
-
-			broadcast(Topics.VOICEOVER_ENDED, activeVO.id);
+			voiceoverEnded(activeVO.id);
 		}
 		if (this._activeTimeout) {
 			this._activeTimeout.kill();
@@ -347,7 +349,7 @@ export class VoiceOverManager implements IVoiceOverManager {
 							BLACK
 						);
 						existing.stop();
-						broadcast(Topics.VOICEOVER_ENDED, item.key);
+						voiceoverEnded(item.key);
 					}
 				} else {
 					this.log("📂 Loading VO %c%s%c", RED, item.key, BLACK);
@@ -367,17 +369,14 @@ export class VoiceOverManager implements IVoiceOverManager {
 					if (!item.skipCC) {
 						// TODO: Captions are not actually part of the framework
 						if (item.caption) {
-							broadcast(Topics.PLAY_CAPTION, {
-								id: item.caption.id,
-								args: item.caption.args,
-							});
+							playCaption({id: item.caption.id, args: item.caption.args})
 						} else {
-							broadcast(Topics.PLAY_CAPTION, {id: item.key});
+							playCaption({id: item.key})
 						}
 					}
 					const onEnd = (pDidPlay: boolean) => {
 						this.log("🏁 Completed VO %c%s%c", RED, item.key, BLACK);
-						broadcast(Topics.VOICEOVER_ENDED, item.key);
+						voiceoverEnded(item.key)
 						this._queue.shift();
 						if (this._activeTimeout) {
 							this._activeTimeout.kill();
@@ -394,7 +393,7 @@ export class VoiceOverManager implements IVoiceOverManager {
 						// TODO: Some devices cannot recognize VO duration, the END event is not reliable
 						this.activeVO.once(HowlerUtils.Events.END, () => onEnd(true));
 						this.activeVO.once(HowlerUtils.Events.PLAY, () => {
-							broadcast(Topics.VOICEOVER_STARTED, item.key);
+							voiceoverStarted(item.key)
 						});
 					} else {
 						this.error(
@@ -420,7 +419,7 @@ export class VoiceOverManager implements IVoiceOverManager {
 		) {
 			this.log("⏸ Pausing VO %c%s%c", RED, this.activeVO.id, BLACK);
 			this.activeVO.pause();
-			broadcast(Topics.VOICEOVER_ENDED, this.activeVO.id);
+			voiceoverEnded(this.activeVO.id)
 		}
 		if (this._activeTimeout) {
 			this._activeTimeout.pause();
@@ -435,7 +434,7 @@ export class VoiceOverManager implements IVoiceOverManager {
 		) {
 			this.log("⏯ Resuming VO %c%s%c", RED, this.activeVO.id, BLACK);
 			this.activeVO.play();
-			broadcast(Topics.VOICEOVER_STARTED, this.activeVO.id);
+			voiceoverStarted(this.activeVO.id)
 		}
 		if (this._activeTimeout) {
 			this._activeTimeout.resume();

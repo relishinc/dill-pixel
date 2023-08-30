@@ -1,14 +1,6 @@
 import {BaseState} from "@/state/BaseState.ts";
 import {MatterPhysicsSpriteExample} from "@/state/GameObjects/MatterPhysicsSpriteExample.ts";
-import {
-	AssetMapData,
-	AssetType,
-	broadcast,
-	Delay,
-	PhysicsBodyType,
-	subscribe,
-	TextureAsset
-} from "html-living-framework";
+import {AssetMapData, AssetType, PhysicsBodyType, TextureAsset} from "html-living-framework";
 import MatterPhysics from "html-living-framework/Physics/MatterPhysics";
 import {Point} from "pixi.js";
 
@@ -34,23 +26,7 @@ export class MatterPhysicsExample extends BaseState {
 			"Click anywhere to add a physics enabled sprite.\nPress the 'D' key to toggle debug mode."
 		);
 
-		this.startPhysics();
-
-		// const button = this.add.coloredSprite(0xff0000, [100, 100], 'rectangle', 1, [this.app.size.x * 0.2,
-		// 	-this.app.size.y * 0.2], [0, 0]);
-		// button.eventMode = 'static';
-		// button.onclick = () => {
-		// 	this.app.state.transitionTo(RapierPhysicsExample.NAME);
-		// }
-		//
-		type TestType = { foo: string, bar: number };
-
-		subscribe<string, TestType>('resize', (message, data) => {
-			console.log(message, data.foo, data.bar);
-		});
-
-		await Delay(2);
-		broadcast('resize', {foo: 'bar', bar: 123})
+		await this.startPhysics();
 	}
 
 	protected getObjectSize() {

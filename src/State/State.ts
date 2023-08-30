@@ -1,72 +1,24 @@
-import {Layout, LayoutStyles} from "@pixi/layout";
-import {gsap} from 'gsap';
-import {Container, Point} from 'pixi.js';
+import {gsap} from "gsap";
+import {Point} from "pixi.js";
+import {SignalConnections} from "typed-signals";
 import {Application} from "../Application";
+import {Container} from "../GameObjects";
 import {AssetMapData} from "../Load";
-import * as Factory from "../Utils/Factory";
+import {Add, Make} from "../Utils/Factory";
 
 /**
  * State
  */
 export abstract class State extends Container {
 	public static NAME: string = "State";
-	public static DEFAULT_LAYOUT_STYLES: LayoutStyles = {
-		root: {
-			position: "center",
-			textAlign: "center"
-		},
-		main: {
-			display: 'block',
-			height: '100%',
-			width: "100%",
-			position: "center",
-			verticalAlign: "center",
-		},
-		header: {
-			display: 'block',
-			height: '10%',
-			width: "100%",
-			position: "top",
-			verticalAlign: "top",
-		},
-		footer: {
-			display: 'block',
-			height: '5%',
-			width: "100%",
-			position: "bottom",
-			textAlign: "right",
-			verticalAlign: "bottom",
-		},
-	}
-	public static DEFAULT_LAYOUT_OPTIONS: any = {
-		id: "root",
-		content: {
-			header: {
-				id: "header",
-				content: {}
-			},
-			main: {
-				id: "main",
-				content: {}
-			},
-			footer: {
-				id: "footer",
-				content: {}
-			},
-		},
-		globalStyles: State.DEFAULT_LAYOUT_STYLES
-	}
-
-	protected _layout: Layout;
 	protected _size: Point;
-	protected _addFactory: Factory.AddFactory;
-	private _gsapContext: gsap.Context | null = null;
+	protected _gsapContext: gsap.Context | null = null;
+	protected _connections: SignalConnections = new SignalConnections();
+
 
 	constructor() {
-		super();
+		super(false);
 		this._size = new Point();
-		this._addFactory = new Factory.AddFactory(this);
-
 		this.gsapContextRevert = this.gsapContextRevert.bind(this);
 	}
 
@@ -88,15 +40,15 @@ export abstract class State extends Container {
 	/**
 	 * gets the Add factory
 	 */
-	public get add(): Factory.AddFactory {
+	public get add(): Add {
 		return this._addFactory;
 	}
 
 	/**
 	 * gets the Make factory
 	 */
-	public get make(): Factory.MakeFactory {
-		return this.app.make;
+	public get make(): typeof Make {
+		return Make;
 	}
 
 	/**
@@ -113,27 +65,6 @@ export abstract class State extends Container {
 	}
 
 	/**
-	 * Gets the current layout for the state, if it exists
-	 */
-	get layout(): Layout {
-		return this._layout;
-	}
-
-	/**
-	 * Gets default layout options
-	 */
-	get defaultLayoutOptions(): any {
-		return State.DEFAULT_LAYOUT_OPTIONS;
-	}
-
-	getLayoutById(id: string): Layout | null {
-		if (!this._layout) {
-			return null;
-		}
-		return this._layout.content.getByID(id) as Layout;
-	}
-
-	/**
 	 * Inits state
 	 * @param pSize{Point}
 	 * @param pData
@@ -143,27 +74,11 @@ export abstract class State extends Container {
 	}
 
 	/**
-	 * Creates layout
-	 * see https://pixijs.io/layout/storybook/?path=/story/complex--application-layout for more info
-	 * @param options
-	 */
-	public createLayout(options?: any) {
-		const opts = Object.assign({}, this.defaultLayoutOptions, options);
-		this._layout = new Layout(opts);
-		this.onResize(this._size);
-		this.layout.update()
-		this.add.existing(this._layout);
-	}
-
-	/**
 	 * Updates state
 	 * @param pDeltaTime
 	 */
 	public update(pDeltaTime: number): void {
 		// override
-		if (this._layout) {
-			this._layout.update()
-		}
 	}
 
 	/**
@@ -173,9 +88,6 @@ export abstract class State extends Container {
 	public onResize(pSize: Point): void {
 		this._size.copyFrom(pSize);
 		this.position.set(this._size.x * 0.5, this._size.y * 0.5);
-		if (this._layout) {
-			this._layout.setStyles({width: this._size.x, height: this._size.y})
-		}
 	}
 
 	/**
@@ -204,9 +116,14 @@ export abstract class State extends Container {
 		}
 	): void {
 		super.destroy(pOptions);
-		if (this._gsapContext) {
-			this._gsapContext.revert();
-		}
+
+		// if (this._gsapContext) {
+		// 	try {
+		// 		this._gsapContext.revert();
+		// 	} catch (e) {
+		// 		// ignore for now
+		// 	}
+		// }
 	}
 
 	/**
@@ -217,4 +134,10 @@ export abstract class State extends Container {
 	protected gsapContextRevert() {
 		// override me to provide custom gsap cleanup function
 	}
+
+	protected gsapContextAdd(func: () => void) {
+		return this.animationContext.add(func);
+	}
+
+
 }

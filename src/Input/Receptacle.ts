@@ -1,34 +1,39 @@
-import * as PIXI from "pixi.js";
-import {FederatedPointerEvent} from "pixi.js";
+import {Container, FederatedPointerEvent, IPoint, Point, Rectangle} from "pixi.js";
+import {SignalConnections} from "typed-signals";
+import {AudioToken} from "../Audio";
 import * as AudioCategory from "../Audio/AudioCategory";
-import {AudioToken} from "../Audio/AudioToken";
-import * as Topics from "../Data/Topics";
-import {Draggable} from "../Input/Draggable";
-import {IFocusable} from "../Input/IFocusable";
 import * as InputUtils from "../Input/InputUtils";
-import {broadcast, subscribe, unsubscribe} from "../Utils";
+import {playAudio, Signals} from "../Signals";
 import * as PixiUtils from "../Utils/PixiUtils";
 import * as RectUtils from "../Utils/RectUtils";
+import {Draggable} from "./Draggable";
+import {IFocusable} from "./IFocusable";
 
 /**
  * Receptacle
  */
-export abstract class Receptacle extends PIXI.Container implements IFocusable {
-	protected _visuals: PIXI.Container;
-	protected _eventData: PIXI.FederatedPointerEvent | undefined;
+export abstract class Receptacle extends Container implements IFocusable {
+	protected _visuals: Container;
+	protected _eventData: FederatedPointerEvent | undefined;
 	protected _isPointerOver: boolean;
 	protected _hoverVo: string | undefined;
 	protected _dragged: Draggable | undefined;
 	protected _selected: Draggable | undefined;
-	protected _subscriptions: any[];
 	protected _isActive: boolean;
+	private _connections: SignalConnections;
 
 	constructor() {
 		super();
+
+		this.onDragBegin = this.onDragBegin.bind(this);
+		this.onDragEnd = this.onDragEnd.bind(this);
+		this.onDraggableSelected = this.onDraggableSelected.bind(this);
+		this.onDraggableDeselected = this.onDraggableDeselected.bind(this);
+
 		this._isPointerOver = false;
 		this._isActive = true;
 
-		this._visuals = new PIXI.Container();
+		this._visuals = new Container();
 		this.addChild(this._visuals);
 
 		this.cursor = "pointer";
@@ -42,11 +47,11 @@ export abstract class Receptacle extends PIXI.Container implements IFocusable {
 		this.on(InputUtils.Events.POINTER_MOVE, this.onPointerMove);
 		this.on(InputUtils.Events.TOUCH_MOVE, this.onTouchMove);
 
-		this._subscriptions = new Array<any>();
-		this._subscriptions.push(subscribe(Topics.DRAG_BEGIN, this.onDragBegin.bind(this)));
-		this._subscriptions.push(subscribe(Topics.DRAG_END, this.onDragEnd.bind(this)));
-		this._subscriptions.push(subscribe(Topics.DRAGGABLE_SELECTED, this.onDraggableSelected.bind(this)));
-		this._subscriptions.push(subscribe(Topics.DRAGGABLE_DESELECTED, this.onDraggableDeselected.bind(this)));
+		this._connections = new SignalConnections();
+		this._connections.add(Signals.dragBegin.connect(this.onDragBegin))
+		this._connections.add(Signals.dragEnd.connect(this.onDragEnd))
+		this._connections.add(Signals.draggableSelected.connect(this.onDraggableSelected))
+		this._connections.add(Signals.draggableDeselected.connect(this.onDraggableDeselected))
 	}
 
 	/**
@@ -87,9 +92,9 @@ export abstract class Receptacle extends PIXI.Container implements IFocusable {
 	/**
 	 * onFocusPosition
 	 */
-	public getFocusPosition(): PIXI.Point {
-		if (this.hitArea instanceof PIXI.Rectangle) {
-			return new PIXI.Point().copyFrom(this.toGlobal(RectUtils.center(this.hitArea)));
+	public getFocusPosition(): Point {
+		if (this.hitArea instanceof Rectangle) {
+			return new Point().copyFrom(this.toGlobal(RectUtils.center(this.hitArea)));
 		} else {
 			return this.getGlobalPosition();
 		}
@@ -97,11 +102,11 @@ export abstract class Receptacle extends PIXI.Container implements IFocusable {
 
 	/**
 	 * Gets focus size
-	 * @returns PIXI.Point
+	 * @returns Point
 	 */
-	public getFocusSize(): PIXI.IPoint {
-		let bounds: PIXI.Rectangle;
-		if (this.hitArea instanceof PIXI.Rectangle) {
+	public getFocusSize(): IPoint {
+		let bounds: Rectangle;
+		if (this.hitArea instanceof Rectangle) {
 			bounds = PixiUtils.getGlobalBounds(this, this.hitArea.clone());
 		} else {
 			bounds = PixiUtils.getGlobalBounds(this);
@@ -113,9 +118,7 @@ export abstract class Receptacle extends PIXI.Container implements IFocusable {
 	 * Destroys receptacle
 	 */
 	public destroy() {
-		for (let i = 0; i < this._subscriptions.length; ++i) {
-			unsubscribe(this._subscriptions[i]);
-		}
+		this._connections.disconnectAll();
 		super.destroy();
 	}
 
@@ -124,9 +127,9 @@ export abstract class Receptacle extends PIXI.Container implements IFocusable {
 	 */
 	protected playHoverVo(): void {
 		if (this._hoverVo !== undefined) {
-			broadcast(Topics.PLAY_AUDIO, new AudioToken(
+			playAudio(new AudioToken(
 				this._hoverVo, 1, false, AudioCategory.VO.toString(),
-			));
+			))
 		}
 	}
 
@@ -179,7 +182,7 @@ export abstract class Receptacle extends PIXI.Container implements IFocusable {
 	}
 
 	protected onTouchMove(pEvent: FederatedPointerEvent): void {
-		const local: PIXI.Point = pEvent.getLocalPosition(this);
+		const local: Point = pEvent.getLocalPosition(this);
 		if (this.hitArea) {
 			if (!this._isPointerOver) {
 				if (this.hitArea.contains(local.x, local.y)) {
@@ -206,7 +209,7 @@ export abstract class Receptacle extends PIXI.Container implements IFocusable {
 	 * @param pTopic
 	 * @param pDraggable
 	 */
-	protected onDragBegin(pTopic: string, pDraggable: Draggable): void {
+	protected onDragBegin(pDraggable: Draggable): void {
 		if (this._isActive) {
 			this.interactive = true;
 			this._dragged = pDraggable;
@@ -218,7 +221,7 @@ export abstract class Receptacle extends PIXI.Container implements IFocusable {
 	 * @param pTopic
 	 * @param pDraggable
 	 */
-	protected onDragEnd(pTopic: string, pDraggable: Draggable): void {
+	protected onDragEnd(pDraggable: Draggable): void {
 		if (this._isActive) {
 			if (this._isPointerOver && this._dragged !== undefined) {
 				this.addDraggable(this._dragged);
@@ -233,7 +236,7 @@ export abstract class Receptacle extends PIXI.Container implements IFocusable {
 	 * @param pTopic
 	 * @param pDraggable
 	 */
-	protected onDraggableSelected(pTopic: string, pDraggable: Draggable): void {
+	protected onDraggableSelected(pDraggable: Draggable): void {
 		if (this._isActive) {
 			this.interactive = true;
 			this._selected = pDraggable;
@@ -245,7 +248,7 @@ export abstract class Receptacle extends PIXI.Container implements IFocusable {
 	 * @param pTopic
 	 * @param pDraggable
 	 */
-	protected onDraggableDeselected(pTopic: string, pDraggable: Draggable): void {
+	protected onDraggableDeselected(pDraggable: Draggable): void {
 		if (this._isActive) {
 			if (this._selected === pDraggable) {
 				this.interactive = false;
