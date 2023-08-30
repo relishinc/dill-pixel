@@ -35,8 +35,8 @@ jobs:
           
           echo "export const PACKAGE_NAME: string = \"html-living-framework\";" > ./src/version.ts
           echo "export const PACKAGE_VERSION: string = \"$PACKAGE_VERSION\";" >> ./src/version.ts
-          echo "export const GIT_BRANCH: string | undefined = \"$GIT_BRANCH\";" >> ./src/version.ts
-          echo "export const GIT_COMMIT: string | undefined = \"$GIT_COMMIT\";" >> ./src/version.ts
+          echo "export const GIT_BRANCH: string = \"$GIT_BRANCH\";" >> ./src/version.ts
+          echo "export const GIT_COMMIT: string = \"$GIT_COMMIT\";" >> ./src/version.ts
 
       # Step to commit and push the version.ts file
       - name: Commit and push version file
