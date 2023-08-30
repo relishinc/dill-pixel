@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Delay
-        run: sleep 10
+        run: sleep 30
 
       - name: Checkout repo
         uses: actions/checkout@v2
