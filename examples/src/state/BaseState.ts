@@ -1,14 +1,22 @@
 import Application from "@/Application.ts";
 import {GREEN} from "@/utils/Constants";
 import {gsap} from "gsap";
-import {AssetMapData, AssetType, State, TextureAsset} from "html-living-framework";
+import {AssetMapData, AssetType, Container, State, TextureAsset} from "html-living-framework";
 import {Point, Sprite, Text} from "pixi.js";
 
 export class BaseState extends State {
 	protected _bg: Sprite;
-	protected _mainTitle: Text;
+
+	protected _layout: Container;
+	protected _header: Container;
+	protected _main: Container;
+	protected _footer: Container;
+
 	protected _title: Text;
+	protected _headerBg: Sprite;
+	protected _mainTitle: Text;
 	protected _footerTitle: Text;
+
 
 	public constructor() {
 		super();
@@ -22,6 +30,18 @@ export class BaseState extends State {
 		return Application.instance;
 	}
 
+	/**
+	 * Creates layout
+	 * see https://pixijs.io/layout/storybook/?path=/story/complex--application-layout for more info
+	 * @param options
+	 */
+	public createLayout() {
+		this._layout = this.add.container();
+		this._header = this._layout.add.container(1, [-this.app.size.x * 0.5, -this.app.size.y * 0.5]);
+		this._main = this._layout.add.container(0.25);
+		this._footer = this._layout.add.container(1, [this.app.size.x * 0.5, this.app.size.y * 0.5]);
+	}
+
 	public init(pSize: Point) {
 		super.init(pSize);
 
@@ -31,79 +51,44 @@ export class BaseState extends State {
 
 		// add the layout
 		this.createLayout()
-		this.layout.alpha = 0;
-
-		const header = this.getLayoutById("header")
-		const main = this.getLayoutById("main")
-		const footer = this.getLayoutById("footer")
-
-		header.setStyles({
+		this._layout.alpha = 0;
+		this._headerBg = this._header.add.coloredSprite(0x0, [this.app.size.x, 80], "rectangle", 0.2, 0, 0);
+		this._title = this._header.add.text("", {
 			fontFamily: "arboria",
-			height: 80,
-			paddingLeft: 25,
-			paddingTop: 8,
 			fontSize: 54,
-			color: "white",
-			background: "rgba(0,0,0,0.05)"
-		});
+			fill: "white",
+		}, 0, [15, 10], 0);
 
-		footer.setStyles({
-			fontFamily: "arboria",
-			paddingRight: 20,
-			paddingBottom: 10,
-			fontSize: 14,
-			color: "white",
-		});
-
-		main.setStyles({
-			fontFamily: "arboria",
-			paddingRight: 10,
-			paddingBottom: 10,
-			fontSize: 18,
-			color: "white",
-			opacity: 0.2,
-			textAlign: "center",
-			verticalAlign: "middle",
-			align: "center",
-		});
-
-		this._title = this.make.text("", {fontFamily: "arboria", fill: 0xffffff});
-		this._title.alpha = 0;
-
-		this._mainTitle = this.make.text("", {
+		this._mainTitle = this._main.add.text("", {
 			fontFamily: "arboria",
 			fill: 0xffffff,
-			fontSize: 14,
+			fontSize: 20,
 			align: "center",
-		});
-		this._mainTitle.alpha = 0;
+		}, 0.5, 0, 0.5);
 
-		this._footerTitle = this.make.text(`Ⓒ ${new Date().getFullYear()} Relish Digital`, {
+		this._footerTitle = this._footer.add.text(`Ⓒ ${new Date().getFullYear()} Relish Digital`, {
 			fontFamily: "arboria",
 			fill: 0xffffff,
 			fontSize: 14
-		});
-		this._footerTitle.alpha = 0;
+		}, 0, -20, 1);
 
-		header.addContent(this._title);
-		main.addContent(this._mainTitle);
-		footer.addContent(this._footerTitle);
+		this.onResize(pSize);
 	}
 
 	public async animateIn(pOnComplete: () => void): Promise<void> {
 		const timeline = gsap.timeline();
-		await timeline.to(this.layout, {
+		await timeline.to(this._layout, {
 			alpha: 1,
 			duration: 0.5
-		}).fromTo(this.getLayoutById("header"), {y: -200}, {
-			y: 0,
-			duration: 0.4, ease: "sine.out"
+		}).fromTo(this._header, {y: "-=200"}, {
+			y: -this.app.size.y * 0.5,
+			duration: 0.4,
+			ease: "sine.out"
 		}).fromTo([this._title, this._mainTitle, this._footerTitle], {alpha: 0}, {
 			duration: 0.4,
 			alpha: 1,
 			stagger: 0.1
 		})
-
 		pOnComplete();
 	}
 
@@ -121,6 +106,12 @@ export class BaseState extends State {
 		if (this._bg) {
 			this._bg.width = this._size.x;
 			this._bg.height = this._size.y;
+		}
+		if (this._header) {
+			this._header.position.set(-pSize.x * 0.5, -pSize.y * 0.5);
+		}
+		if (this._footer) {
+			this._footer.position.set(pSize.x * 0.5, pSize.y * 0.5);
 		}
 	}
 

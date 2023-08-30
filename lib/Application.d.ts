@@ -1,15 +1,14 @@
 import { Application as PIXIApplication, IApplicationOptions, Point } from "pixi.js";
-import { IAudioManager, IVoiceOverManager } from "./Audio";
+import { AudioToken, IAudioManager, IVoiceOverManager } from "./Audio";
 import { CopyManager } from "./Copy";
-import * as Topics from "./Data/Topics";
-import { HitAreaRenderer, KeyboardManager, MouseManager } from "./Input";
-import { AssetMapData, LoadManager, SplashScreen } from "./Load";
+import { DefaultKeyboardFocusManagerSprite, HitAreaRenderer, KeyboardFocusManager, KeyboardManager, MouseManager } from "./Input";
+import { AssetMapData, LoadManager, LoadScreen, LoadScreenProvider, SplashScreen } from "./Load";
 import { PhysicsBase, PhysicsEngineType } from "./Physics";
 import { PopupManager } from "./Popup";
 import { SaveManager } from "./Save";
 import { State, StateManager } from "./State";
 import { OrientationManager, ResizeManager, WebEventsManager } from "./Utils";
-import * as Factory from './Utils/Factory';
+import { Add, Make } from "./Utils/Factory";
 export interface HLFApplicationOptions extends IApplicationOptions {
     physics?: boolean;
 }
@@ -23,6 +22,7 @@ export declare class Application extends PIXIApplication {
     protected _popupManager: PopupManager;
     protected _loadManager: LoadManager;
     protected _keyboardManager: KeyboardManager;
+    protected _keyboardFocusManager: KeyboardFocusManager<DefaultKeyboardFocusManagerSprite>;
     protected _resizeManager: ResizeManager;
     protected _copyManager: CopyManager;
     protected _mouseManager: MouseManager;
@@ -33,8 +33,7 @@ export declare class Application extends PIXIApplication {
     protected _saveManager: SaveManager;
     protected _orientationManager: OrientationManager;
     protected _voiceoverManager: IVoiceOverManager;
-    protected _makeFactory: Factory.MakeFactory;
-    protected _addFactory: Factory.AddFactory;
+    protected _addFactory: Add;
     protected startSplashProcess: OmitThisParameter<(pPersistentAssets: AssetMapData[], pOnComplete: () => void) => void>;
     protected _debugger: any;
     protected _physics: PhysicsBase;
@@ -65,8 +64,8 @@ export declare class Application extends PIXIApplication {
      */
     static create(pElement?: string | HTMLElement): Application | null;
     get resolutionSuffix(): string;
-    get add(): Factory.AddFactory;
-    get make(): Factory.MakeFactory;
+    get add(): Add;
+    get make(): typeof Make;
     get addToStage(): <U extends import("pixi.js").DisplayObject[]>(...children: U) => U[0];
     /**
      * Override to specify assets that should persist between state loads.
@@ -76,6 +75,8 @@ export declare class Application extends PIXIApplication {
      */
     get requiredAssets(): AssetMapData[];
     get state(): StateManager;
+    get keyboard(): KeyboardManager;
+    get popups(): PopupManager;
     get audio(): IAudioManager;
     get voiceover(): IVoiceOverManager;
     get size(): Point;
@@ -86,13 +87,11 @@ export declare class Application extends PIXIApplication {
     get saveManager(): SaveManager;
     get orientationManager(): OrientationManager;
     get load(): LoadManager;
-    get topics(): typeof Topics;
-    get defaultState(): string | undefined;
+    get defaultState(): string | typeof State | undefined;
     get physics(): PhysicsBase;
     get debugger(): DebuggerType;
+    addFocusManager(): void;
     addPhysics(type?: PhysicsEngineType): Promise<PhysicsBase>;
-    broadcast(message: string, data?: any | undefined): boolean;
-    subscribe<T, M>(message: string, callback: (message: T, data: M) => void): string;
     /**
      *
      * @param pGroupId
@@ -111,7 +110,9 @@ export declare class Application extends PIXIApplication {
      * Initializes all managers and starts the splash screen process.
      */
     init(awaitFontsLoaded?: boolean): Promise<void>;
+    loadDocumentFonts(): Promise<void>;
     addDebugger(): Promise<void>;
+    protected setup(): void;
     /**
      * Called once per frame. Updates the `StateManager`, `PopupManager`, `LoadManager` and `HitAreaRenderer`.
      */
@@ -125,7 +126,9 @@ export declare class Application extends PIXIApplication {
      * Override to setup the asset map for this application.
      * @override
      */
+    protected addAssetGroups(): void;
     protected createAssetMap(): void;
+    protected registerDefaultLoadScreen(pIdOrClass: string | typeof LoadScreen, pScreen?: LoadScreenProvider): void;
     /**
      * Override to register any and all loading screens needed for this application.
      * @override
@@ -147,12 +150,19 @@ export declare class Application extends PIXIApplication {
      * @default 0
      */
     protected onResize(pDelay?: number): Promise<void>;
-    protected onPlayAudio(message: string, data: any): void;
+    protected onPlayAudio(token: AudioToken): void;
     /**
      * Called when resize is complete after the delay.
      * @override
      */
     protected onResizeComplete(): void;
+    protected getFontsList(): {
+        family: string;
+        data?: {
+            weight?: number | string;
+        };
+    }[];
+    protected allFontsLoaded(): Promise<any>;
     /**
      * Override to specify what should happen after all persistent assets have been loaded.
      * @override

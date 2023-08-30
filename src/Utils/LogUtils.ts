@@ -10,8 +10,8 @@ export const COLOR_LIGHT_BLUE: string = "#3580bd";
 export const COLOR_RELISH: string = "#74b64c";
 
 export class LogOptions {
-  public className: string = "";
-  public color: string = "black";
+	public className: string = "";
+	public color: string = "black";
 }
 
 /**
@@ -21,17 +21,17 @@ export class LogOptions {
  * @param [pParams] Optional data to be included in the error message.
  */
 export function logError(
-  pText: string,
-  pOptions: LogOptions,
-  ...pParams: any[]
+	pText: string,
+	pOptions: LogOptions,
+	...pParams: any[]
 ): void {
-  console.error(
-    "%c[%s]%c -- " + pText,
-    "color: " + pOptions.color,
-    pOptions.className,
-    STYLE_BLACK,
-    ...pParams
-  );
+	console.error(
+		"%c[%s]%c -- " + pText,
+		"color: " + pOptions.color,
+		pOptions.className,
+		STYLE_WHITE,
+		...pParams
+	);
 }
 
 /**
@@ -41,17 +41,17 @@ export function logError(
  * @param [pParams] Optional data to be included in the warning message.
  */
 export function logWarning(
-  pText: string,
-  pOptions: LogOptions,
-  ...pParams: any[]
+	pText: string,
+	pOptions: LogOptions,
+	...pParams: any[]
 ): void {
-  console.warn(
-    "%c[%s]%c -- " + pText,
-    "color: " + pOptions.color,
-    pOptions.className,
-    STYLE_BLACK,
-    ...pParams
-  );
+	console.warn(
+		"%c[%s]%c -- " + pText,
+		"color: " + pOptions.color,
+		pOptions.className,
+		STYLE_BLACK,
+		...pParams
+	);
 }
 
 /**
@@ -61,15 +61,15 @@ export function logWarning(
  * @param [pParams] Optional data to be included in the message.
  */
 export function log(
-  pText: string,
-  pOptions: LogOptions,
-  ...pParams: any[]
+	pText: string,
+	pOptions: LogOptions,
+	...pParams: any[]
 ): void {
-  console.log(
-    "%c[%s]%c -- " + pText,
-    "color: " + pOptions.color,
-    pOptions.className,
-    STYLE_BLACK,
-    ...pParams
-  );
+	console.log(
+		"%c[%s]%c -- " + pText,
+		"color: " + pOptions.color,
+		pOptions.className,
+		STYLE_BLACK,
+		...pParams
+	);
 }

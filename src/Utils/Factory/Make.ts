@@ -2,12 +2,14 @@ import {Geometry, State} from "@pixi/core";
 import {
 	Assets,
 	BitmapText,
-	Container,
 	DRAW_MODES,
 	Graphics,
+	HTMLText,
+	HTMLTextStyle,
 	IBitmapTextStyle,
 	ITextStyle,
 	Mesh,
+	NineSlicePlane,
 	ObservablePoint,
 	Point,
 	Resource,
@@ -16,12 +18,14 @@ import {
 	SimplePlane,
 	SimpleRope,
 	Sprite,
+	Spritesheet,
 	Text,
 	TextStyle,
 	Texture,
 	TilingSprite
 } from "pixi.js";
 import {Application} from "../../Application";
+import {Container} from "../../GameObjects";
 import {SpritesheetLike} from "../Types";
 import {resolveXYFromObjectOrArray, setObjectName} from "./utils";
 
@@ -31,11 +35,10 @@ import {resolveXYFromObjectOrArray, setObjectName} from "./utils";
  * @param pSheet (optional) The spritesheet(s) that the texture is in. You can leave this out unless you have two textures with the same name in different spritesheets
  */
 
-export class MakeFactory {
-	texture(pAsset: string, pSheet: SpritesheetLike): Texture {
+export class Make {
+	static texture(pAsset: string, pSheet?: SpritesheetLike): Texture {
 		// tslint:disable-next-line:no-shadowed-variable
 		let texture: Texture<Resource> | undefined;
-
 		if (!pSheet || pSheet?.length === 0) {
 			if (Assets.cache.has(pAsset)) {
 				texture = Assets.get(pAsset)!;
@@ -44,56 +47,57 @@ export class MakeFactory {
 			} else {
 				throw new Error("Asset \"" + pAsset + "\" not loaded into Pixi cache");
 			}
-		} else if (pSheet instanceof Array) {
-			const numSheets = pSheet.length;
-			for (let i = 0; i < numSheets; i++) {
-				const sheet = pSheet[i];
-				if (!Assets.get(pAsset)) {
-					throw new Error("Spritesheet \"" + sheet + "\" not loaded into Pixi cache");
-				} else {
-					const textures = Assets.get(pAsset).textures;
-					if (textures !== undefined) {
-						texture = textures[pAsset];
-						if (texture !== undefined) {
-							break;
-						}
-					} else {
-						throw new Error("Spritesheet \"" + sheet + "\" loaded but textures arent!");
-					}
-				}
-			}
-			if (texture === undefined) {
-				throw new Error("Asset \"" + pAsset + "\" not found inside spritesheets \"" + pSheet.toString() + "\'");
-			}
 		} else {
 			if (!Assets.get(pSheet)) {
 				throw new Error("Spritesheet \"" + pSheet + "\" not loaded into Pixi cache");
 			} else {
-				const textures = Assets.get(pSheet).textures;
+				const sheet: Spritesheet = Assets.get(pSheet) as Spritesheet;
+				const textures = sheet.textures;
 				if (textures !== undefined) {
-					if (!textures.hasOwnProperty(pAsset)) {
-						throw new Error("Asset \"" + pAsset + "\" not found inside spritesheet \"" + pSheet + "\'");
+					// eslint-disable-next-line no-prototype-builtins
+					if (textures.hasOwnProperty(pAsset)) {
+						texture = textures[pAsset];
+					} else if (sheet.linkedSheets !== undefined && sheet.linkedSheets.length > 0) {
+						for (const linkedSheet of sheet.linkedSheets) {
+							// eslint-disable-next-line no-prototype-builtins
+							if (linkedSheet.textures !== undefined && linkedSheet.textures.hasOwnProperty(pAsset)) {
+								texture = linkedSheet.textures[pAsset];
+								break;
+							}
+						}
+						if (texture === undefined) {
+							throw new Error("Asset \"" + pAsset + "\" not found inside spritesheet \"" + pAsset + "' or any of its linked sheets");
+						}
+					} else {
+						throw new Error("Asset \"" + pAsset + "\" not found inside spritesheet \"" + pSheet + "'");
 					}
-					texture = textures[pAsset];
 				} else {
 					throw new Error("Spritesheet \"" + pSheet + "\" loaded but textures arent?!");
 				}
 			}
 		}
-
 		return texture || new Sprite().texture;
 	}
 
-	coloredSprite(color: number = 0x0, size: {
+	static coloredSprite(color: number = 0x0, size: {
 		x: number;
 		y: number
-	} | [number, number?] | number = {x: 1, y: 1}, shape: "rectangle" | "circle" = "rectangle"): Sprite {
+	} | [number, number?] | number = {
+		x: 1,
+		y: 1
+	}, shape: "rectangle" | "rounded_rectangle" | "circle" = "rectangle", opts?: {
+		[key: string]: string | number
+	}): Sprite {
 		const gfx = new Graphics();
 		const resolvedSize = resolveXYFromObjectOrArray(size);
+		gfx.lineStyle({width: 0, color: 0, alpha: 0})
 		gfx.beginFill(color, 1);
 		switch (shape) {
 			case "circle":
 				gfx.drawCircle(0, 0, resolvedSize.x);
+				break;
+			case "rounded_rectangle":
+				gfx.drawRoundedRect(0, 0, resolvedSize.x, resolvedSize.y, opts?.radius as number || 5);
 				break;
 			case "rectangle":
 			default:
@@ -103,43 +107,37 @@ export class MakeFactory {
 
 		gfx.endFill();
 
-		return this.sprite(Application.instance.renderer.generateTexture(gfx));
+		return Make.sprite(Application.instance.renderer.generateTexture(gfx));
 	}
 
-	sprite(pTexture: string | Texture, pSheet?: SpritesheetLike): Sprite {
-		let sprite: Sprite | undefined;
-		sprite = new Sprite(typeof pTexture === 'string' ? this.texture(pTexture, pSheet) : pTexture);
+	static sprite(pTexture: string | Texture, pSheet?: SpritesheetLike): Sprite {
+		const sprite = new Sprite(typeof pTexture === "string" ? this.texture(pTexture, pSheet) : pTexture);
 		setObjectName(sprite, pTexture, pSheet);
 		return sprite;
 	}
 
-	text(pText: string = ``, pStyle?: Partial<ITextStyle> | TextStyle): Text {
-		let text: Text | undefined;
-		text = new Text(pText, pStyle);
-		return text;
+	static text(pText: string = "", pStyle?: Partial<ITextStyle | TextStyle>): Text {
+		return new Text(pText, pStyle);
 	}
 
-	bitmapText(pText: string = ``, pStyle?: IBitmapTextStyle): BitmapText {
-		let bitmapText: BitmapText | undefined;
-		bitmapText = new BitmapText(pText, pStyle);
-		return bitmapText;
+	static htmlText(pText: string = "", pStyle?: Partial<HTMLTextStyle | TextStyle | ITextStyle>): HTMLText {
+		return new HTMLText(pText, pStyle);
 	}
 
-	container(): Container {
-		let container: Container | undefined;
-		container = new Container();
-		return container;
+	static bitmapText(pText: string = "", pStyle?: Partial<IBitmapTextStyle>): BitmapText {
+		return new BitmapText(pText, pStyle);
 	}
 
-	graphics(): Graphics {
-		let graphics: Graphics | undefined;
-		graphics = new Graphics();
-		return graphics;
+	static container(): Container {
+		return new Container();
 	}
 
-	tiledSprite(pTexture: string, pSheet: SpritesheetLike, pWidth: number, pHeight: number, pTilePosition?: ObservablePoint): TilingSprite {
-		let tilingSprite: TilingSprite | undefined;
-		tilingSprite = new TilingSprite(this.texture(pTexture, pSheet), pWidth, pHeight);
+	static graphics(): Graphics {
+		return new Graphics();
+	}
+
+	static tiledSprite(pTexture: string, pSheet: SpritesheetLike, pWidth: number, pHeight: number, pTilePosition?: ObservablePoint): TilingSprite {
+		const tilingSprite = new TilingSprite(this.texture(pTexture, pSheet), pWidth, pHeight);
 		setObjectName(tilingSprite, pTexture, pSheet);
 		if (pTilePosition) {
 			tilingSprite.tilePosition = pTilePosition;
@@ -147,31 +145,32 @@ export class MakeFactory {
 		return tilingSprite;
 	}
 
-	mesh(pGeometry: Geometry, pShader: Shader, pState?: State, pDrawMode?: DRAW_MODES): Mesh<Shader> {
-		let mesh: Mesh<Shader> | undefined;
-		mesh = new Mesh<Shader>(pGeometry, pShader, pState, pDrawMode);
-		return mesh;
+	static mesh(pGeometry: Geometry, pShader: Shader, pState?: State, pDrawMode?: DRAW_MODES): Mesh<Shader> {
+		return new Mesh<Shader>(pGeometry, pShader, pState, pDrawMode);
 	}
 
-	simpleRope(pTexture: string, pSheet: SpritesheetLike, pPoints: (Point | ObservablePoint)[], pAutoUpdate?: boolean): SimpleRope {
-		let simpleRope: SimpleRope | undefined;
-		simpleRope = new SimpleRope(this.texture(pTexture, pSheet), pPoints);
+	static simpleRope(pTexture: string, pSheet: SpritesheetLike, pPoints: (Point | ObservablePoint)[], pAutoUpdate?: boolean): SimpleRope {
+		const simpleRope = new SimpleRope(this.texture(pTexture, pSheet), pPoints);
 		setObjectName(simpleRope, pTexture, pSheet);
 		simpleRope.autoUpdate = pAutoUpdate !== false;
 		return simpleRope;
 	}
 
-	simplePlane(pTexture: string, pSheet: SpritesheetLike, pVertsWidth: number, pVertsHeight: number): SimplePlane {
-		let simplePlane: SimplePlane | undefined;
-		simplePlane = new SimplePlane(this.texture(pTexture, pSheet), pVertsWidth, pVertsHeight);
+	static simplePlane(pTexture: string, pSheet: SpritesheetLike, pVertsWidth: number, pVertsHeight: number): SimplePlane {
+		const simplePlane = new SimplePlane(this.texture(pTexture, pSheet), pVertsWidth, pVertsHeight);
 		setObjectName(simplePlane, pTexture, pSheet);
 		return simplePlane;
 	}
 
-	simpleMesh(pTexture: string, pSheet: SpritesheetLike, pVertices?: Float32Array, pUvs?: Float32Array, pIndices?: Uint16Array, pDrawMode?: number): SimpleMesh {
-		let simpleMesh: SimpleMesh | undefined;
-		simpleMesh = new SimpleMesh(this.texture(pTexture, pSheet), pVertices, pUvs, pIndices, pDrawMode);
+	static simpleMesh(pTexture: string, pSheet: SpritesheetLike, pVertices?: Float32Array, pUvs?: Float32Array, pIndices?: Uint16Array, pDrawMode?: number): SimpleMesh {
+		const simpleMesh = new SimpleMesh(this.texture(pTexture, pSheet), pVertices, pUvs, pIndices, pDrawMode);
 		setObjectName(simpleMesh, pTexture, pSheet);
 		return simpleMesh;
+	}
+
+	static nineSlice(pTexture: string, pSheet?: SpritesheetLike, leftWidth: number = 10, topHeight: number = 10, rightWidth: number = 10, bottomHeight: number = 10) {
+		const ns = new NineSlicePlane(typeof pTexture === "string" ? this.texture(pTexture, pSheet) : pTexture, leftWidth, topHeight, rightWidth, bottomHeight);
+		setObjectName(ns, pTexture, pSheet);
+		return ns;
 	}
 }

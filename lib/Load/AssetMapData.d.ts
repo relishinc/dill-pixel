@@ -19,6 +19,7 @@ export declare class AssetMapData {
      * If resolution suffix is set the asset is loaded only on devices with the matched asset resolution
      */
     resolutionSuffix: string;
+    data: any;
     /**
      * @deprecated use asset classes from Load/Assets package
      * @param pAssetName

@@ -1,18 +1,16 @@
 import {BLEND_MODES, Container, DisplayObject, Graphics, Point} from "pixi.js";
 import {Dictionary} from "typescript-collections";
 import {Application} from "../Application";
-import * as Topics from "../Data/Topics";
 import * as Input from "../Input";
+import {popKeyboardLayer, pushKeyboardLayer, Signals} from "../Signals";
 import * as LogUtils from "../Utils/LogUtils";
 import {IPopup} from "./IPopup";
+import {Popup} from "./Popup";
 import {IPopupToken} from "./PopupToken";
 
-type PopupConstructor = () => IPopup;
-
 export class PopupManager extends Container {
-
 	private _activePopups: IPopup[];
-	private _popups: Dictionary<string, PopupConstructor>;
+	private _popups: Dictionary<string, typeof Popup>;
 	private _size!: Point;
 	private _debug: boolean = false;
 	private _overlayColor: number;
@@ -24,30 +22,29 @@ export class PopupManager extends Container {
 		pOverlayAlpha: number = 0.75
 	) {
 		super();
-		this._popups = new Dictionary<string, PopupConstructor>();
+		this._popups = new Dictionary<string, typeof Popup>();
 		this._activePopups = new Array<IPopup>();
 		this._overlayColor = pOverlayColor;
 		this._overlayAlpha = pOverlayAlpha;
 
-		PubSub.subscribe(Topics.SHOW_POPUP, this.handleShowPopup.bind(this));
-		PubSub.subscribe(Topics.HIDE_POPUP, this.handleHidePopup.bind(this));
-		PubSub.subscribe(
-			Topics.HIDE_ALL_POPUPS,
-			this.handleHideAllPopups.bind(this)
-		);
-		PubSub.subscribe(
-			Topics.HIDE_TOPMOST_POPUP,
-			this.handleHideTopmostPopup.bind(this)
-		);
+		// bind internal methods
+		this.handleShowPopup = this.handleShowPopup.bind(this);
+		this.handleHidePopup = this.handleHidePopup.bind(this);
+		this.handleHideAllPopups = this.handleHideAllPopups.bind(this);
+		this.handleHideTopmostPopup = this.handleHideTopmostPopup.bind(this);
+		this.handleHidePopupComplete = this.handleHidePopupComplete.bind(this);
+		this.handleKeyDown = this.handleKeyDown.bind(this);
 
-		PubSub.subscribe(
-			Topics.HIDE_POPUP_COMPLETE,
-			this.handleHidePopupComplete.bind(this)
-		);
+		Signals.showPopup.connect(this.handleShowPopup);
+		Signals.hidePopup.connect(this.handleHidePopup);
+		Signals.hideAllPopups.connect(this.handleHideAllPopups);
+		Signals.hideTopMostPopup.connect(this.handleHideTopmostPopup);
+		Signals.hidePopupComplete.connect(this.handleHidePopupComplete)
 
+		// subscribe to global keyboard events
 		window.addEventListener(
 			Input.Events.KEY_DOWN,
-			this.handleKeyDown.bind(this),
+			this.handleKeyDown,
 			false
 		);
 	}
@@ -63,12 +60,16 @@ export class PopupManager extends Container {
 	/**
 	 * Register a popup, so that it can be spawned later.
 	 * @description Expectation is that this is called in {@link Application.registerPopups}
-	 * @param pPopup A function that returns an {@link IPopup}
+	 * @param pPopupClass
 	 * @param pId Unique ID for this type of popup
 	 */
-	public registerPopup(pPopup: PopupConstructor, pId: string): void {
-		this._popups.setValue(pId, pPopup);
-		this.log('registerPopup: Registered popup with ID "' + pId + '"');
+	public register(pPopupClass: typeof Popup, pId?: string): void {
+		const id = pPopupClass.NAME === "__Popup" ? pId : pPopupClass.NAME;
+		if (!id || id === "__Popup") {
+			throw new Error("PopupManager.register: Popup class should have a NAME property, or you should pass an id parameter");
+		}
+		this._popups.setValue(id, pPopupClass);
+		this.log(`registerPopup: Registered popup with ID " ${pId} `);
 	}
 
 	/**
@@ -100,10 +101,14 @@ export class PopupManager extends Container {
 	// #region PRIVATE FUNCTIONS
 	/**
 	 * Show a Popup, and optionally get a callback when it's closed.
-	 * @description Note that usually you should be using PubSub for this
+	 * @description Note you should be using @link {Signals.showPopup} instead of calling this directly
 	 * @example
 	 * ```ts
-	 * PubSub.publishSync(Topics.SHOW_POPUP, new PopupToken("popup_id"));
+	 * Signals.showPopup.emit(new PopupToken("popup_id"));
+	 * ```
+	 * or
+	 * ```ts
+	 * showPopup(new PopupToken("popup_id"));
 	 * ```
 	 * @param pToken.id Make sure to call {@link registerPopup} with this ID first
 	 * @param pToken.callback This gets called when the popup is closed
@@ -111,10 +116,10 @@ export class PopupManager extends Container {
 	private ShowPopup(pToken: IPopupToken): void {
 		const popupConstructor = this._popups.getValue(pToken.id);
 		if (popupConstructor !== undefined) {
-			this.log('ShowPopup: Creating popup from ID: "' + pToken.id + '"');
+			this.log("ShowPopup: Creating popup from ID: \"" + pToken.id + "\"");
 
 			// TODO: Create / return a unique ID
-			const popup = popupConstructor();
+			const popup = new popupConstructor();
 
 			if (pToken.backdrop !== false) {
 				// TODO: pool overlays
@@ -122,7 +127,8 @@ export class PopupManager extends Container {
 				this.addChild(overlay); // NOTE: must call this before `addChild(popup.displayObject)`
 				popup.blackout = overlay; // TODO: recalculate opacity of overlay based on number of open popups
 			}
-			PubSub.publishSync(Topics.PUSH_KEYBOARD_LAYER, null); // NOTE: must call this before `popup.init()`
+
+			pushKeyboardLayer();
 			popup.init(this._size);
 			this.addChild(popup);
 			this._activePopups.push(popup);
@@ -130,41 +136,44 @@ export class PopupManager extends Container {
 			popup.show(pToken);
 			// TODO: Emit events for when the first popup is opened and when the last popup is closed
 		} else {
-			this.logW(
-				'ShowPopup: No popup with the ID "' +
-				pToken.id +
-				'" has been registered'
-			);
+			this.logW(`ShowPopup: No popup with the ID "${pToken.id}" has been registered`)
+
 		}
 	}
 
 	/**
 	 * Hide a popup by ID, starting from the top and working backwards
-	 * @description Note that usually you should be using PubSub for this
+	 * @description Note that usually you should be using global {@link Signals.hidePopup} instead of calling this directly
 	 * @example
 	 * ```ts
-	 * PubSub.publishSync(Topics.HIDE_POPUP, "popup_id");
+	 * Signals.hidePopup.emit( "popup_id");
+	 * ```
+	 * or
+	 * ```ts
+	 * hidePopup("popup_id");
 	 * ```
 	 */
 	private HidePopup(pId: string): void {
 		const popup = this.getPopup(pId);
 		// TODO: Better handling for situation where multiple active popups have the same ID
 		if (popup !== undefined) {
-			this.log('HidePopup: Attempting to hide popup with ID "' + pId + '"');
+			this.log(`HidePopup: Attempting to hide popup with ID "${pId}"`);
 			this._hidePopup(popup);
 		} else {
-			this.logE(
-				"HidePopup: Can't find any active popup with ID \"" + pId + '"'
-			);
+			this.logE(`HidePopup: Can't find any active popup with ID "${pId}"`);
 		}
 	}
 
 	/**
 	 * Hide all popups, starting from the top and working backwards
-	 * @description Note that usually you should be using PubSub for this
+	 * @description Note that usually you should be {@link Signals.hideAllPopups} instead of calling this directly
 	 * @example
 	 * ```ts
-	 * PubSub.publishSync(Topics.HIDE_ALL_POPUPS, undefined);
+	 * Signals.hideAllPopups.emit();
+	 * ```
+	 * or
+	 * ```ts
+	 * hideAllPopups();
 	 * ```
 	 */
 	private HideAllPopups() {
@@ -180,10 +189,14 @@ export class PopupManager extends Container {
 
 	/**
 	 * Hide the topmost visible popup
-	 * @description Note that usually you should be using PubSub for this
+	 * @description Note that usually you should be using {@link Signals.hideTopMostPopup} instead of calling this directly
 	 * @example
 	 * ```ts
-	 * PubSub.publishSync(Topics.HIDE_TOPMOST_POPUP, undefined);
+	 * Signals.hideTopMostPopup.emit();
+	 * ```
+	 * or
+	 * ```ts
+	 * hideTopMostPopup();
 	 * ```
 	 */
 	private HideTopmostPopup() {
@@ -235,8 +248,8 @@ export class PopupManager extends Container {
 
 			pPopup.destroy(); // TODO: Pool popups
 			this.log("onHidePopupComplete: Destroyed popup");
+			popKeyboardLayer();
 
-			PubSub.publishSync(Topics.POP_KEYBOARD_LAYER, null);
 		} else {
 			this.logE("onHidePopupComplete: parameter pPopup is undefined!");
 		}
@@ -252,23 +265,23 @@ export class PopupManager extends Container {
 
 	// #endregion PRIVATE FUNCTIONS
 	// #region EVENT HANDLERS
-	private handleHidePopup(pTopic: string, pId: string): void {
-		this.HidePopup(pId);
+	private handleHidePopup(id: string): void {
+		this.HidePopup(id);
 	}
 
-	private handleHideAllPopups(pTopic: string): void {
+	private handleHideAllPopups(): void {
 		this.HideAllPopups();
 	}
 
-	private handleShowPopup(pTopic: string, pToken: IPopupToken): void {
-		this.ShowPopup(pToken);
+	private handleShowPopup(token: IPopupToken): void {
+		this.ShowPopup(token);
 	}
 
-	private handleHidePopupComplete(pTopic: string, pPopup: IPopup): void {
-		this.onHidePopupComplete(pPopup);
+	private handleHidePopupComplete(popup: IPopup): void {
+		this.onHidePopupComplete(popup);
 	}
 
-	private handleHideTopmostPopup(pTopic: string): void {
+	private handleHideTopmostPopup(): void {
 		this.HideTopmostPopup();
 	}
 
@@ -290,7 +303,7 @@ export class PopupManager extends Container {
 		overlay.drawRect(0, 0, 2, 2);
 		overlay.endFill();
 		overlay.blendMode = BLEND_MODES.OVERLAY;
-		(overlay as DisplayObject).interactive = true;
+		(overlay as DisplayObject).eventMode = "static";
 		overlay.x = -this._size.x / 2;
 		overlay.y = -this._size.y / 2;
 		overlay.width = this._size.x;

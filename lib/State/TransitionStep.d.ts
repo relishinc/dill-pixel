@@ -46,22 +46,23 @@ export declare enum TransitionStep {
      * Hides the current active load screen.
      */
     HideLoadScreen = 10,
+    HideLoadScreenAndAnimnNewIn = 11,
     /**
      * Halts the transition until further notice.
      */
-    Halt = 11,
+    Halt = 12,
     /**
      * Pauses transition for 0.1 seconds and continues afterward.
      * @todo Relish GM => Figure out how to actually skip only one frame.
      */
-    PauseAFrame = 12,
+    PauseAFrame = 13,
     /**
      * Pauses transition for 1 second and continues afterward.
      */
-    Pause1Second = 13,
+    Pause1Second = 14,
     /**
      * Pauses transition for 5 seconds and continues afterward.
      */
-    Pause5Seconds = 14
+    Pause5Seconds = 15
 }
 //# sourceMappingURL=TransitionStep.d.ts.map

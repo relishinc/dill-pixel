@@ -5,6 +5,7 @@ export enum AssetType {
 	PNG,
 	JPG,
 	FONT,
+	WEB_FONT,
 	/** @deprecated please use SPINE_JSON or AssetMapSpineData instead */
 	SPINE,
 	SPINE_JSON,
@@ -68,6 +69,8 @@ export class AssetUtils {
 				return this.FILEPATH_IMAGE + pAssetName + this._resolutionSuffix + this.FILE_EXTENSION_PNG;
 			case AssetType.FONT:
 				return this.FILEPATH_FONT + pAssetName + this._resolutionSuffix + this.FILE_EXTENSION_FONT;
+			case AssetType.WEB_FONT:
+				return this.FILEPATH_FONT + pAssetName;
 			case AssetType.SPINE:
 				return this.FILEPATH_SPINE + pAssetName + this._resolutionSuffix + this.FILE_EXTENSION_JSON;
 			case AssetType.SPINE_JSON:

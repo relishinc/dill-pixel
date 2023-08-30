@@ -1,7 +1,7 @@
-import * as PIXI from "pixi.js";
+import {DisplayObject, Graphics, Point} from "pixi.js";
 import {IPopupToken} from "./PopupToken";
 
-export interface IPopup extends PIXI.DisplayObject {
+export interface IPopup extends DisplayObject {
 	/**
 	 * Note that IDs are, for now, shared among all instances of the same type of popup.
 	 * Typescript quirk: a `readonly` Field can be implemented as a read-only Property (i.e. a getter)
@@ -11,7 +11,7 @@ export interface IPopup extends PIXI.DisplayObject {
 	 * A full-screen overlay that prevents clicks on things behind the Popup
 	 * Note that this will not be a child of the Popup
 	 */
-	blackout?: PIXI.Graphics;
+	blackout?: Graphics;
 	/** Whether or not to close the popup when the escape key (or Android back button) is pressed */
 	readonly keyboardToClose: boolean;
 
@@ -27,7 +27,7 @@ export interface IPopup extends PIXI.DisplayObject {
 	 * @description This should be called by {@link PopupManager.onResize}
 	 * @param pSize Screen size, in pixels(?)
 	 */
-	onResize(pSize: PIXI.Point): void;
+	onResize(pSize: Point): void;
 
 	/**
 	 * Show the popup, and set the close callback
@@ -40,7 +40,7 @@ export interface IPopup extends PIXI.DisplayObject {
 
 	/**
 	 * Hide the popup.
-	 * When implementing, make sure to call `PubSub.publishSync(Topics.HIDE_POPUP_COMPLETE, this as IPopup)` afterwards
+	 * When implementing, make sure to call `hidePopupComplete(this)` afterwards
 	 */
 	hide(): void;
 
@@ -48,5 +48,5 @@ export interface IPopup extends PIXI.DisplayObject {
 	 * "Delayed constructor", this is called before {@link show()}
 	 * @param pSize Screen size, in pixels(?)
 	 */
-	init(pSize: PIXI.Point): void;
+	init(pSize: Point): void;
 }

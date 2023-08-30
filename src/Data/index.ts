@@ -1,3 +1,2 @@
-export * from "./AppConfig";
-export * from "./Colour";
-export * from "./Topics";
+export {AppConfig} from "./AppConfig";
+export {Colour} from "./Colour";

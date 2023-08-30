@@ -1,255 +1,259 @@
-import * as PIXI from "pixi.js";
-import {FederatedPointerEvent} from "pixi.js";
+import {Container, FederatedPointerEvent, IPoint, Point, Rectangle} from "pixi.js";
+import {SignalConnections} from "typed-signals";
+import {AudioToken} from "../Audio";
 import * as AudioCategory from "../Audio/AudioCategory";
-import {AudioToken} from "../Audio/AudioToken";
-import * as Topics from "../Data/Topics";
-import {Draggable} from "../Input/Draggable";
-import {IFocusable} from "../Input/IFocusable";
 import * as InputUtils from "../Input/InputUtils";
+import {playAudio, Signals} from "../Signals";
 import * as PixiUtils from "../Utils/PixiUtils";
 import * as RectUtils from "../Utils/RectUtils";
+import {Draggable} from "./Draggable";
+import {IFocusable} from "./IFocusable";
 
 /**
  * Receptacle
  */
-export abstract class Receptacle extends PIXI.Container implements IFocusable {
-    protected _visuals: PIXI.Container;
-    protected _eventData: PIXI.FederatedPointerEvent | undefined;
-    protected _isPointerOver: boolean;
-    protected _hoverVo: string | undefined;
-    protected _dragged: Draggable | undefined;
-    protected _selected: Draggable | undefined;
-    protected _subscriptions: any[];
-    protected _isActive: boolean;
+export abstract class Receptacle extends Container implements IFocusable {
+	protected _visuals: Container;
+	protected _eventData: FederatedPointerEvent | undefined;
+	protected _isPointerOver: boolean;
+	protected _hoverVo: string | undefined;
+	protected _dragged: Draggable | undefined;
+	protected _selected: Draggable | undefined;
+	protected _isActive: boolean;
+	private _connections: SignalConnections;
 
-    constructor() {
-        super();
-        this._isPointerOver = false;
-        this._isActive = true;
+	constructor() {
+		super();
 
-        this._visuals = new PIXI.Container();
-        this.addChild(this._visuals);
+		this.onDragBegin = this.onDragBegin.bind(this);
+		this.onDragEnd = this.onDragEnd.bind(this);
+		this.onDraggableSelected = this.onDraggableSelected.bind(this);
+		this.onDraggableDeselected = this.onDraggableDeselected.bind(this);
 
-        this.cursor = "pointer";
-        this.interactive = false;
+		this._isPointerOver = false;
+		this._isActive = true;
 
-        this.on(InputUtils.Events.POINTER_OVER, this.onPointerOver);
-        this.on(InputUtils.Events.POINTER_DOWN, this.onPointerDown);
-        this.on(InputUtils.Events.POINTER_UP, this.onPointerUp);
-        this.on(InputUtils.Events.POINTER_UP_OUTSIDE, this.onPointerUpOutside);
-        this.on(InputUtils.Events.POINTER_OUT, this.onPointerOut);
-        this.on(InputUtils.Events.POINTER_MOVE, this.onPointerMove);
-        this.on(InputUtils.Events.TOUCH_MOVE, this.onTouchMove);
+		this._visuals = new Container();
+		this.addChild(this._visuals);
 
-        this._subscriptions = new Array<any>();
-        this._subscriptions.push(PubSub.subscribe(Topics.DRAG_BEGIN, this.onDragBegin.bind(this)));
-        this._subscriptions.push(PubSub.subscribe(Topics.DRAG_END, this.onDragEnd.bind(this)));
-        this._subscriptions.push(PubSub.subscribe(Topics.DRAGGABLE_SELECTED, this.onDraggableSelected.bind(this)));
-        this._subscriptions.push(PubSub.subscribe(Topics.DRAGGABLE_DESELECTED, this.onDraggableDeselected.bind(this)));
-    }
+		this.cursor = "pointer";
+		this.interactive = false;
 
-    /**
-     * Sets whether is active
-     */
-    public set isActive(pValue: boolean) {
-        this._isActive = pValue;
-    }
+		this.on(InputUtils.Events.POINTER_OVER, this.onPointerOver);
+		this.on(InputUtils.Events.POINTER_DOWN, this.onPointerDown);
+		this.on(InputUtils.Events.POINTER_UP, this.onPointerUp);
+		this.on(InputUtils.Events.POINTER_UP_OUTSIDE, this.onPointerUpOutside);
+		this.on(InputUtils.Events.POINTER_OUT, this.onPointerOut);
+		this.on(InputUtils.Events.POINTER_MOVE, this.onPointerMove);
+		this.on(InputUtils.Events.TOUCH_MOVE, this.onTouchMove);
 
-    /**
-     * Gets whether is active
-     */
-    public get isActive(): boolean {
-        return this._isActive;
-    }
+		this._connections = new SignalConnections();
+		this._connections.add(Signals.dragBegin.connect(this.onDragBegin))
+		this._connections.add(Signals.dragEnd.connect(this.onDragEnd))
+		this._connections.add(Signals.draggableSelected.connect(this.onDraggableSelected))
+		this._connections.add(Signals.draggableDeselected.connect(this.onDraggableDeselected))
+	}
 
-    /**
-     * onFocusBegin
-     */
-    public onFocusBegin(): void {
-        this.playHoverVo();
-    }
+	/**
+	 * Sets whether is active
+	 */
+	public set isActive(pValue: boolean) {
+		this._isActive = pValue;
+	}
 
-    /**
-     * onFocusEnd
-     */
-    public onFocusEnd(): void {
-        // unused
-    }
+	/**
+	 * Gets whether is active
+	 */
+	public get isActive(): boolean {
+		return this._isActive;
+	}
 
-    /**
-     * onFocusActivated
-     */
-    public onFocusActivated(): void {
-        this.addDraggable(this._selected!);
-    }
+	/**
+	 * onFocusBegin
+	 */
+	public onFocusBegin(): void {
+		this.playHoverVo();
+	}
 
-    /**
-     * onFocusPosition
-     */
-    public getFocusPosition(): PIXI.Point {
-        if (this.hitArea instanceof PIXI.Rectangle) {
-            return new PIXI.Point().copyFrom(this.toGlobal(RectUtils.center(this.hitArea)));
-        } else {
-            return this.getGlobalPosition();
-        }
-    }
+	/**
+	 * onFocusEnd
+	 */
+	public onFocusEnd(): void {
+		// unused
+	}
 
-    /**
-     * Gets focus size
-     * @returns PIXI.Point
-     */
-    public getFocusSize(): PIXI.IPoint {
-        let bounds: PIXI.Rectangle;
-        if (this.hitArea instanceof PIXI.Rectangle) {
-            bounds = PixiUtils.getGlobalBounds(this, this.hitArea.clone());
-        } else {
-            bounds = PixiUtils.getGlobalBounds(this);
-        }
-        return RectUtils.size(bounds);
-    }
+	/**
+	 * onFocusActivated
+	 */
+	public onFocusActivated(): void {
+		this.addDraggable(this._selected!);
+	}
 
-    /**
-     * Destroys receptacle
-     */
-    public destroy() {
-        for (let i = 0; i < this._subscriptions.length; ++i) {
-            PubSub.unsubscribe(this._subscriptions[i]);
-        }
-        super.destroy();
-    }
+	/**
+	 * onFocusPosition
+	 */
+	public getFocusPosition(): Point {
+		if (this.hitArea instanceof Rectangle) {
+			return new Point().copyFrom(this.toGlobal(RectUtils.center(this.hitArea)));
+		} else {
+			return this.getGlobalPosition();
+		}
+	}
 
-    /**
-     * Plays hover vo
-     */
-    protected playHoverVo(): void {
-        if (this._hoverVo !== undefined) {
-            PubSub.publishSync(Topics.PLAY_AUDIO, new AudioToken(
-                this._hoverVo, 1, false, AudioCategory.VO.toString(),
-            ));
-        }
-    }
+	/**
+	 * Gets focus size
+	 * @returns Point
+	 */
+	public getFocusSize(): IPoint {
+		let bounds: Rectangle;
+		if (this.hitArea instanceof Rectangle) {
+			bounds = PixiUtils.getGlobalBounds(this, this.hitArea.clone());
+		} else {
+			bounds = PixiUtils.getGlobalBounds(this);
+		}
+		return RectUtils.size(bounds);
+	}
 
-    /**
-     * onPointerOver
-     */
-    protected onPointerOver(): void {
-        this._isPointerOver = true;
-        if (this._selected !== undefined) {
-            this.playHoverVo();
-        }
-    }
+	/**
+	 * Destroys receptacle
+	 */
+	public destroy() {
+		this._connections.disconnectAll();
+		super.destroy();
+	}
 
-    /**
-     * onPointerDown
-     */
-    protected onPointerDown(pEvent: FederatedPointerEvent): void {
-        this._eventData = pEvent;
-    }
+	/**
+	 * Plays hover vo
+	 */
+	protected playHoverVo(): void {
+		if (this._hoverVo !== undefined) {
+			playAudio(new AudioToken(
+				this._hoverVo, 1, false, AudioCategory.VO.toString(),
+			))
+		}
+	}
 
-    /**
-     * onPointerUp
-     */
-    protected onPointerUp(): void {
-        if (this._selected !== undefined) {
-            this._eventData = undefined;
-            this.addDraggable(this._selected);
-        }
-    }
+	/**
+	 * onPointerOver
+	 */
+	protected onPointerOver(): void {
+		this._isPointerOver = true;
+		if (this._selected !== undefined) {
+			this.playHoverVo();
+		}
+	}
 
-    /**
-     * onPointerUpOutside
-     */
-    protected onPointerUpOutside(): void {
-        this._eventData = undefined;
-    }
+	/**
+	 * onPointerDown
+	 */
+	protected onPointerDown(pEvent: FederatedPointerEvent): void {
+		this._eventData = pEvent;
+	}
 
-    /**
-     * onPointerOut
-     */
-    protected onPointerOut(): void {
-        this._isPointerOver = false;
-    }
+	/**
+	 * onPointerUp
+	 */
+	protected onPointerUp(): void {
+		if (this._selected !== undefined) {
+			this._eventData = undefined;
+			this.addDraggable(this._selected);
+		}
+	}
 
-    /**
-     * onPointerMove
-     */
-    protected onPointerMove(pEvent: FederatedPointerEvent): void {
-        // override
-    }
+	/**
+	 * onPointerUpOutside
+	 */
+	protected onPointerUpOutside(): void {
+		this._eventData = undefined;
+	}
 
-    protected onTouchMove(pEvent: FederatedPointerEvent): void {
-        const local: PIXI.Point = pEvent.getLocalPosition(this);
-        if (this.hitArea) {
-            if (!this._isPointerOver) {
-                if (this.hitArea.contains(local.x, local.y)) {
-                    this.onPointerOver();
-                }
-            } else {
-                if (this.hitArea.contains(local.x, local.y) === false) {
-                    this.onPointerOut();
-                }
-            }
-        }
-    }
+	/**
+	 * onPointerOut
+	 */
+	protected onPointerOut(): void {
+		this._isPointerOver = false;
+	}
 
-    /**
-     * Adds draggable
-     * @param pDraggable
-     */
-    protected addDraggable(pDraggable: Draggable): void {
-        // override
-    }
+	/**
+	 * onPointerMove
+	 */
+	protected onPointerMove(pEvent: FederatedPointerEvent): void {
+		// override
+	}
 
-    /**
-     * onDragBegin
-     * @param pTopic
-     * @param pDraggable
-     */
-    protected onDragBegin(pTopic: string, pDraggable: Draggable): void {
-        if (this._isActive) {
-            this.interactive = true;
-            this._dragged = pDraggable;
-        }
-    }
+	protected onTouchMove(pEvent: FederatedPointerEvent): void {
+		const local: Point = pEvent.getLocalPosition(this);
+		if (this.hitArea) {
+			if (!this._isPointerOver) {
+				if (this.hitArea.contains(local.x, local.y)) {
+					this.onPointerOver();
+				}
+			} else {
+				if (this.hitArea.contains(local.x, local.y) === false) {
+					this.onPointerOut();
+				}
+			}
+		}
+	}
 
-    /**
-     * onDragEnd
-     * @param pTopic
-     * @param pDraggable
-     */
-    protected onDragEnd(pTopic: string, pDraggable: Draggable): void {
-        if (this._isActive) {
-            if (this._isPointerOver && this._dragged !== undefined) {
-                this.addDraggable(this._dragged);
-            }
-            this.interactive = false;
-            this._dragged = undefined;
-        }
-    }
+	/**
+	 * Adds draggable
+	 * @param pDraggable
+	 */
+	protected addDraggable(pDraggable: Draggable): void {
+		// override
+	}
 
-    /**
-     * onDraggableSelected
-     * @param pTopic
-     * @param pDraggable
-     */
-    protected onDraggableSelected(pTopic: string, pDraggable: Draggable): void {
-        if (this._isActive) {
-            this.interactive = true;
-            this._selected = pDraggable;
-        }
-    }
+	/**
+	 * onDragBegin
+	 * @param pTopic
+	 * @param pDraggable
+	 */
+	protected onDragBegin(pDraggable: Draggable): void {
+		if (this._isActive) {
+			this.interactive = true;
+			this._dragged = pDraggable;
+		}
+	}
 
-    /**
-     * onDraggableDeselected
-     * @param pTopic
-     * @param pDraggable
-     */
-    protected onDraggableDeselected(pTopic: string, pDraggable: Draggable): void {
-        if (this._isActive) {
-            if (this._selected === pDraggable) {
-                this.interactive = false;
-                this._selected = undefined;
-            }
-        }
-    }
+	/**
+	 * onDragEnd
+	 * @param pTopic
+	 * @param pDraggable
+	 */
+	protected onDragEnd(pDraggable: Draggable): void {
+		if (this._isActive) {
+			if (this._isPointerOver && this._dragged !== undefined) {
+				this.addDraggable(this._dragged);
+			}
+			this.interactive = false;
+			this._dragged = undefined;
+		}
+	}
+
+	/**
+	 * onDraggableSelected
+	 * @param pTopic
+	 * @param pDraggable
+	 */
+	protected onDraggableSelected(pDraggable: Draggable): void {
+		if (this._isActive) {
+			this.interactive = true;
+			this._selected = pDraggable;
+		}
+	}
+
+	/**
+	 * onDraggableDeselected
+	 * @param pTopic
+	 * @param pDraggable
+	 */
+	protected onDraggableDeselected(pDraggable: Draggable): void {
+		if (this._isActive) {
+			if (this._selected === pDraggable) {
+				this.interactive = false;
+				this._selected = undefined;
+			}
+		}
+	}
 }

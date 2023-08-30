@@ -1,13 +1,13 @@
-import * as PIXI from "pixi.js";
+import { IHitArea, Renderer, Sprite } from "pixi.js";
 /**
  * Pixel perfect hit area
  */
-export declare class PixelPerfectHitArea implements PIXI.IHitArea {
+export declare class PixelPerfectHitArea implements IHitArea {
     private _map;
     private _target;
     private _norm;
     private _pixel;
-    constructor(pRenderer: PIXI.Renderer, pTarget: PIXI.Sprite, pTheshhold?: number);
+    constructor(pRenderer: Renderer, pTarget: Sprite, pThreshhold?: number);
     /**
      * Gets width
      */

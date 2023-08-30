@@ -5,7 +5,7 @@ export interface IPopupToken {
     readonly keyboard?: boolean;
     readonly data?: any;
 }
-/** This is the data struct that gets passed to SHOW_POPUP PubSub calls */
+/** This is the data struct that gets passed to the showPopup signal */
 export declare class PopupToken implements IPopupToken {
     /**
      * Make sure to register the ID in {@link Application.registerPopups}

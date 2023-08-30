@@ -1,7 +1,6 @@
-import * as PIXI from "pixi.js";
-import {Point} from "pixi.js";
-import * as Topics from "../Data/Topics";
+import {Container, FederatedPointerEvent, Point} from "pixi.js";
 import * as InputUtils from "../Input/InputUtils";
+import {dragBegin, dragEnd, draggableDeselected, draggableSelected} from "../Signals";
 import * as PixiUtils from "../Utils/PixiUtils";
 import * as PointUtils from "../Utils/PointUtils";
 import {Selectable} from "./Selectable";
@@ -18,13 +17,13 @@ export class Draggable extends Selectable {
 	public readonly onDragEnd: ((p: Draggable) => void)[];
 
 	protected _isDrag: boolean;
-	protected _pointerOffset: PIXI.Point;
+	protected _pointerOffset: Point;
 	private _dragThresholdSq: number;
 
 	constructor() {
 		super();
 		this._isDrag = false;
-		this._pointerOffset = new PIXI.Point(0, 0);
+		this._pointerOffset = new Point(0, 0);
 		this._dragThresholdSq = 15 * 15;
 
 		this.onDragBegin = [];
@@ -44,7 +43,7 @@ export class Draggable extends Selectable {
 	/**
 	 * Gets visuals
 	 */
-	public get visuals(): PIXI.Container {
+	public get visuals(): Container {
 		return this._visuals;
 	}
 
@@ -75,7 +74,7 @@ export class Draggable extends Selectable {
 	 */
 	public select(): void {
 		super.select();
-		PubSub.publishSync(Topics.DRAGGABLE_SELECTED, this);
+		draggableSelected(this);
 	}
 
 	/**
@@ -83,14 +82,14 @@ export class Draggable extends Selectable {
 	 */
 	public deselect(): void {
 		super.deselect();
-		PubSub.publishSync(Topics.DRAGGABLE_DESELECTED, this);
+		draggableDeselected(this);
 	}
 
 	/**
 	 * onPointerDown
 	 * @param pEvent
 	 */
-	protected onPointerDown(pEvent: PIXI.FederatedPointerEvent): void {
+	protected onPointerDown(pEvent: FederatedPointerEvent): void {
 		super.onPointerDown(pEvent);
 		this._isDrag = false;
 		this._pointerOffset = PointUtils.subtract(this.position, this._eventData!.getLocalPosition(this.parent)) as Point;
@@ -99,7 +98,7 @@ export class Draggable extends Selectable {
 	/**
 	 * onPointerUp
 	 */
-	protected onPointerUp(pEvent: PIXI.FederatedPointerEvent): void {
+	protected onPointerUp(pEvent: FederatedPointerEvent): void {
 		if (this._eventData !== undefined && this._eventData.pointerId === pEvent.pointerId) {
 			if (this._isDrag) {
 				this.dragEnd();
@@ -112,7 +111,7 @@ export class Draggable extends Selectable {
 	/**
 	 * onPointerUpOutside
 	 */
-	protected onPointerUpOutside(pEvent: PIXI.FederatedPointerEvent): void {
+	protected onPointerUpOutside(pEvent: FederatedPointerEvent): void {
 		if (this._isDrag) {
 			this.onPointerUp(pEvent);
 		} else {
@@ -123,7 +122,7 @@ export class Draggable extends Selectable {
 	/**
 	 * onPointerMove
 	 */
-	protected onPointerMove(pEvent: PIXI.FederatedPointerEvent): void {
+	protected onPointerMove(pEvent: FederatedPointerEvent): void {
 		if (this._eventData !== undefined && this._eventData.pointerId === pEvent.pointerId) {
 			if (!this._isDrag) {
 				// Calculate how far the mouse has moved
@@ -155,7 +154,7 @@ export class Draggable extends Selectable {
 			this.onDragBegin[i](this);
 		}
 		this._isDrag = true;
-		PubSub.publishSync(Topics.DRAG_BEGIN, this);
+		dragBegin(this);
 	}
 
 	/**
@@ -167,13 +166,13 @@ export class Draggable extends Selectable {
 		}
 		this._isDrag = false;
 		this._eventData = undefined;
-		PubSub.publishSync(Topics.DRAG_END, this);
+		dragEnd(this);
 	}
 
 	/**
 	 * Snaps to mouse
 	 */
 	protected snapToMouse(): void {
-		this._eventData!.getLocalPosition(this._visuals.parent, this._visuals.position as PIXI.Point);
+		this._eventData!.getLocalPosition(this._visuals.parent, this._visuals.position as Point);
 	}
 }

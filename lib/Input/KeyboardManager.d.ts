@@ -19,16 +19,19 @@ interface IKeyboardBinding {
  */
 export declare class KeyboardManager {
     private app;
-    set debug(pEnabled: boolean);
+    private _downKeys;
     private _maps;
     private _isActive;
     private _isEnabled;
+    private _tabEnabled;
     private _debug;
     private _keyBindings;
     constructor(app: Application);
     static bindingToString(pBinding: IKeyboardBinding): string;
     protected static doesEventMatchBinding(pEvent: KeyboardEvent, pBinding: IKeyboardBinding): boolean;
     private static areEqual;
+    set debug(pEnabled: boolean);
+    get isActive(): boolean;
     addKeyBinding(pDirection: Direction | "Enter", pKeyCode: KeyCodes, pModifiers?: Partial<{
         altKey: boolean;
         shiftKey: boolean;
@@ -59,6 +62,12 @@ export declare class KeyboardManager {
         direction: Direction | "Enter";
         binding: IKeyboardBinding;
     } | false;
+    isKeyDown(...args: (string | KeyCodes)[]): boolean;
+    /**
+     * onKeyUp
+     * @param pEvent
+     */
+    private onKeyUp;
     /**
      * onKeyDown
      * @param pEvent
@@ -82,7 +91,9 @@ export declare class KeyboardManager {
      */
     private onBrowserFocus;
     private onRegisterFocusable;
+    private onRegisterFocusables;
     private onUnregisterFocusable;
+    private onUnregisterFocusables;
     private onUnregisterAllFocusables;
     private onClearFocus;
     private onForceFocus;
