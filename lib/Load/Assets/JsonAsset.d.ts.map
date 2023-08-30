@@ -1,1 +1,0 @@
-{"version":3,"file":"JsonAsset.d.ts","sourceRoot":"","sources":["../../../src/Load/Assets/JsonAsset.ts"],"names":[],"mappings":"AACA,OAAO,EAAC,YAAY,EAAC,MAAM,iBAAiB,CAAC;AAC7C,OAAO,EAAC,MAAM,EAAC,MAAM,UAAU,CAAC;AAEhC,qBAAa,SAAS,CAAC,CAAC,CAAE,SAAQ,YAAa,YAAW,MAAM,CAAC,CAAC,CAAC;gBAEnD,SAAS,EAAE,MAAM,EAAE,SAAS,CAAC,EAAE,MAAM;IAO1C,QAAQ,IAAI,CAAC;CAGvB"}
