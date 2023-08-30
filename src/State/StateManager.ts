@@ -2,9 +2,16 @@ import {gsap} from "gsap";
 import {Container, Point} from "pixi.js";
 import {Dictionary} from "typescript-collections";
 import {Application} from "../Application";
-import * as Topics from "../Data/Topics";
 import {AssetMap, AssetMapData, LoadToken} from "../Load";
-import {broadcast, subscribe} from "../Utils";
+import {
+	hideLoadScreen,
+	initState,
+	loadAssets,
+	showLoadScreen,
+	Signals,
+	stateTransitionHalted,
+	unloadAssets
+} from "../Signals";
 import * as LogUtils from "../Utils/LogUtils";
 import {State} from "./State";
 import {StateToken} from "./StateToken";
@@ -92,6 +99,10 @@ export class StateManager extends Container {
 
 	private _defaultTransitionType: TransitionStep[] = TransitionType.TRANSITION_ANIM_NEW_IN_FRONT;
 
+	private _useHash = false;
+	private _statesMenu: HTMLDivElement;
+	private _excluded: string[] = [];
+
 	constructor(private app: Application) {
 		super();
 		this._size = new Point();
@@ -100,11 +111,18 @@ export class StateManager extends Container {
 		this._simultaneousCheckAnimInComplete = false;
 		this._simultaneousCheckAnimOutComplete = false;
 		this._transitionStepIndex = 0;
-		this._defaultStateId = this.app.defaultState;
 
 		this.onStateLoadRequested = this.onStateLoadRequested.bind(this);
 
-		subscribe(Topics.STATE_LOAD_STATE, this.onStateLoadRequested);
+		Signals.loadState.connect(this.onStateLoadRequested);
+	}
+
+	public set useHash(value: boolean) {
+		this._useHash = value;
+		if (this._useHash) {
+			this.showDebugMenu();
+			this.listenForHashChange()
+		}
 	}
 
 	set defaultTransitionType(pTransitionType: TransitionStep[]) {
@@ -158,25 +176,83 @@ export class StateManager extends Container {
 		}
 	}
 
+	public statesRegistered() {
+		const defaultState = this.app.defaultState;
+		if (typeof defaultState === "string") {
+			this._defaultStateId = defaultState;
+		} else {
+			const Klass: typeof State = defaultState as typeof State;
+			this._defaultStateId = Klass.NAME;
+		}
+	}
+
+	public showDebugMenu() {
+		this._statesMenu = document.createElement("div");
+		this._statesMenu.style.cssText = "position: absolute; bottom: 0; left: 0; z-index: 1000; background-color: rgba(0,0,0,0.8); color: white; padding: 10px; border-top-right-radius:8px";
+
+		(Application.containerElement || document.body).appendChild(this._statesMenu);
+
+		const statesList = document.createElement("select");
+		statesList.style.cssText = "width: 100%; padding:4px; border-radius:5px;";
+		statesList.value = this._defaultStateId || "";
+
+		const defaultOption = document.createElement("option");
+		defaultOption.value = "";
+		defaultOption.innerHTML = "Select a game state";
+
+		statesList.appendChild(defaultOption);
+
+		const states = this._stateData.keys();
+		states.forEach((pStateId: string) => {
+			if (this._excluded.indexOf(pStateId) !== -1) {
+				return;
+			}
+			const option = document.createElement("option");
+			option.value = pStateId;
+			option.innerHTML = pStateId;
+			if (pStateId === this._defaultStateId) {
+				option.selected = true;
+			}
+			statesList.appendChild(option);
+		});
+
+		this._statesMenu.appendChild(statesList);
+
+		this._statesMenu.addEventListener("change", (e: Event) => {
+			if (this._isTransitioning) {
+				e.preventDefault();
+				return;
+			}
+			const target = e.target as HTMLSelectElement;
+			const stateId = target.value;
+			if (stateId) {
+				window.location.hash = stateId.toLowerCase();
+			}
+		});
+	}
+
 	/**
-	 * Method to transition states instead of using PubSub variant
+	 * Method to transition states
 	 * instead call this.app.state.transitionTo(stateId, loadScreenId)
 	 * @param pStateIdAndData
 	 * @param pLoadScreen
 	 * @param pTransitionSteps
 	 */
 	public transitionTo(
-		pStateIdAndData: string,
+		pStateIdAndData: string | typeof State,
 		pLoadScreen?: string | undefined,
 		pTransitionSteps?: TransitionStep[]
-	): void;
+	): boolean;
 	public transitionTo(
-		pStateIdAndData: string | { id: string; data: any },
+		pStateIdAndData: string | typeof State | { id: string; data: any },
 		pLoadScreen?: string | undefined,
 		pTransitionSteps?: TransitionStep[]
-	): void {
+	): boolean {
+		if (this._isTransitioning) {
+			return false;
+		}
 		const stateObj = pStateIdAndData as { id: string; data: any };
-		const stateStr: string = pStateIdAndData as string;
+		const stateStr: string | typeof State = pStateIdAndData as string | typeof State;
 
 		if (!pTransitionSteps) {
 			pTransitionSteps = this._first ? TransitionType.TRANSITION_FIRST_VIEW : this._defaultTransitionType;
@@ -188,11 +264,52 @@ export class StateManager extends Container {
 		if (stateObj?.id) {
 			token = new StateToken(stateObj, loadScreen, ...pTransitionSteps);
 		} else {
-			token = new StateToken(stateStr, loadScreen, ...pTransitionSteps);
+			if (typeof stateStr === "string") {
+				token = new StateToken(stateStr, loadScreen, ...pTransitionSteps);
+			} else {
+				const Klass: typeof State = stateStr as typeof State;
+				token = new StateToken(Klass.NAME, loadScreen, ...pTransitionSteps);
+			}
+
 		}
 
 		this._newStateToken = token;
 		this.startTransition(token.stateId, token.loadScreen);
+
+		return true;
+	}
+
+	public getRegisteredStateIds(): string[] {
+		return this._stateData.keys();
+	}
+
+	public getStateFromHash(): string | null {
+		let hash = window?.location?.hash;
+		if (hash) {
+			hash = hash.replace("#", "");
+			const registeredStates = this.getRegisteredStateIds();
+			if (hash.length > 0) {
+				for (let i = 0; i < registeredStates.length; i++) {
+					if (registeredStates[i]?.toLowerCase() === hash.toLowerCase()) {
+						return registeredStates[i];
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	public excludeFromDebugList(name: string) {
+		this._excluded.push(name);
+	}
+
+	protected listenForHashChange() {
+		window.addEventListener("hashchange", () => {
+			const stateId = this.getStateFromHash();
+			if (stateId) {
+				this.transitionTo(stateId);
+			}
+		});
 	}
 
 	/**
@@ -229,6 +346,10 @@ export class StateManager extends Container {
 		}
 
 		this._isTransitioning = true;
+		if (this._statesMenu) {
+			this._statesMenu.querySelector("select")?.setAttribute("disabled", "true");
+		}
+
 		this._queuedStateId = pStateId;
 		this._newStateData = data;
 		this._loadScreen = pLoadScreen;
@@ -419,6 +540,10 @@ export class StateManager extends Container {
 			this._simultaneousCheckAnimInComplete = false;
 			this._simultaneousCheckAnimOutComplete = false;
 			this._firstComplete = true;
+
+			if (this._statesMenu) {
+				this._statesMenu.querySelector("select")?.removeAttribute("disabled");
+			}
 		}
 	}
 
@@ -467,6 +592,10 @@ export class StateManager extends Container {
 				break;
 			case TransitionStep.HideLoadScreen:
 				this.performStepHideLoadScreen();
+				break;
+			case TransitionStep.HideLoadScreenAndAnimnNewIn:
+				this.performStepHideLoadScreen();
+				this.performStepAnimNewIn();
 				break;
 			case TransitionStep.Halt:
 				this.performStepHalt();
@@ -586,7 +715,8 @@ export class StateManager extends Container {
 			// Attach state as child of manager.
 			this.addChild(this._newState);
 			this._newState.init(this._size, this._newStateToken!.data);
-			broadcast(Topics.STATE_INIT, this._newStateToken!.data);
+
+			initState(this._newStateToken!.data);
 
 			// Caller requests the new view to be added in front or behind the existing view.
 			if (pNewInFront) {
@@ -657,9 +787,8 @@ export class StateManager extends Container {
 	 */
 	private performStepLoadAssets(): void {
 		this.log("performStepLoadAssets");
-		let assetsToLoad: AssetMapData[];
 
-		assetsToLoad = this.trimLoadList(this._newStateToken!.stateId);
+		const assetsToLoad = this.trimLoadList(this._newStateToken!.stateId);
 
 		if (assetsToLoad.length > 0) {
 			// Load all assets via the LoadManager
@@ -668,7 +797,7 @@ export class StateManager extends Container {
 				this.handleLoadAssetsComplete.bind(this),
 				this._loadScreen
 			);
-			broadcast(Topics.LOAD_ASSETS, token);
+			loadAssets(token)
 		} else {
 			// No assets to load.
 			this.logW(
@@ -700,7 +829,7 @@ export class StateManager extends Container {
 					this.handleUnloadAssetsComplete.bind(this),
 					this._loadScreen
 				);
-				broadcast(Topics.UNLOAD_ASSETS, token);
+				unloadAssets(token);
 			} else {
 				// No assets to unload
 				this.performNextTransitionStep();
@@ -727,7 +856,7 @@ export class StateManager extends Container {
 	private performStepShowLoadScreen(): void {
 		this.log("performStepShowLoadScreen");
 		if (this._loadScreen !== undefined) {
-			broadcast(Topics.SHOW_LOAD_SCREEN, {
+			showLoadScreen({
 				callback: this.handleLoadScreenAnimateInComplete.bind(this),
 				loadScreen: this._loadScreen,
 				stateData:
@@ -735,7 +864,7 @@ export class StateManager extends Container {
 						? this._newStateToken.data
 						: undefined,
 				firstLoad: false,
-			});
+			})
 		} else {
 			this.logE(
 				"Load screen show requested with %c%s%c passed in. Please specify a registered load screen to" +
@@ -753,10 +882,12 @@ export class StateManager extends Container {
 	private performStepHideLoadScreen(): void {
 		this.log("performStepHideLoadScreen");
 		if (this._loadScreen !== undefined) {
-			broadcast(Topics.HIDE_LOAD_SCREEN, {
-				callback: this.handleLoadScreenAnimateOutComplete.bind(this),
-				loadScreen: this._loadScreen,
-			});
+			hideLoadScreen(
+				{
+					callback: this.handleLoadScreenAnimateOutComplete.bind(this),
+					loadScreen: this._loadScreen,
+				}
+			)
 		} else {
 			this.logE(
 				"Load screen show requested with %c%s%c passed in. Please specify a registered load screen to" +
@@ -773,7 +904,7 @@ export class StateManager extends Container {
 	 */
 	private performStepHalt(): void {
 		this.log("performStepHalt");
-		broadcast(Topics.STATE_TRANSITION_HALTED, this._newStateToken);
+		stateTransitionHalted(this._newStateToken);
 	}
 
 	/**
@@ -844,11 +975,7 @@ export class StateManager extends Container {
 	 * @param pStateData The construction data for the state.
 	 */
 	private createState(pStateData: IStateData): State {
-		let state: State;
-
-		state = pStateData.create();
-
-		return state;
+		return pStateData.create();
 	}
 
 	/**
@@ -856,7 +983,7 @@ export class StateManager extends Container {
 	 * @param pTopic The PubSub message id.
 	 * @param pToken The data defining the state transition.
 	 */
-	private onStateLoadRequested(pTopic: string, pToken: StateToken): void {
+	private onStateLoadRequested(pToken: StateToken): void {
 		this._newStateToken = pToken;
 		this.startTransition(pToken.stateId, pToken.loadScreen);
 	}

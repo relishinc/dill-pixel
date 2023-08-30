@@ -14,4 +14,5 @@ export * from "./Assets/JsonAsset";
 export * from "./Assets/SpineAsset";
 export * from "./Assets/TextureAsset";
 export * from "./Assets/TextureAtlasAsset";
+export * from "./Assets/WebFontAsset";
 //# sourceMappingURL=index.d.ts.map

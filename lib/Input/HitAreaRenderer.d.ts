@@ -1,14 +1,14 @@
-import * as PIXI from "pixi.js";
+import { Container, DisplayObject } from "pixi.js";
 /**
  * Hit area renderer
  */
-export declare class HitAreaRenderer extends PIXI.Container {
+export declare class HitAreaRenderer extends Container {
     private _root;
     private _graphics;
     private _interval;
     private _elapsed;
     private _active;
-    constructor(pRoot: PIXI.DisplayObject, pActive?: boolean, pInterval?: number);
+    constructor(pRoot: DisplayObject, pActive?: boolean, pInterval?: number);
     /**
      * Gets active
      */

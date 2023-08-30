@@ -1,20 +1,36 @@
-import {Container, IBitmapTextStyle, ITextStyle, TextStyle} from "pixi.js";
-import {MakeFactory} from "./Make";
+import {Container, DisplayObject, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Sprite, TextStyle} from "pixi.js";
+import {Make} from "./Make";
 import {resolveXYFromObjectOrArray} from "./utils";
 
-export class AddFactory {
-	private readonly _make: MakeFactory;
-
+export class Add {
 	constructor(private defaultContainer: Container) {
-		this._make = new MakeFactory();
 	}
 
-	public get makeFactory() {
-		return this._make;
-	}
+	existing<T>(pObject: T, position?: {
+		x: number;
+		y: number
+	} | [number, number?] | number, anchor?: { x: number; y: number } | [number, number?] | number, scale?: {
+		x: number;
+		y: number
+	} | [number, number?] | number): T {
+		const obj = this.defaultContainer.addChild(pObject as DisplayObject) as T
+		const dObj = obj as Sprite;
 
-	existing(pObject: any) {
-		return this.defaultContainer.addChild(pObject);
+		if (position !== undefined) {
+			const resolvedPosition = resolveXYFromObjectOrArray(position);
+			dObj?.position?.set(resolvedPosition.x, resolvedPosition.y);
+		}
+		if (anchor !== undefined) {
+			const resolvedAnchor = resolveXYFromObjectOrArray(anchor);
+			dObj?.anchor?.set(resolvedAnchor.x, resolvedAnchor.y);
+		}
+
+		if (scale !== undefined) {
+			const resolvedScale = resolveXYFromObjectOrArray(scale);
+			dObj?.scale?.set(resolvedScale.x, resolvedScale.y);
+		}
+
+		return obj;
 	}
 
 	coloredSprite(color: number = 0x0, size: {
@@ -36,7 +52,7 @@ export class AddFactory {
 		[key: string]: string | number
 	}) {
 
-		const sprite = this._make.coloredSprite(color, size, shape, opts);
+		const sprite = Make.coloredSprite(color, size, shape, opts);
 		sprite.alpha = alpha;
 
 		const resolvedPosition = resolveXYFromObjectOrArray(position);
@@ -61,7 +77,7 @@ export class AddFactory {
 		anchor: { x: number; y: number } | [number, number?] | number = {x: 0.5, y: 0.5},
 		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
 	) {
-		const sprite = this._make.sprite(pAsset, pSheet);
+		const sprite = Make.sprite(pAsset, pSheet);
 		sprite.alpha = alpha;
 
 		const resolvedPosition = resolveXYFromObjectOrArray(position);
@@ -79,14 +95,39 @@ export class AddFactory {
 	}
 
 	text(
-		pText: string = ``,
+		pText: string = "",
 		pStyle?: Partial<ITextStyle> | TextStyle,
 		alpha: number = 1,
 		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
 		anchor: { x: number; y: number } | [number, number?] | number = {x: 0.5, y: 0.5},
 		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
 	) {
-		const text = this._make.text(pText, pStyle);
+		const text = Make.text(pText, pStyle);
+		text.alpha = alpha;
+
+		const resolvedPosition = resolveXYFromObjectOrArray(position);
+		const resolvedAnchor = resolveXYFromObjectOrArray(anchor);
+		const resolvedScale = resolveXYFromObjectOrArray(scale);
+
+		text.x = resolvedPosition.x;
+		text.y = resolvedPosition.y;
+		text.anchor.x = resolvedAnchor.x;
+		text.anchor.y = resolvedAnchor.y;
+		text.scale.x = resolvedScale.x;
+		text.scale.y = resolvedScale.y
+
+		return this.defaultContainer.addChild(text);
+	}
+
+	htmlText(
+		pText: string = "",
+		pStyle?: Partial<HTMLTextStyle | TextStyle | ITextStyle>,
+		alpha: number = 1,
+		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
+		anchor: { x: number; y: number } | [number, number?] | number = {x: 0.5, y: 0.5},
+		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
+	) {
+		const text = Make.htmlText(pText, pStyle);
 		text.alpha = alpha;
 
 		const resolvedPosition = resolveXYFromObjectOrArray(position);
@@ -106,13 +147,13 @@ export class AddFactory {
 	// Add BitmapText
 	bitmapText(
 		pText: string,
-		pStyle?: IBitmapTextStyle,
+		pStyle?: Partial<IBitmapTextStyle>,
 		alpha: number = 1,
 		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
 		anchor: { x: number; y: number } | [number, number?] | number = {x: 0.5, y: 0.5},
 		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
 	) {
-		const bitmapText = this._make.bitmapText(pText, pStyle);
+		const bitmapText = Make.bitmapText(pText, pStyle);
 		bitmapText.alpha = alpha;
 
 		const resolvedPosition = resolveXYFromObjectOrArray(position);
@@ -135,7 +176,7 @@ export class AddFactory {
 		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
 		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
 	) {
-		const container = this._make.container();
+		const container = Make.container();
 		container.alpha = alpha;
 
 		const resolvedPosition = resolveXYFromObjectOrArray(position);
@@ -155,7 +196,7 @@ export class AddFactory {
 		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
 		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
 	) {
-		const graphics = this._make.graphics();
+		const graphics = Make.graphics();
 		graphics.alpha = alpha;
 
 		const resolvedPosition = resolveXYFromObjectOrArray(position);
@@ -169,5 +210,29 @@ export class AddFactory {
 		return this.defaultContainer.addChild(graphics);
 	}
 
+
+	nineSlice(
+		pAsset: string,
+		pSheet?: string | undefined,
+		leftWidth: number = 10, topHeight: number = 10, rightWidth: number = 10, bottomHeight: number = 10,
+		alpha: number = 1,
+		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
+		anchor: { x: number; y: number } | [number, number?] | number = {x: 0.5, y: 0.5},
+		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
+	) {
+		const ns = Make.nineSlice(pAsset, pSheet, leftWidth, topHeight, rightWidth, bottomHeight);
+		ns.alpha = alpha;
+
+		const resolvedPosition = resolveXYFromObjectOrArray(position);
+		const resolvedAnchor = resolveXYFromObjectOrArray(anchor);
+		const resolvedScale = resolveXYFromObjectOrArray(scale);
+
+		ns.x = resolvedPosition.x;
+		ns.y = resolvedPosition.y;
+		ns.scale.x = resolvedScale.x;
+		ns.scale.y = resolvedScale.y
+
+		return this.defaultContainer.addChild(ns);
+	}
 
 }

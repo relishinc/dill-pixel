@@ -33,10 +33,14 @@ export declare class PopupManager extends Container {
     onResize(pSize: Point): void;
     /**
      * Show a Popup, and optionally get a callback when it's closed.
-     * @description Note that usually you should be using PubSub for this
+     * @description Note you should be using @link {Signals.showPopup} instead of calling this directly
      * @example
      * ```ts
-     * broadcast(Topics.SHOW_POPUP, new PopupToken("popup_id"));
+     * Signals.showPopup.emit(new PopupToken("popup_id"));
+     * ```
+     * or
+     * ```ts
+     * showPopup(new PopupToken("popup_id"));
      * ```
      * @param pToken.id Make sure to call {@link registerPopup} with this ID first
      * @param pToken.callback This gets called when the popup is closed
@@ -44,28 +48,40 @@ export declare class PopupManager extends Container {
     private ShowPopup;
     /**
      * Hide a popup by ID, starting from the top and working backwards
-     * @description Note that usually you should be using PubSub for this
+     * @description Note that usually you should be using global {@link Signals.hidePopup} instead of calling this directly
      * @example
      * ```ts
-     * broadcast(Topics.HIDE_POPUP, "popup_id");
+     * Signals.hidePopup.emit( "popup_id");
+     * ```
+     * or
+     * ```ts
+     * hidePopup("popup_id");
      * ```
      */
     private HidePopup;
     /**
      * Hide all popups, starting from the top and working backwards
-     * @description Note that usually you should be using PubSub for this
+     * @description Note that usually you should be {@link Signals.hideAllPopups} instead of calling this directly
      * @example
      * ```ts
-     * broadcast(Topics.HIDE_ALL_POPUPS, undefined);
+     * Signals.hideAllPopups.emit();
+     * ```
+     * or
+     * ```ts
+     * hideAllPopups();
      * ```
      */
     private HideAllPopups;
     /**
      * Hide the topmost visible popup
-     * @description Note that usually you should be using PubSub for this
+     * @description Note that usually you should be using {@link Signals.hideTopMostPopup} instead of calling this directly
      * @example
      * ```ts
-     * broadcast(Topics.HIDE_TOPMOST_POPUP, undefined);
+     * Signals.hideTopMostPopup.emit();
+     * ```
+     * or
+     * ```ts
+     * hideTopMostPopup();
      * ```
      */
     private HideTopmostPopup;

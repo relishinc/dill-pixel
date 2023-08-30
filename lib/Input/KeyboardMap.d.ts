@@ -11,16 +11,16 @@ export declare enum Direction {
  * Keyboard map
  */
 export declare class KeyboardMap {
+    private _isActive;
+    private _currentFocusable;
+    private _focusables;
+    private _neighbours;
     /**
      * Sets whether is active
      * @param pValue
      */
     set isActive(pValue: boolean);
     get currentFocusable(): IFocusable | undefined;
-    private _isActive;
-    private _currentFocusable;
-    private _focusables;
-    private _neighbours;
     /**
      * Clears keyboard map
      */
@@ -34,7 +34,7 @@ export declare class KeyboardMap {
      * Unregisters focusable
      * @param pFocusable
      */
-    unregisterFocusable(pFocusable: (IFocusable | ((it: IFocusable) => boolean)) | Array<IFocusable | ((it: IFocusable) => boolean)>): void;
+    unregisterFocusable(pFocusable: (IFocusable | ((it: IFocusable) => boolean)) | (IFocusable | ((it: IFocusable) => boolean))[]): void;
     /**
      * Steps keyboard map
      * @param pDirection

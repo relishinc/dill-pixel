@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js";
+import { FederatedPointerEvent, Texture } from "pixi.js";
 import { Button } from "./Button";
 /**
  * A button class that swaps between textures based on input state: Normal, Over/Up and Down.
@@ -7,15 +7,15 @@ export declare class TextureSwapButton extends Button {
     /**
      * The texture to use for the normal state of the button.
      */
-    protected _normalTexture: PIXI.Texture;
+    protected _normalTexture: Texture;
     /**
      * The texture to use for the over state of the button.
      */
-    protected _overTexture: PIXI.Texture;
+    protected _overTexture: Texture;
     /**
      * The texture to use for the down state of the button.
      */
-    protected _downTexture: PIXI.Texture;
+    protected _downTexture: Texture;
     /**
      * Creates a TextureSwapButton. Over and down image spritesheets need to be loaded before button creation.
      * @param pCallback The function to call when the button is clicked.
@@ -28,31 +28,31 @@ export declare class TextureSwapButton extends Button {
     /**
      * Sets the normal texture. Sprite sheet must already be loaded if providing the name of the asset.
      */
-    set normalTexture(pNormalAsset: string | PIXI.Texture);
+    set normalTexture(pNormalAsset: string | Texture);
     /**
      * Sets the over texture. Sprite sheet must already be loaded if providing the name of the asset.
      */
-    set overTexture(pOverAsset: string | PIXI.Texture);
+    set overTexture(pOverAsset: string | Texture);
     /**
      * Sets the down texture. Sprite sheet must already be loaded if providing the name of the asset.
      */
-    set downTexture(pDownAsset: string | PIXI.Texture);
+    set downTexture(pDownAsset: string | Texture);
     /**
      * Event fired when pointer is over button
      */
-    protected onPointerOver(pEvent: PIXI.FederatedPointerEvent): void;
+    protected onPointerOver(pEvent: FederatedPointerEvent): void;
     /**
      * Event fired when pointer pressed on button
      * @param pEvent
      */
-    protected onPointerDown(pEvent: PIXI.FederatedPointerEvent): void;
+    protected onPointerDown(pEvent: FederatedPointerEvent): void;
     /**
      * Event fired when pointer released on button
      */
-    protected onPointerUp(pEvent: PIXI.FederatedPointerEvent): void;
+    protected onPointerUp(pEvent: FederatedPointerEvent): void;
     /**
      * Event fired when pointer no longer over button
      */
-    protected onPointerOut(pEvent: PIXI.FederatedPointerEvent): void;
+    protected onPointerOut(pEvent: FederatedPointerEvent): void;
 }
 //# sourceMappingURL=TextureSwapButton.d.ts.map

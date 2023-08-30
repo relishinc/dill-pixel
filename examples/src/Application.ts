@@ -14,7 +14,6 @@ import {
 } from "html-living-framework";
 
 export default class Application extends HLFApplication {
-
 	constructor() {
 		if (HLFApplication._instance !== undefined) {
 			// display a singleton warning
@@ -37,8 +36,12 @@ export default class Application extends HLFApplication {
 		];
 	}
 
-	public get defaultState(): string {
-		return window.location.hash === '#matter' ? MatterPhysicsExample.NAME : SpriteExample.NAME;
+	public get defaultState() {
+		return this.state.getStateFromHash() || PopupExample.NAME;
+	}
+
+	protected getFontsList(): { family: string; data?: { weight?: number | string } }[] {
+		return [{family: "arboria", data: {weight: 400}}]
 	}
 
 	protected createSplashScreen(): HLFSplashScreen {
@@ -49,15 +52,15 @@ export default class Application extends HLFApplication {
 		(globalThis as any).__PIXI_APP__ = this;
 		this.registerDefaultLoadScreen(Interstitial);
 		this.state.defaultTransitionType = TransitionType.TRANSITION_SIMPLE_INTERSTITIAL;
+		this.state.excludeFromDebugList(Interstitial.NAME);
+		this.state.useHash = process.env.NODE_ENV === "development";
 	}
 
 	protected registerStates(): void {
-		// alternate / old way : this.state.register(MatterPhysicsExample.NAME, ()=> new MatterPhysicsExample());
 		this.state.register(MatterPhysicsExample);
 		this.state.register(RapierPhysicsExample);
 		this.state.register(PopupExample);
 		this.state.register(SpriteExample);
-		// this.state.register(SpriteDebugExample);
 	}
 
 	protected createAssetMap(): void {

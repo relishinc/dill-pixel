@@ -89,4 +89,7 @@ export declare function makeSpine(pName: string): Spine;
  * @param pRect - optional rectangle in local coordinate space, defaults to pTarget.getLocalBounds()
  */
 export declare function getGlobalBounds(pTarget: DisplayObject, pRect?: Rectangle): Rectangle;
+export declare function scaleUniform(obj: any, scaleNum: number, scaleProp?: "width" | "height"): void;
+export declare function scaleToWidth(obj: Container, width: number): void;
+export declare function scaleToHeight(obj: Container, height: number): void;
 //# sourceMappingURL=PixiUtils.d.ts.map

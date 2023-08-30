@@ -1,16 +1,16 @@
 import { OutlineFilter } from "@pixi/filter-outline";
-import * as PIXI from "pixi.js";
+import { Container, FederatedPointerEvent, IPoint, Point } from "pixi.js";
 import { IFocusable } from "./IFocusable";
 import { ISelectable } from "./ISelectable";
 /**
  * Selectable
  */
-export declare abstract class Selectable extends PIXI.Container implements ISelectable, IFocusable {
+export declare abstract class Selectable extends Container implements ISelectable, IFocusable {
     readonly onSelected: ((p: ISelectable) => void)[];
     readonly onDeselected: ((p: ISelectable) => void)[];
     protected _isSelected: boolean;
-    protected _visuals: PIXI.Container;
-    protected _eventData: PIXI.FederatedPointerEvent | undefined;
+    protected _visuals: Container;
+    protected _eventData: FederatedPointerEvent | undefined;
     protected _outlineFilter: OutlineFilter;
     protected _isFocussed: boolean;
     protected _hoverVo: string | undefined;
@@ -48,12 +48,12 @@ export declare abstract class Selectable extends PIXI.Container implements ISele
      * Gets focus position
      * @returns PIXI.Point
      */
-    getFocusPosition(): PIXI.Point;
+    getFocusPosition(): Point;
     /**
      * Gets focus size
      * @returns PIXI.Point
      */
-    getFocusSize(): PIXI.IPoint;
+    getFocusSize(): IPoint;
     /**
      * Plays hover vo
      */
@@ -69,15 +69,15 @@ export declare abstract class Selectable extends PIXI.Container implements ISele
     /**
      * onPointerDown
      */
-    protected onPointerDown(pEvent: PIXI.FederatedPointerEvent): void;
+    protected onPointerDown(pEvent: FederatedPointerEvent): void;
     /**
      * onPointerUp
      */
-    protected onPointerUp(pEvent: PIXI.FederatedPointerEvent): void;
+    protected onPointerUp(pEvent: FederatedPointerEvent): void;
     /**
      * onPointerUpOutside
      */
-    protected onPointerUpOutside(pEvent: PIXI.FederatedPointerEvent): void;
+    protected onPointerUpOutside(pEvent: FederatedPointerEvent): void;
     /**
      * onPointerOut
      */

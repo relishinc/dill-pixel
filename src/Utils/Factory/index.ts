@@ -1,2 +1,2 @@
-export {AddFactory} from './Add';
-export {MakeFactory} from './Make';
+export {Add} from "./Add";
+export {Make} from "./Make";

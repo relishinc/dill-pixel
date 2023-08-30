@@ -1,0 +1,1 @@
+{"version":3,"file":"Make.js","sourceRoot":"","sources":["../../../../src/Physics/RapierPhysics/Factory/Make.ts"],"names":[],"mappings":"AAGA,OAAO,EAAC,mBAAmB,EAAC,MAAM,gBAAgB,CAAC;AAEnD,MAAM,OAAO,IAAI;IACT,MAAM,CAAC,aAAa,CAAC,QAA0B,EAAE,MAAwB,EAAE,KAGpD,EAAE,SAA2B;QAC1D,OAAO,IAAI,mBAAmB,CAAC,QAAQ,EAAE,MAAM,EAAE,KAAK,EAAE,SAAS,CAAC,CAAC;IACpE,CAAC;CACD"}

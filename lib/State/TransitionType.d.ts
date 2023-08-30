@@ -21,6 +21,7 @@ export declare const TRANSITION_FIRST_VIEW: TransitionStep[];
  * 8. UnloadUnusedAssets
  */
 export declare const TRANSITION_SIMPLE_INTERSTITIAL: TransitionStep[];
+export declare const TRANSITION_INTERSTITIAL_OVERLAY: TransitionStep[];
 /**
  * Animate out old state and then animate in new state with assets loaded first.
  * @description Steps:

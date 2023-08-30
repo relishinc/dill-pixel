@@ -1,6 +1,6 @@
-import * as PIXI from "pixi.js";
+import { DisplayObject } from "pixi.js";
 import { IFocusable } from "./IFocusable";
-export interface IKeyboardFocus extends PIXI.DisplayObject {
+export interface IKeyboardFocus extends DisplayObject {
     readonly target: IFocusable | undefined;
     show(pFocusable: IFocusable): void;
     hide(pOnComplete?: () => void, pInstantly?: boolean): void;

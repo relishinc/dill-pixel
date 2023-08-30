@@ -1,19 +1,18 @@
-import * as PIXI from "pixi.js";
-import { FederatedPointerEvent } from "pixi.js";
-import { Draggable } from "../Input/Draggable";
-import { IFocusable } from "../Input/IFocusable";
+import { Container, FederatedPointerEvent, IPoint, Point } from "pixi.js";
+import { Draggable } from "./Draggable";
+import { IFocusable } from "./IFocusable";
 /**
  * Receptacle
  */
-export declare abstract class Receptacle extends PIXI.Container implements IFocusable {
-    protected _visuals: PIXI.Container;
-    protected _eventData: PIXI.FederatedPointerEvent | undefined;
+export declare abstract class Receptacle extends Container implements IFocusable {
+    protected _visuals: Container;
+    protected _eventData: FederatedPointerEvent | undefined;
     protected _isPointerOver: boolean;
     protected _hoverVo: string | undefined;
     protected _dragged: Draggable | undefined;
     protected _selected: Draggable | undefined;
-    protected _subscriptions: any[];
     protected _isActive: boolean;
+    private _connections;
     constructor();
     /**
      * Sets whether is active
@@ -38,12 +37,12 @@ export declare abstract class Receptacle extends PIXI.Container implements IFocu
     /**
      * onFocusPosition
      */
-    getFocusPosition(): PIXI.Point;
+    getFocusPosition(): Point;
     /**
      * Gets focus size
-     * @returns PIXI.Point
+     * @returns Point
      */
-    getFocusSize(): PIXI.IPoint;
+    getFocusSize(): IPoint;
     /**
      * Destroys receptacle
      */
@@ -87,24 +86,24 @@ export declare abstract class Receptacle extends PIXI.Container implements IFocu
      * @param pTopic
      * @param pDraggable
      */
-    protected onDragBegin(pTopic: string, pDraggable: Draggable): void;
+    protected onDragBegin(pDraggable: Draggable): void;
     /**
      * onDragEnd
      * @param pTopic
      * @param pDraggable
      */
-    protected onDragEnd(pTopic: string, pDraggable: Draggable): void;
+    protected onDragEnd(pDraggable: Draggable): void;
     /**
      * onDraggableSelected
      * @param pTopic
      * @param pDraggable
      */
-    protected onDraggableSelected(pTopic: string, pDraggable: Draggable): void;
+    protected onDraggableSelected(pDraggable: Draggable): void;
     /**
      * onDraggableDeselected
      * @param pTopic
      * @param pDraggable
      */
-    protected onDraggableDeselected(pTopic: string, pDraggable: Draggable): void;
+    protected onDraggableDeselected(pDraggable: Draggable): void;
 }
 //# sourceMappingURL=Receptacle.d.ts.map
