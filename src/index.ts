@@ -1,8 +1,6 @@
 import "@pixi-spine/base";
-import {sayHello} from "./hello"; // (window as any).PIXI = PIXI; // for pixi-spine
-
+import {sayHello} from "./hello";
 // (window as any).PIXI = PIXI; // for pixi-spine
-
 export * from "./Application";
 export * from "./Audio";
 export * from "./Copy";
@@ -17,6 +15,6 @@ export * from "./State";
 export * from "./Utils";
 export * from "./Signals";
 export {Add, Make} from "./Utils/Factory";
-export * from "./version";
+
 
 sayHello();
