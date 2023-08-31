@@ -18,4 +18,4 @@ jobs:
         with:
           release-type: node
           package-name: release-please-action
-          extra-files: '{"type":"json","path":"src/info.json","jsonpath":"$.version"}'
+          extra-files: '{"updater": "json","path":"src/info.json","jsonpath":"$.version"}'
