@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.2.0](https://github.com/relishinc/hlf/compare/v2.1.1...v2.2.0) (2023-08-31)
+
+
+### Features
+
+* testing release-please manifest ([0193502](https://github.com/relishinc/hlf/commit/0193502649dea246ad6569c80d1848e85bf81d5f))
+* testing release-please manifest ([7954d37](https://github.com/relishinc/hlf/commit/7954d37df45712ec7785cea1a9439c93409120b8))
+* testing release-please manifest ([481ca16](https://github.com/relishinc/hlf/commit/481ca16c9307fa31fd511bac076610552a4eb45a))
+
 ## [2.1.1](https://github.com/relishinc/hlf/compare/v2.1.0...v2.1.1) (2023-08-30)
 
 
