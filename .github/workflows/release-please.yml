@@ -19,6 +19,6 @@ jobs:
           release-type: node
           package-name: release-please-action
           extra-files:
-            type: json
-            path: src/info.json
-            jsonpath: $.version
+            type: "json"
+            path: "src/info.json"
+            jsonpath: "$.version"
