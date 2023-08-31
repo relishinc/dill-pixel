@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.1](https://github.com/relishinc/hlf/compare/v2.3.0...v2.3.1) (2023-08-31)
+
+
+### Bug Fixes
+
+* still fiddling with release action ([91eb141](https://github.com/relishinc/hlf/commit/91eb141ebb2d34ec4186124d5522a229ada1a45d))
+* still fiddling with release action ([740635a](https://github.com/relishinc/hlf/commit/740635a12b412e911a2d983f318867d225535bc4))
+
 ## [2.3.0](https://github.com/relishinc/hlf/compare/v2.2.0...v2.3.0) (2023-08-31)
 
 
