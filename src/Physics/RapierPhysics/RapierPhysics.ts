@@ -1,6 +1,6 @@
-import RAPIER from "@dimforge/rapier2d";
+import type {Vector2, World} from '@dimforge/rapier2d'
+import {Application} from "Application";
 import {Container, Graphics} from "pixi.js";
-import {Application} from "../../Application";
 import {PhysicsBase, PointLike} from "../index";
 import {Factory} from "./Factory";
 import {IRapierPhysicsObject, RapierBodyLike} from "./index";
@@ -14,7 +14,7 @@ export interface WallDefinition {
 export default class RapierPhysics extends PhysicsBase {
 	protected _debug: boolean = true;
 	private _updateables: IRapierPhysicsObject[] = [];
-	private _world: RAPIER.World;
+	private _world: World;
 	private _debugGraphics: Graphics;
 	private _debugContainer: Container;
 	private _bounds: PointLike = {x: 0, y: 0};
@@ -30,7 +30,7 @@ export default class RapierPhysics extends PhysicsBase {
 		return this._systemOfUnitsFactor;
 	}
 
-	public get world(): RAPIER.World {
+	public get world(): World {
 		return this._world;
 	}
 
@@ -48,13 +48,17 @@ export default class RapierPhysics extends PhysicsBase {
 	}
 
 	async init(pAutoStart: boolean = false, pDebug: boolean = false, autoCreateBounds: boolean = true, pEngineOptions?: {
-		gravity: RAPIER.Vector2,
+		gravity: Vector2,
 		systemOfUnitsFactor: number,
 	}) {
+		await import("@dimforge/rapier2d").then(module => {
+			(globalThis as any).RAPIER = module;
+		});
+
 		const defaults = {systemOfUnitsFactor: this._systemOfUnitsFactor}
 		pEngineOptions = Object.assign({}, defaults, pEngineOptions)
 		const opts = Object.assign({}, {
-			gravity: new RAPIER.Vector2(0.0, 9.81 * pEngineOptions.systemOfUnitsFactor),
+			gravity: new RAPIER.Vector2(0.0, 9.81 * pEngineOptions.systemOfUnitsFactor)
 		}, pEngineOptions);
 		this._systemOfUnitsFactor = pEngineOptions.systemOfUnitsFactor;
 		this._debug = pDebug;
@@ -70,6 +74,12 @@ export default class RapierPhysics extends PhysicsBase {
 
 		return Promise.resolve();
 
+	}
+
+	destroy() {
+		this._updateables = [];
+		this._world.free();
+		this._isRunning = false;
 	}
 
 	public makeWall(def: WallDefinition) {
@@ -88,20 +98,20 @@ export default class RapierPhysics extends PhysicsBase {
 
 		this.makeWall({
 			size: {x: width, y: thickness},
-			position: {x: 0, y: -height / 2 - thickness / 2},
+			position: {x: 0, y: -height / 2 - thickness / 2}
 		});
 		this.makeWall({
 			size: {x: width, y: thickness},
-			position: {x: 0, y: height / 2 + thickness / 2},
+			position: {x: 0, y: height / 2 + thickness / 2}
 		});
 		this.makeWall({
 			size: {x: thickness, y: height},
-			position: {x: -width / 2 - thickness / 2, y: 0},
+			position: {x: -width / 2 - thickness / 2, y: 0}
 		});
 
 		this.makeWall({
 			size: {x: thickness, y: height},
-			position: {x: width / 2 + thickness / 2, y: 0},
+			position: {x: width / 2 + thickness / 2, y: 0}
 		});
 	}
 

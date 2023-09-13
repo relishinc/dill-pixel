@@ -32,8 +32,7 @@
     "src"
   ],
   "exclude": [
-    "build_scripts",
     "node_modules",
-    "lib"
+    "../lib"
   ]
 }

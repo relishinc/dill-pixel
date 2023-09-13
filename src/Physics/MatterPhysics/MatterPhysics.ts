@@ -1,11 +1,9 @@
-import Matter from "matter-js";
+import {Application} from "Application";
 import {Container, Graphics} from "pixi.js";
-import {Application} from "../../Application";
 import {PhysicsBase, PointLike} from "../index";
 import {Factory} from "./Factory";
 import {IMatterPhysicsObject, MatterBodyLike} from "./index";
 
-globalThis.Matter = Matter;
 
 export default class MatterPhysics extends PhysicsBase {
 	protected _debug: boolean = false;
@@ -38,8 +36,18 @@ export default class MatterPhysics extends PhysicsBase {
 		return this._debug
 	}
 
+	destroy() {
+		Matter.World.clear(this._engine.world, false);
+		Matter.Engine.clear(this._engine);
+		this._updateables = [];
+		this._isRunning = false;
+	}
+
 	async init(pAutoStart: boolean = false, pDebug: boolean = false, autoCreateBounds: boolean = true, pEngineOptions: Matter.IEngineDefinition = {}) {
 
+		await import("matter-js").then(module => {
+			(globalThis as any).Matter = module;
+		});
 
 		const opts = pEngineOptions || {};
 
