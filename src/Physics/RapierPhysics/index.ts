@@ -1,14 +1,13 @@
-import RAPIER from '@dimforge/rapier2d';
-
-import RapierPhysics from "./RapierPhysics";
+import type {Collider, RigidBody} from '@dimforge/rapier2d';
+import RapierPhysics from './RapierPhysics';
 
 export * from './GameObjects'
-export type RapierBodyLike = RAPIER.RigidBody;
+export type RapierBodyLike = RigidBody;
 
 export interface IRapierPhysicsObject {
 	body: RapierBodyLike;
-	collider?: RAPIER.Collider;
-	colliders?: RAPIER.Collider[]
+	collider?: Collider;
+	colliders?: Collider[]
 	debugColor: number
 
 	update(): void;

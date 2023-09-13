@@ -1,4 +1,3 @@
-import {gsap} from "gsap";
 import {Application} from "../Application";
 import {playCaption, Signals, stopCaption, voiceoverEnded, voiceoverStarted} from "../Signals";
 import {LogUtils} from "../Utils";
@@ -114,7 +113,7 @@ export class VoiceOverManager implements IVoiceOverManager {
 
 	private readonly _queue: IQueueItem[] = [];
 
-	private _activeTimeout?: gsap.core.Tween;
+	private _activeTimeout?: any;
 
 	constructor(private app: Application) {
 		// TODO: Pause and unpause are not actually part of the framework
@@ -261,10 +260,8 @@ export class VoiceOverManager implements IVoiceOverManager {
 			}
 			voiceoverEnded(activeVO.id);
 		}
-		if (this._activeTimeout) {
-			this._activeTimeout.kill();
-			this._activeTimeout = undefined;
-		}
+		clearTimeout(this._activeTimeout)
+		this._activeTimeout = undefined;
 	}
 
 	private addToQueue(
@@ -296,7 +293,7 @@ export class VoiceOverManager implements IVoiceOverManager {
 				callback: i === keys.length - 1 ? cb : undefined,
 				skipCC,
 				priority,
-				caption,
+				caption
 			});
 		}
 		const toLoad = keys.filter((it) => typeof it === "string") as string[];
@@ -309,9 +306,7 @@ export class VoiceOverManager implements IVoiceOverManager {
 			const item = this._queue[0];
 
 			if (item.delay !== undefined) {
-				if (this._activeTimeout) {
-					this._activeTimeout.kill();
-				}
+				clearTimeout(this._activeTimeout)
 				if (this._queue.length === 1) {
 					// skip delay if last item in queue
 					this.log(
@@ -325,14 +320,14 @@ export class VoiceOverManager implements IVoiceOverManager {
 					this.playNext();
 				} else {
 					this.log("⏳ Waiting %s seconds before next VO", item.delay);
-					this._activeTimeout = gsap.delayedCall(item.delay, () => {
+					this._activeTimeout = setTimeout(() => {
 						this._activeTimeout = undefined;
 						this._queue.shift();
 						if (item.callback) {
 							item.callback(true);
 						}
 						this.playNext();
-					});
+					}, item.delay * 1000);
 				}
 			} else {
 				const existing = Application.instance.audio.getAudioTrack(
@@ -462,7 +457,7 @@ export class VoiceOverManager implements IVoiceOverManager {
 			m,
 			{
 				className: "VoiceOverManager",
-				color: "salmon",
+				color: "salmon"
 			},
 			...params
 		);

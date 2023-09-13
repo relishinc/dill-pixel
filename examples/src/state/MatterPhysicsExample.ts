@@ -19,6 +19,11 @@ export class MatterPhysicsExample extends BaseState {
 		return this.app.physics as MatterPhysics;
 	}
 
+	public destroy() {
+		this.physics.destroy();
+		super.destroy();
+	}
+
 	public async init(pSize: Point) {
 		super.init(pSize);
 		this.setHeaderText("Matter Physics Example");

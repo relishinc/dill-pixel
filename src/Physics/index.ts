@@ -53,6 +53,10 @@ export class PhysicsBase implements IPhysicsBase {
 		// noop
 	}
 
+	destroy() {
+		// noop
+	}
+
 	update(pDeltaTime: number) {
 		// noop
 	}

@@ -18,28 +18,24 @@ export class SplashScreen extends LoadScreen {
 
 		this.onResize(this.app.size);
 
-		this.animationContext.add(async () => {
-			await gsap.to(this._bg, {
-				duration: 0.75, alpha: 1, ease: "sine.out"
-			});
-
-			if (pOnComplete) {
-				pOnComplete();
-			}
+		await gsap.to(this._bg, {
+			duration: 0.75, alpha: 1, ease: "sine.out"
 		});
+
+		if (pOnComplete) {
+			pOnComplete();
+		}
 	}
 
 	public async animateOut(pOnComplete: () => void): Promise<void> {
-		this.animationContext.add(async () => {
-			await gsap.to(this, {
-				duration: 0.5,
-				alpha: 0,
-				ease: "sine.in",
-			});
-			if (pOnComplete) {
-				pOnComplete();
-			}
-		})
+		await gsap.to(this, {
+			duration: 0.5,
+			alpha: 0,
+			ease: "sine.in"
+		});
+		if (pOnComplete) {
+			pOnComplete();
+		}
 	}
 
 	public onResize(pSize: Point) {

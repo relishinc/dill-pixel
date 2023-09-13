@@ -18,6 +18,11 @@ export class RapierPhysicsExample extends BaseState {
 		return this.app.physics as unknown as RapierPhysics;
 	}
 
+	public destroy() {
+		this.physics.destroy();
+		super.destroy();
+	}
+
 	public init(pSize: Point) {
 		super.init(pSize);
 		this.setHeaderText("Rapier Physics Example");

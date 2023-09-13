@@ -1,7 +1,7 @@
 // @ts-ignore
 import FontFaceObserver from "fontfaceobserver";
 import {Application as PIXIApplication, Assets, IApplicationOptions, Point, Ticker} from "pixi.js";
-import {AudioToken, HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverManager,} from "./Audio";
+import {AudioToken, HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverManager} from "./Audio";
 import {CopyManager} from "./Copy";
 import {AppConfig} from "./Data";
 import {
@@ -17,7 +17,7 @@ import {PopupManager} from "./Popup";
 import {SaveManager} from "./Save";
 import {keyboardReFocus, Signals} from "./Signals";
 import {State, StateManager} from "./State";
-import {AssetUtils, Delay, OrientationManager, ResizeManager, WebEventsManager,} from "./Utils";
+import {AssetUtils, Delay, OrientationManager, ResizeManager, WebEventsManager} from "./Utils";
 import {Add, Make} from "./Utils/Factory";
 
 export interface HLFApplicationOptions extends IApplicationOptions {
@@ -284,7 +284,7 @@ export class Application extends PIXIApplication {
 		let PhysicsModule: any;
 		switch (type) {
 			case PhysicsEngineType.RAPIER:
-				PhysicsModule = await import ("./Physics/RapierPhysics/RapierPhysics");
+				PhysicsModule = await import ("./Physics/RapierPhysics");
 				break;
 			case PhysicsEngineType.MATTER:
 			default:

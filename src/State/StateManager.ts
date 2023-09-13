@@ -1,4 +1,3 @@
-import {gsap} from "gsap";
 import {Container, Point} from "pixi.js";
 import {Dictionary} from "typescript-collections";
 import {Application} from "../Application";
@@ -12,6 +11,7 @@ import {
 	stateTransitionHalted,
 	unloadAssets
 } from "../Signals";
+import {Delay} from "../Utils";
 import * as LogUtils from "../Utils/LogUtils";
 import {State} from "./State";
 import {StateToken} from "./StateToken";
@@ -863,7 +863,7 @@ export class StateManager extends Container {
 					this._newStateToken !== undefined
 						? this._newStateToken.data
 						: undefined,
-				firstLoad: false,
+				firstLoad: false
 			})
 		} else {
 			this.logE(
@@ -885,7 +885,7 @@ export class StateManager extends Container {
 			hideLoadScreen(
 				{
 					callback: this.handleLoadScreenAnimateOutComplete.bind(this),
-					loadScreen: this._loadScreen,
+					loadScreen: this._loadScreen
 				}
 			)
 		} else {
@@ -911,9 +911,10 @@ export class StateManager extends Container {
 	 * Pauses a transition for the duration provided.
 	 * @param pDuration The duration of the pause.
 	 */
-	private performPause(pDuration: number): void {
+	private async performPause(pDuration: number): Promise<void> {
 		this.log("performPause");
-		gsap.delayedCall(pDuration, this.performNextTransitionStep.bind(this));
+		await Delay(pDuration);
+		this.performNextTransitionStep();
 	}
 
 	/**

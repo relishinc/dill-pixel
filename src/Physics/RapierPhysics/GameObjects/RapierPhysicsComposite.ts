@@ -1,4 +1,12 @@
-import RAPIER from "@dimforge/rapier2d";
+import type {
+	ActiveCollisionTypes,
+	ActiveEvents,
+	ActiveHooks,
+	Collider,
+	ColliderDesc,
+	RigidBody,
+	World
+} from '@dimforge/rapier2d';
 import {Container, DisplayObject, Sprite} from "pixi.js";
 import {Application} from "../../../Application";
 import {resolveXYFromObjectOrArray} from "../../../Utils";
@@ -9,11 +17,11 @@ export class RapierPhysicsComposite extends Container implements IPhysicsObject 
 	public static readonly DEFAULT_DEBUG_COLOR: number = 0x29c5f6;
 	visual: Sprite;
 	visuals: Sprite[] = []
-	body: RAPIER.RigidBody;
-	bodies: RAPIER.RigidBody[] = [];
-	collider: RAPIER.Collider;
-	colliders: RAPIER.Collider[] = []
-	colliderRef: { collider: RAPIER.Collider, visual: DisplayObject, data?: any }[] = [];
+	body: RigidBody;
+	bodies: RigidBody[] = [];
+	collider: Collider;
+	colliders: Collider[] = []
+	colliderRef: { collider: Collider, visual: DisplayObject, data?: any }[] = [];
 
 	constructor() {
 		super();
@@ -31,22 +39,22 @@ export class RapierPhysicsComposite extends Container implements IPhysicsObject 
 		return Application.instance;
 	}
 
-	get world(): RAPIER.World {
+	get world(): World {
 		return (this.app.physics as RapierPhysics).world;
 	}
 
-	get activeCollisionTypes(): RAPIER.ActiveCollisionTypes {
+	get activeCollisionTypes(): ActiveCollisionTypes {
 		// tslint:disable-next-line:no-bitwise
 		return RAPIER.ActiveCollisionTypes.DEFAULT |
 			RAPIER.ActiveCollisionTypes.KINEMATIC_FIXED
 	}
 
-	get activeEvents(): RAPIER.ActiveEvents {
+	get activeEvents(): ActiveEvents {
 		// tslint:disable-next-line:no-bitwise
 		return RAPIER.ActiveEvents.COLLISION_EVENTS;
 	}
 
-	get activeHooks(): RAPIER.ActiveHooks {
+	get activeHooks(): ActiveHooks {
 		return RAPIER.ActiveHooks.FILTER_CONTACT_PAIRS;
 	}
 
@@ -72,8 +80,8 @@ export class RapierPhysicsComposite extends Container implements IPhysicsObject 
 		this.physics.removeFromWorld(this.body);
 	}
 
-	createCollider(visual: Sprite, body: RAPIER.RigidBody, type: PhysicsBodyType = PhysicsBodyType.RECTANGLE): RAPIER.Collider {
-		let colliderDesc: RAPIER.ColliderDesc;
+	createCollider(visual: Sprite, body: RigidBody, type: PhysicsBodyType = PhysicsBodyType.RECTANGLE): Collider {
+		let colliderDesc: ColliderDesc;
 		switch (type) {
 			case PhysicsBodyType.CIRCLE:
 				colliderDesc = RAPIER.ColliderDesc.ball(visual.width / 2)
@@ -89,7 +97,7 @@ export class RapierPhysicsComposite extends Container implements IPhysicsObject 
 		}
 
 
-		let collider: RAPIER.Collider;
+		let collider: Collider;
 
 		if (colliderDesc) {
 			// tslint:disable-next-line:no-bitwise
@@ -105,8 +113,8 @@ export class RapierPhysicsComposite extends Container implements IPhysicsObject 
 	createPiece(color: number, size: [number, number], position: [number, number] = [0,
 		0], angle: number = 0, type: PhysicsBodyType = PhysicsBodyType.RECTANGLE, data?: any): {
 		visual: Sprite,
-		body: RAPIER.RigidBody,
-		collider: RAPIER.Collider
+		body: RigidBody,
+		collider: Collider
 	} {
 		const visual = this.addVisual(color, size, position, type);
 		const bodyDesc = RAPIER.RigidBodyDesc.dynamic()

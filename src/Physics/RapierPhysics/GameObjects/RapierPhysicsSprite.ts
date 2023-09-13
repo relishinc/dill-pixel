@@ -1,4 +1,13 @@
-import RAPIER from "@dimforge/rapier2d";
+import type {
+	ActiveCollisionTypes,
+	ActiveEvents,
+	ActiveHooks,
+	Collider,
+	ColliderDesc,
+	RigidBody,
+	RigidBodyDesc,
+	World
+} from '@dimforge/rapier2d';
 import {Container, Sprite, Texture} from "pixi.js";
 import {Application} from "../../../Application";
 import {resolveXYFromObjectOrArray} from "../../../Utils";
@@ -9,8 +18,8 @@ import RapierPhysics from "../RapierPhysics";
 export class RapierPhysicsSprite extends Container implements IPhysicsObject {
 	public static readonly DEFAULT_DEBUG_COLOR: number = 0x29c5f6;
 	visual: Sprite;
-	body: RAPIER.RigidBody;
-	collider: RAPIER.Collider;
+	body: RigidBody;
+	collider: Collider;
 
 	_size: { x: number, y: number };
 	_bodyType: PhysicsBodyType;
@@ -50,22 +59,22 @@ export class RapierPhysicsSprite extends Container implements IPhysicsObject {
 		return Application.instance;
 	}
 
-	get world(): RAPIER.World {
+	get world(): World {
 		return (this.app.physics as RapierPhysics).world;
 	}
 
-	get activeCollisionTypes(): RAPIER.ActiveCollisionTypes {
+	get activeCollisionTypes(): ActiveCollisionTypes {
 		// tslint:disable-next-line:no-bitwise
 		return RAPIER.ActiveCollisionTypes.DEFAULT |
 			RAPIER.ActiveCollisionTypes.KINEMATIC_FIXED
 	}
 
-	get activeEvents(): RAPIER.ActiveEvents {
+	get activeEvents(): ActiveEvents {
 		// tslint:disable-next-line:no-bitwise
 		return RAPIER.ActiveEvents.COLLISION_EVENTS;
 	}
 
-	get activeHooks(): RAPIER.ActiveHooks {
+	get activeHooks(): ActiveHooks {
 		return RAPIER.ActiveHooks.FILTER_CONTACT_PAIRS;
 	}
 
@@ -85,8 +94,8 @@ export class RapierPhysicsSprite extends Container implements IPhysicsObject {
 		const colliderDesc = RAPIER.ColliderDesc.cuboid(def.size.x / 2, def.size.y / 2).setTranslation(0, 0);
 		const collider = this._world.createCollider(colliderDesc, body);
 		 */
-		let bodyDesc: RAPIER.RigidBodyDesc;
-		let colliderDesc: RAPIER.ColliderDesc | null = null;
+		let bodyDesc: RigidBodyDesc;
+		let colliderDesc: ColliderDesc | null = null;
 
 		bodyDesc = RAPIER.RigidBodyDesc.dynamic().setTranslation(this.x, this.y).setRotation(this.angle || 0);
 		this.body = this.world.createRigidBody(bodyDesc);
