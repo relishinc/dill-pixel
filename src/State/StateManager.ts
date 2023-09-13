@@ -464,10 +464,15 @@ export class StateManager extends Container {
 	 */
 	private handleViewReady(pToken: StateToken): void {
 		this.log("handleViewReady");
+
+		if (!pToken) {
+			pToken = this._newStateToken!;
+		}
+
 		let step: TransitionStep;
 
-		if (this._newStateToken !== undefined) {
-			step = this._newStateToken.transitionSteps[this._transitionStepIndex];
+		if (pToken !== undefined) {
+			step = pToken.transitionSteps[this._transitionStepIndex];
 
 			switch (step) {
 				case TransitionStep.AttachNewInFront:

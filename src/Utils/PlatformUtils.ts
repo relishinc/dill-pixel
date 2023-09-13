@@ -466,9 +466,7 @@ export function isRetina(): boolean {
  */
 export function isSupportedDevice(pToExclude: any): boolean {
 	const iOS = ["iPad", "iPhone", "iPod"].indexOf(navigator.platform) >= 0;
-	const deviceList = new Array()
-		.concat(getiPhoneModel().split(","))
-		.concat(getiPadModel().split(","));
+	const deviceList = Array.from({length: 0}).concat(getiPhoneModel().split(",")).concat(getiPadModel().split(","));
 
 	let found: boolean = false;
 	for (let i = deviceList.length - 1; i >= 0; --i) {

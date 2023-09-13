@@ -60,7 +60,7 @@ export class Application extends PIXIApplication {
 		(pPersistentAssets: AssetMapData[], pOnComplete: () => void) => void
 	>;
 
-	protected _debugger: any;
+	protected _debugger: unknown;
 	protected _physics: PhysicsBase;
 
 	/**
@@ -341,7 +341,7 @@ export class Application extends PIXIApplication {
 	/**
 	 * Initializes all managers and starts the splash screen process.
 	 */
-	public async init(awaitFontsLoaded: boolean = true): Promise<void> {
+	public async init(): Promise<void> {
 		this.onPlayAudio = this.onPlayAudio.bind(this);
 		this.addToStage(this._stateManager);
 		this.addToStage(this._popupManager);
@@ -494,7 +494,7 @@ export class Application extends PIXIApplication {
 		this._stateManager.onResize(this._size);
 		this._loadManager.onResize(this._size);
 		this._popupManager.onResize(this._size);
-		this._orientationManager.onResize(this._size);
+		this._orientationManager.onResize();
 
 		// emit a global resize signal that anything can listen to
 		Signals.onResize.emit(this._size);

@@ -12,6 +12,7 @@ export abstract class State extends Container {
 	public static NAME: string = "State";
 	protected _size: Point;
 	protected _connections: SignalConnections = new SignalConnections();
+	protected _data: any;
 
 	constructor() {
 		super(false);
@@ -54,6 +55,7 @@ export abstract class State extends Container {
 	 */
 	public init(pSize: Point, pData?: any): void {
 		this.onResize(pSize);
+		this._data = pData;
 	}
 
 	/**

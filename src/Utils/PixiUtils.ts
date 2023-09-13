@@ -65,7 +65,7 @@ export function setParent(pChild: DisplayObject, pParent: Container): void {
 export function setAnchor(pObject: Sprite, pAnchor: Point): void {
 	PointUtils.addToPoint(pObject.position, new Point(
 		(pAnchor.x - pObject.anchor.x) * pObject.width,
-		(pAnchor.y - pObject.anchor.y) * pObject.height,
+		(pAnchor.y - pObject.anchor.y) * pObject.height
 	));
 	pObject.anchor.copyFrom(pAnchor);
 }
@@ -135,8 +135,7 @@ export function offsetSimpleShape(pShape: PixiSimpleShape, pDelta: Point): PixiS
  * @param pSheet (optional) The spritesheet(s) that the texture is in. You can leave this out unless you have two textures with the same name in different spritesheets
  */
 export function makeSprite(pAsset: string, pSheet?: string | string[]): Sprite {
-	let sprite: Sprite | undefined;
-	sprite = new Sprite(getTexture(pAsset, pSheet));
+	const sprite: Sprite = new Sprite(getTexture(pAsset, pSheet));
 	sprite.anchor.set(0.5);
 	return sprite;
 }
@@ -210,7 +209,7 @@ export function makeText(pText: string, pFont: string, pSize: number, pColour: n
 		fontName: pFont,
 		fontSize: pSize,
 		align: "center",
-		tint: pColour,
+		tint: pColour
 	});
 
 	text.anchor.set(0.5);
@@ -232,8 +231,7 @@ export enum SpineTrack {
  * @param pName The name of the spine file.
  */
 export function makeSpine(pName: string): Spine {
-	let spine: Spine;
-	spine = new Spine(Assets.get(pName).spineData!);
+	const spine: Spine = new Spine(Assets.get(pName).spineData!);
 	spine.skeleton.setToSetupPose();
 	spine.update(0);
 	spine.autoUpdate = false;
