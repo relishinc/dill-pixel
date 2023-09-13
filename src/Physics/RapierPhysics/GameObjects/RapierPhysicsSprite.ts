@@ -94,10 +94,9 @@ export class RapierPhysicsSprite extends Container implements IPhysicsObject {
 		const colliderDesc = RAPIER.ColliderDesc.cuboid(def.size.x / 2, def.size.y / 2).setTranslation(0, 0);
 		const collider = this._world.createCollider(colliderDesc, body);
 		 */
-		let bodyDesc: RigidBodyDesc;
 		let colliderDesc: ColliderDesc | null = null;
 
-		bodyDesc = RAPIER.RigidBodyDesc.dynamic().setTranslation(this.x, this.y).setRotation(this.angle || 0);
+		const bodyDesc: RigidBodyDesc = RAPIER.RigidBodyDesc.dynamic().setTranslation(this.x, this.y).setRotation(this.angle || 0);
 		this.body = this.world.createRigidBody(bodyDesc);
 
 		switch (this._bodyType) {

@@ -18,12 +18,12 @@ export class Add implements IPhysicsAddFactory {
 
 	// add physics sprite
 	physicsSprite(pTexture: string | Texture, pSheet?: string | undefined, pSize?: {
-		              x: number,
-		              y: number
-	              } | [number, number?] | number, pType: PhysicsBodyType = PhysicsBodyType.RECTANGLE, pAlpha: number = 1, pPosition: {
-		              x: number,
-		              y: number
-	              } | [number, number?] | number = {x: 0, y: 0}
+									x: number,
+									y: number
+								} | [number, number?] | number, pType: PhysicsBodyType = PhysicsBodyType.RECTANGLE, pAlpha: number = 1, pPosition: {
+									x: number,
+									y: number
+								} | [number, number?] | number = {x: 0, y: 0}
 	): IPhysicsObject {
 		const sprite = this.make.physicsSprite(pTexture, pSheet, pSize, pType);
 		sprite.alpha = pAlpha;

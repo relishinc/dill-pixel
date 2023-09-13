@@ -1,4 +1,3 @@
-import {Point} from "pixi.js";
 import {Application} from "../Application";
 import {orientationLandscape, orientationPortrait} from "../Signals";
 import * as PixiUtils from "./PixiUtils";
@@ -33,9 +32,8 @@ export class OrientationManager {
 
 	/**
 	 * Called when the screen resizes
-	 * @param pSize The new size
 	 */
-	public onResize(pSize?: Point): void {
+	public onResize(): void {
 		if (!this._enabled) {
 			return;
 		}

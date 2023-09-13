@@ -136,8 +136,8 @@ export class Make {
 		return new Graphics();
 	}
 
-	static tiledSprite(pTexture: string, pSheet: SpritesheetLike, pWidth: number, pHeight: number, pTilePosition?: ObservablePoint): TilingSprite {
-		const tilingSprite = new TilingSprite(this.texture(pTexture, pSheet), pWidth, pHeight);
+	static tiledSprite(pTexture: string | Texture, pSheet: SpritesheetLike, pWidth: number, pHeight: number, pTilePosition?: ObservablePoint): TilingSprite {
+		const tilingSprite = new TilingSprite(typeof pTexture === "string" ? this.texture(pTexture, pSheet) : pTexture, pWidth, pHeight);
 		setObjectName(tilingSprite, pTexture, pSheet);
 		if (pTilePosition) {
 			tilingSprite.tilePosition = pTilePosition;
@@ -149,26 +149,26 @@ export class Make {
 		return new Mesh<Shader>(pGeometry, pShader, pState, pDrawMode);
 	}
 
-	static simpleRope(pTexture: string, pSheet: SpritesheetLike, pPoints: (Point | ObservablePoint)[], pAutoUpdate?: boolean): SimpleRope {
-		const simpleRope = new SimpleRope(this.texture(pTexture, pSheet), pPoints);
+	static simpleRope(pTexture: string | Texture, pSheet: SpritesheetLike, pPoints: (Point | ObservablePoint)[], pAutoUpdate?: boolean): SimpleRope {
+		const simpleRope = new SimpleRope(typeof pTexture === "string" ? this.texture(pTexture, pSheet) : pTexture, pPoints);
 		setObjectName(simpleRope, pTexture, pSheet);
 		simpleRope.autoUpdate = pAutoUpdate !== false;
 		return simpleRope;
 	}
 
-	static simplePlane(pTexture: string, pSheet: SpritesheetLike, pVertsWidth: number, pVertsHeight: number): SimplePlane {
-		const simplePlane = new SimplePlane(this.texture(pTexture, pSheet), pVertsWidth, pVertsHeight);
+	static simplePlane(pTexture: string | Texture, pSheet: SpritesheetLike, pVertsWidth: number, pVertsHeight: number): SimplePlane {
+		const simplePlane = new SimplePlane(typeof pTexture === "string" ? this.texture(pTexture, pSheet) : pTexture, pVertsWidth, pVertsHeight);
 		setObjectName(simplePlane, pTexture, pSheet);
 		return simplePlane;
 	}
 
-	static simpleMesh(pTexture: string, pSheet: SpritesheetLike, pVertices?: Float32Array, pUvs?: Float32Array, pIndices?: Uint16Array, pDrawMode?: number): SimpleMesh {
-		const simpleMesh = new SimpleMesh(this.texture(pTexture, pSheet), pVertices, pUvs, pIndices, pDrawMode);
+	static simpleMesh(pTexture: string | Texture, pSheet: SpritesheetLike, pVertices?: Float32Array, pUvs?: Float32Array, pIndices?: Uint16Array, pDrawMode?: number): SimpleMesh {
+		const simpleMesh = new SimpleMesh(typeof pTexture === "string" ? this.texture(pTexture, pSheet) : pTexture, pVertices, pUvs, pIndices, pDrawMode);
 		setObjectName(simpleMesh, pTexture, pSheet);
 		return simpleMesh;
 	}
 
-	static nineSlice(pTexture: string, pSheet?: SpritesheetLike, leftWidth: number = 10, topHeight: number = 10, rightWidth: number = 10, bottomHeight: number = 10) {
+	static nineSlice(pTexture: string | Texture, pSheet?: SpritesheetLike, leftWidth: number = 10, topHeight: number = 10, rightWidth: number = 10, bottomHeight: number = 10) {
 		const ns = new NineSlicePlane(typeof pTexture === "string" ? this.texture(pTexture, pSheet) : pTexture, leftWidth, topHeight, rightWidth, bottomHeight);
 		setObjectName(ns, pTexture, pSheet);
 		return ns;

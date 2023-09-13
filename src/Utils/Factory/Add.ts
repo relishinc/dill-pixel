@@ -75,7 +75,7 @@ export class Add {
 		alpha: number = 1,
 		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
 		anchor: { x: number; y: number } | [number, number?] | number = {x: 0.5, y: 0.5},
-		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
+		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1}
 	) {
 		const sprite = Make.sprite(pAsset, pSheet);
 		sprite.alpha = alpha;
@@ -100,7 +100,7 @@ export class Add {
 		alpha: number = 1,
 		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
 		anchor: { x: number; y: number } | [number, number?] | number = {x: 0.5, y: 0.5},
-		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
+		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1}
 	) {
 		const text = Make.text(pText, pStyle);
 		text.alpha = alpha;
@@ -125,7 +125,7 @@ export class Add {
 		alpha: number = 1,
 		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
 		anchor: { x: number; y: number } | [number, number?] | number = {x: 0.5, y: 0.5},
-		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
+		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1}
 	) {
 		const text = Make.htmlText(pText, pStyle);
 		text.alpha = alpha;
@@ -151,7 +151,7 @@ export class Add {
 		alpha: number = 1,
 		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
 		anchor: { x: number; y: number } | [number, number?] | number = {x: 0.5, y: 0.5},
-		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
+		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1}
 	) {
 		const bitmapText = Make.bitmapText(pText, pStyle);
 		bitmapText.alpha = alpha;
@@ -174,7 +174,7 @@ export class Add {
 	container(
 		alpha: number = 1,
 		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
-		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
+		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1}
 	) {
 		const container = Make.container();
 		container.alpha = alpha;
@@ -194,7 +194,7 @@ export class Add {
 	graphics(
 		alpha: number = 1,
 		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
-		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
+		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1}
 	) {
 		const graphics = Make.graphics();
 		graphics.alpha = alpha;
@@ -217,18 +217,17 @@ export class Add {
 		leftWidth: number = 10, topHeight: number = 10, rightWidth: number = 10, bottomHeight: number = 10,
 		alpha: number = 1,
 		position: { x: number; y: number } | [number, number?] | number = {x: 0, y: 0},
-		anchor: { x: number; y: number } | [number, number?] | number = {x: 0.5, y: 0.5},
-		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1},
+		scale: { x: number; y: number } | [number, number?] | number = {x: 1, y: 1}
 	) {
 		const ns = Make.nineSlice(pAsset, pSheet, leftWidth, topHeight, rightWidth, bottomHeight);
 		ns.alpha = alpha;
 
 		const resolvedPosition = resolveXYFromObjectOrArray(position);
-		const resolvedAnchor = resolveXYFromObjectOrArray(anchor);
 		const resolvedScale = resolveXYFromObjectOrArray(scale);
 
 		ns.x = resolvedPosition.x;
 		ns.y = resolvedPosition.y;
+
 		ns.scale.x = resolvedScale.x;
 		ns.scale.y = resolvedScale.y
 
