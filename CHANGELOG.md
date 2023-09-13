@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.4.0](https://github.com/relishinc/hlf/compare/v2.3.0...v2.4.0) (2023-09-13)
+
+
+### Features
+
+* properly code split physics libraries ([a7a15cc](https://github.com/relishinc/hlf/commit/a7a15cc2fe61f20e00923ddfb93f518d2ee2d1ac))
+* removed gsap dependency from core library ([a7a15cc](https://github.com/relishinc/hlf/commit/a7a15cc2fe61f20e00923ddfb93f518d2ee2d1ac))
+
+
+### Bug Fixes
+
+* still fiddling with release action ([91eb141](https://github.com/relishinc/hlf/commit/91eb141ebb2d34ec4186124d5522a229ada1a45d))
+* still fiddling with release action ([740635a](https://github.com/relishinc/hlf/commit/740635a12b412e911a2d983f318867d225535bc4))
+
 ## [2.3.0](https://github.com/relishinc/hlf/compare/v2.2.0...v2.3.0) (2023-08-31)
 
 
