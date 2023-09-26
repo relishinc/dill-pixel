@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Node",
@@ -19,7 +18,8 @@
     "strictPropertyInitialization": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "allowJs": true
+    "allowJs": true,
+    "jsx": "react-jsx"
   },
   "typeRoots": [
     "./node_modules/@types",
