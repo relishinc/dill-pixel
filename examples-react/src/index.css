@@ -1,0 +1,51 @@
+@font-face {
+    font-family: 'arboria';
+    src: url(./assets/fonts/arboria.woff2) format('woff2');
+}
+
+:root {
+    --app-height: 100%;
+}
+
+body, html {
+    width: 100vw;
+    height: 100%;
+    height: var(--app-height);
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#game-container {
+    flex: none;
+    width: 100%;
+    height: 100%;
+    max-width: calc(100% - 20px);
+    max-height: calc(100% - 20px);
+    padding: 0;
+    border: none;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    display: block;
+}
+
+canvas {
+    display: block;
+    margin: auto;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

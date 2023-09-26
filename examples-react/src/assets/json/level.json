@@ -1,0 +1,37 @@
+{
+  "name": "Level 1",
+  "platforms": [
+    {
+      "type": "moving",
+      "x": 25,
+      "y": 400,
+      "width": 200,
+      "height": 50,
+      "threshold": 100,
+      "speed": 0.25
+    },
+    {
+      "type": "static",
+      "x": 350,
+      "y": 300,
+      "width": 300,
+      "height": 50
+    },
+    {
+      "type": "static",
+      "x": 800,
+      "y": 600,
+      "width": 450,
+      "height": 50
+    },
+    {
+      "type": "moving",
+      "x": 1400,
+      "y": 400,
+      "width": 300,
+      "height": 50,
+      "threshold": 300,
+      "speed": 0.5
+    }
+  ]
+}

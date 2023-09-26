@@ -1,0 +1,58 @@
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import {defineConfig, normalizePath} from 'vite';
+import {createHtmlPlugin} from 'vite-plugin-html';
+import {viteStaticCopy} from 'vite-plugin-static-copy';
+import topLevelAwait from 'vite-plugin-top-level-await';
+import wasm from 'vite-plugin-wasm';
+
+/** @type {import("vite").UserConfig} */
+export default defineConfig((config) => ({
+  ...config,
+  target: 'esnext',
+  cacheDir: '.cache',
+  logLevel: 'info',
+  base: process.env.NODE_ENV === 'development' ? '/' : './',
+  server: {
+    port: 3000,
+    host: true,
+    open: true,
+  },
+  preview: {
+    host: true,
+    port: 8080,
+  },
+  plugins: [
+    react(),
+    wasm(),
+    topLevelAwait(),
+    createHtmlPlugin(),
+    viteStaticCopy({
+      watch: { reloadPageOnChange: true },
+      targets: [
+        {
+          src: normalizePath(path.resolve(__dirname, './src/assets/images/spritesheets/_output/*')),
+          dest: './assets/images/spritesheets',
+        },
+        {
+          src: normalizePath(path.resolve(__dirname, './src/assets/images/static/**/*')),
+          dest: './assets/images/static',
+        },
+        {
+          src: normalizePath(path.resolve(__dirname, './src/assets/json/*')),
+          dest: './assets/json',
+        },
+        {
+          src: normalizePath(path.resolve(__dirname, './src/assets/fonts/*')),
+          dest: './assets/fonts',
+        },
+      ],
+    }),
+  ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      'html-living-framework': path.resolve(__dirname, '../src'),
+    },
+  },
+}));
