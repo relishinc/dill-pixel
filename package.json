@@ -1,6 +1,6 @@
 {
   "name": "html-living-framework",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Relish framework for HTML games",
   "main": "./src/index.ts",
   "sideEffects": false,
