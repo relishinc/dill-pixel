@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0](https://github.com/relishinc/hlf/compare/v2.4.0...v2.5.0) (2023-09-27)
+
+
+### Features
+
+* state management, feat: popup management ([0f69c20](https://github.com/relishinc/hlf/commit/0f69c2087fe12354ae32c907912fb7a7cc56262c))
+
 ## [2.4.0](https://github.com/relishinc/hlf/compare/v2.3.0...v2.4.0) (2023-09-13)
 
 
