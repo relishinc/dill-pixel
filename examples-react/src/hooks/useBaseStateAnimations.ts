@@ -1,5 +1,5 @@
+import { IContainer, useStateAnimations } from 'dill-pixel/react';
 import { gsap } from 'gsap';
-import { IContainer, useStateAnimations } from 'html-living-framework/react';
 import * as React from 'react';
 
 export const useBaseStateAnimations = (

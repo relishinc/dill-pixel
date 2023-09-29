@@ -329,7 +329,7 @@ createAssetMap()
 * Since the framework can't run on it's own, there is a process to have a project use a local version of the repo
   instead of pulling a remote one.
 * In your local copy of the framework, run `npm link`
-* Inside a project that depends on the framework, run `npm link html-living-framework`
+* Inside a project that depends on the framework, run `npm link dill-pixel`
 * This sometimes requires a refresh of VSCode. You may even have to delete the node-modules folder and run `npm install`
   to install all dependencies fresh.
 * Run `npm start` in the project that uses the framework, and `npm build:watch` in the framework folder
@@ -399,19 +399,19 @@ createAssetMap()
 * Use the latest release of HLF:
 
 ```npm
-"html-living-framework":"git+https://github.com/relishinc/hlf#release",
+"dill-pixel":"git+https://github.com/relishinc/hlf#release",
 ```
 
 * Use a specific version of HLF:
 
 ```npm
-"html-living-framework": "git+https://github.com/relishinc/hlf#0.12.5",
+"dill-pixel": "git+https://github.com/relishinc/hlf#0.12.5",
 ```
 
 * Use a local version of HLF:
 
 ```npm
-"html-living-framework": "file:../hlf",
+"dill-pixel": "file:../hlf",
 ```
 
 * **Note** - Committing the local url to your repo will always cause a jenkins build to fail.
