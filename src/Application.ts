@@ -1,7 +1,6 @@
 // @ts-ignore
 import FontFaceObserver from 'fontfaceobserver';
 import { Application as PIXIApplication, Assets, IApplicationOptions, Point, Ticker } from 'pixi.js';
-import * as Stats from 'stats.js';
 import { AudioToken, HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverManager } from './Audio';
 import { CopyManager } from './Copy';
 import { AppConfig } from './Data';
@@ -23,6 +22,8 @@ import { Add, Make } from './Utils/Factory';
 
 export interface HLFApplicationOptions extends IApplicationOptions {
   physics?: boolean;
+  showStatsInProduction?: boolean;
+  showStateDebugInProduction?: boolean;
 }
 
 type DebuggerType = typeof import('./Debugger').Debugger;
@@ -70,14 +71,8 @@ export class Application extends PIXIApplication {
   protected constructor(pConfig?: Partial<HLFApplicationOptions> & { [key: string]: any }) {
     // TODO Relish GM => Look into what might be added to the AppConfig class and if there is reason to cache it.
     super(new AppConfig(pConfig));
-    if (isDev) {
-      this.stats = new Stats();
-      this.stats.dom.id = 'stats';
-      Application.containerElement?.appendChild(this.stats.dom);
-      this.stats.dom.style.position = 'absolute';
-      this.stats.dom.style.top = `24px`;
-      this.stats.dom.style.right = `40px`;
-      this.stats.dom.style.left = 'auto';
+    if (isDev || pConfig?.showStatsInProduction) {
+      this.addStats();
     }
 
     // start the ticker if it hasn't been started yet
@@ -128,8 +123,8 @@ export class Application extends PIXIApplication {
     this.startSplashProcess = this._loadManager.startSplashProcess.bind(this._loadManager);
   }
 
-  static get containerElement(): HTMLElement | null {
-    return document.getElementById(Application.containerID);
+  static get containerElement(): HTMLElement | undefined {
+    return document.getElementById(Application.containerID) || undefined;
   }
 
   static get containerID(): string {
@@ -279,6 +274,17 @@ export class Application extends PIXIApplication {
     return this._debugger as DebuggerType;
   }
 
+  public async addStats() {
+    const Stats = await import('stats.js').then((m) => m.default);
+    this.stats = new Stats();
+    this.stats.dom.id = 'stats';
+    Application.containerElement?.appendChild(this.stats.dom);
+    this.stats.dom.style.position = 'absolute';
+    this.stats.dom.style.top = '24px';
+    this.stats.dom.style.right = '40px';
+    this.stats.dom.style.left = 'auto';
+  }
+
   public addFocusManager() {
     this._keyboardFocusManager = new KeyboardFocusManager(DefaultKeyboardFocusManagerSprite);
   }
@@ -300,7 +306,7 @@ export class Application extends PIXIApplication {
 
   /**
    *
-   * @param pGroupId
+   * @param pGroupIdOrClass
    * @param pAssets
    * proxy function for @link {AssetMap.addAssetGroup}
    */
@@ -398,7 +404,7 @@ export class Application extends PIXIApplication {
    * Called once per frame. Updates the `StateManager`, `PopupManager`, `LoadManager` and `HitAreaRenderer`.
    */
   protected update(): void {
-    if (isDev) {
+    if (this.stats) {
       this.stats.begin();
     }
 
@@ -408,7 +414,8 @@ export class Application extends PIXIApplication {
     this._loadManager.update(deltaTime);
     this._hitAreaRenderer.update(deltaTime);
     this._physics?.update(deltaTime);
-    if (isDev) {
+
+    if (this.stats) {
       this.stats.end();
     }
   }

@@ -1,7 +1,7 @@
 {
-  "name": "relish-hlf-testing",
+  "name": "dill-pixel-examples",
   "version": "0.0.0",
-  "description": "Testing Project for ongoing work on HLF",
+  "description": "Examples of some Dill Pixel Features",
   "main": "index.html",
   "scripts": {
     "start": "vite",
@@ -15,26 +15,23 @@
     "spritesheets": "node src/assets/images/export_spritesheets"
   },
   "author": "Relish Digital<dev@reli.sh>",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
     "prettier": "^3.0.3",
     "relishinc-prettier": "github:relishinc/prettier",
     "typescript": "^5.2.2",
+    "vite": "^4.2.1",
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-singlefile": "^0.13.5",
+    "vite-plugin-static-copy": "^0.13.1",
     "vite-plugin-top-level-await": "^1.3.1",
     "vite-plugin-wasm": "^3.2.2"
   },
   "dependencies": {
-    "@pixi/layout": "^0.1.8",
     "@pixi/ui": "^0.9.0",
-    "gsap": "^3.11.5",
-    "hlf-debugger": "file:../../relish-hlf-debugger",
-    "html-living-framework": "file:..",
-    "pixi.js": "^7.2.4",
-    "vite": "^4.2.1",
-    "vite-plugin-static-copy": "^0.13.1"
+    "dill-pixel": "file:..",
+    "gsap": "^3.11.5"
   }
 }

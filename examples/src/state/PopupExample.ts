@@ -1,6 +1,6 @@
 import ExamplePopup from '@/popups/ExamplePopup.ts';
 import { BaseState } from '@/state/BaseState.ts';
-import { AssetMapData, Container, PopupToken, showPopup, TextureAtlasAsset } from 'html-living-framework';
+import { AssetMapData, Container, PopupToken, showPopup, TextureAtlasAsset } from 'dill-pixel';
 import { Point } from 'pixi.js';
 
 class PopupExample extends BaseState {

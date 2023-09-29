@@ -1,6 +1,6 @@
 import { GREEN } from '@/utils/Constants.ts';
+import { Popup } from 'dill-pixel/Popup';
 import { gsap } from 'gsap';
-import { Popup } from 'html-living-framework/Popup';
 import { Point, Sprite, Text } from 'pixi.js';
 
 export default class ExamplePopup extends Popup {
