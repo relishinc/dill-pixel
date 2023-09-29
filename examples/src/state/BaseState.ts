@@ -1,4 +1,4 @@
-import Application from '@/Application.ts';
+import Application from '@/Application';
 import { GREEN } from '@/utils/Constants';
 import { AssetMapData, AssetType, Container, State, TextureAsset } from 'dill-pixel';
 import { gsap } from 'gsap';

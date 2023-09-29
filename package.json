@@ -1,13 +1,16 @@
 {
   "name": "dill-pixel",
   "version": "2.5.0",
+  "title": "Dill Pixel",
   "description": "Relish framework for HTML games",
-  "main": "./src/index.ts",
+  "main": "src/index.ts",
   "sideEffects": false,
   "scripts": {
     "dev": "cd ./examples && npm run dev",
     "dev:react": "cd ./examples-react && npm run dev",
-    "build": "tsc",
+    "prebuild": "node ./scripts/generate-version.js",
+    "build": "npm run prebuild && npm run compile",
+    "compile": "tsc",
     "build:examples": "cd ./examples && npm run build",
     "visualize:examples": "cd ./examples && npx vite-bundle-visualizer",
     "build:watch": "tsc --watch",

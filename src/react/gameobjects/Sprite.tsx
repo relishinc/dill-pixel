@@ -1,6 +1,6 @@
 import { _ReactPixi, PixiRef, Sprite as ReactPIXISprite } from '@pixi/react';
 import React from 'react';
-import { Make } from '../../Utils/Factory';
+import { Make } from '../../utils/factory';
 
 type ISprite = PixiRef<typeof ReactPIXISprite>;
 

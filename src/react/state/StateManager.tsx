@@ -1,5 +1,5 @@
 import { Container } from '@pixi/react';
-import { Assets, ResolverManifest } from 'pixi.js';
+import { Assets } from 'pixi.js';
 import * as React from 'react';
 import { useHLF } from '../global';
 import { LoadingState, State } from '../state';
@@ -36,7 +36,7 @@ export const StateManager = (props: StateManagerProps) => {
 
   React.useEffect(() => {
     const initWithManifest = async () => {
-      const manifest: ResolverManifest = {
+      const manifest: any = {
         bundles: props.states
           .map((S) => ({
             name: S.name,
