@@ -1,8 +1,8 @@
-# HTML Living Framework (2023)
+# Dill Pixel
 
 Framework for HTML game development, made by Relish Digital [https://reli.sh].
 
-### Migration Guide
+### Migrating from old HLF framework
 
 HLF is changing! View the [Migration Guide](./MIGRATION_GUIDE.md) for more information.
 

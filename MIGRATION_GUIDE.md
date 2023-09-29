@@ -1,4 +1,4 @@
-# Migrating to the new HLF
+# Migrating to Dill Pixel
 
 ## Introduction
 
