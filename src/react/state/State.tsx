@@ -1,5 +1,4 @@
 import {gsap} from 'gsap';
-import {ResolverAssetsArray, ResolverAssetsObject} from 'pixi.js';
 import * as React from 'react';
 
 // define a props interface for the State Component
@@ -49,8 +48,8 @@ export const useStateAnimations = (
   handleAnimation().then((r) => r);
 };
 
-// create a @pixi/react component extension of src/State.ts
+// create a @pixi/react component extension of dill-pixel/State.ts
 export type State = React.FC<StateProps> & {
   hasStateAnimations?: boolean;
-  assets?: ResolverAssetsArray | ResolverAssetsObject;
+  assets?: any;
 };

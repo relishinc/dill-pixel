@@ -1,5 +1,5 @@
-import ExamplePopup from '@/popups/ExamplePopup.ts';
-import { BaseState } from '@/state/BaseState.ts';
+import ExamplePopup from '@/popups/ExamplePopup';
+import { BaseState } from '@/state/BaseState';
 import { AssetMapData, Container, PopupToken, showPopup, TextureAtlasAsset } from 'dill-pixel';
 import { Point } from 'pixi.js';
 

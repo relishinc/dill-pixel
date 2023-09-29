@@ -3,13 +3,8 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "baseUrl": ".",
-    "paths": {
-      "dill-pixel": [
-        "src/*"
-      ]
-    },
     "rootDir": "./src",
+    "baseUrl": ".",
     "outDir": "./lib",
     "composite": true,
     "declaration": true,
@@ -41,14 +36,7 @@
     "./node_modules/@dimforge/rapier2d"
   ],
   "include": [
-    "src/**/*"
-  ],
-  "references": [
-    {
-      "path": "./examples"
-    },
-    {
-      "path": "./examples-react"
-    }
+    "./src/**/*.ts",
+    "./src/**/*.tsx"
   ]
 }

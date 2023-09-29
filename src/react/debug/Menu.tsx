@@ -44,13 +44,14 @@ export const Menu = ({ defaultState, appStates, appStateNames }: DebuggerProps) 
           defaultValue={defaultState?.name}
           onChange={(event) => {
             const value = event.target.value;
-            setCurrentState(appStates.find((S) => S.name === value));
+            const newState = appStates?.find((S) => S.name === value);
+            if (newState) {
+              setCurrentState(newState);
+            }
           }}
         >
           <option disabled>Select a game state</option>
-          {appStateNames.map((name) => (
-            <option key={name}>{name}</option>
-          ))}
+          {appStateNames?.map((name) => <option key={name}>{name}</option>)}
         </select>
       </div>
     </>

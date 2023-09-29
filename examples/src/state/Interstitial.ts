@@ -10,7 +10,7 @@ export class Interstitial extends HLF.LoadScreen {
 
   public init(pSize: PIXI.Point, pData?: any) {
     super.init(pSize, pData);
-    this._bg = this.add.sprite('black2x2', null, 0, 0, 0.5, [this._size.x, this._size.y]);
+    this._bg = this.add.sprite('black2x2', undefined, 0, 0, 0.5, [this._size.x, this._size.y]);
   }
 
   public onLoadProgress(progress: number) {

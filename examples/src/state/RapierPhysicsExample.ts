@@ -1,6 +1,6 @@
-import { BaseState } from '@/state/BaseState.ts';
+import { BaseState } from '@/state/BaseState';
 import { AssetMapData, AssetType, PhysicsBodyType, PhysicsEngineType, TextureAsset } from 'dill-pixel';
-import RapierPhysics, { RapierPhysicsComposite } from 'dill-pixel/Physics/RapierPhysics';
+import RapierPhysics, { RapierPhysicsComposite } from 'dill-pixel/physics/rapier';
 import { Point } from 'pixi.js';
 
 export class RapierPhysicsExample extends BaseState {

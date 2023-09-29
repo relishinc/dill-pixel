@@ -1,7 +1,7 @@
-import { BaseState } from '@/state/BaseState.ts';
-import { MatterPhysicsSpriteExample } from '@/state/GameObjects/MatterPhysicsSpriteExample.ts';
+import { BaseState } from '@/state/BaseState';
+import { MatterPhysicsSpriteExample } from '@/state/gameobjects/MatterPhysicsSpriteExample';
 import { AssetMapData, AssetType, PhysicsBodyType, TextureAsset } from 'dill-pixel';
-import MatterPhysics from 'dill-pixel/Physics/MatterPhysics';
+import MatterPhysics from 'dill-pixel/physics/matter';
 import { Point } from 'pixi.js';
 
 export class MatterPhysicsExample extends BaseState {

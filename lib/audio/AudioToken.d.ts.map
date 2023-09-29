@@ -1,0 +1,1 @@
+{"version":3,"file":"AudioToken.d.ts","sourceRoot":"","sources":["../../src/audio/AudioToken.ts"],"names":[],"mappings":"AAEA,qBAAa,UAAU;IACZ,EAAE,EAAE,MAAM,CAAC;IACX,MAAM,EAAE,MAAM,CAAC;IACf,IAAI,EAAE,OAAO,CAAC;IACd,QAAQ,EAAE,MAAM,CAAC;gBAEZ,GAAG,EAAE,MAAM,EAAE,OAAO,GAAE,MAAU,EAAE,KAAK,GAAE,OAAe,EACxD,SAAS,GAAE,MAA8B;CAMxD"}
