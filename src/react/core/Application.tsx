@@ -1,11 +1,10 @@
 import { Stage } from '@pixi/react';
 import * as React from 'react';
-import * as Debug from './debug';
-import { useHLF } from './global';
-import { useDefaultState } from './hooks/useDefaultState';
-import { useSetAppSize } from './hooks/useSetAppSize';
-import { Popup, PopupManager } from './popups';
-import { LoadingState, State, StateManager } from './state';
+import * as Debug from '../debug';
+import { useHLF } from '../global';
+import { useDefaultState, useSetAppSize } from '../hooks';
+import { Popup, PopupManager } from '../popups';
+import { LoadingState, State, StateManager } from '../state';
 
 const isDev = process.env.NODE_ENV === 'development';
 

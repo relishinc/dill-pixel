@@ -1,6 +1,7 @@
 import { Container, Texture } from 'pixi.js';
 import { resolveXYFromObjectOrArray } from '../../../utils';
-import { IPhysicsAddFactory, IPhysicsObject, PhysicsBodyType } from '../../index';
+import { IPhysicsAddFactory, IPhysicsObject } from '../../interfaces';
+import { PhysicsBodyType } from '../../types';
 import { Make } from './Make';
 
 export class Add implements IPhysicsAddFactory {
