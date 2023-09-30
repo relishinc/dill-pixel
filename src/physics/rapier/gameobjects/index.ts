@@ -1,2 +1,2 @@
-export {RapierPhysicsComposite} from './RapierPhysicsComposite'
-export {RapierPhysicsSprite} from './RapierPhysicsSprite'
+export { RapierPhysicsComposite } from './RapierPhysicsComposite';
+export { RapierPhysicsSprite } from './RapierPhysicsSprite';

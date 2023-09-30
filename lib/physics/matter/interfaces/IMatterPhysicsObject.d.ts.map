@@ -1,0 +1,1 @@
+{"version":3,"file":"IMatterPhysicsObject.d.ts","sourceRoot":"","sources":["../../../../src/physics/matter/interfaces/IMatterPhysicsObject.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,cAAc,EAAE,MAAM,UAAU,CAAC;AAE1C,MAAM,WAAW,oBAAoB;IACnC,IAAI,EAAE,cAAc,CAAC;IACrB,UAAU,EAAE,MAAM,CAAC;IAEnB,MAAM,IAAI,IAAI,CAAC;CAChB"}

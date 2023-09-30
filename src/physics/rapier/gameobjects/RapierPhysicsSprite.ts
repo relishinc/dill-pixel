@@ -13,7 +13,7 @@ import { Application } from '../../../core/Application';
 import { resolveXYFromObjectOrArray } from '../../../utils';
 import { SpritesheetLike } from '../../../utils/Types';
 import { IPhysicsObject, PhysicsBodyType } from '../../index';
-import RapierPhysics from '../RapierPhysics';
+import { RapierPhysics } from '../RapierPhysics';
 
 export class RapierPhysicsSprite extends Container implements IPhysicsObject {
   public static readonly DEFAULT_DEBUG_COLOR: number = 0x29c5f6;

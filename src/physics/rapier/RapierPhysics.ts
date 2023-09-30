@@ -4,15 +4,10 @@ import { Application } from '../../core/Application';
 import { PhysicsBase } from '../PhysicsBase';
 import { PointLike } from '../types';
 import { Factory } from './factory';
-import { IRapierPhysicsObject, RapierBodyLike } from './index';
+import { IRapierPhysicsObject, IRapierWallDefinition } from './interfaces';
+import { RapierBodyLike } from './types';
 
-export interface WallDefinition {
-  position: PointLike;
-  size: PointLike;
-  angle?: number;
-}
-
-export default class RapierPhysics extends PhysicsBase {
+export class RapierPhysics extends PhysicsBase {
   protected _debug: boolean = true;
   private _updateables: IRapierPhysicsObject[] = [];
   private _world: World;
@@ -91,7 +86,7 @@ export default class RapierPhysics extends PhysicsBase {
     this._isRunning = false;
   }
 
-  public makeWall(def: WallDefinition) {
+  public makeWall(def: IRapierWallDefinition) {
     const bodyDesc = RAPIER.RigidBodyDesc.fixed()
       .setTranslation(def.position.x, def.position.y)
       .setRotation(def.angle || 0);

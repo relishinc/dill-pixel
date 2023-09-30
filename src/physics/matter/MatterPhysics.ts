@@ -1,11 +1,12 @@
 import { Container, Graphics } from 'pixi.js';
 import { Application } from '../../core/Application';
-import { PointLike } from '../index';
 import { PhysicsBase } from '../PhysicsBase';
+import { PointLike } from '../types';
 import { Factory } from './factory';
-import { IMatterPhysicsObject, MatterBodyLike } from './index';
+import { IMatterPhysicsObject } from './interfaces';
+import { MatterBodyLike } from './types';
 
-export default class MatterPhysics extends PhysicsBase {
+export class MatterPhysics extends PhysicsBase {
   protected _debug: boolean = false;
   private _updateables: IMatterPhysicsObject[] = [];
   private _engine: Matter.Engine;

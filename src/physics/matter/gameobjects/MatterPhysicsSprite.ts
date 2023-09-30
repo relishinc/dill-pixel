@@ -2,8 +2,9 @@ import { Container, Sprite, Texture } from 'pixi.js';
 import { Application } from '../../../core/Application';
 import { resolveXYFromObjectOrArray } from '../../../utils';
 import { SpritesheetLike } from '../../../utils/Types';
-import { IPhysicsObject, PhysicsBodyType } from '../../index';
-import MatterPhysicsBase from '../MatterPhysics';
+import { IPhysicsObject } from '../../interfaces';
+import { PhysicsBodyType } from '../../types';
+import { MatterPhysics } from '../MatterPhysics';
 
 export class MatterPhysicsSprite extends Container implements IPhysicsObject {
   public static readonly DEFAULT_DEBUG_COLOR: number = 0x29c5f6;
@@ -44,8 +45,8 @@ export class MatterPhysicsSprite extends Container implements IPhysicsObject {
     this.on('removed', this.onRemoved);
   }
 
-  get physics(): MatterPhysicsBase {
-    return this.app.physics as MatterPhysicsBase;
+  get physics(): MatterPhysics {
+    return this.app.physics as MatterPhysics;
   }
 
   public get debugColor(): number {

@@ -1,6 +1,6 @@
 import { Container } from 'pixi.js';
-import { IPhysicsAddFactory, IPhysicsBase, IPhysicsFactory } from 'src/physics/index';
 import { Application } from '../core';
+import { IPhysicsAddFactory, IPhysicsBase, IPhysicsFactory } from './interfaces';
 
 export class PhysicsBase implements IPhysicsBase {
   _factory: IPhysicsFactory;

@@ -11,7 +11,7 @@ import { Container, DisplayObject, Sprite } from 'pixi.js';
 import { Application } from '../../../core/Application';
 import { resolveXYFromObjectOrArray } from '../../../utils';
 import { IPhysicsObject, PhysicsBodyType } from '../../index';
-import RapierPhysics from '../RapierPhysics';
+import { RapierPhysics } from '../RapierPhysics';
 
 export class RapierPhysicsComposite extends Container implements IPhysicsObject {
   public static readonly DEFAULT_DEBUG_COLOR: number = 0x29c5f6;
