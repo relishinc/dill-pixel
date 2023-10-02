@@ -1,9 +1,9 @@
-import { IMovingPlatform, IPlatform, MovingPlatform, Platform } from '@/gameobjects/Platform.tsx';
-import { Player } from '@/gameobjects/Player.tsx';
-import { BasicStateBackground } from '@/ui/BasicStateBackground.tsx';
-import { GREEN } from '@/utils/Constants.ts';
+import { IMovingPlatform, IPlatform, MovingPlatform, Platform } from '@/gameobjects/Platform';
+import { Player } from '@/gameobjects/Player';
+import { BasicStateBackground } from '@/ui/BasicStateBackground';
+import { GREEN } from '@/utils/Constants';
 import { Container, Text, useTick } from '@pixi/react';
-import { ISprite, State } from 'html-living-framework/react';
+import { ISprite, State } from 'dill-pixel/react';
 import { Rectangle, TextStyle } from 'pixi.js';
 import * as React from 'react';
 import { RefObject } from 'react';
@@ -50,7 +50,7 @@ const usePlayerMovement = (
   x: number,
   y: number,
   gravity: number,
-  player: ISprite,
+  player: ISprite | null,
   ...platforms: RefObject<IMovingPlatform | IPlatform>[]
 ) => {
   // reference for which keys are pressed
@@ -71,6 +71,9 @@ const usePlayerMovement = (
   // Player move function
   const movePlayer = React.useCallback(
     (dx: number, dy: number) => {
+      if (!player) {
+        return;
+      }
       const hitArea = player.hitArea as Rectangle;
       const pos = player.toGlobal(hitArea);
 
@@ -170,7 +173,7 @@ const usePlayerMovement = (
 
     movementRef.current.y += gravity;
     const lastMovement = movePlayer(movementRef.current.x, movementRef.current.y);
-    if (lastMovement.y > playerPosition.y) {
+    if (lastMovement && lastMovement.y > playerPosition.y) {
       setCanJump(false);
     }
   });

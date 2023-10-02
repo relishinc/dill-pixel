@@ -1,11 +1,10 @@
-import { usePopupAnimations } from '@/hooks/usePopupAnimations.ts';
-import { GREEN } from '@/utils/Constants.ts';
+import { usePopupAnimations } from '@/hooks/usePopupAnimations';
 import { Text } from '@pixi/react';
 import { Container, Graphics } from '@pixi/react-animated';
-import { useHLF } from 'html-living-framework/react';
-import { Popup } from 'html-living-framework/react/popups';
+import { Popup, useHLF } from 'dill-pixel/react';
 import { TextStyle } from 'pixi.js';
 import React from 'react';
+import { GREEN } from '../utils/Constants';
 
 export const SpringPopup: Popup = ({ id, animationState, size, onInAnimationComplete, onOutAnimationComplete }) => {
   const hidePopup = useHLF((globalState) => globalState.hidePopup);
@@ -30,7 +29,6 @@ export const SpringPopup: Popup = ({ id, animationState, size, onInAnimationComp
           anchor={0.5}
           x={size.width * 0.5}
           y={size.height * 0.5}
-          cacheAsBitmap={true}
           draw={(g) => {
             g.clear();
             g.beginFill(GREEN, 0.9);

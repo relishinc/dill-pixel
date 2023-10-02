@@ -1,10 +1,13 @@
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig, normalizePath} from 'vite';
-import {createHtmlPlugin} from 'vite-plugin-html';
-import {viteStaticCopy} from 'vite-plugin-static-copy';
+import { fileURLToPath } from 'url';
+import { defineConfig, normalizePath } from 'vite';
+import { createHtmlPlugin } from 'vite-plugin-html';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 import topLevelAwait from 'vite-plugin-top-level-await';
 import wasm from 'vite-plugin-wasm';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 /** @type {import("vite").UserConfig} */
 export default defineConfig((config) => ({
@@ -52,7 +55,7 @@ export default defineConfig((config) => ({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      'html-living-framework': path.resolve(__dirname, '../src'),
+      'dill-pixel': path.resolve(__dirname, '../src'),
     },
   },
 }));

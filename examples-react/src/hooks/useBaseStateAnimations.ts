@@ -4,8 +4,8 @@ import * as React from 'react';
 
 export const useBaseStateAnimations = (
   animationState: 'in' | 'out' | 'idle',
-  onInAnimationComplete: () => void,
-  onOutAnimationComplete: () => void,
+  onInAnimationComplete: (() => void) | undefined,
+  onOutAnimationComplete: (() => void) | undefined,
 ) => {
   const containerRef = React.useRef<IContainer>(null);
   const animateIn = React.useCallback(

@@ -1,9 +1,9 @@
 import { useBaseStateAnimations } from '@/hooks/useBaseStateAnimations';
 import { BasicStateBackground } from '@/ui/BasicStateBackground';
 import { List } from '@/ui/List';
-import { whiteTextStyle } from '@/utils/text.ts';
+import { whiteTextStyle } from '@/utils/text';
 import { Container, Text } from '@pixi/react';
-import { State } from 'html-living-framework/react';
+import { State } from 'dill-pixel/react';
 import { TextStyle } from 'pixi.js';
 import * as React from 'react';
 
@@ -21,7 +21,7 @@ export const UIListExample: State = ({ size, animationState, onInAnimationComple
         style={new TextStyle({ fontFamily: 'Arial', fontWeight: 'bold', fill: 0xffffff, fontSize: 48 })}
       />
       <List
-        type={'horizontal'}
+        type={'vertical'}
         elementsMargin={50}
         horPadding={40}
         x={size.width * 0.5}

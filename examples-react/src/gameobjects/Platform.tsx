@@ -1,5 +1,5 @@
 import { Container, Graphics, useTick } from '@pixi/react';
-import { IContainer } from 'html-living-framework/react';
+import { IContainer } from 'dill-pixel/react';
 import React from 'react';
 
 type PlatformProps = {

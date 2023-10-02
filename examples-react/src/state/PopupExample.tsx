@@ -1,11 +1,12 @@
-import { SpringPopup } from '@/popups/SpringPopup.tsx';
-import { BasicStateBackground } from '@/ui/BasicStateBackground.tsx';
-import { whiteTextStyle } from '@/utils/text.ts';
+import { SpringPopup } from '@/popups/SpringPopup';
+import { BasicStateBackground } from '@/ui/BasicStateBackground';
+import { whiteTextStyle } from '@/utils/text';
 import { Container, Text } from '@pixi/react';
+import { IContainer, State, useHLF, useStateAnimations } from 'dill-pixel/react';
 import { gsap } from 'gsap';
-import { IContainer, State, useHLF, useStateAnimations } from 'html-living-framework/react';
 import { TextStyle } from 'pixi.js';
-import * as React from 'react';
+import React from 'react';
+import { ExamplePopup } from '../popups/ExamplePopup';
 
 export const PopupExample: State = ({ size, animationState, onInAnimationComplete, onOutAnimationComplete }) => {
   const showPopup = useHLF((globalState) => globalState.showPopup);
@@ -38,7 +39,8 @@ export const PopupExample: State = ({ size, animationState, onInAnimationComplet
   useStateAnimations(animationState, animateIn, animateOut, onInAnimationComplete, onOutAnimationComplete);
 
   const onShowPopup = React.useCallback(() => {
-    showPopup(SpringPopup);
+    // make sure both types of popups work
+    showPopup(Math.random() > 0.5 ? ExamplePopup : SpringPopup);
   }, [showPopup]);
 
   return (
@@ -53,13 +55,14 @@ export const PopupExample: State = ({ size, animationState, onInAnimationComplet
       />
       <Text
         text={`Show popup`}
-        anchor={[1, 1]}
-        x={size.width - 10}
-        y={size.height - 10}
+        anchor={[0.5, 0.5]}
+        x={size.width * 0.5}
+        y={size.height - 100}
         style={whiteTextStyle(24)}
         eventMode={'static'}
         cursor={'pointer'}
         onclick={onShowPopup}
+        zIndex={9999}
       />
     </Container>
   );
