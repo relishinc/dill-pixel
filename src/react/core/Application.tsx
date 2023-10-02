@@ -15,12 +15,25 @@ type ReactApplicationProps = {
   states: State[];
   popups: Popup[];
   children?: React.ReactNode;
+  enableDevTools?: boolean;
+  showDevMenu?: boolean;
+  showFPSInProduction?: boolean;
 };
 
 type ReactApplication = React.FC<ReactApplicationProps>;
 
 // create a standard application component that wraps a PIXI React application in the HLF context
-export const Application: ReactApplication = ({ el, states, popups, defaultState, loadingState, children }) => {
+export const Application: ReactApplication = ({
+  el,
+  states,
+  popups,
+  defaultState,
+  loadingState,
+  enableDevTools,
+  showDevMenu,
+  showFPSInProduction,
+  children,
+}) => {
   const { appStates, appStateNames } = React.useMemo(() => {
     return { appStates: states, appStateNames: states.map((S) => S.name) };
   }, []);
@@ -32,13 +45,12 @@ export const Application: ReactApplication = ({ el, states, popups, defaultState
   const [size, currentState] = useHLF((state) => [state.size, state.currentState, state.transitionTo]);
 
   useSetAppSize(el);
-  useDefaultState(defaultState);
-
+  useDefaultState(defaultState, appStates, appStateNames);
   return (
     <>
       <Stage key={'Stage'} {...size} options={{ resizeTo: el }}>
         {/* create a debug menu to select game states */}
-        {isDev && <Debug.DevTools />}
+        {(isDev || enableDevTools) && <Debug.DevTools />}
         <StateManager
           key={'StateManager'}
           states={appStates}
@@ -49,7 +61,17 @@ export const Application: ReactApplication = ({ el, states, popups, defaultState
         {appPopups && <PopupManager key={'PopupManager'} popups={appPopups} />}
         {children}
       </Stage>
-      {isDev && <Debug.Menu defaultState={defaultState} appStates={appStates} appStateNames={appStateNames} />}
+
+      {(isDev || showDevMenu || showFPSInProduction) && (
+        <Debug.Menu
+          defaultState={currentState}
+          appStates={appStates}
+          appStateNames={appStateNames}
+          isDev={isDev}
+          showMenu={showDevMenu}
+          showFPSInProduction={showFPSInProduction}
+        />
+      )}
     </>
   );
 };

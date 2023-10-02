@@ -1,7 +1,7 @@
 import { GREEN } from '@/utils/Constants.ts';
 import { Container, Graphics, Text } from '@pixi/react';
+import { IContainer, LoadingState, useStateAnimations } from 'dill-pixel/react';
 import { gsap } from 'gsap';
-import { IContainer, LoadingState, useStateAnimations } from 'html-living-framework/react';
 import { TextStyle } from 'pixi.js';
 import * as React from 'react';
 

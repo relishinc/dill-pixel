@@ -1,11 +1,11 @@
 import { ExamplePopup } from '@/popups/ExamplePopup';
-import { SpringPopup } from '@/popups/SpringPopup.tsx';
-import { PlatformerExample } from '@/state/PlatformerExample.tsx';
-import { PopupExample } from '@/state/PopupExample.tsx';
-import { SpriteExample } from '@/state/SpriteExample.tsx';
-import { UIListExample } from '@/state/UIListExample.tsx';
+import { SpringPopup } from '@/popups/SpringPopup';
+import { PlatformerExample } from '@/state/PlatformerExample';
+import { PopupExample } from '@/state/PopupExample';
+import { SpriteExample } from '@/state/SpriteExample';
+import { UIListExample } from '@/state/UIListExample';
 import { Loader } from '@/ui/Loader';
-import { Application } from 'html-living-framework/react';
+import { Application } from 'dill-pixel/react';
 import * as React from 'react';
 
 export function App({ el }: { el: HTMLElement | Window }) {

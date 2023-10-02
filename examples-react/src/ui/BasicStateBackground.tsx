@@ -1,6 +1,6 @@
 import { DARK_GREEN } from '@/utils/Constants.ts';
 import { Graphics } from '@pixi/react';
-import { useHLF } from 'html-living-framework/react';
+import { useHLF } from 'dill-pixel/react';
 import * as React from 'react';
 
 export const BasicStateBackground = ({ color = DARK_GREEN }: { color?: number }) => {

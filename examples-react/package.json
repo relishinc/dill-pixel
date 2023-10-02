@@ -17,8 +17,6 @@
   "author": "Relish Digital<dev@reli.sh>",
   "license": "ISC",
   "devDependencies": {
-    "@types/react": "^18.2.18",
-    "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
     "@vitejs/plugin-react": "^4.0.4",
@@ -31,13 +29,9 @@
     "vite-plugin-wasm": "^3.2.2"
   },
   "dependencies": {
-    "@pixi/react": "^7.1.1",
-    "@pixi/react-animated": "^7.1.1",
     "@pixi/ui": "^0.9.0",
     "dill-pixel": "file:..",
     "gsap": "^3.11.5",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "react-spring": "^9.7.3"
   }
 }

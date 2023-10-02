@@ -1,15 +1,13 @@
-import { BasicStateBackground } from '@/ui/BasicStateBackground.tsx';
-import { List } from '@/ui/List.tsx';
+import { BasicStateBackground } from '@/ui/BasicStateBackground';
+import { List } from '@/ui/List';
 import { Container, Text } from '@pixi/react';
+import { IContainer, Sprite, State, useStateAnimations } from 'dill-pixel/react';
 import { gsap } from 'gsap';
-import { IContainer, State, useStateAnimations } from 'html-living-framework/react';
-import { Sprite } from 'html-living-framework/react/gameobjects/Sprite.tsx';
 import { TextStyle } from 'pixi.js';
 import * as React from 'react';
 
 export const SpriteExample: State = ({ size, animationState, onInAnimationComplete, onOutAnimationComplete }) => {
   const containerRef = React.useRef<IContainer>(null);
-
   const animateIn = React.useCallback(
     () =>
       gsap.fromTo(

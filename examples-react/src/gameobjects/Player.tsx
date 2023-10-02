@@ -1,5 +1,5 @@
 import { Container, Graphics, Sprite } from '@pixi/react';
-import { IContainer, ISprite } from 'html-living-framework/react';
+import { IContainer, ISprite } from 'dill-pixel/react';
 import { Rectangle } from 'pixi.js';
 import * as React from 'react';
 

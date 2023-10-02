@@ -3,8 +3,8 @@ import * as React from 'react';
 // define a props interface for the State Component
 export type StateProps = {
   size: { width: number; height: number };
-  onInAnimationComplete?: () => void;
-  onOutAnimationComplete?: () => void;
+  onInAnimationComplete?: () => void | undefined;
+  onOutAnimationComplete?: () => void | undefined;
   animationState: 'in' | 'out' | 'idle';
   children?: React.ReactNode[];
 };

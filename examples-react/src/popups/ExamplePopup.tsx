@@ -1,8 +1,7 @@
-import { GREEN } from '@/utils/Constants.ts';
+import { GREEN } from '@/utils/Constants';
 import { Container, Graphics, Text } from '@pixi/react';
+import { IContainer, IText, Popup, useHLF, useStateAnimations } from 'dill-pixel/react';
 import { gsap } from 'gsap';
-import { IContainer, IText, useHLF, useStateAnimations } from 'html-living-framework/react';
-import { Popup } from 'html-living-framework/react/popups';
 import { TextStyle } from 'pixi.js';
 import React from 'react';
 
