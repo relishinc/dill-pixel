@@ -12,8 +12,7 @@
   "scripts": {
     "dev": "cd ./examples && npm run dev",
     "dev:react": "cd ./examples-react && npm run dev",
-    "prebuild": "node ./scripts/generate-version.js",
-    "build": "npm run prebuild && npm run compile",
+    "build": "npm run version && npm run compile",
     "compile": "tsc",
     "build:examples": "cd ./examples && npm run build",
     "visualize:examples": "cd ./examples && npx vite-bundle-visualizer",
@@ -21,7 +20,7 @@
     "lint": "eslint --ext .ts ./src/**/*",
     "docs": "npm run version && typedoc --out docs src",
     "copy": "copyfiles ./src/**/* ../hlf-example-template/relish-hlf",
-    "version": "node build_scripts/version.mjs"
+    "version": "node ./scripts/generate-version.js"
   },
   "repository": {
     "type": "git",
