@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.6.3](https://github.com/relishinc/dill-pixel/compare/v2.6.2...v2.6.3) (2023-10-11)
+
+
+### Bug Fixes
+
+* added howler / physics types ([fdcd922](https://github.com/relishinc/dill-pixel/commit/fdcd922c1dd99317bf5ad857e53381a6168806f0))
+* stats.js dependency ([8f1b3a5](https://github.com/relishinc/dill-pixel/commit/8f1b3a5784999c3f10d1236a372eaecaade3b844))
+
 ## [2.6.2](https://github.com/relishinc/dill-pixel/compare/v2.6.1...v2.6.2) (2023-10-11)
 
 
