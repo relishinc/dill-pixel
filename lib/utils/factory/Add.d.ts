@@ -1,4 +1,5 @@
-import { Container, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Point, Sprite, TextStyle, Texture } from 'pixi.js';
+import { Geometry, State } from '@pixi/core';
+import { Container, DRAW_MODES, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Mesh, Point, Shader, SimplePlane, Sprite, TextStyle, Texture } from 'pixi.js';
 export declare class Add {
     private defaultContainer;
     constructor(defaultContainer: Container);
@@ -47,13 +48,30 @@ export declare class Add {
         x: number;
         y: number;
     } | [number, number?] | number): import("pixi.js").TilingSprite;
+    static mesh(pGeometry: Geometry, pShader: Shader, pState?: State, pDrawMode?: DRAW_MODES, alpha?: number, position?: {
+        x: number;
+        y: number;
+    } | [number, number?] | number, scale?: {
+        x: number;
+        y: number;
+    } | [number, number?] | number): Mesh<Shader>;
     simpleRope(pAsset: string | Texture, pSheet?: string | undefined, pNumPoints?: number, pSegmentLength?: number, pAutoUpdate?: boolean, alpha?: number, position?: {
         x: number;
         y: number;
     } | [number, number?] | number, scale?: {
         x: number;
         y: number;
-    } | [number, number?] | number): import("pixi.js").SimpleRope;
+    } | [number, number?] | number): {
+        rope: import("pixi.js").SimpleRope;
+        points: Point[];
+    };
+    simplePlane(pAsset: string | Texture, pSheet: string | undefined, pVertsWidth: number, pVertsHeight: number, alpha?: number, position?: {
+        x: number;
+        y: number;
+    } | [number, number?] | number, scale?: {
+        x: number;
+        y: number;
+    } | [number, number?] | number): SimplePlane;
     text(pText?: string, pStyle?: Partial<ITextStyle> | TextStyle, alpha?: number, position?: {
         x: number;
         y: number;
