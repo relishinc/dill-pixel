@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.2](https://github.com/relishinc/dill-pixel/compare/v2.6.1...v2.6.2) (2023-10-11)
+
+
+### Bug Fixes
+
+* release lib build ([e6d7c3e](https://github.com/relishinc/dill-pixel/commit/e6d7c3e14a7be116a35d6bc00f4fff15bc254912))
+
 ## [2.6.1](https://github.com/relishinc/dill-pixel/compare/v2.6.0...v2.6.1) (2023-10-11)
 
 
