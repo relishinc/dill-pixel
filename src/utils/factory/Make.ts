@@ -146,12 +146,12 @@ export class Make {
     return new Graphics();
   }
 
-  static tiledSprite(
+  static tilingSprite(
     pTexture: string | Texture,
     pSheet: SpritesheetLike,
     pWidth: number,
     pHeight: number,
-    pTilePosition?: ObservablePoint,
+    pTilePosition?: Point,
   ): TilingSprite {
     const tilingSprite = new TilingSprite(
       typeof pTexture === 'string' ? this.texture(pTexture, pSheet) : pTexture,
@@ -160,7 +160,8 @@ export class Make {
     );
     setObjectName(tilingSprite, pTexture, pSheet);
     if (pTilePosition) {
-      tilingSprite.tilePosition = pTilePosition;
+      tilingSprite.tilePosition.x = pTilePosition.x;
+      tilingSprite.tilePosition.y = pTilePosition.y;
     }
     return tilingSprite;
   }

@@ -12,6 +12,7 @@ import {
   TextureAsset,
   TransitionType,
 } from 'dill-pixel';
+import { LevelEditor } from '../../src/misc';
 
 export default class Application extends HLFApplication {
   constructor() {
@@ -40,7 +41,12 @@ export default class Application extends HLFApplication {
     return this.state.getStateFromHash() || PopupExample.NAME;
   }
 
-  protected getFontsList(): { family: string; data?: { weight?: number | string } }[] {
+  protected getFontsList(): {
+    family: string;
+    data?: {
+      weight?: number | string;
+    };
+  }[] {
     return [{ family: 'arboria', data: { weight: 400 } }];
   }
 
@@ -61,6 +67,12 @@ export default class Application extends HLFApplication {
     this.state.register(RapierPhysicsExample);
     this.state.register(PopupExample);
     this.state.register(SpriteExample);
+    // register a level editor
+    LevelEditor.components = [
+      { type: 'sprite', texture: 'pickle' },
+      { type: 'sprite', texture: 'relish-logo-circle' },
+    ];
+    this.state.register(LevelEditor);
   }
 
   protected createAssetMap(): void {
@@ -69,6 +81,10 @@ export default class Application extends HLFApplication {
     this.addAssetGroup(RapierPhysicsExample);
     this.addAssetGroup(PopupExample);
     this.addAssetGroup(SpriteExample);
+    this.addAssetGroup(LevelEditor, [
+      new TextureAsset('pickle', AssetType.PNG),
+      new TextureAsset('relish-logo-circle', AssetType.PNG),
+    ]);
     // this.addAssetGroup(SpriteDebugExample);
   }
 }
