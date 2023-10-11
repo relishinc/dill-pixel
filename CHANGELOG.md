@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.4](https://github.com/relishinc/dill-pixel/compare/v2.6.3...v2.6.4) (2023-10-11)
+
+
+### Bug Fixes
+
+* factory implementation for rope ([0e7ac0e](https://github.com/relishinc/dill-pixel/commit/0e7ac0edd3d3658e14892e402dfc1e2efc98a091))
+
 ## [2.6.3](https://github.com/relishinc/dill-pixel/compare/v2.6.2...v2.6.3) (2023-10-11)
 
 
