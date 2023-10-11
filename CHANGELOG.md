@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.6.0](https://github.com/relishinc/dill-pixel/compare/v2.5.0...v2.6.0) (2023-10-11)
+
+
+### Features
+
+* cleaned up react-pixi implementation ([b9ca473](https://github.com/relishinc/dill-pixel/commit/b9ca4736fffba21b2eac279a42d34a9c2e196eda))
+* trimmed down & optimized tsconfig files, removed unneeded config files for tslint etc ([08046c7](https://github.com/relishinc/dill-pixel/commit/08046c75123fa776f59cb7471354e59a4af9d938))
+
 ## [2.5.0](https://github.com/relishinc/hlf/compare/v2.4.0...v2.5.0) (2023-09-27)
 
 
