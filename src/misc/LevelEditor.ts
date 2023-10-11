@@ -1,8 +1,8 @@
-import { Point } from 'pixi.js';
-import { FlexContainer } from '../gameobjects';
-import { State } from '../state';
-import { scaleToWidth } from '../utils';
-
+import {Point} from 'pixi.js';
+import {FlexContainer} from '../gameobjects';
+import {State} from '../state';
+import {scaleToWidth} from '../utils';
+//
 export type LevelEditorLayer = 'background' | 'collision' | 'foreground';
 
 export class LevelEditor extends State {
