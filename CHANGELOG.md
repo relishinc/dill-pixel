@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.1](https://github.com/relishinc/dill-pixel/compare/v2.6.0...v2.6.1) (2023-10-11)
+
+
+### Bug Fixes
+
+* package.json version fix ([f053991](https://github.com/relishinc/dill-pixel/commit/f053991f7d278627b6c118c9565234b704fece61))
+
 ## [2.6.0](https://github.com/relishinc/dill-pixel/compare/v2.5.0...v2.6.0) (2023-10-11)
 
 
