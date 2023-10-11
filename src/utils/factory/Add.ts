@@ -1,10 +1,15 @@
+import { Geometry, State } from '@pixi/core';
 import {
   Container,
   DisplayObject,
+  DRAW_MODES,
   HTMLTextStyle,
   IBitmapTextStyle,
   ITextStyle,
+  Mesh,
   Point,
+  Shader,
+  SimplePlane,
   Sprite,
   TextStyle,
   Texture,
@@ -159,6 +164,28 @@ export class Add {
     return this.defaultContainer.addChild(sprite);
   }
 
+  static mesh(
+    pGeometry: Geometry,
+    pShader: Shader,
+    pState?: State,
+    pDrawMode?: DRAW_MODES,
+    alpha: number = 1,
+    position: { x: number; y: number } | [number, number?] | number = { x: 0, y: 0 },
+    scale: { x: number; y: number } | [number, number?] | number = { x: 1, y: 1 },
+  ): Mesh<Shader> {
+    const mesh = Make.mesh(pGeometry, pShader, pState, pDrawMode);
+    mesh.alpha = alpha;
+
+    const resolvedPosition = resolveXYFromObjectOrArray(position);
+    const resolvedScale = resolveXYFromObjectOrArray(scale);
+    mesh.x = resolvedPosition.x;
+    mesh.y = resolvedPosition.y;
+    mesh.scale.x = resolvedScale.x;
+    mesh.scale.y = resolvedScale.y;
+
+    return mesh;
+  }
+
   simpleRope(
     pAsset: string | Texture,
     pSheet?: string | undefined,
@@ -184,7 +211,29 @@ export class Add {
     rope.scale.x = resolvedScale.x;
     rope.scale.y = resolvedScale.y;
 
-    return this.defaultContainer.addChild(rope);
+    return { rope: this.defaultContainer.addChild(rope), points };
+  }
+
+  simplePlane(
+    pAsset: string | Texture,
+    pSheet: string | undefined,
+    pVertsWidth: number,
+    pVertsHeight: number,
+    alpha: number = 1,
+    position: { x: number; y: number } | [number, number?] | number = { x: 0, y: 0 },
+    scale: { x: number; y: number } | [number, number?] | number = { x: 1, y: 1 },
+  ): SimplePlane {
+    const plane = Make.simplePlane(pAsset, pSheet, pVertsWidth, pVertsHeight);
+    plane.alpha = alpha;
+
+    const resolvedPosition = resolveXYFromObjectOrArray(position);
+    const resolvedScale = resolveXYFromObjectOrArray(scale);
+
+    plane.x = resolvedPosition.x;
+    plane.y = resolvedPosition.y;
+    plane.scale.x = resolvedScale.x;
+    plane.scale.y = resolvedScale.y;
+    return plane;
   }
 
   text(
