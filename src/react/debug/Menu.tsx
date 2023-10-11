@@ -75,7 +75,7 @@ export const Menu = ({
             <ReactFpsStats id={'fps'} style={{ position: 'absolute' }} />
           </div>
         )}
-        {(isDev || showMenu) && (
+        {(isDev || showMenu) && appStates && appStates.length > 0 && defaultState && (
           <div id={'state-select'}>
             <select
               ref={selectRef}

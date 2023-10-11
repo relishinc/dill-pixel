@@ -21,7 +21,7 @@ export declare class Make {
     static bitmapText(pText?: string, pStyle?: Partial<IBitmapTextStyle>): BitmapText;
     static container(): Container;
     static graphics(): Graphics;
-    static tiledSprite(pTexture: string | Texture, pSheet: SpritesheetLike, pWidth: number, pHeight: number, pTilePosition?: ObservablePoint): TilingSprite;
+    static tilingSprite(pTexture: string | Texture, pSheet: SpritesheetLike, pWidth: number, pHeight: number, pTilePosition?: Point): TilingSprite;
     static mesh(pGeometry: Geometry, pShader: Shader, pState?: State, pDrawMode?: DRAW_MODES): Mesh<Shader>;
     static simpleRope(pTexture: string | Texture, pSheet: SpritesheetLike, pPoints: (Point | ObservablePoint)[], pAutoUpdate?: boolean): SimpleRope;
     static simplePlane(pTexture: string | Texture, pSheet: SpritesheetLike, pVertsWidth: number, pVertsHeight: number): SimplePlane;

@@ -9,11 +9,13 @@ import { Add, Make } from '../utils/factory';
  */
 export declare abstract class State extends Container {
     static NAME: string;
+    private static _assets;
     protected _size: Point;
     protected _connections: SignalConnections;
     protected _data: any;
     constructor();
     static get ID(): string;
+    static set Assets(pAssets: AssetMapData[]);
     static get Assets(): AssetMapData[];
     /**
      * gets the Applicationinstance

@@ -1,4 +1,4 @@
-import { Container, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Sprite, TextStyle } from "pixi.js";
+import { Container, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Point, Sprite, TextStyle, Texture } from 'pixi.js';
 export declare class Add {
     private defaultContainer;
     constructor(defaultContainer: Container);
@@ -15,7 +15,7 @@ export declare class Add {
     coloredSprite(color?: number, size?: {
         x: number;
         y: number;
-    } | [number, number?] | number, shape?: "rectangle" | "rounded_rectangle" | "circle", alpha?: number, position?: {
+    } | [number, number?] | number, shape?: 'rectangle' | 'rounded_rectangle' | 'circle', alpha?: number, position?: {
         x: number;
         y: number;
     } | [number, number?] | number, anchor?: {
@@ -27,7 +27,7 @@ export declare class Add {
     } | [number, number?] | number, opts?: {
         [key: string]: string | number;
     }): Sprite;
-    sprite(pAsset: string, pSheet?: string | undefined, alpha?: number, position?: {
+    sprite(pAsset: string | Texture, pSheet?: string | undefined, alpha?: number, position?: {
         x: number;
         y: number;
     } | [number, number?] | number, anchor?: {
@@ -37,6 +37,23 @@ export declare class Add {
         x: number;
         y: number;
     } | [number, number?] | number): Sprite;
+    tilingSprite(pAsset: string | Texture, pSheet?: string | undefined, alpha?: number, width?: number, height?: number, tilePosition?: Point, position?: {
+        x: number;
+        y: number;
+    } | [number, number?] | number, anchor?: {
+        x: number;
+        y: number;
+    } | [number, number?] | number, scale?: {
+        x: number;
+        y: number;
+    } | [number, number?] | number): import("pixi.js").TilingSprite;
+    simpleRope(pAsset: string | Texture, pSheet?: string | undefined, pNumPoints?: number, pSegmentLength?: number, pAutoUpdate?: boolean, alpha?: number, position?: {
+        x: number;
+        y: number;
+    } | [number, number?] | number, scale?: {
+        x: number;
+        y: number;
+    } | [number, number?] | number): import("pixi.js").SimpleRope;
     text(pText?: string, pStyle?: Partial<ITextStyle> | TextStyle, alpha?: number, position?: {
         x: number;
         y: number;

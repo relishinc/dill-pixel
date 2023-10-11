@@ -4,8 +4,8 @@ export type StateProps = {
         width: number;
         height: number;
     };
-    onInAnimationComplete?: () => void;
-    onOutAnimationComplete?: () => void;
+    onInAnimationComplete?: () => void | undefined;
+    onOutAnimationComplete?: () => void | undefined;
     animationState: 'in' | 'out' | 'idle';
     children?: React.ReactNode[];
 };
