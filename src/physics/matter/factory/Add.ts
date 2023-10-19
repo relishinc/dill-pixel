@@ -1,5 +1,5 @@
 import { Container, Texture } from 'pixi.js';
-import { resolvePointLike } from '../../../utils';
+import { PointLike, resolvePointLike } from '../../../utils';
 import { IPhysicsAddFactory, IPhysicsObject } from '../../interfaces';
 import { PhysicsBodyType } from '../../types';
 import { Make } from './Make';
@@ -19,22 +19,10 @@ export class Add implements IPhysicsAddFactory {
   physicsSprite(
     pTexture: string | Texture,
     pSheet?: string | undefined,
-    pSize?:
-      | {
-          x: number;
-          y: number;
-        }
-      | [number, number?]
-      | number,
+    pSize?: PointLike,
     pType: PhysicsBodyType = PhysicsBodyType.RECTANGLE,
     pAlpha: number = 1,
-    pPosition:
-      | {
-          x: number;
-          y: number;
-        }
-      | [number, number?]
-      | number = { x: 0, y: 0 },
+    pPosition: PointLike = { x: 0, y: 0 },
   ): IPhysicsObject {
     const sprite = this.make.physicsSprite(pTexture, pSheet, pSize, pType);
     sprite.alpha = pAlpha;
