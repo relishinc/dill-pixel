@@ -29,7 +29,14 @@ export class PhysicsBase implements IPhysicsBase {
     this.factory.container = value;
   }
 
-  init(pAutoStart: boolean, pDebug: boolean, autoCreateBounds?: boolean, pEngineOptions?: any): void {
+  /**
+   * Initializes the physics engine
+   * @param _autoStart
+   * @param _debug
+   * @param _autoCreateBounds
+   * @param _engineOptions
+   */
+  init(_autoStart: boolean, _debug: boolean, _autoCreateBounds?: boolean, _engineOptions?: any): void {
     // noop
   }
 
