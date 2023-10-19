@@ -8,7 +8,7 @@ import type {
   World,
 } from '@dimforge/rapier2d';
 import { Container, DisplayObject, Sprite } from 'pixi.js';
-import { Application } from '../../../core/Application';
+import { Application } from '../../../core';
 import { resolvePointLike } from '../../../utils';
 import { IPhysicsObject, PhysicsBodyType } from '../../index';
 import { RapierPhysics } from '../RapierPhysics';

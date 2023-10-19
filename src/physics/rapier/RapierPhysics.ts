@@ -1,11 +1,10 @@
 import type { Vector2, World } from '@dimforge/rapier2d';
 import { Container, Graphics } from 'pixi.js';
-import { Application } from '../../core/Application';
+import { Application } from '../../core';
 import { PhysicsBase } from '../PhysicsBase';
-import { PointLike } from '../types';
 import { Factory } from './factory';
 import { IRapierPhysicsObject, IRapierWallDefinition } from './interfaces';
-import { RapierBodyLike } from './types';
+import { PointObjectLike, RapierBodyLike } from './types';
 
 export class RapierPhysics extends PhysicsBase {
   protected _debug: boolean = true;
@@ -13,7 +12,7 @@ export class RapierPhysics extends PhysicsBase {
   private _world: World;
   private _debugGraphics: Graphics;
   private _debugContainer: Container;
-  private _bounds: PointLike = { x: 0, y: 0 };
+  private _bounds: PointObjectLike = { x: 0, y: 0 };
   private _isRunning: boolean = false;
   private _systemOfUnitsFactor: number = 500;
 

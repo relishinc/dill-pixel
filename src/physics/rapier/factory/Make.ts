@@ -1,8 +1,8 @@
 import { Texture } from 'pixi.js';
-import { SpritesheetLike } from '../../../utils/Types';
+import { SpritesheetLike } from '../../../utils';
 import { IPhysicsObject } from '../../interfaces';
 import { PhysicsBodyType } from '../../types';
-import { RapierPhysicsSprite } from '../gameobjects/RapierPhysicsSprite';
+import { RapierPhysicsSprite } from '../gameobjects';
 
 export class Make {
   public static physicsSprite(
