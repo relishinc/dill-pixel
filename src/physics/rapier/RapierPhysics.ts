@@ -133,12 +133,8 @@ export class RapierPhysics extends PhysicsBase {
 
   addToWorld(...objects: (IRapierPhysicsObject | RapierBodyLike)[]) {
     objects.forEach((obj) => {
-      let body: RapierBodyLike;
       if (obj.hasOwnProperty('body')) {
-        body = (obj as IRapierPhysicsObject).body;
         this._updateables.push(obj as IRapierPhysicsObject);
-      } else {
-        body = obj as RapierBodyLike;
       }
     });
   }

@@ -209,9 +209,9 @@ export class TouchManager {
 
   /**
    * onTouchMove
-   * @param pEvent
+   * @param _event
    */
-  protected onTouchMove(pEvent: FederatedPointerEvent): void {
+  protected onTouchMove(_event: FederatedPointerEvent): void {
     // Swipe
     if (this._touches.length === 1 && this._onSwipe !== undefined) {
       const pos: Point = this.getTouchPos(this._touches[0], GestureType.SWIPE);

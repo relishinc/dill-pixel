@@ -32,7 +32,7 @@ export class DefaultKeyboardFocusManagerSprite extends Sprite implements IKeyboa
     this.redraw();
   }
 
-  public hide(pOnComplete?: () => void, pInstantly?: boolean): void {
+  public hide(pOnComplete?: () => void): void {
     this._target = undefined;
     if (this._gfx) {
       this._gfx.clear();

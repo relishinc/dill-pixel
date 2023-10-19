@@ -20,9 +20,9 @@ export class LoadScreen extends State {
 
   /**
    * onLoadProgress
-   * @param progress
+   * @param _progress
    */
-  public onLoadProgress(progress: number): void {
+  public onLoadProgress(_progress: number): void {
     // do nothing
   }
 

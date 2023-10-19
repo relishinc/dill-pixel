@@ -175,7 +175,7 @@ export abstract class Receptacle extends Container implements IFocusable {
   /**
    * onPointerMove
    */
-  protected onPointerMove(pEvent: FederatedPointerEvent): void {
+  protected onPointerMove(_event: FederatedPointerEvent): void {
     // override
   }
 
@@ -196,9 +196,9 @@ export abstract class Receptacle extends Container implements IFocusable {
 
   /**
    * Adds draggable
-   * @param pDraggable
+   * @param _draggable
    */
-  protected addDraggable(pDraggable: Draggable): void {
+  protected addDraggable(_draggable: Draggable): void {
     // override
   }
 
@@ -216,10 +216,9 @@ export abstract class Receptacle extends Container implements IFocusable {
 
   /**
    * onDragEnd
-   * @param pTopic
-   * @param pDraggable
+   * @param _draggable
    */
-  protected onDragEnd(pDraggable: Draggable): void {
+  protected onDragEnd(_draggable: Draggable): void {
     if (this._isActive) {
       if (this._isPointerOver && this._dragged !== undefined) {
         this.addDraggable(this._dragged);

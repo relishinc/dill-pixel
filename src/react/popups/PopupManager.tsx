@@ -16,7 +16,7 @@ export const PopupManager = (props: PopupManagerProps) => {
 
   const popups = React.useMemo(() => {
     return activePopupsList
-      .map((p, idx) => {
+      .map((p) => {
         const PopupView = props.popups.find((popup) => popup.name === p.name);
         if (PopupView) {
           return (

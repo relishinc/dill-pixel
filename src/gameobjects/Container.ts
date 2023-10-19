@@ -1,8 +1,8 @@
-import { Container as PIXIContainer, IDestroyOptions, IPoint } from 'pixi.js';
-import { SignalConnection, SignalConnections } from 'typed-signals';
-import { Application } from '../core/Application';
-import { Signals } from '../signals';
-import { Add, Make } from '../utils/factory';
+import {Container as PIXIContainer, IDestroyOptions, IPoint} from 'pixi.js';
+import {SignalConnection, SignalConnections} from 'typed-signals';
+import {Application} from '../core/Application';
+import {Signals} from '../signals';
+import {Add, Make} from '../utils/factory';
 
 /**
  * Enhanced PIXI Container that has a factory for adding children, and a reference to the Application instance
@@ -39,7 +39,7 @@ export class Container extends PIXIContainer {
     super.destroy(_options);
   }
 
-  public onResize(size: IPoint) {
+  public onResize(_size: IPoint) {
     //
   }
 
