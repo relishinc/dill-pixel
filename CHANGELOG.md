@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.7.0](https://github.com/relishinc/dill-pixel/compare/v2.6.4...v2.7.0) (2023-10-19)
+
+
+### Features
+
+* htmlText style loading / saving, refactor: added PointLike to Types.ts - swapped it in Add.ts ([6b611f5](https://github.com/relishinc/dill-pixel/commit/6b611f5cadd18db59fe4c6d44f817f83a56cb8dd))
+
+
+### Bug Fixes
+
+* lint config ([1daf5ce](https://github.com/relishinc/dill-pixel/commit/1daf5ce1b05c6e2863fe3f689b896efde8d23d75))
+* linting ([00e0b45](https://github.com/relishinc/dill-pixel/commit/00e0b45818a93a3c739dd6a83a5dd166152e2f52))
+* renamed examples app ([cca8242](https://github.com/relishinc/dill-pixel/commit/cca8242c5a27771c2e1fe0c12de6273afd7b64c3))
+
 ## [2.6.4](https://github.com/relishinc/dill-pixel/compare/v2.6.3...v2.6.4) (2023-10-11)
 
 
