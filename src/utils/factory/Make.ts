@@ -26,8 +26,8 @@ import {
 } from 'pixi.js';
 import {Application} from '../../core/Application';
 import {Container} from '../../gameobjects';
-import {SpritesheetLike} from '../Types';
-import {resolveXYFromObjectOrArray, setObjectName} from './utils';
+import {PointLike, SpritesheetLike} from '../Types';
+import {resolvePointLike, setObjectName} from './utils';
 
 /**
  * Gets a `PIXI.Texture` asset.
@@ -83,13 +83,7 @@ export class Make {
 
   static coloredSprite(
     color: number = 0x0,
-    size:
-      | {
-          x: number;
-          y: number;
-        }
-      | [number, number?]
-      | number = {
+    size: PointLike = {
       x: 1,
       y: 1,
     },
@@ -99,7 +93,7 @@ export class Make {
     },
   ): Sprite {
     const gfx = new Graphics();
-    const resolvedSize = resolveXYFromObjectOrArray(size);
+    const resolvedSize = resolvePointLike(size);
     gfx.lineStyle({ width: 0, color: 0, alpha: 0 });
     gfx.beginFill(color, 1);
     switch (shape) {

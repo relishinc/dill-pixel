@@ -9,7 +9,7 @@ import type {
 } from '@dimforge/rapier2d';
 import { Container, DisplayObject, Sprite } from 'pixi.js';
 import { Application } from '../../../core/Application';
-import { resolveXYFromObjectOrArray } from '../../../utils';
+import { resolvePointLike } from '../../../utils';
 import { IPhysicsObject, PhysicsBodyType } from '../../index';
 import { RapierPhysics } from '../RapierPhysics';
 
@@ -68,7 +68,7 @@ export class RapierPhysicsComposite extends Container implements IPhysicsObject 
     type: PhysicsBodyType = PhysicsBodyType.RECTANGLE,
   ): Sprite {
     const visual = this.app.make.coloredSprite(color, size, type === PhysicsBodyType.CIRCLE ? 'circle' : 'rectangle');
-    visual.position = resolveXYFromObjectOrArray(position);
+    visual.position = resolvePointLike(position);
     visual.anchor.set(0.5, 0.5);
     this.addChild(visual);
     return visual;

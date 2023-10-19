@@ -13,6 +13,7 @@ import {
   TransitionType,
 } from 'dill-pixel';
 import { LevelEditor } from '../../src/misc';
+import HTMLTextStyleExample from './state/HTMLTextStyleExample';
 
 export default class Application extends HLFApplication {
   constructor() {
@@ -67,20 +68,17 @@ export default class Application extends HLFApplication {
     this.state.register(RapierPhysicsExample);
     this.state.register(PopupExample);
     this.state.register(SpriteExample);
+    this.state.register(HTMLTextStyleExample);
     // register a level editor
     LevelEditor.components = [
       { type: 'sprite', texture: 'pickle' },
       { type: 'sprite', texture: 'relish-logo-circle' },
     ];
-    this.state.register(LevelEditor);
+    this.state.register(LevelEditor, undefined, false);
   }
 
   protected createAssetMap(): void {
     this.addAssetGroup(HLFSplashScreen.NAME, SplashScreen.Assets);
-    this.addAssetGroup(MatterPhysicsExample);
-    this.addAssetGroup(RapierPhysicsExample);
-    this.addAssetGroup(PopupExample);
-    this.addAssetGroup(SpriteExample);
     this.addAssetGroup(LevelEditor, [
       new TextureAsset('pickle', AssetType.PNG),
       new TextureAsset('relish-logo-circle', AssetType.PNG),

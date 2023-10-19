@@ -16,7 +16,7 @@ import { PopupManager } from '../popup';
 import { SaveManager } from '../save';
 import { keyboardReFocus, Signals } from '../signals';
 import { State, StateManager } from '../state';
-import { AssetUtils, Delay, OrientationManager, ResizeManager, WebEventsManager } from '../utils';
+import { AssetUtils, delay, HTMLTextStyleManager, OrientationManager, ResizeManager, WebEventsManager } from '../utils';
 import { Add, Make } from '../utils/factory';
 import { AppConfig } from './AppConfig';
 
@@ -74,7 +74,6 @@ export class Application extends PIXIApplication {
     if (isDev || pConfig?.showStatsInProduction) {
       this.addStats();
     }
-
     // start the ticker if it hasn't been started yet
     if (!this.ticker.started) {
       this.ticker.start();
@@ -274,6 +273,10 @@ export class Application extends PIXIApplication {
     return this._debugger as DebuggerType;
   }
 
+  public get htmlTextStyles(): typeof HTMLTextStyleManager {
+    return HTMLTextStyleManager;
+  }
+
   public async addStats() {
     const Stats = await import('stats.js').then((m) => m.default);
     this.stats = new Stats();
@@ -371,6 +374,7 @@ export class Application extends PIXIApplication {
     this.registerLoadingScreens();
 
     await this.loadDocumentFonts();
+    await this.loadHTMLTextStyles();
 
     this.startSplashProcess(this.requiredAssets, this.onRequiredAssetsLoaded);
 
@@ -386,9 +390,38 @@ export class Application extends PIXIApplication {
     // check if document.fonts is supported
     if (document?.fonts) {
       await document.fonts.ready;
+      console.log(document?.fonts);
 
       await this.allFontsLoaded();
     }
+  }
+
+  public listFonts() {
+    if (document?.fonts?.values()) {
+      return [...document.fonts.values()];
+    }
+    return [];
+  }
+
+  public async loadHTMLTextStyles() {
+    // see https://github.com/pixijs/html-text/pull/30
+    // see utils/HTMLTextStyleManager.ts for functionality
+    // here's where we preload any custom font styles to be used later on with html text
+    // not sure if there's a better way to do this...
+    /*
+		// in your Application.ts:
+		import {loadAndAddHTMLTextStyle} from 'dill-pixel';
+
+		// override loadHTMLTextStyles and do:
+		await loadAndAddHTMLTextStyle('style1', FONT_FAMILY_NAME_1, { fontSize: 16, lineHeight: 19, fill: 'white' }, [{url:'assets/fonts/{fontFile1}.woff2', weight: 'normal'}, {url:'assets/fonts/{fontFile2}.woff2', weight: 'bold'}]);
+
+		// then later on, from anywhere in your app, you can do:
+		import {getHTMLTextStyle} from 'dill-pixel';
+		this.add.htmlText( 'This is some text', getHTMLTextStyle('{style1}'), ...);
+		*/
+
+    // override
+    return Promise.resolve();
   }
 
   public async addDebugger() {
@@ -476,7 +509,7 @@ export class Application extends PIXIApplication {
    */
   protected async onResize(pDelay: number = 0): Promise<void> {
     if (pDelay > 0) {
-      await Delay(pDelay);
+      await delay(pDelay);
     }
 
     if (this._resizeManager.useAspectRatio) {

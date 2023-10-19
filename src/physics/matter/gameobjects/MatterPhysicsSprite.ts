@@ -1,6 +1,6 @@
 import { Container, Sprite, Texture } from 'pixi.js';
 import { Application } from '../../../core/Application';
-import { resolveXYFromObjectOrArray } from '../../../utils';
+import { resolvePointLike } from '../../../utils';
 import { SpritesheetLike } from '../../../utils/Types';
 import { IPhysicsObject } from '../../interfaces';
 import { PhysicsBodyType } from '../../types';
@@ -34,7 +34,7 @@ export class MatterPhysicsSprite extends Container implements IPhysicsObject {
     this.visual.anchor.set(0.5, 0.5);
 
     if (pSize) {
-      this._size = resolveXYFromObjectOrArray(pSize);
+      this._size = resolvePointLike(pSize);
       this.visual.width = this._size.x;
       this.visual.height = this._size.y;
     }

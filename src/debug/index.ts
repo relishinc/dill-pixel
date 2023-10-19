@@ -1,5 +1,6 @@
-import { Application } from '../core/Application';
+import {Application} from '../core';
 
+// import { delay } from '../utils';
 export class Debugger {
   private _initted: boolean = false;
 
@@ -11,7 +12,7 @@ export class Debugger {
       // @ts-ignore
       /* leave this out for now
 			await import("relish-hlf-debugger");
-			await Delay(0.25);
+			await delay(0.25);
 			(window as any).setDebugApplication(this.app);
 			 */
       this._initted = true;

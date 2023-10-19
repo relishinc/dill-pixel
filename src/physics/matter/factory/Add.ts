@@ -1,5 +1,5 @@
 import { Container, Texture } from 'pixi.js';
-import { resolveXYFromObjectOrArray } from '../../../utils';
+import { resolvePointLike } from '../../../utils';
 import { IPhysicsAddFactory, IPhysicsObject } from '../../interfaces';
 import { PhysicsBodyType } from '../../types';
 import { Make } from './Make';
@@ -38,7 +38,7 @@ export class Add implements IPhysicsAddFactory {
   ): IPhysicsObject {
     const sprite = this.make.physicsSprite(pTexture, pSheet, pSize, pType);
     sprite.alpha = pAlpha;
-    const resolvedPosition = resolveXYFromObjectOrArray(pPosition);
+    const resolvedPosition = resolvePointLike(pPosition);
     sprite.x = resolvedPosition.x;
     sprite.y = resolvedPosition.y;
     return this.defaultContainer.addChild(sprite);

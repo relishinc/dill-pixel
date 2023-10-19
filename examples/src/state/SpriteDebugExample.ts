@@ -1,4 +1,4 @@
-import { BaseState } from '@/state/BaseState.ts';
+import { BaseState } from '@/state/BaseState';
 import { AssetMapData, AssetType, TextureAsset } from 'dill-pixel';
 import { Point, Sprite } from 'pixi.js';
 
