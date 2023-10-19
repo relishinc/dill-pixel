@@ -25,7 +25,7 @@ export class HTMLTextStyleManager {
       HTMLTextStyleManager._styles = {};
     }
     if (HTMLTextStyleManager._styles[id] === undefined) {
-      console.warn(`HTMLTextStyleManager.get: style ${id} is not defined`);
+      console.warn(`HTMLTextStyleManager.get('${id}'): style '${id}' is not defined. Returning default style.`);
       return new HTMLTextStyle();
     }
     return HTMLTextStyleManager._styles[id];
