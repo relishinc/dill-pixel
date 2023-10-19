@@ -1,5 +1,5 @@
 import { Container, Point } from 'pixi.js';
-import { Application } from '../core/Application';
+import { Application } from '../core';
 import { State } from './State';
 import { TransitionStep } from './TransitionStep';
 /**
@@ -97,8 +97,9 @@ export declare class StateManager extends Container {
      * Registers a state so that it can be transitioned to.
      * @param pIdOrClass The id of the new state or the class of the new state.
      * @param pCreate A function that constructs the state.
+     * @param autoAddAssets whether to automatically register the asset group for this state - only works if pIdOrClass is a class
      */
-    register(pIdOrClass: string | typeof State, pCreate?: () => State): void;
+    register(pIdOrClass: string | typeof State, pCreate?: () => State, autoAddAssets?: boolean): void;
     statesRegistered(): void;
     showDebugMenu(): void;
     /**

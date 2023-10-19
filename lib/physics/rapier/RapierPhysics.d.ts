@@ -1,5 +1,5 @@
 import type { Vector2, World } from '@dimforge/rapier2d';
-import { Application } from '../../core/Application';
+import { Application } from '../../core';
 import { PhysicsBase } from '../PhysicsBase';
 import { IRapierPhysicsObject, IRapierWallDefinition } from './interfaces';
 import { RapierBodyLike } from './types';

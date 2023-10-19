@@ -15,7 +15,7 @@ export declare class Container extends PIXIContainer {
     get make(): typeof Make;
     get app(): Application;
     destroy(_options?: IDestroyOptions | boolean): void;
-    onResize(size: IPoint): void;
+    onResize(_size: IPoint): void;
     /**
      * @protected
      * adds a signal connection

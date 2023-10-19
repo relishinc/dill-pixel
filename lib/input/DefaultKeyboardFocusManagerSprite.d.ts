@@ -13,7 +13,7 @@ export declare class DefaultKeyboardFocusManagerSprite extends Sprite implements
     constructor(padding?: number, outlineOptions?: ILineStyleOptions);
     get target(): IFocusable | undefined;
     show(pFocusable: IFocusable): void;
-    hide(pOnComplete?: () => void, pInstantly?: boolean): void;
+    hide(pOnComplete?: () => void): void;
     redraw(): void;
 }
 //# sourceMappingURL=DefaultKeyboardFocusManagerSprite.d.ts.map

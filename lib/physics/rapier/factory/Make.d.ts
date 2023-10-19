@@ -1,5 +1,5 @@
 import { Texture } from 'pixi.js';
-import { SpritesheetLike } from '../../../utils/Types';
+import { SpritesheetLike } from '../../../utils';
 import { IPhysicsObject } from '../../interfaces';
 import { PhysicsBodyType } from '../../types';
 export declare class Make {

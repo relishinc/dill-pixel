@@ -1,7 +1,7 @@
 import { Geometry, State } from '@pixi/core';
 import { BitmapText, DRAW_MODES, Graphics, HTMLText, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Mesh, NineSlicePlane, ObservablePoint, Point, Shader, SimpleMesh, SimplePlane, SimpleRope, Sprite, Text, TextStyle, Texture, TilingSprite } from 'pixi.js';
 import { Container } from '../../gameobjects';
-import { SpritesheetLike } from '../Types';
+import { PointLike, SpritesheetLike } from '../Types';
 /**
  * Gets a `PIXI.Texture` asset.
  * @param pAsset The name of the texture to get.
@@ -9,10 +9,7 @@ import { SpritesheetLike } from '../Types';
  */
 export declare class Make {
     static texture(pAsset: string, pSheet?: SpritesheetLike): Texture;
-    static coloredSprite(color?: number, size?: {
-        x: number;
-        y: number;
-    } | [number, number?] | number, shape?: 'rectangle' | 'rounded_rectangle' | 'circle', opts?: {
+    static coloredSprite(color?: number, size?: PointLike, shape?: 'rectangle' | 'rounded_rectangle' | 'circle', opts?: {
         [key: string]: string | number;
     }): Sprite;
     static sprite(pTexture: string | Texture, pSheet?: SpritesheetLike): Sprite;

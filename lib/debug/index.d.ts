@@ -1,4 +1,4 @@
-import { Application } from '../core/Application';
+import { Application } from '../core';
 export declare class Debugger {
     private app;
     private _initted;

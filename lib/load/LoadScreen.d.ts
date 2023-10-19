@@ -11,9 +11,9 @@ export declare class LoadScreen extends State {
     get autoProgress(): boolean;
     /**
      * onLoadProgress
-     * @param progress
+     * @param _progress
      */
-    onLoadProgress(progress: number): void;
+    onLoadProgress(_progress: number): void;
     /**
      * onLoadComplete
      * @param pCallback

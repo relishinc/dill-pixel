@@ -77,7 +77,7 @@ export declare abstract class Selectable extends Container implements ISelectabl
     /**
      * onPointerUpOutside
      */
-    protected onPointerUpOutside(pEvent: FederatedPointerEvent): void;
+    protected onPointerUpOutside(_event: FederatedPointerEvent): void;
     /**
      * onPointerOut
      */
