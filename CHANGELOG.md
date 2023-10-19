@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.3](https://github.com/relishinc/dill-pixel/compare/v2.7.2...v2.7.3) (2023-10-19)
+
+
+### Bug Fixes
+
+* added position / alpha / scale to Make.ts ([596959e](https://github.com/relishinc/dill-pixel/commit/596959e54f3c030d9601a5b5d95f4ee2f0a93d64))
+
 ## [2.7.2](https://github.com/relishinc/dill-pixel/compare/v2.7.1...v2.7.2) (2023-10-19)
 
 
