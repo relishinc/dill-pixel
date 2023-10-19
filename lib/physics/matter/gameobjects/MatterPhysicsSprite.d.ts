@@ -1,7 +1,7 @@
 /// <reference types="matter-js" />
 import { Container, Sprite, Texture } from 'pixi.js';
-import { Application } from '../../../core/Application';
-import { SpritesheetLike } from '../../../utils/Types';
+import { Application } from '../../../core';
+import { SpritesheetLike } from '../../../utils';
 import { IPhysicsObject } from '../../interfaces';
 import { PhysicsBodyType } from '../../types';
 import { MatterPhysics } from '../MatterPhysics';
