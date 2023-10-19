@@ -193,7 +193,7 @@ export abstract class Selectable extends Container implements ISelectable, IFocu
   /**
    * onPointerUpOutside
    */
-  protected onPointerUpOutside(pEvent: FederatedPointerEvent): void {
+  protected onPointerUpOutside(_event: FederatedPointerEvent): void {
     this._eventData = undefined;
   }
 

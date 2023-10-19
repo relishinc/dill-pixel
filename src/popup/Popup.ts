@@ -80,10 +80,10 @@ export class Popup extends Container implements IPopup {
   /**
    * Update tick. Needed for some animations.
    * Override this
-   * @param pDeltaTime Seconds elapsed since last call to {@link update}
+   * @param _deltaTime Seconds elapsed since last call to {@link update}
    * @override
    */
-  public update(pDeltaTime: number): void {
+  public update(_deltaTime: number): void {
     // Override me
   }
 

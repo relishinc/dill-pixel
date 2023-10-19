@@ -157,7 +157,7 @@ export class MatterPhysics extends PhysicsBase {
     }
   }
 
-  public update(deltaTime: number) {
+  public update(_deltaTime: number) {
     if (!this._isRunning) {
       return;
     }

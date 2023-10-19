@@ -1,15 +1,15 @@
-import { Assets, Container, Point } from 'pixi.js';
-import { Dictionary } from 'typescript-collections';
-import { Application } from '../core/Application';
-import { loadAudioFromAssetMap, loadComplete, loadScreenHidden, Signals } from '../signals';
-import { AssetUtils } from '../utils';
+import {Assets, Container, Point} from 'pixi.js';
+import {Dictionary} from 'typescript-collections';
+import {Application} from '../core/Application';
+import {loadAudioFromAssetMap, loadComplete, loadScreenHidden, Signals} from '../signals';
+import {AssetUtils} from '../utils';
 import * as LogUtils from '../utils/LogUtils';
-import { AssetMap } from './AssetMap';
-import { AssetMapAudioData } from './AssetMapAudioData';
-import { AssetMapData } from './AssetMapData';
-import { LoadScreen, LoadScreenProvider } from './LoadScreen';
-import { LoadToken } from './LoadToken';
-import { SplashScreen } from './SplashScreen';
+import {AssetMap} from './AssetMap';
+import {AssetMapAudioData} from './AssetMapAudioData';
+import {AssetMapData} from './AssetMapData';
+import {LoadScreen, LoadScreenProvider} from './LoadScreen';
+import {LoadToken} from './LoadToken';
+import {SplashScreen} from './SplashScreen';
 
 /**
  * Manages all asset loading.
@@ -376,9 +376,7 @@ export class LoadManager extends Container {
           callback: this.onAllLoadsComplete,
         });
       } else {
-        const loaderResult = await Assets.load(defaultAssets, this.onPixiLoadProgress).catch((e) =>
-          this.onPixiLoadError(e),
-        );
+        await Assets.load(defaultAssets, this.onPixiLoadProgress).catch((e) => this.onPixiLoadError(e));
         this.onAllLoadsComplete();
       }
     } else {

@@ -66,9 +66,9 @@ export abstract class State extends Container {
 
   /**
    * Updates state
-   * @param pDeltaTime
+   * @param _deltaTime
    */
-  public update(pDeltaTime: number): void {
+  public update(_deltaTime: number): void {
     // override
   }
 
