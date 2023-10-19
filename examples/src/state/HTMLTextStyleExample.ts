@@ -18,9 +18,9 @@ class HTMLTextStyleExample extends BaseState {
     this.setHeaderText('HTML Text Example');
     this.setMainText('See how to load HTML Text styles to use later on');
 
-    const text = this.add.htmlText('This will render in times', { fontFamily: FONT_ARBORIA, fontSize: 24 }, 1, [0, 50]);
+    const text = this.add.htmlText('This will render in times', { fontFamily: FONT_ARBORIA, fontSize: 24 }, 1, [0, 75]);
 
-    // load and add it all at once
+    // load and add the test style using the helper
     await loadAndAddHTMLTextStyle(
       'arboria',
       FONT_ARBORIA,
@@ -44,7 +44,11 @@ class HTMLTextStyleExample extends BaseState {
 		addHTMLTextStyle('arboria', loadedStyle);
 		*/
 
-    this.add.htmlText('This will render in arboria', getHTMLTextStyle('arboria'), 1, [0, 100]);
+    // retrieve the style
+    const style = getHTMLTextStyle('arboria');
+
+    // and use it
+    this.add.htmlText('This will render in arboria', style, 1, [0, 110]);
   }
 }
 

@@ -85,4 +85,18 @@ export default class Application extends HLFApplication {
     ]);
     // this.addAssetGroup(SpriteDebugExample);
   }
+
+  async loadHTMLTextStyles(): Promise<void> {
+    // load a style for use later:
+    // await loadAndAddHTMLTextStyle(
+    //   'arboria',
+    //   FONT_ARBORIA,
+    //   { fontFamily: FONT_ARBORIA, fontSize: 24, fill: 'white', fontWeight: 'normal', align: 'center' },
+    //   {
+    //     url: 'assets/fonts/arboria.woff2',
+    //     weight: 'normal',
+    //   },
+    // );
+    return Promise.resolve();
+  }
 }

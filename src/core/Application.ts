@@ -386,40 +386,41 @@ export class Application extends PIXIApplication {
     this.setup();
   }
 
-  public async loadDocumentFonts() {
+  public async loadDocumentFonts(): Promise<void> {
     // check if document.fonts is supported
     if (document?.fonts) {
       await document.fonts.ready;
-      console.log(document?.fonts);
-
       await this.allFontsLoaded();
     }
   }
 
-  public listFonts() {
+  public listFonts(): FontFace[] {
     if (document?.fonts?.values()) {
       return [...document.fonts.values()];
     }
     return [];
   }
 
-  public async loadHTMLTextStyles() {
-    // see https://github.com/pixijs/html-text/pull/30
-    // see utils/HTMLTextStyleManager.ts for functionality
-    // here's where we preload any custom font styles to be used later on with html text
-    // not sure if there's a better way to do this...
-    /*
-		// in your Application.ts:
-		import {loadAndAddHTMLTextStyle} from 'dill-pixel';
-
-		// override loadHTMLTextStyles and do:
-		await loadAndAddHTMLTextStyle('style1', FONT_FAMILY_NAME_1, { fontSize: 16, lineHeight: 19, fill: 'white' }, [{url:'assets/fonts/{fontFile1}.woff2', weight: 'normal'}, {url:'assets/fonts/{fontFile2}.woff2', weight: 'bold'}]);
-
-		// then later on, from anywhere in your app, you can do:
-		import {getHTMLTextStyle} from 'dill-pixel';
-		this.add.htmlText( 'This is some text', getHTMLTextStyle('{style1}'), ...);
-		*/
-
+  /**
+   * Preload any custom font styles to be used later on with html text
+   * currently not sure if there's a better way to do this...
+   * @see https://github.com/pixijs/html-text/pull/30
+   * @see {HTMLTextStyleManager} for functionality
+   * @override
+   * @returns {Promise<void>}
+   * @async
+   * @example
+   * // in your Application.ts:
+   * import {loadAndAddHTMLTextStyle} from 'dill-pixel';
+   *
+   * // override loadHTMLTextStyles and do:
+   * await loadAndAddHTMLTextStyle('style1', FONT_FAMILY_NAME_1, { fontSize: 16, lineHeight: 19, fill: 'white' }, [{url:'assets/fonts/{fontFile1}.woff2', weight: 'normal'}, {url:'assets/fonts/{fontFile2}.woff2', weight: 'bold'}]);
+   *
+   * // then later on, from anywhere in your app, you can do:
+   * import {getHTMLTextStyle} from 'dill-pixel';
+   * this.add.htmlText( 'This is some text', getHTMLTextStyle('{style1}'), ...);
+   */
+  public async loadHTMLTextStyles(): Promise<void> {
     // override
     return Promise.resolve();
   }
@@ -568,7 +569,7 @@ export class Application extends PIXIApplication {
     return [];
   }
 
-  protected allFontsLoaded() {
+  protected allFontsLoaded(): Promise<void> {
     const fonts = this.getFontsList();
     if (fonts?.length > 0) {
       return Promise.all(
@@ -577,7 +578,7 @@ export class Application extends PIXIApplication {
           return font.load();
         }),
       ).catch((e) => {
-        console.error('Error loading fonts', e);
+        console.warn('Error loading fonts', e);
       });
     } else {
       return Promise.resolve();
