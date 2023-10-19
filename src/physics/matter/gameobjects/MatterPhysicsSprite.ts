@@ -1,7 +1,6 @@
 import { Container, Sprite, Texture } from 'pixi.js';
-import { Application } from '../../../core/Application';
-import { resolvePointLike } from '../../../utils';
-import { SpritesheetLike } from '../../../utils/Types';
+import { Application } from '../../../core';
+import { resolvePointLike, SpritesheetLike } from '../../../utils';
 import { IPhysicsObject } from '../../interfaces';
 import { PhysicsBodyType } from '../../types';
 import { MatterPhysics } from '../MatterPhysics';

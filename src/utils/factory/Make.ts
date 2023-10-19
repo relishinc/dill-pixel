@@ -24,7 +24,7 @@ import {
   Texture,
   TilingSprite
 } from 'pixi.js';
-import {Application} from '../../core/Application';
+import {Application} from '../../core';
 import {Container} from '../../gameobjects';
 import {PointLike, SpritesheetLike} from '../Types';
 import {resolvePointLike, setObjectName} from './utils';
@@ -114,30 +114,117 @@ export class Make {
     return Make.sprite(Application.instance.renderer.generateTexture(gfx));
   }
 
-  static sprite(pTexture: string | Texture, pSheet?: SpritesheetLike): Sprite {
+  static sprite(
+    pTexture: string | Texture,
+    pSheet?: SpritesheetLike,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+  ): Sprite {
     const sprite = new Sprite(typeof pTexture === 'string' ? this.texture(pTexture, pSheet) : pTexture);
     setObjectName(sprite, pTexture, pSheet);
+    if (alpha !== undefined) {
+      sprite.alpha = alpha;
+    }
+    if (position !== undefined) {
+      const resolvedPosition = resolvePointLike(position);
+      sprite.position.set(resolvedPosition.x, resolvedPosition.y);
+    }
+    if (anchor !== undefined) {
+      const resolvedAnchor = resolvePointLike(anchor);
+      sprite.anchor.set(resolvedAnchor.x, resolvedAnchor.y);
+    }
     return sprite;
   }
 
-  static text(pText: string = '', pStyle?: Partial<ITextStyle | TextStyle>): Text {
-    return new Text(pText, pStyle);
+  static text(
+    pText: string = '',
+    pStyle?: Partial<ITextStyle | TextStyle>,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+  ): Text {
+    const text = new Text(pText, pStyle);
+    if (alpha !== undefined) {
+      text.alpha = alpha;
+    }
+    if (position !== undefined) {
+      const resolvedPosition = resolvePointLike(position);
+      text.position.set(resolvedPosition.x, resolvedPosition.y);
+    }
+    if (anchor !== undefined) {
+      const resolvedAnchor = resolvePointLike(anchor);
+      text.anchor.set(resolvedAnchor.x, resolvedAnchor.y);
+    }
+    return text;
   }
 
-  static htmlText(pText: string = '', pStyle?: Partial<HTMLTextStyle | TextStyle | ITextStyle>): HTMLText {
-    return new HTMLText(pText, pStyle);
+  static htmlText(
+    pText: string = '',
+    pStyle?: Partial<HTMLTextStyle | TextStyle | ITextStyle>,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+  ): HTMLText {
+    const text = new HTMLText(pText, pStyle);
+    if (alpha !== undefined) {
+      text.alpha = alpha;
+    }
+    if (position !== undefined) {
+      const resolvedPosition = resolvePointLike(position);
+      text.position.set(resolvedPosition.x, resolvedPosition.y);
+    }
+    if (anchor !== undefined) {
+      const resolvedAnchor = resolvePointLike(anchor);
+      text.anchor.set(resolvedAnchor.x, resolvedAnchor.y);
+    }
+    return text;
   }
 
-  static bitmapText(pText: string = '', pStyle?: Partial<IBitmapTextStyle>): BitmapText {
-    return new BitmapText(pText, pStyle);
+  static bitmapText(
+    pText: string = '',
+    pStyle?: Partial<IBitmapTextStyle>,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+  ): BitmapText {
+    const text = new BitmapText(pText, pStyle);
+    if (alpha !== undefined) {
+      text.alpha = alpha;
+    }
+    if (position !== undefined) {
+      const resolvedPosition = resolvePointLike(position);
+      text.position.set(resolvedPosition.x, resolvedPosition.y);
+    }
+    if (anchor !== undefined) {
+      const resolvedAnchor = resolvePointLike(anchor);
+      text.anchor.set(resolvedAnchor.x, resolvedAnchor.y);
+    }
+    return text;
   }
 
-  static container(): Container {
-    return new Container();
+  static container(alpha?: number, position?: PointLike): Container {
+    const container = new Container();
+    if (alpha !== undefined) {
+      container.alpha = alpha;
+    }
+    if (position !== undefined) {
+      const resolvedPosition = resolvePointLike(position);
+      container.position.set(resolvedPosition.x, resolvedPosition.y);
+    }
+    return container;
   }
 
-  static graphics(): Graphics {
-    return new Graphics();
+  static graphics(alpha?: number, position?: PointLike): Graphics {
+    const graphics = new Graphics();
+    if (alpha !== undefined) {
+      graphics.alpha = alpha;
+    }
+    if (position !== undefined) {
+      const resolvedPosition = resolvePointLike(position);
+      graphics.position.set(resolvedPosition.x, resolvedPosition.y);
+    }
+    return graphics;
   }
 
   static tilingSprite(
@@ -146,6 +233,9 @@ export class Make {
     pWidth: number,
     pHeight: number,
     pTilePosition?: Point,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
   ): TilingSprite {
     const tilingSprite = new TilingSprite(
       typeof pTexture === 'string' ? this.texture(pTexture, pSheet) : pTexture,
@@ -156,6 +246,17 @@ export class Make {
     if (pTilePosition) {
       tilingSprite.tilePosition.x = pTilePosition.x;
       tilingSprite.tilePosition.y = pTilePosition.y;
+    }
+    if (alpha !== undefined) {
+      tilingSprite.alpha = alpha;
+    }
+    if (position !== undefined) {
+      const resolvedPosition = resolvePointLike(position);
+      tilingSprite.position.set(resolvedPosition.x, resolvedPosition.y);
+    }
+    if (anchor !== undefined) {
+      const resolvedAnchor = resolvePointLike(anchor);
+      tilingSprite.anchor.set(resolvedAnchor.x, resolvedAnchor.y);
     }
     return tilingSprite;
   }
@@ -220,6 +321,8 @@ export class Make {
     topHeight: number = 10,
     rightWidth: number = 10,
     bottomHeight: number = 10,
+    alpha?: number,
+    position?: PointLike,
   ) {
     const ns = new NineSlicePlane(
       typeof pTexture === 'string' ? this.texture(pTexture, pSheet) : pTexture,
@@ -229,6 +332,13 @@ export class Make {
       bottomHeight,
     );
     setObjectName(ns, pTexture, pSheet);
+    if (alpha !== undefined) {
+      ns.alpha = alpha;
+    }
+    if (position !== undefined) {
+      const resolvedPosition = resolvePointLike(position);
+      ns.position.set(resolvedPosition.x, resolvedPosition.y);
+    }
     return ns;
   }
 }
