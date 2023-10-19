@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.2](https://github.com/relishinc/dill-pixel/compare/v2.7.1...v2.7.2) (2023-10-19)
+
+
+### Bug Fixes
+
+* physics PointLike error ([db065ff](https://github.com/relishinc/dill-pixel/commit/db065ffdfd07708b452e931a668809bad790a19c))
+
 ## [2.7.1](https://github.com/relishinc/dill-pixel/compare/v2.7.0...v2.7.1) (2023-10-19)
 
 
