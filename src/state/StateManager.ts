@@ -1,7 +1,7 @@
-import { Container, Point } from 'pixi.js';
-import { Dictionary } from 'typescript-collections';
-import { Application } from '../core/Application';
-import { AssetMap, AssetMapData, LoadToken } from '../load';
+import {Container, Point} from 'pixi.js';
+import {Dictionary} from 'typescript-collections';
+import {Application} from '../core';
+import {AssetMap, AssetMapData, LoadToken} from '../load';
 import {
   hideLoadScreen,
   initState,
@@ -9,13 +9,13 @@ import {
   showLoadScreen,
   Signals,
   stateTransitionHalted,
-  unloadAssets,
+  unloadAssets
 } from '../signals';
-import { Delay } from '../utils';
+import {delay} from '../utils';
 import * as LogUtils from '../utils/LogUtils';
-import { State } from './State';
-import { StateToken } from './StateToken';
-import { TransitionStep } from './TransitionStep';
+import {State} from './State';
+import {StateToken} from './StateToken';
+import {TransitionStep} from './TransitionStep';
 import * as TransitionType from './TransitionType';
 
 /**
@@ -165,14 +165,18 @@ export class StateManager extends Container {
    * Registers a state so that it can be transitioned to.
    * @param pIdOrClass The id of the new state or the class of the new state.
    * @param pCreate A function that constructs the state.
+   * @param autoAddAssets whether to automatically register the asset group for this state - only works if pIdOrClass is a class
    */
-  public register(pIdOrClass: string | typeof State, pCreate?: () => State) {
+  public register(pIdOrClass: string | typeof State, pCreate?: () => State, autoAddAssets: boolean = true) {
     if (typeof pIdOrClass === 'string') {
       this._stateData.setValue(pIdOrClass, { create: pCreate as () => State });
     } else {
       const Klass: typeof State = pIdOrClass as typeof State;
       // @ts-ignore
       this._stateData.setValue(Klass.NAME, { create: () => new Klass() });
+      if (autoAddAssets) {
+        this.app.addAssetGroup(pIdOrClass);
+      }
     }
   }
 
@@ -866,7 +870,7 @@ export class StateManager extends Container {
    */
   private async performPause(pDuration: number): Promise<void> {
     this.log('performPause');
-    await Delay(pDuration);
+    await delay(pDuration);
     this.performNextTransitionStep();
   }
 
