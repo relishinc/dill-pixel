@@ -4,23 +4,8 @@ import { PointLike } from '../Types';
 export declare class Add {
     private defaultContainer;
     constructor(defaultContainer: Container);
-    existing<T>(pObject: T, position?: {
-        x: number;
-        y: number;
-    } | [number, number?] | number, anchor?: PointLike, scale?: {
-        x: number;
-        y: number;
-    } | [number, number?] | number): T;
-    coloredSprite(color?: number, size?: {
-        x: number;
-        y: number;
-    } | [number, number?] | number, shape?: 'rectangle' | 'rounded_rectangle' | 'circle', alpha?: number, position?: {
-        x: number;
-        y: number;
-    } | [number, number?] | number, anchor?: PointLike, scale?: {
-        x: number;
-        y: number;
-    } | [number, number?] | number, opts?: {
+    existing<T>(pObject: T, position?: PointLike, anchor?: PointLike, scale?: PointLike): T;
+    coloredSprite(color?: number, size?: PointLike, shape?: 'rectangle' | 'rounded_rectangle' | 'circle', alpha?: number, position?: PointLike, anchor?: PointLike, scale?: PointLike, opts?: {
         [key: string]: string | number;
     }): Sprite;
     sprite(pAsset: string | Texture, pSheet?: string | undefined, alpha?: number, position?: PointLike, anchor?: PointLike, scale?: PointLike): Sprite;
