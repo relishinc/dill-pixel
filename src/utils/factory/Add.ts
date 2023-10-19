@@ -21,24 +21,7 @@ import { resolvePointLike } from './utils';
 export class Add {
   constructor(private defaultContainer: Container) {}
 
-  existing<T>(
-    pObject: T,
-    position?:
-      | {
-          x: number;
-          y: number;
-        }
-      | [number, number?]
-      | number,
-    anchor?: PointLike,
-    scale?:
-      | {
-          x: number;
-          y: number;
-        }
-      | [number, number?]
-      | number,
-  ): T {
+  existing<T>(pObject: T, position?: PointLike, anchor?: PointLike, scale?: PointLike): T {
     const obj = this.defaultContainer.addChild(pObject as DisplayObject) as T;
     const dObj = obj as Sprite;
 
@@ -61,36 +44,18 @@ export class Add {
 
   coloredSprite(
     color: number = 0x0,
-    size:
-      | {
-          x: number;
-          y: number;
-        }
-      | [number, number?]
-      | number = {
+    size: PointLike = {
       x: 1,
       y: 1,
     },
     shape: 'rectangle' | 'rounded_rectangle' | 'circle' = 'rectangle',
     alpha: number = 1,
-    position:
-      | {
-          x: number;
-          y: number;
-        }
-      | [number, number?]
-      | number = {
+    position: PointLike = {
       x: 0,
       y: 0,
     },
     anchor: PointLike = { x: 0.5, y: 0.5 },
-    scale:
-      | {
-          x: number;
-          y: number;
-        }
-      | [number, number?]
-      | number = { x: 1, y: 1 },
+    scale: PointLike = { x: 1, y: 1 },
     opts?: {
       [key: string]: string | number;
     },
