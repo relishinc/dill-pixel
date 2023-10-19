@@ -11,7 +11,14 @@ export declare class PhysicsBase implements IPhysicsBase {
     get debug(): boolean;
     get add(): IPhysicsAddFactory;
     set container(value: Container);
-    init(pAutoStart: boolean, pDebug: boolean, autoCreateBounds?: boolean, pEngineOptions?: any): void;
+    /**
+     * Initializes the physics engine
+     * @param _autoStart
+     * @param _debug
+     * @param _autoCreateBounds
+     * @param _engineOptions
+     */
+    init(_autoStart: boolean, _debug: boolean, _autoCreateBounds?: boolean, _engineOptions?: any): void;
     destroy(): void;
     update(pDeltaTime: number): void;
     addToWorld(body: any): void;

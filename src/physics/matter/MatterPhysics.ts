@@ -1,7 +1,7 @@
 import { Container, Graphics } from 'pixi.js';
-import { Application } from '../../core/Application';
+import { Application } from '../../core';
 import { PhysicsBase } from '../PhysicsBase';
-import { PointLike } from '../types';
+import { PointObjectLike } from '../rapier';
 import { Factory } from './factory';
 import { IMatterPhysicsObject } from './interfaces';
 import { MatterBodyLike } from './types';
@@ -12,7 +12,7 @@ export class MatterPhysics extends PhysicsBase {
   private _engine: Matter.Engine;
   private _debugGraphics: Graphics;
   private _debugContainer: Container;
-  private _bounds: PointLike = { x: 0, y: 0 };
+  private _bounds: PointObjectLike = { x: 0, y: 0 };
   private _isRunning: boolean = false;
 
   constructor(protected app: Application) {

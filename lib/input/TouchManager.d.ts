@@ -106,9 +106,9 @@ export declare class TouchManager {
     protected onTouchStart(pEvent: FederatedPointerEvent): void;
     /**
      * onTouchMove
-     * @param pEvent
+     * @param _event
      */
-    protected onTouchMove(pEvent: FederatedPointerEvent): void;
+    protected onTouchMove(_event: FederatedPointerEvent): void;
     /**
      * onTouchEnd
      * @param pEvent

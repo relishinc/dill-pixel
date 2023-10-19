@@ -1,7 +1,7 @@
-import { PointLike } from '../../types';
+import { PointObjectLike } from '../types';
 export interface IRapierWallDefinition {
-    position: PointLike;
-    size: PointLike;
+    position: PointObjectLike;
+    size: PointObjectLike;
     angle?: number;
 }
 //# sourceMappingURL=IRapierWallDefinition.d.ts.map

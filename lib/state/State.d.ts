@@ -37,9 +37,9 @@ export declare abstract class State extends Container {
     init(pSize: Point, pData?: any): void;
     /**
      * Updates state
-     * @param pDeltaTime
+     * @param _deltaTime
      */
-    update(pDeltaTime: number): void;
+    update(_deltaTime: number): void;
     /**
      * Determines whether resize on
      * @param pSize

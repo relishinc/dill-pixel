@@ -53,7 +53,7 @@ export declare class Button extends Container implements IFocusable {
     /**
      * Event fired when pointer is over button
      */
-    protected onPointerOver(pEvent: FederatedPointerEvent): void;
+    protected onPointerOver(_event: FederatedPointerEvent): void;
     /**`
      * Event fired when pointer pressed on button
      * @param pEvent
@@ -66,6 +66,6 @@ export declare class Button extends Container implements IFocusable {
     /**
      * Event fired when pointer no longer over button
      */
-    protected onPointerOut(pEvent: FederatedPointerEvent): void;
+    protected onPointerOut(_event: FederatedPointerEvent): void;
 }
 //# sourceMappingURL=Button.d.ts.map

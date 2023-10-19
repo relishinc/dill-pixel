@@ -44,10 +44,10 @@ export declare class Popup extends Container implements IPopup {
     /**
      * Update tick. Needed for some animations.
      * Override this
-     * @param pDeltaTime Seconds elapsed since last call to {@link update}
+     * @param _deltaTime Seconds elapsed since last call to {@link update}
      * @override
      */
-    update(pDeltaTime: number): void;
+    update(_deltaTime: number): void;
     /**
      * Show the popup, and set the close callback
      * You probably want to override {@link AnimateIn}, not {@link show}

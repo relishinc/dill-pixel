@@ -7,7 +7,7 @@ import { PhysicsBase, PhysicsEngineType } from '../physics';
 import { PopupManager } from '../popup';
 import { SaveManager } from '../save';
 import { State, StateManager } from '../state';
-import { OrientationManager, ResizeManager, WebEventsManager } from '../utils';
+import { HTMLTextStyleManager, OrientationManager, ResizeManager, WebEventsManager } from '../utils';
 import { Add, Make } from '../utils/factory';
 export interface HLFApplicationOptions extends IApplicationOptions {
     physics?: boolean;
@@ -93,6 +93,7 @@ export declare class Application extends PIXIApplication {
     get defaultState(): string | typeof State | undefined;
     get physics(): PhysicsBase;
     get debugger(): DebuggerType;
+    get htmlTextStyles(): typeof HTMLTextStyleManager;
     addStats(): Promise<void>;
     addFocusManager(): void;
     addPhysics(type?: PhysicsEngineType): Promise<PhysicsBase>;
@@ -115,6 +116,27 @@ export declare class Application extends PIXIApplication {
      */
     init(): Promise<void>;
     loadDocumentFonts(): Promise<void>;
+    listFonts(): FontFace[];
+    /**
+     * Preload any custom font styles to be used later on with html text
+     * currently not sure if there's a better way to do this...
+     * @see https://github.com/pixijs/html-text/pull/30
+     * @see {HTMLTextStyleManager} for functionality
+     * @override
+     * @returns {Promise<void>}
+     * @async
+     * @example
+     * // in your Application.ts:
+     * import {loadAndAddHTMLTextStyle} from 'dill-pixel';
+     *
+     * // override loadHTMLTextStyles and do:
+     * await loadAndAddHTMLTextStyle('style1', FONT_FAMILY_NAME_1, { fontSize: 16, lineHeight: 19, fill: 'white' }, [{url:'assets/fonts/{fontFile1}.woff2', weight: 'normal'}, {url:'assets/fonts/{fontFile2}.woff2', weight: 'bold'}]);
+     *
+     * // then later on, from anywhere in your app, you can do:
+     * import {getHTMLTextStyle} from 'dill-pixel';
+     * this.add.htmlText( 'This is some text', getHTMLTextStyle('{style1}'), ...);
+     */
+    loadHTMLTextStyles(): Promise<void>;
     addDebugger(): Promise<void>;
     protected setup(): void;
     /**
@@ -166,7 +188,7 @@ export declare class Application extends PIXIApplication {
             weight?: number | string;
         };
     }[];
-    protected allFontsLoaded(): Promise<any>;
+    protected allFontsLoaded(): Promise<void>;
     /**
      * Override to specify what should happen after all persistent assets have been loaded.
      * @override

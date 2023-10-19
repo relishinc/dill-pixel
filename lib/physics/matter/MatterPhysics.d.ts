@@ -1,5 +1,5 @@
 /// <reference types="matter-js" />
-import { Application } from '../../core/Application';
+import { Application } from '../../core';
 import { PhysicsBase } from '../PhysicsBase';
 import { IMatterPhysicsObject } from './interfaces';
 import { MatterBodyLike } from './types';
@@ -24,6 +24,6 @@ export declare class MatterPhysics extends PhysicsBase {
     addToWorld(...objects: (IMatterPhysicsObject | MatterBodyLike)[]): void;
     removeFromWorld(...bodies: MatterBodyLike[]): void;
     drawDebug(): void;
-    update(deltaTime: number): void;
+    update(_deltaTime: number): void;
 }
 //# sourceMappingURL=MatterPhysics.d.ts.map

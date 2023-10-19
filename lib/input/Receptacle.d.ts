@@ -74,13 +74,13 @@ export declare abstract class Receptacle extends Container implements IFocusable
     /**
      * onPointerMove
      */
-    protected onPointerMove(pEvent: FederatedPointerEvent): void;
+    protected onPointerMove(_event: FederatedPointerEvent): void;
     protected onTouchMove(pEvent: FederatedPointerEvent): void;
     /**
      * Adds draggable
-     * @param pDraggable
+     * @param _draggable
      */
-    protected addDraggable(pDraggable: Draggable): void;
+    protected addDraggable(_draggable: Draggable): void;
     /**
      * onDragBegin
      * @param pTopic
@@ -89,10 +89,9 @@ export declare abstract class Receptacle extends Container implements IFocusable
     protected onDragBegin(pDraggable: Draggable): void;
     /**
      * onDragEnd
-     * @param pTopic
-     * @param pDraggable
+     * @param _draggable
      */
-    protected onDragEnd(pDraggable: Draggable): void;
+    protected onDragEnd(_draggable: Draggable): void;
     /**
      * onDraggableSelected
      * @param pTopic
