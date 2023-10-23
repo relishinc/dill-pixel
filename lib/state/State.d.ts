@@ -1,6 +1,6 @@
 import { Point } from 'pixi.js';
 import { SignalConnections } from 'typed-signals';
-import { Application } from '../core/Application';
+import { Application } from '../core';
 import { Container } from '../gameobjects';
 import { AssetMapData } from '../load';
 import { Add, Make } from '../utils/factory';
