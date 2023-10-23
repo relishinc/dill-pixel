@@ -1,7 +1,8 @@
 import {OutlineFilter} from '@pixi/filter-outline';
-import {Container, FederatedPointerEvent, IPoint, Point, Rectangle, settings as pixiSettings} from 'pixi.js';
+import {FederatedPointerEvent, IPoint, Point, Rectangle, settings as pixiSettings} from 'pixi.js';
 import {AudioToken} from '../audio';
 import * as AudioCategory from '../audio/AudioCategory';
+import {Container} from '../gameobjects';
 import {playAudio} from '../signals';
 import * as PixiUtils from '../utils/PixiUtils';
 import * as RectUtils from '../utils/RectUtils';
@@ -26,6 +27,12 @@ export abstract class Selectable extends Container implements ISelectable, IFocu
   protected constructor() {
     super();
 
+    this.onPointerOver = this.onPointerOver.bind(this);
+    this.onPointerDown = this.onPointerDown.bind(this);
+    this.onPointerUp = this.onPointerUp.bind(this);
+    this.onPointerUpOutside = this.onPointerUpOutside.bind(this);
+    this.onPointerOut = this.onPointerOut.bind(this);
+
     this._isFocussed = false;
     this._isSelected = false;
 
@@ -45,15 +52,35 @@ export abstract class Selectable extends Container implements ISelectable, IFocu
     this.onSelected = [];
     this.onDeselected = [];
 
+    this.eventMode = 'static';
+    this.cursor = 'pointer';
+
+    this.addEventListeners();
+    this.setHitArea();
+  }
+
+  protected removeEventListeners() {
+    this.off('pointerover', this.onPointerOver);
+    this.off('pointerdown', this.onPointerDown);
+    this.off('pointerup', this.onPointerUp);
+    this.off('pointerupoutside', this.onPointerUpOutside);
+    this.off('pointerout', this.onPointerOut);
+  }
+
+  protected addEventListeners() {
     this.on('pointerover', this.onPointerOver);
     this.on('pointerdown', this.onPointerDown);
     this.on('pointerup', this.onPointerUp);
     this.on('pointerupoutside', this.onPointerUpOutside);
     this.on('pointerout', this.onPointerOut);
+  }
 
-    this.interactive = true;
-    this.cursor = 'pointer';
-    this.hitArea = new Rectangle(-25, -25, 50, 50);
+  protected setHitArea() {
+    const bounds = this.getBounds();
+    this.hitArea =
+      this._visuals?.children?.length > 0
+        ? new Rectangle(0, 0, bounds.width, bounds.height)
+        : new Rectangle(-25, -25, 50, 50);
   }
 
   /**
@@ -78,6 +105,7 @@ export abstract class Selectable extends Container implements ISelectable, IFocu
    * Deselects selectable
    */
   public deselect(): void {
+    console.log('deselect');
     this._isSelected = false;
     this._visuals.filters = [];
     for (let i = 0; i < this.onDeselected.length; ++i) {
@@ -166,7 +194,6 @@ export abstract class Selectable extends Container implements ISelectable, IFocu
    * onPointerOver
    */
   protected onPointerOver(): void {
-    this._visuals.scale.set(1.05);
     this.playHoverVo();
   }
 
@@ -175,7 +202,6 @@ export abstract class Selectable extends Container implements ISelectable, IFocu
    */
   protected onPointerDown(pEvent: FederatedPointerEvent): void {
     this._eventData = pEvent;
-    this._visuals.scale.set(0.95);
   }
 
   /**
@@ -185,7 +211,6 @@ export abstract class Selectable extends Container implements ISelectable, IFocu
     if (this._eventData !== undefined && this._eventData.pointerId === pEvent.pointerId) {
       this.toggleSelected();
       this._eventData = undefined;
-      this._visuals.scale.set(1.05);
       this.playClickedSFX();
     }
   }
@@ -200,7 +225,5 @@ export abstract class Selectable extends Container implements ISelectable, IFocu
   /**
    * onPointerOut
    */
-  protected onPointerOut(): void {
-    this._visuals.scale.set(1.0);
-  }
+  protected onPointerOut(): void {}
 }

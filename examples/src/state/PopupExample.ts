@@ -3,7 +3,7 @@ import { BaseState } from '@/state/BaseState';
 import { AssetMapData, Container, PopupToken, showPopup, TextureAtlasAsset } from 'dill-pixel';
 import { Point } from 'pixi.js';
 
-class PopupExample extends BaseState {
+export class PopupExample extends BaseState {
   count: number = 0;
   button: Container;
 
@@ -41,5 +41,3 @@ class PopupExample extends BaseState {
     this.count--;
   };
 }
-
-export default PopupExample;

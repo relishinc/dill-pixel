@@ -1,19 +1,13 @@
 import { IMovingPlatform, IPlatform, MovingPlatform, Platform } from '@/gameobjects/Platform';
 import { Player } from '@/gameobjects/Player';
 import { BasicStateBackground } from '@/ui/BasicStateBackground';
-import { GREEN } from '@/utils/Constants';
+import { COLOR_GREEN } from '@/utils/Constants';
 import { Container, Text, useTick } from '@pixi/react';
+import { RectLike } from 'dill-pixel';
 import { ISprite, State } from 'dill-pixel/react';
 import { Rectangle, TextStyle } from 'pixi.js';
-import * as React from 'react';
-import { RefObject } from 'react';
+import React, { RefObject } from 'react';
 
-type RectangleLike = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
 type CollisionDirection = 'top' | 'bottom' | 'left' | 'right' | 'none';
 
 interface CollisionResult {
@@ -21,7 +15,7 @@ interface CollisionResult {
   direction: CollisionDirection;
 }
 
-const checkAABBCollision = (rect1: RectangleLike, rect2: RectangleLike): CollisionResult => {
+const checkAABBCollision = (rect1: RectLike, rect2: RectLike): CollisionResult => {
   const dx = rect1.x + rect1.width / 2 - (rect2.x + rect2.width / 2);
   const dy = rect1.y + rect1.height / 2 - (rect2.y + rect2.height / 2);
   const width = (rect1.width + rect2.width) / 2;
@@ -99,7 +93,7 @@ const usePlayerMovement = (
         });
 
         if (collision.isColliding) {
-          platformInstance.setColor(GREEN);
+          platformInstance.setColor(COLOR_GREEN);
           if (collision.direction === 'top') {
             newPosition.y = instance.y - hitArea.height * 0.5;
             setJumpingDisabled(false);

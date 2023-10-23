@@ -1,49 +1,28 @@
-import { Container, PixiRef } from '@pixi/react';
-import { ListType } from '@pixi/ui';
+import { _ReactPixi, Container } from '@pixi/react';
+import { IContainer } from 'dill-pixel/react';
 import React from 'react';
+import PointLike = _ReactPixi.PointLike;
 
 interface ListProps extends React.ComponentProps<typeof Container> {
-  type?: ListType;
+  type?: 'horizontal' | 'vertical';
   elementsMargin?: number;
   vertPadding?: number;
   horPadding?: number;
-  anchor?:
-    | [number, number]
-    | {
-        x: number;
-        y: number;
-      }
-    | number;
+  anchor?: PointLike;
 }
 
-type IContainer = PixiRef<typeof Container>;
-
-function toPointLike(
-  anchor:
-    | [number, number]
-    | {
-        x: number;
-        y: number;
-      }
-    | number,
-) {
-  if (Array.isArray(anchor)) {
-    return { x: anchor[0], y: anchor[1] ?? 0 };
-  } else if (typeof anchor === 'number') {
-    return { x: anchor, y: anchor };
+function toPointLike(ptToConvert: PointLike) {
+  if (Array.isArray(ptToConvert)) {
+    return { x: ptToConvert[0], y: ptToConvert[1] ?? 0 };
+  } else if (typeof ptToConvert === 'number') {
+    return { x: ptToConvert, y: ptToConvert };
   } else {
-    return anchor;
+    return ptToConvert;
   }
 }
 
 export const useContainerAnchor = (
-  anchor:
-    | [number, number]
-    | {
-        x: number;
-        y: number;
-      }
-    | number,
+  anchor: PointLike,
   dimensions: {
     width: number;
     height: number;
@@ -78,7 +57,7 @@ export const List: React.FC<ListProps> = ({
   const [totalWidth, setTotalWidth] = React.useState(0);
   const [totalHeight, setTotalHeight] = React.useState(0);
 
-  const containerRef = React.useRef(null);
+  const containerRef = React.useRef<IContainer | null>(null);
   const childRefs = React.useRef<(IContainer | null)[]>([]);
 
   React.useEffect(() => {
@@ -104,14 +83,16 @@ export const List: React.FC<ListProps> = ({
 
   React.useEffect(() => {
     setTimeout(() => {
-      setDimensions({
-        width: (containerRef?.current?.width ?? 0) + (horPadding ?? 0) * 2,
-        height: (containerRef?.current?.height ?? 0) + (vertPadding ?? 0) * 2,
-      });
+      if (containerRef.current) {
+        setDimensions({
+          width: (containerRef.current.width ?? 0) + (horPadding ?? 0) * 2,
+          height: (containerRef.current.height ?? 0) + (vertPadding ?? 0) * 2,
+        });
+      }
     }, 0);
   }, [children, totalWidth, totalHeight]);
 
-  const pivot = useContainerAnchor(anchor, dimensions, vertPadding, horPadding, children);
+  const pivot = useContainerAnchor(anchor ?? { x: 0, y: 0 }, dimensions, vertPadding, horPadding, children);
 
   return (
     <Container {...props} pivot={pivot}>
@@ -119,6 +100,7 @@ export const List: React.FC<ListProps> = ({
         {React.Children.map(children, (child, index) => {
           const xPosition = accumulatedWidths[index] || 0;
           const yPosition = accumulatedHeights[index] || 0;
+
           return React.cloneElement(child as React.ReactElement, {
             x: type === 'horizontal' ? xPosition : 0,
             y: type === 'vertical' ? yPosition : 0,

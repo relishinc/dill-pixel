@@ -218,6 +218,10 @@ export function unpause(): void {
   Signals.unpause.emit();
 }
 
+export function changeLanguage(languageId: string) {
+  Signals.changeLanguage.emit(languageId);
+}
+
 export class Signals {
   // resize signal
   public static onResize = new Signal<(size: IPoint) => void>();
@@ -296,4 +300,8 @@ export class Signals {
   // pause / unpause
   public static pause = new Signal<() => void>();
   public static unpause = new Signal<() => void>();
+
+  // language signals
+  public static changeLanguage = new Signal<(languageId: string) => void>();
+  public static onLanguageChanged = new Signal<(languageId: string) => void>();
 }

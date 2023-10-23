@@ -1,6 +1,7 @@
 import {Container as PIXIContainer, IDestroyOptions, IPoint} from 'pixi.js';
 import {SignalConnection, SignalConnections} from 'typed-signals';
-import {Application} from '../core/Application';
+import {Application} from '../core';
+import {Editor} from '../misc';
 import {Signals} from '../signals';
 import {Add, Make} from '../utils/factory';
 
@@ -13,12 +14,40 @@ export class Container extends PIXIContainer {
   protected _addFactory: Add;
   protected _connections: SignalConnections = new SignalConnections();
 
+  protected _editMode = false;
+  protected editor: Editor;
+  public editable: boolean = true;
+  public childrenEditable: boolean = true;
+
   constructor(listenForResize: boolean = true) {
     super();
     this.onResize = this.onResize.bind(this);
     this._addFactory = new Add(this);
     if (listenForResize) {
       Signals.onResize.connect(this.onResize);
+    }
+  }
+
+  set editMode(value: boolean) {
+    this._editMode = value;
+    if (this._editMode) {
+      this.enableEditMode();
+    } else {
+      this.disableEditMode();
+    }
+  }
+
+  get editMode(): boolean {
+    return this._editMode;
+  }
+
+  enableEditMode() {
+    this.editor = new Editor(this);
+  }
+
+  disableEditMode() {
+    if (this.editor) {
+      this.editor.destroy();
     }
   }
 

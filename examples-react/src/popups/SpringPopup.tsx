@@ -4,7 +4,7 @@ import { Container, Graphics } from '@pixi/react-animated';
 import { Popup, useHLF } from 'dill-pixel/react';
 import { TextStyle } from 'pixi.js';
 import React from 'react';
-import { GREEN } from '../utils/Constants';
+import { COLOR_GREEN } from '../utils/Constants';
 
 export const SpringPopup: Popup = ({ id, animationState, size, onInAnimationComplete, onOutAnimationComplete }) => {
   const hidePopup = useHLF((globalState) => globalState.hidePopup);
@@ -31,7 +31,7 @@ export const SpringPopup: Popup = ({ id, animationState, size, onInAnimationComp
           y={size.height * 0.5}
           draw={(g) => {
             g.clear();
-            g.beginFill(GREEN, 0.9);
+            g.beginFill(COLOR_GREEN, 0.9);
             g.drawRoundedRect(-450, -200, 900, 400, 20);
             g.endFill();
           }}

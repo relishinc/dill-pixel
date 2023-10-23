@@ -1,6 +1,6 @@
 import { TextStyle } from 'pixi.js';
 
-export const whiteTextStyle = (size) =>
+export const whiteTextStyle = (size: number) =>
   new TextStyle({
     fontFamily: 'Arial',
     fontWeight: 'bold',

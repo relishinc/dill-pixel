@@ -1,3 +1,3 @@
-import { MatterPhysicsSprite } from 'dill-pixel/physics/matter';
+import { MatterPhysicsSprite } from 'dill-pixel';
 
 export class MatterPhysicsSpriteExample extends MatterPhysicsSprite {}
