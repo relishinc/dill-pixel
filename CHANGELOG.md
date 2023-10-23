@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.0](https://github.com/relishinc/dill-pixel/compare/v2.7.3...v2.8.0) (2023-10-23)
+
+
+### Features
+
+* added 'editMode' functionmality to all containers, feat: started FlexContainer.tsx ([c305ced](https://github.com/relishinc/dill-pixel/commit/c305ceda830230df856bff0289d2fdf485186396))
+
 ## [2.7.3](https://github.com/relishinc/dill-pixel/compare/v2.7.2...v2.7.3) (2023-10-19)
 
 
