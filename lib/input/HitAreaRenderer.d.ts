@@ -30,6 +30,7 @@ export declare class HitAreaRenderer extends Container {
      * Renders hit area renderer
      */
     renderHitAreas(): void;
+    renderSingle(target: DisplayObject): void;
     /**
      * Clears hit area renderer
      */

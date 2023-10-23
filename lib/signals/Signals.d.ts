@@ -79,6 +79,7 @@ export declare function dragBegin(draggable: Draggable): void;
 export declare function dragEnd(draggable: Draggable): void;
 export declare function pause(): void;
 export declare function unpause(): void;
+export declare function changeLanguage(languageId: string): void;
 export declare class Signals {
     static onResize: Signal<(size: IPoint) => void>;
     static showPopup: Signal<(token: IPopupToken) => void>;
@@ -155,5 +156,7 @@ export declare class Signals {
     static dragEnd: Signal<(draggable: Draggable) => void>;
     static pause: Signal<() => void>;
     static unpause: Signal<() => void>;
+    static changeLanguage: Signal<(languageId: string) => void>;
+    static onLanguageChanged: Signal<(languageId: string) => void>;
 }
 //# sourceMappingURL=Signals.d.ts.map

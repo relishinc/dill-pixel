@@ -1,5 +1,6 @@
 import { OutlineFilter } from '@pixi/filter-outline';
-import { Container, FederatedPointerEvent, IPoint, Point } from 'pixi.js';
+import { FederatedPointerEvent, IPoint, Point } from 'pixi.js';
+import { Container } from '../gameobjects';
 import { IFocusable } from './IFocusable';
 import { ISelectable } from './ISelectable';
 /**
@@ -16,6 +17,9 @@ export declare abstract class Selectable extends Container implements ISelectabl
     protected _hoverVo: string | undefined;
     protected _clickedSfx: string | undefined;
     protected constructor();
+    protected removeEventListeners(): void;
+    protected addEventListeners(): void;
+    protected setHitArea(): void;
     /**
      * Gets whether is selected
      */
