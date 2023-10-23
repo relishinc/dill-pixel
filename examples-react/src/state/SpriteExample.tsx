@@ -1,10 +1,10 @@
 import { BasicStateBackground } from '@/ui/BasicStateBackground';
-import { List } from '@/ui/List';
 import { Container, Text } from '@pixi/react';
 import { IContainer, Sprite, State, useStateAnimations } from 'dill-pixel/react';
 import { gsap } from 'gsap';
 import { TextStyle } from 'pixi.js';
 import * as React from 'react';
+import { List } from '../../../src/react/ui/List';
 
 export const SpriteExample: State = ({ size, animationState, onInAnimationComplete, onOutAnimationComplete }) => {
   const containerRef = React.useRef<IContainer>(null);

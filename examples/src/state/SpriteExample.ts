@@ -3,7 +3,7 @@ import { BaseState } from '@/state/BaseState';
 import { AssetMapData, AssetType, TextureAsset, TextureAtlasAsset } from 'dill-pixel';
 import { Point } from 'pixi.js';
 
-class SpriteExample extends BaseState {
+export class SpriteExample extends BaseState {
   public static get NAME(): string {
     return 'SpriteExample';
   }
@@ -23,9 +23,7 @@ class SpriteExample extends BaseState {
 
     this.eventMode = 'static';
 
-    const spr = this.add.sprite('pickle', undefined, 1, [-150, 150], 0.5);
-    const textureAtlasSprite = this.add.sprite('lab', 'buildings', 1, [150, 150]);
+    this.add.sprite('pickle', undefined, 1, [-150, 150], 0.5);
+    this.add.sprite('lab', 'buildings', 1, [150, 150]);
   }
 }
-
-export default SpriteExample;

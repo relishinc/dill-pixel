@@ -1,6 +1,6 @@
 import {Point} from 'pixi.js';
 import {SignalConnections} from 'typed-signals';
-import {Application} from '../core/Application';
+import {Application} from '../core';
 import {Container} from '../gameobjects';
 import {AssetMapData} from '../load';
 import {Add, Make} from '../utils/factory';
@@ -11,7 +11,6 @@ import {Add, Make} from '../utils/factory';
 export abstract class State extends Container {
   public static NAME: string = 'State';
   private static _assets: AssetMapData[] = [];
-
   protected _size: Point;
   protected _connections: SignalConnections = new SignalConnections();
   protected _data: any;

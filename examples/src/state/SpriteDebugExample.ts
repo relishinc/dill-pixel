@@ -23,7 +23,7 @@ export class SpriteDebugExample extends BaseState {
     // init debugger
     await this.app.addDebugger();
 
-    this.sprite = this.add.sprite('relish-logo-circle', null, 1, [0, -100]);
+    this.sprite = this.add.sprite('relish-logo-circle', undefined, 1, [0, -100]);
     this.sprite.width = this.sprite.height = this.getObjectSize();
   }
 

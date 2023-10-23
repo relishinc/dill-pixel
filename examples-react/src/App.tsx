@@ -7,6 +7,7 @@ import { UIListExample } from '@/state/UIListExample';
 import { Loader } from '@/ui/Loader';
 import { Application } from 'dill-pixel/react';
 import * as React from 'react';
+import { UIFlexContainerExample } from './state/UIFlexContainerExample';
 
 export function App({ el }: { el: HTMLElement | Window }) {
   return (
@@ -15,7 +16,7 @@ export function App({ el }: { el: HTMLElement | Window }) {
         el={el}
         defaultState={PopupExample}
         loadingState={Loader}
-        states={[PlatformerExample, SpriteExample, PopupExample, UIListExample]}
+        states={[PlatformerExample, SpriteExample, PopupExample, UIListExample, UIFlexContainerExample]}
         popups={[ExamplePopup, SpringPopup]}
       />
     </>

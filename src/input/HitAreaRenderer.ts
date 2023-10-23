@@ -88,6 +88,13 @@ export class HitAreaRenderer extends Container {
     this._graphics.endFill();
   }
 
+  public renderSingle(target: DisplayObject) {
+    this._graphics.clear();
+    this._graphics.beginFill(0xff0000, 0.25);
+    this.renderTarget(target);
+    this._graphics.endFill();
+  }
+
   /**
    * Clears hit area renderer
    */

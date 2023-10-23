@@ -1,5 +1,4 @@
 import {Container, FederatedPointerEvent, Point} from 'pixi.js';
-import * as InputUtils from '../input/InputUtils';
 import {dragBegin, dragEnd, draggableDeselected, draggableSelected} from '../signals';
 import * as PixiUtils from '../utils/PixiUtils';
 import * as PointUtils from '../utils/PointUtils';
@@ -11,26 +10,27 @@ import {Selectable} from './Selectable';
  * @todo SH: Strip the Chef Leo logic from this class and make it generic and customizable
  */
 export class Draggable extends Selectable {
-  // TODO: Can we get rid of these callback arrays?
-  public readonly onDragBegin: ((p: Draggable) => void)[];
-  public readonly onDrag: ((p: Draggable) => void)[];
-  public readonly onDragEnd: ((p: Draggable) => void)[];
-
   protected _isDrag: boolean;
   protected _pointerOffset: Point;
   private _dragThresholdSq: number;
+  private _storedStageHitArea: any;
+  private _storedStageEventMode: any;
 
   constructor() {
     super();
+    this.onPointerMove = this.onPointerMove.bind(this);
+
     this._isDrag = false;
     this._pointerOffset = new Point(0, 0);
     this._dragThresholdSq = 15 * 15;
 
-    this.onDragBegin = [];
-    this.onDrag = [];
-    this.onDragEnd = [];
+    this.cursor = 'grab';
+  }
 
-    this.on(InputUtils.Events.POINTER_MOVE, this.onPointerMove);
+  protected addEventListeners() {
+    this.on('pointerdown', this.onPointerDown);
+    this.on('pointerup', this.onPointerUp);
+    this.on('pointerupoutside', this.onPointerUpOutside);
   }
 
   /**
@@ -93,6 +93,34 @@ export class Draggable extends Selectable {
     super.onPointerDown(pEvent);
     this._isDrag = false;
     this._pointerOffset = PointUtils.subtract(this.position, this._eventData!.getLocalPosition(this.parent)) as Point;
+
+    this._storedStageHitArea = this.app.stage.hitArea;
+    this._storedStageEventMode = this.app.stage.eventMode;
+
+    this.app.stage.cursor = 'grabbing';
+    this.cursor = 'grabbing';
+
+    this.app.stage.hitArea = this.app.screen;
+    this.app.stage.eventMode = 'static';
+    this.app.stage.on('pointermove', this.onPointerMove);
+    this.app.stage.on('pointerup', this.onPointerUp);
+    this.app.stage.on('pointerupoutside', this.onPointerUpOutside);
+  }
+
+  removeAppListeners() {
+    this.app.stage.off('pointermove', this.onPointerMove);
+    this.app.stage.off('pointerup', this.onPointerUp);
+    this.app.stage.off('pointerupoutside', this.onPointerUpOutside);
+
+    this.app.stage.hitArea = this._storedStageHitArea;
+    this.app.stage.eventMode = this._storedStageEventMode;
+    this._storedStageHitArea = null;
+    this._storedStageEventMode = null;
+
+    this.app.stage.cursor = 'default';
+    this.cursor = 'grab';
+
+    this.setHitArea();
   }
 
   /**
@@ -106,6 +134,7 @@ export class Draggable extends Selectable {
         super.onPointerUp(pEvent);
       }
     }
+    this.removeAppListeners();
   }
 
   /**
@@ -117,6 +146,7 @@ export class Draggable extends Selectable {
     } else {
       super.onPointerUpOutside(pEvent);
     }
+    this.removeAppListeners();
   }
 
   /**
@@ -135,9 +165,7 @@ export class Draggable extends Selectable {
           this.dragBegin();
         }
       } else {
-        for (let i = 0; i < this.onDrag.length; ++i) {
-          this.onDrag[i](this);
-        }
+        this._eventData = pEvent;
         this.snapToMouse();
       }
     }
@@ -147,9 +175,6 @@ export class Draggable extends Selectable {
    * Drag begin
    */
   protected dragBegin(): void {
-    for (let i = 0; i < this.onDragBegin.length; ++i) {
-      this.onDragBegin[i](this);
-    }
     this._isDrag = true;
     dragBegin(this);
   }
@@ -158,9 +183,6 @@ export class Draggable extends Selectable {
    * Drag end
    */
   protected dragEnd(): void {
-    for (let i = 0; i < this.onDragEnd.length; ++i) {
-      this.onDragEnd[i](this);
-    }
     this._isDrag = false;
     this._eventData = undefined;
     dragEnd(this);
@@ -170,6 +192,12 @@ export class Draggable extends Selectable {
    * Snaps to mouse
    */
   protected snapToMouse(): void {
-    this._eventData!.getLocalPosition(this._visuals.parent, this._visuals.position as Point);
+    const pos = this.parent.toLocal(this._eventData!.global, this.parent);
+    this.position.set(pos.x, pos.y);
+  }
+
+  public addVisual(pVisual: Container): void {
+    this._visuals.addChild(pVisual);
+    this.setHitArea();
   }
 }

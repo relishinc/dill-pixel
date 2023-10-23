@@ -1,9 +1,13 @@
-import { Interstitial } from '@/state/Interstitial';
-import { MatterPhysicsExample } from '@/state/MatterPhysicsExample';
-import PopupExample from '@/state/PopupExample';
-import { RapierPhysicsExample } from '@/state/RapierPhysicsExample';
-import { SplashScreen } from '@/state/SplashScreen';
-import SpriteExample from '@/state/SpriteExample';
+import {
+  ContainerEditModeExample,
+  HTMLTextStyleExample,
+  Interstitial,
+  MatterPhysicsExample,
+  PopupExample,
+  RapierPhysicsExample,
+  SplashScreen,
+  SpriteExample,
+} from '@/state';
 import {
   Application as HLFApplication,
   AssetMapData,
@@ -12,8 +16,6 @@ import {
   TextureAsset,
   TransitionType,
 } from 'dill-pixel';
-import { LevelEditor } from '../../src/misc';
-import HTMLTextStyleExample from './state/HTMLTextStyleExample';
 
 export default class Application extends HLFApplication {
   constructor() {
@@ -69,21 +71,11 @@ export default class Application extends HLFApplication {
     this.state.register(PopupExample);
     this.state.register(SpriteExample);
     this.state.register(HTMLTextStyleExample);
-    // register a level editor
-    LevelEditor.components = [
-      { type: 'sprite', texture: 'pickle' },
-      { type: 'sprite', texture: 'relish-logo-circle' },
-    ];
-    this.state.register(LevelEditor, undefined, false);
+    this.state.register(ContainerEditModeExample);
   }
 
   protected createAssetMap(): void {
     this.addAssetGroup(HLFSplashScreen.NAME, SplashScreen.Assets);
-    this.addAssetGroup(LevelEditor, [
-      new TextureAsset('pickle', AssetType.PNG),
-      new TextureAsset('relish-logo-circle', AssetType.PNG),
-    ]);
-    // this.addAssetGroup(SpriteDebugExample);
   }
 
   async loadHTMLTextStyles(): Promise<void> {

@@ -1,12 +1,13 @@
-import { Application } from '../core/Application';
-import { LogUtils } from '../utils';
+import {Application} from '../core';
+import {Signals} from '../signals';
+import {LogUtils} from '../utils';
 
 /**
  * Alias for the function signature of callbacks. Easier on the eyes than (() => void)[] :)
  */
-type OnCopyChanged = () => void;
 
 export class CopyManager {
+  onCopyChanged = Signals.onLanguageChanged;
   /**
    * Id for English Canada. This is the default.
    */
@@ -19,25 +20,22 @@ export class CopyManager {
    * The current language id.
    */
   private _languageId: string;
-  /**
-   * A list of callbacks to be called when the language is changed.
-   */
-  private _copyChangedCallbacks: OnCopyChanged[];
 
   /**
    * Creates a manager to hold all copy data.
    * @default _languageId Set to "en_ca".
    */
   constructor(private app: Application) {
-    this._copyChangedCallbacks = new Array<OnCopyChanged>();
     this._languageId = CopyManager.EN_CA;
+    this.changeLanguage = this.changeLanguage.bind(this);
+    Signals.changeLanguage.connect(this.changeLanguage);
   }
 
   /**
    * A getter for the current set language.
    * @returns The current set language id.
    */
-  public get curLanguage(): string {
+  public get currentLanguage(): string {
     return this._languageId;
   }
 
@@ -76,41 +74,12 @@ export class CopyManager {
   }
 
   /**
-   * Registers a function to be called when the current language changes.
-   * @param pCallback The function to register.
-   */
-  public registerOnChangeLanguageCallback(pCallback: OnCopyChanged): boolean {
-    const index = this._copyChangedCallbacks.indexOf(pCallback);
-
-    if (index === -1) {
-      this._copyChangedCallbacks.push(pCallback);
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
-   * Unregisters a function to be called when the current language changes.
-   * @param pCallback The function to unregister.
-   */
-  public unregisterOnChangeLanguageCallback(pCallback: OnCopyChanged): void {
-    const index = this._copyChangedCallbacks.indexOf(pCallback);
-
-    if (index > -1) {
-      this._copyChangedCallbacks.splice(index, 1);
-    }
-  }
-
-  /**
    * Updates the current language and calls all registered callbacks.
    * @param pNewLanguage The new language id.
    */
   public changeLanguage(pNewLanguage: string): void {
     this._languageId = pNewLanguage;
-    this._copyChangedCallbacks.forEach((callback) => {
-      callback();
-    });
+    this.onCopyChanged.emit(this._languageId);
   }
 
   private logError(pText: string, ...pParams: any[]) {

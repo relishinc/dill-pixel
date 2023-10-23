@@ -1,9 +1,8 @@
 import { useBaseStateAnimations } from '@/hooks/useBaseStateAnimations';
 import { BasicStateBackground } from '@/ui/BasicStateBackground';
-import { List } from '@/ui/List';
 import { whiteTextStyle } from '@/utils/text';
 import { Container, Text } from '@pixi/react';
-import { State } from 'dill-pixel/react';
+import { List, State } from 'dill-pixel/react';
 import { TextStyle } from 'pixi.js';
 import * as React from 'react';
 
@@ -22,7 +21,7 @@ export const UIListExample: State = ({ size, animationState, onInAnimationComple
       />
       <List
         type={'vertical'}
-        elementsMargin={50}
+        elementsMargin={30}
         horPadding={40}
         x={size.width * 0.5}
         y={size.height * 0.5}

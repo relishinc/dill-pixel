@@ -1,9 +1,9 @@
-import { DARK_GREEN } from '@/utils/Constants.ts';
+import { COLOR_DARK_GREEN } from '@/utils/Constants';
 import { Graphics } from '@pixi/react';
 import { useHLF } from 'dill-pixel/react';
 import * as React from 'react';
 
-export const BasicStateBackground = ({ color = DARK_GREEN }: { color?: number }) => {
+export const BasicStateBackground = ({ color = COLOR_DARK_GREEN }: { color?: number }) => {
   const size = useHLF((globalState) => globalState.size);
   return (
     <Graphics

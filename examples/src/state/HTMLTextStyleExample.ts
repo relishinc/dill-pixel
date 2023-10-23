@@ -3,7 +3,7 @@ import { AssetMapData, getHTMLTextStyle, loadAndAddHTMLTextStyle } from 'dill-pi
 import { Point } from 'pixi.js';
 import { FONT_ARBORIA } from '../utils/Constants';
 
-class HTMLTextStyleExample extends BaseState {
+export class HTMLTextStyleExample extends BaseState {
   public static get NAME(): string {
     return 'HTMLTextStyleExample';
   }
@@ -51,5 +51,3 @@ class HTMLTextStyleExample extends BaseState {
     this.add.htmlText('This will render in arboria', style, 1, [0, 110]);
   }
 }
-
-export default HTMLTextStyleExample;

@@ -1,1 +1,1 @@
-export * from './LevelEditor';
+export * from './Editor';

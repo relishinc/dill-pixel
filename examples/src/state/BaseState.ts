@@ -39,6 +39,8 @@ export class BaseState extends State {
     this._header = this._layout.add.container(1, [-this.app.size.x * 0.5, -this.app.size.y * 0.5]);
     this._main = this._layout.add.container(0.25);
     this._footer = this._layout.add.container(1, [this.app.size.x * 0.5, this.app.size.y * 0.5]);
+
+    this._layout.childrenEditable = this._layout.editable = false;
   }
 
   public init(pSize: Point) {

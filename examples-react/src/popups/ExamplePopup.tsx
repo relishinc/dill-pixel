@@ -1,4 +1,4 @@
-import { GREEN } from '@/utils/Constants';
+import { COLOR_GREEN } from '@/utils/Constants';
 import { Container, Graphics, Text } from '@pixi/react';
 import { IContainer, IText, Popup, useHLF, useStateAnimations } from 'dill-pixel/react';
 import { gsap } from 'gsap';
@@ -47,7 +47,7 @@ export const ExamplePopup: Popup = ({ id, animationState, size, onInAnimationCom
         y={size.height * 0.5}
         draw={(g) => {
           g.clear();
-          g.beginFill(GREEN, 0.9);
+          g.beginFill(COLOR_GREEN, 0.9);
           g.drawRoundedRect(-450, -200, 900, 400, 20);
           g.endFill();
         }}

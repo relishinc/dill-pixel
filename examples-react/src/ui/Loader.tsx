@@ -1,4 +1,4 @@
-import { GREEN } from '@/utils/Constants.ts';
+import { COLOR_GREEN } from '@/utils/Constants';
 import { Container, Graphics, Text } from '@pixi/react';
 import { IContainer, LoadingState, useStateAnimations } from 'dill-pixel/react';
 import { gsap } from 'gsap';
@@ -41,7 +41,7 @@ export const Loader: LoadingState = ({
       <Graphics
         draw={(g) => {
           g.clear();
-          g.beginFill(GREEN, 1);
+          g.beginFill(COLOR_GREEN, 1);
           g.drawRect(0, 0, size.width, size.height);
           g.endFill();
         }}

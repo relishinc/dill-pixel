@@ -20,11 +20,17 @@ export interface FlexContainerSettings {
   flexDirection?: 'row' | 'column';
   alignItems?: 'center' | 'flex-start' | 'flex-end';
   justifyContent?: 'center' | 'space-between' | 'space-around' | 'flex-start' | 'flex-end';
+  padding?: number | [number, number] | [number, number, number, number];
 }
 
 export class FlexContainer extends Container {
   public onLayoutComplete: Signal<() => void> = new Signal<() => void>();
   public debug: boolean = false;
+
+  protected paddingLeft: number = 0;
+  protected paddingRight: number = 0;
+  protected paddingTop: number = 0;
+  protected paddingBottom: number = 0;
   protected _settings: FlexContainerSettings;
 
   constructor(settings: Partial<FlexContainerSettings> = {}) {
@@ -34,9 +40,36 @@ export class FlexContainer extends Container {
     this.layoutChildren = this.layoutChildren.bind(this);
 
     this._settings = Object.assign(
-      { gap: 0, flexWrap: 'nowrap', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start' },
+      {
+        gap: 0,
+        flexWrap: 'nowrap',
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        padding: 0,
+      },
       settings,
     );
+
+    if (this._settings?.padding) {
+      if (Array.isArray(this._settings.padding)) {
+        if (this._settings.padding.length === 4) {
+          this.paddingLeft = this._settings.padding[0];
+          this.paddingTop = this._settings.padding[1];
+          this.paddingRight = this._settings.padding[2];
+          this.paddingBottom = this._settings.padding[3];
+        } else if (this._settings.padding.length === 2) {
+          this.paddingLeft = this._settings.padding[0];
+          this.paddingTop = this._settings.padding[1];
+          this.paddingRight = this._settings.padding[0];
+          this.paddingBottom = this._settings.padding[1];
+        } else {
+          throw new Error('padding must be an array of 2 or 4 numbers');
+        }
+      } else {
+        this.paddingLeft = this.paddingTop = this.paddingRight = this.paddingBottom = this._settings.padding;
+      }
+    }
 
     Signals.onResize.connect(this.layoutChildren);
 
@@ -84,8 +117,8 @@ export class FlexContainer extends Container {
       console.log(this.name, this._settings.width);
     }
 
-    let currentOffset = 0;
-    let crossAxisOffset = 0;
+    let currentOffset = this._settings.flexDirection === 'row' ? this.paddingLeft : this.paddingTop;
+    let crossAxisOffset = this._settings.flexDirection === 'row' ? this.paddingLeft : this.paddingTop;
     let maxCrossAxisSize = 0;
     let rowOrColumnItems = [];
 
@@ -94,17 +127,17 @@ export class FlexContainer extends Container {
       // Check if the item fits or if flexWrap is enabled
       const isOverflowing =
         this._settings.flexDirection === 'row'
-          ? currentOffset + child.width > this._settings.width!
-          : currentOffset + child.height > this._settings.height!;
+          ? currentOffset + child.width > this._settings.width! - this.paddingLeft - this.paddingRight
+          : currentOffset + child.height > this._settings.height! - this.paddingTop - this.paddingBottom;
 
       if (this._settings.flexWrap === 'wrap' && isOverflowing && rowOrColumnItems.length > 0) {
         // Lay out the current row/column
         this.layoutRowOrColumn(rowOrColumnItems, crossAxisOffset, maxCrossAxisSize);
 
         // Reset for the next row/column
-        currentOffset = 0;
+        currentOffset = this._settings.flexDirection === 'row' ? this.paddingLeft : this.paddingTop;
         crossAxisOffset += maxCrossAxisSize + this._settings.gap!;
-        maxCrossAxisSize = 0;
+        maxCrossAxisSize = this._settings.flexDirection === 'row' ? this.paddingLeft : this.paddingTop;
         rowOrColumnItems = [];
       }
 
@@ -148,8 +181,10 @@ export class FlexContainer extends Container {
         remainingSpace / (items.length * 2) +
         (this._settings.flexDirection === 'column' ? items[items.length - 1].height : items[items.length - 1].width);
     }
+    spaceBetween -= this.paddingLeft + this.paddingRight;
 
-    let currentOffset = this._settings.justifyContent === 'flex-end' ? remainingSpace : 0;
+    let currentOffset =
+      this._settings.justifyContent === 'flex-end' ? remainingSpace - this.paddingRight : this.paddingLeft;
     currentOffset +=
       this._settings.justifyContent === 'center' || this._settings.justifyContent === 'space-around' ? spaceBetween : 0;
 
