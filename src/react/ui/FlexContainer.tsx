@@ -28,62 +28,91 @@ export const FlexContainer: React.FC<FlexContainerProps> = (props) => {
   const childRefs = React.useRef<(IContainer | null)[]>([]);
   const [layoutProps, setLayoutProps] = React.useState<{ x: number; y: number }[]>([]);
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     let x = 0;
     let y = 0;
     let rowHeight = 0;
     let columnWidth = 0;
-    let totalWidth = 0;
-    let totalHeight = 0;
     let nextRowY = 0; // y-coordinate of the next row
     let nextColumnX = 0; // x-coordinate of the next column
     const newLayoutProps: { x: number; y: number }[] = [];
     const items = childRefs.current.filter(Boolean);
-    items.forEach((childRef, index) => {
-      const isLast = index === items.length - 1;
-      if (childRef) {
-        // Check for wrapping
-        if (
-          flexWrap === 'wrap' &&
-          ((flexDirection === 'row' && x + childRef.width + gap > width) ||
-            (flexDirection === 'column' && y + childRef.height + gap > height))
-        ) {
-          if (flexDirection === 'row') {
-            nextRowY += rowHeight + gap; // Update y-coordinate for the next row
-          } else {
-            nextColumnX += columnWidth + gap; // Update x-coordinate for the next column
-          }
-          totalWidth = Math.max(totalWidth, x);
-          totalHeight = Math.max(totalHeight, y);
-          x = 0;
-          y = 0;
-          rowHeight = 0;
-          columnWidth = 0;
-        }
+    let lineItems: { index: number; width: number; height: number }[] = [];
+    let lineStart = 0;
 
-        // Position child
-        newLayoutProps[index] = {
-          x: flexDirection === 'row' ? x : nextColumnX,
-          y: flexDirection === 'column' ? y : nextRowY,
-        };
+    const shouldWrap = (childRef: IContainer, x: number, y: number) =>
+      (flexDirection === 'row' && x + childRef.width + gap > width) ||
+      (flexDirection === 'column' && y + childRef.height + gap > height);
 
-        // Update layout variables
-        if (flexDirection === 'row') {
-          x += childRef.width + gap; // Include gap after child
-          rowHeight = Math.max(rowHeight, childRef.height);
-        } else {
-          y += childRef.height + gap; // Include gap after child
-          columnWidth = Math.max(columnWidth, childRef.width);
-        }
+    const handleWrap = () => {
+      if (flexDirection === 'row') {
+        nextRowY += rowHeight + gap;
+      } else {
+        nextColumnX += columnWidth + gap;
       }
-    });
-    if (alignItems && flexDirection === 'row') {
+      x = 0;
+      y = 0;
+      rowHeight = 0;
+      columnWidth = 0;
+    };
+
+    const updateLayoutVariables = (childRef: IContainer) => {
+      if (flexDirection === 'row') {
+        x += childRef.width + gap;
+        rowHeight = Math.max(rowHeight, childRef.height);
+      } else {
+        y += childRef.height + gap;
+        columnWidth = Math.max(columnWidth, childRef.width);
+      }
+    };
+
+    const getNextX = (currentX: number) => (flexDirection === 'row' ? currentX : nextColumnX);
+    const getNextY = (currentY: number) => (flexDirection === 'column' ? currentY : nextRowY);
+
+    const handleJustification = (
+      lineItems: { index: number; width: number; height: number }[],
+      lineStart: number,
+      lineEnd: number,
+      direction: 'row' | 'column',
+    ) => {
+      const extraSpace = (direction === 'row' ? width : height) - (lineEnd - lineStart);
+      lineItems.forEach(({ index, width, height }, i) => {
+        let offset = 0;
+        switch (justifyContent) {
+          case 'flex-start':
+            break; // Do nothing
+          case 'flex-end':
+            offset = extraSpace;
+            break;
+          case 'center':
+            offset = extraSpace / 2;
+            break;
+          case 'space-between':
+            offset = i * (extraSpace / (lineItems.length - 1));
+            break;
+          case 'space-around':
+            offset = (extraSpace / lineItems.length) * i + extraSpace / (2 * lineItems.length);
+            break;
+          case 'space-evenly':
+            offset = (extraSpace / (lineItems.length + 1)) * (i + 1);
+            break;
+        }
+        if (direction === 'row') {
+          newLayoutProps[index].x += offset;
+        } else {
+          newLayoutProps[index].y += offset;
+        }
+      });
+    };
+
+    const handleAlignment = (newLayoutProps: { x: number; y: number }[], items: (IContainer | null)[]) => {
       newLayoutProps.forEach((props, index) => {
         const childRef = items[index];
-        if (childRef) {
+        if (!childRef) return;
+
+        if (flexDirection === 'row') {
           switch (alignItems) {
             case 'flex-start':
-              // No extra alignment needed
               break;
             case 'flex-end':
               props.y += rowHeight - childRef.height;
@@ -91,23 +120,14 @@ export const FlexContainer: React.FC<FlexContainerProps> = (props) => {
             case 'center':
               props.y += (rowHeight - childRef.height) / 2;
               break;
-            case 'baseline':
-              // Assume baseline is at the bottom of each child for simplicity
-              props.y += rowHeight - childRef.height;
-              break;
             case 'stretch':
               childRef.height = rowHeight;
               break;
+            // Handle 'baseline' as needed
           }
-        }
-      });
-    } else if (alignItems && flexDirection === 'column') {
-      newLayoutProps.forEach((props, index) => {
-        const childRef = items[index];
-        if (childRef) {
+        } else {
           switch (alignItems) {
             case 'flex-start':
-              // No extra alignment needed
               break;
             case 'flex-end':
               props.x += columnWidth - childRef.width;
@@ -115,68 +135,38 @@ export const FlexContainer: React.FC<FlexContainerProps> = (props) => {
             case 'center':
               props.x += (columnWidth - childRef.width) / 2;
               break;
-            case 'baseline':
-              // Assume baseline is at the left side of each child for simplicity
-              break;
             case 'stretch':
               childRef.width = columnWidth;
               break;
+            // Handle 'baseline' as needed
           }
         }
       });
-    }
-    // Handle justifyContent
-    if (justifyContent) {
-      const extraSpace = flexDirection === 'row' ? width - totalWidth : height - totalHeight;
-      const numGaps = items.length - 1;
+    };
 
-      newLayoutProps.forEach((props, index) => {
-        if (flexDirection === 'row') {
-          switch (justifyContent) {
-            case 'flex-start':
-              // No extra spacing needed
-              break;
-            case 'flex-end':
-              props.x += extraSpace;
-              break;
-            case 'center':
-              props.x += extraSpace / 2;
-              break;
-            case 'space-between':
-              props.x += (extraSpace / numGaps) * index;
-              break;
-            case 'space-around':
-              props.x += (extraSpace / numGaps) * index + extraSpace / (2 * numGaps);
-              break;
-            case 'space-evenly':
-              props.x += (extraSpace / (numGaps + 1)) * (index + 1);
-              break;
-          }
-        } else {
-          // flexDirection === 'column'
-          switch (justifyContent) {
-            case 'flex-start':
-              // No extra spacing needed
-              break;
-            case 'flex-end':
-              props.y += extraSpace;
-              break;
-            case 'center':
-              props.y += extraSpace / 2;
-              break;
-            case 'space-between':
-              props.y += (extraSpace / numGaps) * index;
-              break;
-            case 'space-around':
-              props.y += (extraSpace / numGaps) * index + extraSpace / (2 * numGaps);
-              break;
-            case 'space-evenly':
-              props.y += (extraSpace / (numGaps + 1)) * (index + 1);
-              break;
-          }
-        }
-      });
-    }
+    items.forEach((childRef, index) => {
+      if (!childRef) return;
+
+      // Check for wrapping
+      if (flexWrap === 'wrap' && shouldWrap(childRef, x, y)) {
+        handleJustification(lineItems, lineStart, flexDirection === 'column' ? y - gap : x - gap, flexDirection);
+        handleWrap();
+        lineItems = [];
+        lineStart = x;
+      }
+
+      lineItems.push({ index, width: childRef.width, height: childRef.height });
+
+      // Position child
+      newLayoutProps[index] = { x: getNextX(x), y: getNextY(y) };
+
+      // Update layout variables
+      updateLayoutVariables(childRef);
+    });
+
+    // Justify the last line
+    handleJustification(lineItems, lineStart, flexDirection === 'column' ? y - gap : x - gap, flexDirection);
+    handleAlignment(newLayoutProps, items);
     setLayoutProps(newLayoutProps);
   }, [children, flexDirection, flexWrap, alignItems, justifyContent, width, height, gap]);
 

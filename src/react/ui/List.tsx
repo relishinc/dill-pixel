@@ -1,9 +1,10 @@
-import { _ReactPixi, Container } from '@pixi/react';
+import { _ReactPixi } from '@pixi/react';
 import { IContainer } from 'dill-pixel/react';
 import React from 'react';
+import { Container, IContainerProps } from '../gameobjects';
 import PointLike = _ReactPixi.PointLike;
 
-interface ListProps extends React.ComponentProps<typeof Container> {
+interface ListProps extends IContainerProps {
   type?: 'horizontal' | 'vertical';
   elementsMargin?: number;
   vertPadding?: number;

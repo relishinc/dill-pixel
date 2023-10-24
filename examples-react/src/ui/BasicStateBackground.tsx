@@ -3,7 +3,13 @@ import { Graphics } from '@pixi/react';
 import { useHLF } from 'dill-pixel/react';
 import * as React from 'react';
 
-export const BasicStateBackground = ({ color = COLOR_DARK_GREEN }: { color?: number }) => {
+export const BasicStateBackground = ({
+  color = COLOR_DARK_GREEN,
+  editable = false,
+}: {
+  color?: number;
+  editable?: boolean;
+}) => {
   const size = useHLF((globalState) => globalState.size);
   return (
     <Graphics
