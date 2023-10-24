@@ -8,36 +8,38 @@ import { useControls } from 'leva';
 import { TextStyle } from 'pixi.js';
 import * as React from 'react';
 
+const controlsSchema = {
+  numItems: { label: '# of items', value: 4, min: 1, max: 40, step: 1 },
+  varySizes: false,
+  gap: { value: 0, min: 0, max: 200, step: 1 },
+  flexWrap: { options: { nowrap: 'nowrap', wrap: 'wrap' } },
+  flexDirection: { options: { row: 'row', column: 'column' } },
+  alignItems: {
+    options: {
+      'flex-start': 'flex-start',
+      center: 'center',
+      'flex-end': 'flex-end',
+    },
+  },
+  justifyContent: {
+    options: {
+      'flex-start': 'flex-start',
+      center: 'center',
+      'flex-end': 'flex-end',
+      'space-between': 'space-between',
+      'space-around': 'space-around',
+      'space-evenly': 'space-evenly',
+    },
+  },
+};
+
 export const UIFlexContainerExample: State = ({
   size,
   animationState,
   onInAnimationComplete,
   onOutAnimationComplete,
 }) => {
-  const { numItems, varySizes, gap, flexDirection, flexWrap, alignItems, justifyContent } = useControls({
-    numItems: { label: '# of items', value: 4, min: 1, max: 40, step: 1 },
-    varySizes: false,
-    gap: { value: 0, min: 0, max: 200, step: 1 },
-    flexWrap: { options: { nowrap: 'nowrap', wrap: 'wrap' } },
-    flexDirection: { options: { row: 'row', column: 'column' } },
-    alignItems: {
-      options: {
-        'flex-start': 'flex-start',
-        center: 'center',
-        'flex-end': 'flex-end',
-      },
-    },
-    justifyContent: {
-      options: {
-        'flex-start': 'flex-start',
-        center: 'center',
-        'flex-end': 'flex-end',
-        'space-between': 'space-between',
-        'space-around': 'space-around',
-        'space-evenly': 'space-evenly',
-      },
-    },
-  });
+  const { numItems, varySizes, gap, flexDirection, flexWrap, alignItems, justifyContent } = useControls(controlsSchema);
 
   const items = React.useMemo(() => {
     return Array.from({ length: numItems }).map((_, i) => (
