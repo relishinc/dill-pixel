@@ -42,6 +42,7 @@ export const UIFlexContainerExample: State = ({
   const items = React.useMemo(() => {
     return Array.from({ length: numItems }).map((_, i) => (
       <Text
+        key={`item-${i}`}
         text={`Item ${i + 1}`}
         style={whiteTextStyle(varySizes ? MathUtils.clamp(Math.random() * 48 + 24, 24, 72) : 48)}
       />
