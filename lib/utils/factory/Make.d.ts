@@ -1,6 +1,6 @@
 import { Geometry, State } from '@pixi/core';
 import { BitmapText, DRAW_MODES, Graphics, HTMLText, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Mesh, NineSlicePlane, ObservablePoint, Point, Shader, SimpleMesh, SimplePlane, SimpleRope, Sprite, Text, TextStyle, Texture, TilingSprite } from 'pixi.js';
-import { Container } from '../../gameobjects';
+import { Container, FlexContainer, FlexContainerSettings } from '../../gameobjects';
 import { PointLike, SpritesheetLike } from '../Types';
 /**
  * Gets a `PIXI.Texture` asset.
@@ -17,6 +17,7 @@ export declare class Make {
     static htmlText(pText?: string, pStyle?: Partial<HTMLTextStyle | TextStyle | ITextStyle>, alpha?: number, position?: PointLike, anchor?: PointLike): HTMLText;
     static bitmapText(pText?: string, pStyle?: Partial<IBitmapTextStyle>, alpha?: number, position?: PointLike, anchor?: PointLike): BitmapText;
     static container(alpha?: number, position?: PointLike): Container;
+    static flexContainer(alpha?: number, position?: PointLike, settings?: Partial<FlexContainerSettings>): FlexContainer;
     static graphics(alpha?: number, position?: PointLike): Graphics;
     static tilingSprite(pTexture: string | Texture, pSheet: SpritesheetLike, pWidth: number, pHeight: number, pTilePosition?: Point, alpha?: number, position?: PointLike, anchor?: PointLike): TilingSprite;
     static mesh(pGeometry: Geometry, pShader: Shader, pState?: State, pDrawMode?: DRAW_MODES): Mesh<Shader>;
