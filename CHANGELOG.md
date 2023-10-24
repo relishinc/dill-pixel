@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.9.0](https://github.com/relishinc/dill-pixel/compare/v2.8.0...v2.9.0) (2023-10-24)
+
+
+### Features
+
+* added FlexContainer react component and updated example ([9f4aef9](https://github.com/relishinc/dill-pixel/commit/9f4aef9bd1a6a599895a0157b80f46a4902b78c6))
+
+
+### Bug Fixes
+
+* key issue in FlexContainer example ([95fce6f](https://github.com/relishinc/dill-pixel/commit/95fce6f473fa28fbebacb186f488244e78d66c4b))
+
 ## [2.8.0](https://github.com/relishinc/dill-pixel/compare/v2.7.3...v2.8.0) (2023-10-23)
 
 
