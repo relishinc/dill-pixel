@@ -22,7 +22,7 @@ export const Platform = React.forwardRef<IPlatform, PlatformProps>((props: Platf
     return {
       initialColor: 0x0,
       setColor,
-      container: innerRef.current,
+      container: innerRef.current!,
     };
   });
 
@@ -87,7 +87,7 @@ export const MovingPlatform = React.forwardRef<IMovingPlatform, MovingPlatformPr
       return {
         initialColor: 0x00fff0,
         setColor,
-        container: innerRef.current,
+        container: innerRef.current!,
       };
     });
 

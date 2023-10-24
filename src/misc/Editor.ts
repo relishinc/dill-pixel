@@ -1,4 +1,5 @@
 import {
+  Application as PIXIApplication,
   Container as PIXIContainer,
   DisplayObject,
   FederatedPointerEvent,
@@ -10,24 +11,42 @@ import { Application } from '../core';
 import { Container } from '../gameobjects';
 import * as PointUtils from '../utils/PointUtils';
 
+export interface IEditableContainer extends PIXIContainer {
+  editable?: boolean;
+  childrenEditable?: boolean;
+}
+
 export class Editor {
-  _childStore: Set<{ child: any; data: any }> = new Set();
+  _childStore: Set<{
+    child: any;
+    data: any;
+  }> = new Set();
   _data: any = {};
   _children: DisplayObject[] = [];
   _storedStageData: any = {};
   _isDragging: boolean = false;
   _selectedChild: DisplayObject | null = null;
-  _offset: { x: number; y: number } = { x: 0, y: 0 };
+  _offset: {
+    x: number;
+    y: number;
+  } = { x: 0, y: 0 };
   _gfx: Graphics;
   _text: HTMLText;
 
+  protected stage: PIXIContainer | null = null;
+
   get app(): Application {
-    return Application.instance;
+    return <Application>this?.application || Application.instance;
   }
 
-  constructor(public container: Container) {
+  constructor(
+    public container: IEditableContainer,
+    public application?: PIXIApplication,
+  ) {
+    this.stage = application?.stage || this.app.stage;
     this.onContainerChildAdded = this.onContainerChildAdded.bind(this);
     this.onChildPointerDown = this.onChildPointerDown.bind(this);
+    this.onChildPointerOut = this.onChildPointerOut.bind(this);
     this.onChildPointerOver = this.onChildPointerOver.bind(this);
     this.onStagePointerMove = this.onStagePointerMove.bind(this);
     this.onStagePointerUp = this.onStagePointerUp.bind(this);
@@ -36,7 +55,7 @@ export class Editor {
   }
 
   init() {
-    this._gfx = this.app.stage.addChild(new Graphics());
+    this._gfx = this.stage!.addChild(new Graphics());
     const style = new HTMLTextStyle({
       fontSize: 15,
       fontFamily: 'Arial',
@@ -44,9 +63,11 @@ export class Editor {
       padding: 5,
     });
     style.addOverride('background-color: white');
-    this._text = this.app.stage.addChild(
+    this._text = this.stage!.addChild(
       new HTMLText('<strong style="color:red">x: </strong>0, <strong style="color:red">y: </strong>0', style),
     );
+    this._text.resolution = 2;
+    this._text.eventMode = 'none';
     this._text.anchor.set(1, 1);
     this.container.on('childAdded', this.onContainerChildAdded.bind(this));
     // recursively find all children in this.container and add them to an array
@@ -54,6 +75,8 @@ export class Editor {
     this._children.forEach((child: DisplayObject) => {
       this.addChildListeners(child);
     });
+
+    console.log(this._children);
   }
 
   destroy() {
@@ -61,8 +84,12 @@ export class Editor {
       const child = this._children.pop();
       this.remove(child);
     }
-    this._gfx.parent.removeChild(this._gfx);
-    this._text.parent.removeChild(this._text);
+    if (this._gfx) {
+      this._gfx.parent.removeChild(this._gfx);
+    }
+    if (this._text) {
+      this._text.parent.removeChild(this._text);
+    }
   }
 
   remove(child: any) {
@@ -70,7 +97,10 @@ export class Editor {
       child?.off('pointerdown', this.onChildPointerDown);
       child?.off('pointerover', this.onChildPointerOver);
 
-      let childData: { child: any; data: any } | null = null;
+      let childData: {
+        child: any;
+        data: any;
+      } | null = null;
       for (let i = 0; i < this._childStore.size; ++i) {
         const data = this._childStore.values().next().value;
         if (data.child === child) {
@@ -133,6 +163,15 @@ export class Editor {
     }
     event.target.cursor = 'grab';
     this.drawBounds(event.target as DisplayObject);
+    event.target.on('pointerout', this.onChildPointerOut);
+  }
+
+  onChildPointerOut(event: FederatedPointerEvent) {
+    if (this._isDragging) {
+      return;
+    }
+    event.target.off('pointerout', this.onChildPointerOut);
+    this.clear();
   }
 
   drawBounds(target: any) {
@@ -161,25 +200,29 @@ export class Editor {
   }
 
   onChildPointerDown(event: FederatedPointerEvent) {
+    if (this._selectedChild) {
+      this._selectedChild.off('pointerout', this.onChildPointerOut);
+    }
+    event.target.off('pointerout', this.onChildPointerOut);
     this._isDragging = true;
-    this._gfx.clear();
+    this.clear();
     this._selectedChild = event.target as DisplayObject;
-    this.app.stage.cursor = 'grabbing';
+    this.stage!.cursor = 'grabbing';
     this._selectedChild.cursor = 'grabbing';
 
-    this._storedStageData.hitArea = this.app.stage.hitArea;
-    this._storedStageData.eventMode = this.app.stage.eventMode;
+    this._storedStageData.hitArea = this.stage!.hitArea;
+    this._storedStageData.eventMode = this.stage!.eventMode;
 
     this._offset = PointUtils.subtract(
       this._selectedChild.position,
       event!.getLocalPosition(this._selectedChild.parent),
     );
 
-    this.app.stage.hitArea = this.app.screen;
-    this.app.stage.eventMode = 'static';
-    this.app.stage.on('pointermove', this.onStagePointerMove);
-    this.app.stage.on('pointerup', this.onStagePointerUp);
-    this.app.stage.on('pointerupoutside', this.onStagePointerUp);
+    this.stage!.hitArea = this.app.screen;
+    this.stage!.eventMode = 'static';
+    this.stage!.on('pointermove', this.onStagePointerMove);
+    this.stage!.on('pointerup', this.onStagePointerUp);
+    this.stage!.on('pointerupoutside', this.onStagePointerUp);
   }
 
   onStagePointerMove(event: FederatedPointerEvent) {
@@ -189,11 +232,14 @@ export class Editor {
       pos.y += this._offset.y;
     }
     this._selectedChild!.position.set(Math.round(pos.x), Math.round(pos.y));
+
     this.drawBounds(this._selectedChild!);
   }
 
   onStagePointerUp() {
-    if (!this._selectedChild) {
+    if (this._selectedChild) {
+      this._selectedChild.on('pointerout', this.onChildPointerOut);
+    } else {
       return;
     }
     const name = this.getName(this._selectedChild);
@@ -204,20 +250,22 @@ export class Editor {
     this._isDragging = false;
     this._selectedChild = null;
 
-    this.app.stage.off('pointermove', this.onStagePointerMove);
-    this.app.stage.off('pointerup', this.onStagePointerUp);
-    this.app.stage.off('pointerupoutside', this.onStagePointerUp);
+    this.stage!.off('pointermove', this.onStagePointerMove);
+    this.stage!.off('pointerup', this.onStagePointerUp);
+    this.stage!.off('pointerupoutside', this.onStagePointerUp);
 
-    this.app.stage.hitArea = this._storedStageData.hitArea;
-    this.app.stage.eventMode = this._storedStageData.eventMode;
+    this.stage!.hitArea = this._storedStageData.hitArea;
+    this.stage!.eventMode = this._storedStageData.eventMode;
     this._storedStageData = {};
 
-    this.app.stage.cursor = 'default';
-
-    this._gfx.clear();
-    this._text.visible = false;
+    this.stage!.cursor = 'default';
 
     this.outputJSON();
+  }
+
+  protected clear() {
+    this._gfx.clear();
+    this._text.visible = false;
   }
 
   findChildren(container: PIXIContainer) {
@@ -234,6 +282,8 @@ export class Editor {
           if (child.childrenEditable) {
             this.findChildren(child as PIXIContainer);
           }
+        } else {
+          this.findChildren(child as PIXIContainer);
         }
       }
     });
