@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.10.0](https://github.com/relishinc/dill-pixel/compare/v2.9.0...v2.10.0) (2023-10-24)
+
+
+### Features
+
+* added dat.GUI to examples ([b0d4f39](https://github.com/relishinc/dill-pixel/commit/b0d4f39ad3c1fbff9b116b425aeed2fb76e9c7d4))
+* added leva controls to UIFlexContainer react example ([93bec2c](https://github.com/relishinc/dill-pixel/commit/93bec2c6690a7fb3aa966e64998e1d264d39461e))
+
+
+### Bug Fixes
+
+* rolled in FlexContainer react changes to the vanilla flex container ([b0d4f39](https://github.com/relishinc/dill-pixel/commit/b0d4f39ad3c1fbff9b116b425aeed2fb76e9c7d4))
+
 ## [2.9.0](https://github.com/relishinc/dill-pixel/compare/v2.8.0...v2.9.0) (2023-10-24)
 
 
