@@ -7,3 +7,4 @@ export * from './PopupExample';
 export * from './RapierPhysicsExample';
 export * from './SplashScreen';
 export * from './SpriteExample';
+export * from './FlexContainerExample';

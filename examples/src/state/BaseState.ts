@@ -1,5 +1,6 @@
 import Application from '@/Application';
 import { GREEN } from '@/utils/Constants';
+import * as dat from 'dat.gui';
 import { AssetMapData, AssetType, Container, State, TextureAsset } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Point, Sprite, Text } from 'pixi.js';
@@ -16,6 +17,8 @@ export class BaseState extends State {
   protected _headerBg: Sprite;
   protected _mainTitle: Text;
   protected _footerTitle: Text;
+
+  public gui: any;
 
   public constructor() {
     super();
@@ -41,6 +44,17 @@ export class BaseState extends State {
     this._footer = this._layout.add.container(1, [this.app.size.x * 0.5, this.app.size.y * 0.5]);
 
     this._layout.childrenEditable = this._layout.editable = false;
+  }
+
+  public addGUI() {
+    this.gui = new dat.GUI({ name: 'Controls', closeOnTop: true });
+    this.app.view.parentNode?.appendChild(this.gui.domElement.parentNode);
+    (this.gui.domElement.parentNode as HTMLElement).style.cssText = `position: absolute;
+    top: 0;
+    left: 0;
+    right: 86px;
+    height: 0;
+    z-index: 0;`;
   }
 
   public init(pSize: Point) {

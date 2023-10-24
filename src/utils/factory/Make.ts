@@ -25,7 +25,7 @@ import {
   TilingSprite
 } from 'pixi.js';
 import {Application} from '../../core';
-import {Container} from '../../gameobjects';
+import {Container, FlexContainer, FlexContainerSettings} from '../../gameobjects';
 import {PointLike, SpritesheetLike} from '../Types';
 import {resolvePointLike, setObjectName} from './utils';
 
@@ -205,6 +205,18 @@ export class Make {
 
   static container(alpha?: number, position?: PointLike): Container {
     const container = new Container();
+    if (alpha !== undefined) {
+      container.alpha = alpha;
+    }
+    if (position !== undefined) {
+      const resolvedPosition = resolvePointLike(position);
+      container.position.set(resolvedPosition.x, resolvedPosition.y);
+    }
+    return container;
+  }
+
+  static flexContainer(alpha?: number, position?: PointLike, settings?: Partial<FlexContainerSettings>): FlexContainer {
+    const container = new FlexContainer(settings);
     if (alpha !== undefined) {
       container.alpha = alpha;
     }
