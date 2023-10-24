@@ -14,6 +14,7 @@ import {
   TextStyle,
   Texture,
 } from 'pixi.js';
+import { FlexContainerSettings } from '../../gameobjects';
 import { PointLike } from '../Types';
 import { Make } from './Make';
 import { resolvePointLike } from './utils';
@@ -290,6 +291,19 @@ export class Add {
     container.y = resolvedPosition.y;
     container.scale.x = resolvedScale.x;
     container.scale.y = resolvedScale.y;
+
+    return this.defaultContainer.addChild(container);
+  }
+
+  // Add FlexContainer
+  flexContainer(alpha: number = 1, position: PointLike = { x: 0, y: 0 }, settings?: Partial<FlexContainerSettings>) {
+    const container = Make.flexContainer(alpha, position, settings);
+    container.alpha = alpha;
+
+    const resolvedPosition = resolvePointLike(position);
+
+    container.x = resolvedPosition.x;
+    container.y = resolvedPosition.y;
 
     return this.defaultContainer.addChild(container);
   }

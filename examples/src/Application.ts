@@ -1,5 +1,6 @@
 import {
   ContainerEditModeExample,
+  FlexContainerExample,
   HTMLTextStyleExample,
   Interstitial,
   MatterPhysicsExample,
@@ -72,6 +73,7 @@ export default class Application extends HLFApplication {
     this.state.register(SpriteExample);
     this.state.register(HTMLTextStyleExample);
     this.state.register(ContainerEditModeExample);
+    this.state.register(FlexContainerExample);
   }
 
   protected createAssetMap(): void {

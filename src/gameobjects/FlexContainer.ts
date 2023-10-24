@@ -1,6 +1,5 @@
-import { IDestroyOptions } from 'pixi.js';
+import { Container as PIXIContainer, DisplayObject, IDestroyOptions, IPoint } from 'pixi.js';
 import { Signal } from 'typed-signals';
-import { Signals } from '../signals';
 import { Container } from './Container';
 
 export type ContainerLike = {
@@ -11,16 +10,15 @@ export type ContainerLike = {
 };
 
 export interface FlexContainerSettings {
-  width?: number;
-  height?: number;
-  bindTo?: ContainerLike;
-  bindToAppSize?: boolean;
-  gap?: number;
-  flexWrap?: 'wrap' | 'nowrap';
-  flexDirection?: 'row' | 'column';
-  alignItems?: 'center' | 'flex-start' | 'flex-end';
-  justifyContent?: 'center' | 'space-between' | 'space-around' | 'flex-start' | 'flex-end';
-  padding?: number | [number, number] | [number, number, number, number];
+  width: number;
+  height: number;
+  bindTo: ContainerLike;
+  bindToAppSize: boolean;
+  gap: number;
+  flexWrap: 'wrap' | 'nowrap';
+  flexDirection: 'row' | 'column';
+  alignItems: 'center' | 'flex-start' | 'flex-end';
+  justifyContent: 'center' | 'space-between' | 'space-around' | 'space-evenly' | 'flex-start' | 'flex-end';
 }
 
 export class FlexContainer extends Container {
@@ -32,15 +30,83 @@ export class FlexContainer extends Container {
   protected paddingTop: number = 0;
   protected paddingBottom: number = 0;
   protected _settings: FlexContainerSettings;
+  private _layoutTimeout: any;
+
+  set gap(value: number) {
+    this._settings.gap = value;
+    this.layout();
+  }
+
+  get gap(): number {
+    return this._settings.gap!;
+  }
+
+  set flexWrap(value: 'wrap' | 'nowrap') {
+    this._settings.flexWrap = value;
+    this.layout();
+  }
+
+  get flexWrap(): 'wrap' | 'nowrap' {
+    return this._settings.flexWrap!;
+  }
+
+  set flexDirection(value: 'row' | 'column') {
+    this._settings.flexDirection = value;
+    this.layout();
+  }
+
+  get flexDirection(): 'row' | 'column' {
+    return this._settings.flexDirection!;
+  }
+
+  set alignItems(value: 'center' | 'flex-start' | 'flex-end') {
+    this._settings.alignItems = value;
+    this.layout();
+  }
+
+  get alignItems(): 'center' | 'flex-start' | 'flex-end' {
+    return this._settings.alignItems!;
+  }
+
+  set justifyContent(value: 'center' | 'space-between' | 'space-around' | 'space-evenly' | 'flex-start' | 'flex-end') {
+    this._settings.justifyContent = value;
+    this.layout();
+  }
+
+  get justifyContent(): 'center' | 'space-between' | 'space-around' | 'space-evenly' | 'flex-start' | 'flex-end' {
+    return this._settings.justifyContent!;
+  }
+
+  set containerHeight(value: number) {
+    this._settings.height = value;
+    this.layout();
+  }
+
+  get containerHeight(): number {
+    return this._settings.height;
+  }
+
+  set containerWidth(value: number) {
+    this._settings.width = value;
+    this.layout();
+  }
+
+  get containerWidth(): number {
+    return this._settings.width;
+  }
 
   constructor(settings: Partial<FlexContainerSettings> = {}) {
-    super();
+    super(true);
     this.handleChildAdded = this.handleChildAdded.bind(this);
     this.handleChildRemoved = this.handleChildRemoved.bind(this);
-    this.layoutChildren = this.layoutChildren.bind(this);
+    this.layout = this.layout.bind(this);
+    this._layout = this._layout.bind(this);
 
     this._settings = Object.assign(
       {
+        bindTo: null,
+        width: 0,
+        height: 0,
         gap: 0,
         flexWrap: 'nowrap',
         flexDirection: 'row',
@@ -51,178 +117,200 @@ export class FlexContainer extends Container {
       settings,
     );
 
-    if (this._settings?.padding) {
-      if (Array.isArray(this._settings.padding)) {
-        if (this._settings.padding.length === 4) {
-          this.paddingLeft = this._settings.padding[0];
-          this.paddingTop = this._settings.padding[1];
-          this.paddingRight = this._settings.padding[2];
-          this.paddingBottom = this._settings.padding[3];
-        } else if (this._settings.padding.length === 2) {
-          this.paddingLeft = this._settings.padding[0];
-          this.paddingTop = this._settings.padding[1];
-          this.paddingRight = this._settings.padding[0];
-          this.paddingBottom = this._settings.padding[1];
-        } else {
-          throw new Error('padding must be an array of 2 or 4 numbers');
-        }
-      } else {
-        this.paddingLeft = this.paddingTop = this.paddingRight = this.paddingBottom = this._settings.padding;
-      }
-    }
-
-    Signals.onResize.connect(this.layoutChildren);
-
     this.on('childAdded', this.handleChildAdded);
     this.on('childRemoved', this.handleChildRemoved);
 
-    this.layoutChildren();
+    this.layout();
   }
 
   handleChildAdded(child: any) {
     if (child instanceof FlexContainer) {
-      child.onLayoutComplete.connect(this.layoutChildren);
+      child.onLayoutComplete.connect(this.layout);
     }
-    this.layoutChildren();
+    this.layout();
   }
 
   handleChildRemoved(child: any) {
     if (child instanceof FlexContainer) {
-      child.onLayoutComplete.disconnect(this.layoutChildren);
+      child.onLayoutComplete.disconnect(this.layout);
     }
-    this.layoutChildren();
+    this.layout();
   }
 
   destroy(_options?: IDestroyOptions | boolean) {
-    Signals.onResize.disconnect(this.layoutChildren);
     this.children.forEach((child) => {
       if (child instanceof FlexContainer) {
-        child.onLayoutComplete.disconnect(this.layoutChildren);
+        child.onLayoutComplete.disconnect(this.layout);
       }
     });
     this.off('childAdded', this.handleChildAdded);
     super.destroy(_options);
   }
 
-  protected layoutChildren() {
+  public onResize(_size: IPoint) {
+    this.layout();
+  }
+
+  public layout(immediate: boolean = false) {
+    this._layout();
+  }
+
+  private _layout() {
     if (this._settings.bindTo) {
       this._settings.width = this._settings.bindTo?.width ?? 0;
       this._settings.height = this._settings.bindTo?.height ?? 0;
     }
+
     if (this._settings.bindToAppSize) {
       this._settings.width = this.app.size.x;
       this._settings.height = this.app.size.y;
     }
-    if (this.debug) {
-      console.log(this.name, this._settings.width);
-    }
 
-    let currentOffset = this._settings.flexDirection === 'row' ? this.paddingLeft : this.paddingTop;
-    let crossAxisOffset = this._settings.flexDirection === 'row' ? this.paddingLeft : this.paddingTop;
-    let maxCrossAxisSize = 0;
-    let rowOrColumnItems = [];
+    const { width, height, gap, flexDirection, flexWrap, alignItems, justifyContent } = this._settings;
 
-    for (const c of this.children) {
-      const child = c as unknown as ContainerLike;
-      // Check if the item fits or if flexWrap is enabled
-      const isOverflowing =
-        this._settings.flexDirection === 'row'
-          ? currentOffset + child.width > this._settings.width! - this.paddingLeft - this.paddingRight
-          : currentOffset + child.height > this._settings.height! - this.paddingTop - this.paddingBottom;
+    let layoutProps: { x: number; y: number }[] = [];
 
-      if (this._settings.flexWrap === 'wrap' && isOverflowing && rowOrColumnItems.length > 0) {
-        // Lay out the current row/column
-        this.layoutRowOrColumn(rowOrColumnItems, crossAxisOffset, maxCrossAxisSize);
+    let x = 0;
+    let y = 0;
+    let rowHeight = 0;
+    let columnWidth = 0;
+    let nextRowY = 0; // y-coordinate of the next row
+    let nextColumnX = 0; // x-coordinate of the next column
+    const newLayoutProps: { x: number; y: number }[] = [];
+    const items = this.children.filter(Boolean);
+    let lineItems: { index: number; width: number; height: number }[] = [];
+    let lineStart = 0;
 
-        // Reset for the next row/column
-        currentOffset = this._settings.flexDirection === 'row' ? this.paddingLeft : this.paddingTop;
-        crossAxisOffset += maxCrossAxisSize + this._settings.gap!;
-        maxCrossAxisSize = this._settings.flexDirection === 'row' ? this.paddingLeft : this.paddingTop;
-        rowOrColumnItems = [];
-      }
+    const shouldWrap = (childRef: PIXIContainer, x: number, y: number) =>
+      (flexDirection === 'row' && x + childRef.width + gap! > width!) ||
+      (flexDirection === 'column' && y + childRef.height + gap! > height!);
 
-      // Update maxCrossAxisSize and currentOffset
-      if (this._settings.flexDirection === 'row') {
-        maxCrossAxisSize = Math.max(maxCrossAxisSize, child.height);
-        currentOffset += child.width + this._settings.gap!;
+    const handleWrap = () => {
+      if (flexDirection === 'row') {
+        nextRowY += rowHeight + gap!;
       } else {
-        maxCrossAxisSize = Math.max(maxCrossAxisSize, child.width);
-        currentOffset += child.height + this._settings.gap!;
+        nextColumnX += columnWidth + gap!;
+      }
+      x = 0;
+      y = 0;
+      rowHeight = 0;
+      columnWidth = 0;
+    };
+
+    const updateLayoutVariables = (childRef: PIXIContainer) => {
+      if (flexDirection === 'row') {
+        x += childRef.width + gap!;
+        rowHeight = Math.max(rowHeight, childRef.height);
+      } else {
+        y += childRef.height + gap!;
+        columnWidth = Math.max(columnWidth, childRef.width);
+      }
+    };
+
+    const getNextX = (currentX: number) => (flexDirection === 'row' ? currentX : nextColumnX);
+    const getNextY = (currentY: number) => (flexDirection === 'column' ? currentY : nextRowY);
+
+    const handleJustification = (
+      lineItems: { index: number; width: number; height: number }[],
+      lineStart: number,
+      lineEnd: number,
+      direction: 'row' | 'column',
+    ) => {
+      const extraSpace = (direction === 'row' ? width! : height!) - (lineEnd - lineStart);
+      lineItems.forEach(({ index, width, height }, i) => {
+        let offset = 0;
+        switch (justifyContent) {
+          case 'flex-start':
+            break; // Do nothing
+          case 'flex-end':
+            offset = extraSpace;
+            break;
+          case 'center':
+            offset = extraSpace / 2;
+            break;
+          case 'space-between':
+            offset = i * (extraSpace / (lineItems.length - 1));
+            break;
+          case 'space-around':
+            offset = (extraSpace / lineItems.length) * i + extraSpace / (2 * lineItems.length);
+            break;
+          case 'space-evenly':
+            offset = (extraSpace / (lineItems.length + 1)) * (i + 1);
+            break;
+        }
+        if (direction === 'row') {
+          newLayoutProps[index].x += offset;
+        } else {
+          newLayoutProps[index].y += offset;
+        }
+      });
+    };
+
+    const handleAlignment = (newLayoutProps: { x: number; y: number }[], items: (DisplayObject | null)[]) => {
+      newLayoutProps.forEach((props, index) => {
+        const childRef = items[index] as PIXIContainer;
+        if (!childRef) return;
+
+        if (flexDirection === 'row') {
+          switch (alignItems) {
+            case 'flex-start':
+              break;
+            case 'flex-end':
+              props.y += rowHeight - childRef.height;
+              break;
+            case 'center':
+              props.y += (rowHeight - childRef.height) / 2;
+              break;
+          }
+        } else {
+          switch (alignItems) {
+            case 'flex-start':
+              break;
+            case 'flex-end':
+              props.x += columnWidth - childRef.width;
+              break;
+            case 'center':
+              props.x += (columnWidth - childRef.width) / 2;
+              break;
+          }
+        }
+      });
+    };
+
+    items.forEach((childRef, index) => {
+      if (!childRef) return;
+
+      const item = childRef as PIXIContainer;
+
+      // Check for wrapping
+      if (flexWrap === 'wrap' && shouldWrap(item, x, y)) {
+        handleJustification(lineItems, lineStart, flexDirection === 'column' ? y - gap : x - gap, flexDirection);
+        handleWrap();
+        lineItems = [];
+        lineStart = x;
       }
 
-      // Add the child to the current row/column items
-      rowOrColumnItems.push(child);
-    }
-    this.layoutRowOrColumn(rowOrColumnItems, crossAxisOffset, maxCrossAxisSize);
+      lineItems.push({ index, width: item.width, height: item.height });
+
+      // Position child
+      newLayoutProps[index] = { x: getNextX(x), y: getNextY(y) };
+
+      // Update layout variables
+      updateLayoutVariables(item);
+    });
+
+    // Justify the last line
+    handleJustification(lineItems, lineStart, flexDirection === 'column' ? y - gap : x - gap, flexDirection);
+    handleAlignment(newLayoutProps, items);
+
+    layoutProps = newLayoutProps;
+
+    items.forEach((childRef, index) => {
+      const item = childRef as PIXIContainer;
+      const { x, y } = layoutProps[index] || { x: 0, y: 0 };
+      item.position.set(x, y);
+    });
 
     this.onLayoutComplete.emit();
-  }
-
-  private layoutRowOrColumn(items: ContainerLike[], crossAxisOffset: number, maxCrossAxisSize: number): void {
-    let totalItemSize = 0;
-    for (const child of items) {
-      totalItemSize += this._settings.flexDirection === 'row' ? child.width : child.height;
-    }
-    const totalGapSize = this._settings.gap! * (items.length - 1);
-    const remainingSpace =
-      (this._settings.flexDirection === 'row' ? this._settings.width! : this._settings.height!) -
-      totalItemSize -
-      totalGapSize;
-
-    if (this.debug) {
-      console.log({ totalItemSize, totalGapSize, remainingSpace });
-    }
-
-    let spaceBetween = 0;
-    if (this._settings.justifyContent === 'space-between' && items.length > 1) {
-      spaceBetween = remainingSpace / (items.length - 1);
-    } else if (this._settings.justifyContent === 'space-around' && items.length > 0) {
-      spaceBetween =
-        remainingSpace / (items.length * 2) +
-        (this._settings.flexDirection === 'column' ? items[items.length - 1].height : items[items.length - 1].width);
-    }
-    spaceBetween -= this.paddingLeft + this.paddingRight;
-
-    let currentOffset =
-      this._settings.justifyContent === 'flex-end' ? remainingSpace - this.paddingRight : this.paddingLeft;
-    currentOffset +=
-      this._settings.justifyContent === 'center' || this._settings.justifyContent === 'space-around' ? spaceBetween : 0;
-
-    for (const child of items) {
-      if (this._settings.flexDirection === 'row') {
-        child.x = currentOffset;
-        child.y = crossAxisOffset;
-
-        if (this._settings.alignItems === 'center') {
-          child.y += (maxCrossAxisSize - child.height) / 2;
-        } else if (this._settings.alignItems === 'flex-end') {
-          child.y += maxCrossAxisSize - child.height;
-        }
-
-        currentOffset +=
-          child.width +
-          this._settings.gap! +
-          (this._settings.justifyContent === 'space-around' || this._settings.justifyContent === 'space-between'
-            ? spaceBetween
-            : 0);
-      } else {
-        // Handling 'column' direction
-        child.y = currentOffset;
-        child.x = crossAxisOffset;
-
-        if (this._settings.alignItems === 'center') {
-          child.x += (maxCrossAxisSize - child.width) / 2;
-        } else if (this._settings.alignItems === 'flex-end') {
-          child.x += maxCrossAxisSize - child.width;
-        }
-
-        currentOffset +=
-          child.height +
-          this._settings.gap! +
-          (this._settings.justifyContent === 'space-around' || this._settings.justifyContent === 'space-between'
-            ? spaceBetween
-            : 0);
-      }
-    }
   }
 }
