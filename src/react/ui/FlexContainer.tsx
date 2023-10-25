@@ -40,9 +40,15 @@ export const FlexContainer: React.FC<FlexContainerProps> = (props) => {
     let lineItems: { index: number; width: number; height: number }[] = [];
     let lineStart = 0;
 
-    const shouldWrap = (childRef: IContainer, x: number, y: number) =>
-      (flexDirection === 'row' && x + childRef.width + gap > width) ||
-      (flexDirection === 'column' && y + childRef.height + gap > height);
+    const shouldWrap = (childRef: IContainer, x: number, y: number) => {
+      if ((flexDirection === 'row' && flexWrap === 'nowrap') || (flexDirection === 'column' && flexWrap === 'nowrap')) {
+        return false;
+      }
+      return (
+        (flexDirection === 'row' && x + childRef.width + gap > width) ||
+        (flexDirection === 'column' && y + childRef.height + gap > height)
+      );
+    };
 
     const handleWrap = () => {
       if (flexDirection === 'row') {
