@@ -3,7 +3,7 @@ export * from './core';
 export * from './audio';
 export * from './copy';
 export * from './gameobjects';
-export * as Input from './input';
+export * from './input';
 export { KeyCodes } from './input';
 export * from './load';
 export * from './physics';
