@@ -166,6 +166,12 @@ export class FlexContainer extends Container {
       this._settings.height = this.app.size.y;
     }
 
+    if (this._settings.flexDirection === 'row' && this._settings.wrap === 'nowrap') {
+      this._settings.width = Infinity;
+    } else if (this._settings.flexDirection === 'column' && this._settings.wrap === 'nowrap') {
+      this._settings.height = Infinity;
+    }
+
     const { width, height, gap, flexDirection, flexWrap, alignItems, justifyContent } = this._settings;
 
     let layoutProps: { x: number; y: number }[] = [];
