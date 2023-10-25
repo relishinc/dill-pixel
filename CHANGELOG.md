@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.1](https://github.com/relishinc/dill-pixel/compare/v2.10.0...v2.10.1) (2023-10-25)
+
+
+### Bug Fixes
+
+* fixed bug in FlexContainer nowrap layout ([b5940f8](https://github.com/relishinc/dill-pixel/commit/b5940f84dbc32b644353edea190bc24dae69ff50))
+
 ## [2.10.0](https://github.com/relishinc/dill-pixel/compare/v2.9.0...v2.10.0) (2023-10-24)
 
 
