@@ -166,9 +166,9 @@ export class FlexContainer extends Container {
       this._settings.height = this.app.size.y;
     }
 
-    if (this._settings.flexDirection === 'row' && this._settings.wrap === 'nowrap') {
+    if (this._settings.flexDirection === 'row' && this._settings.flexWrap === 'nowrap') {
       this._settings.width = Infinity;
-    } else if (this._settings.flexDirection === 'column' && this._settings.wrap === 'nowrap') {
+    } else if (this._settings.flexDirection === 'column' && this._settings.flexWrap === 'nowrap') {
       this._settings.height = Infinity;
     }
 
