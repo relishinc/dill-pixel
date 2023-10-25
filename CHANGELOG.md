@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.10.2](https://github.com/relishinc/dill-pixel/compare/v2.10.1...v2.10.2) (2023-10-25)
+
+
+### Bug Fixes
+
+* export all from input subdir ([f9aa963](https://github.com/relishinc/dill-pixel/commit/f9aa9632b083aaf75459c6e09bcb673980aa5348))
+* flexcontainer settings ([1540e00](https://github.com/relishinc/dill-pixel/commit/1540e0035ef8a83e8c11c6ac9c96072cb7fbc6c7))
+
 ## [2.10.1](https://github.com/relishinc/dill-pixel/compare/v2.10.0...v2.10.1) (2023-10-25)
 
 
