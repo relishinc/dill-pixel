@@ -4,7 +4,6 @@
 
 # production
 /deploy
-/docs
 /dist
 
 # misc

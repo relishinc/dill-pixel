@@ -1,0 +1,30 @@
+import starlight from '@astrojs/starlight';
+import tailwind from '@astrojs/tailwind';
+import {defineConfig} from 'astro/config';
+
+// https://astro.build/config
+export default defineConfig({
+	integrations: [
+		starlight({
+			title: 'Dill Pixel - Documentation',
+			social: {
+				github: 'https://github.com/relishinc/dill-pixel',
+			},
+			sidebar: [
+				{
+					label: 'Guides',
+					items: [
+						// Each item here is one entry in the navigation menu.
+						{label: 'Setup Guide', link: '/guides/setup/'},
+					],
+				},
+				{
+					label: 'Reference',
+					autogenerate: {directory: 'reference'},
+				},
+			],
+			customCss: ['./src/tailwind.css'],
+		}),
+		tailwind({applyBaseStyles: false}),
+	],
+});

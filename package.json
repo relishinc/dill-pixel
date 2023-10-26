@@ -18,8 +18,10 @@
     "visualize:examples": "cd ./examples && npx vite-bundle-visualizer",
     "build:watch": "tsc --watch",
     "lint": "eslint --ext .ts ./src/**/*",
-    "docs": "npm run version && typedoc --out docs src",
-    "copy": "copyfiles ./src/**/* ../hlf-example-template/relish-hlf",
+    "docs": "build:docs",
+    "build:docs": "cd ./docs && npm run build",
+    "dev:docs": "cd ./docs && npm run dev",
+    "typedoc": "npm run version && typedoc --out typedoc src",
     "version": "node ./scripts/generate-version.js"
   },
   "repository": {

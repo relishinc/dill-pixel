@@ -1,4 +1,4 @@
-name: Deploy TypeScript Docs
+name: Deploy Docs
 
 on:
   pull_request:
@@ -44,5 +44,5 @@ jobs:
           user: ${{ secrets.DOCS_SFTP_USERNAME }}
           password: ${{ secrets.DOCS_SFTP_PASSWORD }}
           port: ${{ secrets.DOCS_SFTP_PORT }}
-          local: './docs/'
+          local: './docs/dist/'
           remote: '/docs/'
