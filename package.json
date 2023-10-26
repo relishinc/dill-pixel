@@ -18,7 +18,7 @@
     "visualize:examples": "cd ./examples && npx vite-bundle-visualizer",
     "build:watch": "tsc --watch",
     "lint": "eslint --ext .ts ./src/**/*",
-    "docs": "build:docs",
+    "docs": "npm run build:docs",
     "build:docs": "cd ./docs && npm run build",
     "dev:docs": "cd ./docs && npm run dev",
     "typedoc": "npm run version && typedoc --out typedoc src",
