@@ -5,7 +5,7 @@ import {defineConfig} from 'astro/config';
 // https://astro.build/config
 export default defineConfig({
 	site: "http://hlf.reli.sh/docs",
-	base: process.env.NODE_ENV === 'development' ? "/" : "/docs",
+	base: "/docs",
 	integrations: [
 		starlight({
 			title: 'Dill Pixel',
@@ -17,7 +17,7 @@ export default defineConfig({
 					label: 'Guides',
 					items: [
 						// Each item here is one entry in the navigation menu.
-						{label: 'Setup Guide', link: '/guides/setup/'},
+						{label: 'Setup Guide', link: '/docs/guides/setup/'},
 					],
 				},
 				{
