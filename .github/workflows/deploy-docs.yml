@@ -9,10 +9,15 @@ on:
       - '**.yml'
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Deploy Docs'
+        required: false
 
 jobs:
   build:
-    if: github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'release')
+    if: (github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'release')) || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
     steps:
