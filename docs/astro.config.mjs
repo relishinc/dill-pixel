@@ -8,7 +8,7 @@ export default defineConfig({
 	base: process.env.NODE_ENV === 'development' ? "/" : "/docs",
 	integrations: [
 		starlight({
-			title: 'Dill Pixel - Documentation',
+			title: 'Dill Pixel',
 			social: {
 				github: 'https://github.com/relishinc/dill-pixel',
 			},
@@ -25,7 +25,7 @@ export default defineConfig({
 					autogenerate: {directory: 'reference'},
 				},
 			],
-			customCss: ['./src/tailwind.css'],
+			customCss: ['./src/tailwind.css', './src/custom.css'],
 		}),
 		tailwind({applyBaseStyles: false}),
 	],
