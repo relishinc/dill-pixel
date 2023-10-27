@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.11.0](https://github.com/relishinc/dill-pixel/compare/v2.10.2...v2.11.0) (2023-10-27)
+
+
+### Features
+
+* project creation binary (dill-pixel create) ([b8077c5](https://github.com/relishinc/dill-pixel/commit/b8077c5c0eddb73720bce49cef2fe99c68570939))
+
 ## [2.10.2](https://github.com/relishinc/dill-pixel/compare/v2.10.1...v2.10.2) (2023-10-25)
 
 
