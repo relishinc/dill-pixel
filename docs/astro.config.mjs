@@ -16,8 +16,7 @@ export default defineConfig({
 				{
 					label: 'Guides',
 					items: [
-						// Each item here is one entry in the navigation menu.
-						{label: 'Setup Guide', link: '/docs/guides/setup/'},
+						{label: 'Setup Guide', link: '/guides/setup/'},
 					],
 				},
 				{
