@@ -166,13 +166,24 @@ export class FlexContainer extends Container {
       this._settings.height = this.app.size.y;
     }
 
-    if (this._settings.flexDirection === 'row' && this._settings.flexWrap === 'nowrap') {
-      this._settings.width = Infinity;
-    } else if (this._settings.flexDirection === 'column' && this._settings.flexWrap === 'nowrap') {
-      this._settings.height = Infinity;
-    }
+    const canHaveEndlessWidthOrHeight = ['flex-start'];
 
-    const { width, height, gap, flexDirection, flexWrap, alignItems, justifyContent } = this._settings;
+    let { width, height } = this._settings;
+    const { gap, flexDirection, flexWrap, alignItems, justifyContent } = this._settings;
+
+    if (
+      this._settings.flexDirection === 'row' &&
+      this._settings.flexWrap === 'nowrap' &&
+      canHaveEndlessWidthOrHeight.includes(this._settings.justifyContent)
+    ) {
+      width = Infinity;
+    } else if (
+      this._settings.flexDirection === 'column' &&
+      this._settings.flexWrap === 'nowrap' &&
+      canHaveEndlessWidthOrHeight.includes(this._settings.justifyContent)
+    ) {
+      height = Infinity;
+    }
 
     let layoutProps: { x: number; y: number }[] = [];
 
