@@ -1,5 +1,5 @@
 import { ILineStyleOptions } from '@pixi/graphics';
-import { DisplayObject, Graphics, Sprite } from 'pixi.js';
+import { Container, Graphics, Sprite } from 'pixi.js';
 import { Application } from '../core/Application';
 import { IFocusable } from './IFocusable';
 import { IKeyboardFocus } from './IKeyboardFocus';
@@ -52,20 +52,23 @@ export class DefaultKeyboardFocusManagerSprite extends Sprite implements IKeyboa
       this.visible = false;
     } else {
       this.visible = true;
-      const pos = this.toLocal(
-        this.parent.position,
-        this._target as unknown as DisplayObject,
-        this._target.getFocusPosition(),
-      );
+      const targetAsContainer = this._target as unknown as Container;
+      const focusPos = this._target.getFocusPosition();
+
+      const globalPos = targetAsContainer.getGlobalPosition();
+      globalPos.x += focusPos.x;
+      globalPos.y += focusPos.y;
+      const pos = this.toLocal(globalPos);
 
       const outlineWidth = this.outlineOptions?.width ?? 2;
       this.position.set(pos.x - outlineWidth * 0.5 - this.padding, pos.y - outlineWidth * 0.5 - this.padding);
 
-      const size = this._target.getFocusSize();
+      const size = this._target.getFocusSize() ?? { x: targetAsContainer?.width, y: targetAsContainer?.height };
       this._gfx.clear();
       this._gfx.lineStyle(this.outlineOptions);
       this._gfx.drawRoundedRect(pos.x, pos.y, size.x + this.padding * 2, size.y + this.padding * 2, 8);
       this._gfx.closePath();
+
       this.texture = Application.instance.renderer.generateTexture(this._gfx);
     }
   }

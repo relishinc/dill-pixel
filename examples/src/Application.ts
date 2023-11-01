@@ -17,6 +17,7 @@ import {
   TextureAsset,
   TransitionType,
 } from 'dill-pixel';
+import { FocusablesExample } from './state/FocusablesExample';
 
 export default class Application extends HLFApplication {
   constructor() {
@@ -74,6 +75,7 @@ export default class Application extends HLFApplication {
     this.state.register(HTMLTextStyleExample);
     this.state.register(ContainerEditModeExample);
     this.state.register(FlexContainerExample);
+    this.state.register(FocusablesExample);
   }
 
   protected createAssetMap(): void {
