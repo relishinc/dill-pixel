@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.11.2](https://github.com/relishinc/dill-pixel/compare/v2.11.1...v2.11.2) (2023-11-01)
+
+
+### Bug Fixes
+
+* added FocusablesExample, made DefaultKeyboardFocusManagerSprite easier to use ([63d9c38](https://github.com/relishinc/dill-pixel/commit/63d9c38a138f7346af9de32b87038177c4cde2f8))
+
 ## [2.11.1](https://github.com/relishinc/dill-pixel/compare/v2.11.0...v2.11.1) (2023-10-31)
 
 
