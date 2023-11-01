@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.11.1](https://github.com/relishinc/dill-pixel/compare/v2.11.0...v2.11.1) (2023-10-31)
+
+
+### Bug Fixes
+
+* flex container justifyContent bug: space-between / space-evenly broken ([8ea2d77](https://github.com/relishinc/dill-pixel/commit/8ea2d77f5bfd96b5d0e11489299aafe2349f41de))
+
 ## [2.11.0](https://github.com/relishinc/dill-pixel/compare/v2.10.2...v2.11.0) (2023-10-27)
 
 
