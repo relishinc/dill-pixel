@@ -1,6 +1,6 @@
 import { BaseState } from '@/state/BaseState';
 import { AssetMapData, FlexContainer, MathUtils } from 'dill-pixel';
-import { Point, TextStyle } from 'pixi.js';
+import { Point, Sprite, TextStyle } from 'pixi.js';
 
 const whiteTextStyle = (size: number) =>
   new TextStyle({
@@ -11,6 +11,7 @@ const whiteTextStyle = (size: number) =>
   });
 
 export class FlexContainerExample extends BaseState {
+  protected backing: Sprite;
   protected flexContainer: FlexContainer;
   protected config = {
     numItems: 4,
@@ -37,10 +38,29 @@ export class FlexContainerExample extends BaseState {
     this.configureGUI();
 
     this.setHeaderText('Flex Container Example');
-
-    this.flexContainer = this.add.flexContainer(1, [-size.x * 0.5 + 30, -size.y * 0.5 + 100], { width: size.x - 60 });
-
+    this.backing = this.add.coloredSprite(
+      0x000000,
+      [size.x - 60, size.y - 200],
+      'rectangle',
+      0.5,
+      [-size.x * 0.5 + 30, -size.y * 0.5 + 100],
+      0,
+    );
+    this.flexContainer = this.add.flexContainer(1, this.backing.position, {
+      width: this.backing.width,
+      height: this.backing.height,
+    });
     this.addItems();
+  }
+
+  onResize(pSize: Point) {
+    if (this.backing) {
+      this.backing.width = pSize.x - 60;
+      this.backing.height = pSize.y - 200;
+      this.backing.position.set(-pSize.x * 0.5 + 30, -pSize.y * 0.5 + 100);
+      this.flexContainer.size = [this.backing.width, this.backing.height];
+    }
+    super.onResize(pSize);
   }
 
   configureGUI() {
@@ -101,6 +121,5 @@ export class FlexContainerExample extends BaseState {
         0,
       );
     });
-    setTimeout(() => this.flexContainer.layout(), 1000);
   }
 }
