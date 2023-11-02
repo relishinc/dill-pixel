@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.11.3](https://github.com/relishinc/dill-pixel/compare/v2.11.2...v2.11.3) (2023-11-02)
+
+
+### Bug Fixes
+
+* flexcontainer alignItems issue when flexDirection=column ([4ffa509](https://github.com/relishinc/dill-pixel/commit/4ffa509e47e7fd8fc620b3409d5518bc987d2ccb))
+
 ## [2.11.2](https://github.com/relishinc/dill-pixel/compare/v2.11.1...v2.11.2) (2023-11-01)
 
 
