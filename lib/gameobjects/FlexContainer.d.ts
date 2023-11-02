@@ -1,5 +1,6 @@
 import { IDestroyOptions, IPoint } from 'pixi.js';
 import { Signal } from 'typed-signals';
+import { PointLike } from '../utils';
 import { Container } from './Container';
 export type ContainerLike = {
     x: number;
@@ -41,6 +42,11 @@ export declare class FlexContainer extends Container {
     get containerHeight(): number;
     set containerWidth(value: number);
     get containerWidth(): number;
+    set size(size: PointLike);
+    get size(): {
+        width: number;
+        height: number;
+    };
     constructor(settings?: Partial<FlexContainerSettings>);
     handleChildAdded(child: any): void;
     handleChildRemoved(child: any): void;
