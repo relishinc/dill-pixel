@@ -1,5 +1,6 @@
 import { Container as PIXIContainer, DisplayObject, IDestroyOptions, IPoint } from 'pixi.js';
 import { Signal } from 'typed-signals';
+import { PointLike, resolvePointLike } from '../utils';
 import { Container } from './Container';
 
 export type ContainerLike = {
@@ -93,6 +94,17 @@ export class FlexContainer extends Container {
 
   get containerWidth(): number {
     return this._settings.width;
+  }
+
+  set size(size: PointLike) {
+    const { x, y } = resolvePointLike(size);
+    this._settings.width = x;
+    this._settings.height = y;
+    this.layout();
+  }
+
+  get size(): { width: number; height: number } {
+    return { width: this._settings.width, height: this._settings.height };
   }
 
   constructor(settings: Partial<FlexContainerSettings> = {}) {
@@ -284,10 +296,10 @@ export class FlexContainer extends Container {
             case 'flex-start':
               break;
             case 'flex-end':
-              props.x += columnWidth - childRef.width;
+              props.x += width - childRef.width;
               break;
             case 'center':
-              props.x += (columnWidth - childRef.width) / 2;
+              props.x += (width - childRef.width) / 2;
               break;
           }
         }
