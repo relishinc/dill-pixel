@@ -8,7 +8,7 @@ export default defineConfig({
 	base: "/docs",
 	integrations: [
 		starlight({
-			title: 'Dill Pixel',
+			title: 'dill pixel',
 			social: {
 				github: 'https://github.com/relishinc/dill-pixel',
 			},
