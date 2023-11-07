@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.12.0](https://github.com/relishinc/dill-pixel/compare/v2.11.3...v2.12.0) (2023-11-07)
+
+
+### Features
+
+* settings objects added to the Add / Make api ([af4998a](https://github.com/relishinc/dill-pixel/commit/af4998a6ca0eae49393835fc7e59dda31d18bc12))
+
 ## [2.11.3](https://github.com/relishinc/dill-pixel/compare/v2.11.2...v2.11.3) (2023-11-02)
 
 
