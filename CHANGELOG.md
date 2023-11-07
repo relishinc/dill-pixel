@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.12.1](https://github.com/relishinc/dill-pixel/compare/v2.12.0...v2.12.1) (2023-11-07)
+
+
+### Bug Fixes
+
+* broken interface imports in physics factories ([6475bf8](https://github.com/relishinc/dill-pixel/commit/6475bf83d71bea24f63b3cf957e9ade83cbfb889))
+* physics debugging, ([6475bf8](https://github.com/relishinc/dill-pixel/commit/6475bf83d71bea24f63b3cf957e9ade83cbfb889))
+
 ## [2.12.0](https://github.com/relishinc/dill-pixel/compare/v2.11.3...v2.12.0) (2023-11-07)
 
 
