@@ -1,8 +1,8 @@
 import { Container, Texture } from 'pixi.js';
 import { PointLike, SpritesheetLike } from '../../../utils';
-import { IPhysicsAddFactory, IPhysicsObject } from '../../interfaces';
+import { IPhysicsAddFactory, IPhysicsObject, PhysicsSpriteSettings } from '../../interfaces';
 import { PhysicsBodyType } from '../../types';
-import { Make, PhysicsSpriteSettings } from './Make';
+import { Make } from './Make';
 
 export class Add implements IPhysicsAddFactory {
   constructor(private defaultContainer: Container) {}
