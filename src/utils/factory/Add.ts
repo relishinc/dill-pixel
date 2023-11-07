@@ -1,28 +1,69 @@
 import { Geometry, State } from '@pixi/core';
+import { Container as PIXIContainer } from '@pixi/display';
 import {
-  Container,
+  BitmapText,
   DisplayObject,
   DRAW_MODES,
+  Graphics,
+  HTMLText,
   HTMLTextStyle,
   IBitmapTextStyle,
   ITextStyle,
   Mesh,
+  NineSlicePlane,
   Point,
   Shader,
   SimplePlane,
+  SimpleRope,
   Sprite,
+  Text,
   TextStyle,
   Texture,
+  TilingSprite,
 } from 'pixi.js';
-import { FlexContainerSettings } from '../../gameobjects';
-import { PointLike } from '../Types';
-import { Make } from './Make';
+import { Container, FlexContainer, FlexContainerSettings } from '../../gameobjects';
+import { PointLike, SpritesheetLike } from '../Types';
+import {
+  AnchorSettings,
+  BitmapTextSettings,
+  ColoredSpriteSettings,
+  ContainerSettings,
+  FlexContainerCreationSettings,
+  GraphicsSettings,
+  HTMLTextSettings,
+  Make,
+  MeshSettings,
+  NineSliceSettings,
+  PositionSettings,
+  ScaleSettings,
+  SimplePlaneSettings,
+  SimpleRopeSettings,
+  SpriteSettings,
+  TextSettings,
+  TilingSpriteSettings,
+} from './Make';
 import { resolvePointLike } from './utils';
 
-export class Add {
-  constructor(private defaultContainer: Container) {}
+export interface ExistingSettings extends PositionSettings, AnchorSettings, ScaleSettings {}
 
-  existing<T>(pObject: T, position?: PointLike, anchor?: PointLike, scale?: PointLike): T {
+export class Add {
+  constructor(private defaultContainer: PIXIContainer) {}
+
+  existing<T>(pObject: T, settings: ExistingSettings): T;
+  existing<T>(pObject: T, position?: PointLike, anchor?: PointLike, scale?: PointLike): T;
+  existing<T>(pObject: T, settingsOrPosition?: ExistingSettings | PointLike, anchor?: PointLike, scale?: PointLike): T {
+    let position: PointLike = settingsOrPosition as PointLike;
+    if (
+      settingsOrPosition &&
+      typeof settingsOrPosition === 'object' &&
+      !settingsOrPosition.hasOwnProperty('x') &&
+      !settingsOrPosition.hasOwnProperty('y')
+    ) {
+      const settings = settingsOrPosition as ExistingSettings;
+      position = settings?.position ?? 0;
+      anchor = settings?.anchor ?? 0;
+      scale = settings?.scale ?? 1;
+    }
     const obj = this.defaultContainer.addChild(pObject as DisplayObject) as T;
     const dObj = obj as Sprite;
 
@@ -34,7 +75,6 @@ export class Add {
       const resolvedAnchor = resolvePointLike(anchor);
       dObj?.anchor?.set(resolvedAnchor.x, resolvedAnchor.y);
     }
-
     if (scale !== undefined) {
       const resolvedScale = resolvePointLike(scale);
       dObj?.scale?.set(resolvedScale.x, resolvedScale.y);
@@ -43,310 +83,318 @@ export class Add {
     return obj;
   }
 
+  coloredSprite(settings: ColoredSpriteSettings): Sprite;
   coloredSprite(
-    color: number = 0x0,
+    color: number,
+    size?: PointLike,
+    shape?: 'rectangle' | 'rounded_rectangle' | 'circle',
+    opts?: {
+      [key: string]: any;
+    },
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
+  ): Sprite;
+  coloredSprite(
+    settingsOrColor: number | ColoredSpriteSettings = 0x0,
     size: PointLike = {
       x: 1,
       y: 1,
     },
     shape: 'rectangle' | 'rounded_rectangle' | 'circle' = 'rectangle',
-    alpha: number = 1,
-    position: PointLike = {
-      x: 0,
-      y: 0,
-    },
-    anchor: PointLike = { x: 0.5, y: 0.5 },
-    scale: PointLike = { x: 1, y: 1 },
     opts?: {
-      [key: string]: string | number;
+      [key: string]: any;
     },
-  ) {
-    const sprite = Make.coloredSprite(color, size, shape, opts);
-    sprite.alpha = alpha;
-
-    const resolvedPosition = resolvePointLike(position);
-    const resolvedAnchor = resolvePointLike(anchor);
-    const resolvedScale = resolvePointLike(scale);
-
-    sprite.x = resolvedPosition.x;
-    sprite.y = resolvedPosition.y;
-    sprite.anchor.x = resolvedAnchor.x;
-    sprite.anchor.y = resolvedAnchor.y;
-    sprite.scale.x = resolvedScale.x;
-    sprite.scale.y = resolvedScale.y;
-
-    return this.defaultContainer.addChild(sprite);
-  }
-
-  sprite(
-    pAsset: string | Texture,
-    pSheet?: string | undefined,
     alpha: number = 1,
-    position: PointLike = { x: 0, y: 0 },
-    anchor: PointLike = { x: 0.5, y: 0.5 },
-    scale: PointLike = { x: 1, y: 1 },
-  ) {
-    const sprite = Make.sprite(pAsset, pSheet);
-    sprite.alpha = alpha;
-
-    const resolvedPosition = resolvePointLike(position);
-    const resolvedAnchor = resolvePointLike(anchor);
-    const resolvedScale = resolvePointLike(scale);
-
-    sprite.x = resolvedPosition.x;
-    sprite.y = resolvedPosition.y;
-    sprite.anchor.x = resolvedAnchor.x;
-    sprite.anchor.y = resolvedAnchor.y;
-    sprite.scale.x = resolvedScale.x;
-    sprite.scale.y = resolvedScale.y;
-
-    return this.defaultContainer.addChild(sprite);
-  }
-
-  tilingSprite(
-    pAsset: string | Texture,
-    pSheet?: string | undefined,
-    alpha: number = 1,
-    width: number = 0,
-    height: number = 0,
-    tilePosition: Point = new Point(0, 0),
-    position: PointLike = { x: 0, y: 0 },
-    anchor: PointLike = { x: 0.5, y: 0.5 },
-    scale: PointLike = { x: 1, y: 1 },
-  ) {
-    const sprite = Make.tilingSprite(pAsset, pSheet, width, height, tilePosition);
-    sprite.alpha = alpha;
-
-    const resolvedPosition = resolvePointLike(position);
-    const resolvedAnchor = resolvePointLike(anchor);
-    const resolvedScale = resolvePointLike(scale);
-
-    sprite.x = resolvedPosition.x;
-    sprite.y = resolvedPosition.y;
-    sprite.anchor.x = resolvedAnchor.x;
-    sprite.anchor.y = resolvedAnchor.y;
-    sprite.scale.x = resolvedScale.x;
-    sprite.scale.y = resolvedScale.y;
-
-    return this.defaultContainer.addChild(sprite);
-  }
-
-  static mesh(
-    pGeometry: Geometry,
-    pShader: Shader,
-    pState?: State,
-    pDrawMode?: DRAW_MODES,
-    alpha: number = 1,
-    position: PointLike = { x: 0, y: 0 },
-    scale: PointLike = { x: 1, y: 1 },
-  ): Mesh<Shader> {
-    const mesh = Make.mesh(pGeometry, pShader, pState, pDrawMode);
-    mesh.alpha = alpha;
-
-    const resolvedPosition = resolvePointLike(position);
-    const resolvedScale = resolvePointLike(scale);
-    mesh.x = resolvedPosition.x;
-    mesh.y = resolvedPosition.y;
-    mesh.scale.x = resolvedScale.x;
-    mesh.scale.y = resolvedScale.y;
-
-    return mesh;
-  }
-
-  simpleRope(
-    pAsset: string | Texture,
-    pSheet?: string | undefined,
-    pNumPoints: number = 25,
-    pSegmentLength: number = 50,
-    pAutoUpdate: boolean = true,
-    alpha: number = 1,
-    position: PointLike = { x: 0, y: 0 },
-    scale: PointLike = { x: 1, y: 1 },
-  ) {
-    const points = [];
-    for (let i = 0; i < pNumPoints; i++) {
-      points.push(new Point(i * pSegmentLength, 0));
+    position: PointLike = 0,
+    anchor: PointLike = 0.5,
+    scale: PointLike = 1,
+  ): Sprite {
+    let sprite: Sprite;
+    if (typeof settingsOrColor === 'object') {
+      sprite = Make.coloredSprite(settingsOrColor);
+    } else {
+      sprite = Make.coloredSprite(settingsOrColor, size, shape, opts, alpha, position, anchor, scale);
     }
-    const rope = Make.simpleRope(pAsset, pSheet, points, pAutoUpdate);
-    rope.alpha = alpha;
 
-    const resolvedPosition = resolvePointLike(position);
-    const resolvedScale = resolvePointLike(scale);
-
-    rope.x = resolvedPosition.x;
-    rope.y = resolvedPosition.y;
-    rope.scale.x = resolvedScale.x;
-    rope.scale.y = resolvedScale.y;
-
-    return { rope: this.defaultContainer.addChild(rope), points };
+    return this.defaultContainer.addChild(sprite);
   }
 
-  simplePlane(
-    pAsset: string | Texture,
-    pSheet: string | undefined,
-    pVertsWidth: number,
-    pVertsHeight: number,
+  sprite(settings: SpriteSettings): Sprite;
+  sprite(
+    pTexture: string | Texture,
+    pSheet?: SpritesheetLike,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
+  ): Sprite;
+  sprite(
+    settingsOrAsset: string | Texture | SpriteSettings,
+    sheet?: SpritesheetLike,
     alpha: number = 1,
-    position: PointLike = { x: 0, y: 0 },
-    scale: PointLike = { x: 1, y: 1 },
-  ): SimplePlane {
-    const plane = Make.simplePlane(pAsset, pSheet, pVertsWidth, pVertsHeight);
-    plane.alpha = alpha;
+    position: PointLike = 0,
+    anchor: PointLike = 0.5,
+    scale: PointLike = 1,
+  ): Sprite {
+    const sprite =
+      settingsOrAsset instanceof Texture || typeof settingsOrAsset === 'string'
+        ? Make.sprite(settingsOrAsset, sheet, alpha, position, anchor, scale)
+        : Make.sprite(settingsOrAsset);
 
-    const resolvedPosition = resolvePointLike(position);
-    const resolvedScale = resolvePointLike(scale);
+    return this.defaultContainer.addChild(sprite);
+  }
 
-    plane.x = resolvedPosition.x;
-    plane.y = resolvedPosition.y;
-    plane.scale.x = resolvedScale.x;
-    plane.scale.y = resolvedScale.y;
-    return plane;
+  tilingSprite(settings: TilingSpriteSettings): TilingSprite;
+  tilingSprite(
+    asset: string | Texture,
+    sheet: SpritesheetLike,
+    width: number,
+    height: number,
+    tilePosition?: PointLike,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
+  ): TilingSprite;
+  tilingSprite(
+    settingsOrAsset: string | Texture | TilingSpriteSettings,
+    sheet?: SpritesheetLike,
+    width: number = 1,
+    height: number = 1,
+    tilePosition: PointLike = 0,
+    alpha: number = 1,
+    position: PointLike = 0,
+    anchor: PointLike = 0.5,
+    scale: PointLike = 1,
+  ): TilingSprite {
+    const sprite =
+      typeof settingsOrAsset === 'string' || settingsOrAsset instanceof Texture
+        ? Make.tilingSprite(settingsOrAsset, sheet, width, height, tilePosition, alpha, position, anchor, scale)
+        : Make.tilingSprite(settingsOrAsset);
+
+    return this.defaultContainer.addChild(sprite);
   }
 
   text(
-    pText: string = '',
-    pStyle?: Partial<ITextStyle> | TextStyle,
+    value?: string,
+    style?: Partial<ITextStyle | TextStyle>,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
+  ): Text;
+  text(settings: TextSettings): Text;
+  text(
+    settingsOrValue: string | TextSettings = '',
+    style?: Partial<ITextStyle | TextStyle>,
     alpha: number = 1,
-    position: PointLike = { x: 0, y: 0 },
-    anchor: PointLike = { x: 0.5, y: 0.5 },
-    scale: PointLike = { x: 1, y: 1 },
-  ) {
-    const text = Make.text(pText, pStyle);
-    text.alpha = alpha;
-
-    const resolvedPosition = resolvePointLike(position);
-    const resolvedAnchor = resolvePointLike(anchor);
-    const resolvedScale = resolvePointLike(scale);
-
-    text.x = resolvedPosition.x;
-    text.y = resolvedPosition.y;
-    text.anchor.x = resolvedAnchor.x;
-    text.anchor.y = resolvedAnchor.y;
-    text.scale.x = resolvedScale.x;
-    text.scale.y = resolvedScale.y;
-
+    position: PointLike = 0,
+    anchor: PointLike = 0.5,
+    scale: PointLike = 1,
+  ): Text {
+    const text =
+      typeof settingsOrValue === 'object'
+        ? Make.text(settingsOrValue)
+        : Make.text(settingsOrValue, style, alpha, position, anchor, scale);
     return this.defaultContainer.addChild(text);
   }
 
+  htmlText(settings?: HTMLTextSettings): HTMLText;
   htmlText(
-    pText: string = '',
-    pStyle?: Partial<HTMLTextStyle | TextStyle | ITextStyle>,
+    value?: string,
+    style?: Partial<HTMLTextStyle | TextStyle | ITextStyle>,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
+  ): HTMLText;
+  htmlText(
+    settingsOrValue: string | HTMLTextSettings = '',
+    style?: Partial<HTMLTextStyle | TextStyle | ITextStyle>,
     alpha: number = 1,
-    position: PointLike = { x: 0, y: 0 },
-    anchor: PointLike = { x: 0.5, y: 0.5 },
-    scale: PointLike = { x: 1, y: 1 },
-  ) {
-    const text = Make.htmlText(pText, pStyle);
-    text.alpha = alpha;
-
-    const resolvedPosition = resolvePointLike(position);
-    const resolvedAnchor = resolvePointLike(anchor);
-    const resolvedScale = resolvePointLike(scale);
-
-    text.x = resolvedPosition.x;
-    text.y = resolvedPosition.y;
-    text.anchor.x = resolvedAnchor.x;
-    text.anchor.y = resolvedAnchor.y;
-    text.scale.x = resolvedScale.x;
-    text.scale.y = resolvedScale.y;
-
+    position: PointLike = 0,
+    anchor: PointLike = 0.5,
+    scale: PointLike = 1,
+  ): HTMLText {
+    const text =
+      typeof settingsOrValue === 'string'
+        ? Make.htmlText(settingsOrValue, style, alpha, position, anchor, scale)
+        : Make.htmlText(settingsOrValue);
     return this.defaultContainer.addChild(text);
   }
 
   // Add BitmapText
+  bitmapText(settings?: BitmapTextSettings): BitmapText;
   bitmapText(
-    pText: string,
-    pStyle?: Partial<IBitmapTextStyle>,
+    value?: string,
+    style?: Partial<IBitmapTextStyle>,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
+  ): BitmapText;
+  bitmapText(
+    settingsOrValue: string | BitmapTextSettings = '',
+    style?: Partial<IBitmapTextStyle>,
     alpha: number = 1,
-    position: PointLike = { x: 0, y: 0 },
-    anchor: PointLike = { x: 0.5, y: 0.5 },
-    scale: PointLike = { x: 1, y: 1 },
-  ) {
-    const bitmapText = Make.bitmapText(pText, pStyle);
-    bitmapText.alpha = alpha;
-
-    const resolvedPosition = resolvePointLike(position);
-    const resolvedAnchor = resolvePointLike(anchor);
-    const resolvedScale = resolvePointLike(scale);
-
-    bitmapText.x = resolvedPosition.x;
-    bitmapText.y = resolvedPosition.y;
-    bitmapText.anchor.x = resolvedAnchor.x;
-    bitmapText.anchor.y = resolvedAnchor.y;
-    bitmapText.scale.x = resolvedScale.x;
-    bitmapText.scale.y = resolvedScale.y;
-
+    position: PointLike = 0,
+    anchor: PointLike = 0.5,
+    scale: PointLike = 1,
+  ): BitmapText {
+    const bitmapText =
+      typeof settingsOrValue === 'string'
+        ? Make.bitmapText(settingsOrValue, style, alpha, position, anchor, scale)
+        : Make.bitmapText(settingsOrValue);
     return this.defaultContainer.addChild(bitmapText);
   }
 
   // Add Container
-  container(alpha: number = 1, position: PointLike = { x: 0, y: 0 }, scale: PointLike = { x: 1, y: 1 }) {
-    const container = Make.container();
-    container.alpha = alpha;
-
-    const resolvedPosition = resolvePointLike(position);
-    const resolvedScale = resolvePointLike(scale);
-
-    container.x = resolvedPosition.x;
-    container.y = resolvedPosition.y;
-    container.scale.x = resolvedScale.x;
-    container.scale.y = resolvedScale.y;
-
+  container(settings?: ContainerSettings): Container;
+  container(alpha?: number, position?: PointLike, scale?: PointLike): Container;
+  container(settingsOrAlpha: number | ContainerSettings = 1, position: PointLike = 0, scale: PointLike = 1): Container {
+    let container: Container;
+    if (typeof settingsOrAlpha === 'object') {
+      container = Make.container(settingsOrAlpha);
+    } else {
+      container = Make.container(settingsOrAlpha, position, scale);
+    }
     return this.defaultContainer.addChild(container);
   }
 
   // Add FlexContainer
-  flexContainer(alpha: number = 1, position: PointLike = { x: 0, y: 0 }, settings?: Partial<FlexContainerSettings>) {
-    const container = Make.flexContainer(alpha, position, settings);
-    container.alpha = alpha;
-
-    const resolvedPosition = resolvePointLike(position);
-
-    container.x = resolvedPosition.x;
-    container.y = resolvedPosition.y;
+  flexContainer(settings: FlexContainerCreationSettings): FlexContainer;
+  flexContainer(
+    alpha?: number,
+    position?: PointLike,
+    settings?: Partial<FlexContainerSettings>,
+    scale?: PointLike,
+  ): FlexContainer;
+  flexContainer(
+    settingsOrAlpha: FlexContainerCreationSettings | number = 1,
+    position: PointLike = 0,
+    settings: Partial<FlexContainerSettings> = {},
+    scale: PointLike = 1,
+  ): FlexContainer {
+    const container =
+      typeof settingsOrAlpha === 'object'
+        ? Make.flexContainer(settingsOrAlpha)
+        : Make.flexContainer(settingsOrAlpha, position, settings, scale);
 
     return this.defaultContainer.addChild(container);
   }
 
   // Add Graphics
-  graphics(alpha: number = 1, position: PointLike = { x: 0, y: 0 }, scale: PointLike = { x: 1, y: 1 }) {
-    const graphics = Make.graphics();
-    graphics.alpha = alpha;
-
-    const resolvedPosition = resolvePointLike(position);
-    const resolvedScale = resolvePointLike(scale);
-
-    graphics.x = resolvedPosition.x;
-    graphics.y = resolvedPosition.y;
-    graphics.scale.x = resolvedScale.x;
-    graphics.scale.y = resolvedScale.y;
+  graphics(settings: GraphicsSettings): Graphics;
+  graphics(alpha?: number, position?: PointLike, scale?: PointLike): Graphics;
+  graphics(settingsOrAlpha: GraphicsSettings | number = 1, position: PointLike = 0, scale: PointLike = 1): Graphics {
+    const graphics =
+      typeof settingsOrAlpha === 'object'
+        ? Make.graphics(settingsOrAlpha)
+        : Make.graphics(settingsOrAlpha, position, scale);
 
     return this.defaultContainer.addChild(graphics);
   }
 
+  nineSlice(settings: NineSliceSettings): NineSlicePlane;
   nineSlice(
-    pAsset: string,
-    pSheet?: string | undefined,
+    asset: string | Texture,
+    sheet?: SpritesheetLike,
+    leftWidth?: number,
+    topHeight?: number,
+    rightWidth?: number,
+    bottomHeight?: number,
+    alpha?: number,
+    position?: PointLike,
+    scale?: PointLike,
+  ): NineSlicePlane;
+  nineSlice(
+    settingsOrAsset?: string | Texture | NineSliceSettings,
+    sheet?: SpritesheetLike,
     leftWidth: number = 10,
     topHeight: number = 10,
     rightWidth: number = 10,
     bottomHeight: number = 10,
     alpha: number = 1,
-    position: PointLike = { x: 0, y: 0 },
-    scale: PointLike = { x: 1, y: 1 },
-  ) {
-    const ns = Make.nineSlice(pAsset, pSheet, leftWidth, topHeight, rightWidth, bottomHeight);
-    ns.alpha = alpha;
-
-    const resolvedPosition = resolvePointLike(position);
-    const resolvedScale = resolvePointLike(scale);
-
-    ns.x = resolvedPosition.x;
-    ns.y = resolvedPosition.y;
-
-    ns.scale.x = resolvedScale.x;
-    ns.scale.y = resolvedScale.y;
-
+    position: PointLike = 0,
+    scale: PointLike = 1,
+  ): NineSlicePlane {
+    const ns =
+      typeof settingsOrAsset === 'string' || settingsOrAsset instanceof Texture
+        ? Make.nineSlice(settingsOrAsset, sheet, leftWidth, topHeight, rightWidth, bottomHeight, alpha, position, scale)
+        : Make.nineSlice(settingsOrAsset as NineSliceSettings);
     return this.defaultContainer.addChild(ns);
+  }
+
+  // @ts-ignore
+  mesh(settings: MeshSettings): Mesh<Shader>;
+  mesh(geometry: Geometry, shader: Shader, state?: State, drawMode?: DRAW_MODES): Mesh<Shader>;
+  mesh(
+    settingsOrGeometry: MeshSettings | Geometry,
+    shader: Shader,
+    state: State = State.for2d(),
+    drawMode: DRAW_MODES = DRAW_MODES.LINE_LOOP,
+  ): Mesh<Shader> {
+    const mesh =
+      settingsOrGeometry instanceof Geometry
+        ? Make.mesh(settingsOrGeometry, shader, state, drawMode)
+        : Make.mesh(settingsOrGeometry);
+    return this.defaultContainer.addChild(mesh);
+  }
+
+  simpleRope(settings: SimpleRopeSettings): { rope: SimpleRope; points: Point[] };
+  simpleRope(
+    asset: string | Texture,
+    sheet?: SpritesheetLike,
+    numPoints?: number,
+    segmentLength?: number,
+    autoUpdate?: boolean,
+    alpha?: number,
+    position?: PointLike,
+    scale?: PointLike,
+  ): { rope: SimpleRope; points: Point[] };
+  simpleRope(
+    settingsOrAsset?: string | Texture | SimpleRopeSettings,
+    sheet?: SpritesheetLike,
+    numPoints: number = 25,
+    segmentLength: number = 50,
+    autoUpdate?: boolean,
+    alpha: number = 1,
+    position: PointLike = 0,
+    scale: PointLike = 1,
+  ): { rope: SimpleRope; points: Point[] } {
+    const sr =
+      typeof settingsOrAsset === 'string' || settingsOrAsset instanceof Texture
+        ? Make.simpleRope(settingsOrAsset, sheet, numPoints, segmentLength, autoUpdate, alpha, position, scale)
+        : Make.simpleRope(settingsOrAsset as SimpleRopeSettings);
+    this.defaultContainer.addChild(sr.rope);
+    return sr;
+  }
+
+  simplePlane(settings: SimplePlaneSettings): SimplePlane;
+  simplePlane(
+    asset?: string | Texture,
+    sheet?: SpritesheetLike,
+    vertsWidth?: number,
+    vertsHeight?: number,
+    alpha?: number,
+    position?: PointLike,
+    scale?: PointLike,
+  ): SimplePlane;
+  simplePlane(
+    settingsOrAsset?: string | Texture | SimplePlaneSettings,
+    sheet?: SpritesheetLike,
+    vertsWidth: number = 1,
+    vertsHeight: number = 1,
+    alpha: number = 1,
+    position: PointLike = 0,
+    scale: PointLike = 1,
+  ): SimplePlane {
+    const sp =
+      typeof settingsOrAsset === 'string' || settingsOrAsset instanceof Texture
+        ? Make.simplePlane(settingsOrAsset, sheet, vertsWidth, vertsHeight, alpha, position, scale)
+        : Make.simplePlane(settingsOrAsset as SimplePlaneSettings);
+    return sp;
   }
 }

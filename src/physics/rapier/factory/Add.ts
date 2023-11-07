@@ -1,6 +1,7 @@
 import { Container, Texture } from 'pixi.js';
-import { PointLike, resolvePointLike } from '../../../utils';
+import { PointLike, SpritesheetLike } from '../../../utils';
 import { IPhysicsAddFactory, IPhysicsObject } from '../../interfaces';
+import { PhysicsSpriteSettings } from '../../matter/factory/Make';
 import { PhysicsBodyType } from '../../types';
 import { Make } from './Make';
 
@@ -16,20 +17,32 @@ export class Add implements IPhysicsAddFactory {
   }
 
   // add physics sprite
+  physicsSprite(settings: PhysicsSpriteSettings): IPhysicsObject;
   physicsSprite(
-    pTexture: string | Texture,
-    pSheet?: string | undefined,
-    pSize?: PointLike,
-    pType: PhysicsBodyType = PhysicsBodyType.RECTANGLE,
-    pAlpha: number = 1,
-    pPosition: PointLike = { x: 0, y: 0 },
+    asset?: string | Texture,
+    sheet?: SpritesheetLike,
+    size?: PointLike,
+    bodyType?: PhysicsBodyType,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
+  ): IPhysicsObject;
+  physicsSprite(
+    settingsOrAsset?: string | Texture | PhysicsSpriteSettings,
+    sheet?: SpritesheetLike,
+    size?: PointLike,
+    bodyType?: PhysicsBodyType,
+    alpha: number = 1,
+    position: PointLike = 0,
+    scale: PointLike = 1,
   ): IPhysicsObject {
-    const sprite = this.make.physicsSprite(pTexture, pSheet, pSize, pType);
-    sprite.alpha = pAlpha;
-    const resolvedPosition = resolvePointLike(pPosition);
-    sprite.x = resolvedPosition.x;
-    sprite.y = resolvedPosition.y;
-    return this.defaultContainer.addChild(sprite);
+    const mfs: IPhysicsObject =
+      typeof settingsOrAsset === 'string' || settingsOrAsset instanceof Texture
+        ? this.make.physicsSprite(settingsOrAsset, sheet, size, bodyType, alpha, position, scale)
+        : this.make.physicsSprite(settingsOrAsset as PhysicsSpriteSettings);
+
+    return this.defaultContainer.addChild(mfs);
   }
 
   existing(pObject: any) {

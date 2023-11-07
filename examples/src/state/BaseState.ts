@@ -67,7 +67,7 @@ export class BaseState extends State {
     // add the layout
     this.createLayout();
     this._layout.alpha = 0;
-    this._headerBg = this._header.add.coloredSprite(0x0, [this.app.size.x, 80], 'rectangle', 0.2, 0, 0);
+    this._headerBg = this._header.add.coloredSprite(0x0, [this.app.size.x, 80], 'rectangle', {}, 0.2, 0, 0);
     this._title = this._header.add.text(
       '',
       {
