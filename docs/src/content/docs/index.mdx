@@ -4,29 +4,27 @@ description: Get started building your docs site with Starlight.
 template: splash
 hero:
   title: |
-    <span
-      class="font-black text-transparent
-        bg-clip-text bg-gradient-to-b
-        from-accent-600 to-accent-200
-        dark:from-accent-600 dark:to-accent-200 text-6xl xl:text-8xl"
-    >
-      Dill Pixel
-    </span>
-  tagline: Your new favourite PIXI.js game framework.
+    <div class="font-extrabold text-4xl xl:text-6xl leading-tight block">
+      <span class="text-relishGreen">dill pixel</span> Docs
+    </div>
+  tagline: Your new favourite PixiJS game framework
   image:
-    file: ../../assets/logo-circle-3.png
+    file: ../../assets/jar.webp
   actions:
-    - text: Get Started
+    - text: Get started
       link: /docs/guides/setup/
       icon: right-arrow
       variant: primary
+    - text: View on GitHub
+      link: https://github.com/relishinc/dill-pixel
+      icon: external      
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
 ## Next steps
 
-<CardGrid stagger>
+<CardGrid>
 	<Card title="Read the Guides" icon="open-book">
 		Start with the [Setup Guide](/docs/guides/setup/) to get your site up and running.
 	</Card>

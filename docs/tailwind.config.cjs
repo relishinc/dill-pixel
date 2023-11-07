@@ -1,30 +1,20 @@
-const starlightPlugin = require('@astrojs/starlight-tailwind');
-
+import starlightPlugin from '@astrojs/starlight-tailwind';
 
 // Generated color palettes
-const accent = {200: '#abd79d', 600: '#2f8000', 900: '#123d00', 950: '#0b2c00'};
-const gray = {
-	100: '#f2f7f9',
-	200: '#e6f0f3',
-	300: '#b9c4c8',
-	400: '#7a9097',
-	500: '#475c63',
-	700: '#283c42',
-	800: '#172a30',
-	900: '#111a1c'
-};
-
+const accent = { 200: '#b3d598', 600: '#4a7c00', 900: '#203b00', 950: '#162b00' };
+const gray = { 100: '#f6f6f6', 200: '#eeeeee', 300: '#c2c2c2', 400: '#8b8b8b', 500: '#585858', 700: '#383838', 800: '#272727', 900: '#181818' };
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
 	content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
 	theme: {
 		extend: {
-			colors: {
-				// Your preferred accent color. Indigo is closest to Starlight’s defaults.
-				accent,
-				// Your preferred gray scale. Zinc is closest to Starlight’s defaults.
-				gray
+			colors: { 
+				accent, 
+				gray, 
+				relishGreen: {
+					DEFAULT: '#8AC733',
+				}
 			},
 		},
 	},
