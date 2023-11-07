@@ -297,8 +297,8 @@ export class Make {
 
     if (typeof settingsOrAsset === 'object' && !(settingsOrAsset instanceof Texture)) {
       const settings = settingsOrAsset as SpriteSettings;
-      asset = settings.asset;
-      sheet = settings.sheet;
+      asset = settings?.asset;
+      sheet = settings?.sheet;
       alpha = settings?.alpha ?? 1;
       visible = settings?.visible ?? true;
       position = settings?.position ?? 0;
@@ -359,7 +359,7 @@ export class Make {
       position = settings?.position ?? 0;
       anchor = settings?.anchor ?? 0.5;
       scale = settings?.scale ?? 1;
-      visible = settings.visible !== false;
+      visible = settings?.visible !== false;
     }
 
     const text = new Text(value, style);
@@ -409,7 +409,7 @@ export class Make {
       position = settings?.position ?? 0;
       anchor = settings?.anchor ?? 0.5;
       scale = settings?.scale ?? 1;
-      visible = settings.visible !== false;
+      visible = settings?.visible !== false;
     }
     const text = new HTMLText(value, style);
     if (alpha !== undefined) {
@@ -457,7 +457,7 @@ export class Make {
       alpha = settings?.alpha ?? 1;
       position = settings?.position ?? 0;
       (anchor = settings?.anchor ?? 0.5), (scale = settings?.scale ?? 1);
-      visible = settings.visible !== false;
+      visible = settings?.visible !== false;
     }
     const text = new BitmapText(value, style);
     if (alpha !== undefined) {
@@ -492,7 +492,7 @@ export class Make {
       const settings = settingsOrAlpha as ContainerSettings;
       alpha = settings?.alpha ?? 1;
       position = settings?.position ?? 0;
-      visible = settings.visible !== false;
+      visible = settings?.visible !== false;
     }
     const container = new Container();
     container.alpha = alpha;
@@ -528,7 +528,7 @@ export class Make {
       const settings = settingsOrAlpha as FlexContainerCreationSettings;
       alpha = settings?.alpha ?? 1;
       position = settings?.position ?? 0;
-      visible = settings.visible !== false;
+      visible = settings?.visible !== false;
       container = new FlexContainer(settingsOrAlpha);
     } else {
       container = new FlexContainer(settings);
@@ -561,7 +561,7 @@ export class Make {
       const settings = settingsOrAlpha as GraphicsSettings;
       alpha = settings?.alpha ?? 1;
       position = settings?.position ?? 0;
-      visible = settings.visible !== false;
+      visible = settings?.visible !== false;
       scale = settings?.scale ?? 1;
     }
     const graphics = new Graphics();
@@ -704,7 +704,7 @@ export class Make {
       alpha = settings?.alpha ?? 1;
       position = settings?.position ?? 0;
       scale = settings?.scale ?? 1;
-      visible = settings.visible !== false;
+      visible = settings?.visible !== false;
     }
     if (!asset) {
       asset = Texture.WHITE;
@@ -762,7 +762,7 @@ export class Make {
       alpha = settings?.alpha ?? 1;
       position = settings?.position ?? 0;
       scale = settings?.scale ?? 1;
-      visible = settings.visible !== false;
+      visible = settings?.visible !== false;
     }
     if (!asset) {
       asset = Texture.WHITE;
@@ -825,7 +825,7 @@ export class Make {
       alpha = settings?.alpha ?? 1;
       position = settings?.position ?? 0;
       scale = settings?.scale ?? 1;
-      visible = settings.visible !== false;
+      visible = settings?.visible !== false;
     }
     if (!asset) {
       asset = Texture.WHITE;
@@ -889,7 +889,7 @@ export class Make {
       alpha = settings?.alpha ?? 1;
       position = settings?.position ?? 0;
       scale = settings?.scale ?? 1;
-      visible = settings.visible !== false;
+      visible = settings?.visible !== false;
     }
     if (!asset) {
       asset = Texture.WHITE;
