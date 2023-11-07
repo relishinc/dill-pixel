@@ -1,4 +1,3 @@
-import { Container, Graphics } from 'pixi.js';
 import { Application } from '../../core';
 import { PhysicsBase } from '../PhysicsBase';
 import { PointObjectLike } from '../rapier';
@@ -7,11 +6,9 @@ import { IMatterPhysicsObject } from './interfaces';
 import { MatterBodyLike } from './types';
 
 export class MatterPhysics extends PhysicsBase {
-  protected _debug: boolean = false;
   private _updateables: IMatterPhysicsObject[] = [];
   private _engine: Matter.Engine;
-  private _debugGraphics: Graphics;
-  private _debugContainer: Container;
+
   private _bounds: PointObjectLike = { x: 0, y: 0 };
   private _isRunning: boolean = false;
 
@@ -24,24 +21,12 @@ export class MatterPhysics extends PhysicsBase {
     return this._engine;
   }
 
-  public set debug(pDebug: boolean) {
-    this._debug = pDebug;
-    if (!this._debug) {
-      this._debugContainer?.parent.removeChild(this._debugContainer);
-      this._debugGraphics?.destroy({ children: true });
-      this._debugContainer?.destroy({ children: true });
-    }
-  }
-
-  public get debug(): boolean {
-    return this._debug;
-  }
-
   destroy() {
     Matter.World.clear(this._engine.world, false);
     Matter.Engine.clear(this._engine);
     this._updateables = [];
     this._isRunning = false;
+    super.destroy();
   }
 
   async init(
@@ -126,16 +111,6 @@ export class MatterPhysics extends PhysicsBase {
   }
 
   drawDebug() {
-    if (!this._debugGraphics || !this._debugContainer || !this._debugGraphics.parent) {
-      this._debugContainer = this.app.make.container();
-      this.app.add.existing(this._debugContainer);
-      this._debugGraphics = this.app.make.graphics();
-      this._debugContainer.addChild(this._debugGraphics);
-      this._debugContainer.x = this.app.resizer.getSize().x * 0.5;
-      this._debugContainer.y = this.app.resizer.getSize().y * 0.5;
-      this.app.stage.setChildIndex(this._debugContainer, this.app.stage.children.length - 1);
-    }
-
     this._debugGraphics.clear();
 
     for (let i = 0; i < this._updateables.length; i++) {

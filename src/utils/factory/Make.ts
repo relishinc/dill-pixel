@@ -227,8 +227,9 @@ export class Make {
   ): Sprite {
     let color: number = settingsOrColor as number;
     const visible = true;
-    const settings: ColoredSpriteSettings = settingsOrColor as ColoredSpriteSettings;
+    let settings: ColoredSpriteSettings = {};
     if (typeof settingsOrColor === 'object') {
+      settings = settingsOrColor as ColoredSpriteSettings;
       const {
         color: settingsColor = 0x0,
         size: settingsSize = 1,

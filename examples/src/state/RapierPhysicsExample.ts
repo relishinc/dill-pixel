@@ -27,12 +27,14 @@ export class RapierPhysicsExample extends BaseState {
   }
 
   public destroy() {
+    window.removeEventListener('keyup', this.onKeyup);
     this.physics.destroy();
     super.destroy();
   }
 
   public init(pSize: Point) {
     super.init(pSize);
+    this.onKeyup = this.onKeyup.bind(this);
     this.setHeaderText('Rapier Physics Example');
     this.setMainText("Click anywhere to add a physics enabled sprite.\nPress the 'D' key to toggle debug mode.");
 
@@ -43,6 +45,12 @@ export class RapierPhysicsExample extends BaseState {
     return Math.random() * 50 + 50;
   }
 
+  protected onKeyup(e: KeyboardEvent) {
+    if (e.key === 'd') {
+      this.app.physics.debug = !this.app.physics.debug;
+    }
+  }
+
   protected async startPhysics() {
     await this.app.addPhysics(PhysicsEngineType.RAPIER);
     this.app.physics.init(true, false);
@@ -51,11 +59,7 @@ export class RapierPhysicsExample extends BaseState {
     const gfx = this.make.graphics();
 
     // if the D key is pressed, toggle debug mode
-    window.addEventListener('keyup', (e) => {
-      if (e.key === 'd') {
-        this.app.physics.debug = !this.app.physics.debug;
-      }
-    });
+    window.addEventListener('keyup', this.onKeyup);
 
     // on pointer down, add a random colored rect or circle
     this.eventMode = 'static';
@@ -77,14 +81,6 @@ export class RapierPhysicsExample extends BaseState {
             gfx.drawCircle(0, 0, (size as number) * 0.5);
             gfx.endFill();
             const useLogo = Math.random() > 0.5;
-            this.physics.add.physicsSprite(
-              useLogo ? 'relish-logo-circle' : this.app.renderer.generateTexture(gfx),
-              undefined,
-              size,
-              type,
-              1,
-              pt,
-            );
             this.physics.add.physicsSprite({
               asset: useLogo ? 'relish-logo-circle' : this.app.renderer.generateTexture(gfx),
               size,
