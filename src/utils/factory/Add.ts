@@ -195,7 +195,7 @@ export class Add {
     style?: Partial<ITextStyle | TextStyle>,
     alpha: number = 1,
     position: PointLike = 0,
-    anchor: PointLike = 0.5,
+    anchor: PointLike = 0,
     scale: PointLike = 1,
   ): Text {
     const text =
@@ -219,7 +219,7 @@ export class Add {
     style?: Partial<HTMLTextStyle | TextStyle | ITextStyle>,
     alpha: number = 1,
     position: PointLike = 0,
-    anchor: PointLike = 0.5,
+    anchor: PointLike = 0,
     scale: PointLike = 1,
   ): HTMLText {
     const text =
@@ -244,7 +244,7 @@ export class Add {
     style?: Partial<IBitmapTextStyle>,
     alpha: number = 1,
     position: PointLike = 0,
-    anchor: PointLike = 0.5,
+    anchor: PointLike = 0,
     scale: PointLike = 1,
   ): BitmapText {
     const bitmapText =
