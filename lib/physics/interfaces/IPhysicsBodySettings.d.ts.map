@@ -1,0 +1,1 @@
+{"version":3,"file":"IPhysicsBodySettings.d.ts","sourceRoot":"","sources":["../../../src/physics/interfaces/IPhysicsBodySettings.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,SAAS,EAAE,MAAM,aAAa,CAAC;AACxC,OAAO,EAAE,eAAe,EAAE,MAAM,UAAU,CAAC;AAE3C,MAAM,WAAW,oBAAoB;IACnC,IAAI,CAAC,EAAE,SAAS,CAAC;IACjB,QAAQ,CAAC,EAAE,eAAe,CAAC;IAE3B,CAAC,GAAG,EAAE,MAAM,GAAG,GAAG,CAAC;CACpB"}
