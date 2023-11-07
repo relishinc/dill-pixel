@@ -13,7 +13,6 @@ export class Make {
     bodyType?: PhysicsBodyType,
     alpha?: number,
     position?: PointLike,
-    anchor?: PointLike,
     scale?: PointLike,
   ): IPhysicsObject;
   static physicsSprite(

@@ -13,7 +13,6 @@ export class Make {
     bodyType?: PhysicsBodyType,
     alpha?: number,
     position?: PointLike,
-    anchor?: PointLike,
     scale?: PointLike,
   ): IPhysicsObject;
   static physicsSprite(
@@ -31,7 +30,7 @@ export class Make {
       const settings = settingsOrAsset as PhysicsSpriteSettings;
       asset = settings?.asset;
       sheet = settings?.sheet;
-      size = settings?.size;
+      size = settings?.size ?? 1;
       bodyType = settings?.bodyType ?? PhysicsBodyType.RECTANGLE;
       alpha = settings?.alpha ?? 1;
       position = settings?.position ?? 0;
