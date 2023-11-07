@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.12.5](https://github.com/relishinc/dill-pixel/compare/v2.12.4...v2.12.5) (2023-11-07)
+
+
+### Bug Fixes
+
+* add existing incorrectly type checking settings ([98dd9b4](https://github.com/relishinc/dill-pixel/commit/98dd9b47e84bb5c122bb211059a96634f28e22b8))
+* add existing incorrectly type checking settings ([5b0cde4](https://github.com/relishinc/dill-pixel/commit/5b0cde42e906818dd93ddea4474a89f046e4a874))
+
 ## [2.12.4](https://github.com/relishinc/dill-pixel/compare/v2.12.3...v2.12.4) (2023-11-07)
 
 
