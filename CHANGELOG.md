@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.12.6](https://github.com/relishinc/dill-pixel/compare/v2.12.5...v2.12.6) (2023-11-07)
+
+
+### Bug Fixes
+
+* factory text, htmlText, bitmapText anchor settings reset to 0,0 ([6d6db65](https://github.com/relishinc/dill-pixel/commit/6d6db656823946e36585ed44bb6c26b054d64954))
+
 ## [2.12.5](https://github.com/relishinc/dill-pixel/compare/v2.12.4...v2.12.5) (2023-11-07)
 
 
