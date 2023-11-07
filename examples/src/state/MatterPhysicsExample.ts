@@ -19,16 +19,24 @@ export class MatterPhysicsExample extends BaseState {
   }
 
   public destroy() {
+    window.removeEventListener('keyup', this.onKeyup);
     this.physics.destroy();
     super.destroy();
   }
 
   public async init(pSize: Point) {
     super.init(pSize);
+    this.onKeyup = this.onKeyup.bind(this);
     this.setHeaderText('Matter Physics Example');
     this.setMainText("Click anywhere to add a physics enabled sprite.\nPress the 'D' key to toggle debug mode.");
 
     await this.startPhysics();
+  }
+
+  protected onKeyup(e: KeyboardEvent) {
+    if (e.key === 'd') {
+      this.app.physics.debug = !this.app.physics.debug;
+    }
   }
 
   protected getObjectSize() {
@@ -44,11 +52,7 @@ export class MatterPhysicsExample extends BaseState {
     const gfx = this.make.graphics();
 
     // if the D key is pressed, toggle debug mode
-    window.addEventListener('keyup', (e) => {
-      if (e.key === 'd') {
-        this.app.physics.debug = !this.app.physics.debug;
-      }
-    });
+    window.addEventListener('keyup', this.onKeyup);
 
     // on pointer down, add a random colored rect or circle
     this.eventMode = 'static';

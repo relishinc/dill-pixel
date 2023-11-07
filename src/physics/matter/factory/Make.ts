@@ -1,11 +1,8 @@
 import { Texture } from 'pixi.js';
 import { PointLike, resolvePointLike, SpritesheetLike } from '../../../utils';
-import { PositionSettings, ScaleSettings, SpriteSettings } from '../../../utils/factory/Make';
-import { IPhysicsBodySettings, IPhysicsObject } from '../../interfaces';
+import { IPhysicsObject, PhysicsSpriteSettings } from '../../interfaces';
 import { PhysicsBodyType } from '../../types';
 import { MatterPhysicsSprite } from '../gameobjects';
-
-interface PhysicsSpriteSettings extends SpriteSettings, PositionSettings, ScaleSettings, IPhysicsBodySettings {}
 
 export class Make {
   static physicsSprite(settings: PhysicsSpriteSettings): IPhysicsObject;
