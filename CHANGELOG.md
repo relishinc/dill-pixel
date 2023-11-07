@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.12.2](https://github.com/relishinc/dill-pixel/compare/v2.12.1...v2.12.2) (2023-11-07)
+
+
+### Bug Fixes
+
+* fixed import in matter js factory ([36cee04](https://github.com/relishinc/dill-pixel/commit/36cee048ddcfb4ef3720320af4e12b5bbcc3a8a1))
+
 ## [2.12.1](https://github.com/relishinc/dill-pixel/compare/v2.12.0...v2.12.1) (2023-11-07)
 
 
