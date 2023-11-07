@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.12.4](https://github.com/relishinc/dill-pixel/compare/v2.12.3...v2.12.4) (2023-11-07)
+
+
+### Bug Fixes
+
+* some settings objects assumed properties were set ([42b75b4](https://github.com/relishinc/dill-pixel/commit/42b75b49829cef364ad0c669448c4778631d7031))
+
 ## [2.12.3](https://github.com/relishinc/dill-pixel/compare/v2.12.2...v2.12.3) (2023-11-07)
 
 
