@@ -346,7 +346,7 @@ export class Make {
     style?: Partial<ITextStyle | TextStyle>,
     alpha: number = 1,
     position: PointLike = 0,
-    anchor: PointLike = 0.5,
+    anchor: PointLike = 0,
     scale: PointLike = 1,
   ): Text {
     let value: string = settingsOrValue as string;
@@ -357,7 +357,7 @@ export class Make {
       style = settings?.style ?? {};
       alpha = settings?.alpha ?? 1;
       position = settings?.position ?? 0;
-      anchor = settings?.anchor ?? 0.5;
+      anchor = settings?.anchor ?? 0;
       scale = settings?.scale ?? 1;
       visible = settings?.visible !== false;
     }
@@ -396,7 +396,7 @@ export class Make {
     style?: Partial<HTMLTextStyle | TextStyle | ITextStyle>,
     alpha: number = 1,
     position: PointLike = 0,
-    anchor: PointLike = 0.5,
+    anchor: PointLike = 0,
     scale: PointLike = 1,
   ): HTMLText {
     let value: string = settingsOrValue as string;
@@ -407,7 +407,7 @@ export class Make {
       style = settings?.style ?? {};
       alpha = settings?.alpha ?? 1;
       position = settings?.position ?? 0;
-      anchor = settings?.anchor ?? 0.5;
+      anchor = settings?.anchor ?? 0;
       scale = settings?.scale ?? 1;
       visible = settings?.visible !== false;
     }
@@ -445,7 +445,7 @@ export class Make {
     style?: Partial<IBitmapTextStyle>,
     alpha: number = 1,
     position: PointLike = 0,
-    anchor: PointLike = 0.5,
+    anchor: PointLike = 0,
     scale: PointLike = 1,
   ): BitmapText {
     let value: string = settingsOrValue as string;
@@ -456,7 +456,8 @@ export class Make {
       style = settings?.style ?? {};
       alpha = settings?.alpha ?? 1;
       position = settings?.position ?? 0;
-      (anchor = settings?.anchor ?? 0.5), (scale = settings?.scale ?? 1);
+      anchor = settings?.anchor ?? 0;
+      scale = settings?.scale ?? 1;
       visible = settings?.visible !== false;
     }
     const text = new BitmapText(value, style);
