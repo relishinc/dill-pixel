@@ -1,5 +1,5 @@
 import { Geometry, State } from '@pixi/core';
-import { BitmapText, DRAW_MODES, Graphics, HTMLText, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Mesh, NineSlicePlane, ObservablePoint, Point, Shader, SimpleMesh, SimplePlane, SimpleRope, Sprite, Text, TextStyle, Texture, TilingSprite } from 'pixi.js';
+import { BitmapText, DRAW_MODES, Graphics, HTMLText, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Mesh, NineSlicePlane, Point, Shader, SimpleMesh, SimplePlane, SimpleRope, Sprite, Text, TextStyle, Texture, TilingSprite } from 'pixi.js';
 import { Container, FlexContainer, FlexContainerSettings } from '../../gameobjects';
 import { PointLike, SpritesheetLike } from '../Types';
 /**
@@ -7,23 +7,123 @@ import { PointLike, SpritesheetLike } from '../Types';
  * @param pAsset The name of the texture to get.
  * @param pSheet (optional) The spritesheet(s) that the texture is in. You can leave this out unless you have two textures with the same name in different spritesheets
  */
+export interface TextureSettings {
+    asset: string;
+    sheet?: SpritesheetLike;
+}
+export interface SpriteTextureSettings {
+    asset?: string | Texture;
+    sheet?: SpritesheetLike;
+}
+export interface PositionSettings {
+    position?: PointLike;
+}
+export interface VisibilitySettings {
+    alpha?: number;
+    visible?: boolean;
+}
+export interface AnchorSettings {
+    anchor?: PointLike;
+}
+export interface ScaleSettings {
+    scale?: PointLike;
+}
+export interface SpriteSettings extends SpriteTextureSettings, PositionSettings, AnchorSettings, VisibilitySettings, ScaleSettings {
+}
+export interface ContainerSettings extends PositionSettings, VisibilitySettings, ScaleSettings {
+}
+export interface ColoredSpriteSettings extends PositionSettings, AnchorSettings, VisibilitySettings, ScaleSettings {
+    color?: number;
+    size?: PointLike;
+    shape?: 'rectangle' | 'rounded_rectangle' | 'circle';
+    [key: string]: any;
+}
+export interface TextSettings extends PositionSettings, AnchorSettings, VisibilitySettings, ScaleSettings {
+    value?: string;
+    style?: Partial<ITextStyle | TextStyle>;
+}
+export interface HTMLTextSettings extends PositionSettings, AnchorSettings, VisibilitySettings, ScaleSettings {
+    value?: string;
+    style?: Partial<HTMLTextStyle | TextStyle | ITextStyle>;
+}
+export interface BitmapTextSettings extends PositionSettings, AnchorSettings, VisibilitySettings, ScaleSettings {
+    value?: string;
+    style?: Partial<IBitmapTextStyle>;
+}
+export interface FlexContainerCreationSettings extends FlexContainerSettings, ContainerSettings {
+}
+export interface GraphicsSettings extends PositionSettings, VisibilitySettings, ScaleSettings {
+}
+export interface TilingSpriteSettings extends SpriteTextureSettings, PositionSettings, VisibilitySettings, ScaleSettings, AnchorSettings {
+    tilePosition?: PointLike;
+    width?: number;
+    height?: number;
+}
+export interface MeshSettings {
+    geometry: Geometry;
+    shader: Shader;
+    state?: State;
+    drawMode?: DRAW_MODES;
+}
+export interface SimpleRopeSettings extends SpriteTextureSettings, PositionSettings, VisibilitySettings, ScaleSettings {
+    numPoints?: number;
+    segmentLength?: number;
+    autoUpdate?: boolean;
+}
+export interface SimplePlaneSettings extends SpriteTextureSettings, PositionSettings, VisibilitySettings, ScaleSettings {
+    vertsWidth?: number;
+    vertsHeight?: number;
+}
+export interface SimpleMeshSettings extends SpriteTextureSettings, PositionSettings, VisibilitySettings, ScaleSettings {
+    vertices?: Float32Array;
+    uvs?: Float32Array;
+    indices?: Uint16Array;
+    drawMode?: number;
+}
+export interface NineSliceSettings extends SpriteTextureSettings, PositionSettings, VisibilitySettings, ScaleSettings {
+    leftWidth?: number;
+    topHeight?: number;
+    rightWidth?: number;
+    bottomHeight?: number;
+}
 export declare class Make {
-    static texture(pAsset: string, pSheet?: SpritesheetLike): Texture;
+    static texture(settings: TextureSettings): Texture;
+    static texture(asset: string, sheet?: SpritesheetLike): Texture;
+    static coloredSprite(settings: ColoredSpriteSettings): Sprite;
     static coloredSprite(color?: number, size?: PointLike, shape?: 'rectangle' | 'rounded_rectangle' | 'circle', opts?: {
-        [key: string]: string | number;
-    }): Sprite;
-    static sprite(pTexture: string | Texture, pSheet?: SpritesheetLike, alpha?: number, position?: PointLike, anchor?: PointLike): Sprite;
-    static text(pText?: string, pStyle?: Partial<ITextStyle | TextStyle>, alpha?: number, position?: PointLike, anchor?: PointLike): Text;
-    static htmlText(pText?: string, pStyle?: Partial<HTMLTextStyle | TextStyle | ITextStyle>, alpha?: number, position?: PointLike, anchor?: PointLike): HTMLText;
-    static bitmapText(pText?: string, pStyle?: Partial<IBitmapTextStyle>, alpha?: number, position?: PointLike, anchor?: PointLike): BitmapText;
-    static container(alpha?: number, position?: PointLike): Container;
-    static flexContainer(alpha?: number, position?: PointLike, settings?: Partial<FlexContainerSettings>): FlexContainer;
-    static graphics(alpha?: number, position?: PointLike): Graphics;
-    static tilingSprite(pTexture: string | Texture, pSheet: SpritesheetLike, pWidth: number, pHeight: number, pTilePosition?: Point, alpha?: number, position?: PointLike, anchor?: PointLike): TilingSprite;
-    static mesh(pGeometry: Geometry, pShader: Shader, pState?: State, pDrawMode?: DRAW_MODES): Mesh<Shader>;
-    static simpleRope(pTexture: string | Texture, pSheet: SpritesheetLike, pPoints: (Point | ObservablePoint)[], pAutoUpdate?: boolean): SimpleRope;
-    static simplePlane(pTexture: string | Texture, pSheet: SpritesheetLike, pVertsWidth: number, pVertsHeight: number): SimplePlane;
-    static simpleMesh(pTexture: string | Texture, pSheet: SpritesheetLike, pVertices?: Float32Array, pUvs?: Float32Array, pIndices?: Uint16Array, pDrawMode?: number): SimpleMesh;
-    static nineSlice(pTexture: string | Texture, pSheet?: SpritesheetLike, leftWidth?: number, topHeight?: number, rightWidth?: number, bottomHeight?: number, alpha?: number, position?: PointLike): NineSlicePlane;
+        [key: string]: any;
+    }, alpha?: number, position?: PointLike, anchor?: PointLike, scale?: PointLike): Sprite;
+    static sprite(settings: SpriteSettings): Sprite;
+    static sprite(asset: string | Texture, sheet?: SpritesheetLike, alpha?: number, position?: PointLike, anchor?: PointLike, scale?: PointLike): Sprite;
+    static text(value?: string, style?: Partial<ITextStyle | TextStyle>, alpha?: number, position?: PointLike, anchor?: PointLike, scale?: PointLike): Text;
+    static text(settings: TextSettings): Text;
+    static htmlText(settings?: HTMLTextSettings): HTMLText;
+    static htmlText(value?: string, style?: Partial<HTMLTextStyle | TextStyle | ITextStyle>, alpha?: number, position?: PointLike, anchor?: PointLike, scale?: PointLike): HTMLText;
+    static bitmapText(settings?: BitmapTextSettings): BitmapText;
+    static bitmapText(value?: string, style?: Partial<IBitmapTextStyle>, alpha?: number, position?: PointLike, anchor?: PointLike, scale?: PointLike): BitmapText;
+    static container(settings?: ContainerSettings): Container;
+    static container(alpha?: number, position?: PointLike, scale?: PointLike): Container;
+    static flexContainer(settings: FlexContainerCreationSettings): FlexContainer;
+    static flexContainer(alpha?: number, position?: PointLike, settings?: Partial<FlexContainerSettings>, scale?: PointLike): FlexContainer;
+    static graphics(settings: GraphicsSettings): Graphics;
+    static graphics(alpha?: number, position?: PointLike, scale?: PointLike): Graphics;
+    static tilingSprite(settings: TilingSpriteSettings): TilingSprite;
+    static tilingSprite(asset: string | Texture, sheet: SpritesheetLike, width: number, height: number, tilePosition?: PointLike, alpha?: number, position?: PointLike, anchor?: PointLike, scale?: PointLike): TilingSprite;
+    static mesh(settings: MeshSettings): Mesh<Shader>;
+    static mesh(geometry: Geometry, shader: Shader, state?: State, drawMode?: DRAW_MODES): Mesh<Shader>;
+    static simpleRope(settings: SimpleRopeSettings): {
+        rope: SimpleRope;
+        points: Point[];
+    };
+    static simpleRope(asset: string | Texture, sheet?: SpritesheetLike, numPoints?: number, segmentLength?: number, autoUpdate?: boolean, alpha?: number, position?: PointLike, scale?: PointLike): {
+        rope: SimpleRope;
+        points: Point[];
+    };
+    static simplePlane(settings: SimplePlaneSettings): SimplePlane;
+    static simplePlane(asset?: string | Texture, sheet?: SpritesheetLike, vertsWidth?: number, vertsHeight?: number, alpha?: number, position?: PointLike, scale?: PointLike): SimplePlane;
+    static simpleMesh(settings: SimpleMeshSettings): SimpleMesh;
+    static simpleMesh(asset: string | Texture, sheet: SpritesheetLike, vertices?: Float32Array, uvs?: Float32Array, indices?: Uint16Array, drawMode?: number, alpha?: number, position?: PointLike, scale?: PointLike): SimpleMesh;
+    static nineSlice(settings: NineSliceSettings): NineSlicePlane;
+    static nineSlice(asset: string | Texture, sheet?: SpritesheetLike, leftWidth?: number, topHeight?: number, rightWidth?: number, bottomHeight?: number, alpha?: number, position?: PointLike, scale?: PointLike): NineSlicePlane;
 }
 //# sourceMappingURL=Make.d.ts.map

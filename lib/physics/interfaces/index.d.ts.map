@@ -1,1 +1,1 @@
-{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../../src/physics/interfaces/index.ts"],"names":[],"mappings":"AAAA,cAAc,mBAAmB,CAAC;AAClC,cAAc,uBAAuB,CAAC;AACtC,cAAc,sBAAsB,CAAC;AACrC,cAAc,gBAAgB,CAAC;AAC/B,cAAc,kBAAkB,CAAC"}
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../../src/physics/interfaces/index.ts"],"names":[],"mappings":"AAAA,cAAc,mBAAmB,CAAC;AAClC,cAAc,uBAAuB,CAAC;AACtC,cAAc,sBAAsB,CAAC;AACrC,cAAc,gBAAgB,CAAC;AAC/B,cAAc,kBAAkB,CAAC;AACjC,cAAc,wBAAwB,CAAC"}

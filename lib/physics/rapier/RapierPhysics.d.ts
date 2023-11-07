@@ -5,18 +5,15 @@ import { IRapierPhysicsObject, IRapierWallDefinition } from './interfaces';
 import { RapierBodyLike } from './types';
 export declare class RapierPhysics extends PhysicsBase {
     protected app: Application;
-    protected _debug: boolean;
     private _updateables;
     private _world;
-    private _debugGraphics;
-    private _debugContainer;
     private _bounds;
     private _isRunning;
     private _systemOfUnitsFactor;
     constructor(app: Application);
     get SIFactor(): number;
     get world(): World;
-    set debug(pDebug: boolean);
+    set debug(value: boolean);
     get debug(): boolean;
     init(pAutoStart?: boolean, pDebug?: boolean, autoCreateBounds?: boolean, pEngineOptions?: {
         gravity: Vector2;
