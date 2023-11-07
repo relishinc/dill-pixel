@@ -54,7 +54,7 @@ export class Add {
   existing<T>(
     pObject: T,
     settingsOrPosition: ExistingSettings | PointLike = 0,
-    anchor: PointLike = 0.5,
+    anchor: PointLike = 0,
     scale: PointLike = 1,
   ): T {
     let position: PointLike = settingsOrPosition as PointLike;
@@ -65,7 +65,7 @@ export class Add {
     ) {
       const settings = settingsOrPosition as ExistingSettings;
       position = settings?.position ?? 0;
-      anchor = settings?.anchor ?? 0.5;
+      anchor = settings?.anchor ?? 0;
       scale = settings?.scale ?? 1;
     }
     const obj = this.defaultContainer.addChild(pObject as DisplayObject) as T;
