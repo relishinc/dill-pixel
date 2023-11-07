@@ -6,7 +6,7 @@ import { List, State } from 'dill-pixel/react';
 import { TextStyle } from 'pixi.js';
 import * as React from 'react';
 
-export const UIListExample: State = ({ size, animationState, onInAnimationComplete, onOutAnimationComplete }) => {
+export const ListExample: State = ({ size, animationState, onInAnimationComplete, onOutAnimationComplete }) => {
   const containerRef = useBaseStateAnimations(animationState, onInAnimationComplete, onOutAnimationComplete);
 
   return (
@@ -36,4 +36,4 @@ export const UIListExample: State = ({ size, animationState, onInAnimationComple
   );
 };
 
-UIListExample.hasStateAnimations = true;
+ListExample.hasStateAnimations = true;

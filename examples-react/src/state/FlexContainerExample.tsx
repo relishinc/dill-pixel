@@ -1,14 +1,16 @@
 import { useBaseStateAnimations } from '@/hooks/useBaseStateAnimations';
 import { BasicStateBackground } from '@/ui/BasicStateBackground';
 import { whiteTextStyle } from '@/utils/text';
-import { Container, Text } from '@pixi/react';
+import { Container, Graphics, Text } from '@pixi/react';
 import { MathUtils } from 'dill-pixel';
-import { FlexContainer, State } from 'dill-pixel/react';
+import { FlexContainer, IFlexContainer, State } from 'dill-pixel/react';
 import { useControls } from 'leva';
-import { TextStyle } from 'pixi.js';
+import { Graphics as PIXIGraphics, TextStyle } from 'pixi.js';
 import * as React from 'react';
 
 const controlsSchema = {
+  width: { value: 800, min: 0, max: 1000, step: 1 },
+  height: { value: 600, min: 0, max: 1000, step: 1 },
   numItems: { label: '# of items', value: 4, min: 1, max: 40, step: 1 },
   varySizes: false,
   gap: { value: 0, min: 0, max: 200, step: 1 },
@@ -33,13 +35,14 @@ const controlsSchema = {
   },
 };
 
-export const UIFlexContainerExample: State = ({
+export const FlexContainerExample: State = ({
   size,
   animationState,
   onInAnimationComplete,
   onOutAnimationComplete,
 }) => {
-  const { numItems, varySizes, gap, flexDirection, flexWrap, alignItems, justifyContent } = useControls(controlsSchema);
+  const { numItems, width, height, varySizes, gap, flexDirection, flexWrap, alignItems, justifyContent } =
+    useControls(controlsSchema);
 
   const items = React.useMemo(() => {
     return Array.from({ length: numItems }).map((_, i) => (
@@ -51,24 +54,33 @@ export const UIFlexContainerExample: State = ({
     ));
   }, [numItems, varySizes]);
 
-  const containerRef = useBaseStateAnimations(animationState, onInAnimationComplete, onOutAnimationComplete);
+  const stateContainerRef = useBaseStateAnimations(animationState, onInAnimationComplete, onOutAnimationComplete);
+  const containerRef = React.useRef<IFlexContainer>(null);
+  const drawBacking = React.useCallback(
+    (g: PIXIGraphics) => {
+      g.clear().beginFill(0x0, 0.25).drawRect(0, 0, width, height).endFill();
+    },
+    [flexDirection, width, height, gap, alignItems, justifyContent, flexWrap, items, containerRef.current],
+  );
 
   return (
     <>
-      <Container ref={containerRef}>
+      <Container ref={stateContainerRef}>
         <BasicStateBackground />
         <Text
-          text={`UI Flex Container`}
+          text={`Flex Container`}
           x={30}
           y={30}
           anchor={0}
           style={new TextStyle({ fontFamily: 'Arial', fontWeight: 'bold', fill: 0xffffff, fontSize: 48 })}
         />
+        <Graphics x={30} y={200} draw={drawBacking} />
         <FlexContainer
+          ref={containerRef}
           x={30}
           y={200}
-          width={size.width - 60}
-          height={flexDirection === 'column' ? size.height - 230 : undefined}
+          width={width}
+          height={height}
           gap={gap}
           flexWrap={flexWrap as 'nowrap' | 'wrap'}
           flexDirection={flexDirection as 'row' | 'column'}
@@ -84,4 +96,4 @@ export const UIFlexContainerExample: State = ({
   );
 };
 
-UIFlexContainerExample.hasStateAnimations = true;
+FlexContainerExample.hasStateAnimations = true;

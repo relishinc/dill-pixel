@@ -13,7 +13,7 @@ interface FlexContainerProps extends React.ComponentProps<typeof Container> {
   children: React.ReactNode;
 }
 
-export const FlexContainer: React.FC<FlexContainerProps> = (props) => {
+export const FlexContainer: React.FC<FlexContainerProps> = React.forwardRef((props, ref) => {
   const {
     width = 0,
     height = 0,
@@ -94,7 +94,7 @@ export const FlexContainer: React.FC<FlexContainerProps> = (props) => {
             offset = extraSpace / 2;
             break;
           case 'space-between':
-            offset = i * (extraSpace / (lineItems.length - 1));
+            offset = lineItems.length > 1 ? i * (extraSpace / (lineItems.length - 1)) : 0;
             break;
           case 'space-around':
             offset = (extraSpace / lineItems.length) * i + extraSpace / (2 * lineItems.length);
@@ -136,10 +136,10 @@ export const FlexContainer: React.FC<FlexContainerProps> = (props) => {
             case 'flex-start':
               break;
             case 'flex-end':
-              props.x += columnWidth - childRef.width;
+              props.x += (width || columnWidth) - childRef.width;
               break;
             case 'center':
-              props.x += (columnWidth - childRef.width) / 2;
+              props.x += ((width || columnWidth) - childRef.width) / 2;
               break;
             case 'stretch':
               childRef.width = columnWidth;
@@ -177,7 +177,7 @@ export const FlexContainer: React.FC<FlexContainerProps> = (props) => {
   }, [children, flexDirection, flexWrap, alignItems, justifyContent, width, height, gap]);
 
   return (
-    <Container x={props.x ?? 0} y={props.y ?? 0}>
+    <Container ref={ref} x={props.x ?? 0} y={props.y ?? 0}>
       {React.Children.map(children, (child, index) => {
         const { x, y } = layoutProps[index] || { x: 0, y: 0 };
         return React.cloneElement(child as React.ReactElement, {
@@ -190,6 +190,6 @@ export const FlexContainer: React.FC<FlexContainerProps> = (props) => {
       })}
     </Container>
   );
-};
+});
 
 export default FlexContainer;

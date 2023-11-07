@@ -20,16 +20,19 @@ export default class ExamplePopup extends Popup {
       this.blackout.eventMode = 'none';
     }
 
-    this._bg = this.add.coloredSprite(GREEN, [400, 400], 'rounded_rectangle', 1, [0, 0], 0.5, 1, { radius: 20 });
+    this._bg = this.add.coloredSprite({
+      color: GREEN,
+      size: [400, 300],
+      shape: 'rounded_rectangle',
+      radius: 20,
+    });
   }
 
   show(pToken: any): void {
     super.show(pToken);
-    this._text = this.add.text(`This is a popup ${this._popupData}`, {
-      align: 'center',
-      fill: 'white',
-      fontSize: 24,
-      fontFamily: 'arboria',
+    this._text = this.add.text({
+      value: `This is a popup ${this._popupData}`,
+      style: { align: 'center', fill: 'white', fontSize: 24, fontFamily: 'arboria' },
     });
   }
 

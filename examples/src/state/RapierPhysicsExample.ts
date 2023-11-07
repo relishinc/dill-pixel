@@ -4,6 +4,7 @@ import {
   AssetType,
   PhysicsBodyType,
   PhysicsEngineType,
+  PointLike,
   RapierPhysics,
   RapierPhysicsComposite,
   TextureAsset,
@@ -38,7 +39,7 @@ export class RapierPhysicsExample extends BaseState {
     this.startPhysics();
   }
 
-  protected getObjectSize() {
+  protected getObjectSize(): number {
     return Math.random() * 50 + 50;
   }
 
@@ -66,7 +67,7 @@ export class RapierPhysicsExample extends BaseState {
         case rnd < 0.5:
           const type = Math.random() > 0.5 ? PhysicsBodyType.CIRCLE : PhysicsBodyType.RECTANGLE;
 
-          const size: [number, number?] | number =
+          const size: PointLike =
             type === PhysicsBodyType.CIRCLE ? this.getObjectSize() : [this.getObjectSize(), this.getObjectSize()];
 
           // make a random colored texture from graphics
@@ -84,6 +85,13 @@ export class RapierPhysicsExample extends BaseState {
               1,
               pt,
             );
+            this.physics.add.physicsSprite({
+              asset: useLogo ? 'relish-logo-circle' : this.app.renderer.generateTexture(gfx),
+              size,
+              bodyType: type,
+              mass: 1,
+              position: pt,
+            });
           } else {
             gfx.drawRect(0, 0, (size as [number, number])[0], (size as [number, number])[1]);
             gfx.endFill();
