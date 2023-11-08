@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.12.7](https://github.com/relishinc/dill-pixel/compare/v2.12.6...v2.12.7) (2023-11-08)
+
+
+### Bug Fixes
+
+* removed default alpha, position, scale, set sensible defaults for sprite anchors in make / add ([6eb58c2](https://github.com/relishinc/dill-pixel/commit/6eb58c28ac560716b04d1c1f14510ce885b4a014))
+
 ## [2.12.6](https://github.com/relishinc/dill-pixel/compare/v2.12.5...v2.12.6) (2023-11-07)
 
 
