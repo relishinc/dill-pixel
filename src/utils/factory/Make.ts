@@ -220,10 +220,10 @@ export class Make {
     opts?: {
       [key: string]: any;
     },
-    alpha: number = 1,
-    position: PointLike = [0, 0],
-    anchor: PointLike = [0.5, 0.5],
-    scale: PointLike = [1, 1],
+    alpha?: number,
+    position?: PointLike,
+    anchor: PointLike = 0.5,
+    scale?: PointLike,
   ): Sprite {
     let color: number = settingsOrColor as number;
     const visible = true;
@@ -241,11 +241,22 @@ export class Make {
       shape = settingsShape as 'rectangle' | 'rounded_rectangle' | 'circle';
       opts = settingsOpts;
     } else {
-      settings.alpha = alpha;
       settings.visible = visible;
-      settings.position = position;
-      settings.anchor = anchor;
-      settings.scale = scale;
+      if (alpha !== undefined) {
+        settings.alpha = alpha;
+      }
+      if (position !== undefined) {
+        settings.position = position;
+      }
+      if (anchor !== undefined) {
+        settings.anchor = anchor;
+      }
+      if (scale !== undefined) {
+        settings.scale = scale;
+      }
+      if (settings.anchor === undefined) {
+        settings.anchor = 0.5;
+      }
     }
     const gfx = new Graphics();
     const resolvedSize = resolvePointLike(size);
@@ -288,7 +299,7 @@ export class Make {
     sheet?: SpritesheetLike,
     alpha?: number,
     position?: PointLike,
-    anchor?: PointLike,
+    anchor: PointLike = 0.5,
     scale?: PointLike,
   ): Sprite {
     let visible = true;
@@ -299,11 +310,11 @@ export class Make {
       const settings = settingsOrAsset as SpriteSettings;
       asset = settings?.asset;
       sheet = settings?.sheet;
-      alpha = settings?.alpha ?? 1;
-      visible = settings?.visible ?? true;
-      position = settings?.position ?? 0;
+      alpha = settings?.alpha;
+      visible = settings?.visible !== false;
+      position = settings?.position;
       anchor = settings?.anchor ?? 0.5;
-      scale = settings?.scale ?? 1;
+      scale = settings?.scale;
     }
 
     if (!asset) {
@@ -344,10 +355,10 @@ export class Make {
   static text(
     settingsOrValue: string | TextSettings = '',
     style?: Partial<ITextStyle | TextStyle>,
-    alpha: number = 1,
-    position: PointLike = 0,
-    anchor: PointLike = 0,
-    scale: PointLike = 1,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
   ): Text {
     let value: string = settingsOrValue as string;
     let visible = true;
@@ -355,10 +366,10 @@ export class Make {
       const settings = settingsOrValue as TextSettings;
       value = settings?.value ?? '';
       style = settings?.style ?? {};
-      alpha = settings?.alpha ?? 1;
-      position = settings?.position ?? 0;
-      anchor = settings?.anchor ?? 0;
-      scale = settings?.scale ?? 1;
+      alpha = settings?.alpha;
+      position = settings?.position;
+      anchor = settings?.anchor;
+      scale = settings?.scale;
       visible = settings?.visible !== false;
     }
 
@@ -394,10 +405,10 @@ export class Make {
   static htmlText(
     settingsOrValue: string | HTMLTextSettings = '',
     style?: Partial<HTMLTextStyle | TextStyle | ITextStyle>,
-    alpha: number = 1,
-    position: PointLike = 0,
-    anchor: PointLike = 0,
-    scale: PointLike = 1,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
   ): HTMLText {
     let value: string = settingsOrValue as string;
     let visible = true;
@@ -405,10 +416,10 @@ export class Make {
       const settings = settingsOrValue as TextSettings;
       value = settings?.value ?? '';
       style = settings?.style ?? {};
-      alpha = settings?.alpha ?? 1;
-      position = settings?.position ?? 0;
-      anchor = settings?.anchor ?? 0;
-      scale = settings?.scale ?? 1;
+      alpha = settings?.alpha;
+      position = settings?.position;
+      anchor = settings?.anchor;
+      scale = settings?.scale;
       visible = settings?.visible !== false;
     }
     const text = new HTMLText(value, style);
@@ -443,10 +454,10 @@ export class Make {
   static bitmapText(
     settingsOrValue: string | BitmapTextSettings = '',
     style?: Partial<IBitmapTextStyle>,
-    alpha: number = 1,
-    position: PointLike = 0,
-    anchor: PointLike = 0,
-    scale: PointLike = 1,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
   ): BitmapText {
     let value: string = settingsOrValue as string;
     let visible = true;
@@ -454,10 +465,10 @@ export class Make {
       const settings = settingsOrValue as BitmapTextSettings;
       value = settings?.value ?? '';
       style = settings?.style ?? {};
-      alpha = settings?.alpha ?? 1;
-      position = settings?.position ?? 0;
-      anchor = settings?.anchor ?? 0;
-      scale = settings?.scale ?? 1;
+      alpha = settings?.alpha;
+      position = settings?.position;
+      anchor = settings?.anchor;
+      scale = settings?.scale;
       visible = settings?.visible !== false;
     }
     const text = new BitmapText(value, style);
@@ -473,7 +484,7 @@ export class Make {
       text.anchor.set(resolvedAnchor.x, resolvedAnchor.y);
     }
     if (scale !== undefined) {
-      const resolvedScale = resolvePointLike(anchor);
+      const resolvedScale = resolvePointLike(scale);
       text.scale.set(resolvedScale.x, resolvedScale.y);
     }
     text.visible = visible;
@@ -482,21 +493,21 @@ export class Make {
 
   static container(settings?: ContainerSettings): Container;
   static container(alpha?: number, position?: PointLike, scale?: PointLike): Container;
-  static container(
-    settingsOrAlpha: number | ContainerSettings = 1,
-    position: PointLike = 0,
-    scale: PointLike = 1,
-  ): Container {
+  static container(settingsOrAlpha?: number | ContainerSettings, position?: PointLike, scale?: PointLike): Container {
     let visible = true;
     let alpha: number = settingsOrAlpha as number;
     if (typeof settingsOrAlpha === 'object') {
       const settings = settingsOrAlpha as ContainerSettings;
-      alpha = settings?.alpha ?? 1;
-      position = settings?.position ?? 0;
+      if (settings.alpha !== undefined) {
+        alpha = settings?.alpha;
+      }
+      position = settings?.position;
       visible = settings?.visible !== false;
     }
     const container = new Container();
-    container.alpha = alpha;
+    if (alpha !== undefined) {
+      container.alpha = alpha;
+    }
     if (position !== undefined) {
       const resolvedPosition = resolvePointLike(position);
       container.position.set(resolvedPosition.x, resolvedPosition.y);
@@ -517,18 +528,20 @@ export class Make {
     scale?: PointLike,
   ): FlexContainer;
   static flexContainer(
-    settingsOrAlpha: FlexContainerCreationSettings | number = 1,
-    position: PointLike = 0,
+    settingsOrAlpha?: FlexContainerCreationSettings | number,
+    position?: PointLike,
     settings: Partial<FlexContainerSettings> = {},
-    scale: PointLike = 1,
+    scale?: PointLike,
   ): FlexContainer {
     let visible = true;
     let alpha: number = settingsOrAlpha as number;
     let container: FlexContainer;
     if (typeof settingsOrAlpha === 'object') {
       const settings = settingsOrAlpha as FlexContainerCreationSettings;
-      alpha = settings?.alpha ?? 1;
-      position = settings?.position ?? 0;
+      if (settings.alpha !== undefined) {
+        alpha = settings?.alpha;
+      }
+      position = settings?.position;
       visible = settings?.visible !== false;
       container = new FlexContainer(settingsOrAlpha);
     } else {
@@ -551,23 +564,19 @@ export class Make {
 
   static graphics(settings: GraphicsSettings): Graphics;
   static graphics(alpha?: number, position?: PointLike, scale?: PointLike): Graphics;
-  static graphics(
-    settingsOrAlpha: GraphicsSettings | number = 1,
-    position: PointLike = 0,
-    scale: PointLike = 1,
-  ): Graphics {
+  static graphics(settingsOrAlpha?: GraphicsSettings | number, position?: PointLike, scale?: PointLike): Graphics {
     let visible = true;
-    let alpha: number = settingsOrAlpha as number;
+    let alpha = settingsOrAlpha;
     if (typeof settingsOrAlpha === 'object') {
       const settings = settingsOrAlpha as GraphicsSettings;
-      alpha = settings?.alpha ?? 1;
-      position = settings?.position ?? 0;
+      alpha = settings?.alpha;
+      position = settings?.position;
       visible = settings?.visible !== false;
-      scale = settings?.scale ?? 1;
+      scale = settings?.scale;
     }
     const graphics = new Graphics();
     if (alpha !== undefined) {
-      graphics.alpha = alpha;
+      graphics.alpha = alpha as number;
     }
     if (position !== undefined) {
       const resolvedPosition = resolvePointLike(position);
@@ -598,11 +607,11 @@ export class Make {
     sheet?: SpritesheetLike,
     width: number = 1,
     height: number = 1,
-    tilePosition: PointLike = 0,
-    alpha: number = 1,
-    position: PointLike = 0,
-    anchor: PointLike = 0.5,
-    scale: PointLike = 1,
+    tilePosition?: PointLike,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
   ): TilingSprite {
     let visible = true;
     let asset: string | Texture | undefined = settingsOrAsset as string | Texture;
@@ -610,13 +619,17 @@ export class Make {
       const settings: TilingSpriteSettings = settingsOrAsset as TilingSpriteSettings;
       asset = settings?.asset;
       sheet = settings?.sheet;
-      width = settings?.width ?? 1;
-      height = settings?.height ?? 1;
-      tilePosition = settings?.tilePosition ?? 0;
-      alpha = settings?.alpha ?? 1;
-      position = settings?.position ?? 0;
-      anchor = settings?.anchor ?? 0.5;
-      scale = settings?.scale ?? 1;
+      if (settings.width !== undefined) {
+        width = settings.width;
+      }
+      if (settings.height !== undefined) {
+        height = settings.height;
+      }
+      tilePosition = settings?.tilePosition;
+      alpha = settings?.alpha;
+      position = settings?.position;
+      anchor = settings?.anchor;
+      scale = settings?.scale;
       visible = settings?.visible !== false;
     }
     if (!asset) {
@@ -689,9 +702,9 @@ export class Make {
     numPoints: number = 25,
     segmentLength: number = 50,
     autoUpdate?: boolean,
-    alpha: number = 1,
-    position: PointLike = 0,
-    scale: PointLike = 1,
+    alpha?: number,
+    position?: PointLike,
+    scale?: PointLike,
   ): { rope: SimpleRope; points: Point[] } {
     let visible = true;
     let asset: string | Texture | undefined = settingsOrAsset as string | Texture;
@@ -702,9 +715,9 @@ export class Make {
       numPoints = settings?.numPoints ?? 25;
       segmentLength = settings?.segmentLength ?? 50;
       autoUpdate = settings?.autoUpdate ?? true;
-      alpha = settings?.alpha ?? 1;
-      position = settings?.position ?? 0;
-      scale = settings?.scale ?? 1;
+      alpha = settings?.alpha;
+      position = settings?.position;
+      scale = settings?.scale;
       visible = settings?.visible !== false;
     }
     if (!asset) {
@@ -748,9 +761,9 @@ export class Make {
     sheet?: SpritesheetLike,
     vertsWidth: number = 1,
     vertsHeight: number = 1,
-    alpha: number = 1,
-    position: PointLike = 0,
-    scale: PointLike = 1,
+    alpha?: number,
+    position?: PointLike,
+    scale?: PointLike,
   ): SimplePlane {
     let visible = true;
     let asset: string | Texture | undefined = settingsOrAsset as string | Texture;
@@ -760,9 +773,9 @@ export class Make {
       sheet = settings?.sheet;
       vertsWidth = settings?.vertsWidth ?? 1;
       vertsHeight = settings?.vertsHeight ?? 1;
-      alpha = settings?.alpha ?? 1;
-      position = settings?.position ?? 0;
-      scale = settings?.scale ?? 1;
+      alpha = settings?.alpha;
+      position = settings?.position;
+      scale = settings?.scale;
       visible = settings?.visible !== false;
     }
     if (!asset) {
@@ -801,7 +814,6 @@ export class Make {
     position?: PointLike,
     scale?: PointLike,
   ): SimpleMesh;
-
   static simpleMesh(
     settingsOrAsset?: string | Texture | SimpleMeshSettings,
     sheet?: SpritesheetLike,
@@ -809,9 +821,9 @@ export class Make {
     uvs?: Float32Array,
     indices?: Uint16Array,
     drawMode?: number,
-    alpha: number = 1,
-    position: PointLike = 0,
-    scale: PointLike = 1,
+    alpha?: number,
+    position?: PointLike,
+    scale?: PointLike,
   ): SimpleMesh {
     let visible = true;
     let asset: string | Texture | undefined = settingsOrAsset as string | Texture;
@@ -823,9 +835,9 @@ export class Make {
       uvs = settings?.uvs;
       indices = settings?.indices;
       drawMode = settings?.drawMode;
-      alpha = settings?.alpha ?? 1;
-      position = settings?.position ?? 0;
-      scale = settings?.scale ?? 1;
+      alpha = settings?.alpha;
+      position = settings?.position;
+      scale = settings?.scale;
       visible = settings?.visible !== false;
     }
     if (!asset) {
@@ -873,9 +885,9 @@ export class Make {
     topHeight: number = 10,
     rightWidth: number = 10,
     bottomHeight: number = 10,
-    alpha: number = 1,
-    position: PointLike = 0,
-    scale: PointLike = 1,
+    alpha?: number,
+    position?: PointLike,
+    scale?: PointLike,
   ) {
     let visible = true;
     let asset: string | Texture | undefined = settingsOrAsset as string | Texture;
@@ -887,9 +899,9 @@ export class Make {
       topHeight = settings?.topHeight ?? 10;
       rightWidth = settings?.rightWidth ?? 10;
       bottomHeight = settings?.bottomHeight ?? 10;
-      alpha = settings?.alpha ?? 1;
-      position = settings?.position ?? 0;
-      scale = settings?.scale ?? 1;
+      alpha = settings?.alpha;
+      position = settings?.position;
+      scale = settings?.scale;
       visible = settings?.visible !== false;
     }
     if (!asset) {

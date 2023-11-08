@@ -51,22 +51,17 @@ export class Add {
 
   existing<T>(pObject: T, settings: ExistingSettings): T;
   existing<T>(pObject: T, position?: PointLike, anchor?: PointLike, scale?: PointLike): T;
-  existing<T>(
-    pObject: T,
-    settingsOrPosition: ExistingSettings | PointLike = 0,
-    anchor: PointLike = 0,
-    scale: PointLike = 1,
-  ): T {
-    let position: PointLike = settingsOrPosition as PointLike;
+  existing<T>(pObject: T, settingsOrPosition?: ExistingSettings | PointLike, anchor?: PointLike, scale?: PointLike): T {
+    let position: PointLike | undefined = settingsOrPosition as PointLike;
     if (
       settingsOrPosition &&
       typeof settingsOrPosition === 'object' &&
       ('position' in settingsOrPosition || 'anchor' in settingsOrPosition || 'scale' in settingsOrPosition)
     ) {
       const settings = settingsOrPosition as ExistingSettings;
-      position = settings?.position ?? 0;
-      anchor = settings?.anchor ?? 0;
-      scale = settings?.scale ?? 1;
+      position = settings?.position;
+      anchor = settings?.anchor;
+      scale = settings?.scale;
     }
     const obj = this.defaultContainer.addChild(pObject as DisplayObject) as T;
     const dObj = obj as Sprite;
@@ -110,10 +105,10 @@ export class Add {
     opts?: {
       [key: string]: any;
     },
-    alpha: number = 1,
-    position: PointLike = 0,
-    anchor: PointLike = 0.5,
-    scale: PointLike = 1,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
   ): Sprite {
     let sprite: Sprite;
     if (typeof settingsOrColor === 'object') {
@@ -137,10 +132,10 @@ export class Add {
   sprite(
     settingsOrAsset: string | Texture | SpriteSettings,
     sheet?: SpritesheetLike,
-    alpha: number = 1,
-    position: PointLike = 0,
-    anchor: PointLike = 0.5,
-    scale: PointLike = 1,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
   ): Sprite {
     const sprite =
       settingsOrAsset instanceof Texture || typeof settingsOrAsset === 'string'
@@ -168,10 +163,10 @@ export class Add {
     width: number = 1,
     height: number = 1,
     tilePosition: PointLike = 0,
-    alpha: number = 1,
-    position: PointLike = 0,
-    anchor: PointLike = 0.5,
-    scale: PointLike = 1,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
   ): TilingSprite {
     const sprite =
       typeof settingsOrAsset === 'string' || settingsOrAsset instanceof Texture
@@ -193,10 +188,10 @@ export class Add {
   text(
     settingsOrValue: string | TextSettings = '',
     style?: Partial<ITextStyle | TextStyle>,
-    alpha: number = 1,
-    position: PointLike = 0,
-    anchor: PointLike = 0,
-    scale: PointLike = 1,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
   ): Text {
     const text =
       typeof settingsOrValue === 'object'
@@ -217,10 +212,10 @@ export class Add {
   htmlText(
     settingsOrValue: string | HTMLTextSettings = '',
     style?: Partial<HTMLTextStyle | TextStyle | ITextStyle>,
-    alpha: number = 1,
-    position: PointLike = 0,
-    anchor: PointLike = 0,
-    scale: PointLike = 1,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
   ): HTMLText {
     const text =
       typeof settingsOrValue === 'string'
@@ -242,10 +237,10 @@ export class Add {
   bitmapText(
     settingsOrValue: string | BitmapTextSettings = '',
     style?: Partial<IBitmapTextStyle>,
-    alpha: number = 1,
-    position: PointLike = 0,
-    anchor: PointLike = 0,
-    scale: PointLike = 1,
+    alpha?: number,
+    position?: PointLike,
+    anchor?: PointLike,
+    scale?: PointLike,
   ): BitmapText {
     const bitmapText =
       typeof settingsOrValue === 'string'
@@ -257,7 +252,7 @@ export class Add {
   // Add Container
   container(settings?: ContainerSettings): Container;
   container(alpha?: number, position?: PointLike, scale?: PointLike): Container;
-  container(settingsOrAlpha: number | ContainerSettings = 1, position: PointLike = 0, scale: PointLike = 1): Container {
+  container(settingsOrAlpha?: number | ContainerSettings, position?: PointLike, scale?: PointLike): Container {
     let container: Container;
     if (typeof settingsOrAlpha === 'object') {
       container = Make.container(settingsOrAlpha);
@@ -276,10 +271,10 @@ export class Add {
     scale?: PointLike,
   ): FlexContainer;
   flexContainer(
-    settingsOrAlpha: FlexContainerCreationSettings | number = 1,
-    position: PointLike = 0,
+    settingsOrAlpha?: FlexContainerCreationSettings | number,
+    position?: PointLike,
     settings: Partial<FlexContainerSettings> = {},
-    scale: PointLike = 1,
+    scale?: PointLike,
   ): FlexContainer {
     const container =
       typeof settingsOrAlpha === 'object'
@@ -292,7 +287,7 @@ export class Add {
   // Add Graphics
   graphics(settings: GraphicsSettings): Graphics;
   graphics(alpha?: number, position?: PointLike, scale?: PointLike): Graphics;
-  graphics(settingsOrAlpha: GraphicsSettings | number = 1, position: PointLike = 0, scale: PointLike = 1): Graphics {
+  graphics(settingsOrAlpha?: GraphicsSettings | number, position?: PointLike, scale?: PointLike): Graphics {
     const graphics =
       typeof settingsOrAlpha === 'object'
         ? Make.graphics(settingsOrAlpha)
@@ -316,13 +311,13 @@ export class Add {
   nineSlice(
     settingsOrAsset?: string | Texture | NineSliceSettings,
     sheet?: SpritesheetLike,
-    leftWidth: number = 10,
-    topHeight: number = 10,
-    rightWidth: number = 10,
-    bottomHeight: number = 10,
-    alpha: number = 1,
-    position: PointLike = 0,
-    scale: PointLike = 1,
+    leftWidth?: number,
+    topHeight?: number,
+    rightWidth?: number,
+    bottomHeight?: number,
+    alpha?: number,
+    position?: PointLike,
+    scale?: PointLike,
   ): NineSlicePlane {
     const ns =
       typeof settingsOrAsset === 'string' || settingsOrAsset instanceof Texture
@@ -364,9 +359,9 @@ export class Add {
     numPoints: number = 25,
     segmentLength: number = 50,
     autoUpdate?: boolean,
-    alpha: number = 1,
-    position: PointLike = 0,
-    scale: PointLike = 1,
+    alpha?: number,
+    position?: PointLike,
+    scale?: PointLike,
   ): { rope: SimpleRope; points: Point[] } {
     const sr =
       typeof settingsOrAsset === 'string' || settingsOrAsset instanceof Texture
@@ -391,14 +386,15 @@ export class Add {
     sheet?: SpritesheetLike,
     vertsWidth: number = 1,
     vertsHeight: number = 1,
-    alpha: number = 1,
-    position: PointLike = 0,
-    scale: PointLike = 1,
+    alpha?: number,
+    position?: PointLike,
+    scale?: PointLike,
   ): SimplePlane {
     const sp =
       typeof settingsOrAsset === 'string' || settingsOrAsset instanceof Texture
         ? Make.simplePlane(settingsOrAsset, sheet, vertsWidth, vertsHeight, alpha, position, scale)
         : Make.simplePlane(settingsOrAsset as SimplePlaneSettings);
+    this.defaultContainer.addChild(sp);
     return sp;
   }
 }
