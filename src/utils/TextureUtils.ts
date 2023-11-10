@@ -8,23 +8,21 @@ export function createGradientTexture(
   }[],
 ) {
   const canvas = document.createElement('canvas');
-
   canvas.width = width;
   canvas.height = 1;
 
   const ctx = canvas.getContext('2d');
+  if (ctx) {
+    // use canvas2d API to create gradient
+    const grd = ctx.createLinearGradient(0, 0, width, 0);
 
-  // use canvas2d API to create gradient
-  const grd = ctx.createLinearGradient(0, 0, width, 0);
+    colorStops.forEach((cs) => {
+      grd.addColorStop(cs.offset, cs.color);
+    });
 
-  colorStops.forEach((cs) => {
-    grd.addColorStop(cs.offset, cs.color);
-  });
-  grd.addColorStop(0, 'black');
-  grd.addColorStop(1, 'rgba(0,0,0, 0)');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, width, 1);
 
-  ctx.fillStyle = grd;
-  ctx.fillRect(0, 0, width, 1);
-
-  return Texture.from(canvas as TextureSource);
+    return Texture.from(canvas as TextureSource);
+  }
 }
