@@ -1,4 +1,4 @@
-import {Container as PIXIContainer, IDestroyOptions, IPoint} from 'pixi.js';
+import {Container as PIXIContainer, IDestroyOptions, IPoint, Ticker} from 'pixi.js';
 import {SignalConnection, SignalConnections} from 'typed-signals';
 import {Application} from '../core';
 import {Editor} from '../misc';
@@ -32,7 +32,7 @@ export class Container extends PIXIContainer {
     this.onResize = this.onResize.bind(this);
     this._addFactory = new Add(this);
 
-    if (listenForResize) {
+    if (autoResize) {
       Signals.onResize.connect(this.onResize);
     }
 
