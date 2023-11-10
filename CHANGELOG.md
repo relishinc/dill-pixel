@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.14.0](https://github.com/relishinc/dill-pixel/compare/v2.13.0...v2.14.0) (2023-11-10)
+
+
+### Features
+
+* added a utility method for programmatically creating gradient textures, ([30677af](https://github.com/relishinc/dill-pixel/commit/30677af3e5bcee5aaa070f24860c60544808ca03))
+
 ## [2.13.0](https://github.com/relishinc/dill-pixel/compare/v2.12.7...v2.13.0) (2023-11-10)
 
 
