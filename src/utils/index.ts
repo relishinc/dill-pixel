@@ -7,6 +7,8 @@ export * as PlatformUtils from './PlatformUtils';
 export * as PointUtils from './PointUtils';
 export * as Random from './Random';
 export * as RectUtils from './RectUtils';
+export * as TextureUtils from './TextureUtils';
+export { createGradientTexture } from './TextureUtils';
 export * as StringUtils from './StringUtils';
 export * from './StringUtils';
 export * as ColorUtils from './ColorUtils';

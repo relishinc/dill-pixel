@@ -6,25 +6,38 @@ import {Signals} from '../signals';
 import {Add, Make} from '../utils/factory';
 
 /**
- * Enhanced PIXI Container that has a factory for adding children, and a reference to the Application instance
+ * Enhanced PIXI Container that has:
+ * a factory for adding children,
+ * a reference to the Application instance,
+ * a signal connection manager,
+ * and auto update / resize capabilities
  * @class Container
  * @extends PIXIContainer
  */
 export class Container extends PIXIContainer {
   protected _addFactory: Add;
-  protected _connections: SignalConnections = new SignalConnections();
+
+  // optionally add signals to a SignalConnections instance for easy removal
+  protected _signalConnections: SignalConnections = new SignalConnections();
 
   protected _editMode = false;
   protected editor: Editor;
+
   public editable: boolean = true;
   public childrenEditable: boolean = true;
 
-  constructor(listenForResize: boolean = true) {
+  constructor(autoResize: boolean = true, autoUpdate: boolean = false) {
     super();
+    this.update = this.update.bind(this);
     this.onResize = this.onResize.bind(this);
     this._addFactory = new Add(this);
+
     if (listenForResize) {
       Signals.onResize.connect(this.onResize);
+    }
+
+    if (autoUpdate) {
+      Ticker.shared.add(this.update);
     }
   }
 
@@ -69,7 +82,11 @@ export class Container extends PIXIContainer {
   }
 
   public onResize(_size: IPoint) {
-    //
+    // noop
+  }
+
+  public update(_deltaTime: number) {
+    // noop
   }
 
   /**
@@ -77,7 +94,7 @@ export class Container extends PIXIContainer {
    * adds a signal connection
    */
   protected addSignalConnection(pConnection: SignalConnection) {
-    this._connections.add(pConnection);
+    this._signalConnections.add(pConnection);
   }
 
   /**
@@ -85,6 +102,6 @@ export class Container extends PIXIContainer {
    * removes all signal connections
    */
   protected disconnectAllSignals() {
-    this._connections.disconnectAll();
+    this._signalConnections.disconnectAll();
   }
 }
