@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.15.0](https://github.com/relishinc/dill-pixel/compare/v2.14.2...v2.15.0) (2023-11-13)
+
+
+### Features
+
+* added ParticleContainer ([7699939](https://github.com/relishinc/dill-pixel/commit/76999394e13452d49da1311486a2d61d4d1a5950))
+
 ## [2.14.2](https://github.com/relishinc/dill-pixel/compare/v2.14.1...v2.14.2) (2023-11-13)
 
 
