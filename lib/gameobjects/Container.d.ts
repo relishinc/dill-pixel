@@ -4,18 +4,22 @@ import { Application } from '../core';
 import { Editor } from '../misc';
 import { Add, Make } from '../utils/factory';
 /**
- * Enhanced PIXI Container that has a factory for adding children, and a reference to the Application instance
+ * Enhanced PIXI Container that has:
+ * a factory for adding children,
+ * a reference to the Application instance,
+ * a signal connection manager,
+ * and auto update / resize capabilities
  * @class Container
  * @extends PIXIContainer
  */
 export declare class Container extends PIXIContainer {
     protected _addFactory: Add;
-    protected _connections: SignalConnections;
+    protected _signalConnections: SignalConnections;
     protected _editMode: boolean;
     protected editor: Editor;
     editable: boolean;
     childrenEditable: boolean;
-    constructor(listenForResize?: boolean);
+    constructor(autoResize?: boolean, autoUpdate?: boolean);
     set editMode(value: boolean);
     get editMode(): boolean;
     enableEditMode(): void;
@@ -25,6 +29,7 @@ export declare class Container extends PIXIContainer {
     get app(): Application;
     destroy(_options?: IDestroyOptions | boolean): void;
     onResize(_size: IPoint): void;
+    update(_deltaTime: number): void;
     /**
      * @protected
      * adds a signal connection
