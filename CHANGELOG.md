@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.14.1](https://github.com/relishinc/dill-pixel/compare/v2.14.0...v2.14.1) (2023-11-10)
+
+
+### Bug Fixes
+
+* createGradientTexture method error ([88aeb96](https://github.com/relishinc/dill-pixel/commit/88aeb96d5465d83156ada605274c1aaca8ebaadf))
+
 ## [2.14.0](https://github.com/relishinc/dill-pixel/compare/v2.13.0...v2.14.0) (2023-11-10)
 
 
