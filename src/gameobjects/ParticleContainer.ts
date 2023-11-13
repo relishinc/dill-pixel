@@ -8,7 +8,7 @@ import { Add, Make } from '../utils/factory';
 export interface ParticleContainerProps {
   maxSize: number;
   properties: {
-    scale: boolean;
+    vertices: boolean;
     position: boolean;
     rotation: boolean;
     uvs: boolean;
@@ -42,11 +42,11 @@ export class ParticleContainer extends PIXIParticleContainer {
   constructor(props: Partial<ParticleContainerProps> = {}, autoResize: boolean = true, autoUpdate: boolean = false) {
     const properties = Object.assign(
       {
-        scale: true,
+        vertices: false,
         position: true,
-        rotation: true,
-        uvs: true,
-        tint: true,
+        rotation: false,
+        uvs: false,
+        tint: false,
       },
       props.properties ?? {},
     );
