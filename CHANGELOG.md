@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.15.1](https://github.com/relishinc/dill-pixel/compare/v2.15.0...v2.15.1) (2023-11-13)
+
+
+### Bug Fixes
+
+* default settings for ParticleContainer ([b9244b8](https://github.com/relishinc/dill-pixel/commit/b9244b89818ce66184a1227cf72df4866d397b55))
+
 ## [2.15.0](https://github.com/relishinc/dill-pixel/compare/v2.14.2...v2.15.0) (2023-11-13)
 
 
