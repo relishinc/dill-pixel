@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.14.2](https://github.com/relishinc/dill-pixel/compare/v2.14.1...v2.14.2) (2023-11-13)
+
+
+### Bug Fixes
+
+* fixed import in TextureUtils.ts ([275917e](https://github.com/relishinc/dill-pixel/commit/275917e90f727712958c4e042d488014330a1092))
+
 ## [2.14.1](https://github.com/relishinc/dill-pixel/compare/v2.14.0...v2.14.1) (2023-11-10)
 
 
