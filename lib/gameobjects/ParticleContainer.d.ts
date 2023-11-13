@@ -3,6 +3,18 @@ import { SignalConnection, SignalConnections } from 'typed-signals';
 import { Application } from '../core';
 import { Editor } from '../misc';
 import { Add, Make } from '../utils/factory';
+export interface ParticleContainerProps {
+    maxSize: number;
+    properties: {
+        scale: boolean;
+        position: boolean;
+        rotation: boolean;
+        uvs: boolean;
+        tint: boolean;
+    };
+    batchSize: number;
+    autoResize: boolean;
+}
 /**
  * Enhanced PIXI Container that has:
  * a factory for adding children,
@@ -19,7 +31,7 @@ export declare class ParticleContainer extends PIXIParticleContainer {
     protected editor: Editor;
     editable: boolean;
     childrenEditable: boolean;
-    constructor(autoResize?: boolean, autoUpdate?: boolean);
+    constructor(props?: Partial<ParticleContainerProps>, autoResize?: boolean, autoUpdate?: boolean);
     set editMode(value: boolean);
     get editMode(): boolean;
     enableEditMode(): void;
