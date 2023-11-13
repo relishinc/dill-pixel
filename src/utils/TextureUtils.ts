@@ -1,4 +1,4 @@
-import { TextureSource } from 'pixi.js';
+import { Texture, TextureSource } from 'pixi.js';
 
 export function createGradientTexture(
   width: number,
