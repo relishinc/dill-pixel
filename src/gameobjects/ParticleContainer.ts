@@ -1,9 +1,22 @@
-import {IDestroyOptions, IPoint, ParticleContainer as PIXIParticleContainer, Ticker} from 'pixi.js';
-import {SignalConnection, SignalConnections} from 'typed-signals';
-import {Application} from '../core';
-import {Editor} from '../misc';
-import {Signals} from '../signals';
-import {Add, Make} from '../utils/factory';
+import { IDestroyOptions, IPoint, ParticleContainer as PIXIParticleContainer, Ticker } from 'pixi.js';
+import { SignalConnection, SignalConnections } from 'typed-signals';
+import { Application } from '../core';
+import { Editor } from '../misc';
+import { Signals } from '../signals';
+import { Add, Make } from '../utils/factory';
+
+export interface ParticleContainerProps {
+  maxSize: number;
+  properties: {
+    scale: boolean;
+    position: boolean;
+    rotation: boolean;
+    uvs: boolean;
+    tint: boolean;
+  };
+  batchSize: number;
+  autoResize: boolean;
+}
 
 /**
  * Enhanced PIXI Container that has:
@@ -26,8 +39,21 @@ export class ParticleContainer extends PIXIParticleContainer {
   public editable: boolean = true;
   public childrenEditable: boolean = true;
 
-  constructor(autoResize: boolean = true, autoUpdate: boolean = false) {
-    super();
+  constructor(props: Partial<ParticleContainerProps> = {}, autoResize: boolean = true, autoUpdate: boolean = false) {
+    const properties = Object.assign(
+      {
+        scale: true,
+        position: true,
+        rotation: true,
+        uvs: true,
+        tint: true,
+      },
+      props.properties ?? {},
+    );
+    const derivedProps = Object.assign({ maxSize: 1500, properties, batchSize: 16384, autoResize: false }, props);
+
+    super(derivedProps.maxSize, derivedProps.properties, derivedProps.batchSize, derivedProps.autoResize);
+
     this.update = this.update.bind(this);
     this.onResize = this.onResize.bind(this);
     this._addFactory = new Add(this);
