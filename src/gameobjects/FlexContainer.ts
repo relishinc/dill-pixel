@@ -296,7 +296,7 @@ export class FlexContainer extends Container {
             case 'flex-start':
               break;
             case 'flex-end':
-              props.x += width - childRef.width;
+              props.x = width ? width - childRef.width : childRef.width;
               break;
             case 'center':
               props.x += (width - childRef.width) / 2;
