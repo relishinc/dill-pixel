@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.15.2](https://github.com/relishinc/dill-pixel/compare/v2.15.1...v2.15.2) (2023-11-14)
+
+
+### Bug Fixes
+
+* alignItems bug in FlexContainer when flexDirection is set to column ([14dfc58](https://github.com/relishinc/dill-pixel/commit/14dfc58220a0d054bf09362e3cc99c4202cf2fe4))
+* default settings for ParticleContainer ([63af909](https://github.com/relishinc/dill-pixel/commit/63af909215955e208b4141aa7b5fb4ea0d31a2a3))
+* default settings for ParticleContainer ([36a1331](https://github.com/relishinc/dill-pixel/commit/36a13314d90079f2cec3a417244eff84f698fd0e))
+
 ## [2.15.1](https://github.com/relishinc/dill-pixel/compare/v2.15.0...v2.15.1) (2023-11-13)
 
 
