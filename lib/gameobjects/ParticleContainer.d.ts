@@ -5,13 +5,13 @@ import { Editor } from '../misc';
 import { Add, Make } from '../utils/factory';
 export interface ParticleContainerProps {
     maxSize: number;
-    properties: {
-        scale: boolean;
+    properties: Partial<{
+        vertices: boolean;
         position: boolean;
         rotation: boolean;
         uvs: boolean;
         tint: boolean;
-    };
+    }>;
     batchSize: number;
     autoResize: boolean;
 }
