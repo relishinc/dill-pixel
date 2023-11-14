@@ -42,6 +42,7 @@ export class FlexContainerExample extends BaseState {
       0x000000,
       [size.x - 60, size.y - 200],
       'rectangle',
+      {},
       0.5,
       [-size.x * 0.5 + 30, -size.y * 0.5 + 100],
       0,
