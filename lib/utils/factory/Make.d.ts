@@ -103,7 +103,7 @@ export declare class Make {
     static bitmapText(value?: string, style?: Partial<IBitmapTextStyle>, alpha?: number, position?: PointLike, anchor?: PointLike, scale?: PointLike): BitmapText;
     static container(settings?: ContainerSettings): Container;
     static container(alpha?: number, position?: PointLike, scale?: PointLike): Container;
-    static flexContainer(settings: FlexContainerCreationSettings): FlexContainer;
+    static flexContainer(settings: Partial<FlexContainerCreationSettings>): FlexContainer;
     static flexContainer(alpha?: number, position?: PointLike, settings?: Partial<FlexContainerSettings>, scale?: PointLike): FlexContainer;
     static graphics(settings: GraphicsSettings): Graphics;
     static graphics(alpha?: number, position?: PointLike, scale?: PointLike): Graphics;
