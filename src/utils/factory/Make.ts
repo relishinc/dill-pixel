@@ -520,7 +520,7 @@ export class Make {
     return container;
   }
 
-  static flexContainer(settings: FlexContainerCreationSettings): FlexContainer;
+  static flexContainer(settings: Partial<FlexContainerCreationSettings>): FlexContainer;
   static flexContainer(
     alpha?: number,
     position?: PointLike,
@@ -528,7 +528,7 @@ export class Make {
     scale?: PointLike,
   ): FlexContainer;
   static flexContainer(
-    settingsOrAlpha?: FlexContainerCreationSettings | number,
+    settingsOrAlpha?: Partial<FlexContainerCreationSettings> | number,
     position?: PointLike,
     settings: Partial<FlexContainerSettings> = {},
     scale?: PointLike,
@@ -538,7 +538,9 @@ export class Make {
     let container: FlexContainer;
     if (typeof settingsOrAlpha === 'object') {
       const settings = settingsOrAlpha as FlexContainerCreationSettings;
-      if (settings.alpha !== undefined) {
+      if (settings.alpha === undefined) {
+        alpha = 1;
+      } else {
         alpha = settings?.alpha;
       }
       position = settings?.position;
@@ -547,9 +549,10 @@ export class Make {
     } else {
       container = new FlexContainer(settings);
     }
-    if (alpha !== undefined) {
+    if (alpha !== undefined && !isNaN(alpha)) {
       container.alpha = alpha;
     }
+
     if (position !== undefined) {
       const resolvedPosition = resolvePointLike(position);
       container.position.set(resolvedPosition.x, resolvedPosition.y);
