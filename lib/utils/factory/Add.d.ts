@@ -27,7 +27,7 @@ export declare class Add {
     bitmapText(value?: string, style?: Partial<IBitmapTextStyle>, alpha?: number, position?: PointLike, anchor?: PointLike, scale?: PointLike): BitmapText;
     container(settings?: ContainerSettings): Container;
     container(alpha?: number, position?: PointLike, scale?: PointLike): Container;
-    flexContainer(settings: FlexContainerCreationSettings): FlexContainer;
+    flexContainer(settings: Partial<FlexContainerCreationSettings>): FlexContainer;
     flexContainer(alpha?: number, position?: PointLike, settings?: Partial<FlexContainerSettings>, scale?: PointLike): FlexContainer;
     graphics(settings: GraphicsSettings): Graphics;
     graphics(alpha?: number, position?: PointLike, scale?: PointLike): Graphics;
