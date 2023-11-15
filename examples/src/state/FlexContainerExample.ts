@@ -14,6 +14,9 @@ export class FlexContainerExample extends BaseState {
   protected backing: Sprite;
   protected flexContainer: FlexContainer;
   protected config = {
+    useBacking: false,
+    width: 0,
+    height: 0,
     numItems: 4,
     varySizes: false,
     gap: 0,
@@ -47,11 +50,26 @@ export class FlexContainerExample extends BaseState {
       [-size.x * 0.5 + 30, -size.y * 0.5 + 100],
       0,
     );
-    this.flexContainer = this.add.flexContainer(1, this.backing.position, {
-      width: this.backing.width,
-      height: this.backing.height,
-    });
+    this.flexContainer = this.add.flexContainer(1, this.backing.position);
     this.addItems();
+
+    // test flex container inside flex container
+    // const fc1 = this.add.flexContainer({
+    //   position: [200, -this.app.size.y * 0.5 + 100],
+    //   width: 200,
+    //   height: 300,
+    //   flexDirection: 'column',
+    //   justifyContent: 'space-between',
+    // });
+    //
+    // const fcSub1 = fc1.add.flexContainer({ gap: 10, flexDirection: 'column' });
+    // const fcSub2 = fc1.add.flexContainer({ gap: 10, flexDirection: 'column', justifyContent: 'flex-end' });
+    //
+    // fcSub1.add.text(`Top Item 1`, whiteTextStyle(24));
+    // fcSub1.add.text(`Top Item 2`, whiteTextStyle(24));
+    // fcSub2.add.text(`Bottom Item 1`, whiteTextStyle(24));
+    // fcSub2.add.text(`Bottom Item 2`, whiteTextStyle(24));
+    // end test
   }
 
   onResize(pSize: Point) {
@@ -65,6 +83,18 @@ export class FlexContainerExample extends BaseState {
   }
 
   configureGUI() {
+    this.gui.add(this.config, 'useBacking').onChange(() => {
+      this.addItems();
+    });
+
+    this.gui.add(this.config, 'width', 0, 2000, 1).onChange(() => {
+      this.addItems();
+    });
+
+    this.gui.add(this.config, 'height', 0, 2000, 1).onChange(() => {
+      this.addItems();
+    });
+
     this.gui.add(this.config, 'numItems', 1, 20, 1).onChange(() => {
       this.addItems();
     });
@@ -111,8 +141,21 @@ export class FlexContainerExample extends BaseState {
   }
 
   addItems() {
-    const { numItems, varySizes } = this.config;
+    const { numItems, varySizes, useBacking } = this.config;
+    this.backing.visible = useBacking;
+
+    const width = this.backing.visible ? this.config.width : 0;
+    const height = this.backing.visible ? this.config.height : 0;
+
+    if (this.backing.visible) {
+      this.backing.width = width;
+      this.backing.height = height;
+    }
+
     this.flexContainer.removeChildren();
+
+    this.flexContainer.size = [width, height];
+
     Array.from({ length: numItems }).forEach((_, i) => {
       this.flexContainer.add.text(
         `Item ${i + 1}`,

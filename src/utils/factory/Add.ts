@@ -263,7 +263,7 @@ export class Add {
   }
 
   // Add FlexContainer
-  flexContainer(settings: FlexContainerCreationSettings): FlexContainer;
+  flexContainer(settings: Partial<FlexContainerCreationSettings>): FlexContainer;
   flexContainer(
     alpha?: number,
     position?: PointLike,
@@ -271,7 +271,7 @@ export class Add {
     scale?: PointLike,
   ): FlexContainer;
   flexContainer(
-    settingsOrAlpha?: FlexContainerCreationSettings | number,
+    settingsOrAlpha?: Partial<FlexContainerCreationSettings> | number,
     position?: PointLike,
     settings: Partial<FlexContainerSettings> = {},
     scale?: PointLike,
