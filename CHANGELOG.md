@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.16.1](https://github.com/relishinc/dill-pixel/compare/v2.16.0...v2.16.1) (2023-11-27)
+
+
+### Bug Fixes
+
+* container & flexcontainer rollback in add factory ([e7724c2](https://github.com/relishinc/dill-pixel/commit/e7724c294cb1e279c46af5fc64ee78cc118629e1))
+
 ## [2.16.0](https://github.com/relishinc/dill-pixel/compare/v2.15.3...v2.16.0) (2023-11-27)
 
 
