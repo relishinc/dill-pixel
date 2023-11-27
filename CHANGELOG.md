@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.15.3](https://github.com/relishinc/dill-pixel/compare/v2.15.2...v2.15.3) (2023-11-15)
+
+
+### Bug Fixes
+
+* flexContainer column alignmnent bugs ([f50d017](https://github.com/relishinc/dill-pixel/commit/f50d0172bdfaad2893aba4cae15c9337bce1679b))
+
 ## [2.15.2](https://github.com/relishinc/dill-pixel/compare/v2.15.1...v2.15.2) (2023-11-14)
 
 
