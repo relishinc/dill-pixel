@@ -506,6 +506,9 @@ export class Make {
     } else {
       alpha = settingsOrAlpha as number;
     }
+    if (alpha === undefined) {
+      alpha = 1;
+    }
     const container = new Container();
     container.alpha = alpha;
     if (position !== undefined) {
