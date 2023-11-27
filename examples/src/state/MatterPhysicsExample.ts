@@ -6,7 +6,7 @@ import { Point } from 'pixi.js';
 export class MatterPhysicsExample extends BaseState {
   public static NAME: string = 'MatterPhysicsExample';
 
-  public constructor() {
+  constructor() {
     super();
   }
 

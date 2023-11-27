@@ -1,6 +1,6 @@
 import ExamplePopup from '@/popups/ExamplePopup';
 import { BaseState } from '@/state/BaseState';
-import { AssetMapData, Container, PopupToken, showPopup, TextureAtlasAsset } from 'dill-pixel';
+import { AssetMapData, Container, hideAllPopups, PopupToken, showPopup, TextureAtlasAsset } from 'dill-pixel';
 import { Point } from 'pixi.js';
 
 export class PopupExample extends BaseState {
@@ -15,6 +15,11 @@ export class PopupExample extends BaseState {
     return [new TextureAtlasAsset('buildings')];
   }
 
+  destroy() {
+    hideAllPopups();
+    super.destroy();
+  }
+
   init(pSize: Point) {
     super.init(pSize);
     //
@@ -25,9 +30,12 @@ export class PopupExample extends BaseState {
     this.app.popups.register(ExamplePopup);
     this.eventMode = 'static';
 
-    this.button = this.add.container({ position: [this.app.size.x * 0.5 - 130, -this.app.size.y * 0.5 + 200] });
+    this.button = this.add.container({
+      alpha: 1,
+      position: [this.app.size.x * 0.5 - 130, -this.app.size.y * 0.5 + 200],
+    });
     this.button.add.coloredSprite({ color: 0x00ff00, size: [200, 100], shape: 'rounded_rectangle', radius: 10 });
-    this.button.add.text('Click me');
+    this.button.add.text({ value: 'Click me', anchor: 0.5 });
     this.button.eventMode = 'static';
     this.button.cursor = 'pointer';
 

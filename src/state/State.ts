@@ -15,7 +15,7 @@ export abstract class State extends Container {
   protected _connections: SignalConnections = new SignalConnections();
   protected _data: any;
 
-  constructor() {
+  protected constructor() {
     super(false);
     this._size = new Point();
   }
