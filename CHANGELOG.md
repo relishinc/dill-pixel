@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.17.0](https://github.com/relishinc/dill-pixel/compare/v2.16.1...v2.17.0) (2023-11-27)
+
+
+### Features
+
+* addeed scaleToSize utility method ([1e83c7b](https://github.com/relishinc/dill-pixel/commit/1e83c7b4a05662e86b8e1265239008808006f0e9))
+
 ## [2.16.1](https://github.com/relishinc/dill-pixel/compare/v2.16.0...v2.16.1) (2023-11-27)
 
 
