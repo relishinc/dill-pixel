@@ -25,5 +25,5 @@ export * from './Types';
 export * from './Delay';
 export { scaleToWidth, scaleToHeight, scaleToSize, scaleUniform } from './PixiUtils';
 export * from './AssetUtils';
-export { bindMethods } from './FrameworkUtils';
+export { bindMethods, bindAllMethods } from './FrameworkUtils';
 //# sourceMappingURL=index.d.ts.map
