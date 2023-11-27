@@ -288,6 +288,7 @@ export function scaleToHeight(obj: Container, height: number) {
 
 export function scaleToSize(obj: Container, size: PointLike, firstProp: 'width' | 'height' = 'width') {
   const resolvedSize = resolvePointLike(size);
+
   if (firstProp === 'width') {
     scaleToWidth(obj, resolvedSize.x);
     if (obj.height < resolvedSize.y) {
