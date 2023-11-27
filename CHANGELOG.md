@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.17.1](https://github.com/relishinc/dill-pixel/compare/v2.17.0...v2.17.1) (2023-11-27)
+
+
+### Bug Fixes
+
+* fixed scaleToSize export ([aca94f9](https://github.com/relishinc/dill-pixel/commit/aca94f9d2c4878feea94508525dc7d8e80b71adc))
+
 ## [2.17.0](https://github.com/relishinc/dill-pixel/compare/v2.16.1...v2.17.0) (2023-11-27)
 
 
