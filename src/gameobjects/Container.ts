@@ -3,7 +3,7 @@ import {SignalConnection, SignalConnections} from 'typed-signals';
 import {Application} from '../core';
 import {Editor} from '../misc';
 import {Signals} from '../signals';
-import {Add, bindMethods, Make} from '../utils';
+import {Add, bindAllMethods, bindMethods, Make} from '../utils';
 
 /**
  * Enhanced PIXI Container that has:
@@ -26,10 +26,8 @@ export class Container extends PIXIContainer {
   public editable: boolean = true;
   public childrenEditable: boolean = true;
 
-  constructor(autoResize: boolean = true, autoUpdate: boolean = false) {
+  constructor(autoResize: boolean = true, autoUpdate: boolean = false, autoBindMethods: boolean = true) {
     super();
-
-    this.bindMethods('onResize', 'update');
 
     this._addFactory = new Add(this);
 
@@ -39,6 +37,12 @@ export class Container extends PIXIContainer {
 
     if (autoUpdate) {
       Ticker.shared.add(this.update);
+    }
+
+    if (autoBindMethods) {
+      this.bindAllMethods();
+    } else {
+      this.bindMethods('onResize', 'update');
     }
   }
 
@@ -112,5 +116,9 @@ export class Container extends PIXIContainer {
    */
   protected bindMethods(...methodNames: string[]) {
     return bindMethods(this, ...methodNames);
+  }
+
+  protected bindAllMethods() {
+    return bindAllMethods(this);
   }
 }

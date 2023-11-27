@@ -20,7 +20,9 @@ export class PhysicsBase implements IPhysicsBase {
     this._debug = value;
     if (this._debug) {
       if (!this._debugGraphics || !this._debugContainer || !this._debugGraphics.parent) {
-        this._debugContainer = this.app.add.container({ position: [this.app.size.x * 0.5, this.app.size.y * 0.5] });
+        this._debugContainer = this.app.add.container({
+          position: [this.app.size.x * 0.5, this.app.size.y * 0.5],
+        });
         this._debugGraphics = this._debugContainer.add.graphics();
         this.app.stage.setChildIndex(this._debugContainer, this.app.stage.children.length - 1);
       }
@@ -56,7 +58,11 @@ export class PhysicsBase implements IPhysicsBase {
 
   destroy() {
     if (this._debugGraphics) {
-      this._debugGraphics?.destroy();
+      try {
+        this._debugGraphics.destroy({ children: true });
+      } catch (e) {
+        console.log('Error destroying debug graphics', e);
+      }
     }
     if (this._debugContainer) {
       this.app.stage.removeChild(this._debugContainer);

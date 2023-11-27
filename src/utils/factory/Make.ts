@@ -495,7 +495,7 @@ export class Make {
   static container(alpha?: number, position?: PointLike, scale?: PointLike): Container;
   static container(settingsOrAlpha?: number | ContainerSettings, position?: PointLike, scale?: PointLike): Container {
     let visible = true;
-    let alpha: number = settingsOrAlpha as number;
+    let alpha: number = 1;
     if (typeof settingsOrAlpha === 'object') {
       const settings = settingsOrAlpha as ContainerSettings;
       if (settings.alpha !== undefined) {
@@ -503,11 +503,11 @@ export class Make {
       }
       position = settings?.position;
       visible = settings?.visible !== false;
+    } else {
+      alpha = settingsOrAlpha as number;
     }
     const container = new Container();
-    if (alpha !== undefined) {
-      container.alpha = alpha;
-    }
+    container.alpha = alpha;
     if (position !== undefined) {
       const resolvedPosition = resolvePointLike(position);
       container.position.set(resolvedPosition.x, resolvedPosition.y);
