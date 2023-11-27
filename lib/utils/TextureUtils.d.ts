@@ -1,5 +1,10 @@
 import { Texture } from 'pixi.js';
-export declare function createGradientTexture(width: number, colorStops: {
+export declare function createLinearGradientTexture(width: number, colorStops: {
+    offset: number;
+    color: string;
+}[]): Texture<import("pixi.js").Resource> | undefined;
+export declare const createGradientTexture: typeof createLinearGradientTexture;
+export declare function createRadialGradientTexture(radius: number, colorStops: {
     offset: number;
     color: string;
 }[]): Texture<import("pixi.js").Resource> | undefined;

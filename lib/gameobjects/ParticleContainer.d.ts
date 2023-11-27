@@ -2,7 +2,7 @@ import { IDestroyOptions, IPoint, ParticleContainer as PIXIParticleContainer } f
 import { SignalConnection, SignalConnections } from 'typed-signals';
 import { Application } from '../core';
 import { Editor } from '../misc';
-import { Add, Make } from '../utils/factory';
+import { Add, Make } from '../utils';
 export interface ParticleContainerProps {
     maxSize: number;
     properties: Partial<{
@@ -52,5 +52,10 @@ export declare class ParticleContainer extends PIXIParticleContainer {
      * removes all signal connections
      */
     protected disconnectAllSignals(): void;
+    /**
+     * @param methodNames
+     * @protected
+     */
+    protected bindMethods(...methodNames: string[]): void;
 }
 //# sourceMappingURL=ParticleContainer.d.ts.map

@@ -2,7 +2,7 @@ import { Container as PIXIContainer, IDestroyOptions, IPoint } from 'pixi.js';
 import { SignalConnection, SignalConnections } from 'typed-signals';
 import { Application } from '../core';
 import { Editor } from '../misc';
-import { Add, Make } from '../utils/factory';
+import { Add, Make } from '../utils';
 /**
  * Enhanced PIXI Container that has:
  * a factory for adding children,
@@ -40,5 +40,10 @@ export declare class Container extends PIXIContainer {
      * removes all signal connections
      */
     protected disconnectAllSignals(): void;
+    /**
+     * @param methodNames
+     * @protected
+     */
+    protected bindMethods(...methodNames: string[]): void;
 }
 //# sourceMappingURL=Container.d.ts.map
