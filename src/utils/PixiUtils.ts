@@ -17,6 +17,8 @@ import {
 } from 'pixi.js';
 
 import * as PointUtils from '../utils/PointUtils';
+import { resolvePointLike } from './factory/utils';
+import { PointLike } from './Types';
 
 export type PixiSimpleShape = Rectangle | Circle | Ellipse | RoundedRectangle;
 export type PixiShape = PixiSimpleShape | Polygon;
@@ -282,4 +284,19 @@ export function scaleToWidth(obj: Container, width: number) {
 
 export function scaleToHeight(obj: Container, height: number) {
   scaleUniform(obj, height, 'height');
+}
+
+export function scaleToSize(obj: Container, size: PointLike, firstProp: 'width' | 'height' = 'width') {
+  const resolvedSize = resolvePointLike(size);
+  if (firstProp === 'width') {
+    scaleToWidth(obj, resolvedSize.x);
+    if (obj.height < resolvedSize.y) {
+      scaleToHeight(obj, resolvedSize.y);
+    }
+  } else {
+    scaleToHeight(obj, resolvedSize.y);
+    if (obj.width < resolvedSize.x) {
+      scaleToWidth(obj, resolvedSize.x);
+    }
+  }
 }
