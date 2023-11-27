@@ -3,7 +3,7 @@ import { SignalConnection, SignalConnections } from 'typed-signals';
 import { Application } from '../core';
 import { Editor } from '../misc';
 import { Signals } from '../signals';
-import { Add, Make } from '../utils/factory';
+import { Add, bindMethods, Make } from '../utils';
 
 export interface ParticleContainerProps {
   maxSize: number;
@@ -129,5 +129,13 @@ export class ParticleContainer extends PIXIParticleContainer {
    */
   protected disconnectAllSignals() {
     this._signalConnections.disconnectAll();
+  }
+
+  /**
+   * @param methodNames
+   * @protected
+   */
+  protected bindMethods(...methodNames: string[]) {
+    return bindMethods(this, ...methodNames);
   }
 }
