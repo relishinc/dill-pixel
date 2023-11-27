@@ -1,5 +1,6 @@
 import { Spine } from '@pixi-spine/runtime-4.1';
 import { BitmapText, Circle, Container, DisplayObject, Ellipse, IHitArea, Point, Polygon, Rectangle, RoundedRectangle, Sprite, Texture } from 'pixi.js';
+import { PointLike } from './Types';
 export type PixiSimpleShape = Rectangle | Circle | Ellipse | RoundedRectangle;
 export type PixiShape = PixiSimpleShape | Polygon;
 /**
@@ -92,4 +93,5 @@ export declare function getGlobalBounds(pTarget: DisplayObject, pRect?: Rectangl
 export declare function scaleUniform(obj: any, scaleNum: number, scaleProp?: 'width' | 'height'): void;
 export declare function scaleToWidth(obj: Container, width: number): void;
 export declare function scaleToHeight(obj: Container, height: number): void;
+export declare function scaleToSize(obj: Container, size: PointLike, firstProp?: 'width' | 'height'): void;
 //# sourceMappingURL=PixiUtils.d.ts.map
