@@ -82,6 +82,12 @@ export class FlexContainerExample extends BaseState {
     super.onResize(pSize);
   }
 
+  destroy() {
+    if (this.gui) {
+      this.gui.destroy();
+    }
+  }
+
   configureGUI() {
     this.gui.add(this.config, 'useBacking').onChange(() => {
       this.addItems();

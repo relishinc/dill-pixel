@@ -38,10 +38,10 @@ export class BaseState extends State {
    * @param options
    */
   public createLayout() {
-    this._layout = this.add.container();
+    this._layout = this.add.container({ position: [0, 0] });
     this._header = this._layout.add.container(1, [-this.app.size.x * 0.5, -this.app.size.y * 0.5]);
-    this._main = this._layout.add.container(0.25);
-    this._footer = this._layout.add.container(1, [this.app.size.x * 0.5, this.app.size.y * 0.5]);
+    this._main = this._layout.add.container({ alpha: 0.25 });
+    this._footer = this._layout.add.container({ position: [this.app.size.x * 0.5, this.app.size.y * 0.5] });
 
     this._layout.childrenEditable = this._layout.editable = false;
   }
