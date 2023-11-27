@@ -13,7 +13,7 @@ export declare abstract class State extends Container {
     protected _size: Point;
     protected _connections: SignalConnections;
     protected _data: any;
-    constructor();
+    protected constructor();
     static get ID(): string;
     static set Assets(pAssets: AssetMapData[]);
     static get Assets(): AssetMapData[];

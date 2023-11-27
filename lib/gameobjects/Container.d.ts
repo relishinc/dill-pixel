@@ -19,7 +19,7 @@ export declare class Container extends PIXIContainer {
     protected editor: Editor;
     editable: boolean;
     childrenEditable: boolean;
-    constructor(autoResize?: boolean, autoUpdate?: boolean);
+    constructor(autoResize?: boolean, autoUpdate?: boolean, autoBindMethods?: boolean);
     set editMode(value: boolean);
     get editMode(): boolean;
     enableEditMode(): void;
@@ -45,5 +45,6 @@ export declare class Container extends PIXIContainer {
      * @protected
      */
     protected bindMethods(...methodNames: string[]): void;
+    protected bindAllMethods(): void;
 }
 //# sourceMappingURL=Container.d.ts.map
