@@ -22,7 +22,7 @@ import {
   TilingSprite,
 } from 'pixi.js';
 import { Container, FlexContainer, FlexContainerSettings } from '../../gameobjects';
-import { PointLike, SpritesheetLike } from '../Types';
+import { PointLike, SpritesheetLike } from '../index';
 import {
   AnchorSettings,
   BitmapTextSettings,
@@ -250,7 +250,6 @@ export class Add {
   }
 
   // Add Container
-  container(settings?: ContainerSettings): Container;
   container(alpha?: number, position?: PointLike, scale?: PointLike): Container;
   container(settingsOrAlpha?: number | ContainerSettings, position?: PointLike, scale?: PointLike): Container {
     let container: Container;
@@ -263,7 +262,6 @@ export class Add {
   }
 
   // Add FlexContainer
-  flexContainer(settings: Partial<FlexContainerCreationSettings>): FlexContainer;
   flexContainer(
     alpha?: number,
     position?: PointLike,

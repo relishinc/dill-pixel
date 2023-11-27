@@ -3,7 +3,7 @@ import {SignalConnection, SignalConnections} from 'typed-signals';
 import {Application} from '../core';
 import {Editor} from '../misc';
 import {Signals} from '../signals';
-import {Add, Make} from '../utils/factory';
+import {Add, bindMethods, Make} from '../utils';
 
 /**
  * Enhanced PIXI Container that has:
@@ -28,8 +28,9 @@ export class Container extends PIXIContainer {
 
   constructor(autoResize: boolean = true, autoUpdate: boolean = false) {
     super();
-    this.update = this.update.bind(this);
-    this.onResize = this.onResize.bind(this);
+
+    this.bindMethods('onResize', 'update');
+
     this._addFactory = new Add(this);
 
     if (autoResize) {
@@ -103,5 +104,13 @@ export class Container extends PIXIContainer {
    */
   protected disconnectAllSignals() {
     this._signalConnections.disconnectAll();
+  }
+
+  /**
+   * @param methodNames
+   * @protected
+   */
+  protected bindMethods(...methodNames: string[]) {
+    return bindMethods(this, ...methodNames);
   }
 }
