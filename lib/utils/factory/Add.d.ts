@@ -2,7 +2,7 @@ import { Geometry, State } from '@pixi/core';
 import { Container as PIXIContainer } from '@pixi/display';
 import { BitmapText, DRAW_MODES, Graphics, HTMLText, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Mesh, NineSlicePlane, Point, Shader, SimplePlane, SimpleRope, Sprite, Text, TextStyle, Texture, TilingSprite } from 'pixi.js';
 import { Container, FlexContainer, FlexContainerSettings } from '../../gameobjects';
-import { PointLike, SpritesheetLike } from '../Types';
+import { PointLike, SpritesheetLike } from '../index';
 import { AnchorSettings, BitmapTextSettings, ColoredSpriteSettings, ContainerSettings, FlexContainerCreationSettings, GraphicsSettings, HTMLTextSettings, MeshSettings, NineSliceSettings, PositionSettings, ScaleSettings, SimplePlaneSettings, SimpleRopeSettings, SpriteSettings, TextSettings, TilingSpriteSettings } from './Make';
 export interface ExistingSettings extends PositionSettings, AnchorSettings, ScaleSettings {
 }
