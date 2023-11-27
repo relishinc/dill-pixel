@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.16.0](https://github.com/relishinc/dill-pixel/compare/v2.15.3...v2.16.0) (2023-11-27)
+
+
+### Features
+
+* add texture helper for radial gradients ([a709c04](https://github.com/relishinc/dill-pixel/commit/a709c04e7790d5cfeb47039ac3cff0103179aa68))
+* added bindMethods utility function ([0a2f319](https://github.com/relishinc/dill-pixel/commit/0a2f319cb19843dc9f5fd452c6704bee48aab2bd))
+* added ObjectPool, ([0a2f319](https://github.com/relishinc/dill-pixel/commit/0a2f319cb19843dc9f5fd452c6704bee48aab2bd))
+
 ## [2.15.3](https://github.com/relishinc/dill-pixel/compare/v2.15.2...v2.15.3) (2023-11-15)
 
 
