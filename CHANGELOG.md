@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.18.0](https://github.com/relishinc/dill-pixel/compare/v2.17.1...v2.18.0) (2023-11-27)
+
+
+### Features
+
+* added bindAllMethods utility function, with opt-in for Container.ts (true by default), ([10c257e](https://github.com/relishinc/dill-pixel/commit/10c257e98add0ddf3d74ebaf20bfb895eccf9fef))
+
+
+### Bug Fixes
+
+* factory adding container bug with alpha not being set ([10c257e](https://github.com/relishinc/dill-pixel/commit/10c257e98add0ddf3d74ebaf20bfb895eccf9fef))
+
 ## [2.17.1](https://github.com/relishinc/dill-pixel/compare/v2.17.0...v2.17.1) (2023-11-27)
 
 
