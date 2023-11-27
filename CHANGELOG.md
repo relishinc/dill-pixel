@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.1](https://github.com/relishinc/dill-pixel/compare/v2.18.0...v2.18.1) (2023-11-27)
+
+
+### Bug Fixes
+
+* alpha=0 bug  on factory added container with no params ([b8be9ae](https://github.com/relishinc/dill-pixel/commit/b8be9ae3c86eea3645330f003d26aec71e1498a5))
+
 ## [2.18.0](https://github.com/relishinc/dill-pixel/compare/v2.17.1...v2.18.0) (2023-11-27)
 
 
