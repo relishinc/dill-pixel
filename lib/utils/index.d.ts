@@ -23,7 +23,7 @@ export * from './factory/utils';
 export * as Types from './Types';
 export * from './Types';
 export * from './Delay';
-export { scaleToWidth, scaleToHeight, scaleUniform } from './PixiUtils';
+export { scaleToWidth, scaleToHeight, scaleToSize, scaleUniform } from './PixiUtils';
 export * from './AssetUtils';
 export { bindMethods } from './FrameworkUtils';
 //# sourceMappingURL=index.d.ts.map
