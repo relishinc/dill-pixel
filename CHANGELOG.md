@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.19.2](https://github.com/relishinc/dill-pixel/compare/v2.19.1...v2.19.2) (2023-11-29)
+
+
+### Bug Fixes
+
+* update method binding context in Container.ts ([a4f3e1a](https://github.com/relishinc/dill-pixel/commit/a4f3e1a556055f7c65fb875f55f81f91c1045f3f))
+
 ## [2.19.1](https://github.com/relishinc/dill-pixel/compare/v2.19.0...v2.19.1) (2023-11-29)
 
 
