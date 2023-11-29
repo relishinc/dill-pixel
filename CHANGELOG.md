@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.19.3](https://github.com/relishinc/dill-pixel/compare/v2.19.2...v2.19.3) (2023-11-29)
+
+
+### Bug Fixes
+
+* allow setting the current frame for an AnimatedSprite ([4ce9ab5](https://github.com/relishinc/dill-pixel/commit/4ce9ab5182415b5eff0074ad2d8f17481a020c2f))
+* allow setting the current frame for an AnimatedSprite ([5f77a00](https://github.com/relishinc/dill-pixel/commit/5f77a00201632aca7d32db259ca36edb78257c5f))
+
 ## [2.19.2](https://github.com/relishinc/dill-pixel/compare/v2.19.1...v2.19.2) (2023-11-29)
 
 
