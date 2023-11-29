@@ -21,10 +21,11 @@ import {
   Texture,
   TilingSprite,
 } from 'pixi.js';
-import { Container, FlexContainer, FlexContainerSettings } from '../../gameobjects';
+import { AnimatedSprite, Container, FlexContainer, FlexContainerSettings } from '../../gameobjects';
 import { PointLike, SpritesheetLike } from '../index';
 import {
   AnchorSettings,
+  AnimatedSpriteSettings,
   BitmapTextSettings,
   ColoredSpriteSettings,
   ContainerSettings,
@@ -396,5 +397,12 @@ export class Add {
         : Make.simplePlane(settingsOrAsset as SimplePlaneSettings);
     this.defaultContainer.addChild(sp);
     return sp;
+  }
+
+  // animatedSprite
+  animatedSprite(settings: AnimatedSpriteSettings): AnimatedSprite {
+    const animatedSprite = Make.animatedSprite(settings);
+    this.defaultContainer.addChild(animatedSprite);
+    return animatedSprite;
   }
 }
