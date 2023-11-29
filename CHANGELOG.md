@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.19.0](https://github.com/relishinc/dill-pixel/compare/v2.18.1...v2.19.0) (2023-11-29)
+
+
+### Features
+
+* added AnimatedSprite and SpriteAnimation to factory utility, ([9c5c720](https://github.com/relishinc/dill-pixel/commit/9c5c7207a92b545a1af5c7db0e0212fc04c3cc7c))
+* added object based config for SpriteAnimation to simplify constructor ([9c5c720](https://github.com/relishinc/dill-pixel/commit/9c5c7207a92b545a1af5c7db0e0212fc04c3cc7c))
+
 ## [2.18.1](https://github.com/relishinc/dill-pixel/compare/v2.18.0...v2.18.1) (2023-11-27)
 
 
