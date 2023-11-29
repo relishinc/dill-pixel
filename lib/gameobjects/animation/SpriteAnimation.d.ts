@@ -7,6 +7,8 @@ export interface SpriteAnimationConfig {
     framerate: number;
     loop: boolean;
     startFrame: number;
+    onComplete?: (reversed?: boolean) => void;
+    onLoop?: () => void;
 }
 export type SpriteAnimationProps = Partial<SpriteAnimationConfig> & Required<Pick<SpriteAnimationConfig, 'name' | 'sheet' | 'numFrames'>>;
 /**
@@ -63,9 +65,9 @@ export declare class SpriteAnimation {
     onLoop(callback: () => void): void;
     /**
      * Fires on complete
-     * @param [pReversed]
+     * @param [reversed]
      */
-    fireOnComplete(pReversed?: boolean): void;
+    fireOnComplete(reversed?: boolean): void;
     /**
      * Fires on loop
      */

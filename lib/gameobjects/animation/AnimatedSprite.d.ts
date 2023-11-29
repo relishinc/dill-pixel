@@ -46,5 +46,7 @@ export declare class AnimatedSprite extends Sprite {
      * Updates frame
      */
     private updateFrame;
+    get currentFrame(): number;
+    set currentFrame(frame: number);
 }
 //# sourceMappingURL=AnimatedSprite.d.ts.map
