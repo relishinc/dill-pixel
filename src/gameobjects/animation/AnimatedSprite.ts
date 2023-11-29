@@ -124,4 +124,24 @@ export class AnimatedSprite extends Sprite {
       this._activeAnimation.fireOnComplete(this._isReversed);
     }
   }
+
+  get currentFrame(): number {
+    return this._frame;
+  }
+
+  set currentFrame(frame: number) {
+    if (!this._activeAnimation) {
+      console.warn(
+        `AnimatedSprite: ${this.constructor.name}:: can't set the current frame before an active animation has been chosen.`,
+      );
+      return;
+    }
+    if (frame < 0 || frame > this._activeAnimation.frames) {
+      console.warn(
+        `AnimatedSprite: ${this.constructor.name}:: The frame ${frame} is outside of the number of frames for the current animation`,
+      );
+      return;
+    }
+    this._frame = frame;
+  }
 }
