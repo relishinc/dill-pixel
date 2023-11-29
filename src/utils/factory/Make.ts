@@ -24,7 +24,8 @@ import {
   TilingSprite
 } from 'pixi.js';
 import {Application} from '../../core';
-import {Container, FlexContainer, FlexContainerSettings} from '../../gameobjects';
+import {AnimatedSprite, Container, FlexContainer, FlexContainerSettings, SpriteAnimation} from '../../gameobjects';
+import {SpriteAnimationProps} from '../../gameobjects/animation';
 import {PointLike, SpritesheetLike} from '../Types';
 import {resolvePointLike, setObjectName} from './utils';
 
@@ -142,6 +143,10 @@ export interface NineSliceSettings extends SpriteTextureSettings, PositionSettin
   topHeight?: number;
   rightWidth?: number;
   bottomHeight?: number;
+}
+
+export interface AnimatedSpriteSettings extends VisibilitySettings, PositionSettings, ScaleSettings {
+  animations: { key: string; props: SpriteAnimationProps }[];
 }
 
 export class Make {
@@ -934,5 +939,50 @@ export class Make {
     }
     ns.visible = visible;
     return ns;
+  }
+
+  // spriteAnimation
+  static spriteAnimation(props: SpriteAnimationProps): SpriteAnimation {
+    return new SpriteAnimation(props);
+  }
+
+  // animatedSprite
+  static animatedSprite(settings: AnimatedSpriteSettings): AnimatedSprite {
+    let visible = true;
+    let alpha: number = 1;
+
+    const animatedSprite = new AnimatedSprite();
+
+    const animationKeysAndProps = settings.animations!;
+
+    if (animationKeysAndProps.length > 0) {
+      animationKeysAndProps.forEach((keyAndProps) => {
+        const { key, props } = keyAndProps;
+        const anim = new SpriteAnimation(props);
+        animatedSprite.addAnimation(key, anim);
+      });
+    }
+
+    if (settings.position !== undefined) {
+      const resolvedPosition = resolvePointLike(settings.position);
+      animatedSprite.position.set(resolvedPosition.x, resolvedPosition.y);
+    }
+    if (settings.scale !== undefined) {
+      const resolvedScale = resolvePointLike(settings.scale);
+      animatedSprite.scale.set(resolvedScale.x, resolvedScale.y);
+    }
+
+    if (settings.alpha) {
+      alpha = settings.alpha;
+    }
+
+    if (settings.visible === false) {
+      visible = false;
+    }
+
+    animatedSprite.alpha = alpha;
+    animatedSprite.visible = visible;
+
+    return animatedSprite;
   }
 }
