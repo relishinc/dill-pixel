@@ -42,7 +42,7 @@ export class Container extends PIXIContainer {
     }
 
     if (autoUpdate) {
-      Ticker.shared.add(this.update);
+      Ticker.shared.add(this.update, this);
     }
   }
 
