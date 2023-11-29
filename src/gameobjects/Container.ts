@@ -31,18 +31,18 @@ export class Container extends PIXIContainer {
 
     this._addFactory = new Add(this);
 
+    if (autoBindMethods) {
+      this.bindAllMethods();
+    } else {
+      this.bindMethods('onResize', 'update');
+    }
+
     if (autoResize) {
       Signals.onResize.connect(this.onResize);
     }
 
     if (autoUpdate) {
       Ticker.shared.add(this.update);
-    }
-
-    if (autoBindMethods) {
-      this.bindAllMethods();
-    } else {
-      this.bindMethods('onResize', 'update');
     }
   }
 
