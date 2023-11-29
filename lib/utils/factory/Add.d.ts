@@ -1,9 +1,9 @@
 import { Geometry, State } from '@pixi/core';
 import { Container as PIXIContainer } from '@pixi/display';
 import { BitmapText, DRAW_MODES, Graphics, HTMLText, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Mesh, NineSlicePlane, Point, Shader, SimplePlane, SimpleRope, Sprite, Text, TextStyle, Texture, TilingSprite } from 'pixi.js';
-import { Container, FlexContainer, FlexContainerSettings } from '../../gameobjects';
+import { AnimatedSprite, Container, FlexContainer, FlexContainerSettings } from '../../gameobjects';
 import { PointLike, SpritesheetLike } from '../index';
-import { AnchorSettings, BitmapTextSettings, ColoredSpriteSettings, ContainerSettings, FlexContainerCreationSettings, GraphicsSettings, HTMLTextSettings, MeshSettings, NineSliceSettings, PositionSettings, ScaleSettings, SimplePlaneSettings, SimpleRopeSettings, SpriteSettings, TextSettings, TilingSpriteSettings } from './Make';
+import { AnchorSettings, AnimatedSpriteSettings, BitmapTextSettings, ColoredSpriteSettings, ContainerSettings, FlexContainerCreationSettings, GraphicsSettings, HTMLTextSettings, MeshSettings, NineSliceSettings, PositionSettings, ScaleSettings, SimplePlaneSettings, SimpleRopeSettings, SpriteSettings, TextSettings, TilingSpriteSettings } from './Make';
 export interface ExistingSettings extends PositionSettings, AnchorSettings, ScaleSettings {
 }
 export declare class Add {
@@ -45,5 +45,6 @@ export declare class Add {
     };
     simplePlane(settings: SimplePlaneSettings): SimplePlane;
     simplePlane(asset?: string | Texture, sheet?: SpritesheetLike, vertsWidth?: number, vertsHeight?: number, alpha?: number, position?: PointLike, scale?: PointLike): SimplePlane;
+    animatedSprite(settings: AnimatedSpriteSettings): AnimatedSprite;
 }
 //# sourceMappingURL=Add.d.ts.map
