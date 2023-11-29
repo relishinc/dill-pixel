@@ -10,6 +10,8 @@ export interface SpriteAnimationConfig {
   framerate: number;
   loop: boolean;
   startFrame: number;
+  onComplete?: (reversed?: boolean) => void;
+  onLoop?: () => void;
 }
 
 const defaultConfig: Partial<SpriteAnimationConfig> &
@@ -51,6 +53,14 @@ export class SpriteAnimation {
       textureName =
         this.config.name + NumberUtils.addZeroPadding((i + this.config.startFrame).toString(), this.config.zeroPadding);
       this._frames[i] = Make.texture(textureName, this.config.sheet);
+    }
+
+    if (this.config.onComplete) {
+      this._onComplete = this.config.onComplete;
+    }
+
+    if (this.config.onLoop) {
+      this._onLoop = this.config.onLoop;
     }
   }
 
@@ -118,11 +128,11 @@ export class SpriteAnimation {
 
   /**
    * Fires on complete
-   * @param [pReversed]
+   * @param [reversed]
    */
-  public fireOnComplete(pReversed?: boolean): void {
+  public fireOnComplete(reversed?: boolean): void {
     if (this._onComplete !== undefined) {
-      this._onComplete(pReversed);
+      this._onComplete(reversed);
     }
   }
 
