@@ -1,6 +1,7 @@
 import { Geometry, State } from '@pixi/core';
 import { BitmapText, DRAW_MODES, Graphics, HTMLText, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Mesh, NineSlicePlane, Point, Shader, SimpleMesh, SimplePlane, SimpleRope, Sprite, Text, TextStyle, Texture, TilingSprite } from 'pixi.js';
-import { Container, FlexContainer, FlexContainerSettings } from '../../gameobjects';
+import { AnimatedSprite, Container, FlexContainer, FlexContainerSettings, SpriteAnimation } from '../../gameobjects';
+import { SpriteAnimationProps } from '../../gameobjects/animation';
 import { PointLike, SpritesheetLike } from '../Types';
 /**
  * Gets a `PIXI.Texture` asset.
@@ -86,6 +87,12 @@ export interface NineSliceSettings extends SpriteTextureSettings, PositionSettin
     rightWidth?: number;
     bottomHeight?: number;
 }
+export interface AnimatedSpriteSettings extends VisibilitySettings, PositionSettings, ScaleSettings {
+    animations: {
+        key: string;
+        props: SpriteAnimationProps;
+    }[];
+}
 export declare class Make {
     static texture(settings: TextureSettings): Texture;
     static texture(asset: string, sheet?: SpritesheetLike): Texture;
@@ -125,5 +132,7 @@ export declare class Make {
     static simpleMesh(asset: string | Texture, sheet: SpritesheetLike, vertices?: Float32Array, uvs?: Float32Array, indices?: Uint16Array, drawMode?: number, alpha?: number, position?: PointLike, scale?: PointLike): SimpleMesh;
     static nineSlice(settings: NineSliceSettings): NineSlicePlane;
     static nineSlice(asset: string | Texture, sheet?: SpritesheetLike, leftWidth?: number, topHeight?: number, rightWidth?: number, bottomHeight?: number, alpha?: number, position?: PointLike, scale?: PointLike): NineSlicePlane;
+    static spriteAnimation(props: SpriteAnimationProps): SpriteAnimation;
+    static animatedSprite(settings: AnimatedSpriteSettings): AnimatedSprite;
 }
 //# sourceMappingURL=Make.d.ts.map
