@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.19.1](https://github.com/relishinc/dill-pixel/compare/v2.19.0...v2.19.1) (2023-11-29)
+
+
+### Bug Fixes
+
+* method binding order in Container.ts ([87c6757](https://github.com/relishinc/dill-pixel/commit/87c67574c7ed6c8f6b68534362506b1a1560537a))
+
 ## [2.19.0](https://github.com/relishinc/dill-pixel/compare/v2.18.1...v2.19.0) (2023-11-29)
 
 
