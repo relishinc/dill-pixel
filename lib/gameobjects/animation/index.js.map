@@ -1,1 +1,1 @@
-{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../src/gameobjects/animation/index.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,cAAc,EAAE,MAAM,kBAAkB,CAAC;AAClD,OAAO,EAAE,eAAe,EAA+C,MAAM,mBAAmB,CAAC"}
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../src/gameobjects/animation/index.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,cAAc,EAAE,MAAM,kBAAkB,CAAC;AAClD,cAAc,mBAAmB,CAAC"}

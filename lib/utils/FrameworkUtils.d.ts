@@ -7,5 +7,6 @@
  * @protected
  */
 export declare function bindMethods(instance: unknown, ...methodNames: string[]): void;
-export declare function bindAllMethods(instance: unknown, excludePrefixes?: string[], excludeMethodNames?: string[]): void;
+export declare function bindAllMethods(instance: any, excludePrefixes?: string[], excludeMethodNames?: string[]): void;
+export declare function checkAndInvokeMethod(obj: any, methodName: string, ...methodArgs: any[]): void;
 //# sourceMappingURL=FrameworkUtils.d.ts.map
