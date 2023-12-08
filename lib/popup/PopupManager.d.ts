@@ -1,15 +1,17 @@
-import { Container, Point } from 'pixi.js';
-import { Application } from '../core/Application';
+import { Point } from 'pixi.js';
+import { Application } from '../core';
+import { Container } from '../gameobjects';
 import { Popup } from './Popup';
 export declare class PopupManager extends Container {
-    private app;
+    protected _app: Application;
     private _activePopups;
     private _popups;
     private _size;
     private _debug;
     private _overlayColor;
     private _overlayAlpha;
-    constructor(app: Application, pOverlayColor?: number, pOverlayAlpha?: number);
+    constructor(_app: Application, pOverlayColor?: number, pOverlayAlpha?: number);
+    get app(): Application;
     /** Enabling this will print all debug logs. */
     set debug(pEnabled: boolean);
     /**
@@ -28,9 +30,9 @@ export declare class PopupManager extends Container {
     /**
      * Tick update() on all open popups
      * @description Expectation is that this is called in {@link Application.onResize}
-     * @param pSize Screen size, in pixels(?)
+     * @param size Screen size, in pixels(?)
      */
-    onResize(pSize: Point): void;
+    onResize(size: Point): void;
     /**
      * Show a Popup, and optionally get a callback when it's closed.
      * @description Note you should be using @link {Signals.showPopup} instead of calling this directly
@@ -42,10 +44,10 @@ export declare class PopupManager extends Container {
      * ```ts
      * showPopup(new PopupToken("popup_id"));
      * ```
-     * @param pToken.id Make sure to call {@link registerPopup} with this ID first
-     * @param pToken.callback This gets called when the popup is closed
+     * @param token.id Make sure to call {@link registerPopup} with this ID first
+     * @param token.callback This gets called when the popup is closed
      */
-    private ShowPopup;
+    private showPopup;
     /**
      * Hide a popup by ID, starting from the top and working backwards
      * @description Note that usually you should be using global {@link Signals.hidePopup} instead of calling this directly
@@ -58,7 +60,7 @@ export declare class PopupManager extends Container {
      * hidePopup("popup_id");
      * ```
      */
-    private HidePopup;
+    private hidePopup;
     /**
      * Hide all popups, starting from the top and working backwards
      * @description Note that usually you should be {@link Signals.hideAllPopups} instead of calling this directly
@@ -71,7 +73,7 @@ export declare class PopupManager extends Container {
      * hideAllPopups();
      * ```
      */
-    private HideAllPopups;
+    private hideAllPopups;
     /**
      * Hide the topmost visible popup
      * @description Note that usually you should be using {@link Signals.hideTopMostPopup} instead of calling this directly
@@ -84,7 +86,7 @@ export declare class PopupManager extends Container {
      * hideTopMostPopup();
      * ```
      */
-    private HideTopmostPopup;
+    private hideTopmostPopup;
     /**
      * Hide a popup by reference
      * @param pPopup
@@ -99,7 +101,7 @@ export declare class PopupManager extends Container {
     private handleHideTopmostPopup;
     private handleKeyDown;
     /** Creates an overlay, but does not add it to the stage */
-    private CreateOverlay;
+    private createOverlay;
     /**
      * Get an active popup, by ID
      * This might return undefined!

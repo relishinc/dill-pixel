@@ -1,5 +1,5 @@
-import { Graphics, Point } from 'pixi.js';
-import { Container } from '../gameobjects/Container';
+import { Graphics, Point, Sprite } from 'pixi.js';
+import { Container } from '../gameobjects';
 import { IPopup } from './IPopup';
 import { IPopupToken } from './PopupToken';
 export declare enum POPUP_STATE {
@@ -15,9 +15,9 @@ export declare enum POPUP_STATE {
 export declare class Popup extends Container implements IPopup {
     static readonly NAME: string;
     /** @inheritdoc */
-    blackout?: Graphics;
+    blackout?: Graphics | Sprite;
     /** This is where we keep the callback that we call when closing the popup  */
-    protected _callback?: (...pParams: any[]) => void;
+    protected _callback?: (...args: any[]) => void;
     /** Custom data sent to the popup */
     protected _popupData: any;
     /** Private backing field for {@link state} */
@@ -30,6 +30,7 @@ export declare class Popup extends Container implements IPopup {
     private _id?;
     /** @inheritdoc */
     get id(): string;
+    constructor(data?: any);
     /** This is used to prevent duplicate calls to e.g. {@link hide} */
     get state(): POPUP_STATE;
     /** @inheritdoc */
@@ -38,9 +39,9 @@ export declare class Popup extends Container implements IPopup {
     /** Hide the popup, but only if it's open */
     hide(): void;
     /** @inheritdoc */
-    init(pSize: Point): void;
+    init(size: Point): void;
     /** @inheritdoc */
-    onResize(pSize: Point): void;
+    onResize(size: Point): void;
     /**
      * Update tick. Needed for some animations.
      * Override this
@@ -50,34 +51,34 @@ export declare class Popup extends Container implements IPopup {
     update(_deltaTime: number): void;
     /**
      * Show the popup, and set the close callback
-     * You probably want to override {@link AnimateIn}, not {@link show}
+     * You probably want to override {@link animateIn}, not {@link show}
      * @override
      */
-    show(pToken: IPopupToken): void;
+    show(token: IPopupToken): void;
     destroy(options?: Parameters<typeof Container.prototype.destroy>[0]): void;
     /**
      * Called by {@link show}
      * Don't forget to call the callback when complete
      */
-    protected AnimateIn(pCallback: () => void): Promise<void>;
+    protected animateIn(callback: () => void): Promise<void>;
     /**
      * Called by {@link hide}
      * Don't forget to call the callback when complete
      */
-    protected AnimateOut(pCallback: () => void): Promise<void>;
+    protected animateOut(callback: () => void): Promise<void>;
     /**
      * Click handler for {@link blackout}
      * Feel free to override this
      */
-    protected OnBlackoutClicked(): void;
+    protected onBlackoutClicked(): void;
     /**
      * This changes the popup's state to {@link POPUP_STATE.OPEN}
      * You may want to override this to do more things after the animation has completed
      */
-    protected OnAnimateInComplete(): void;
+    protected animateInComplete(): void;
     /**
      * Hides the popup, and disables click handling on all children
-     * You probably want to override {@link hide} or {@link AnimateOut}, not {@link _hide}
+     * You probably want to override {@link hide} or {@link animateOut}, not {@link _hide}
      * @override
      */
     protected _hide(): void;
@@ -85,6 +86,6 @@ export declare class Popup extends Container implements IPopup {
      * This calls the popup's callback (which came from the `pToken` parameter in {@link show})
      * and also tells {@link PopupManager} that we are finished animating out, so the popup can be destroyed or pooled
      */
-    protected OnAnimateOutComplete(): void;
+    protected animateOutComplete(): void;
 }
 //# sourceMappingURL=Popup.d.ts.map
