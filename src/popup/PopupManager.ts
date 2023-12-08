@@ -1,6 +1,7 @@
-import { BLEND_MODES, Container, DisplayObject, Graphics, Point } from 'pixi.js';
+import { BLEND_MODES, DisplayObject, Graphics, Point } from 'pixi.js';
 import { Dictionary } from 'typescript-collections';
-import { Application } from '../core/Application';
+import { Application } from '../core';
+import { Container } from '../gameobjects';
 import * as Input from '../input';
 import { popKeyboardLayer, pushKeyboardLayer, Signals } from '../signals';
 import * as LogUtils from '../utils/LogUtils';
@@ -17,7 +18,7 @@ export class PopupManager extends Container {
   private _overlayAlpha: number;
 
   constructor(
-    private app: Application,
+    protected _app: Application,
     pOverlayColor: number = 0x000000,
     pOverlayAlpha: number = 0.75,
   ) {
@@ -27,14 +28,6 @@ export class PopupManager extends Container {
     this._overlayColor = pOverlayColor;
     this._overlayAlpha = pOverlayAlpha;
 
-    // bind internal methods
-    this.handleShowPopup = this.handleShowPopup.bind(this);
-    this.handleHidePopup = this.handleHidePopup.bind(this);
-    this.handleHideAllPopups = this.handleHideAllPopups.bind(this);
-    this.handleHideTopmostPopup = this.handleHideTopmostPopup.bind(this);
-    this.handleHidePopupComplete = this.handleHidePopupComplete.bind(this);
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-
     Signals.showPopup.connect(this.handleShowPopup);
     Signals.hidePopup.connect(this.handleHidePopup);
     Signals.hideAllPopups.connect(this.handleHideAllPopups);
@@ -43,6 +36,10 @@ export class PopupManager extends Container {
 
     // subscribe to global keyboard events
     window.addEventListener(Input.Events.KEY_DOWN, this.handleKeyDown, false);
+  }
+
+  get app(): Application {
+    return this._app;
   }
 
   /** Enabling this will print all debug logs. */
@@ -84,13 +81,13 @@ export class PopupManager extends Container {
   /**
    * Tick update() on all open popups
    * @description Expectation is that this is called in {@link Application.onResize}
-   * @param pSize Screen size, in pixels(?)
+   * @param size Screen size, in pixels(?)
    */
-  public onResize(pSize: Point): void {
-    this._size = pSize;
+  public onResize(size: Point): void {
+    this._size = size;
     this.position.set(this._size.x * 0.5, this._size.y * 0.5);
     for (let i = 0; i < this._activePopups.length; ++i) {
-      this._activePopups[i].onResize(pSize);
+      this._activePopups[i].onResize(size);
     }
   }
 
@@ -108,20 +105,20 @@ export class PopupManager extends Container {
    * ```ts
    * showPopup(new PopupToken("popup_id"));
    * ```
-   * @param pToken.id Make sure to call {@link registerPopup} with this ID first
-   * @param pToken.callback This gets called when the popup is closed
+   * @param token.id Make sure to call {@link registerPopup} with this ID first
+   * @param token.callback This gets called when the popup is closed
    */
-  private ShowPopup(pToken: IPopupToken): void {
-    const popupConstructor = this._popups.getValue(pToken.id);
+  private showPopup(token: IPopupToken): void {
+    const popupConstructor = this._popups.getValue(token.id) as typeof Popup;
     if (popupConstructor !== undefined) {
-      this.log('ShowPopup: Creating popup from ID: "' + pToken.id + '"');
+      this.log('ShowPopup: Creating popup from ID: "' + token.id + '"');
 
       // TODO: Create / return a unique ID
-      const popup = new popupConstructor(pToken?.data);
+      const popup = new popupConstructor(token?.data);
 
-      if (pToken.backdrop !== false) {
+      if (token.backdrop !== false) {
         // TODO: pool overlays
-        const overlay = this.CreateOverlay();
+        const overlay = this.createOverlay();
         this.addChild(overlay); // NOTE: must call this before `addChild(popup.displayObject)`
         popup.blackout = overlay; // TODO: recalculate opacity of overlay based on number of open popups
       }
@@ -131,10 +128,10 @@ export class PopupManager extends Container {
       this.addChild(popup);
       this._activePopups.push(popup);
       this.log('ShowPopup: Showing popup');
-      popup.show(pToken);
+      popup.show(token);
       // TODO: Emit events for when the first popup is opened and when the last popup is closed
     } else {
-      this.logW(`ShowPopup: No popup with the ID "${pToken.id}" has been registered`);
+      this.logW(`ShowPopup: No popup with the ID "${token.id}" has been registered`);
     }
   }
 
@@ -150,7 +147,7 @@ export class PopupManager extends Container {
    * hidePopup("popup_id");
    * ```
    */
-  private HidePopup(pId: string): void {
+  private hidePopup(pId: string): void {
     const popup = this.getPopup(pId);
     // TODO: Better handling for situation where multiple active popups have the same ID
     if (popup !== undefined) {
@@ -173,7 +170,7 @@ export class PopupManager extends Container {
    * hideAllPopups();
    * ```
    */
-  private HideAllPopups() {
+  private hideAllPopups() {
     if (this._activePopups.length === 0) {
       this.logW('HideAllPopups: No popups to hide!');
     } else {
@@ -196,7 +193,7 @@ export class PopupManager extends Container {
    * hideTopMostPopup();
    * ```
    */
-  private HideTopmostPopup() {
+  private hideTopmostPopup() {
     if (this._activePopups.length === 0) {
       this.logW('HideTopmostPopup: No popups to hide!');
     } else {
@@ -262,15 +259,15 @@ export class PopupManager extends Container {
   // #endregion PRIVATE FUNCTIONS
   // #region EVENT HANDLERS
   private handleHidePopup(id: string): void {
-    this.HidePopup(id);
+    this.hidePopup(id);
   }
 
   private handleHideAllPopups(): void {
-    this.HideAllPopups();
+    this.hideAllPopups();
   }
 
   private handleShowPopup(token: IPopupToken): void {
-    this.ShowPopup(token);
+    this.showPopup(token);
   }
 
   private handleHidePopupComplete(popup: IPopup): void {
@@ -278,7 +275,7 @@ export class PopupManager extends Container {
   }
 
   private handleHideTopmostPopup(): void {
-    this.HideTopmostPopup();
+    this.hideTopmostPopup();
   }
 
   private handleKeyDown(pEvent: KeyboardEvent): void {
@@ -292,7 +289,7 @@ export class PopupManager extends Container {
   // #endregion
   // #region HELPERS
   /** Creates an overlay, but does not add it to the stage */
-  private CreateOverlay(): Graphics {
+  private createOverlay(): Graphics {
     // TODO: Pool overlays
     const overlay = new Graphics();
     overlay.beginFill(this._overlayColor, this._overlayAlpha);

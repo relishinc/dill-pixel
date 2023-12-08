@@ -11,10 +11,11 @@ export default class ExamplePopup extends Popup {
     return 'ExamplePopup';
   }
 
-  init(pSize: Point) {
-    super.init(pSize);
+  init(size: Point) {
+    super.init(size);
 
     this.alpha = 0;
+
     if (this.blackout) {
       this.blackout.alpha = 0;
       this.blackout.eventMode = 'none';
@@ -28,8 +29,8 @@ export default class ExamplePopup extends Popup {
     });
   }
 
-  show(pToken: any): void {
-    super.show(pToken);
+  show(token: any): void {
+    super.show(token);
     this._text = this.add.text({
       value: `This is a popup ${this._popupData}`,
       style: { align: 'center', fill: 'white', fontSize: 24, fontFamily: 'arboria' },
@@ -37,21 +38,21 @@ export default class ExamplePopup extends Popup {
     });
   }
 
-  async AnimateIn(pCallback: () => void): Promise<void> {
+  async animateIn(callback: () => void): Promise<void> {
     this.y = 10;
     if (this.blackout) {
       await gsap.to(this.blackout, { alpha: 1, visible: true, duration: 0.3 });
     }
     await gsap.to(this, { alpha: 1, y: 0, visible: true, ease: 'sine.out', duration: 0.4 });
-    pCallback();
+    callback();
   }
 
-  async AnimateOut(pCallback: () => void): Promise<void> {
+  async animateOut(callback: () => void): Promise<void> {
     gsap.to(this, { alpha: 0, y: -5, ease: 'sine.in', duration: 0.3 });
     if (this.blackout) {
       await gsap.to(this.blackout, { alpha: 0, duration: 0.2, delay: 0.1 });
     }
 
-    pCallback();
+    callback();
   }
 }
