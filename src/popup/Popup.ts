@@ -1,5 +1,5 @@
-import { Graphics, Point } from 'pixi.js';
-import { Container } from '../gameobjects/Container';
+import { Graphics, Point, Sprite } from 'pixi.js';
+import { Container } from '../gameobjects';
 import { hidePopupComplete } from '../signals';
 import { IPopup } from './IPopup';
 import { IPopupToken } from './PopupToken';
@@ -18,9 +18,9 @@ export enum POPUP_STATE {
 export class Popup extends Container implements IPopup {
   public static readonly NAME: string = '__Popup';
   /** @inheritdoc */
-  public blackout?: Graphics;
+  public blackout?: Graphics | Sprite;
   /** This is where we keep the callback that we call when closing the popup  */
-  protected _callback?: (...pParams: any[]) => void;
+  protected _callback?: (...args: any[]) => void;
   /** Custom data sent to the popup */
   protected _popupData: any;
   /** Private backing field for {@link state} */
@@ -35,6 +35,12 @@ export class Popup extends Container implements IPopup {
   /** @inheritdoc */
   public get id(): string {
     return this._id!;
+  }
+
+  constructor(data?: any) {
+    super(true, false);
+    this.bindMethods('animateInComplete', 'animateOutComplete', 'onBlackoutClicked');
+    this._popupData = data;
   }
 
   /** This is used to prevent duplicate calls to e.g. {@link hide} */
@@ -59,21 +65,21 @@ export class Popup extends Container implements IPopup {
   }
 
   /** @inheritdoc */
-  public init(pSize: Point): void {
+  public init(size: Point): void {
     this._state = POPUP_STATE.CLOSED;
-    this.onResize(pSize);
+    this.onResize(size);
     if (this.blackout !== undefined) {
-      this.blackout.on('click', this.OnBlackoutClicked.bind(this));
+      this.blackout.on('click', this.onBlackoutClicked);
     }
   }
 
   /** @inheritdoc */
-  public onResize(pSize: Point): void {
+  public onResize(size: Point): void {
     if (this.blackout !== undefined) {
-      this.blackout.x = -pSize.x / 2;
-      this.blackout.y = -pSize.y / 2;
-      this.blackout.width = pSize.x;
-      this.blackout.height = pSize.y;
+      this.blackout.x = -size.x / 2;
+      this.blackout.y = -size.y / 2;
+      (this.blackout as Sprite).width = size.x;
+      (this.blackout as Sprite).height = size.y;
     }
   }
 
@@ -89,17 +95,18 @@ export class Popup extends Container implements IPopup {
 
   /**
    * Show the popup, and set the close callback
-   * You probably want to override {@link AnimateIn}, not {@link show}
+   * You probably want to override {@link animateIn}, not {@link show}
    * @override
    */
-  public show(pToken: IPopupToken): void {
-    this._id = pToken.id;
-    this._callback = pToken.callback;
+  public show(token: IPopupToken): void {
+    this._id = token.id;
+    this._callback = token.callback;
     this._state = POPUP_STATE.OPENING;
-    this._clickBackdropToClose = pToken.backdrop ?? true;
-    this._keyboardToClose = pToken.keyboard ?? true;
-    this._popupData = pToken.data;
-    this.AnimateIn(this.OnAnimateInComplete.bind(this));
+    this._clickBackdropToClose = token.backdrop ?? true;
+    this._keyboardToClose = token.keyboard ?? true;
+    this._popupData = token.data;
+
+    this.animateIn(this.animateInComplete);
   }
 
   public destroy(options?: Parameters<typeof Container.prototype.destroy>[0]): void {
@@ -112,25 +119,23 @@ export class Popup extends Container implements IPopup {
    * Called by {@link show}
    * Don't forget to call the callback when complete
    */
-  protected async AnimateIn(pCallback: () => void): Promise<void> {
-    console.log('default AnimateIn');
-    pCallback();
+  protected async animateIn(callback: () => void): Promise<void> {
+    callback();
   }
 
   /**
    * Called by {@link hide}
    * Don't forget to call the callback when complete
    */
-  protected async AnimateOut(pCallback: () => void): Promise<void> {
-    console.log('default AnimateOut');
-    pCallback();
+  protected async animateOut(callback: () => void): Promise<void> {
+    callback();
   }
 
   /**
    * Click handler for {@link blackout}
    * Feel free to override this
    */
-  protected OnBlackoutClicked() {
+  protected onBlackoutClicked() {
     if (this._clickBackdropToClose === true) {
       this.hide();
     }
@@ -140,13 +145,14 @@ export class Popup extends Container implements IPopup {
    * This changes the popup's state to {@link POPUP_STATE.OPEN}
    * You may want to override this to do more things after the animation has completed
    */
-  protected OnAnimateInComplete() {
+  protected animateInComplete() {
+    console.log(this);
     this._state = POPUP_STATE.OPEN;
   }
 
   /**
    * Hides the popup, and disables click handling on all children
-   * You probably want to override {@link hide} or {@link AnimateOut}, not {@link _hide}
+   * You probably want to override {@link hide} or {@link animateOut}, not {@link _hide}
    * @override
    */
   protected _hide(): void {
@@ -155,14 +161,14 @@ export class Popup extends Container implements IPopup {
       this.blackout.off('click');
     }
     this._state = POPUP_STATE.CLOSING;
-    this.AnimateOut(this.OnAnimateOutComplete.bind(this));
+    this.animateOut(this.animateOutComplete);
   }
 
   /**
    * This calls the popup's callback (which came from the `pToken` parameter in {@link show})
    * and also tells {@link PopupManager} that we are finished animating out, so the popup can be destroyed or pooled
    */
-  protected OnAnimateOutComplete() {
+  protected animateOutComplete() {
     this._state = POPUP_STATE.CLOSED;
     if (this._callback !== undefined) {
       const callback = this._callback;

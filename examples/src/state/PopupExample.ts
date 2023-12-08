@@ -1,6 +1,6 @@
 import ExamplePopup from '@/popups/ExamplePopup';
 import { BaseState } from '@/state/BaseState';
-import { AssetMapData, Container, hideAllPopups, PopupToken, showPopup, TextureAtlasAsset } from 'dill-pixel';
+import { AssetMapData, Container, hideAllPopups, PopupToken, showPopup, Signals, TextureAtlasAsset } from 'dill-pixel';
 import { Point } from 'pixi.js';
 
 export class PopupExample extends BaseState {
@@ -43,6 +43,18 @@ export class PopupExample extends BaseState {
       this.count++;
       showPopup(new PopupToken(ExamplePopup.NAME, this.onClose, true, false, this.count));
     });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        hideAllPopups();
+      }
+    });
+
+    this.addSignalConnection(
+      Signals.hidePopupComplete.connect((p) => {
+        console.log('hide popup complete', p);
+      }),
+    );
   }
 
   onClose = () => {

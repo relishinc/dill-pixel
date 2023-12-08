@@ -19,11 +19,7 @@ export function bindMethods(instance: unknown, ...methodNames: string[]) {
   });
 }
 
-export function bindAllMethods(
-  instance: unknown,
-  excludePrefixes: string[] = ['_'],
-  excludeMethodNames: string[] = [],
-) {
+export function bindAllMethods(instance: any, excludePrefixes: string[] = ['_'], excludeMethodNames: string[] = []) {
   const prototype = Object.getPrototypeOf(instance);
   Object.getOwnPropertyNames(prototype).forEach((propertyName) => {
     const descriptor = Object.getOwnPropertyDescriptor(prototype, propertyName);
@@ -35,8 +31,14 @@ export function bindAllMethods(
       if (excludeMethodNames.includes(propertyName)) {
         return;
       }
-      (instance as any)[propertyName] = (instance as any)[propertyName].bind(instance);
+      instance[propertyName] = instance[propertyName].bind(instance);
     }
     // Note: Getters and setters are not bound here
   });
+}
+
+export function checkAndInvokeMethod(obj: any, methodName: string, ...methodArgs: any[]): void {
+  if (methodName in obj && typeof obj[methodName] === 'function') {
+    obj[methodName](...methodArgs);
+  }
 }
