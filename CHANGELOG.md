@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.19.4](https://github.com/relishinc/dill-pixel/compare/v2.19.3...v2.19.4) (2023-12-08)
+
+
+### Bug Fixes
+
+* change method names in Popup, bind methods properly, set data properly ([30f11cc](https://github.com/relishinc/dill-pixel/commit/30f11cc48d5d16d991291d7cb286cc12b69d01bd))
+
 ## [2.19.3](https://github.com/relishinc/dill-pixel/compare/v2.19.2...v2.19.3) (2023-11-29)
 
 
