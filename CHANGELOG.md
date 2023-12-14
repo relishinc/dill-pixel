@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.4](https://github.com/relishinc/dill-pixel/compare/v2.20.3...v2.20.4) (2023-12-14)
+
+
+### Bug Fixes
+
+* added getters for current state and current state id ([006b4fc](https://github.com/relishinc/dill-pixel/commit/006b4fca591f09e98b9c78afe6ff91c5585af2a6))
+
 ## [2.20.3](https://github.com/relishinc/dill-pixel/compare/v2.20.2...v2.20.3) (2023-12-14)
 
 
