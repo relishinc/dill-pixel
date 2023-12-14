@@ -140,6 +140,15 @@ export class StateManager extends Container {
     this._debug = pEnabled;
   }
 
+  // get the current state
+  public get current(): State | undefined {
+    return this._currentState;
+  }
+
+  public get currentId(): string {
+    return this._currentStateId;
+  }
+
   /**
    * Updates the current active state.
    * @param deltaTime ticker.shared.elapsedMS / 1000.
@@ -251,6 +260,7 @@ export class StateManager extends Container {
     loadScreen?: string | undefined,
     transitionSteps?: TransitionStep[],
   ): boolean;
+
   public transitionTo(
     stateIdAndData: string | typeof State | { id: string; data: any },
     loadScreen?: string | undefined,

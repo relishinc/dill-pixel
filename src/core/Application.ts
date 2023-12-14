@@ -140,6 +140,7 @@ export class Application extends PIXIApplication {
           'Please set the _instance in your Application.',
       );
     }
+
     return Application._instance;
   }
 
