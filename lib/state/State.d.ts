@@ -37,7 +37,7 @@ export declare abstract class State extends Container {
      * Inits state
      * @param size{Point}
      */
-    init(size: Point): Promise<void>;
+    init(size: Point): Promise<void> | void;
     /**
      * Updates state
      * @param _deltaTime
