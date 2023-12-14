@@ -15,6 +15,14 @@ export abstract class State extends Container {
   protected _connections: SignalConnections = new SignalConnections();
   protected _data: any;
 
+  set size(value: Point) {
+    this._size.copyFrom(value);
+  }
+
+  get size() {
+    return this._size;
+  }
+
   set data(value: any) {
     this._data = value;
   }
@@ -77,13 +85,16 @@ export abstract class State extends Container {
     // override
   }
 
+  public positionSelfCenter(size: Point) {
+    this.position.set(size.x * 0.5, size.y * 0.5);
+  }
+
   /**
    * Determines whether resize on
    * @param size
    */
   public onResize(size: Point): void {
-    this._size.copyFrom(size);
-    this.position.set(this._size.x * 0.5, this._size.y * 0.5);
+    // override
   }
 
   /**
