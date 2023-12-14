@@ -676,7 +676,7 @@ export class StateManager extends Container {
    * Creates, initializes and attaches a new state either in front of or behind other states.
    * @param newInFront Should the new view be in front of other states or behind.
    */
-  private performStepAttachNewView(newInFront: boolean): void {
+  private async performStepAttachNewView(newInFront: boolean): Promise<void> {
     this.log('performStepAttachNewView');
     const d = new Date();
     this.log(
@@ -697,10 +697,12 @@ export class StateManager extends Container {
       this.addChild(this._newState);
 
       // set the state's data (if there is any)
-      this._newState.data = this._newStateToken!.data;
+      if (this._newStateToken!.data) {
+        this._newState.data = this._newStateToken!.data;
+      }
 
       // call its init method
-      this._newState.init(this._size);
+      await this._newState.init(this._size);
 
       // call the onResize method
       this._newState.onResize(this._size);
