@@ -125,8 +125,8 @@ export class StateManager extends Container {
     }
   }
 
-  set defaultTransitionType(pTransitionType: TransitionStep[]) {
-    this._defaultTransitionType = pTransitionType;
+  set defaultTransitionType(transitionType: TransitionStep[]) {
+    this._defaultTransitionType = transitionType;
   }
 
   public get default() {
@@ -142,20 +142,20 @@ export class StateManager extends Container {
 
   /**
    * Updates the current active state.
-   * @param pDeltaTime ticker.shared.elapsedMS / 1000.
+   * @param deltaTime ticker.shared.elapsedMS / 1000.
    */
-  public update(pDeltaTime: number): void {
+  public update(deltaTime: number): void {
     if (this._currentState !== undefined) {
-      this._currentState.update(pDeltaTime);
+      this._currentState.update(deltaTime);
     }
   }
 
   /**
    * Called when the window is resized.
-   * @param pSize The new size.
+   * @param size The new size.
    */
-  public onResize(pSize: Point): void {
-    this._size.copyFrom(pSize);
+  public onResize(size: Point): void {
+    this._size.copyFrom(size);
     if (this._currentState !== undefined) {
       this._currentState.onResize(this._size);
     }
@@ -163,19 +163,19 @@ export class StateManager extends Container {
 
   /**
    * Registers a state so that it can be transitioned to.
-   * @param pIdOrClass The id of the new state or the class of the new state.
-   * @param pCreate A function that constructs the state.
-   * @param autoAddAssets whether to automatically register the asset group for this state - only works if pIdOrClass is a class
+   * @param stateIdOrClass The id of the new state or the class of the new state.
+   * @param creationMethod A function that constructs the state.
+   * @param autoAddAssets whether to automatically register the asset group for this state - only works if stateIdOrClass is a class
    */
-  public register(pIdOrClass: string | typeof State, pCreate?: () => State, autoAddAssets: boolean = true) {
-    if (typeof pIdOrClass === 'string') {
-      this._stateData.setValue(pIdOrClass, { create: pCreate as () => State });
+  public register(stateIdOrClass: string | typeof State, creationMethod?: () => State, autoAddAssets: boolean = true) {
+    if (typeof stateIdOrClass === 'string') {
+      this._stateData.setValue(stateIdOrClass, { create: creationMethod as () => State });
     } else {
-      const Klass: typeof State = pIdOrClass as typeof State;
+      const Klass: typeof State = stateIdOrClass as typeof State;
       // @ts-ignore
       this._stateData.setValue(Klass.NAME, { create: () => new Klass() });
       if (autoAddAssets) {
-        this.app.addAssetGroup(pIdOrClass);
+        this.app.addAssetGroup(stateIdOrClass);
       }
     }
   }
@@ -239,41 +239,41 @@ export class StateManager extends Container {
   /**
    * Method to transition states
    * instead call this.app.state.transitionTo(stateId, loadScreenId)
-   * @param pStateIdAndData
-   * @param pLoadScreen
-   * @param pTransitionSteps
+   * @param stateIdAndData
+   * @param loadScreen
+   * @param transitionSteps
    */
   public transitionTo(
-    pStateIdAndData: string | typeof State,
-    pLoadScreen?: string | undefined,
-    pTransitionSteps?: TransitionStep[],
+    stateIdAndData: string | typeof State,
+    loadScreen?: string | undefined,
+    transitionSteps?: TransitionStep[],
   ): boolean;
   public transitionTo(
-    pStateIdAndData: string | typeof State | { id: string; data: any },
-    pLoadScreen?: string | undefined,
-    pTransitionSteps?: TransitionStep[],
+    stateIdAndData: string | typeof State | { id: string; data: any },
+    loadScreen?: string | undefined,
+    transitionSteps?: TransitionStep[],
   ): boolean {
     if (this._isTransitioning) {
       return false;
     }
-    const stateObj = pStateIdAndData as { id: string; data: any };
-    const stateStr: string | typeof State = pStateIdAndData as string | typeof State;
+    const stateObj = stateIdAndData as { id: string; data: any };
+    const stateStr: string | typeof State = stateIdAndData as string | typeof State;
 
-    if (!pTransitionSteps) {
-      pTransitionSteps = this._first ? TransitionType.TRANSITION_FIRST_VIEW : this._defaultTransitionType;
+    if (!transitionSteps) {
+      transitionSteps = this._first ? TransitionType.TRANSITION_FIRST_VIEW : this._defaultTransitionType;
     }
     this._first = false;
 
     let token: StateToken;
-    const loadScreen = pLoadScreen || this.app.load.defaultLoadScreenId;
+    const loadScreen = loadScreen || this.app.load.defaultLoadScreenId;
     if (stateObj?.id) {
-      token = new StateToken(stateObj, loadScreen, ...pTransitionSteps);
+      token = new StateToken(stateObj, loadScreen, ...transitionSteps);
     } else {
       if (typeof stateStr === 'string') {
-        token = new StateToken(stateStr, loadScreen, ...pTransitionSteps);
+        token = new StateToken(stateStr, loadScreen, ...transitionSteps);
       } else {
         const Klass: typeof State = stateStr as typeof State;
-        token = new StateToken(Klass.NAME, loadScreen, ...pTransitionSteps);
+        token = new StateToken(Klass.NAME, loadScreen, ...transitionSteps);
       }
     }
 
@@ -318,23 +318,23 @@ export class StateManager extends Container {
 
   /**
    * Transitions to a new state.
-   * @param pStateId The new state to transition to.
-   * @param [pLoadScreen] The load screen to use.
+   * @param stateId The new state to transition to.
+   * @param [loadScreen] The load screen to use.
    */
-  private startTransition(pStateId: string, pLoadScreen?: string): void {
+  private startTransition(stateId: string, loadScreen?: string): void {
     this.log(
       'Transition requested from %c%s %cto %c%s.',
       LogUtils.STYLE_RED_BOLD,
       this._currentStateId,
       LogUtils.STYLE_BLACK,
       LogUtils.STYLE_RED_BOLD,
-      pStateId,
+      stateId,
     );
     if (this._isTransitioning) {
-      this.logW('Transition already in progress, transition to (%s) ignored', pStateId);
+      this.logW('Transition already in progress, transition to (%s) ignored', stateId);
       return;
     }
-    const data: IStateData | undefined = this._stateData.getValue(pStateId);
+    const data: IStateData | undefined = this._stateData.getValue(stateId);
     if (data === undefined) {
       this.logE(
         '%c%s%c has not been registered as a state. Please include it in your registerState ' + 'implementation.',
@@ -350,9 +350,9 @@ export class StateManager extends Container {
       this._statesMenu.querySelector('select')?.setAttribute('disabled', 'true');
     }
 
-    this._queuedStateId = pStateId;
+    this._queuedStateId = stateId;
     this._newStateData = data;
-    this._loadScreen = pLoadScreen;
+    this._loadScreen = loadScreen;
     // Start transition
     this.setAndPerformTransitionStep(0);
   }
@@ -455,17 +455,17 @@ export class StateManager extends Container {
   /**
    * Completes attach new state step if it is in the current transition steps.
    */
-  private handleViewReady(pToken: StateToken): void {
+  private handleViewReady(token: StateToken): void {
     this.log('handleViewReady');
 
-    if (!pToken) {
-      pToken = this._newStateToken!;
+    if (!token) {
+      token = this._newStateToken!;
     }
 
     let step: TransitionStep;
 
-    if (pToken !== undefined) {
-      step = pToken.transitionSteps[this._transitionStepIndex];
+    if (token !== undefined) {
+      step = token.transitionSteps[this._transitionStepIndex];
 
       switch (step) {
         case TransitionStep.AttachNewInFront:
@@ -504,15 +504,15 @@ export class StateManager extends Container {
 
   /**
    * Perform a transition step at a specific index. If no more steps remain, complete the transition.
-   * @param pStepIndex The index of the step to perform.
+   * @param stepIndex The index of the step to perform.
    */
-  private setAndPerformTransitionStep(pStepIndex: number): void {
+  private setAndPerformTransitionStep(stepIndex: number): void {
     this.log('setAndPerformTransitionStep');
     let step: TransitionStep;
 
-    this._transitionStepIndex = pStepIndex;
+    this._transitionStepIndex = stepIndex;
 
-    this.log('Step index %s out of %s steps', pStepIndex, this._newStateToken!.transitionSteps.length);
+    this.log('Step index %s out of %s steps', stepIndex, this._newStateToken!.transitionSteps.length);
 
     if (this._transitionStepIndex < this._newStateToken!.transitionSteps.length) {
       step = this._newStateToken!.transitionSteps[this._transitionStepIndex];
@@ -541,10 +541,10 @@ export class StateManager extends Container {
 
   /**
    * Performs a specific transition step.
-   * @param pStep The step to perform.
+   * @param step The step to perform.
    */
-  private performTransitionStep(pStep: TransitionStep): void {
-    this.log('performTransitionStep(%c%s%c)', LogUtils.STYLE_BLUE_BOLD, TransitionStep[pStep], LogUtils.STYLE_BLACK);
+  private performTransitionStep(step: TransitionStep): void {
+    this.log('performTransitionStep(%c%s%c)', LogUtils.STYLE_BLUE_BOLD, TransitionStep[step], LogUtils.STYLE_BLACK);
 
     switch (pStep) {
       case TransitionStep.AnimNewIn:
@@ -673,9 +673,9 @@ export class StateManager extends Container {
 
   /**
    * Creates, initializes and attaches a new state either in front of or behind other states.
-   * @param pNewInFront Should the new view be in front of other states or behind.
+   * @param newInFront Should the new view be in front of other states or behind.
    */
-  private performStepAttachNewView(pNewInFront: boolean): void {
+  private performStepAttachNewView(newInFront: boolean): void {
     this.log('performStepAttachNewView');
     const d = new Date();
     this.log(
@@ -694,12 +694,20 @@ export class StateManager extends Container {
 
       // Attach state as child of manager.
       this.addChild(this._newState);
-      this._newState.init(this._size, this._newStateToken!.data);
+
+      // set the state's data (if there is any)
+      this._newState.data = this._newStateToken!.data;
+
+      // call its init method
+      this._newState.init(this._size);
+
+      // call the onResize method
+      this._newState.onResize(this._size);
 
       initState(this._newStateToken!.data);
 
       // Caller requests the new view to be added in front or behind the existing view.
-      if (pNewInFront) {
+      if (newInFront) {
         this.log(
           'Attaching %c%s%c in %cfront.',
           LogUtils.STYLE_RED_BOLD,
@@ -866,24 +874,24 @@ export class StateManager extends Container {
 
   /**
    * Pauses a transition for the duration provided.
-   * @param pDuration The duration of the pause.
+   * @param duration The duration of the pause.
    */
-  private async performPause(pDuration: number): Promise<void> {
+  private async performPause(duration: number): Promise<void> {
     this.log('performPause');
-    await delay(pDuration);
+    await delay(duration);
     this.performNextTransitionStep();
   }
 
   /**
    * Generates a list of assets to unload based on the assets that were loaded in the old state and the assets
    * needed by the new state.
-   * @param pOldStateId The id of the state that is leaving.
-   * @param pNewStateId The id of the state that is arriving.
+   * @param oldStateId The id of the state that is leaving.
+   * @param newStateId The id of the state that is arriving.
    * @returns The list of assets to unload.
    */
-  private trimUnloadList(pOldStateId: string, pNewStateId: string): AssetMapData[] {
-    const oldAssets: AssetMapData[] = AssetMap.getAssetGroup(pOldStateId);
-    const newAssets: AssetMapData[] = AssetMap.getAssetGroup(pNewStateId);
+  private trimUnloadList(oldStateId: string, newStateId: string): AssetMapData[] {
+    const oldAssets: AssetMapData[] = AssetMap.getAssetGroup(oldStateId);
+    const newAssets: AssetMapData[] = AssetMap.getAssetGroup(newStateId);
     const requiredAssets = Application.instance.requiredAssets;
     // Concatenate the arrays so we only loop through oldAssets once
     const assetsToKeep: string[] = requiredAssets.map((a) => a.assetName).concat(...newAssets.map((a) => a.assetName));
@@ -900,11 +908,11 @@ export class StateManager extends Container {
 
   /**
    * Generates a list assets to load based on already loaded assets and the assets needed by the new state.
-   * @param pNewStateId The id of the state that is arriving.
+   * @param newStateId The id of the state that is arriving.
    * @returns The list of assets to load.
    */
-  private trimLoadList(pNewStateId: string): AssetMapData[] {
-    const newAssets: AssetMapData[] = AssetMap.getAssetGroup(pNewStateId);
+  private trimLoadList(newStateId: string): AssetMapData[] {
+    const newAssets: AssetMapData[] = AssetMap.getAssetGroup(newStateId);
     const assetsToLoad: AssetMapData[] = new Array<AssetMapData>();
 
     for (const asset of newAssets) {
@@ -918,18 +926,17 @@ export class StateManager extends Container {
 
   /**
    * Creates and returns a new state.
-   * @param pStateData The construction data for the state.
+   * @param stateData The construction data for the state.
    */
-  private createState(pStateData: IStateData): State {
-    return pStateData.create();
+  private createState(stateData: IStateData): State {
+    return stateData.create();
   }
 
   /**
    * Called when a state transition is requested.
-   * @param pTopic The PubSub message id.
-   * @param pToken The data defining the state transition.
+   * @param token The data defining the state transition.
    */
-  private onStateLoadRequested(pToken: StateToken): void {
+  private onStateLoadRequested(token: StateToken): void {
     this._newStateToken = pToken;
     this.startTransition(pToken.stateId, pToken.loadScreen);
   }

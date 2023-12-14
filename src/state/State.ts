@@ -15,6 +15,14 @@ export abstract class State extends Container {
   protected _connections: SignalConnections = new SignalConnections();
   protected _data: any;
 
+  set data(value: any) {
+    this._data = value;
+  }
+
+  get data(): any {
+    return this._data;
+  }
+
   protected constructor() {
     super(false);
     this._size = new Point();
@@ -33,7 +41,7 @@ export abstract class State extends Container {
   }
 
   /**
-   * gets the Applicationinstance
+   * gets the Application instance
    */
   public get app(): Application {
     return Application.instance;
@@ -55,12 +63,10 @@ export abstract class State extends Container {
 
   /**
    * Inits state
-   * @param pSize{Point}
-   * @param pData
+   * @param size{Point}
    */
-  public init(pSize: Point, pData?: any): void {
-    this.onResize(pSize);
-    this._data = pData;
+  public init(size: Point): void {
+    // override
   }
 
   /**
@@ -73,27 +79,27 @@ export abstract class State extends Container {
 
   /**
    * Determines whether resize on
-   * @param pSize
+   * @param size
    */
-  public onResize(pSize: Point): void {
-    this._size.copyFrom(pSize);
+  public onResize(size: Point): void {
+    this._size.copyFrom(size);
     this.position.set(this._size.x * 0.5, this._size.y * 0.5);
   }
 
   /**
    * Animates in
-   * @param pOnComplete
+   * @param callback
    */
-  public animateIn(pOnComplete: () => void): void {
-    pOnComplete();
+  public animateIn(callback: () => void): void {
+    callback();
   }
 
   /**
    * Animates out
-   * @param pOnComplete
+   * @param callback
    */
-  public animateOut(pOnComplete: () => void): void {
-    pOnComplete();
+  public animateOut(callback: () => void): void {
+    callback();
   }
 
   /**
