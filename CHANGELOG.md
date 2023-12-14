@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.0](https://github.com/relishinc/dill-pixel/compare/v2.19.4...v2.20.0) (2023-12-14)
+
+
+### Features
+
+* re-org of State class to call init and resize seperately, pass data before init method ([13a66bc](https://github.com/relishinc/dill-pixel/commit/13a66bc9716e6b831ec9e0cf06605ecb8b48ccef))
+
 ## [2.19.4](https://github.com/relishinc/dill-pixel/compare/v2.19.3...v2.19.4) (2023-12-08)
 
 
