@@ -77,7 +77,7 @@ export declare class StateManager extends Container {
     private _excluded;
     constructor(app: Application);
     set useHash(value: boolean);
-    set defaultTransitionType(pTransitionType: TransitionStep[]);
+    set defaultTransitionType(transitionType: TransitionStep[]);
     get default(): string | undefined;
     /**
      * Enabling this will print all debug logs.
@@ -85,39 +85,39 @@ export declare class StateManager extends Container {
     set debug(pEnabled: boolean);
     /**
      * Updates the current active state.
-     * @param pDeltaTime ticker.shared.elapsedMS / 1000.
+     * @param deltaTime ticker.shared.elapsedMS / 1000.
      */
-    update(pDeltaTime: number): void;
+    update(deltaTime: number): void;
     /**
      * Called when the window is resized.
-     * @param pSize The new size.
+     * @param size The new size.
      */
-    onResize(pSize: Point): void;
+    onResize(size: Point): void;
     /**
      * Registers a state so that it can be transitioned to.
-     * @param pIdOrClass The id of the new state or the class of the new state.
-     * @param pCreate A function that constructs the state.
-     * @param autoAddAssets whether to automatically register the asset group for this state - only works if pIdOrClass is a class
+     * @param stateIdOrClass The id of the new state or the class of the new state.
+     * @param creationMethod A function that constructs the state.
+     * @param autoAddAssets whether to automatically register the asset group for this state - only works if stateIdOrClass is a class
      */
-    register(pIdOrClass: string | typeof State, pCreate?: () => State, autoAddAssets?: boolean): void;
+    register(stateIdOrClass: string | typeof State, creationMethod?: () => State, autoAddAssets?: boolean): void;
     statesRegistered(): void;
     showDebugMenu(): void;
     /**
      * Method to transition states
      * instead call this.app.state.transitionTo(stateId, loadScreenId)
-     * @param pStateIdAndData
-     * @param pLoadScreen
-     * @param pTransitionSteps
+     * @param stateIdAndData
+     * @param loadScreen
+     * @param transitionSteps
      */
-    transitionTo(pStateIdAndData: string | typeof State, pLoadScreen?: string | undefined, pTransitionSteps?: TransitionStep[]): boolean;
+    transitionTo(stateIdAndData: string | typeof State, loadScreen?: string | undefined, transitionSteps?: TransitionStep[]): boolean;
     getRegisteredStateIds(): string[];
     getStateFromHash(): string | null;
     excludeFromDebugList(name: string): void;
     protected listenForHashChange(): void;
     /**
      * Transitions to a new state.
-     * @param pStateId The new state to transition to.
-     * @param [pLoadScreen] The load screen to use.
+     * @param stateId The new state to transition to.
+     * @param [loadScreen] The load screen to use.
      */
     private startTransition;
     /**
@@ -158,12 +158,12 @@ export declare class StateManager extends Container {
     private performNextTransitionStep;
     /**
      * Perform a transition step at a specific index. If no more steps remain, complete the transition.
-     * @param pStepIndex The index of the step to perform.
+     * @param stepIndex The index of the step to perform.
      */
     private setAndPerformTransitionStep;
     /**
      * Performs a specific transition step.
-     * @param pStep The step to perform.
+     * @param step The step to perform.
      */
     private performTransitionStep;
     /**
@@ -180,7 +180,7 @@ export declare class StateManager extends Container {
     private performStepAnimSimultaneously;
     /**
      * Creates, initializes and attaches a new state either in front of or behind other states.
-     * @param pNewInFront Should the new view be in front of other states or behind.
+     * @param newInFront Should the new view be in front of other states or behind.
      */
     private performStepAttachNewView;
     /**
@@ -215,32 +215,31 @@ export declare class StateManager extends Container {
     private performStepHalt;
     /**
      * Pauses a transition for the duration provided.
-     * @param pDuration The duration of the pause.
+     * @param duration The duration of the pause.
      */
     private performPause;
     /**
      * Generates a list of assets to unload based on the assets that were loaded in the old state and the assets
      * needed by the new state.
-     * @param pOldStateId The id of the state that is leaving.
-     * @param pNewStateId The id of the state that is arriving.
+     * @param oldStateId The id of the state that is leaving.
+     * @param newStateId The id of the state that is arriving.
      * @returns The list of assets to unload.
      */
     private trimUnloadList;
     /**
      * Generates a list assets to load based on already loaded assets and the assets needed by the new state.
-     * @param pNewStateId The id of the state that is arriving.
+     * @param newStateId The id of the state that is arriving.
      * @returns The list of assets to load.
      */
     private trimLoadList;
     /**
      * Creates and returns a new state.
-     * @param pStateData The construction data for the state.
+     * @param stateData The construction data for the state.
      */
     private createState;
     /**
      * Called when a state transition is requested.
-     * @param pTopic The PubSub message id.
-     * @param pToken The data defining the state transition.
+     * @param token The data defining the state transition.
      */
     private onStateLoadRequested;
     /**

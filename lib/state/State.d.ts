@@ -13,12 +13,14 @@ export declare abstract class State extends Container {
     protected _size: Point;
     protected _connections: SignalConnections;
     protected _data: any;
+    set data(value: any);
+    get data(): any;
     protected constructor();
     static get ID(): string;
     static set Assets(pAssets: AssetMapData[]);
     static get Assets(): AssetMapData[];
     /**
-     * gets the Applicationinstance
+     * gets the Application instance
      */
     get app(): Application;
     /**
@@ -31,10 +33,9 @@ export declare abstract class State extends Container {
     get make(): typeof Make;
     /**
      * Inits state
-     * @param pSize{Point}
-     * @param pData
+     * @param size{Point}
      */
-    init(pSize: Point, pData?: any): void;
+    init(size: Point): Promise<void>;
     /**
      * Updates state
      * @param _deltaTime
@@ -42,19 +43,19 @@ export declare abstract class State extends Container {
     update(_deltaTime: number): void;
     /**
      * Determines whether resize on
-     * @param pSize
+     * @param size
      */
-    onResize(pSize: Point): void;
+    onResize(size: Point): void;
     /**
      * Animates in
-     * @param pOnComplete
+     * @param callback
      */
-    animateIn(pOnComplete: () => void): void;
+    animateIn(callback: () => void): void;
     /**
      * Animates out
-     * @param pOnComplete
+     * @param callback
      */
-    animateOut(pOnComplete: () => void): void;
+    animateOut(callback: () => void): void;
     /**
      * Destroys state.
      * @param pOptions
