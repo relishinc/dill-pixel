@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.2](https://github.com/relishinc/dill-pixel/compare/v2.20.1...v2.20.2) (2023-12-14)
+
+
+### Bug Fixes
+
+* fix state sizing & positioning to center ([edba702](https://github.com/relishinc/dill-pixel/commit/edba702d25808781c867fc4bae002fe43fb01db5))
+
 ## [2.20.1](https://github.com/relishinc/dill-pixel/compare/v2.20.0...v2.20.1) (2023-12-14)
 
 
