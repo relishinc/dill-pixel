@@ -190,6 +190,8 @@ export class LoadManager extends Container {
   public onResize(pSize: Point): void {
     this._size.copyFrom(pSize);
     if (this._currentLoadScreen !== undefined) {
+      this._currentLoadScreen.size = this._size;
+      this._currentLoadScreen.positionSelfCenter(this._size);
       this._currentLoadScreen.onResize(this._size);
     }
   }
@@ -208,9 +210,10 @@ export class LoadManager extends Container {
         this._currentLoadScreen.data = pData.stateData;
       }
 
+      this._currentLoadScreen.size = this._size;
+      this._currentLoadScreen.positionSelfCenter(this._size);
       // call init
       await this._currentLoadScreen.init(this._size);
-
       // trigger onResize
       this._currentLoadScreen.onResize(this._size);
 

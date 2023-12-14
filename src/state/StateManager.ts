@@ -156,7 +156,10 @@ export class StateManager extends Container {
    */
   public onResize(size: Point): void {
     this._size.copyFrom(size);
+
     if (this._currentState !== undefined) {
+      this._currentState.size = this._size;
+      this._currentState.positionSelfCenter(this._size);
       this._currentState.onResize(this._size);
     }
   }
@@ -700,6 +703,9 @@ export class StateManager extends Container {
       if (this._newStateToken!.data) {
         this._newState.data = this._newStateToken!.data;
       }
+
+      this._newState.size = this._size;
+      this._newState.positionSelfCenter(this._size);
 
       // call its init method
       await this._newState.init(this._size);
