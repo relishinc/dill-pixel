@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.20.1](https://github.com/relishinc/dill-pixel/compare/v2.20.0...v2.20.1) (2023-12-14)
+
+
+### Bug Fixes
+
+* make init async ([d2fa3bb](https://github.com/relishinc/dill-pixel/commit/d2fa3bb9ad48d6658b938ddc1faaea3f49e52e8a))
+* variable names in StateManager ([1583897](https://github.com/relishinc/dill-pixel/commit/1583897a7e47f73356360feb15522d24f7833005))
+
 ## [2.20.0](https://github.com/relishinc/dill-pixel/compare/v2.19.4...v2.20.0) (2023-12-14)
 
 
