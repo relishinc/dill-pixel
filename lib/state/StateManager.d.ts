@@ -83,6 +83,8 @@ export declare class StateManager extends Container {
      * Enabling this will print all debug logs.
      */
     set debug(pEnabled: boolean);
+    get current(): State | undefined;
+    get currentId(): string;
     /**
      * Updates the current active state.
      * @param deltaTime ticker.shared.elapsedMS / 1000.
