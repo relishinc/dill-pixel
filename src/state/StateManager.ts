@@ -265,15 +265,16 @@ export class StateManager extends Container {
     this._first = false;
 
     let token: StateToken;
-    const loadScreen = loadScreen || this.app.load.defaultLoadScreenId;
+    const newLoadScreen = loadScreen || this.app.load.defaultLoadScreenId;
+
     if (stateObj?.id) {
-      token = new StateToken(stateObj, loadScreen, ...transitionSteps);
+      token = new StateToken(stateObj, newLoadScreen, ...transitionSteps);
     } else {
       if (typeof stateStr === 'string') {
-        token = new StateToken(stateStr, loadScreen, ...transitionSteps);
+        token = new StateToken(stateStr, newLoadScreen, ...transitionSteps);
       } else {
         const Klass: typeof State = stateStr as typeof State;
-        token = new StateToken(Klass.NAME, loadScreen, ...transitionSteps);
+        token = new StateToken(Klass.NAME, newLoadScreen, ...transitionSteps);
       }
     }
 
@@ -339,7 +340,7 @@ export class StateManager extends Container {
       this.logE(
         '%c%s%c has not been registered as a state. Please include it in your registerState ' + 'implementation.',
         LogUtils.STYLE_RED_BOLD,
-        pStateId,
+        stateId,
         LogUtils.STYLE_BLACK,
       );
       return;
@@ -546,7 +547,7 @@ export class StateManager extends Container {
   private performTransitionStep(step: TransitionStep): void {
     this.log('performTransitionStep(%c%s%c)', LogUtils.STYLE_BLUE_BOLD, TransitionStep[step], LogUtils.STYLE_BLACK);
 
-    switch (pStep) {
+    switch (step) {
       case TransitionStep.AnimNewIn:
         this.performStepAnimNewIn();
         break;
@@ -937,8 +938,8 @@ export class StateManager extends Container {
    * @param token The data defining the state transition.
    */
   private onStateLoadRequested(token: StateToken): void {
-    this._newStateToken = pToken;
-    this.startTransition(pToken.stateId, pToken.loadScreen);
+    this._newStateToken = token;
+    this.startTransition(token.stateId, token.loadScreen);
   }
 
   /**

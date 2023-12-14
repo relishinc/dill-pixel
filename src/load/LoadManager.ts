@@ -203,7 +203,9 @@ export class LoadManager extends Container {
     this.log('Show load screen requested: %c%s', LogUtils.STYLE_RED_BOLD, pData.loadScreen);
     this._currentLoadScreen = this.getLoadScreen(pData.loadScreen || this._defaultLoadScreenId);
     if (this._currentLoadScreen !== undefined) {
-      this._currentLoadScreen.init(this._size, pData.stateData);
+      this._currentLoadScreen.data = pData.stateData;
+      this._currentLoadScreen.init(this._size);
+      this._currentLoadScreen.onResize(this._size);
       this.addChild(this._currentLoadScreen);
       this._currentLoadScreen.animateIn(() => {
         this.log('Load screen animate in complete.');
