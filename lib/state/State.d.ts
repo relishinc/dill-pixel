@@ -13,6 +13,8 @@ export declare abstract class State extends Container {
     protected _size: Point;
     protected _connections: SignalConnections;
     protected _data: any;
+    set size(value: Point);
+    get size(): Point;
     set data(value: any);
     get data(): any;
     protected constructor();
@@ -41,6 +43,7 @@ export declare abstract class State extends Container {
      * @param _deltaTime
      */
     update(_deltaTime: number): void;
+    positionSelfCenter(size: Point): void;
     /**
      * Determines whether resize on
      * @param size
