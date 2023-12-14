@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.3](https://github.com/relishinc/dill-pixel/compare/v2.20.2...v2.20.3) (2023-12-14)
+
+
+### Bug Fixes
+
+* init can by async or non-async ([8a80cba](https://github.com/relishinc/dill-pixel/commit/8a80cbad817d20529ba0ffba71a4260737e00620))
+
 ## [2.20.2](https://github.com/relishinc/dill-pixel/compare/v2.20.1...v2.20.2) (2023-12-14)
 
 
