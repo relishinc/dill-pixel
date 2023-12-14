@@ -65,7 +65,7 @@ export abstract class State extends Container {
    * Inits state
    * @param size{Point}
    */
-  public init(size: Point): void {
+  public async init(size: Point): Promise<void> {
     // override
   }
 

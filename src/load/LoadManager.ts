@@ -199,13 +199,21 @@ export class LoadManager extends Container {
    * @param pTopic The PubSub message id.
    * @param pData Data containing what loadscreen to show and what to call when it is shown.
    */
-  private showLoadScreen(pData: { loadScreen: string; stateData?: any; callback: () => void }): void {
+  private async showLoadScreen(pData: { loadScreen: string; stateData?: any; callback: () => void }): Promise<void> {
     this.log('Show load screen requested: %c%s', LogUtils.STYLE_RED_BOLD, pData.loadScreen);
     this._currentLoadScreen = this.getLoadScreen(pData.loadScreen || this._defaultLoadScreenId);
     if (this._currentLoadScreen !== undefined) {
-      this._currentLoadScreen.data = pData.stateData;
-      this._currentLoadScreen.init(this._size);
+      // set the data (if there is any)
+      if (pData.stateData) {
+        this._currentLoadScreen.data = pData.stateData;
+      }
+
+      // call init
+      await this._currentLoadScreen.init(this._size);
+
+      // trigger onResize
       this._currentLoadScreen.onResize(this._size);
+
       this.addChild(this._currentLoadScreen);
       this._currentLoadScreen.animateIn(() => {
         this.log('Load screen animate in complete.');
