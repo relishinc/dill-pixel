@@ -4,7 +4,7 @@
 
 HLF is changing! We are moving towards
 
-- a new name for the framework (under discussion)
+- a new name for the framework (Dill Pixel!)
 - hosting on GitHub
 - open sourcing the framework
 - a new website / docs site / code examples
@@ -193,7 +193,6 @@ __After:__
 
 ```typescript
 // in Applicatgion.ts
-protected
 setup()
 {
 	this.registerDefaultLoadScreen(Interstitial);
