@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.0](https://github.com/relishinc/dill-pixel/compare/v2.21.0...v2.22.0) (2023-12-20)
+
+
+### Features
+
+* add more optional async methods to State ([d3d6c09](https://github.com/relishinc/dill-pixel/commit/d3d6c09ee314d2158565a77e53422e440eb21793))
+
 ## [2.21.0](https://github.com/relishinc/dill-pixel/compare/v2.20.4...v2.21.0) (2023-12-20)
 
 
