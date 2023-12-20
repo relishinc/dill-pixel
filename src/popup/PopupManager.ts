@@ -3,6 +3,7 @@ import { Dictionary } from 'typescript-collections';
 import { Application } from '../core';
 import { Container } from '../gameobjects';
 import * as Input from '../input';
+import { KeyValues } from '../input/KeyValues';
 import { popKeyboardLayer, pushKeyboardLayer, Signals } from '../signals';
 import * as LogUtils from '../utils/LogUtils';
 import { IPopup } from './IPopup';
@@ -19,20 +20,20 @@ export class PopupManager extends Container {
 
   constructor(
     protected _app: Application,
-    pOverlayColor: number = 0x000000,
-    pOverlayAlpha: number = 0.75,
+    overlayColor: number = 0x000000,
+    overlayAlpha: number = 0.75,
   ) {
     super();
     this._popups = new Dictionary<string, typeof Popup>();
     this._activePopups = new Array<IPopup>();
-    this._overlayColor = pOverlayColor;
-    this._overlayAlpha = pOverlayAlpha;
+    this._overlayColor = overlayColor;
+    this._overlayAlpha = overlayAlpha;
 
-    Signals.showPopup.connect(this.handleShowPopup);
-    Signals.hidePopup.connect(this.handleHidePopup);
-    Signals.hideAllPopups.connect(this.handleHideAllPopups);
-    Signals.hideTopMostPopup.connect(this.handleHideTopmostPopup);
-    Signals.hidePopupComplete.connect(this.handleHidePopupComplete);
+    this.addSignalConnection(Signals.showPopup.connect(this.handleShowPopup));
+    this.addSignalConnection(Signals.hidePopup.connect(this.handleHidePopup));
+    this.addSignalConnection(Signals.hideAllPopups.connect(this.handleHideAllPopups));
+    this.addSignalConnection(Signals.hideTopMostPopup.connect(this.handleHideTopmostPopup));
+    this.addSignalConnection(Signals.hidePopupComplete.connect(this.handleHidePopupComplete));
 
     // subscribe to global keyboard events
     window.addEventListener(Input.Events.KEY_DOWN, this.handleKeyDown, false);
@@ -43,38 +44,20 @@ export class PopupManager extends Container {
   }
 
   /** Enabling this will print all debug logs. */
-  public set debug(pEnabled: boolean) {
-    this._debug = pEnabled;
+  public set debug(value: boolean) {
+    this._debug = value;
   }
 
   // #endregion INITIALIZATION
 
-  // #region PUBLIC FUNCTIONS
-  /**
-   * Register a popup, so that it can be spawned later.
-   * @description Expectation is that this is called in {@link Application.registerPopups}
-   * @param pPopupClass
-   * @param pId Unique ID for this type of popup
-   */
-  public register(pPopupClass: typeof Popup, pId?: string): void {
-    const id = pPopupClass.NAME === '__Popup' ? pId : pPopupClass.NAME;
-    if (!id || id === '__Popup') {
-      throw new Error(
-        'PopupManager.register: Popup class should have a NAME property, or you should pass an id parameter',
-      );
-    }
-    this._popups.setValue(id, pPopupClass);
-    this.log(`registerPopup: Registered popup with ID " ${pId} `);
-  }
-
   /**
    * Tick update on all open popups
    * @description Expectation is that this is called in {@link Application.update}
-   * @param pDeltaTime Seconds elapsed since last call to update()
+   * @param deltaTime Seconds elapsed since last call to update()
    */
-  public update(pDeltaTime: number): void {
+  public update(deltaTime: number): void {
     for (let i = 0; i < this._activePopups.length; ++i) {
-      this._activePopups[i].update(pDeltaTime);
+      this._activePopups[i].update(deltaTime);
     }
   }
 
@@ -89,6 +72,24 @@ export class PopupManager extends Container {
     for (let i = 0; i < this._activePopups.length; ++i) {
       this._activePopups[i].onResize(size);
     }
+  }
+
+  // #region PUBLIC FUNCTIONS
+  /**
+   * Register a popup, so that it can be spawned later.
+   * @description Expectation is that this is called in {@link Application.registerPopups}
+   * @param popupClass
+   * @param popupId Unique ID for this type of popup
+   */
+  public register(popupClass: typeof Popup, popupId?: string): void {
+    const id = popupClass.NAME === '__Popup' ? popupId : popupClass.NAME;
+    if (!id || id === '__Popup') {
+      throw new Error(
+        'PopupManager.register: Popup class should have a NAME property, or you should pass an id parameter',
+      );
+    }
+    this._popups.setValue(id, popupClass);
+    this.log(`registerPopup: Registered popup with ID " ${id} `);
   }
 
   // #endregion PUBLIC FUNCTIONS
@@ -147,14 +148,14 @@ export class PopupManager extends Container {
    * hidePopup("popup_id");
    * ```
    */
-  private hidePopup(pId: string): void {
-    const popup = this.getPopup(pId);
+  private hidePopup(popupId: string): void {
+    const popup = this.getPopup(popupId);
     // TODO: Better handling for situation where multiple active popups have the same ID
     if (popup !== undefined) {
-      this.log(`HidePopup: Attempting to hide popup with ID "${pId}"`);
+      this.log(`HidePopup: Attempting to hide popup with ID "${popupId}"`);
       this._hidePopup(popup);
     } else {
-      this.logE(`HidePopup: Can't find any active popup with ID "${pId}"`);
+      this.logE(`HidePopup: Can't find any active popup with ID "${popupId}"`);
     }
   }
 
@@ -205,32 +206,32 @@ export class PopupManager extends Container {
 
   /**
    * Hide a popup by reference
-   * @param pPopup
+   * @param popup
    */
-  private _hidePopup(pPopup: IPopup) {
-    pPopup.hide();
+  private _hidePopup(popup: IPopup) {
+    popup.hide();
   }
 
-  private handleEscapeKeyDown(pEvent: KeyboardEvent): void {
+  private handleEscapeKeyDown(event: KeyboardEvent): void {
     this.log('Escape key (or Android back button) pressed');
     if (this._activePopups.length === 0) {
       this.logW('No popups to close');
     } else {
       const popup = this._activePopups[this._activePopups.length - 1];
       if (popup.keyboardToClose) {
-        pEvent.preventDefault();
+        event.preventDefault();
         this._hidePopup(popup);
       }
     }
   }
 
-  private onHidePopupComplete(pPopup: IPopup): void {
-    if (pPopup !== undefined) {
-      this._activePopups.splice(this._activePopups.indexOf(pPopup), 1);
-      this.removeChild(pPopup);
+  private onHidePopupComplete(popup: IPopup): void {
+    if (popup !== undefined) {
+      this._activePopups.splice(this._activePopups.indexOf(popup), 1);
+      this.removeChild(popup);
       this.log('onHidePopupComplete: Removed popup from stage');
 
-      const overlay = pPopup.blackout;
+      const overlay = popup.blackout;
       if (overlay !== undefined) {
         this.removeChild(overlay);
         this.log('onHidePopupComplete: Removed overlay from stage');
@@ -240,7 +241,7 @@ export class PopupManager extends Container {
         this.logE("onHidePopupComplete: Can't find overlay to remove");
       }
 
-      pPopup.destroy(); // TODO: Pool popups
+      popup.destroy(); // TODO: Pool popups
       this.log('onHidePopupComplete: Destroyed popup');
       popKeyboardLayer();
     } else {
@@ -258,8 +259,8 @@ export class PopupManager extends Container {
 
   // #endregion PRIVATE FUNCTIONS
   // #region EVENT HANDLERS
-  private handleHidePopup(id: string): void {
-    this.hidePopup(id);
+  private handleHidePopup(popupId: string): void {
+    this.hidePopup(popupId);
   }
 
   private handleHideAllPopups(): void {
@@ -278,10 +279,10 @@ export class PopupManager extends Container {
     this.hideTopmostPopup();
   }
 
-  private handleKeyDown(pEvent: KeyboardEvent): void {
-    switch (pEvent.keyCode) {
-      case Input.KeyCodes.ESC:
-        this.handleEscapeKeyDown(pEvent);
+  private handleKeyDown(event: KeyboardEvent): void {
+    switch (event.key) {
+      case KeyValues.ESC:
+        this.handleEscapeKeyDown(event);
         break;
     }
   }
@@ -308,10 +309,10 @@ export class PopupManager extends Container {
    * Get an active popup, by ID
    * This might return undefined!
    */
-  private getPopup(pId: string): IPopup | undefined {
+  private getPopup(popupId: string): IPopup | undefined {
     let popup: IPopup | undefined;
     for (let i = this._activePopups.length - 1; i >= 0; --i) {
-      if (this._activePopups[i].id === pId) {
+      if (this._activePopups[i].id === popupId) {
         popup = this._activePopups[i];
         break;
       }
@@ -321,36 +322,36 @@ export class PopupManager extends Container {
 
   /**
    * Logs a message with class name and colour coding if debug flag is true.
-   * @param pText The message to print.
-   * @param [pParams] Optional data to be included in the message.
+   * @param text The message to print.
+   * @param [rest] Optional data to be included in the message.
    * @todo Decide if this should live in its own class, be in an interface or within each manager.
    */
-  private log(pText: string, ...pParams: any[]): void {
+  private log(text: string, ...rest: any[]): void {
     if (this._debug) {
-      LogUtils.log(pText, { className: 'PopupManager', color: 'blue' }, ...pParams);
+      LogUtils.log(text, { className: 'PopupManager', color: 'blue' }, ...rest);
     }
   }
 
   /**
    * Logs a warning message with class name and colour coding if debug flag is true.
-   * @param pText The message to print.
-   * @param [pParams] Optional data to be included in the message.
+   * @param text The message to print.
+   * @param [rest] Optional data to be included in the message.
    * @todo Decide if this should live in its own class, be in an interface or within each manager.
    */
-  private logW(pText: string, ...pParams: any[]): void {
+  private logW(text: string, ...rest: any[]): void {
     if (this._debug) {
-      LogUtils.logWarning(pText, { className: 'PopupManager', color: 'blue' }, ...pParams);
+      LogUtils.logWarning(text, { className: 'PopupManager', color: 'blue' }, ...rest);
     }
   }
 
   /**
    * Logs an error message with class name and colour coding.
-   * @param pText The message to print.
-   * @param [pParams] Optional data to be included in the message.
+   * @param text The message to print.
+   * @param [rest] Optional data to be included in the message.
    * @todo Decide if this should live in its own class, be in an interface or within each manager.
    */
-  private logE(pText: string, ...pParams: any[]): void {
-    LogUtils.logError(pText, { className: 'PopupManager', color: 'blue' }, ...pParams);
+  private logE(text: string, ...rest: any[]): void {
+    LogUtils.logError(text, { className: 'PopupManager', color: 'blue' }, ...rest);
   }
 
   // #endregion

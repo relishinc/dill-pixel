@@ -4,7 +4,7 @@ import { hidePopupComplete } from '../signals';
 import { IPopup } from './IPopup';
 import { IPopupToken } from './PopupToken';
 
-export enum POPUP_STATE {
+export enum PopupState {
   CLOSED,
   OPENING,
   OPEN,
@@ -16,15 +16,15 @@ export enum POPUP_STATE {
  * However, you can also make your own implementation of {@link IPopup} if necessary.
  */
 export class Popup extends Container implements IPopup {
-  public static readonly NAME: string = '__Popup';
   /** @inheritdoc */
   public blackout?: Graphics | Sprite;
+  public static readonly NAME: string = '__Popup';
   /** This is where we keep the callback that we call when closing the popup  */
   protected _callback?: (...args: any[]) => void;
   /** Custom data sent to the popup */
   protected _popupData: any;
   /** Private backing field for {@link state} */
-  protected _state: POPUP_STATE = POPUP_STATE.CLOSED;
+  protected _state: PopupState = PopupState.CLOSED;
   /** Storage for for {@link PopupToken.backdrop} */
   protected _clickBackdropToClose: boolean | 'static' = true;
   /** Private backing field for {@link keyboardToClose} */
@@ -32,20 +32,25 @@ export class Popup extends Container implements IPopup {
 
   /** Private backing field for {@link id} */
   private _id?: string;
-  /** @inheritdoc */
-  public get id(): string {
-    return this._id!;
-  }
 
   constructor(data?: any) {
     super(true, false);
-    this.bindMethods('animateInComplete', 'animateOutComplete', 'onBlackoutClicked');
+    this.bindMethods(
+      'animateInComplete',
+      'animateOutComplete',
+      'onBlackoutClicked',
+      'show',
+      'hide',
+      '_hide',
+      'animateIn',
+      'animateOut',
+    );
     this._popupData = data;
   }
 
-  /** This is used to prevent duplicate calls to e.g. {@link hide} */
-  public get state(): POPUP_STATE {
-    return this._state;
+  /** @inheritdoc */
+  public get id(): string {
+    return this._id!;
   }
 
   /** @inheritdoc */
@@ -53,23 +58,28 @@ export class Popup extends Container implements IPopup {
     return this._keyboardToClose;
   }
 
-  get popupData() {
+  /** This is used to prevent duplicate calls to e.g. {@link hide} */
+  public get state(): PopupState {
+    return this._state;
+  }
+
+  public get popupData() {
     return this._popupData;
   }
 
   /** Hide the popup, but only if it's open */
   public hide(): void {
-    if (this.state === POPUP_STATE.OPEN) {
+    if (this.state === PopupState.OPEN) {
       this._hide();
     }
   }
 
   /** @inheritdoc */
   public init(size: Point): void {
-    this._state = POPUP_STATE.CLOSED;
+    this._state = PopupState.CLOSED;
     this.onResize(size);
     if (this.blackout !== undefined) {
-      this.blackout.on('click', this.onBlackoutClicked);
+      this.blackout.on('pointerdown', this.onBlackoutClicked);
     }
   }
 
@@ -101,7 +111,7 @@ export class Popup extends Container implements IPopup {
   public show(token: IPopupToken): void {
     this._id = token.id;
     this._callback = token.callback;
-    this._state = POPUP_STATE.OPENING;
+    this._state = PopupState.OPENING;
     this._clickBackdropToClose = token.backdrop ?? true;
     this._keyboardToClose = token.keyboard ?? true;
     this._popupData = token.data;
@@ -119,6 +129,8 @@ export class Popup extends Container implements IPopup {
    * Called by {@link show}
    * Don't forget to call the callback when complete
    */
+
+  protected animateIn(callback: () => void): Promise<void> | void;
   protected async animateIn(callback: () => void): Promise<void> {
     callback();
   }
@@ -127,6 +139,7 @@ export class Popup extends Container implements IPopup {
    * Called by {@link hide}
    * Don't forget to call the callback when complete
    */
+  protected animateOut(callback: () => void): Promise<void> | void;
   protected async animateOut(callback: () => void): Promise<void> {
     callback();
   }
@@ -142,12 +155,11 @@ export class Popup extends Container implements IPopup {
   }
 
   /**
-   * This changes the popup's state to {@link POPUP_STATE.OPEN}
+   * This changes the popup's state to {@link PopupState.OPEN}
    * You may want to override this to do more things after the animation has completed
    */
   protected animateInComplete() {
-    console.log(this);
-    this._state = POPUP_STATE.OPEN;
+    this._state = PopupState.OPEN;
   }
 
   /**
@@ -159,8 +171,9 @@ export class Popup extends Container implements IPopup {
     this.interactiveChildren = false;
     if (this.blackout !== undefined) {
       this.blackout.off('click');
+      this.blackout.off('pointerdown');
     }
-    this._state = POPUP_STATE.CLOSING;
+    this._state = PopupState.CLOSING;
     this.animateOut(this.animateOutComplete);
   }
 
@@ -169,7 +182,7 @@ export class Popup extends Container implements IPopup {
    * and also tells {@link PopupManager} that we are finished animating out, so the popup can be destroyed or pooled
    */
   protected animateOutComplete() {
-    this._state = POPUP_STATE.CLOSED;
+    this._state = PopupState.CLOSED;
     if (this._callback !== undefined) {
       const callback = this._callback;
       this._callback = undefined;
