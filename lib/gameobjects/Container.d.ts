@@ -1,4 +1,4 @@
-import { Container as PIXIContainer, IDestroyOptions, IPoint } from 'pixi.js';
+import { Container as PIXIContainer, IDestroyOptions, IPoint, Point } from 'pixi.js';
 import { SignalConnection, SignalConnections } from 'typed-signals';
 import { Application } from '../core';
 import { Editor } from '../misc';
@@ -13,23 +13,32 @@ import { Add, Make } from '../utils';
  * @extends PIXIContainer
  */
 export declare class Container extends PIXIContainer {
+    editable: boolean;
+    childrenEditable: boolean;
     protected _addFactory: Add;
     protected _signalConnections: SignalConnections;
     protected _editMode: boolean;
     protected editor: Editor;
-    editable: boolean;
-    childrenEditable: boolean;
+    protected _focusable: boolean;
     constructor(autoResize?: boolean, autoUpdate?: boolean, autoBindMethods?: boolean);
-    set editMode(value: boolean);
+    get focusable(): boolean;
+    set focusable(value: boolean);
     get editMode(): boolean;
-    enableEditMode(): void;
-    disableEditMode(): void;
+    set editMode(value: boolean);
     get add(): Add;
     get make(): typeof Make;
     get app(): Application;
     destroy(_options?: IDestroyOptions | boolean): void;
+    enableEditMode(): void;
+    disableEditMode(): void;
     onResize(_size: IPoint): void;
     update(_deltaTime: number): void;
+    onFocusBegin(): void;
+    onFocusEnd(): void;
+    onFocusActivated(): void;
+    getFocusPosition(): Point;
+    getFocusSize(): IPoint;
+    isFocusable?(): boolean;
     /**
      * @protected
      * adds a signal connection

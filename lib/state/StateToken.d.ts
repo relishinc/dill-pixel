@@ -1,4 +1,4 @@
-import { TransitionStep } from "./TransitionStep";
+import { TransitionStep } from './TransitionStep';
 /**
  * State token
  */
@@ -16,9 +16,9 @@ export declare class StateToken {
      */
     readonly transitionSteps: TransitionStep[];
     readonly data: any;
-    constructor(pParam1: string | {
+    constructor(idOrData: string | {
         id: string;
         data: any;
-    }, pLoadScreen?: string, ...pTransitionSteps: TransitionStep[]);
+    }, loadScreen?: string, ...transitionSteps: TransitionStep[]);
 }
 //# sourceMappingURL=StateToken.d.ts.map
