@@ -1,4 +1,4 @@
-import { Application } from '../core/Application';
+import { Application } from '../core';
 import { CookieStorage } from './CookieStorage';
 import { LocalStorage } from './LocalStorage';
 

@@ -1,4 +1,4 @@
-import {Container as PIXIContainer, IDestroyOptions, IPoint, Ticker} from 'pixi.js';
+import {Container as PIXIContainer, IDestroyOptions, IPoint, Point, Ticker} from 'pixi.js';
 import {SignalConnection, SignalConnections} from 'typed-signals';
 import {Application} from '../core';
 import {Editor} from '../misc';
@@ -15,16 +15,15 @@ import {Add, bindAllMethods, bindMethods, Make} from '../utils';
  * @extends PIXIContainer
  */
 export class Container extends PIXIContainer {
-  protected _addFactory: Add;
-
-  // optionally add signals to a SignalConnections instance for easy removal
-  protected _signalConnections: SignalConnections = new SignalConnections();
-
-  protected _editMode = false;
-  protected editor: Editor;
-
   public editable: boolean = true;
   public childrenEditable: boolean = true;
+  protected _addFactory: Add;
+  // optionally add signals to a SignalConnections instance for easy removal
+  protected _signalConnections: SignalConnections = new SignalConnections();
+  protected _editMode = false;
+  protected editor: Editor;
+  // focus management
+  protected _focusable: boolean = false;
 
   constructor(autoResize: boolean = true, autoUpdate: boolean = false, autoBindMethods: boolean = true) {
     super();
@@ -46,26 +45,24 @@ export class Container extends PIXIContainer {
     }
   }
 
-  set editMode(value: boolean) {
-    this._editMode = value;
-    if (this._editMode) {
-      this.enableEditMode();
-    } else {
-      this.disableEditMode();
-    }
+  get focusable(): boolean {
+    return this._focusable;
+  }
+
+  set focusable(value: boolean) {
+    this._focusable = value;
   }
 
   get editMode(): boolean {
     return this._editMode;
   }
 
-  enableEditMode() {
-    this.editor = new Editor(this);
-  }
-
-  disableEditMode() {
-    if (this.editor) {
-      this.editor.destroy();
+  set editMode(value: boolean) {
+    this._editMode = value;
+    if (this._editMode) {
+      this.enableEditMode();
+    } else {
+      this.disableEditMode();
     }
   }
 
@@ -86,12 +83,48 @@ export class Container extends PIXIContainer {
     super.destroy(_options);
   }
 
+  enableEditMode() {
+    this.editor = new Editor(this);
+  }
+
+  disableEditMode() {
+    if (this.editor) {
+      this.editor.destroy();
+    }
+  }
+
   public onResize(_size: IPoint) {
     // noop
   }
 
   public update(_deltaTime: number) {
     // noop
+  }
+
+  // focus stuff
+  public onFocusBegin(): void {
+    console.log(`onFocusBegin for ${this.name}`);
+  }
+
+  public onFocusEnd(): void {
+    console.log(`onFocusEnd for ${this.name}`);
+  }
+
+  public onFocusActivated(): void {
+    console.log(`onFocusActivated for ${this.name}`);
+  }
+
+  public getFocusPosition(): Point {
+    return new Point(-this.width * 0.5, -this.height * 0.5);
+  }
+
+  public getFocusSize(): IPoint {
+    const bounds = this.getBounds();
+    return new Point(bounds.width, bounds.height);
+  }
+
+  public isFocusable?(): boolean {
+    return this._focusable;
   }
 
   /**
