@@ -3,33 +3,17 @@ import {SignalConnections} from 'typed-signals';
 import {Application} from '../core';
 import {Container} from '../gameobjects';
 import {AssetMapData} from '../load';
-import {Add, Make} from '../utils/factory';
+import {Add, Make} from '../utils';
 
 /**
  * State
  */
 export abstract class State extends Container {
-  public static NAME: string = 'State';
   private static _assets: AssetMapData[] = [];
+  public static NAME: string = 'State';
   protected _size: Point;
   protected _connections: SignalConnections = new SignalConnections();
   protected _data: any;
-
-  set size(value: Point) {
-    this._size.copyFrom(value);
-  }
-
-  get size() {
-    return this._size;
-  }
-
-  set data(value: any) {
-    this._data = value;
-  }
-
-  get data(): any {
-    return this._data;
-  }
 
   protected constructor() {
     super(false);
@@ -40,12 +24,12 @@ export abstract class State extends Container {
     return 'State';
   }
 
-  public static set Assets(pAssets: AssetMapData[]) {
-    this._assets = pAssets;
-  }
-
   public static get Assets(): AssetMapData[] {
     return State._assets || [];
+  }
+
+  public static set Assets(pAssets: AssetMapData[]) {
+    this._assets = pAssets;
   }
 
   /**
@@ -69,25 +53,28 @@ export abstract class State extends Container {
     return Make;
   }
 
-  /**
-   * Inits state
-   * @param size{Point}
-   */
-  public init(size: Point): Promise<void> | void;
-  public async init(size: Point): Promise<void> {
-    // override
+  get size() {
+    return this._size;
+  }
+
+  set size(value: Point) {
+    this._size.copyFrom(value);
+  }
+
+  get data(): any {
+    return this._data;
+  }
+
+  set data(value: any) {
+    this._data = value;
   }
 
   /**
    * Updates state
-   * @param _deltaTime
+   * @param deltaTime
    */
-  public update(_deltaTime: number): void {
+  public update(deltaTime: number): void {
     // override
-  }
-
-  public positionSelfCenter(size: Point) {
-    this.position.set(size.x * 0.5, size.y * 0.5);
   }
 
   /**
@@ -99,10 +86,36 @@ export abstract class State extends Container {
   }
 
   /**
+   * Destroys state.
+   * @param destroyOptions
+   */
+  public destroy(
+    destroyOptions: Parameters<typeof Container.prototype.destroy>[0] = {
+      children: true,
+    },
+  ): void {
+    super.destroy(destroyOptions);
+  }
+
+  /**
+   * Inits state
+   * @param size{Point}
+   */
+  public init(size: Point): Promise<void> | void;
+  public async init(size: Point): Promise<void> {
+    // override
+  }
+
+  public positionSelfCenter(size: Point) {
+    this.position.set(size.x * 0.5, size.y * 0.5);
+  }
+
+  /**
    * Animates in
    * @param callback
    */
-  public animateIn(callback: () => void): void {
+  public animateIn(callback: () => void): Promise<void> | void;
+  public async animateIn(callback: () => void): Promise<void> {
     callback();
   }
 
@@ -110,19 +123,8 @@ export abstract class State extends Container {
    * Animates out
    * @param callback
    */
-  public animateOut(callback: () => void): void {
+  public animateOut(callback: () => void): Promise<void> | void;
+  public async animateOut(callback: () => void): Promise<void> {
     callback();
-  }
-
-  /**
-   * Destroys state.
-   * @param pOptions
-   */
-  public destroy(
-    pOptions: Parameters<typeof Container.prototype.destroy>[0] = {
-      children: true,
-    },
-  ): void {
-    super.destroy(pOptions);
   }
 }
