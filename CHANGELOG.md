@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.21.0](https://github.com/relishinc/dill-pixel/compare/v2.20.4...v2.21.0) (2023-12-20)
+
+
+### Features
+
+* make Container a first class focus citizen ([d45bd18](https://github.com/relishinc/dill-pixel/commit/d45bd18a3ad029528b930bb96ea80251f57620b2))
+
 ## [2.20.4](https://github.com/relishinc/dill-pixel/compare/v2.20.3...v2.20.4) (2023-12-14)
 
 
