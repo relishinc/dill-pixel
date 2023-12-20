@@ -1,4 +1,4 @@
-import { Application } from '../core/Application';
+import { Application } from '../core';
 export declare enum Storage {
     Cookie = 0,
     Local = 1

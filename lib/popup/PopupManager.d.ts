@@ -10,29 +10,29 @@ export declare class PopupManager extends Container {
     private _debug;
     private _overlayColor;
     private _overlayAlpha;
-    constructor(_app: Application, pOverlayColor?: number, pOverlayAlpha?: number);
+    constructor(_app: Application, overlayColor?: number, overlayAlpha?: number);
     get app(): Application;
     /** Enabling this will print all debug logs. */
-    set debug(pEnabled: boolean);
-    /**
-     * Register a popup, so that it can be spawned later.
-     * @description Expectation is that this is called in {@link Application.registerPopups}
-     * @param pPopupClass
-     * @param pId Unique ID for this type of popup
-     */
-    register(pPopupClass: typeof Popup, pId?: string): void;
+    set debug(value: boolean);
     /**
      * Tick update on all open popups
      * @description Expectation is that this is called in {@link Application.update}
-     * @param pDeltaTime Seconds elapsed since last call to update()
+     * @param deltaTime Seconds elapsed since last call to update()
      */
-    update(pDeltaTime: number): void;
+    update(deltaTime: number): void;
     /**
      * Tick update() on all open popups
      * @description Expectation is that this is called in {@link Application.onResize}
      * @param size Screen size, in pixels(?)
      */
     onResize(size: Point): void;
+    /**
+     * Register a popup, so that it can be spawned later.
+     * @description Expectation is that this is called in {@link Application.registerPopups}
+     * @param popupClass
+     * @param popupId Unique ID for this type of popup
+     */
+    register(popupClass: typeof Popup, popupId?: string): void;
     /**
      * Show a Popup, and optionally get a callback when it's closed.
      * @description Note you should be using @link {Signals.showPopup} instead of calling this directly
@@ -89,7 +89,7 @@ export declare class PopupManager extends Container {
     private hideTopmostPopup;
     /**
      * Hide a popup by reference
-     * @param pPopup
+     * @param popup
      */
     private _hidePopup;
     private handleEscapeKeyDown;
@@ -109,22 +109,22 @@ export declare class PopupManager extends Container {
     private getPopup;
     /**
      * Logs a message with class name and colour coding if debug flag is true.
-     * @param pText The message to print.
-     * @param [pParams] Optional data to be included in the message.
+     * @param text The message to print.
+     * @param [rest] Optional data to be included in the message.
      * @todo Decide if this should live in its own class, be in an interface or within each manager.
      */
     private log;
     /**
      * Logs a warning message with class name and colour coding if debug flag is true.
-     * @param pText The message to print.
-     * @param [pParams] Optional data to be included in the message.
+     * @param text The message to print.
+     * @param [rest] Optional data to be included in the message.
      * @todo Decide if this should live in its own class, be in an interface or within each manager.
      */
     private logW;
     /**
      * Logs an error message with class name and colour coding.
-     * @param pText The message to print.
-     * @param [pParams] Optional data to be included in the message.
+     * @param text The message to print.
+     * @param [rest] Optional data to be included in the message.
      * @todo Decide if this should live in its own class, be in an interface or within each manager.
      */
     private logE;

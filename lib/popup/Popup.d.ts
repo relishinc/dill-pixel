@@ -2,7 +2,7 @@ import { Graphics, Point, Sprite } from 'pixi.js';
 import { Container } from '../gameobjects';
 import { IPopup } from './IPopup';
 import { IPopupToken } from './PopupToken';
-export declare enum POPUP_STATE {
+export declare enum PopupState {
     CLOSED = 0,
     OPENING = 1,
     OPEN = 2,
@@ -13,28 +13,28 @@ export declare enum POPUP_STATE {
  * However, you can also make your own implementation of {@link IPopup} if necessary.
  */
 export declare class Popup extends Container implements IPopup {
-    static readonly NAME: string;
     /** @inheritdoc */
     blackout?: Graphics | Sprite;
+    static readonly NAME: string;
     /** This is where we keep the callback that we call when closing the popup  */
     protected _callback?: (...args: any[]) => void;
     /** Custom data sent to the popup */
     protected _popupData: any;
     /** Private backing field for {@link state} */
-    protected _state: POPUP_STATE;
+    protected _state: PopupState;
     /** Storage for for {@link PopupToken.backdrop} */
     protected _clickBackdropToClose: boolean | 'static';
     /** Private backing field for {@link keyboardToClose} */
     protected _keyboardToClose: boolean;
     /** Private backing field for {@link id} */
     private _id?;
+    constructor(data?: any);
     /** @inheritdoc */
     get id(): string;
-    constructor(data?: any);
-    /** This is used to prevent duplicate calls to e.g. {@link hide} */
-    get state(): POPUP_STATE;
     /** @inheritdoc */
     get keyboardToClose(): boolean;
+    /** This is used to prevent duplicate calls to e.g. {@link hide} */
+    get state(): PopupState;
     get popupData(): any;
     /** Hide the popup, but only if it's open */
     hide(): void;
@@ -60,19 +60,19 @@ export declare class Popup extends Container implements IPopup {
      * Called by {@link show}
      * Don't forget to call the callback when complete
      */
-    protected animateIn(callback: () => void): Promise<void>;
+    protected animateIn(callback: () => void): Promise<void> | void;
     /**
      * Called by {@link hide}
      * Don't forget to call the callback when complete
      */
-    protected animateOut(callback: () => void): Promise<void>;
+    protected animateOut(callback: () => void): Promise<void> | void;
     /**
      * Click handler for {@link blackout}
      * Feel free to override this
      */
     protected onBlackoutClicked(): void;
     /**
-     * This changes the popup's state to {@link POPUP_STATE.OPEN}
+     * This changes the popup's state to {@link PopupState.OPEN}
      * You may want to override this to do more things after the animation has completed
      */
     protected animateInComplete(): void;
