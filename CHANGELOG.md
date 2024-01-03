@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.23.3](https://github.com/relishinc/dill-pixel/compare/v2.23.2...v2.23.3) (2024-01-03)
+
+
+### Bug Fixes
+
+* made some async methods optinally async in core application ([11a56af](https://github.com/relishinc/dill-pixel/commit/11a56af1c96f76d07da8df8b7aaf134df71e87ea))
+* made some async methods optinally async in core application ([caaa930](https://github.com/relishinc/dill-pixel/commit/caaa930e11ba1bc858f00402a9f571a997444cb9))
+* made some async methods optinally async in core application ([7da447f](https://github.com/relishinc/dill-pixel/commit/7da447f441932b6724fc3c8c8a64e3b8161e8a76))
+* made some async methods optinally async in core application ([4e966f6](https://github.com/relishinc/dill-pixel/commit/4e966f61edaaea642f3cb86efbd5125c63500de4))
+
 ## [2.23.2](https://github.com/relishinc/dill-pixel/compare/v2.23.1...v2.23.2) (2024-01-03)
 
 
