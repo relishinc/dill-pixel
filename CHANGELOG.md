@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.23.2](https://github.com/relishinc/dill-pixel/compare/v2.23.1...v2.23.2) (2024-01-03)
+
+
+### Bug Fixes
+
+* altered dill-pixel cmd util to not log version every time there's a command ([eb12d51](https://github.com/relishinc/dill-pixel/commit/eb12d51a43b1851f362a5cc3fcffaf03c5d97c67))
+
 ## [2.23.1](https://github.com/relishinc/dill-pixel/compare/v2.23.0...v2.23.1) (2024-01-03)
 
 
