@@ -510,7 +510,7 @@ export class Application extends PIXIApplication {
    * @param debounceDelay A delay (in seconds) before telling the rest of the application that a resize occured.
    * @default 0
    */
-  protected async onResize(debounceDelay: number = 0): Promise<void>;
+  protected async onResize(debounceDelay: number): Promise<void>;
   protected onResize(debounceDelay: number = 0): Promise<void> | void {
     if (debounceDelay > 0) {
       await delay(debounceDelay);
