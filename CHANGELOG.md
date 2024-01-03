@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.23.0](https://github.com/relishinc/dill-pixel/compare/v2.22.1...v2.23.0) (2024-01-03)
+
+
+### Features
+
+* 'dill-pixel update' command line to update dill-pixel ([95b773e](https://github.com/relishinc/dill-pixel/commit/95b773e47558d94fe12ff7db93fce752f25b07f7))
+
 ## [2.22.1](https://github.com/relishinc/dill-pixel/compare/v2.22.0...v2.22.1) (2024-01-03)
 
 
