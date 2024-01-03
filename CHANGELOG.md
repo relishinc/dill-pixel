@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.1](https://github.com/relishinc/dill-pixel/compare/v2.22.0...v2.22.1) (2024-01-03)
+
+
+### Bug Fixes
+
+* onResize signal in Container now uses this.addSignalConnection so it disconnects on destroy ([542f72f](https://github.com/relishinc/dill-pixel/commit/542f72fcb3af955e59aa3ac7c946c8a7f26df7e9))
+
 ## [2.22.0](https://github.com/relishinc/dill-pixel/compare/v2.21.0...v2.22.0) (2023-12-20)
 
 
