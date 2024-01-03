@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-import {green} from "kleur/colors";
-import fs from "node:fs";
-import {create} from "./create.mjs";
+import {green} from 'kleur/colors';
+import fs from 'node:fs';
+import {create} from './create.mjs';
+import {update} from './update.mjs';
 
 const currentVersion = process.versions.node;
 const requiredMajorVersion = parseInt(currentVersion.split('.')[0], 10);
@@ -32,6 +33,9 @@ switch (args[0]) {
 	case 'create':
 		let cwd = args[1] || '.';
 		await create(cwd);
+		break;
+	case 'update':
+		await update();
 		break;
 	default:
 		console.log(`Unknown subcommand: ${args[0]}`);
