@@ -62,6 +62,41 @@ export class Application extends PIXIApplication {
   protected stats: any;
 
   /**
+   * Creates a container element with the given id and appends it to the DOM.
+   * @param pId{string} - The id of the element to create.
+   */
+  public static createContainer(pId: string) {
+    const container = document.createElement('div');
+    container.setAttribute('id', pId);
+    document.body.appendChild(container);
+    return container;
+  }
+
+  /**
+   * Creates a new instance of the Application class and returns it.
+   * @param pElement{string | HTMLElement} - The id of the element to use as the container, or the element itself.
+   */
+  public static create(pElement: string | HTMLElement = Application.containerID): Application | null {
+    let el: HTMLElement | null = null;
+    if (typeof pElement === 'string') {
+      el = document.getElementById(pElement);
+      if (!el) {
+        el = Application.createContainer(pElement);
+      }
+    } else if (pElement instanceof HTMLElement) {
+      el = pElement;
+    }
+    if (!el) {
+      // no element to use
+      console.error(
+        'You passed in a DOM Element, but none was found. If you instead pass in a string, a container will be created for you, using the string for its id.',
+      );
+      return null;
+    }
+    return this.instance.create(el);
+  }
+
+  /**
    * The config passed in can be a json object, or an `AppConfig` object.
    * @param pConfig
    * @see `AppConfig` for what can be contained in the passed in config.
@@ -142,41 +177,6 @@ export class Application extends PIXIApplication {
     }
 
     return Application._instance;
-  }
-
-  /**
-   * Creates a container element with the given id and appends it to the DOM.
-   * @param pId{string} - The id of the element to create.
-   */
-  public static createContainer(pId: string) {
-    const container = document.createElement('div');
-    container.setAttribute('id', pId);
-    document.body.appendChild(container);
-    return container;
-  }
-
-  /**
-   * Creates a new instance of the Application class and returns it.
-   * @param pElement{string | HTMLElement} - The id of the element to use as the container, or the element itself.
-   */
-  public static create(pElement: string | HTMLElement = Application.containerID): Application | null {
-    let el: HTMLElement | null = null;
-    if (typeof pElement === 'string') {
-      el = document.getElementById(pElement);
-      if (!el) {
-        el = Application.createContainer(pElement);
-      }
-    } else if (pElement instanceof HTMLElement) {
-      el = pElement;
-    }
-    if (!el) {
-      // no element to use
-      console.error(
-        'You passed in a DOM Element, but none was found. If you instead pass in a string, a container will be created for you, using the string for its id.',
-      );
-      return null;
-    }
-    return this.instance.create(el);
   }
 
   // override this to set a custom resolution suffix;
@@ -431,7 +431,8 @@ export class Application extends PIXIApplication {
     this._debugger = new DebuggerClass(this);
   }
 
-  protected setup() {
+  protected async setup(): Promise<void>;
+  protected setup(): Promise<void> | void {
     // override me to set up application specific stuff
   }
 
@@ -506,12 +507,13 @@ export class Application extends PIXIApplication {
 
   /**
    * Called when the application window is resized.
-   * @param pDelay A delay before telling the rest of the application that a resize occured.
+   * @param debounceDelay A delay (in seconds) before telling the rest of the application that a resize occured.
    * @default 0
    */
-  protected async onResize(pDelay: number = 0): Promise<void> {
-    if (pDelay > 0) {
-      await delay(pDelay);
+  protected async onResize(debounceDelay: number = 0): Promise<void>;
+  protected onResize(debounceDelay: number = 0): Promise<void> | void {
+    if (debounceDelay > 0) {
+      await delay(debounceDelay);
     }
 
     if (this._resizeManager.useAspectRatio) {
@@ -590,7 +592,8 @@ export class Application extends PIXIApplication {
    * Override to specify what should happen after all persistent assets have been loaded.
    * @override
    */
-  protected async onRequiredAssetsLoaded(): Promise<void> {
+  protected async onRequiredAssetsLoaded(): Promise<void>;
+  protected onRequiredAssetsLoaded(): Promise<void> | void {
     // transition to the default state, if set
     if (this.state.default) {
       this.state.transitionTo(this.state.default);
