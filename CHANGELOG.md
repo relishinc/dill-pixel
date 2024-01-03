@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.23.1](https://github.com/relishinc/dill-pixel/compare/v2.23.0...v2.23.1) (2024-01-03)
+
+
+### Bug Fixes
+
+* altered dill-pixel update to show the new version when done ([35be63d](https://github.com/relishinc/dill-pixel/commit/35be63dc0ebaeff5556d840a53cc6755b3cd6a18))
+
 ## [2.23.0](https://github.com/relishinc/dill-pixel/compare/v2.22.1...v2.23.0) (2024-01-03)
 
 
