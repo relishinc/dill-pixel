@@ -1,9 +1,9 @@
-import {Container as PIXIContainer, IDestroyOptions, IPoint, Point, Ticker} from 'pixi.js';
-import {SignalConnection, SignalConnections} from 'typed-signals';
-import {Application} from '../core';
-import {Editor} from '../misc';
-import {Signals} from '../signals';
-import {Add, bindAllMethods, bindMethods, Make} from '../utils';
+import { Container as PIXIContainer, IDestroyOptions, IPoint, Point, Ticker } from 'pixi.js';
+import { SignalConnection, SignalConnections } from 'typed-signals';
+import { Application } from '../core';
+import { Editor } from '../misc';
+import { Signals } from '../signals';
+import { Add, bindAllMethods, bindMethods, Make } from '../utils';
 
 /**
  * Enhanced PIXI Container that has:
@@ -37,7 +37,7 @@ export class Container extends PIXIContainer {
     }
 
     if (autoResize) {
-      Signals.onResize.connect(this.onResize);
+      this.addSignalConnection(Signals.onResize.connect(this.onResize));
     }
 
     if (autoUpdate) {
