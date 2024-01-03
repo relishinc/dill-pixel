@@ -1,26 +1,35 @@
 // @ts-ignore
+// require the global.d.ts file
 import FontFaceObserver from 'fontfaceobserver';
-import { Application as PIXIApplication, Assets, IApplicationOptions, Point, Ticker } from 'pixi.js';
-import { AudioToken, HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverManager } from '../audio';
-import { CopyManager } from '../copy';
+import {Application as PIXIApplication, Assets, IApplicationOptions, Point, Ticker} from 'pixi.js';
+import {AudioToken, HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverManager} from '../audio';
+import {CopyManager} from '../copy';
 import {
   DefaultKeyboardFocusManagerSprite,
   HitAreaRenderer,
   KeyboardFocusManager,
   KeyboardManager,
-  MouseManager,
+  MouseManager
 } from '../input';
-import { AssetMap, AssetMapData, LoadManager, LoadScreen, LoadScreenProvider, SplashScreen } from '../load';
-import { PhysicsBase, PhysicsEngineType } from '../physics';
-import { PopupManager } from '../popup';
-import { SaveManager } from '../save';
-import { keyboardReFocus, Signals } from '../signals';
-import { State, StateManager } from '../state';
-import { AssetUtils, delay, HTMLTextStyleManager, OrientationManager, ResizeManager, WebEventsManager } from '../utils';
-import { Add, Make } from '../utils/factory';
-import { AppConfig } from './AppConfig';
+import {AssetMap, AssetMapData, LoadManager, LoadScreen, LoadScreenProvider, SplashScreen} from '../load';
+import {PhysicsBase, PhysicsEngineType} from '../physics';
+import {PopupManager} from '../popup';
+import {SaveManager} from '../save';
+import {keyboardReFocus, Signals} from '../signals';
+import {State, StateManager} from '../state';
+import {
+  Add,
+  AssetUtils,
+  delay,
+  HTMLTextStyleManager,
+  Make,
+  OrientationManager,
+  ResizeManager,
+  WebEventsManager
+} from '../utils';
+import {AppConfig} from './AppConfig';
 
-export interface HLFApplicationOptions extends IApplicationOptions {
+export interface DillPixelApplicationOptions extends IApplicationOptions {
   physics?: boolean;
   showStatsInProduction?: boolean;
   showStateDebugInProduction?: boolean;
@@ -45,7 +54,6 @@ export class Application extends PIXIApplication {
   protected _copyManager: CopyManager;
   protected _mouseManager: MouseManager;
   protected _webEventsManager: WebEventsManager;
-  protected _screenSizeRatio!: number;
   protected _size: Point;
   protected _hitAreaRenderer!: HitAreaRenderer;
   protected _saveManager!: SaveManager;
@@ -98,16 +106,18 @@ export class Application extends PIXIApplication {
 
   /**
    * The config passed in can be a json object, or an `AppConfig` object.
-   * @param pConfig
-   * @see `AppConfig` for what can be contained in the passed in config.
+   * @param appConfig
+   * @see `AppConfig` for what can be contained in the passed-in config.
    * @default autoResize: true
    * @default resolution: utils.isMobile.any === false ? 2 : (window.devicePixelRatio > 1 ? 2 : 1);
    */
-  protected constructor(pConfig?: Partial<HLFApplicationOptions> & { [key: string]: any }) {
+  protected constructor(appConfig?: Partial<DillPixelApplicationOptions> & { [key: string]: any }) {
     // TODO Relish GM => Look into what might be added to the AppConfig class and if there is reason to cache it.
-    super(new AppConfig(pConfig));
-    if (isDev || pConfig?.showStatsInProduction) {
-      this.addStats();
+    super(new AppConfig(appConfig));
+    if (isDev || appConfig?.showStatsInProduction) {
+      this.addStats().then(() => {
+        console.log('stats.js added');
+      });
     }
     // start the ticker if it hasn't been started yet
     if (!this.ticker.started) {
@@ -141,8 +151,8 @@ export class Application extends PIXIApplication {
     } else {
       this._resizeManager = new ResizeManager(
         this,
-        pConfig?.sizeMin || Application.SIZE_MIN_DEFAULT,
-        pConfig?.sizeMax || Application.SIZE_MAX_DEFAULT,
+        appConfig?.sizeMin || Application.SIZE_MIN_DEFAULT,
+        appConfig?.sizeMax || Application.SIZE_MAX_DEFAULT,
       );
     }
 
@@ -171,7 +181,7 @@ export class Application extends PIXIApplication {
   static get instance() {
     if (Application._instance === undefined) {
       console.error(
-        "You've tried to access the instance of HLF.Application when it hasn't been set. " +
+        "You've tried to access the instance of DillPixel.Application when it hasn't been set. " +
           'Please set the _instance in your Application.',
       );
     }
@@ -269,7 +279,9 @@ export class Application extends PIXIApplication {
 
   public get debugger(): DebuggerType {
     if (!this._debugger) {
-      this.addDebugger();
+      this.addDebugger().then(() => {
+        console.log('debugger added');
+      });
     }
     return this._debugger as DebuggerType;
   }
@@ -346,7 +358,11 @@ export class Application extends PIXIApplication {
       return null;
     }
 
-    Application.instance.init();
+    Application.instance.init().then(() => {
+      if (isDev) {
+        console.log('Application initialized');
+      }
+    });
     return Application.instance;
   }
 
@@ -382,6 +398,7 @@ export class Application extends PIXIApplication {
     this.onResize(0);
     // Delayed to fix incorrect iOS resizing in WKWebView. See: https://bugs.webkit.org/show_bug.cgi?id=170595
     this.onResize(0.5);
+
     this._webEventsManager.registerResizeCallback(() => this.onResize(0.5));
 
     this.setup();
@@ -431,8 +448,8 @@ export class Application extends PIXIApplication {
     this._debugger = new DebuggerClass(this);
   }
 
-  protected async setup(): Promise<void>;
-  protected setup(): Promise<void> | void {
+  protected setup(): Promise<void> | void;
+  protected async setup(): Promise<void> {
     // override me to set up application specific stuff
   }
 
@@ -510,7 +527,8 @@ export class Application extends PIXIApplication {
    * @param debounceDelay A delay (in seconds) before telling the rest of the application that a resize occured.
    * @default 0
    */
-  protected async onResize(debounceDelay: number): Promise<void> {
+  protected onResize(debounceDelay: number): Promise<void> | void;
+  protected async onResize(debounceDelay: number = 0): Promise<void> {
     if (debounceDelay > 0) {
       await delay(debounceDelay);
     }
@@ -571,7 +589,7 @@ export class Application extends PIXIApplication {
     return [];
   }
 
-  protected allFontsLoaded(): Promise<void> {
+  protected async allFontsLoaded(): Promise<void> {
     const fonts = this.getFontsList();
     if (fonts?.length > 0) {
       return Promise.all(
@@ -591,8 +609,8 @@ export class Application extends PIXIApplication {
    * Override to specify what should happen after all persistent assets have been loaded.
    * @override
    */
-  protected async onRequiredAssetsLoaded(): Promise<void>;
-  protected onRequiredAssetsLoaded(): Promise<void> | void {
+  protected onRequiredAssetsLoaded(): Promise<void> | void;
+  protected async onRequiredAssetsLoaded(): Promise<void> {
     // transition to the default state, if set
     if (this.state.default) {
       this.state.transitionTo(this.state.default);
