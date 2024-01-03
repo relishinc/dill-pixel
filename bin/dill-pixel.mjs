@@ -17,11 +17,13 @@ if (requiredMajorVersion < minimumMajorVersion) {
 const {version} = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf-8'));
 
 
-console.log(`
+const args = process.argv.slice(2);
+
+if (!args[0] || args[0] === 'version') {
+	console.log(`
 ${green(`Dill Pixel ${version}`)}
 `);
-
-const args = process.argv.slice(2);
+}
 
 if (args.length === 0) {
 	console.log('Please provide a subcommand.');
@@ -30,7 +32,6 @@ if (args.length === 0) {
 
 switch (args[0]) {
 	case 'version':
-		console.log(`${green(`Dill Pixel ${version}`)}`);
 		break;
 	case 'create':
 		let cwd = args[1] || '.';
