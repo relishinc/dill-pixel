@@ -7,9 +7,8 @@ import { PhysicsBase, PhysicsEngineType } from '../physics';
 import { PopupManager } from '../popup';
 import { SaveManager } from '../save';
 import { State, StateManager } from '../state';
-import { HTMLTextStyleManager, OrientationManager, ResizeManager, WebEventsManager } from '../utils';
-import { Add, Make } from '../utils/factory';
-export interface HLFApplicationOptions extends IApplicationOptions {
+import { Add, HTMLTextStyleManager, Make, OrientationManager, ResizeManager, WebEventsManager } from '../utils';
+export interface DillPixelApplicationOptions extends IApplicationOptions {
     physics?: boolean;
     showStatsInProduction?: boolean;
     showStateDebugInProduction?: boolean;
@@ -29,7 +28,6 @@ export declare class Application extends PIXIApplication {
     protected _copyManager: CopyManager;
     protected _mouseManager: MouseManager;
     protected _webEventsManager: WebEventsManager;
-    protected _screenSizeRatio: number;
     protected _size: Point;
     protected _hitAreaRenderer: HitAreaRenderer;
     protected _saveManager: SaveManager;
@@ -41,22 +39,6 @@ export declare class Application extends PIXIApplication {
     protected _physics: PhysicsBase;
     protected stats: any;
     /**
-     * The config passed in can be a json object, or an `AppConfig` object.
-     * @param pConfig
-     * @see `AppConfig` for what can be contained in the passed in config.
-     * @default autoResize: true
-     * @default resolution: utils.isMobile.any === false ? 2 : (window.devicePixelRatio > 1 ? 2 : 1);
-     */
-    protected constructor(pConfig?: Partial<HLFApplicationOptions> & {
-        [key: string]: any;
-    });
-    static get containerElement(): HTMLElement | undefined;
-    static get containerID(): string;
-    /**
-     * gets the current singleton instance
-     */
-    static get instance(): Application;
-    /**
      * Creates a container element with the given id and appends it to the DOM.
      * @param pId{string} - The id of the element to create.
      */
@@ -66,6 +48,22 @@ export declare class Application extends PIXIApplication {
      * @param pElement{string | HTMLElement} - The id of the element to use as the container, or the element itself.
      */
     static create(pElement?: string | HTMLElement): Application | null;
+    /**
+     * The config passed in can be a json object, or an `AppConfig` object.
+     * @param appConfig
+     * @see `AppConfig` for what can be contained in the passed-in config.
+     * @default autoResize: true
+     * @default resolution: utils.isMobile.any === false ? 2 : (window.devicePixelRatio > 1 ? 2 : 1);
+     */
+    protected constructor(appConfig?: Partial<DillPixelApplicationOptions> & {
+        [key: string]: any;
+    });
+    static get containerElement(): HTMLElement | undefined;
+    static get containerID(): string;
+    /**
+     * gets the current singleton instance
+     */
+    static get instance(): Application;
     get resolutionSuffix(): string;
     get add(): Add;
     get make(): typeof Make;
@@ -138,7 +136,7 @@ export declare class Application extends PIXIApplication {
      */
     loadHTMLTextStyles(): Promise<void>;
     addDebugger(): Promise<void>;
-    protected setup(): void;
+    protected setup(): Promise<void> | void;
     /**
      * Called once per frame. Updates the `StateManager`, `PopupManager`, `LoadManager` and `HitAreaRenderer`.
      */
@@ -172,10 +170,10 @@ export declare class Application extends PIXIApplication {
     protected registerStates(): void;
     /**
      * Called when the application window is resized.
-     * @param pDelay A delay before telling the rest of the application that a resize occured.
+     * @param debounceDelay A delay (in seconds) before telling the rest of the application that a resize occured.
      * @default 0
      */
-    protected onResize(pDelay?: number): Promise<void>;
+    protected onResize(debounceDelay: number): Promise<void> | void;
     protected onPlayAudio(token: AudioToken): void;
     /**
      * Called when resize is complete after the delay.
@@ -193,7 +191,7 @@ export declare class Application extends PIXIApplication {
      * Override to specify what should happen after all persistent assets have been loaded.
      * @override
      */
-    protected onRequiredAssetsLoaded(): Promise<void>;
+    protected onRequiredAssetsLoaded(): Promise<void> | void;
 }
 export {};
 //# sourceMappingURL=Application.d.ts.map
