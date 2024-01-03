@@ -22,7 +22,6 @@ ${green(`Dill Pixel ${version}`)}
 `);
 
 const args = process.argv.slice(2);
-console.log(args);
 
 if (args.length === 0) {
 	console.log('Please provide a subcommand.');
@@ -30,12 +29,18 @@ if (args.length === 0) {
 }
 
 switch (args[0]) {
+	case 'version':
+		console.log(`${green(`Dill Pixel ${version}`)}`);
+		break;
 	case 'create':
 		let cwd = args[1] || '.';
 		await create(cwd);
 		break;
 	case 'update':
+		console.log(`${green(`Updating Dill Pixel to the latest version...`)}`);
 		await update();
+		const {version: newVersion} = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf-8'));
+		console.log(`${green(`Updated Dill Pixel to version ${newVersion}.`)}`);
 		break;
 	default:
 		console.log(`Unknown subcommand: ${args[0]}`);
