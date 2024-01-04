@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.23.5](https://github.com/relishinc/dill-pixel/compare/v2.23.4...v2.23.5) (2024-01-04)
+
+
+### Bug Fixes
+
+* modified implementation of registerFocusables global method ([538661d](https://github.com/relishinc/dill-pixel/commit/538661d095e380be1664ca1a06fd771dcc0ee8cb))
+
 ## [2.23.4](https://github.com/relishinc/dill-pixel/compare/v2.23.3...v2.23.4) (2024-01-04)
 
 
