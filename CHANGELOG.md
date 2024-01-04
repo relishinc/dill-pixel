@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.23.6](https://github.com/relishinc/dill-pixel/compare/v2.23.5...v2.23.6) (2024-01-04)
+
+
+### Bug Fixes
+
+* unregisterFocusables ([241c598](https://github.com/relishinc/dill-pixel/commit/241c598c5644e665b831906d6e6119bf24d464e6))
+
 ## [2.23.5](https://github.com/relishinc/dill-pixel/compare/v2.23.4...v2.23.5) (2024-01-04)
 
 
