@@ -49,7 +49,7 @@ export function registerFocusables(...focusables: IFocusable[] | [IFocusable[]])
   Signals.registerFocusables.emit(focusablesArray);
 }
 
-export function unregisterFocusable(focusable: IFocusable | ((it: IFocusable) => boolean)): void {
+export function unregisterFocusable(focusable: IFocusable): void {
   Signals.unregisterFocusable.emit(focusable);
 }
 
@@ -262,10 +262,8 @@ export class Signals {
   // keyboard signals
   public static registerFocusable = new Signal<(focusable: IFocusable) => void>();
   public static registerFocusables = new Signal<(focusables: IFocusable[]) => void>();
-  public static unregisterFocusable = new Signal<(focusable: IFocusable | ((it: IFocusable) => boolean)) => void>();
-  public static unregisterFocusables = new Signal<
-    (focusables: (IFocusable | ((it: IFocusable) => boolean))[]) => void
-  >();
+  public static unregisterFocusable = new Signal<(focusable: IFocusable) => void>();
+  public static unregisterFocusables = new Signal<(focusables: IFocusable[]) => void>();
   public static unregisterAllFocusables = new Signal<() => void>();
   public static clearFocus = new Signal<() => void>();
   public static forceFocus = new Signal<(focusable: IFocusable) => void>();

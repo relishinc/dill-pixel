@@ -422,15 +422,15 @@ export class KeyboardManager {
     }
   }
 
-  private onUnregisterFocusable(pData: IFocusable | ((it: IFocusable) => boolean)) {
+  private onUnregisterFocusable(focusable: IFocusable) {
     for (const map of this._maps) {
-      map.unregisterFocusable(pData);
+      map.unregisterFocusable(focusable);
     }
   }
 
-  private onUnregisterFocusables(pData: (IFocusable | ((it: IFocusable) => boolean))[]) {
+  private onUnregisterFocusables(focusables: IFocusable[]) {
     for (const map of this._maps) {
-      map.unregisterFocusable(pData);
+      map.unregisterFocusable(focusables);
     }
   }
 
