@@ -53,8 +53,21 @@ export function unregisterFocusable(focusable: IFocusable | ((it: IFocusable) =>
   Signals.unregisterFocusable.emit(focusable);
 }
 
-export function unregisterFocusables(focusables: (IFocusable | ((it: IFocusable) => boolean))[]): void {
-  Signals.unregisterFocusables.emit(focusables);
+// Function overloads
+export function unregisterFocusables(focusables: IFocusable[]): void;
+export function unregisterFocusables(...focusables: IFocusable[]): void;
+// Actual function implementation
+export function unregisterFocusables(...focusables: IFocusable[] | [IFocusable[]]): void {
+  let focusablesArray: IFocusable[];
+  // If the first argument is an array, use it directly. Otherwise, use the whole arguments array.
+  if (focusables.length === 1 && Array.isArray(focusables[0])) {
+    // If the first (and only) argument is an array, use it directly.
+    focusablesArray = focusables[0];
+  } else {
+    // Otherwise, treat it as a spread of IFocusable objects.
+    focusablesArray = focusables as IFocusable[];
+  }
+  Signals.unregisterFocusables.emit(focusablesArray);
 }
 
 export function unregisterAllFocusables(): void {
