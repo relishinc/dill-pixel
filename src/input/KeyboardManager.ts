@@ -2,6 +2,7 @@ import { isMobile } from 'pixi.js';
 import { Dictionary } from 'typescript-collections';
 import { Application } from '../core/Application';
 import { setKeyboardEnabled, Signals } from '../signals';
+import { bindMethods } from '../utils';
 import * as LogUtils from '../utils/LogUtils';
 import { IFocusable } from './IFocusable';
 import { KeyCode } from './index';
@@ -36,60 +37,6 @@ export class KeyboardManager {
   private _debug: boolean = false;
 
   private _keyBindings: Dictionary<Direction | 'Enter', IKeyboardBinding[]> = new Dictionary();
-
-  constructor(private app: Application) {
-    // bind internal methods
-    this.onRegisterFocusable = this.onRegisterFocusable.bind(this);
-    this.onRegisterFocusables = this.onRegisterFocusables.bind(this);
-    this.onUnregisterFocusable = this.onUnregisterFocusable.bind(this);
-    this.onUnregisterFocusables = this.onUnregisterFocusables.bind(this);
-    this.onUnregisterAllFocusables = this.onUnregisterAllFocusables.bind(this);
-    this.onClearFocus = this.onClearFocus.bind(this);
-    this.onForceFocus = this.onForceFocus.bind(this);
-    this.onForceNeighbours = this.onForceNeighbours.bind(this);
-    this.onClearNeighbours = this.onClearNeighbours.bind(this);
-    this.onSetKeyboardEnabled = this.onSetKeyboardEnabled.bind(this);
-    this.onGetKeyboardStatus = this.onGetKeyboardStatus.bind(this);
-    this.pushMapLayer = this.pushMapLayer.bind(this);
-    this.popMapLayer = this.popMapLayer.bind(this);
-    this.onKeyDown = this.onKeyDown.bind(this);
-    this.onKeyUp = this.onKeyUp.bind(this);
-
-    this._isActive = false;
-    this._isEnabled = true;
-
-    this._maps = new Array<KeyboardMap>();
-
-    this.addDefaultBindings();
-
-    window.addEventListener(InputUtils.Events.KEY_DOWN, this.onKeyDown.bind(this), false);
-
-    window.addEventListener(InputUtils.Events.POINTER_DOWN, this.onMouseDown.bind(this), false);
-
-    window.addEventListener(InputUtils.Events.KEY_UP, this.onKeyUp.bind(this), false);
-
-    window.addEventListener(InputUtils.Events.FOCUS, this.onBrowserFocus.bind(this));
-
-    window.addEventListener(InputUtils.Events.BLUR, this.onBrowserBlur.bind(this));
-
-    Signals.registerFocusable.connect(this.onRegisterFocusable);
-    Signals.registerFocusables.connect(this.onRegisterFocusables);
-    Signals.unregisterFocusable.connect(this.onUnregisterFocusable);
-    Signals.unregisterFocusables.connect(this.onUnregisterFocusables);
-    Signals.unregisterAllFocusables.connect(this.onUnregisterAllFocusables);
-    Signals.clearFocus.connect(this.onClearFocus);
-    Signals.forceFocus.connect(this.onForceFocus);
-    Signals.forceNeighbours.connect(this.onForceNeighbours);
-    Signals.clearNeighbours.connect(this.onClearNeighbours);
-    Signals.pushKeyboardLayer.connect(this.pushMapLayer);
-    Signals.popKeyboardLayer.connect(this.popMapLayer);
-    Signals.setKeyboardEnabled.connect(this.onSetKeyboardEnabled);
-    Signals.getKeyboardStatus.connect(this.onGetKeyboardStatus);
-
-    if (!isMobile.any) {
-      setKeyboardEnabled(true);
-    }
-  }
 
   public static bindingToString(pBinding: IKeyboardBinding): string {
     let ret = '';
@@ -133,6 +80,59 @@ export class KeyboardManager {
       return true;
     }
     return false;
+  }
+
+  constructor(private app: Application) {
+    // bind internal methods
+    bindMethods(
+      this,
+      'onRegisterFocusable',
+      'onRegisterFocusables',
+      'onUnregisterFocusable',
+      'onUnregisterFocusables',
+      'onUnregisterAllFocusables',
+      'onClearFocus',
+      'onForceFocus',
+      'onForceNeighbours',
+      'onClearNeighbours',
+      'onSetKeyboardEnabled',
+      'onGetKeyboardStatus',
+      'pushMapLayer',
+      'popMapLayer',
+      'onKeyDown',
+      'onKeyUp',
+    );
+
+    this._isActive = false;
+    this._isEnabled = true;
+
+    this._maps = new Array<KeyboardMap>();
+
+    this.addDefaultBindings();
+
+    window.addEventListener(InputUtils.Events.KEY_DOWN, this.onKeyDown.bind(this), false);
+    window.addEventListener(InputUtils.Events.POINTER_DOWN, this.onMouseDown.bind(this), false);
+    window.addEventListener(InputUtils.Events.KEY_UP, this.onKeyUp.bind(this), false);
+    window.addEventListener(InputUtils.Events.FOCUS, this.onBrowserFocus.bind(this));
+    window.addEventListener(InputUtils.Events.BLUR, this.onBrowserBlur.bind(this));
+
+    Signals.registerFocusable.connect(this.onRegisterFocusable);
+    Signals.registerFocusables.connect(this.onRegisterFocusables);
+    Signals.unregisterFocusable.connect(this.onUnregisterFocusable);
+    Signals.unregisterFocusables.connect(this.onUnregisterFocusables);
+    Signals.unregisterAllFocusables.connect(this.onUnregisterAllFocusables);
+    Signals.clearFocus.connect(this.onClearFocus);
+    Signals.forceFocus.connect(this.onForceFocus);
+    Signals.forceNeighbours.connect(this.onForceNeighbours);
+    Signals.clearNeighbours.connect(this.onClearNeighbours);
+    Signals.pushKeyboardLayer.connect(this.pushMapLayer);
+    Signals.popKeyboardLayer.connect(this.popMapLayer);
+    Signals.setKeyboardEnabled.connect(this.onSetKeyboardEnabled);
+    Signals.getKeyboardStatus.connect(this.onGetKeyboardStatus);
+
+    if (!isMobile.any) {
+      setKeyboardEnabled(true);
+    }
   }
 
   public set debug(pEnabled: boolean) {
@@ -410,15 +410,15 @@ export class KeyboardManager {
     }
   }
 
-  private onRegisterFocusable(pData: IFocusable) {
+  private onRegisterFocusable(focusable: IFocusable) {
     if (this._maps.length > 0) {
-      this._maps[0].registerFocusable(pData);
+      this._maps[0].registerFocusable(focusable);
     }
   }
 
-  private onRegisterFocusables(pData: IFocusable[]) {
+  private onRegisterFocusables(focusables: IFocusable[]) {
     if (this._maps.length > 0) {
-      this._maps[0].registerFocusable(pData);
+      this._maps[0].registerFocusable(focusables);
     }
   }
 
