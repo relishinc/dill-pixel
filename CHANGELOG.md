@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.23.4](https://github.com/relishinc/dill-pixel/compare/v2.23.3...v2.23.4) (2024-01-04)
+
+
+### Bug Fixes
+
+* added overload parameters to registerFocusables global method ([5cc2997](https://github.com/relishinc/dill-pixel/commit/5cc2997f3e01c34e8c9ee7572f3b0885c86ac58d))
+
 ## [2.23.3](https://github.com/relishinc/dill-pixel/compare/v2.23.2...v2.23.3) (2024-01-03)
 
 
