@@ -1,10 +1,10 @@
-import {IPoint} from 'pixi.js';
-import {Signal} from 'typed-signals';
-import {AudioToken} from '../audio';
-import {Draggable, IFocusable, IKeyboardStatus, KeyboardMapToken} from '../input';
-import {AssetMapAudioData, LoadToken} from '../load';
-import {IPopup, IPopupToken} from '../popup';
-import {StateToken} from '../state';
+import { IPoint } from 'pixi.js';
+import { Signal } from 'typed-signals';
+import { AudioToken } from '../audio';
+import { Draggable, IFocusable, IKeyboardStatus, KeyboardMapToken } from '../input';
+import { AssetMapAudioData, LoadToken } from '../load';
+import { IPopup, IPopupToken } from '../popup';
+import { StateToken } from '../state';
 
 // export convenience methods for all the popup signals
 export function showPopup(token: IPopupToken): void {
@@ -32,8 +32,13 @@ export function registerFocusable(focusable: IFocusable): void {
   Signals.registerFocusable.emit(focusable);
 }
 
-export function registerFocusables(focusables: IFocusable[]): void {
-  Signals.registerFocusables.emit(focusables);
+export function registerFocusables(focusables: IFocusable[]);
+export function registerFocusables(...focusables: IFocusable[]);
+// Actual function implementation
+export function registerFocusables(...focusables: IFocusable[] | [IFocusable[]]): void {
+  // If the first argument is an array, use it directly. Otherwise, use the whole arguments array.
+  const focusablesArray = Array.isArray(focusables[0]) ? focusables[0] : focusables;
+  Signals.registerFocusables.emit(focusablesArray);
 }
 
 export function unregisterFocusable(focusable: IFocusable | ((it: IFocusable) => boolean)): void {
