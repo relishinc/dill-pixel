@@ -32,12 +32,20 @@ export function registerFocusable(focusable: IFocusable): void {
   Signals.registerFocusable.emit(focusable);
 }
 
-export function registerFocusables(focusables: IFocusable[]);
-export function registerFocusables(...focusables: IFocusable[]);
+// Function overloads
+export function registerFocusables(focusables: IFocusable[]): void;
+export function registerFocusables(...focusables: IFocusable[]): void;
 // Actual function implementation
 export function registerFocusables(...focusables: IFocusable[] | [IFocusable[]]): void {
+  let focusablesArray: IFocusable[];
   // If the first argument is an array, use it directly. Otherwise, use the whole arguments array.
-  const focusablesArray = Array.isArray(focusables[0]) ? focusables[0] : focusables;
+  if (focusables.length === 1 && Array.isArray(focusables[0])) {
+    // If the first (and only) argument is an array, use it directly.
+    focusablesArray = focusables[0];
+  } else {
+    // Otherwise, treat it as a spread of IFocusable objects.
+    focusablesArray = focusables as IFocusable[];
+  }
   Signals.registerFocusables.emit(focusablesArray);
 }
 
