@@ -26,10 +26,10 @@ export declare class KeyboardManager {
     private _tabEnabled;
     private _debug;
     private _keyBindings;
-    constructor(app: Application);
     static bindingToString(pBinding: IKeyboardBinding): string;
     protected static doesEventMatchBinding(pEvent: KeyboardEvent, pBinding: IKeyboardBinding): boolean;
     private static areEqual;
+    constructor(app: Application);
     set debug(pEnabled: boolean);
     get isActive(): boolean;
     addKeyBinding(pDirection: Direction | 'Enter', pKeyCode: KeyCodes, pModifiers?: Partial<{

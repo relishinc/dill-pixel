@@ -12,6 +12,7 @@ export declare function hideAllPopups(): void;
 export declare function hidePopupComplete(popup: IPopup): void;
 export declare function registerFocusable(focusable: IFocusable): void;
 export declare function registerFocusables(focusables: IFocusable[]): void;
+export declare function registerFocusables(...focusables: IFocusable[]): void;
 export declare function unregisterFocusable(focusable: IFocusable | ((it: IFocusable) => boolean)): void;
 export declare function unregisterFocusables(focusables: (IFocusable | ((it: IFocusable) => boolean))[]): void;
 export declare function unregisterAllFocusables(): void;
