@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.23.7](https://github.com/relishinc/dill-pixel/compare/v2.23.6...v2.23.7) (2024-01-05)
+
+
+### Bug Fixes
+
+* added startingFrame to AnimatedSprite.play method ([52ecd1a](https://github.com/relishinc/dill-pixel/commit/52ecd1af83164a317b143bd288caf92abbc759df))
+
 ## [2.23.6](https://github.com/relishinc/dill-pixel/compare/v2.23.5...v2.23.6) (2024-01-04)
 
 
