@@ -6,6 +6,7 @@ import {SpriteAnimation} from './SpriteAnimation';
  * Animated sprite
  */
 export class AnimatedSprite extends Sprite {
+  private _offset: number = 0;
   private _elapsed: number;
   private _frame: number;
   private _animations: Dictionary<string, SpriteAnimation>;
@@ -33,6 +34,26 @@ export class AnimatedSprite extends Sprite {
     return this._isPlaying;
   }
 
+  get currentFrame(): number {
+    return this._frame;
+  }
+
+  set currentFrame(frame: number) {
+    if (!this._activeAnimation) {
+      console.warn(
+        `AnimatedSprite: ${this.constructor.name}:: can't set the current frame before an active animation has been chosen.`,
+      );
+      return;
+    }
+    if (frame < 0 || frame > this._activeAnimation.frames) {
+      console.warn(
+        `AnimatedSprite: ${this.constructor.name}:: The frame ${frame} is outside of the number of frames for the current animation`,
+      );
+      return;
+    }
+    this._frame = frame;
+  }
+
   /**
    * Adds animation
    * @param key
@@ -48,13 +69,14 @@ export class AnimatedSprite extends Sprite {
    * Plays animated sprite
    * @param key
    * @param reverse
+   * @param startingFrame
    */
-  public play(key: string, reverse: boolean = false): void {
+  public play(key: string, reverse: boolean = false, startingFrame: number = 0): void {
     const anim: SpriteAnimation | undefined = this._animations.getValue(key);
     if (anim !== undefined) {
       this._isReversed = reverse;
       this._isPlaying = true;
-      this._elapsed = 0;
+      this._elapsed = startingFrame ? (startingFrame / anim.frames) * anim.duration : 0;
       this._activeAnimation = anim;
     } else {
       console.log(`AnimatedSprite.play: Animation with key ${key} was not found`);
@@ -123,25 +145,5 @@ export class AnimatedSprite extends Sprite {
     } else if (complete) {
       this._activeAnimation.fireOnComplete(this._isReversed);
     }
-  }
-
-  get currentFrame(): number {
-    return this._frame;
-  }
-
-  set currentFrame(frame: number) {
-    if (!this._activeAnimation) {
-      console.warn(
-        `AnimatedSprite: ${this.constructor.name}:: can't set the current frame before an active animation has been chosen.`,
-      );
-      return;
-    }
-    if (frame < 0 || frame > this._activeAnimation.frames) {
-      console.warn(
-        `AnimatedSprite: ${this.constructor.name}:: The frame ${frame} is outside of the number of frames for the current animation`,
-      );
-      return;
-    }
-    this._frame = frame;
   }
 }
