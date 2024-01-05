@@ -4,6 +4,7 @@ import { SpriteAnimation } from './SpriteAnimation';
  * Animated sprite
  */
 export declare class AnimatedSprite extends Sprite {
+    private _offset;
     private _elapsed;
     private _frame;
     private _animations;
@@ -18,6 +19,8 @@ export declare class AnimatedSprite extends Sprite {
      * Gets whether is playing
      */
     get isPlaying(): boolean;
+    get currentFrame(): number;
+    set currentFrame(frame: number);
     /**
      * Adds animation
      * @param key
@@ -29,8 +32,9 @@ export declare class AnimatedSprite extends Sprite {
      * Plays animated sprite
      * @param key
      * @param reverse
+     * @param startingFrame
      */
-    play(key: string, reverse?: boolean): void;
+    play(key: string, reverse?: boolean, startingFrame?: number): void;
     /**
      * Holds frame
      * @param key
@@ -46,7 +50,5 @@ export declare class AnimatedSprite extends Sprite {
      * Updates frame
      */
     private updateFrame;
-    get currentFrame(): number;
-    set currentFrame(frame: number);
 }
 //# sourceMappingURL=AnimatedSprite.d.ts.map
