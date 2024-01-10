@@ -2,6 +2,7 @@ import { IApplicationOptions } from 'pixi.js';
 export declare class AppConfig {
     [key: string]: any;
     autoStart?: boolean;
+    useSpine?: boolean;
     width?: number;
     height?: number;
     view?: HTMLCanvasElement;

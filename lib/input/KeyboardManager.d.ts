@@ -1,4 +1,4 @@
-import { Application } from '../core/Application';
+import { Application } from '../core';
 import { IFocusable } from './IFocusable';
 import { Direction } from './KeyboardMap';
 import { KeyCodes } from './KeyCodes';
@@ -32,6 +32,7 @@ export declare class KeyboardManager {
     constructor(app: Application);
     set debug(pEnabled: boolean);
     get isActive(): boolean;
+    get numLayers(): number;
     addKeyBinding(pDirection: Direction | 'Enter', pKeyCode: KeyCodes, pModifiers?: Partial<{
         altKey: boolean;
         shiftKey: boolean;

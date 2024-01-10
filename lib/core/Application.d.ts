@@ -13,7 +13,6 @@ export interface DillPixelApplicationOptions extends IApplicationOptions {
     showStatsInProduction?: boolean;
     showStateDebugInProduction?: boolean;
 }
-type DebuggerType = typeof import('../debug').Debugger;
 export declare class Application extends PIXIApplication {
     protected static readonly SIZE_MIN_DEFAULT: Point;
     protected static readonly SIZE_MAX_DEFAULT: Point;
@@ -35,9 +34,10 @@ export declare class Application extends PIXIApplication {
     protected _voiceoverManager: IVoiceOverManager;
     protected _addFactory: Add;
     protected startSplashProcess: OmitThisParameter<(pPersistentAssets: AssetMapData[], pOnComplete: () => void) => void>;
-    protected _debugger: unknown;
     protected _physics: PhysicsBase;
     protected stats: any;
+    protected _useSpine: boolean;
+    protected _ready: boolean;
     /**
      * Creates a container element with the given id and appends it to the DOM.
      * @param pId{string} - The id of the element to create.
@@ -90,7 +90,6 @@ export declare class Application extends PIXIApplication {
     get load(): LoadManager;
     get defaultState(): string | typeof State | undefined;
     get physics(): PhysicsBase;
-    get debugger(): DebuggerType;
     get htmlTextStyles(): typeof HTMLTextStyleManager;
     addStats(): Promise<void>;
     addFocusManager(): void;
@@ -135,7 +134,7 @@ export declare class Application extends PIXIApplication {
      * this.add.htmlText( 'This is some text', getHTMLTextStyle('{style1}'), ...);
      */
     loadHTMLTextStyles(): Promise<void>;
-    addDebugger(): Promise<void>;
+    protected addSpine(): Promise<void>;
     protected setup(): Promise<void> | void;
     /**
      * Called once per frame. Updates the `StateManager`, `PopupManager`, `LoadManager` and `HitAreaRenderer`.
@@ -193,5 +192,4 @@ export declare class Application extends PIXIApplication {
      */
     protected onRequiredAssetsLoaded(): Promise<void> | void;
 }
-export {};
 //# sourceMappingURL=Application.d.ts.map

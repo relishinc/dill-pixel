@@ -1,4 +1,3 @@
-import { Spine } from '@pixi-spine/runtime-4.1';
 import { BitmapText, Circle, Container, DisplayObject, Ellipse, IHitArea, Point, Polygon, Rectangle, RoundedRectangle, Sprite, Texture } from 'pixi.js';
 import { PointLike } from './Types';
 export type PixiSimpleShape = Rectangle | Circle | Ellipse | RoundedRectangle;
@@ -79,11 +78,6 @@ export declare enum SpineTrack {
     Mouth = 2,
     NumElements = 3
 }
-/**
- * Creates and returns a `spine.Spine` object.
- * @param pName The name of the spine file.
- */
-export declare function makeSpine(pName: string): Spine;
 /**
  * Calculates bounding box in global coordinate space
  * @param pTarget - local coordinate space

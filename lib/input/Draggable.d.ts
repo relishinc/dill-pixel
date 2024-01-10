@@ -11,7 +11,6 @@ export declare class Draggable extends Selectable {
     private _storedStageHitArea;
     private _storedStageEventMode;
     constructor();
-    protected addEventListeners(): void;
     /**
      * Gets whether is dragging
      */
@@ -25,14 +24,7 @@ export declare class Draggable extends Selectable {
      * @param pValue
      */
     set dragThreshold(pValue: number);
-    /**
-     * Attaches visuals
-     */
-    attachVisuals(): void;
-    /**
-     * Drops draggable
-     */
-    drop(): void;
+    protected addEventListeners(): void;
     /**
      * Selects draggable
      */
@@ -46,7 +38,6 @@ export declare class Draggable extends Selectable {
      * @param pEvent
      */
     protected onPointerDown(pEvent: FederatedPointerEvent): void;
-    removeAppListeners(): void;
     /**
      * onPointerUp
      */
@@ -55,6 +46,16 @@ export declare class Draggable extends Selectable {
      * onPointerUpOutside
      */
     protected onPointerUpOutside(pEvent: FederatedPointerEvent): void;
+    /**
+     * Attaches visuals
+     */
+    attachVisuals(): void;
+    /**
+     * Drops draggable
+     */
+    drop(): void;
+    removeAppListeners(): void;
+    addVisual(pVisual: Container): void;
     /**
      * onPointerMove
      */
@@ -71,6 +72,5 @@ export declare class Draggable extends Selectable {
      * Snaps to mouse
      */
     protected snapToMouse(): void;
-    addVisual(pVisual: Container): void;
 }
 //# sourceMappingURL=Draggable.d.ts.map

@@ -15,13 +15,13 @@ export declare abstract class Receptacle extends Container implements IFocusable
     private _connections;
     constructor();
     /**
-     * Sets whether is active
-     */
-    set isActive(pValue: boolean);
-    /**
      * Gets whether is active
      */
     get isActive(): boolean;
+    /**
+     * Sets whether is active
+     */
+    set isActive(pValue: boolean);
     /**
      * onFocusBegin
      */
