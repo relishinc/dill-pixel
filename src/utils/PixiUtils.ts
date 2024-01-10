@@ -1,4 +1,4 @@
-import { Spine } from '@pixi-spine/runtime-4.1';
+// import { Spine } from '@pixi-spine/runtime-4.1';
 import {
   Assets,
   BitmapText,
@@ -226,18 +226,6 @@ export enum SpineTrack {
   Eyes,
   Mouth,
   NumElements,
-}
-
-/**
- * Creates and returns a `spine.Spine` object.
- * @param pName The name of the spine file.
- */
-export function makeSpine(pName: string): Spine {
-  const spine: Spine = new Spine(Assets.get(pName).spineData!);
-  spine.skeleton.setToSetupPose();
-  spine.update(0);
-  spine.autoUpdate = false;
-  return spine;
 }
 
 /**

@@ -22,6 +22,8 @@ import {
   TilingSprite,
 } from 'pixi.js';
 import { AnimatedSprite, Container, FlexContainer, FlexContainerSettings } from '../../gameobjects';
+import { Spine } from '../../global';
+import { SpineSettings } from '../../spine/Make';
 import { PointLike, SpritesheetLike } from '../index';
 import {
   AnchorSettings,
@@ -404,5 +406,11 @@ export class Add {
     const animatedSprite = Make.animatedSprite(settings);
     this.defaultContainer.addChild(animatedSprite);
     return animatedSprite;
+  }
+
+  spine(settings: SpineSettings): Spine {
+    const spine = Make.spine(settings);
+    this.defaultContainer.addChild(spine);
+    return spine;
   }
 }

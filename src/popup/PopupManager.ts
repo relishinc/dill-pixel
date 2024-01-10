@@ -1,10 +1,11 @@
 import { BLEND_MODES, DisplayObject, Graphics, Point } from 'pixi.js';
 import { Dictionary } from 'typescript-collections';
 import { Application } from '../core';
+import { popKeyboardLayer, pushKeyboardLayer } from '../functions';
 import { Container } from '../gameobjects';
 import * as Input from '../input';
 import { KeyValues } from '../input/KeyValues';
-import { popKeyboardLayer, pushKeyboardLayer, Signals } from '../signals';
+import { Signals } from '../signals';
 import * as LogUtils from '../utils/LogUtils';
 import { IPopup } from './IPopup';
 import { Popup } from './Popup';

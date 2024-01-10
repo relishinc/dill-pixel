@@ -62,6 +62,7 @@
     "@types/howler": "^2.2.9",
     "@types/matter-js": "^0.19.1",
     "@types/stats.js": "^0.17.1",
+    "csv-parse": "^5.5.3",
     "fontfaceobserver": "^2.3.0",
     "gsap": "^3.12.1",
     "howler": "^2.2.3",

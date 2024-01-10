@@ -26,6 +26,8 @@ import {
 import {Application} from '../../core';
 import {AnimatedSprite, Container, FlexContainer, FlexContainerSettings, SpriteAnimation} from '../../gameobjects';
 import {SpriteAnimationProps} from '../../gameobjects/animation';
+import {Spine} from '../../global';
+import {SpineSettings} from '../../spine/Make';
 import {PointLike, SpritesheetLike} from '../Types';
 import {resolvePointLike, setObjectName} from './utils';
 
@@ -150,6 +152,8 @@ export interface AnimatedSpriteSettings extends VisibilitySettings, PositionSett
 }
 
 export class Make {
+  public static spine: (settings: SpineSettings) => Spine;
+
   static texture(settings: TextureSettings): Texture;
   static texture(asset: string, sheet?: SpritesheetLike): Texture;
   static texture(asset: string | TextureSettings, sheet?: SpritesheetLike): Texture {

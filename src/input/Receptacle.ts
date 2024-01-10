@@ -2,7 +2,8 @@ import {Container, FederatedPointerEvent, IPoint, Point, Rectangle} from 'pixi.j
 import {SignalConnections} from 'typed-signals';
 import {AudioToken} from '../audio';
 import * as AudioCategory from '../audio/AudioCategory';
-import {playAudio, Signals} from '../signals';
+import {playAudio} from '../functions';
+import {Signals} from '../signals';
 import * as PixiUtils from '../utils/PixiUtils';
 import * as RectUtils from '../utils/RectUtils';
 import {Draggable} from './Draggable';
@@ -55,17 +56,17 @@ export abstract class Receptacle extends Container implements IFocusable {
   }
 
   /**
-   * Sets whether is active
-   */
-  public set isActive(pValue: boolean) {
-    this._isActive = pValue;
-  }
-
-  /**
    * Gets whether is active
    */
   public get isActive(): boolean {
     return this._isActive;
+  }
+
+  /**
+   * Sets whether is active
+   */
+  public set isActive(pValue: boolean) {
+    this._isActive = pValue;
   }
 
   /**

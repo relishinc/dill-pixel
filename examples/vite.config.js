@@ -8,7 +8,7 @@ import wasm from 'vite-plugin-wasm';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-/** @type {import("vite").UserConfig} */
+/** @type {import('vite').UserConfig} */
 export default defineConfig((config) => ({
   ...config,
   target: 'esnext',
@@ -42,6 +42,10 @@ export default defineConfig((config) => ({
         {
           src: normalizePath(path.resolve(__dirname, './src/assets/json/*')),
           dest: './assets/json',
+        },
+        {
+          src: normalizePath(path.resolve(__dirname, './src/assets/spine/*')),
+          dest: './assets/spine',
         },
         {
           src: normalizePath(path.resolve(__dirname, './src/assets/fonts/*')),

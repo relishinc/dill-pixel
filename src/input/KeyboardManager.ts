@@ -1,7 +1,8 @@
 import { isMobile } from 'pixi.js';
 import { Dictionary } from 'typescript-collections';
-import { Application } from '../core/Application';
-import { setKeyboardEnabled, Signals } from '../signals';
+import { Application } from '../core';
+import { setKeyboardEnabled } from '../functions';
+import { Signals } from '../signals';
 import { bindMethods } from '../utils';
 import * as LogUtils from '../utils/LogUtils';
 import { IFocusable } from './IFocusable';
@@ -141,6 +142,10 @@ export class KeyboardManager {
 
   public get isActive(): boolean {
     return this._isActive;
+  }
+
+  public get numLayers(): number {
+    return this._maps.length;
   }
 
   public addKeyBinding(
@@ -490,13 +495,14 @@ export class KeyboardManager {
   /**
    * Pushs map layer
    */
-  private pushMapLayer(): void {
+  private pushMapLayer(): KeyboardMap {
     if (this._maps.length > 0) {
       this._maps[0].isActive = false;
     }
     const map = new KeyboardMap();
     this._maps.unshift(map);
     map.isActive = this._isActive;
+    return map;
   }
 
   /**
