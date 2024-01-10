@@ -1,7 +1,7 @@
 import { Howl } from 'howler';
 import { Assets } from 'pixi.js';
-import { audioLoadError } from '../signals';
-import { AssetUtils } from '../utils/AssetUtils';
+import { audioLoadError } from '../functions';
+import { AssetUtils } from '../utils';
 import * as HowlerUtils from './HowlerUtils';
 import { IAudioManager } from './IAudioManager';
 import { IAudioTrack } from './IAudioTrack';
@@ -19,16 +19,20 @@ export class HowlerTrack implements IAudioTrack {
   private _audioManager: IAudioManager;
   private _urls: string[];
 
+  private static getDefaultUrls(_id: string): string[] {
+    return HowlerTrack.FILE_EXTENSIONS.map((ext) => AssetUtils.FILEPATH_AUDIO + _id + '.' + ext);
+  }
+
   constructor(
-    pId: string,
-    pCategory: string,
-    pAudioManager: IAudioManager,
-    pVolume: number = 1,
-    pLoop: boolean = false,
+    trackId: string,
+    category: string,
+    audioManager: IAudioManager,
+    volume: number = 1,
+    loop: boolean = false,
   ) {
-    this._id = pId;
-    this._audioManager = pAudioManager;
-    this._category = pCategory;
+    this._id = trackId;
+    this._audioManager = audioManager;
+    this._category = category;
 
     if (Assets.resolver.basePath !== '') {
       this._urls = HowlerTrack.getDefaultUrls(this._id).map((url) => Assets.resolver.basePath + '/' + url);
@@ -38,20 +42,12 @@ export class HowlerTrack implements IAudioTrack {
 
     this.loadSource();
 
-    this.setVolume(pVolume);
-    this.setLooped(pLoop);
-  }
-
-  private static getDefaultUrls(_id: string): string[] {
-    return HowlerTrack.FILE_EXTENSIONS.map((ext) => AssetUtils.FILEPATH_AUDIO + _id + '.' + ext);
+    this.setVolume(volume);
+    this.setLooped(loop);
   }
 
   public get id() {
     return this._id;
-  }
-
-  public getSource(): Howl {
-    return this._source;
   }
 
   public play(): void {
@@ -71,10 +67,10 @@ export class HowlerTrack implements IAudioTrack {
     this._source.stop();
   }
 
-  public fadeTo(pVolume: number, pMilliseconds: number): void {
+  public fadeTo(volume: number, milliseconds: number): void {
     const newVol: number =
-      pVolume * this._audioManager.masterVolume * this._audioManager.getCategoryVolume(this._category);
-    this._source.fade(this._source.volume(), newVol, pMilliseconds);
+      volume * this._audioManager.masterVolume * this._audioManager.getCategoryVolume(this._category);
+    this._source.fade(this._source.volume(), newVol, milliseconds);
   }
 
   public unloadSource(): void {
@@ -101,8 +97,8 @@ export class HowlerTrack implements IAudioTrack {
     return this._source.mute();
   }
 
-  public setMuted(pMute: boolean): void {
-    this._source.mute(pMute);
+  public setMuted(value: boolean): void {
+    this._source.mute(value);
   }
 
   public isLooped(): boolean {
@@ -123,17 +119,27 @@ export class HowlerTrack implements IAudioTrack {
     return this._volume;
   }
 
-  public setVolume(pVolume: number): void {
+  public setVolume(volume: number): void {
     this.setVolumeWithModifiers(
-      pVolume,
+      volume,
       this._audioManager.masterVolume,
       this._audioManager.getCategoryVolume(this._category),
     );
   }
 
-  public setVolumeWithModifiers(pVolume: number, pMasterVolume: number, pCategoryVolume: number): void {
-    this._volume = pVolume;
-    this._source.volume(this._volume * pMasterVolume * pCategoryVolume);
+  public setVolumeWithModifiers(volume: number, masterVolume: number, categoryVolume: number): void {
+    this._volume = volume;
+    this._source.volume(this._volume * masterVolume * categoryVolume);
+  }
+
+  public setPitch(pitch?: number): void {
+    if (pitch) {
+      this._source.rate(pitch);
+    }
+  }
+
+  public getPitch(): number {
+    return this._source.rate();
   }
 
   public getTimePos(): number {
@@ -152,16 +158,20 @@ export class HowlerTrack implements IAudioTrack {
     return this._source.playing();
   }
 
-  public on(pEvent: string, pCallback: () => void): void {
-    this._source.on(pEvent, pCallback);
+  public on(eventName: string, callback: () => void): void {
+    this._source.on(eventName, callback);
   }
 
-  public off(pEvent: string, pCallback?: () => void): void {
-    this._source.off(pEvent, pCallback);
+  public off(eventName: string, callback?: () => void): void {
+    this._source.off(eventName, callback);
   }
 
-  public once(pEvent: string, pCallback: () => void): void {
-    this._source.once(pEvent, pCallback);
+  public once(eventName: string, callback: () => void): void {
+    this._source.once(eventName, callback);
+  }
+
+  public getSource(): Howl {
+    return this._source;
   }
 
   private onLoadError(pID: number | undefined | null, pError: any): void {

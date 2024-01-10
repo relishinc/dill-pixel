@@ -18,6 +18,7 @@ import {
   TransitionType,
 } from 'dill-pixel';
 import { FocusablesExample } from './state/FocusablesExample';
+import { SpineExample } from './state/SpineExample';
 
 export default class Application extends HLFApplication {
   constructor() {
@@ -28,7 +29,7 @@ export default class Application extends HLFApplication {
       );
     }
 
-    super({ resizeTo: Application.containerElement });
+    super({ resizeTo: Application.containerElement, useSpine: true, showStatsInProduction: true, antialias: false });
   }
 
   static get instance(): Application {
@@ -76,6 +77,7 @@ export default class Application extends HLFApplication {
     this.state.register(ContainerEditModeExample);
     this.state.register(FlexContainerExample);
     this.state.register(FocusablesExample);
+    this.state.register(SpineExample);
   }
 
   protected createAssetMap(): void {

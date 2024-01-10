@@ -1,5 +1,6 @@
-import { Application } from '../core/Application';
-import { playCaption, Signals, stopCaption, voiceoverEnded, voiceoverStarted } from '../signals';
+import { Application } from '../core';
+import { playCaption, stopCaption, voiceoverEnded, voiceoverStarted } from '../functions';
+import { Signals } from '../signals';
 import { LogUtils } from '../utils';
 import * as AudioCategory from './AudioCategory';
 import { HowlerTrack } from './HowlerTrack';
@@ -43,6 +44,18 @@ interface IQueueItem extends IPlayOptions {
   delay?: number;
 }
 
+export function playVO(
+  key: string | (string | number)[],
+  mode?: PlayMode | Callback | IPlayOptions,
+  callback?: Callback,
+) {
+  Application.instance.voiceover.playVO(key, mode as any, callback as any);
+}
+
+export function stopVO(): void {
+  Application.instance.voiceover.stopVO();
+}
+
 export interface IVoiceOverManager {
   /** Duration, in milliseconds, of the fade out when stopping voiceovers. Must be greater than or equal to zero */
   FADE_OUT_DURATION: number;
@@ -75,6 +88,7 @@ export interface IVoiceOverManager {
   /**
    * Play a Voiceover or sequence of voiceovers
    * @param key Id or array of voiceover Ids
+   * @param options
    * @param options.mode Audio interruption behaviour. Default is {@link PlayMode.Override}
    * @param options.cb Called after the last voiceover finishes playing, or immediately if no playback occurs
    */
@@ -109,6 +123,23 @@ export class VoiceOverManager implements IVoiceOverManager {
   private readonly _queue: IQueueItem[] = [];
 
   private _activeTimeout?: any;
+  private log = (m: string, ...params: any[]) => {
+    if (this.debug) {
+      LogUtils.log(m, { className: 'VoiceOverManager', color: 'salmon' }, ...params);
+    }
+  };
+  private warn = (m: string, ...params: any[]) => {
+    LogUtils.logWarning(m, { className: 'VoiceOverManager', color: 'salmon' }, ...params);
+  };
+  private error = (m: string, ...params: any[]) =>
+    LogUtils.logError(
+      m,
+      {
+        className: 'VoiceOverManager',
+        color: 'salmon',
+      },
+      ...params,
+    );
 
   constructor(private app: Application) {
     // TODO: Pause and unpause are not actually part of the framework
@@ -371,22 +402,4 @@ export class VoiceOverManager implements IVoiceOverManager {
       this._activeTimeout.resume();
     }
   }
-
-  private log = (m: string, ...params: any[]) => {
-    if (this.debug) {
-      LogUtils.log(m, { className: 'VoiceOverManager', color: 'salmon' }, ...params);
-    }
-  };
-  private warn = (m: string, ...params: any[]) => {
-    LogUtils.logWarning(m, { className: 'VoiceOverManager', color: 'salmon' }, ...params);
-  };
-  private error = (m: string, ...params: any[]) =>
-    LogUtils.logError(
-      m,
-      {
-        className: 'VoiceOverManager',
-        color: 'salmon',
-      },
-      ...params,
-    );
 }

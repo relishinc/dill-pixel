@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import {green} from 'kleur/colors';
 import fs from 'node:fs';
+import {compress} from './audio';
+import {generateCaptions} from './audio/cc.mjs';
 import {create} from './create.mjs';
 import {update} from './update.mjs';
 
@@ -42,6 +44,25 @@ switch (args[0]) {
 		await update();
 		const {version: newVersion} = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf-8'));
 		console.log(`${green(`Updated Dill Pixel to version ${newVersion}.`)}`);
+		break;
+	case 'audio':
+		switch (args[1]) {
+			case 'compress':
+				const audioDirectory = args[2] || './src/assets/audio';
+				console.log(`${green(`Dill Pixel is compressing your audio files...`)}`);
+				await compress(audioDirectory);
+				console.log(`${green(`Dill Pixel has finished compressing your audio files! Find them in "${audioDirectory}/output."`)}`);
+				break;
+			case 'captions':
+				const captionsDirectory = args[2] || './src/assets/audio/captions';
+				console.log(`${green(`Dill Pixel is preparing your closed captioning files...`)}`);
+				await generateCaptions(captionsDirectory);
+				console.log(`${green(`Dill Pixel has finished prepaeing your closed captioning files! Find them in "${captionsDirectory}/output."`)}`);
+				break;
+			default:
+				console.log(`Unknown audio command: "${args[0]}". Please use "compress".`);
+				break;
+		}
 		break;
 	default:
 		console.log(`Unknown subcommand: ${args[0]}`);

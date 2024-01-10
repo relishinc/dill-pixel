@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "Examples of some Dill Pixel Features",
   "main": "index.html",
+  "bin": {
+    "dill-pixel": "../bin/dill-pixel.mjs"
+  },
   "scripts": {
     "start": "vite",
     "dev": "vite",

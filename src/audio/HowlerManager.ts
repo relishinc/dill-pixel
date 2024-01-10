@@ -1,6 +1,6 @@
 import { Howl } from 'howler';
 import { Dictionary } from 'typescript-collections';
-import { Application } from '../core/Application';
+import { Application } from '../core';
 import { AssetMapAudioData } from '../load';
 import { Signals } from '../signals';
 import { LogUtils, MathUtils } from '../utils';
@@ -11,6 +11,106 @@ import { HowlerTrack } from './HowlerTrack';
 import * as HowlerUtils from './HowlerUtils';
 import { IAudioManager } from './IAudioManager';
 import { IAudioTrack } from './IAudioTrack';
+
+// utility functions to call from HowlerManager
+
+export function setMasterVolume(value: number): void {
+  Application.instance.audio.masterVolume = value;
+}
+
+export function getMasterVolume(): number {
+  return Application.instance.audio.masterVolume;
+}
+
+export function fadeAudioTo(id: string, category: string, volume: number, duration: number): void {
+  Application.instance.audio.fadeTo(id, category, volume, duration);
+}
+
+/**
+ * Creates an IAudioTrack.
+ * @returns The created IAudioTrack.
+ * @param trackId
+ * @param category
+ */
+export function createAudioTrack(trackId: string, category: string): IAudioTrack {
+  return Application.instance.audio.createAudioTrack(trackId, category);
+}
+
+/**
+ * Gets a track.
+ * @returns The IAudioTrack created or undefined if not able to create track.
+ * This could happen if the source file could not be found.
+ * @param trackId
+ * @param category
+ */
+export function getAudioTrack(trackId: string, category?: string): IAudioTrack | undefined {
+  return Application.instance.audio.getAudioTrack(trackId, category || AudioCategory.DEFAULT);
+}
+
+/**
+ * Gets the volume of a specific category.
+ * @param category The category to check.
+ * @returns The volume of the category.
+ */
+export function getAudioCategoryVolume(category: string): number {
+  return Application.instance.audio.getCategoryVolume(category);
+}
+
+/**
+ * Sets the volume of a specific category.
+ * @param category
+ * @param volume
+ */
+export function setAudioCategoryVolume(category: string, volume: number) {
+  Application.instance.audio.setCategoryVolume(category, volume);
+}
+
+/**
+ * Gets the length of an IAudioTrack.
+ * @returns The length of the track or `undefined` if the track doesn't exist.
+ * @param trackId
+ * @param category
+ */
+export function getAudioTrackDuration(trackId: string, category: string): number | undefined {
+  return Application.instance.audio.getDuration(trackId, category);
+}
+
+/**
+ * Plays a track. If the track does not exist, this function will create it.
+ * @returns The track playing.
+ * @param trackId
+ * @param volume
+ * @param loop
+ * @param category
+ * @param pitch
+ */
+export function playAudioTrack(
+  trackId: string,
+  volume?: number,
+  loop?: boolean,
+  category?: string,
+  pitch?: number,
+): IAudioTrack | undefined {
+  return Application.instance.audio.play(trackId, volume, loop, category || AudioCategory.DEFAULT, pitch);
+}
+
+/**
+ * Pauses a track.
+ * @param trackId
+ * @param category
+ */
+export function pauseAudioTrack(trackId: string, category: string): IAudioTrack | undefined {
+  return Application.instance.audio.pause(trackId, category || AudioCategory.DEFAULT);
+}
+
+/**
+ * Stops a track.
+ * @param trackId
+ * @param category
+ */
+export function stopAudioTrack(trackId: string, category: string): IAudioTrack | undefined {
+  return Application.instance.audio.stop(trackId, category || AudioCategory.DEFAULT);
+}
 
 export class HowlerManager implements IAudioManager {
   private _masterVolume: number;
@@ -77,17 +177,17 @@ export class HowlerManager implements IAudioManager {
     Signals.audioLoadError.connect(this.onAudioLoadError);
   }
 
-  public getCategoryVolume(pCategory: string): number {
-    return this.getCollection(pCategory).volume;
+  public getCategoryVolume(category: string): number {
+    return this.getCollection(category).volume;
   }
 
-  public setCategoryVolume(pCategory: string, pVolume: number): void {
-    this.getCollection(pCategory).volume = pVolume;
-    this.updateCategoryVolume(pCategory);
+  public setCategoryVolume(category: string, pVolume: number): void {
+    this.getCollection(category).volume = pVolume;
+    this.updateCategoryVolume(category);
   }
 
-  public getDuration(pId: string, pCategory: string): number | undefined {
-    const track: HowlerTrack | undefined = this.getAudioTrack(pId, pCategory) as HowlerTrack;
+  public getDuration(trackId: string, category: string): number | undefined {
+    const track: HowlerTrack | undefined = this.getAudioTrack(trackId, category) as HowlerTrack;
 
     if (track !== undefined) {
       return track.getDuration();
@@ -97,56 +197,63 @@ export class HowlerManager implements IAudioManager {
   }
 
   public play(
-    pId: string,
-    pVolume: number = 1,
-    pLoop: boolean = false,
-    pCategory: string = AudioCategory.DEFAULT,
-  ): void {
+    trackId: string,
+    volume: number = 1,
+    loop: boolean = false,
+    category: string = AudioCategory.DEFAULT,
+    pitch?: number,
+  ): IAudioTrack | undefined {
     let loaded: HowlerTrack;
-    const category: AudioCollection = this.getCollection(pCategory);
-    const track: HowlerTrack | undefined = category.tracks.getValue(pId) as HowlerTrack;
+    const collection: AudioCollection = this.getCollection(category);
+    const track: HowlerTrack | undefined = collection.tracks.getValue(trackId) as HowlerTrack;
     if (track === undefined) {
-      this.load(pId, pCategory, () => {
-        loaded = category.tracks.getValue(pId) as HowlerTrack;
-        loaded.setLooped(pLoop);
-        loaded.setVolumeWithModifiers(pVolume, this._masterVolume, category.volume);
+      this.load(trackId, category, () => {
+        loaded = collection.tracks.getValue(trackId) as HowlerTrack;
+        loaded.setLooped(loop);
+        loaded.setVolumeWithModifiers(volume, this._masterVolume, collection.volume);
+        loaded.setPitch(pitch);
         loaded.play();
+        return loaded;
       });
     } else {
-      track.setLooped(pLoop);
-      track.setVolumeWithModifiers(pVolume, this._masterVolume, category.volume);
+      track.setLooped(loop);
+      track.setVolumeWithModifiers(volume, this._masterVolume, collection.volume);
+      track.setPitch(pitch);
       track.play();
+      return track;
     }
   }
 
-  public pause(pId: string, pCategory: string): void {
-    const track: HowlerTrack | undefined = this.getAudioTrack(pId, pCategory) as HowlerTrack;
+  public pause(trackId: string, category: string): IAudioTrack | undefined {
+    const track: HowlerTrack | undefined = this.getAudioTrack(trackId, category) as HowlerTrack;
     if (track !== undefined) {
       track.pause();
     }
+    return track;
   }
 
-  public stop(pId: string, pCategory: string): void {
-    const track: HowlerTrack | undefined = this.getAudioTrack(pId, pCategory) as HowlerTrack;
+  public stop(trackId: string, category: string): IAudioTrack | undefined {
+    const track: HowlerTrack | undefined = this.getAudioTrack(trackId, category) as HowlerTrack;
     if (track !== undefined) {
       track.stop();
     }
+    return track;
   }
 
-  public load(pIds: string | string[], pCategory: string, pOnLoad?: () => void): void {
-    const category: AudioCollection = this.getCollection(pCategory);
+  public load(ids: string | string[], category: string, onLoadCallback?: () => void): void {
+    const collection: AudioCollection = this.getCollection(category);
     let track: HowlerTrack | undefined;
     let id: string;
     // convert single Ids into array for simplicity
-    if (typeof pIds === 'string') {
-      pIds = [pIds];
+    if (typeof ids === 'string') {
+      ids = [ids];
     }
     // Create the howls if they don't already exist
-    for (let i = pIds.length - 1; i >= 0; --i) {
-      id = pIds[i];
-      track = category.tracks.getValue(id) as HowlerTrack;
+    for (let i = ids.length - 1; i >= 0; --i) {
+      id = ids[i];
+      track = collection.tracks.getValue(id) as HowlerTrack;
       if (track === undefined) {
-        track = this.createAudioTrack(id, pCategory) as HowlerTrack;
+        track = this.createAudioTrack(id, category) as HowlerTrack;
       } else {
         // Ensure that the actual source exists
         if (track.getSource().state() === HowlerUtils.State.UNLOADED) {
@@ -155,15 +262,15 @@ export class HowlerManager implements IAudioManager {
       }
     }
     // If supplied, call the pOnLoad callback once all howls have loaded
-    if (pOnLoad !== undefined) {
+    if (onLoadCallback !== undefined) {
       let loadedCount: number = 0;
-      for (let i = pIds.length - 1; i >= 0; --i) {
-        const howl: Howl = (category.tracks.getValue(pIds[i])! as HowlerTrack).getSource();
+      for (let i = ids.length - 1; i >= 0; --i) {
+        const howl: Howl = (collection.tracks.getValue(ids[i])! as HowlerTrack).getSource();
         if (howl.state() !== HowlerUtils.State.LOADED) {
           howl.on(HowlerUtils.Events.LOAD, () => {
             ++loadedCount;
-            if (loadedCount >= pIds.length) {
-              pOnLoad();
+            if (loadedCount >= ids.length) {
+              onLoadCallback();
             }
           });
         } else {
@@ -171,85 +278,84 @@ export class HowlerManager implements IAudioManager {
         }
       }
       // If all Ids were already loaded, fire off the callback immediately
-      if (loadedCount === pIds.length) {
-        pOnLoad();
+      if (loadedCount === ids.length) {
+        onLoadCallback();
       }
     }
   }
 
-  public unload(pId: string, pCategory: string, pRemoveTrack: boolean): void {
-    const category: AudioCollection = this.getCollection(pCategory);
-    const track: IAudioTrack | undefined = category.tracks.getValue(pId);
+  public unload(trackId: string, category: string, removeTrack: boolean = false): void {
+    const collection: AudioCollection = this.getCollection(category);
+    const track: IAudioTrack | undefined = collection.tracks.getValue(trackId);
 
     if (track !== undefined) {
       track.unloadSource();
-      if (pRemoveTrack === true) {
-        category.tracks.remove(pId);
+      if (removeTrack) {
+        collection.tracks.remove(trackId);
       }
     }
   }
 
-  public fadeTo(pId: string, pCategory: string, pVolume: number, pDuration: number): void {
-    const track: HowlerTrack | undefined = this.getAudioTrack(pId, pCategory) as HowlerTrack;
+  public fadeTo(trackId: string, category: string, volume: number, pDuration: number): void {
+    const track: HowlerTrack | undefined = this.getAudioTrack(trackId, category) as HowlerTrack;
     if (track !== undefined) {
-      pVolume = MathUtils.clamp(pVolume, 0, 1);
-      track.fadeTo(pVolume, pDuration);
+      volume = MathUtils.clamp(volume, 0, 1);
+      track.fadeTo(volume, pDuration);
     }
   }
 
-  public getAudioTrack(pId: string, pCategory: string): IAudioTrack | undefined {
-    if (this._collections.containsKey(pCategory)) {
-      return this._collections.getValue(pCategory)!.tracks.getValue(pId);
+  public getAudioTrack(trackId: string, category: string): IAudioTrack | undefined {
+    if (this._collections.containsKey(category)) {
+      return this._collections.getValue(category)!.tracks.getValue(trackId);
     }
 
     return undefined;
   }
 
   public createAudioTrack(
-    pId: string,
-    pCategory: string = AudioCategory.DEFAULT,
-    pVolume: number = 1,
-    pLoop: boolean = false,
+    trackId: string,
+    category: string = AudioCategory.DEFAULT,
+    volume: number = 1,
+    loop: boolean = false,
   ): IAudioTrack {
     this.log(
       'Creating new howler track with id %c%s%c and category %c%s%c.',
       LogUtils.STYLE_RED_BOLD,
-      pId,
+      trackId,
       LogUtils.STYLE_BLACK,
       LogUtils.STYLE_RED_BOLD,
-      pCategory,
+      category,
       LogUtils.STYLE_BLACK,
     );
-    const track: HowlerTrack = new HowlerTrack(pId, pCategory, this, pVolume, pLoop);
-    const category: AudioCollection = this.getCollection(pCategory);
-    category.tracks.setValue(pId, track);
+    const track: HowlerTrack = new HowlerTrack(trackId, category, this, volume, loop);
+    const collection: AudioCollection = this.getCollection(category);
+    collection.tracks.setValue(trackId, track);
     return track;
   }
 
   /**
    * Loads a group of audio tracks and adds them to the same category.
-   * @param pToken The token with the load data.
+   * @param token
    */
-  private loadFromIds(pToken: { assets: string[]; category: string; callback: () => void }): void {
-    this.load(pToken.assets, pToken.category, pToken.callback);
+  private loadFromIds(token: { assets: string[]; category: string; callback: () => void }): void {
+    this.load(token.assets, token.category, token.callback);
   }
 
   /**
    * Loads a group of audio tracks into the categories specified by each data object.
-   * @param pTopic The pubsub message id.
-   * @param pData The token with the load data.
+   * @param data
    */
-  private loadFromAssetMapData(pData: {
+  private loadFromAssetMapData(data: {
     assets: AssetMapAudioData[];
     callback: () => void;
     progressCallback: (progress: number) => void;
   }): void {
     this.log('Loading audio assets from AssetMap.');
 
-    this._audioLoadTokenCallback = pData.callback;
-    this._audioLoadTokenProgressCallback = pData.progressCallback;
+    this._audioLoadTokenCallback = data.callback;
+    this._audioLoadTokenProgressCallback = data.progressCallback;
 
-    pData.assets.forEach((token) => {
+    data.assets.forEach((token) => {
       this._audioLoadTokens.push(token);
     });
 
@@ -265,7 +371,7 @@ export class HowlerManager implements IAudioManager {
 
     this._audioLoadTokenProgressCallback(percent);
 
-    if (this.tryLoadFirstAssetMapAudioData() === false) {
+    if (!this.tryLoadFirstAssetMapAudioData()) {
       this.log('All audio from asset map loaded');
       this._audioLoadTokenCallback();
     }
@@ -294,33 +400,33 @@ export class HowlerManager implements IAudioManager {
 
   /**
    * Updates the volume of all the tracks in a specific category.
-   * @param pCategory The category to update.
+   * @param category The category to update.
    */
-  private updateCategoryVolume(pCategory: string): void {
-    const collection: AudioCollection = this.getCollection(pCategory);
+  private updateCategoryVolume(category: string): void {
+    const collection: AudioCollection = this.getCollection(category);
     const tracks: IAudioTrack[] = collection.tracks.values();
     for (let i = tracks.length - 1; i >= 0; --i) {
       tracks[i].setVolumeWithModifiers(tracks[i].getVolume(), this._masterVolume, collection.volume);
     }
   }
 
-  private getCollection(pCategory: string): AudioCollection {
-    if (this._collections.containsKey(pCategory) === false) {
-      this.createCollection(pCategory);
+  private getCollection(category: string): AudioCollection {
+    if (!this._collections.containsKey(category)) {
+      this.createCollection(category);
     }
-    return this._collections.getValue(pCategory)!;
+    return this._collections.getValue(category)!;
   }
 
-  private createCollection(pCategory: string): void {
-    this._collections.setValue(pCategory, new AudioCollection());
+  private createCollection(category: string): void {
+    this._collections.setValue(category, new AudioCollection());
   }
 
-  private onPlayRequested(pToken: AudioToken): void {
-    this.play(pToken.id, pToken.volume, pToken.loop, pToken.category);
+  private onPlayRequested(token: AudioToken): void {
+    this.play(token.id, token.volume, token.loop, token.category);
   }
 
-  private onVisibilityChanged(pVisible: boolean): void {
-    if (pVisible) {
+  private onVisibilityChanged(isVisible: boolean): void {
+    if (isVisible) {
       this._masterVolume = this._previousMasterVolume;
       this.updateAllCategoryVolume();
     } else {
@@ -330,50 +436,50 @@ export class HowlerManager implements IAudioManager {
     }
   }
 
-  private onAudioLoadError(pData: { id: string; category: string; src: string; fallback: string[]; error: any }): void {
-    const canRetry: boolean = pData.fallback.length > 0;
+  private onAudioLoadError(data: { id: string; category: string; src: string; fallback: string[]; error: any }): void {
+    const canRetry: boolean = data.fallback.length > 0;
     if (canRetry) {
-      this.logW('Audio Load Error. Trying again with a fallback url.', pData);
-      const track = this.getAudioTrack(pData.id, pData.category);
+      this.logW('Audio Load Error. Trying again with a fallback url.', data);
+      const track = this.getAudioTrack(data.id, data.category);
       if (track !== undefined) {
         track.loadSource();
       }
     } else {
-      this.logE('Audio Load Error. No more fallback urls to try.', pData);
+      this.logE('Audio Load Error. No more fallback urls to try.', data);
     }
   }
 
   /**
    * Logs a message with class name and colour coding if debug flag is true.
-   * @param pText The message to print.
-   * @param [pParams] Optional data to be included in the message.
    * @todo Relish GM => Decide if this should live in its own class, be in an interface or within each manager.
+   * @param text
+   * @param rest
    */
-  private log(pText: string, ...pParams: any[]): void {
+  private log(text: string, ...rest: any[]): void {
     if (this._debug) {
-      LogUtils.log(pText, { className: 'HowlerManager', color: LogUtils.COLOR_LIGHT_BLUE }, ...pParams);
+      LogUtils.log(text, { className: 'HowlerManager', color: LogUtils.COLOR_LIGHT_BLUE }, ...rest);
     }
   }
 
   /**
    * Logs a warning message with class name and colour coding if debug flag is true.
-   * @param pText The message to print.
-   * @param [pParams] Optional data to be included in the message.
    * @todo Relish GM => Decide if this should live in its own class, be in an interface or within each manager.
+   * @param text
+   * @param rest
    */
-  private logW(pText: string, ...pParams: any[]): void {
+  private logW(text: string, ...rest: any[]): void {
     if (this._debug) {
-      LogUtils.logWarning(pText, { className: 'HowlerManager', color: LogUtils.COLOR_LIGHT_BLUE }, ...pParams);
+      LogUtils.logWarning(text, { className: 'HowlerManager', color: LogUtils.COLOR_LIGHT_BLUE }, ...rest);
     }
   }
 
   /**
    * Logs an error message with class name and colour coding.
-   * @param pText The message to print.
-   * @param [pParams] Optional data to be included in the message.
    * @todo Relish GM => Decide if this should live in its own class, be in an interface or within each manager.
+   * @param text
+   * @param rest
    */
-  private logE(pText: string, ...pParams: any[]): void {
-    LogUtils.logError(pText, { className: 'HowlerManager', color: LogUtils.COLOR_LIGHT_BLUE }, ...pParams);
+  private logE(text: string, ...rest: any[]): void {
+    LogUtils.logError(text, { className: 'HowlerManager', color: LogUtils.COLOR_LIGHT_BLUE }, ...rest);
   }
 }

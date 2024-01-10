@@ -1,16 +1,9 @@
 import {Container, Point} from 'pixi.js';
 import {Dictionary} from 'typescript-collections';
 import {Application} from '../core';
+import {hideLoadScreen, initState, loadAssets, showLoadScreen, stateTransitionHalted, unloadAssets} from '../functions';
 import {AssetMap, AssetMapData, LoadToken} from '../load';
-import {
-  hideLoadScreen,
-  initState,
-  loadAssets,
-  showLoadScreen,
-  Signals,
-  stateTransitionHalted,
-  unloadAssets
-} from '../signals';
+import {Signals} from '../signals';
 import {delay} from '../utils';
 import * as LogUtils from '../utils/LogUtils';
 import {State} from './State';
@@ -23,6 +16,14 @@ import * as TransitionType from './TransitionType';
  */
 interface IStateData {
   create: () => State;
+}
+
+export function transitionToState(
+  stateIdAndData: string | typeof State | { id: string; data: any },
+  loadScreen?: string | undefined,
+  transitionSteps?: TransitionStep[],
+): boolean {
+  return Application.instance.state.transitionTo(stateIdAndData, loadScreen, transitionSteps);
 }
 
 /**
@@ -255,12 +256,6 @@ export class StateManager extends Container {
    * @param loadScreen
    * @param transitionSteps
    */
-  public transitionTo(
-    stateIdAndData: string | typeof State,
-    loadScreen?: string | undefined,
-    transitionSteps?: TransitionStep[],
-  ): boolean;
-
   public transitionTo(
     stateIdAndData: string | typeof State | { id: string; data: any },
     loadScreen?: string | undefined,

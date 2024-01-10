@@ -1,7 +1,8 @@
 import {Assets, Container, Point} from 'pixi.js';
 import {Dictionary} from 'typescript-collections';
-import {Application} from '../core/Application';
-import {loadAudioFromAssetMap, loadComplete, loadScreenHidden, Signals} from '../signals';
+import {Application} from '../core';
+import {loadAudioFromAssetMap, loadComplete, loadScreenHidden} from '../functions';
+import {Signals} from '../signals';
 import {AssetUtils} from '../utils';
 import * as LogUtils from '../utils/LogUtils';
 import {AssetMap} from './AssetMap';

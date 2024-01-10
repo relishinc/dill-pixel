@@ -6,6 +6,7 @@ export class AppConfig {
   [key: string]: any;
 
   public autoStart?: boolean;
+  public useSpine?: boolean;
   public width?: number;
   public height?: number;
   public view?: HTMLCanvasElement;
@@ -29,6 +30,7 @@ export class AppConfig {
       pConfig = {
         antialias: false,
         autoStart: false,
+        useSpine: false,
         background: undefined,
         backgroundAlpha: 0,
         backgroundColor: 'transparent',

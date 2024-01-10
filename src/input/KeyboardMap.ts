@@ -1,5 +1,5 @@
 import { Container, IPoint } from 'pixi.js';
-import { keyboardFocusBegin, keyboardFocusEnd } from '../signals';
+import { keyboardFocusBegin, keyboardFocusEnd } from '../functions';
 import { LogUtils } from '../utils';
 import { IFocusable } from './IFocusable';
 

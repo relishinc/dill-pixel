@@ -4,6 +4,7 @@ import FontFaceObserver from 'fontfaceobserver';
 import {Application as PIXIApplication, Assets, IApplicationOptions, Point, Ticker} from 'pixi.js';
 import {AudioToken, HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverManager} from '../audio';
 import {CopyManager} from '../copy';
+import {updateFocus} from '../functions';
 import {
   DefaultKeyboardFocusManagerSprite,
   HitAreaRenderer,
@@ -15,7 +16,7 @@ import {AssetMap, AssetMapData, LoadManager, LoadScreen, LoadScreenProvider, Spl
 import {PhysicsBase, PhysicsEngineType} from '../physics';
 import {PopupManager} from '../popup';
 import {SaveManager} from '../save';
-import {keyboardReFocus, Signals} from '../signals';
+import {Signals} from '../signals';
 import {State, StateManager} from '../state';
 import {
   Add,
@@ -68,6 +69,8 @@ export class Application extends PIXIApplication {
   protected _physics: PhysicsBase;
 
   protected stats: any;
+  protected _useSpine: boolean;
+  protected _ready: boolean = false;
 
   /**
    * Creates a container element with the given id and appends it to the DOM.
@@ -114,6 +117,7 @@ export class Application extends PIXIApplication {
   protected constructor(appConfig?: Partial<DillPixelApplicationOptions> & { [key: string]: any }) {
     // TODO Relish GM => Look into what might be added to the AppConfig class and if there is reason to cache it.
     super(new AppConfig(appConfig));
+    this._useSpine = appConfig?.useSpine || false;
     if (isDev || appConfig?.showStatsInProduction) {
       this.addStats().then(() => {
         console.log('stats.js added');
@@ -362,6 +366,7 @@ export class Application extends PIXIApplication {
       if (isDev) {
         console.log('Application initialized');
       }
+      Application.instance._ready = true;
     });
     return Application.instance;
   }
@@ -370,13 +375,19 @@ export class Application extends PIXIApplication {
    * Initializes all managers and starts the splash screen process.
    */
   public async init(): Promise<void> {
+    // load required externals
+    if (this._useSpine) {
+      await import('../spine');
+      console.log('using spine');
+      console.log(Make.spine);
+    }
+
     this.onPlayAudio = this.onPlayAudio.bind(this);
     this.addToStage(this._stateManager);
     this.addToStage(this._popupManager);
     this.addToStage(this._loadManager);
     this._hitAreaRenderer = this.addToStage(new HitAreaRenderer(this.stage));
     this.addToStage(this._keyboardFocusManager);
-
     this._audioManager.init();
 
     Signals.playAudio.connect(this.onPlayAudio);
@@ -457,6 +468,9 @@ export class Application extends PIXIApplication {
    * Called once per frame. Updates the `StateManager`, `PopupManager`, `LoadManager` and `HitAreaRenderer`.
    */
   protected update(): void {
+    if (!this._ready) {
+      return;
+    }
     if (this.stats) {
       this.stats.begin();
     }
@@ -564,7 +578,7 @@ export class Application extends PIXIApplication {
     // emit a global resize signal that anything can listen to
     Signals.onResize.emit(this._size);
 
-    keyboardReFocus();
+    updateFocus();
 
     if (this._hitAreaRenderer.active) {
       this._hitAreaRenderer.renderHitAreas();

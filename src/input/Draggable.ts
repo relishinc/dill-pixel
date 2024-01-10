@@ -1,8 +1,8 @@
-import {Container, FederatedPointerEvent, Point} from 'pixi.js';
-import {dragBegin, dragEnd, draggableDeselected, draggableSelected} from '../signals';
+import { Container, FederatedPointerEvent, Point } from 'pixi.js';
+import { dragBegin, dragEnd, draggableDeselected, draggableSelected } from '../functions';
 import * as PixiUtils from '../utils/PixiUtils';
 import * as PointUtils from '../utils/PointUtils';
-import {Selectable} from './Selectable';
+import { Selectable } from './Selectable';
 
 // TODO:SH: Strip the Chef Leo logic from this class and make it generic and customizable
 /**
@@ -27,12 +27,6 @@ export class Draggable extends Selectable {
     this.cursor = 'grab';
   }
 
-  protected addEventListeners() {
-    this.on('pointerdown', this.onPointerDown);
-    this.on('pointerup', this.onPointerUp);
-    this.on('pointerupoutside', this.onPointerUpOutside);
-  }
-
   /**
    * Gets whether is dragging
    */
@@ -55,18 +49,10 @@ export class Draggable extends Selectable {
     this._dragThresholdSq = pValue * pValue;
   }
 
-  /**
-   * Attaches visuals
-   */
-  public attachVisuals(): void {
-    PixiUtils.setParent(this._visuals, this);
-  }
-
-  /**
-   * Drops draggable
-   */
-  public drop(): void {
-    // override
+  protected addEventListeners() {
+    this.on('pointerdown', this.onPointerDown);
+    this.on('pointerup', this.onPointerUp);
+    this.on('pointerupoutside', this.onPointerUpOutside);
   }
 
   /**
@@ -107,22 +93,6 @@ export class Draggable extends Selectable {
     this.app.stage.on('pointerupoutside', this.onPointerUpOutside);
   }
 
-  removeAppListeners() {
-    this.app.stage.off('pointermove', this.onPointerMove);
-    this.app.stage.off('pointerup', this.onPointerUp);
-    this.app.stage.off('pointerupoutside', this.onPointerUpOutside);
-
-    this.app.stage.hitArea = this._storedStageHitArea;
-    this.app.stage.eventMode = this._storedStageEventMode;
-    this._storedStageHitArea = null;
-    this._storedStageEventMode = null;
-
-    this.app.stage.cursor = 'default';
-    this.cursor = 'grab';
-
-    this.setHitArea();
-  }
-
   /**
    * onPointerUp
    */
@@ -147,6 +117,41 @@ export class Draggable extends Selectable {
       super.onPointerUpOutside(pEvent);
     }
     this.removeAppListeners();
+  }
+
+  /**
+   * Attaches visuals
+   */
+  public attachVisuals(): void {
+    PixiUtils.setParent(this._visuals, this);
+  }
+
+  /**
+   * Drops draggable
+   */
+  public drop(): void {
+    // override
+  }
+
+  removeAppListeners() {
+    this.app.stage.off('pointermove', this.onPointerMove);
+    this.app.stage.off('pointerup', this.onPointerUp);
+    this.app.stage.off('pointerupoutside', this.onPointerUpOutside);
+
+    this.app.stage.hitArea = this._storedStageHitArea;
+    this.app.stage.eventMode = this._storedStageEventMode;
+    this._storedStageHitArea = null;
+    this._storedStageEventMode = null;
+
+    this.app.stage.cursor = 'default';
+    this.cursor = 'grab';
+
+    this.setHitArea();
+  }
+
+  public addVisual(pVisual: Container): void {
+    this._visuals.addChild(pVisual);
+    this.setHitArea();
   }
 
   /**
@@ -194,10 +199,5 @@ export class Draggable extends Selectable {
   protected snapToMouse(): void {
     const pos = this.parent.toLocal(this._eventData!.global, this.parent);
     this.position.set(pos.x, pos.y);
-  }
-
-  public addVisual(pVisual: Container): void {
-    this._visuals.addChild(pVisual);
-    this.setHitArea();
   }
 }
