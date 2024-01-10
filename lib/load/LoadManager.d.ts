@@ -1,5 +1,5 @@
 import { Container, Point } from 'pixi.js';
-import { Application } from '../core/Application';
+import { Application } from '../core';
 import { AssetMapData } from './AssetMapData';
 import { LoadScreen, LoadScreenProvider } from './LoadScreen';
 import { SplashScreen } from './SplashScreen';

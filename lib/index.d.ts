@@ -1,4 +1,3 @@
-import '@pixi-spine/base';
 export * from './core';
 export * from './audio';
 export * from './copy';
@@ -12,5 +11,6 @@ export * from './save';
 export * from './state';
 export * from './utils';
 export * from './signals';
+export * from './functions';
 export { Add, Make } from './utils/factory';
 //# sourceMappingURL=index.d.ts.map

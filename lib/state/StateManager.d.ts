@@ -2,6 +2,10 @@ import { Container, Point } from 'pixi.js';
 import { Application } from '../core';
 import { State } from './State';
 import { TransitionStep } from './TransitionStep';
+export declare function transitionToState(stateIdAndData: string | typeof State | {
+    id: string;
+    data: any;
+}, loadScreen?: string | undefined, transitionSteps?: TransitionStep[]): boolean;
 /**
  * Manages all states.
  * @extends Container
@@ -111,7 +115,10 @@ export declare class StateManager extends Container {
      * @param loadScreen
      * @param transitionSteps
      */
-    transitionTo(stateIdAndData: string | typeof State, loadScreen?: string | undefined, transitionSteps?: TransitionStep[]): boolean;
+    transitionTo(stateIdAndData: string | typeof State | {
+        id: string;
+        data: any;
+    }, loadScreen?: string | undefined, transitionSteps?: TransitionStep[]): boolean;
     getRegisteredStateIds(): string[];
     getStateFromHash(): string | null;
     excludeFromDebugList(name: string): void;

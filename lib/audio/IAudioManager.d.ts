@@ -1,4 +1,4 @@
-import { IAudioTrack } from "./IAudioTrack";
+import { IAudioTrack } from './IAudioTrack';
 /**
  * All audio manager implementations need to implement this interface to function with the framework.
  */
@@ -17,80 +17,81 @@ export interface IAudioManager {
     init(): void;
     /**
      * Gets the volume of a specific category.
-     * @param pCategory The category to check.
+     * @param category The category to check.
      * @returns The volume of the category.
      */
-    getCategoryVolume(pCategory: string): number;
+    getCategoryVolume(category: string): number;
     /**
      * Sets the volume of a specific category.
-     * @param pCategory The category to set.
-     * @param pVolume The volume to set.
+     * @param category The category to set.
+     * @param volume The volume to set.
      */
-    setCategoryVolume(pCategory: string, pVolume: number): void;
+    setCategoryVolume(category: string, volume: number): void;
     /**
      * Gets the length of an IAudioTrack.
-     * @param pId The id of the track to check.
-     * @param pCategory The category that the track belongs to.
+     * @param trackId The id of the track to check.
+     * @param category The category that the track belongs to.
      * @returns The length of the track or `undefined` if the track doesn't exist.
      */
-    getDuration(pId: string, pCategory: string): number | undefined;
+    getDuration(trackId: string, category: string): number | undefined;
     /**
      * Plays a track. If the track does not exist, this function will create it.
-     * @param pId The id of the track to play.
-     * @param pVolume The volume to play the track at. If this function creates the track, this will be the base volume.
-     * @param pLoop Should the track loop or not.
-     * @param pCategory The category that the track belongs to.
+     * @param trackId The id of the track to play.
+     * @param volume The volume to play the track at. If this function creates the track, this will be the base volume.
+     * @param loop Should the track loop or not.
+     * @param category The category that the track belongs to.
+     * @param pitch the pitch of the track
      * @returns The track playing.
      */
-    play(pId: string, pVolume?: number, pLoop?: boolean, pCategory?: string): void;
+    play(trackId: string, volume?: number, loop?: boolean, category?: string, pitch?: number): IAudioTrack | undefined;
     /**
      * Pauses a track.
-     * @param pId The id of the track.
-     * @param pCategory The category that the track belongs to.
+     * @param trackId The id of the track.
+     * @param category The category that the track belongs to.
      */
-    pause(pId: string, pCategory: string): void;
+    pause(trackId: string, category: string): IAudioTrack | undefined;
     /**
      * Stops a track.
-     * @param pId The id of the track.
-     * @param pCategory The category that the track belongs to.
+     * @param trackId The id of the track.
+     * @param category The category that the track belongs to.
      */
-    stop(pId: string, pCategory: string): void;
+    stop(trackId: string, category: string): IAudioTrack | undefined;
     /**
      * Loads one or more tracks.
-     * @param pIds The ids of the tracks to load.
-     * @param pCategory The category that the track belongs to.
-     * @param pOnLoad The callback to be called when loading is finished.
+     * @param trackIds The ids of the tracks to load.
+     * @param category The category that the track belongs to.
+     * @param onLoadCallback The callback to be called when loading is finished.
      */
-    load(pIds: string | string[], pCategory: string, pOnLoad?: () => void): void;
+    load(trackIds: string | string[], category: string, onLoadCallback?: () => void): void;
     /**
      * Unloads a track's source from memory.
-     * @param pId The id of the track.
-     * @param pCategory The category that the track belongs to.
-     * @param pRemoveTrack Whether the IAudioTrack should be removed and destroyed too.
+     * @param trackId The id of the track.
+     * @param category The category that the track belongs to.
+     * @param removeTrack Whether the IAudioTrack should be removed and destroyed too.
      */
-    unload(pId: string, pCategory: string, pRemoveTrack: boolean): void;
+    unload(trackId: string, category: string, removeTrack: boolean): void;
     /**
      * Fades a track from it's current volume over time.
-     * @param pId The id of the track.
-     * @param pCategory The category that the track belongs to.
-     * @param pVolume The volume to fade to.
-     * @param pMilliseconds The time in milliseconds it should take to fade.
+     * @param trackId The id of the track.
+     * @param category The category that the track belongs to.
+     * @param volume The volume to fade to.
+     * @param milliseconds The time in milliseconds it should take to fade.
      */
-    fadeTo(pId: string, pCategory: string, pVolume: number, pMilliseconds: number): void;
+    fadeTo(trackId: string, category: string, volume: number, milliseconds: number): void;
     /**
      * Creates an IAudioTrack.
-     * @param pId The id of the track.
-     * @param pCategory The category that the track belongs to.
+     * @param trackId The id of the track.
+     * @param category The category that the track belongs to.
      * @returns The created IAudioTrack.
      */
-    createAudioTrack(pId: string, pCategory: string): IAudioTrack;
+    createAudioTrack(trackId: string, category: string): IAudioTrack;
     /**
      * Gets a track.
-     * @param pId The id of the track.
-     * @param pCategory The category that the track belongs to.
+     * @param trackId The id of the track.
+     * @param category The category that the track belongs to.
      * @returns The IAudioTrack created or undefined if not able to create track.
      * This could happen if the source file could not be found.
      */
-    getAudioTrack(pId: string, pCategory: string): IAudioTrack | undefined;
+    getAudioTrack(trackId: string, category: string): IAudioTrack | undefined;
 }
 //# sourceMappingURL=IAudioManager.d.ts.map

@@ -2,6 +2,8 @@ import { Geometry, State } from '@pixi/core';
 import { BitmapText, DRAW_MODES, Graphics, HTMLText, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Mesh, NineSlicePlane, Point, Shader, SimpleMesh, SimplePlane, SimpleRope, Sprite, Text, TextStyle, Texture, TilingSprite } from 'pixi.js';
 import { AnimatedSprite, Container, FlexContainer, FlexContainerSettings, SpriteAnimation } from '../../gameobjects';
 import { SpriteAnimationProps } from '../../gameobjects/animation';
+import { Spine } from '../../global';
+import { SpineSettings } from '../../spine/Make';
 import { PointLike, SpritesheetLike } from '../Types';
 /**
  * Gets a `PIXI.Texture` asset.
@@ -94,6 +96,7 @@ export interface AnimatedSpriteSettings extends VisibilitySettings, PositionSett
     }[];
 }
 export declare class Make {
+    static spine: (settings: SpineSettings) => Spine;
     static texture(settings: TextureSettings): Texture;
     static texture(asset: string, sheet?: SpritesheetLike): Texture;
     static coloredSprite(settings: ColoredSpriteSettings): Sprite;

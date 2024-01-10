@@ -17,9 +17,6 @@ export declare abstract class Selectable extends Container implements ISelectabl
     protected _hoverVo: string | undefined;
     protected _clickedSfx: string | undefined;
     protected constructor();
-    protected removeEventListeners(): void;
-    protected addEventListeners(): void;
-    protected setHitArea(): void;
     /**
      * Gets whether is selected
      */
@@ -58,6 +55,9 @@ export declare abstract class Selectable extends Container implements ISelectabl
      * @returns PIXI.Point
      */
     getFocusSize(): IPoint;
+    protected removeEventListeners(): void;
+    protected addEventListeners(): void;
+    protected setHitArea(): void;
     /**
      * Plays hover vo
      */

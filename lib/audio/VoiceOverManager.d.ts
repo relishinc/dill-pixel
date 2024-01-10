@@ -1,4 +1,4 @@
-import { Application } from '../core/Application';
+import { Application } from '../core';
 type Callback = (pDidPlay: boolean) => void;
 export declare enum PlayMode {
     /** Play immediately if nothing else is playing, otherwise add to end of queue */
@@ -27,6 +27,8 @@ export interface IPlayOptions {
      */
     callback?: Callback;
 }
+export declare function playVO(key: string | (string | number)[], mode?: PlayMode | Callback | IPlayOptions, callback?: Callback): void;
+export declare function stopVO(): void;
 export interface IVoiceOverManager {
     /** Duration, in milliseconds, of the fade out when stopping voiceovers. Must be greater than or equal to zero */
     FADE_OUT_DURATION: number;
@@ -51,6 +53,7 @@ export interface IVoiceOverManager {
     /**
      * Play a Voiceover or sequence of voiceovers
      * @param key Id or array of voiceover Ids
+     * @param options
      * @param options.mode Audio interruption behaviour. Default is {@link PlayMode.Override}
      * @param options.cb Called after the last voiceover finishes playing, or immediately if no playback occurs
      */
@@ -77,6 +80,9 @@ export declare class VoiceOverManager implements IVoiceOverManager {
     debug: boolean;
     private readonly _queue;
     private _activeTimeout?;
+    private log;
+    private warn;
+    private error;
     constructor(app: Application);
     private get activeVO();
     playVO(key: string | (string | number)[], mode?: PlayMode | Callback | IPlayOptions, callback?: Callback): void;
@@ -85,9 +91,6 @@ export declare class VoiceOverManager implements IVoiceOverManager {
     private playNext;
     private onPause;
     private onResume;
-    private log;
-    private warn;
-    private error;
 }
 export {};
 //# sourceMappingURL=VoiceOverManager.d.ts.map
