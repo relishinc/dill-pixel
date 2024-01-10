@@ -69,14 +69,14 @@ export default class Application extends HLFApplication {
   }
 
   protected registerStates(): void {
-    this.state.register(MatterPhysicsExample);
-    this.state.register(RapierPhysicsExample);
-    this.state.register(PopupExample);
     this.state.register(SpriteExample);
+    this.state.register(PopupExample);
     this.state.register(HTMLTextStyleExample);
     this.state.register(ContainerEditModeExample);
     this.state.register(FlexContainerExample);
     this.state.register(FocusablesExample);
+    this.state.register(MatterPhysicsExample);
+    this.state.register(RapierPhysicsExample);
     this.state.register(SpineExample);
   }
 

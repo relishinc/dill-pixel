@@ -1,4 +1,4 @@
-import { ISkeletonData } from 'pixi-spine';
+import { ISkeletonData } from '../../global';
 import { AssetType, AssetUtils } from '../../utils';
 import { AssetMapData } from '../AssetMapData';
 import { IAsset } from './IAsset';

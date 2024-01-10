@@ -1,4 +1,3 @@
-// import { Spine } from '@pixi-spine/runtime-4.1';
 import {
   Assets,
   BitmapText,

@@ -36,8 +36,6 @@ export interface DillPixelApplicationOptions extends IApplicationOptions {
   showStateDebugInProduction?: boolean;
 }
 
-type DebuggerType = typeof import('../debug').Debugger;
-
 const isDev = process.env.NODE_ENV === 'development';
 
 export class Application extends PIXIApplication {
@@ -65,7 +63,6 @@ export class Application extends PIXIApplication {
 
   protected startSplashProcess: OmitThisParameter<(pPersistentAssets: AssetMapData[], pOnComplete: () => void) => void>;
 
-  protected _debugger: unknown;
   protected _physics: PhysicsBase;
 
   protected stats: any;
@@ -281,15 +278,6 @@ export class Application extends PIXIApplication {
     return this._physics;
   }
 
-  public get debugger(): DebuggerType {
-    if (!this._debugger) {
-      this.addDebugger().then(() => {
-        console.log('debugger added');
-      });
-    }
-    return this._debugger as DebuggerType;
-  }
-
   public get htmlTextStyles(): typeof HTMLTextStyleManager {
     return HTMLTextStyleManager;
   }
@@ -377,9 +365,7 @@ export class Application extends PIXIApplication {
   public async init(): Promise<void> {
     // load required externals
     if (this._useSpine) {
-      await import('../spine');
-      console.log('using spine');
-      console.log(Make.spine);
+      await this.addSpine();
     }
 
     this.onPlayAudio = this.onPlayAudio.bind(this);
@@ -454,9 +440,9 @@ export class Application extends PIXIApplication {
     return Promise.resolve();
   }
 
-  public async addDebugger() {
-    const DebuggerClass = await import('../debug').then((m) => m.Debugger);
-    this._debugger = new DebuggerClass(this);
+  protected async addSpine() {
+    await import('../spine/spine');
+    console.log('using spine');
   }
 
   protected setup(): Promise<void> | void;

@@ -1,6 +1,5 @@
-// import '@pixi-spine/base';
 import { sayHello } from './hello';
-// (window as any).PIXI = PIXI; // for pixi-spine
+
 export * from './core';
 export * from './audio';
 export * from './copy';

@@ -1,1 +1,0 @@
-export {MatterPhysicsSprite} from "./MatterPhysicsSprite"
