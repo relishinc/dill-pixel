@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.24.0](https://github.com/relishinc/dill-pixel/compare/v2.23.7...v2.24.0) (2024-01-10)
+
+
+### Features
+
+* re-organized global functions, ([3fb649a](https://github.com/relishinc/dill-pixel/commit/3fb649a381dc0ec35a1e76406d358753d259b4a5))
+* work on Spine implementation - made spine optional ([3fb649a](https://github.com/relishinc/dill-pixel/commit/3fb649a381dc0ec35a1e76406d358753d259b4a5))
+
+
+### Bug Fixes
+
+* modularizing spine ([7eb52a0](https://github.com/relishinc/dill-pixel/commit/7eb52a083afda7e041356fb7d5856178aa59c916))
+
 ## [2.23.7](https://github.com/relishinc/dill-pixel/compare/v2.23.6...v2.23.7) (2024-01-05)
 
 
