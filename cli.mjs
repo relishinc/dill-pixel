@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 import {green} from 'kleur/colors';
 import fs from 'node:fs';
-import {compress} from './audio';
-import {generateCaptions} from './audio/cc.mjs';
-import {create} from './create.mjs';
-import {update} from './update.mjs';
+import {generateCaptions} from './cli/audio/cc.mjs';
+import {compress} from './cli/audio/index.mjs';
+import {create} from './cli/create.mjs';
+import {update} from './cli/update.mjs';
 
 const currentVersion = process.versions.node;
 const requiredMajorVersion = parseInt(currentVersion.split('.')[0], 10);
