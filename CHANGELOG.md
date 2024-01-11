@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.24.4](https://github.com/relishinc/dill-pixel/compare/v2.24.3...v2.24.4) (2024-01-11)
+
+
+### Bug Fixes
+
+* added npm create cli option ([9e76f76](https://github.com/relishinc/dill-pixel/commit/9e76f76ea524340d2fe5a6163fb5b95726b49b2c))
+
 ## [2.24.3](https://github.com/relishinc/dill-pixel/compare/v2.24.2...v2.24.3) (2024-01-11)
 
 
