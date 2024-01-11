@@ -5,8 +5,9 @@
   "description": "Relish framework for HTML games",
   "main": "src/index.ts",
   "bin": {
-    "dill-pixel": "./bin/dill-pixel.mjs"
+    "dill-pixel": "./cli.mjs"
   },
+  "types": "./lib/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
     "./react": "./src/react/index.ts"
