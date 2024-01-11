@@ -59,7 +59,7 @@ switch (args[0]) {
 				console.log(`${green(`Dill Pixel has finished prepaeing your closed captioning files! Find them in "${captionsDirectory}/output."`)}`);
 				break;
 			default:
-				console.log(`Unknown audio command: "${args[0]}". Please use "compress".`);
+				console.log(`Unknown audio command: "${args[1]}". Please use "compress" or "captions".`);
 				break;
 		}
 		break;
