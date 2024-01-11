@@ -16,8 +16,7 @@ if (requiredMajorVersion < minimumMajorVersion) {
 	process.exit(1);
 }
 
-const {version} = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf-8'));
-
+const {version} = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf-8'));
 
 const args = process.argv.slice(2);
 
@@ -42,7 +41,7 @@ switch (args[0]) {
 	case 'update':
 		console.log(`${green(`Updating Dill Pixel to the latest version...`)}`);
 		await update();
-		const {version: newVersion} = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf-8'));
+		const {version: newVersion} = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf-8'));
 		console.log(`${green(`Updated Dill Pixel to version ${newVersion}.`)}`);
 		break;
 	case 'audio':
