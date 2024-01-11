@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.24.1](https://github.com/relishinc/dill-pixel/compare/v2.24.0...v2.24.1) (2024-01-11)
+
+
+### Bug Fixes
+
+* moved / refactored cli files a bit, fixed audio import error in cli ([63ed49f](https://github.com/relishinc/dill-pixel/commit/63ed49f9aee5dceb897aa9287c77c4f081211fac))
+
 ## [2.24.0](https://github.com/relishinc/dill-pixel/compare/v2.23.7...v2.24.0) (2024-01-10)
 
 
