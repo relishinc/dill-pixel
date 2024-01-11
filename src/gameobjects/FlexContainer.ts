@@ -33,80 +33,6 @@ export class FlexContainer extends Container {
   protected _settings: FlexContainerSettings;
   private _layoutTimeout: any;
 
-  set gap(value: number) {
-    this._settings.gap = value;
-    this.layout();
-  }
-
-  get gap(): number {
-    return this._settings.gap!;
-  }
-
-  set flexWrap(value: 'wrap' | 'nowrap') {
-    this._settings.flexWrap = value;
-    this.layout();
-  }
-
-  get flexWrap(): 'wrap' | 'nowrap' {
-    return this._settings.flexWrap!;
-  }
-
-  set flexDirection(value: 'row' | 'column') {
-    this._settings.flexDirection = value;
-    this.layout();
-  }
-
-  get flexDirection(): 'row' | 'column' {
-    return this._settings.flexDirection!;
-  }
-
-  set alignItems(value: 'center' | 'flex-start' | 'flex-end') {
-    this._settings.alignItems = value;
-    this.layout();
-  }
-
-  get alignItems(): 'center' | 'flex-start' | 'flex-end' {
-    return this._settings.alignItems!;
-  }
-
-  set justifyContent(value: 'center' | 'space-between' | 'space-around' | 'space-evenly' | 'flex-start' | 'flex-end') {
-    this._settings.justifyContent = value;
-    this.layout();
-  }
-
-  get justifyContent(): 'center' | 'space-between' | 'space-around' | 'space-evenly' | 'flex-start' | 'flex-end' {
-    return this._settings.justifyContent!;
-  }
-
-  set containerHeight(value: number) {
-    this._settings.height = value;
-    this.layout();
-  }
-
-  get containerHeight(): number {
-    return this._settings.height;
-  }
-
-  set containerWidth(value: number) {
-    this._settings.width = value;
-    this.layout();
-  }
-
-  get containerWidth(): number {
-    return this._settings.width;
-  }
-
-  set size(size: PointLike) {
-    const { x, y } = resolvePointLike(size);
-    this._settings.width = x;
-    this._settings.height = y;
-    this.layout();
-  }
-
-  get size(): { width: number; height: number } {
-    return { width: this._settings.width, height: this._settings.height };
-  }
-
   constructor(settings: Partial<FlexContainerSettings> = {}) {
     super(true);
     this.handleChildAdded = this.handleChildAdded.bind(this);
@@ -135,17 +61,77 @@ export class FlexContainer extends Container {
     this.layout();
   }
 
-  handleChildAdded(child: any) {
-    if (child instanceof FlexContainer) {
-      child.onLayoutComplete.connect(this.layout);
-    }
+  get gap(): number {
+    return this._settings.gap!;
+  }
+
+  set gap(value: number) {
+    this._settings.gap = value;
     this.layout();
   }
 
-  handleChildRemoved(child: any) {
-    if (child instanceof FlexContainer) {
-      child.onLayoutComplete.disconnect(this.layout);
-    }
+  get flexWrap(): 'wrap' | 'nowrap' {
+    return this._settings.flexWrap!;
+  }
+
+  set flexWrap(value: 'wrap' | 'nowrap') {
+    this._settings.flexWrap = value;
+    this.layout();
+  }
+
+  get flexDirection(): 'row' | 'column' {
+    return this._settings.flexDirection!;
+  }
+
+  set flexDirection(value: 'row' | 'column') {
+    this._settings.flexDirection = value;
+    this.layout();
+  }
+
+  get alignItems(): 'center' | 'flex-start' | 'flex-end' {
+    return this._settings.alignItems!;
+  }
+
+  set alignItems(value: 'center' | 'flex-start' | 'flex-end') {
+    this._settings.alignItems = value;
+    this.layout();
+  }
+
+  get justifyContent(): 'center' | 'space-between' | 'space-around' | 'space-evenly' | 'flex-start' | 'flex-end' {
+    return this._settings.justifyContent!;
+  }
+
+  set justifyContent(value: 'center' | 'space-between' | 'space-around' | 'space-evenly' | 'flex-start' | 'flex-end') {
+    this._settings.justifyContent = value;
+    this.layout();
+  }
+
+  get containerHeight(): number {
+    return this._settings.height;
+  }
+
+  set containerHeight(value: number) {
+    this._settings.height = value;
+    this.layout();
+  }
+
+  get containerWidth(): number {
+    return this._settings.width;
+  }
+
+  set containerWidth(value: number) {
+    this._settings.width = value;
+    this.layout();
+  }
+
+  get size(): { width: number; height: number } {
+    return { width: this._settings.width, height: this._settings.height };
+  }
+
+  set size(size: PointLike) {
+    const { x, y } = resolvePointLike(size);
+    this._settings.width = x;
+    this._settings.height = y;
     this.layout();
   }
 
@@ -160,6 +146,20 @@ export class FlexContainer extends Container {
   }
 
   public onResize(_size: IPoint) {
+    this.layout();
+  }
+
+  handleChildAdded(child: any) {
+    if (child instanceof FlexContainer) {
+      child.onLayoutComplete.connect(this.layout);
+    }
+    this.layout();
+  }
+
+  handleChildRemoved(child: any) {
+    if (child instanceof FlexContainer) {
+      child.onLayoutComplete.disconnect(this.layout);
+    }
     this.layout();
   }
 
