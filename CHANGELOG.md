@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.24.2](https://github.com/relishinc/dill-pixel/compare/v2.24.1...v2.24.2) (2024-01-11)
+
+
+### Bug Fixes
+
+* package.json import error in cli ([7a47810](https://github.com/relishinc/dill-pixel/commit/7a478106036a5114b2b8e0da5e6f6274d8a30c4c))
+
 ## [2.24.1](https://github.com/relishinc/dill-pixel/compare/v2.24.0...v2.24.1) (2024-01-11)
 
 
