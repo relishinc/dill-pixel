@@ -10,33 +10,27 @@ import {
   SpriteExample,
 } from '@/state';
 import {
-  Application as HLFApplication,
+  Application as DillPixelApplication,
   AssetMapData,
   AssetType,
-  SplashScreen as HLFSplashScreen,
+  SplashScreen as DillPixelSplashScreen,
   TextureAsset,
   TransitionType,
 } from 'dill-pixel';
 import { FocusablesExample } from './state/FocusablesExample';
 import { SpineExample } from './state/SpineExample';
+import { UICanvasExample } from './state/UICanvasExample';
 
-export default class Application extends HLFApplication {
-  constructor() {
-    if (HLFApplication._instance !== undefined) {
-      // display a singleton warning
-      console.warn(
-        'Application is a singleton class and should not be instantiated directly. Use Application.instance instead.',
-      );
+export default class Application extends DillPixelApplication {
+  public static getInstance(): Application {
+    if (!DillPixelApplication._instance) {
+      DillPixelApplication._instance = new Application();
     }
-
-    super({ resizeTo: Application.containerElement, useSpine: true, showStatsInProduction: true, antialias: false });
+    return DillPixelApplication._instance as Application;
   }
 
-  static get instance(): Application {
-    if (HLFApplication._instance === undefined) {
-      HLFApplication._instance = new Application();
-    }
-    return HLFApplication._instance as Application;
+  constructor() {
+    super({ resizeTo: Application.containerElement, useSpine: true, showStatsInProduction: true, antialias: false });
   }
 
   public get requiredAssets(): AssetMapData[] {
@@ -56,7 +50,7 @@ export default class Application extends HLFApplication {
     return [{ family: 'arboria', data: { weight: 400 } }];
   }
 
-  protected createSplashScreen(): HLFSplashScreen {
+  protected createSplashScreen(): DillPixelSplashScreen {
     return new SplashScreen();
   }
 
@@ -78,10 +72,11 @@ export default class Application extends HLFApplication {
     this.state.register(MatterPhysicsExample);
     this.state.register(RapierPhysicsExample);
     this.state.register(SpineExample);
+    this.state.register(UICanvasExample);
   }
 
   protected createAssetMap(): void {
-    this.addAssetGroup(HLFSplashScreen.NAME, SplashScreen.Assets);
+    this.addAssetGroup(DillPixelSplashScreen.NAME, SplashScreen.Assets);
   }
 
   async loadHTMLTextStyles(): Promise<void> {

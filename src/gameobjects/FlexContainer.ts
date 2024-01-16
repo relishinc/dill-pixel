@@ -35,10 +35,8 @@ export class FlexContainer extends Container {
 
   constructor(settings: Partial<FlexContainerSettings> = {}) {
     super(true);
-    this.handleChildAdded = this.handleChildAdded.bind(this);
-    this.handleChildRemoved = this.handleChildRemoved.bind(this);
-    this.layout = this.layout.bind(this);
-    this._layout = this._layout.bind(this);
+
+    this.bindMethods('handleChildAdded', 'handleChildRemoved', 'layout', '_layout');
 
     this._settings = Object.assign(
       {
@@ -136,11 +134,6 @@ export class FlexContainer extends Container {
   }
 
   destroy(_options?: IDestroyOptions | boolean) {
-    this.children.forEach((child) => {
-      if (child instanceof FlexContainer) {
-        child.onLayoutComplete.disconnect(this.layout);
-      }
-    });
     this.off('childAdded', this.handleChildAdded);
     super.destroy(_options);
   }
@@ -151,15 +144,12 @@ export class FlexContainer extends Container {
 
   handleChildAdded(child: any) {
     if (child instanceof FlexContainer) {
-      child.onLayoutComplete.connect(this.layout);
+      this.addSignalConnection(child.onLayoutComplete.connect(this.layout));
     }
     this.layout();
   }
 
-  handleChildRemoved(child: any) {
-    if (child instanceof FlexContainer) {
-      child.onLayoutComplete.disconnect(this.layout);
-    }
+  handleChildRemoved() {
     this.layout();
   }
 

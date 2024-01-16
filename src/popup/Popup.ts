@@ -15,7 +15,7 @@ export enum PopupState {
  * This is an abstract class from which all Popups should inherit.
  * However, you can also make your own implementation of {@link IPopup} if necessary.
  */
-export class Popup extends Container implements IPopup {
+export class Popup extends Container<any> implements IPopup {
   /** @inheritdoc */
   public blackout?: Graphics | Sprite;
   public static readonly NAME: string = '__Popup';

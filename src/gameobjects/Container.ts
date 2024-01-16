@@ -1,9 +1,9 @@
-import { Container as PIXIContainer, IDestroyOptions, IPoint, Point, Ticker } from 'pixi.js';
-import { SignalConnection, SignalConnections } from 'typed-signals';
-import { Application } from '../core';
-import { Editor } from '../misc';
-import { Signals } from '../signals';
-import { Add, bindAllMethods, bindMethods, Make } from '../utils';
+import {Container as PIXIContainer, IDestroyOptions, IPoint, Point, Ticker} from 'pixi.js';
+import {SignalConnection, SignalConnections} from 'typed-signals';
+import {Application} from '../core';
+import {Editor} from '../misc';
+import {Signals} from '../signals';
+import {Add, bindAllMethods, bindMethods, Make} from '../utils';
 
 /**
  * Enhanced PIXI Container that has:
@@ -14,7 +14,7 @@ import { Add, bindAllMethods, bindMethods, Make } from '../utils';
  * @class Container
  * @extends PIXIContainer
  */
-export class Container extends PIXIContainer {
+export class Container<T extends Application = Application> extends PIXIContainer {
   public editable: boolean = true;
   public childrenEditable: boolean = true;
   protected _addFactory: Add;
@@ -74,8 +74,8 @@ export class Container extends PIXIContainer {
     return Make;
   }
 
-  get app(): Application {
-    return Application.instance;
+  get app(): T {
+    return Application.instance as T;
   }
 
   destroy(_options?: IDestroyOptions | boolean) {
