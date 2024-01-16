@@ -1,13 +1,17 @@
 import { GREEN } from '@/utils/Constants';
-import { AssetMapData, LoadScreen } from 'dill-pixel';
+import { AssetMapData, LoadScreen, SplashScreen as DillPixelSplashScreen } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Point, Sprite } from 'pixi.js';
 
 export class SplashScreen extends LoadScreen {
-  public static NAME: string = 'SplashScreen';
+  public static NAME: string = DillPixelSplashScreen.NAME;
 
   private _bg!: Sprite;
   private _black!: Sprite;
+
+  public static get Assets(): AssetMapData[] {
+    return [];
+  }
 
   public init(pSize: Point) {
     super.init(pSize);
@@ -46,9 +50,5 @@ export class SplashScreen extends LoadScreen {
       this._bg.width = pSize.x;
       this._bg.height = pSize.y;
     }
-  }
-
-  public static get Assets(): AssetMapData[] {
-    return [];
   }
 }

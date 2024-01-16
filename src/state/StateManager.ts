@@ -1,7 +1,8 @@
-import {Container, Point} from 'pixi.js';
+import {Point} from 'pixi.js';
 import {Dictionary} from 'typescript-collections';
 import {Application} from '../core';
 import {hideLoadScreen, initState, loadAssets, showLoadScreen, stateTransitionHalted, unloadAssets} from '../functions';
+import {Container} from '../gameobjects';
 import {AssetMap, AssetMapData, LoadToken} from '../load';
 import {Signals} from '../signals';
 import {delay} from '../utils';
@@ -23,14 +24,14 @@ export function transitionToState(
   loadScreen?: string | undefined,
   transitionSteps?: TransitionStep[],
 ): boolean {
-  return Application.instance.state.transitionTo(stateIdAndData, loadScreen, transitionSteps);
+  return Application.getInstance().state.transitionTo(stateIdAndData, loadScreen, transitionSteps);
 }
 
 /**
  * Manages all states.
  * @extends Container
  */
-export class StateManager extends Container {
+export class StateManager<T extends Application = Application> extends Container<T> {
   /**
    * Cached size of the game.
    */
@@ -104,7 +105,7 @@ export class StateManager extends Container {
   private _statesMenu: HTMLDivElement;
   private _excluded: string[] = [];
 
-  constructor(private app: Application) {
+  constructor(private _app: Application) {
     super();
     this._size = new Point();
     this._stateData = new Dictionary<string, IStateData>();
@@ -113,9 +114,9 @@ export class StateManager extends Container {
     this._simultaneousCheckAnimOutComplete = false;
     this._transitionStepIndex = 0;
 
-    this.onStateLoadRequested = this.onStateLoadRequested.bind(this);
+    this.bindMethods('onStateLoadRequested');
 
-    Signals.loadState.connect(this.onStateLoadRequested);
+    this.addSignalConnection(Signals.loadState.connect(this.onStateLoadRequested));
   }
 
   public set useHash(value: boolean) {
@@ -180,9 +181,13 @@ export class StateManager extends Container {
    * @param creationMethod A function that constructs the state.
    * @param autoAddAssets whether to automatically register the asset group for this state - only works if stateIdOrClass is a class
    */
-  public register(stateIdOrClass: string | typeof State, creationMethod?: () => State, autoAddAssets: boolean = true) {
+  public register(
+    stateIdOrClass: string | typeof State<T> | typeof State,
+    creationMethod?: () => State<T>,
+    autoAddAssets: boolean = true,
+  ) {
     if (typeof stateIdOrClass === 'string') {
-      this._stateData.setValue(stateIdOrClass, { create: creationMethod as () => State });
+      this._stateData.setValue(stateIdOrClass, { create: creationMethod as () => State<T> });
     } else {
       const Klass: typeof State = stateIdOrClass as typeof State;
       // @ts-ignore
@@ -701,54 +706,56 @@ export class StateManager extends Container {
     } else {
       this._newState = this.createState(this._newStateData!);
 
-      // Attach state as child of manager.
-      this.addChild(this._newState);
+      if (this._newState) {
+        // Attach state as child of manager.
+        this.add.existing(this._newState);
 
-      // set the state's data (if there is any)
-      if (this._newStateToken!.data) {
-        this._newState.data = this._newStateToken!.data;
+        // set the state's data (if there is any)
+        if (this._newStateToken!.data) {
+          this._newState.data = this._newStateToken!.data;
+        }
+
+        this._newState.size = this._size;
+        this._newState.positionSelfCenter(this._size);
+
+        // call its init method
+        await this._newState.init(this._size);
+
+        // call the onResize method
+        this._newState.onResize(this._size);
+
+        initState(this._newStateToken!.data);
+
+        // Caller requests the new view to be added in front or behind the existing view.
+        if (newInFront) {
+          this.log(
+            'Attaching %c%s%c in %cfront.',
+            LogUtils.STYLE_RED_BOLD,
+            this._newStateToken!.stateId,
+            LogUtils.STYLE_BLACK,
+            LogUtils.STYLE_BLUE_BOLD,
+          );
+          this.setChildIndex(this._newState, this.children.length - 1);
+        } else {
+          this.log(
+            'Attaching %c%s%c %cbehind.',
+            LogUtils.STYLE_RED_BOLD,
+            this._newStateToken!.stateId,
+            LogUtils.STYLE_BLACK,
+            LogUtils.STYLE_BLUE_BOLD,
+          );
+          this.setChildIndex(this._newState, 0);
+        }
+
+        /**
+         * @todo Relish GM => Should we send a view ready notification?
+         */
+        // Notify the world that a view has been added.
+        // _mediator.NotifyViewAdded(_newViewToken);
+
+        // Wait for ViewReady notification.
+        this.handleViewReady(this._newStateToken!);
       }
-
-      this._newState.size = this._size;
-      this._newState.positionSelfCenter(this._size);
-
-      // call its init method
-      await this._newState.init(this._size);
-
-      // call the onResize method
-      this._newState.onResize(this._size);
-
-      initState(this._newStateToken!.data);
-
-      // Caller requests the new view to be added in front or behind the existing view.
-      if (newInFront) {
-        this.log(
-          'Attaching %c%s%c in %cfront.',
-          LogUtils.STYLE_RED_BOLD,
-          this._newStateToken!.stateId,
-          LogUtils.STYLE_BLACK,
-          LogUtils.STYLE_BLUE_BOLD,
-        );
-        this.setChildIndex(this._newState, this.children.length - 1);
-      } else {
-        this.log(
-          'Attaching %c%s%c %cbehind.',
-          LogUtils.STYLE_RED_BOLD,
-          this._newStateToken!.stateId,
-          LogUtils.STYLE_BLACK,
-          LogUtils.STYLE_BLUE_BOLD,
-        );
-        this.setChildIndex(this._newState, 0);
-      }
-
-      /**
-       * @todo Relish GM => Should we send a view ready notification?
-       */
-      // Notify the world that a view has been added.
-      // _mediator.NotifyViewAdded(_newViewToken);
-
-      // Wait for ViewReady notification.
-      this.handleViewReady(this._newStateToken!);
     }
   }
 

@@ -11,7 +11,7 @@ import { IPopup } from './IPopup';
 import { Popup } from './Popup';
 import { IPopupToken } from './PopupToken';
 
-export class PopupManager extends Container {
+export class PopupManager<T extends Application<any>> extends Container<any> {
   private _activePopups: IPopup[];
   private _popups: Dictionary<string, typeof Popup>;
   private _size!: Point;
@@ -20,7 +20,7 @@ export class PopupManager extends Container {
   private _overlayAlpha: number;
 
   constructor(
-    protected _app: Application,
+    protected _app: Application<any>,
     overlayColor: number = 0x000000,
     overlayAlpha: number = 0.75,
   ) {
@@ -40,8 +40,8 @@ export class PopupManager extends Container {
     window.addEventListener(Input.Events.KEY_DOWN, this.handleKeyDown, false);
   }
 
-  get app(): Application {
-    return this._app;
+  get app(): T {
+    return Application.getInstance<T>();
   }
 
   /** Enabling this will print all debug logs. */

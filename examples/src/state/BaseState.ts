@@ -1,24 +1,21 @@
-import Application from '@/Application';
 import { GREEN } from '@/utils/Constants';
 import * as dat from 'dat.gui';
 import { AssetMapData, AssetType, Container, State, TextureAsset } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Point, Sprite, Text } from 'pixi.js';
+import Application from '../Application';
 
-export class BaseState extends State {
+export class BaseState extends State<Application> {
+  public gui: any;
   protected _bg: Sprite;
-
   protected _layout: Container;
   protected _header: Container;
   protected _main: Container;
   protected _footer: Container;
-
   protected _title: Text;
   protected _headerBg: Sprite;
   protected _mainTitle: Text;
   protected _footerTitle: Text;
-
-  public gui: any;
 
   public constructor() {
     super();
@@ -26,35 +23,6 @@ export class BaseState extends State {
 
   public static get Assets(): AssetMapData[] {
     return [new TextureAsset('black2x2', AssetType.PNG)];
-  }
-
-  public get app(): Application {
-    return Application.instance;
-  }
-
-  /**
-   * Creates layout
-   * see https://pixijs.io/layout/storybook/?path=/story/complex--application-layout for more info
-   * @param options
-   */
-  public createLayout() {
-    this._layout = this.add.container({ position: [0, 0] });
-    this._header = this._layout.add.container(1, [-this.app.size.x * 0.5, -this.app.size.y * 0.5]);
-    this._main = this._layout.add.container({ alpha: 0.25 });
-    this._footer = this._layout.add.container({ position: [this.app.size.x * 0.5, this.app.size.y * 0.5] });
-
-    this._layout.childrenEditable = this._layout.editable = false;
-  }
-
-  public addGUI() {
-    this.gui = new dat.GUI({ name: 'Controls', closeOnTop: true });
-    this.app.view.parentNode?.appendChild(this.gui.domElement.parentNode);
-    (this.gui.domElement.parentNode as HTMLElement).style.cssText = `position: absolute;
-    top: 0;
-    left: 0;
-    right: 86px;
-    height: 0;
-    z-index: 0;`;
   }
 
   public init(pSize: Point) {
@@ -161,6 +129,31 @@ export class BaseState extends State {
 
   public destroy() {
     super.destroy();
+  }
+
+  /**
+   * Creates layout
+   * see https://pixijs.io/layout/storybook/?path=/story/complex--application-layout for more info
+   * @param options
+   */
+  public createLayout() {
+    this._layout = this.add.container({ position: [0, 0] });
+    this._header = this._layout.add.container(1, [-this.app.size.x * 0.5, -this.app.size.y * 0.5]);
+    this._main = this._layout.add.container({ alpha: 0.25 });
+    this._footer = this._layout.add.container({ position: [this.app.size.x * 0.5, this.app.size.y * 0.5] });
+
+    this._layout.childrenEditable = this._layout.editable = false;
+  }
+
+  public addGUI() {
+    this.gui = new dat.GUI({ name: 'Controls', closeOnTop: true });
+    this.app.view.parentNode?.appendChild(this.gui.domElement.parentNode);
+    (this.gui.domElement.parentNode as HTMLElement).style.cssText = `position: absolute;
+    top: 0;
+    left: 0;
+    right: 86px;
+    height: 0;
+    z-index: 0;`;
   }
 
   protected setHeaderText(pText: string) {

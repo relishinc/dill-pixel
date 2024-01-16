@@ -4,7 +4,7 @@ import FontFaceObserver from 'fontfaceobserver';
 import {Application as PIXIApplication, Assets, IApplicationOptions, Point, Ticker} from 'pixi.js';
 import {AudioToken, HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverManager} from '../audio';
 import {CopyManager} from '../copy';
-import {updateFocus} from '../functions';
+import {isDev, updateFocus} from '../functions';
 import {
   DefaultKeyboardFocusManagerSprite,
   HitAreaRenderer,
@@ -36,16 +36,15 @@ export interface DillPixelApplicationOptions extends IApplicationOptions {
   showStateDebugInProduction?: boolean;
 }
 
-const isDev = process.env.NODE_ENV === 'development';
+export type Font = { family: string; data?: { weight?: number | string } };
 
-export class Application extends PIXIApplication {
+export class Application<T extends Application = any> extends PIXIApplication {
   protected static readonly SIZE_MIN_DEFAULT: Point = new Point(1024, 768);
   protected static readonly SIZE_MAX_DEFAULT: Point = new Point(1365, 768);
-  protected static _instance: Application;
-
-  protected _stateManager: StateManager;
+  protected static _instance: Application<any>;
+  protected _stateManager: StateManager<T>;
   protected _audioManager: IAudioManager;
-  protected _popupManager: PopupManager;
+  protected _popupManager: PopupManager<T>;
   protected _loadManager: LoadManager;
   protected _keyboardManager: KeyboardManager;
   protected _keyboardFocusManager: KeyboardFocusManager<DefaultKeyboardFocusManagerSprite>;
@@ -101,7 +100,14 @@ export class Application extends PIXIApplication {
       );
       return null;
     }
-    return this.instance.create(el);
+    return this.getInstance().create(el);
+  }
+
+  public static getInstance<T extends Application = Application>(): Application {
+    if (!this._instance) {
+      this._instance = new this();
+    }
+    return this._instance as T;
   }
 
   /**
@@ -115,7 +121,7 @@ export class Application extends PIXIApplication {
     // TODO Relish GM => Look into what might be added to the AppConfig class and if there is reason to cache it.
     super(new AppConfig(appConfig));
     this._useSpine = appConfig?.useSpine || false;
-    if (isDev || appConfig?.showStatsInProduction) {
+    if (isDev() || appConfig?.showStatsInProduction) {
       this.addStats().then(() => {
         console.log('stats.js added');
       });
@@ -179,7 +185,7 @@ export class Application extends PIXIApplication {
   /**
    * gets the current singleton instance
    */
-  static get instance() {
+  static get instance(): Application {
     if (Application._instance === undefined) {
       console.error(
         "You've tried to access the instance of DillPixel.Application when it hasn't been set. " +
@@ -218,7 +224,7 @@ export class Application extends PIXIApplication {
     return [];
   }
 
-  public get state(): StateManager {
+  public get state(): StateManager<T> {
     return this._stateManager;
   }
 
@@ -226,7 +232,7 @@ export class Application extends PIXIApplication {
     return this._keyboardManager;
   }
 
-  public get popups(): PopupManager {
+  public get popups(): PopupManager<T> {
     return this._popupManager;
   }
 
@@ -318,7 +324,7 @@ export class Application extends PIXIApplication {
    * @param pAssets
    * proxy function for @link {AssetMap.addAssetGroup}
    */
-  public addAssetGroup(pGroupIdOrClass: string | typeof State, pAssets?: AssetMapData[]): void {
+  public addAssetGroup(pGroupIdOrClass: string | typeof State<T> | typeof State, pAssets?: AssetMapData[]): void {
     if (typeof pGroupIdOrClass === 'string') {
       return AssetMap.addAssetGroup(pGroupIdOrClass as string, pAssets as AssetMapData[]);
     } else {
@@ -343,20 +349,22 @@ export class Application extends PIXIApplication {
    * @param pElement{String|HTMLElement}
    */
   public create(pElement: HTMLElement): Application | null {
+    const instance = Application.getInstance();
     if (pElement) {
-      pElement.appendChild(Application.instance.view as HTMLCanvasElement);
+      pElement.appendChild(instance.view as HTMLCanvasElement);
     } else {
       console.error('No element found to append the view to.');
       return null;
     }
 
-    Application.instance.init().then(() => {
-      if (isDev) {
+    instance.init().then(() => {
+      if (isDev()) {
         console.log('Application initialized');
       }
-      Application.instance._ready = true;
+      instance._ready = true;
     });
-    return Application.instance;
+
+    return instance;
   }
 
   /**
@@ -442,7 +450,9 @@ export class Application extends PIXIApplication {
 
   protected async addSpine() {
     await import('../spine/spine');
-    console.log('using spine');
+    if (isDev()) {
+      console.log('using spine');
+    }
   }
 
   protected setup(): Promise<void> | void;
@@ -585,7 +595,7 @@ export class Application extends PIXIApplication {
     // override
   }
 
-  protected getFontsList(): { family: string; data?: { weight?: number | string } }[] {
+  protected getFontsList(): Font[] {
     return [];
   }
 

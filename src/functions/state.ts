@@ -1,8 +1,17 @@
+import { Application } from '../core';
 import { AssetMapAudioData, LoadToken } from '../load';
 import { Signals } from '../signals';
 
 // export convenience methods for all the state manager signals
-import { StateToken } from '../state';
+import { State, StateToken } from '../state';
+
+export function registerState<T extends Application = Application>(
+  stateIdOrClass: string | typeof State<T> | typeof State,
+  creationMethod?: () => State<T>,
+  autoAddAssets: boolean = true,
+): void {
+  Application.getInstance().state.register(stateIdOrClass, creationMethod, autoAddAssets);
+}
 
 export function loadState(token: StateToken): void {
   Signals.loadState.emit(token);

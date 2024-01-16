@@ -8,7 +8,7 @@ import {Add, Make} from '../utils';
 /**
  * State
  */
-export abstract class State extends Container {
+export abstract class State<T extends Application = Application> extends Container<T> {
   private static _assets: AssetMapData[] = [];
   public static NAME: string = 'State';
   protected _size: Point;
@@ -30,13 +30,6 @@ export abstract class State extends Container {
 
   public static set Assets(pAssets: AssetMapData[]) {
     this._assets = pAssets;
-  }
-
-  /**
-   * gets the Application instance
-   */
-  public get app(): Application {
-    return Application.instance;
   }
 
   /**
