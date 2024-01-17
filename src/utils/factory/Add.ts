@@ -15,13 +15,12 @@ import {
   Shader,
   SimplePlane,
   SimpleRope,
-  Sprite,
   Text,
   TextStyle,
   Texture,
   TilingSprite,
 } from 'pixi.js';
-import { AnimatedSprite, Container, FlexContainer, FlexContainerSettings } from '../../gameobjects';
+import { AnimatedSprite, Container, FlexContainer, FlexContainerSettings, Sprite } from '../../gameobjects';
 import { Spine } from '../../global';
 import { SpineSettings } from '../../spine/Make';
 import { PointLike, SpritesheetLike } from '../index';

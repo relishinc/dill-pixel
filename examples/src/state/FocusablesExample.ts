@@ -1,10 +1,11 @@
 import { BaseState } from '@/state/BaseState';
 import {
+  addKeyboardLayer,
   AssetMapData,
   AssetType,
   Container,
-  pushKeyboardLayer,
   registerFocusables,
+  Sprite,
   TextureAsset,
   TextureAtlasAsset,
 } from 'dill-pixel';
@@ -30,17 +31,18 @@ export class FocusablesExample extends BaseState {
 
   init(pSize: Point) {
     super.init(pSize);
-    pushKeyboardLayer();
+    addKeyboardLayer();
 
     this.setHeaderText('Sprite Example');
     this.setMainText('Static and Texture Atlas Sprites');
 
-    const pickle: Focusable = this.add.existing(new Focusable('pickle'));
+    const pickle: Sprite = this.add.sprite({ asset: 'pickle' });
+    pickle.focusable = true;
     pickle.position.set(-150, 150);
 
     const lab: Focusable = this.add.existing(new Focusable('lab', 'buildings'));
     lab.position.set(150, 150);
 
-    registerFocusables([pickle, lab]);
+    registerFocusables(pickle, lab);
   }
 }

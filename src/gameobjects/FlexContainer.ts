@@ -135,6 +135,7 @@ export class FlexContainer extends Container {
 
   destroy(_options?: IDestroyOptions | boolean) {
     this.off('childAdded', this.handleChildAdded);
+    this.off('childRemoved', this.handleChildRemoved);
     super.destroy(_options);
   }
 

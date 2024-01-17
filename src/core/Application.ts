@@ -21,6 +21,7 @@ import {State, StateManager} from '../state';
 import {
   Add,
   AssetUtils,
+  bindMethods,
   delay,
   HTMLTextStyleManager,
   Make,
@@ -32,16 +33,58 @@ import {AppConfig} from './AppConfig';
 
 export interface DillPixelApplicationOptions extends IApplicationOptions {
   physics?: boolean;
+  useSpine?: boolean;
   showStatsInProduction?: boolean;
   showStateDebugInProduction?: boolean;
 }
 
 export type Font = { family: string; data?: { weight?: number | string } };
 
+export function create<T extends Application = Application>(
+  ApplicationClass: typeof Application,
+  config?: Partial<DillPixelApplicationOptions>,
+  domElement?: string | HTMLElement,
+): Promise<T> | T;
+export async function create<T extends Application = Application>(
+  ApplicationClass: typeof Application,
+  config: Partial<DillPixelApplicationOptions> = {},
+  domElement: string | HTMLElement = ApplicationClass.containerID || Application.containerID,
+): Promise<T> {
+  let el: HTMLElement | null = null;
+  if (typeof domElement === 'string') {
+    el = document.getElementById(domElement);
+    if (!el) {
+      el = Application.createContainer(domElement);
+    }
+  } else if (domElement instanceof HTMLElement) {
+    el = domElement;
+  }
+  if (!el) {
+    // no element to use
+    throw new Error(
+      'You passed in a DOM Element, but none was found. If you instead pass in a string, a container will be created for you, using the string for its id.',
+    );
+  }
+  config.resizeTo = el;
+  const instance = new ApplicationClass(config);
+
+  if (el) {
+    el.appendChild(instance.view as HTMLCanvasElement);
+  } else {
+    throw new Error('No element found to append the view to.');
+  }
+
+  await instance.initialize();
+  if (isDev()) {
+    console.log('Application initialized');
+  }
+  return instance as T;
+}
+
 export class Application<T extends Application = any> extends PIXIApplication {
   protected static readonly SIZE_MIN_DEFAULT: Point = new Point(1024, 768);
   protected static readonly SIZE_MAX_DEFAULT: Point = new Point(1365, 768);
-  protected static _instance: Application<any>;
+  protected static _instance: Application;
   protected _stateManager: StateManager<T>;
   protected _audioManager: IAudioManager;
   protected _popupManager: PopupManager<T>;
@@ -57,16 +100,12 @@ export class Application<T extends Application = any> extends PIXIApplication {
   protected _saveManager!: SaveManager;
   protected _orientationManager!: OrientationManager;
   protected _voiceoverManager!: IVoiceOverManager;
-
   protected _addFactory: Add;
-
   protected startSplashProcess: OmitThisParameter<(pPersistentAssets: AssetMapData[], pOnComplete: () => void) => void>;
-
   protected _physics: PhysicsBase;
-
   protected stats: any;
   protected _useSpine: boolean;
-  protected _ready: boolean = false;
+  protected _initialized: boolean = false;
 
   /**
    * Creates a container element with the given id and appends it to the DOM.
@@ -81,31 +120,10 @@ export class Application<T extends Application = any> extends PIXIApplication {
 
   /**
    * Creates a new instance of the Application class and returns it.
-   * @param pElement{string | HTMLElement} - The id of the element to use as the container, or the element itself.
    */
-  public static create(pElement: string | HTMLElement = Application.containerID): Application | null {
-    let el: HTMLElement | null = null;
-    if (typeof pElement === 'string') {
-      el = document.getElementById(pElement);
-      if (!el) {
-        el = Application.createContainer(pElement);
-      }
-    } else if (pElement instanceof HTMLElement) {
-      el = pElement;
-    }
-    if (!el) {
-      // no element to use
-      console.error(
-        'You passed in a DOM Element, but none was found. If you instead pass in a string, a container will be created for you, using the string for its id.',
-      );
-      return null;
-    }
-    return this.getInstance().create(el);
-  }
-
-  public static getInstance<T extends Application = Application>(): Application {
+  public static getInstance<T extends Application = Application>(): T {
     if (!this._instance) {
-      this._instance = new this();
+      throw new Error('Application has not been initialized yet.');
     }
     return this._instance as T;
   }
@@ -117,9 +135,12 @@ export class Application<T extends Application = any> extends PIXIApplication {
    * @default autoResize: true
    * @default resolution: utils.isMobile.any === false ? 2 : (window.devicePixelRatio > 1 ? 2 : 1);
    */
-  protected constructor(appConfig?: Partial<DillPixelApplicationOptions> & { [key: string]: any }) {
-    // TODO Relish GM => Look into what might be added to the AppConfig class and if there is reason to cache it.
+  constructor(appConfig?: Partial<DillPixelApplicationOptions> & { [key: string]: any }) {
+    if (Application._instance) {
+      throw new Error('Application already exists. Use Application.getInstance() instead.');
+    }
     super(new AppConfig(appConfig));
+    Application._instance = this;
     this._useSpine = appConfig?.useSpine || false;
     if (isDev() || appConfig?.showStatsInProduction) {
       this.addStats().then(() => {
@@ -135,8 +156,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
     AssetUtils.resolutionSuffix = this.resolutionSuffix;
 
     // bind functions
-    this.update = this.update.bind(this);
-    this.onRequiredAssetsLoaded = this.onRequiredAssetsLoaded.bind(this);
+    bindMethods(this, 'update', 'onRequiredAssetsLoaded', 'onPlayAudio');
 
     // create factories
     this._addFactory = new Add(this.stage);
@@ -187,10 +207,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
    */
   static get instance(): Application {
     if (Application._instance === undefined) {
-      console.error(
-        "You've tried to access the instance of DillPixel.Application when it hasn't been set. " +
-          'Please set the _instance in your Application.',
-      );
+      throw new Error('Application has not been initialized yet.');
     }
 
     return Application._instance;
@@ -320,22 +337,22 @@ export class Application<T extends Application = any> extends PIXIApplication {
 
   /**
    *
-   * @param pGroupIdOrClass
-   * @param pAssets
    * proxy function for @link {AssetMap.addAssetGroup}
+   * @param groupIdOrClass
+   * @param assets
    */
-  public addAssetGroup(pGroupIdOrClass: string | typeof State<T> | typeof State, pAssets?: AssetMapData[]): void {
-    if (typeof pGroupIdOrClass === 'string') {
-      return AssetMap.addAssetGroup(pGroupIdOrClass as string, pAssets as AssetMapData[]);
+  public addAssetGroup(groupIdOrClass: string | typeof State<T> | typeof State, assets?: AssetMapData[]): void {
+    if (typeof groupIdOrClass === 'string') {
+      return AssetMap.addAssetGroup(groupIdOrClass as string, assets as AssetMapData[]);
     } else {
-      const Klass: typeof State = pGroupIdOrClass as typeof State;
+      const Klass: typeof State = groupIdOrClass as typeof State;
       if (!Klass.NAME) {
         throw new Error(`You tried to add an asset group for ${Klass}, but it has no NAME defined.`);
       }
       if (!Klass.Assets) {
         throw new Error(`You tried to add an asset group for ${Klass.NAME}, but it has no assets defined.`);
       }
-      return AssetMap.addAssetGroup(Klass.NAME, pAssets || Klass.Assets);
+      return AssetMap.addAssetGroup(Klass.NAME, assets || Klass.Assets);
     }
   }
 
@@ -343,28 +360,13 @@ export class Application<T extends Application = any> extends PIXIApplication {
     return Assets.get(pAssetName) !== undefined;
   }
 
-  /**
-   * initialize the Application singleton
-   * and append the view to the DOM
-   * @param pElement{String|HTMLElement}
-   */
-  public create(pElement: HTMLElement): Application | null {
-    const instance = Application.getInstance();
-    if (pElement) {
-      pElement.appendChild(instance.view as HTMLCanvasElement);
-    } else {
-      console.error('No element found to append the view to.');
-      return null;
+  public async initialize() {
+    if (this._initialized) {
+      throw new Error('Application has already been initialized.');
     }
-
-    instance.init().then(() => {
-      if (isDev()) {
-        console.log('Application initialized');
-      }
-      instance._ready = true;
-    });
-
-    return instance;
+    await this.init();
+    await this.setup();
+    this._initialized = true;
   }
 
   /**
@@ -405,8 +407,6 @@ export class Application<T extends Application = any> extends PIXIApplication {
     this.onResize(0.5);
 
     this._webEventsManager.registerResizeCallback(() => this.onResize(0.5));
-
-    this.setup();
   }
 
   public async loadDocumentFonts(): Promise<void> {
@@ -441,7 +441,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
    *
    * // then later on, from anywhere in your app, you can do:
    * import {getHTMLTextStyle} from 'dill-pixel';
-   * this.add.htmlText( 'This is some text', getHTMLTextStyle('{style1}'), ...);
+   * this.add.htmlText( 'This is some text', getHTMLTextStyle('style1'), ...);
    */
   public async loadHTMLTextStyles(): Promise<void> {
     // override
@@ -450,9 +450,6 @@ export class Application<T extends Application = any> extends PIXIApplication {
 
   protected async addSpine() {
     await import('../spine/spine');
-    if (isDev()) {
-      console.log('using spine');
-    }
   }
 
   protected setup(): Promise<void> | void;
@@ -464,7 +461,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
    * Called once per frame. Updates the `StateManager`, `PopupManager`, `LoadManager` and `HitAreaRenderer`.
    */
   protected update(): void {
-    if (!this._ready) {
+    if (!this._initialized) {
       return;
     }
     if (this.stats) {
@@ -493,7 +490,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
   }
 
   /**
-   * Override to setup the asset map for this application.
+   * Override to set up the asset map for this application.
    * @override
    */
   protected addAssetGroups(): void {
@@ -534,7 +531,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
 
   /**
    * Called when the application window is resized.
-   * @param debounceDelay A delay (in seconds) before telling the rest of the application that a resize occured.
+   * @param debounceDelay A delay (in seconds) before telling the rest of the application that a resize occurred.
    * @default 0
    */
   protected onResize(debounceDelay: number): Promise<void> | void;

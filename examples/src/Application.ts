@@ -21,18 +21,7 @@ import { FocusablesExample } from './state/FocusablesExample';
 import { SpineExample } from './state/SpineExample';
 import { UICanvasExample } from './state/UICanvasExample';
 
-export default class Application extends DillPixelApplication {
-  public static getInstance(): Application {
-    if (!DillPixelApplication._instance) {
-      DillPixelApplication._instance = new Application();
-    }
-    return DillPixelApplication._instance as Application;
-  }
-
-  constructor() {
-    super({ resizeTo: Application.containerElement, useSpine: true, showStatsInProduction: true, antialias: false });
-  }
-
+export class Application extends DillPixelApplication {
   public get requiredAssets(): AssetMapData[] {
     return [new TextureAsset('black2x2', AssetType.PNG)];
   }
@@ -91,5 +80,9 @@ export default class Application extends DillPixelApplication {
     //   },
     // );
     return Promise.resolve();
+  }
+
+  someFunction() {
+    console.log('some function');
   }
 }
