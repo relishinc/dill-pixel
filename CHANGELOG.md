@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.25.0](https://github.com/relishinc/dill-pixel/compare/v2.24.4...v2.25.0) (2024-01-17)
+
+
+### Features
+
+* added focusable Sprite class ([d9f23a9](https://github.com/relishinc/dill-pixel/commit/d9f23a930bccb4c3657d889fcd5b0f742068f7c7))
+* added getInstance() method to Application ([2dfe713](https://github.com/relishinc/dill-pixel/commit/2dfe713f719ecd3018a4add08509c23cb800c55f))
+* added type casting to Container so this.app intellisense works ([2dfe713](https://github.com/relishinc/dill-pixel/commit/2dfe713f719ecd3018a4add08509c23cb800c55f))
+* added UICanvas + example, ([2dfe713](https://github.com/relishinc/dill-pixel/commit/2dfe713f719ecd3018a4add08509c23cb800c55f))
+
+
+### Bug Fixes
+
+* some code cleanup in Container ([d9f23a9](https://github.com/relishinc/dill-pixel/commit/d9f23a930bccb4c3657d889fcd5b0f742068f7c7))
+
 ## [2.24.4](https://github.com/relishinc/dill-pixel/compare/v2.24.3...v2.24.4) (2024-01-11)
 
 
