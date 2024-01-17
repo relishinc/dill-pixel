@@ -1,6 +1,7 @@
 import { Container as PIXIContainer, IDestroyOptions, IPoint, Point } from 'pixi.js';
 import { SignalConnection, SignalConnections } from 'typed-signals';
 import { Application } from '../core';
+import { IFocusable } from '../input';
 import { Editor } from '../misc';
 import { Add, Make } from '../utils';
 /**
@@ -12,7 +13,7 @@ import { Add, Make } from '../utils';
  * @class Container
  * @extends PIXIContainer
  */
-export declare class Container extends PIXIContainer {
+export declare class Container<T extends Application = Application> extends PIXIContainer implements IFocusable {
     editable: boolean;
     childrenEditable: boolean;
     protected _addFactory: Add;
@@ -20,25 +21,32 @@ export declare class Container extends PIXIContainer {
     protected _editMode: boolean;
     protected editor: Editor;
     protected _focusable: boolean;
+    private _focusSize;
+    private _focusPosition;
     constructor(autoResize?: boolean, autoUpdate?: boolean, autoBindMethods?: boolean);
+    get focusPosition(): Point;
+    set focusPosition(value: Point);
+    get focusSize(): Point;
+    set focusSize(value: Point);
     get focusable(): boolean;
     set focusable(value: boolean);
     get editMode(): boolean;
     set editMode(value: boolean);
     get add(): Add;
     get make(): typeof Make;
-    get app(): Application;
+    get app(): T;
     destroy(_options?: IDestroyOptions | boolean): void;
-    enableEditMode(): void;
-    disableEditMode(): void;
-    onResize(_size: IPoint): void;
-    update(_deltaTime: number): void;
     onFocusBegin(): void;
     onFocusEnd(): void;
     onFocusActivated(): void;
     getFocusPosition(): Point;
     getFocusSize(): IPoint;
-    isFocusable?(): boolean;
+    isFocusable(): boolean;
+    enableEditMode(): void;
+    disableEditMode(): void;
+    onResize(_size: IPoint): void;
+    update(_deltaTime: number): void;
+    protected updateFocusValues(): void;
     /**
      * @protected
      * adds a signal connection

@@ -2,16 +2,16 @@ import { Point } from 'pixi.js';
 import { Application } from '../core';
 import { Container } from '../gameobjects';
 import { Popup } from './Popup';
-export declare class PopupManager extends Container {
-    protected _app: Application;
+export declare class PopupManager<T extends Application> extends Container<T> {
+    protected _app: Application<T>;
     private _activePopups;
     private _popups;
     private _size;
     private _debug;
     private _overlayColor;
     private _overlayAlpha;
-    constructor(_app: Application, overlayColor?: number, overlayAlpha?: number);
-    get app(): Application;
+    constructor(_app: Application<T>, overlayColor?: number, overlayAlpha?: number);
+    get app(): T;
     /** Enabling this will print all debug logs. */
     set debug(value: boolean);
     /**

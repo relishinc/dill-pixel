@@ -7,7 +7,7 @@ import { Add, Make } from '../utils';
 /**
  * State
  */
-export declare abstract class State extends Container {
+export declare abstract class State<T extends Application = Application> extends Container<T> {
     private static _assets;
     static NAME: string;
     protected _size: Point;
@@ -17,10 +17,6 @@ export declare abstract class State extends Container {
     static get ID(): string;
     static get Assets(): AssetMapData[];
     static set Assets(pAssets: AssetMapData[]);
-    /**
-     * gets the Application instance
-     */
-    get app(): Application;
     /**
      * gets the Add factory
      */

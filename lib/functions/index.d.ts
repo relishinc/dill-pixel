@@ -1,3 +1,4 @@
+export * from './pipeline';
 export * from './game';
 export * from './audio';
 export * from './popups';
