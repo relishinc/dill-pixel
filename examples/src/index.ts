@@ -1,3 +1,8 @@
-import Application from '@/Application';
+import { Application } from '@/Application';
+import { create } from 'dill-pixel';
 
-Application.create();
+create(Application, {
+  useSpine: true,
+  showStatsInProduction: true,
+  antialias: false,
+});

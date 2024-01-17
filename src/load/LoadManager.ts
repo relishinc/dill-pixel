@@ -374,7 +374,8 @@ export class LoadManager extends Container {
           const src = asset.assetPath
             ? AssetUtils.replaceResolutionToken(asset.assetPath)
             : AssetUtils.getPathToAsset(asset);
-          Assets.add(asset.assetName, src, asset?.data || null);
+          Assets.add({ alias: asset.assetName, src, data: asset?.data || null });
+          // Assets.add(asset.assetName, src, asset?.data || null);
           defaultAssets.push(asset.assetName);
         }
       }

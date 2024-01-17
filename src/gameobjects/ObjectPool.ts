@@ -1,4 +1,9 @@
-export class ObjectPool<T extends { release: (...args: any[]) => void; destroy: (...args: any[]) => void }> {
+export interface IObjectPoolItem {
+  release: (...args: any[]) => void;
+  destroy: (...args: any[]) => void;
+}
+
+export class ObjectPool<T extends IObjectPoolItem> {
   private pool: T[] = [];
 
   constructor(

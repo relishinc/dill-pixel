@@ -1,6 +1,6 @@
 // @ts-ignore
-import { Assets } from 'pixi.js';
-import { AssetType } from '../utils';
+import {Assets} from 'pixi.js';
+import {AssetType} from '../utils';
 
 /**
  * Stores data used to load and unload assets.
@@ -50,7 +50,8 @@ export class AssetMapData {
   }
 
   public isLoaded(): boolean {
-    return !!Assets.get(this.assetName);
+    return Assets.cache.has(this.assetName);
+    // return !!Assets.get(this.assetName);
   }
 
   public destroy(): void {

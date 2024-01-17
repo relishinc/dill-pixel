@@ -16,7 +16,6 @@ import {
   SimpleMesh,
   SimplePlane,
   SimpleRope,
-  Sprite,
   Spritesheet,
   Text,
   TextStyle,
@@ -24,7 +23,14 @@ import {
   TilingSprite
 } from 'pixi.js';
 import {Application} from '../../core';
-import {AnimatedSprite, Container, FlexContainer, FlexContainerSettings, SpriteAnimation} from '../../gameobjects';
+import {
+  AnimatedSprite,
+  Container,
+  FlexContainer,
+  FlexContainerSettings,
+  Sprite,
+  SpriteAnimation
+} from '../../gameobjects';
 import {SpriteAnimationProps} from '../../gameobjects/animation';
 import {Spine} from '../../global';
 import {SpineSettings} from '../../spine/Make';

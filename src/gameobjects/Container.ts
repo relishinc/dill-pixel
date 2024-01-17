@@ -1,6 +1,7 @@
 import {Container as PIXIContainer, IDestroyOptions, IPoint, Point, Ticker} from 'pixi.js';
 import {SignalConnection, SignalConnections} from 'typed-signals';
 import {Application} from '../core';
+import {IFocusable} from '../input';
 import {Editor} from '../misc';
 import {Signals} from '../signals';
 import {Add, bindAllMethods, bindMethods, Make} from '../utils';
@@ -14,7 +15,7 @@ import {Add, bindAllMethods, bindMethods, Make} from '../utils';
  * @class Container
  * @extends PIXIContainer
  */
-export class Container<T extends Application = Application> extends PIXIContainer {
+export class Container<T extends Application = Application> extends PIXIContainer implements IFocusable {
   public editable: boolean = true;
   public childrenEditable: boolean = true;
   protected _addFactory: Add;
@@ -23,7 +24,9 @@ export class Container<T extends Application = Application> extends PIXIContaine
   protected _editMode = false;
   protected editor: Editor;
   // focus management
-  protected _focusable: boolean = false;
+  protected _focusable: boolean;
+  private _focusSize: Point = new Point();
+  private _focusPosition: Point = new Point();
 
   constructor(autoResize: boolean = true, autoUpdate: boolean = false, autoBindMethods: boolean = true) {
     super();
@@ -33,7 +36,7 @@ export class Container<T extends Application = Application> extends PIXIContaine
     if (autoBindMethods) {
       this.bindAllMethods();
     } else {
-      this.bindMethods('onResize', 'update');
+      this.bindMethods('onResize', 'update', 'updateFocusValues');
     }
 
     if (autoResize) {
@@ -43,6 +46,28 @@ export class Container<T extends Application = Application> extends PIXIContaine
     if (autoUpdate) {
       Ticker.shared.add(this.update, this);
     }
+
+    this.on('added', this.updateFocusValues);
+    this.on('childAdded', this.updateFocusValues);
+    this.on('childRemoved', this.updateFocusValues);
+
+    this.updateFocusValues();
+  }
+
+  public get focusPosition(): Point {
+    return this._focusPosition;
+  }
+
+  public set focusPosition(value: Point) {
+    this._focusPosition = value;
+  }
+
+  public get focusSize(): Point {
+    return this._focusSize;
+  }
+
+  public set focusSize(value: Point) {
+    this._focusSize = value;
   }
 
   get focusable(): boolean {
@@ -80,14 +105,36 @@ export class Container<T extends Application = Application> extends PIXIContaine
 
   destroy(_options?: IDestroyOptions | boolean) {
     this.disconnectAllSignals();
+    this.off('added', this.updateFocusValues);
+    this.off('childAdded', this.updateFocusValues);
+    this.off('childRemoved', this.updateFocusValues);
     super.destroy(_options);
   }
 
-  enableEditMode() {
+  // focus stuff
+  public onFocusBegin(): void {}
+
+  public onFocusEnd(): void {}
+
+  public onFocusActivated(): void {}
+
+  public getFocusPosition(): Point {
+    return this._focusPosition;
+  }
+
+  public getFocusSize(): IPoint {
+    return this._focusSize;
+  }
+
+  public isFocusable(): boolean {
+    return this._focusable;
+  }
+
+  public enableEditMode() {
     this.editor = new Editor(this);
   }
 
-  disableEditMode() {
+  public disableEditMode() {
     if (this.editor) {
       this.editor.destroy();
     }
@@ -101,30 +148,10 @@ export class Container<T extends Application = Application> extends PIXIContaine
     // noop
   }
 
-  // focus stuff
-  public onFocusBegin(): void {
-    console.log(`onFocusBegin for ${this.name}`);
-  }
-
-  public onFocusEnd(): void {
-    console.log(`onFocusEnd for ${this.name}`);
-  }
-
-  public onFocusActivated(): void {
-    console.log(`onFocusActivated for ${this.name}`);
-  }
-
-  public getFocusPosition(): Point {
-    return new Point(-this.width * 0.5, -this.height * 0.5);
-  }
-
-  public getFocusSize(): IPoint {
+  protected updateFocusValues() {
     const bounds = this.getBounds();
-    return new Point(bounds.width, bounds.height);
-  }
-
-  public isFocusable?(): boolean {
-    return this._focusable;
+    this._focusPosition = new Point(-this.width * 0.5, -this.height * 0.5);
+    this._focusSize = new Point(bounds.width, bounds.height);
   }
 
   /**
