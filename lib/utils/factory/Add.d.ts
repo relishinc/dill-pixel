@@ -1,7 +1,7 @@
 import { Geometry, State } from '@pixi/core';
 import { Container as PIXIContainer } from '@pixi/display';
-import { BitmapText, DRAW_MODES, Graphics, HTMLText, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Mesh, NineSlicePlane, Point, Shader, SimplePlane, SimpleRope, Sprite, Text, TextStyle, Texture, TilingSprite } from 'pixi.js';
-import { AnimatedSprite, Container, FlexContainer, FlexContainerSettings } from '../../gameobjects';
+import { BitmapText, DRAW_MODES, Graphics, HTMLText, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Mesh, NineSlicePlane, Point, Shader, SimplePlane, SimpleRope, Text, TextStyle, Texture, TilingSprite } from 'pixi.js';
+import { AnimatedSprite, Container, FlexContainer, FlexContainerSettings, Sprite } from '../../gameobjects';
 import { Spine } from '../../global';
 import { SpineSettings } from '../../spine/Make';
 import { PointLike, SpritesheetLike } from '../index';

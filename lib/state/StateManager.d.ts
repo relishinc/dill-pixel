@@ -1,5 +1,6 @@
-import { Container, Point } from 'pixi.js';
+import { Point } from 'pixi.js';
 import { Application } from '../core';
+import { Container } from '../gameobjects';
 import { State } from './State';
 import { TransitionStep } from './TransitionStep';
 export declare function transitionToState(stateIdAndData: string | typeof State | {
@@ -10,8 +11,8 @@ export declare function transitionToState(stateIdAndData: string | typeof State 
  * Manages all states.
  * @extends Container
  */
-export declare class StateManager extends Container {
-    private app;
+export declare class StateManager<T extends Application = Application> extends Container<T> {
+    private _app;
     /**
      * Cached size of the game.
      */
@@ -79,7 +80,7 @@ export declare class StateManager extends Container {
     private _useHash;
     private _statesMenu;
     private _excluded;
-    constructor(app: Application);
+    constructor(_app: Application);
     set useHash(value: boolean);
     set defaultTransitionType(transitionType: TransitionStep[]);
     get default(): string | undefined;
@@ -105,7 +106,7 @@ export declare class StateManager extends Container {
      * @param creationMethod A function that constructs the state.
      * @param autoAddAssets whether to automatically register the asset group for this state - only works if stateIdOrClass is a class
      */
-    register(stateIdOrClass: string | typeof State, creationMethod?: () => State, autoAddAssets?: boolean): void;
+    register(stateIdOrClass: string | typeof State<T> | typeof State, creationMethod?: () => State<T>, autoAddAssets?: boolean): void;
     statesRegistered(): void;
     showDebugMenu(): void;
     /**

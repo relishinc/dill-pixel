@@ -1,5 +1,7 @@
+import { Application } from '../core';
 import { AssetMapAudioData, LoadToken } from '../load';
-import { StateToken } from '../state';
+import { State, StateToken } from '../state';
+export declare function registerState<T extends Application = Application>(stateIdOrClass: string | typeof State<T> | typeof State, creationMethod?: () => State<T>, autoAddAssets?: boolean): void;
 export declare function loadState(token: StateToken): void;
 export declare function initState(data?: any): void;
 export declare function showLoadScreen(data: {

@@ -1,7 +1,8 @@
-export declare class ObjectPool<T extends {
+export interface IObjectPoolItem {
     release: (...args: any[]) => void;
     destroy: (...args: any[]) => void;
-}> {
+}
+export declare class ObjectPool<T extends IObjectPoolItem> {
     classType: new (...args: any[]) => T;
     initialSize: number;
     maxSize: number;

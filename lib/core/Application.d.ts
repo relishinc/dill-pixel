@@ -10,16 +10,24 @@ import { State, StateManager } from '../state';
 import { Add, HTMLTextStyleManager, Make, OrientationManager, ResizeManager, WebEventsManager } from '../utils';
 export interface DillPixelApplicationOptions extends IApplicationOptions {
     physics?: boolean;
+    useSpine?: boolean;
     showStatsInProduction?: boolean;
     showStateDebugInProduction?: boolean;
 }
-export declare class Application extends PIXIApplication {
+export type Font = {
+    family: string;
+    data?: {
+        weight?: number | string;
+    };
+};
+export declare function create<T extends Application = Application>(ApplicationClass: typeof Application, config?: Partial<DillPixelApplicationOptions>, domElement?: string | HTMLElement): Promise<T> | T;
+export declare class Application<T extends Application = any> extends PIXIApplication {
     protected static readonly SIZE_MIN_DEFAULT: Point;
     protected static readonly SIZE_MAX_DEFAULT: Point;
     protected static _instance: Application;
-    protected _stateManager: StateManager;
+    protected _stateManager: StateManager<T>;
     protected _audioManager: IAudioManager;
-    protected _popupManager: PopupManager;
+    protected _popupManager: PopupManager<T>;
     protected _loadManager: LoadManager;
     protected _keyboardManager: KeyboardManager;
     protected _keyboardFocusManager: KeyboardFocusManager<DefaultKeyboardFocusManagerSprite>;
@@ -37,7 +45,7 @@ export declare class Application extends PIXIApplication {
     protected _physics: PhysicsBase;
     protected stats: any;
     protected _useSpine: boolean;
-    protected _ready: boolean;
+    protected _initialized: boolean;
     /**
      * Creates a container element with the given id and appends it to the DOM.
      * @param pId{string} - The id of the element to create.
@@ -45,9 +53,8 @@ export declare class Application extends PIXIApplication {
     static createContainer(pId: string): HTMLDivElement;
     /**
      * Creates a new instance of the Application class and returns it.
-     * @param pElement{string | HTMLElement} - The id of the element to use as the container, or the element itself.
      */
-    static create(pElement?: string | HTMLElement): Application | null;
+    static getInstance<T extends Application = Application>(): T;
     /**
      * The config passed in can be a json object, or an `AppConfig` object.
      * @param appConfig
@@ -55,7 +62,7 @@ export declare class Application extends PIXIApplication {
      * @default autoResize: true
      * @default resolution: utils.isMobile.any === false ? 2 : (window.devicePixelRatio > 1 ? 2 : 1);
      */
-    protected constructor(appConfig?: Partial<DillPixelApplicationOptions> & {
+    constructor(appConfig?: Partial<DillPixelApplicationOptions> & {
         [key: string]: any;
     });
     static get containerElement(): HTMLElement | undefined;
@@ -75,9 +82,9 @@ export declare class Application extends PIXIApplication {
      * @override
      */
     get requiredAssets(): AssetMapData[];
-    get state(): StateManager;
+    get state(): StateManager<T>;
     get keyboard(): KeyboardManager;
-    get popups(): PopupManager;
+    get popups(): PopupManager<T>;
     get audio(): IAudioManager;
     get voiceover(): IVoiceOverManager;
     get size(): Point;
@@ -96,18 +103,13 @@ export declare class Application extends PIXIApplication {
     addPhysics(type?: PhysicsEngineType): Promise<PhysicsBase>;
     /**
      *
-     * @param pGroupIdOrClass
-     * @param pAssets
      * proxy function for @link {AssetMap.addAssetGroup}
+     * @param groupIdOrClass
+     * @param assets
      */
-    addAssetGroup(pGroupIdOrClass: string | typeof State, pAssets?: AssetMapData[]): void;
+    addAssetGroup(groupIdOrClass: string | typeof State<T> | typeof State, assets?: AssetMapData[]): void;
     hasAsset(pAssetName: string): boolean;
-    /**
-     * initialize the Application singleton
-     * and append the view to the DOM
-     * @param pElement{String|HTMLElement}
-     */
-    create(pElement: HTMLElement): Application | null;
+    initialize(): Promise<void>;
     /**
      * Initializes all managers and starts the splash screen process.
      */
@@ -131,7 +133,7 @@ export declare class Application extends PIXIApplication {
      *
      * // then later on, from anywhere in your app, you can do:
      * import {getHTMLTextStyle} from 'dill-pixel';
-     * this.add.htmlText( 'This is some text', getHTMLTextStyle('{style1}'), ...);
+     * this.add.htmlText( 'This is some text', getHTMLTextStyle('style1'), ...);
      */
     loadHTMLTextStyles(): Promise<void>;
     protected addSpine(): Promise<void>;
@@ -146,7 +148,7 @@ export declare class Application extends PIXIApplication {
      */
     protected createSplashScreen(): SplashScreen;
     /**
-     * Override to setup the asset map for this application.
+     * Override to set up the asset map for this application.
      * @override
      */
     protected addAssetGroups(): void;
@@ -169,7 +171,7 @@ export declare class Application extends PIXIApplication {
     protected registerStates(): void;
     /**
      * Called when the application window is resized.
-     * @param debounceDelay A delay (in seconds) before telling the rest of the application that a resize occured.
+     * @param debounceDelay A delay (in seconds) before telling the rest of the application that a resize occurred.
      * @default 0
      */
     protected onResize(debounceDelay: number): Promise<void> | void;
@@ -179,12 +181,7 @@ export declare class Application extends PIXIApplication {
      * @override
      */
     protected onResizeComplete(): void;
-    protected getFontsList(): {
-        family: string;
-        data?: {
-            weight?: number | string;
-        };
-    }[];
+    protected getFontsList(): Font[];
     protected allFontsLoaded(): Promise<void>;
     /**
      * Override to specify what should happen after all persistent assets have been loaded.

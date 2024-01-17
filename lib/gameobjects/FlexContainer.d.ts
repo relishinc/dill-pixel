@@ -51,7 +51,7 @@ export declare class FlexContainer extends Container {
     destroy(_options?: IDestroyOptions | boolean): void;
     onResize(_size: IPoint): void;
     handleChildAdded(child: any): void;
-    handleChildRemoved(child: any): void;
+    handleChildRemoved(): void;
     layout(immediate?: boolean): void;
     private _layout;
 }
