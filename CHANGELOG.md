@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.25.1](https://github.com/relishinc/dill-pixel/compare/v2.25.0...v2.25.1) (2024-01-24)
+
+
+### Bug Fixes
+
+* onResize method binding in FlexContainer ([e60af36](https://github.com/relishinc/dill-pixel/commit/e60af36951b3db3b462c513ccdefd638b96ce9f6))
+
 ## [2.25.0](https://github.com/relishinc/dill-pixel/compare/v2.24.4...v2.25.0) (2024-01-17)
 
 
