@@ -19,21 +19,42 @@ export function bindMethods(instance: unknown, ...methodNames: string[]) {
   });
 }
 
-export function bindAllMethods(instance: any, excludePrefixes: string[] = ['_'], excludeMethodNames: string[] = []) {
-  const prototype = Object.getPrototypeOf(instance);
-  Object.getOwnPropertyNames(prototype).forEach((propertyName) => {
-    const descriptor = Object.getOwnPropertyDescriptor(prototype, propertyName);
-    if (descriptor && typeof descriptor.value === 'function' && propertyName !== 'constructor') {
-      // check if methodName starts with any of the prefixes
+// get all method names of instance and any prototype it extends, all the way up the tree
+function getInstanceMethodNames(
+  instance: any,
+  excludePrefixes: string[] = [],
+  excludeMethodNames: string[] = [],
+): string[] {
+  const methodNames: string[] = [];
+  let prototype = Object.getPrototypeOf(instance);
+  while (prototype) {
+    // console.log('binding', prototype.constructor.name, prototype);
+    const filteredMethodNames = Object.getOwnPropertyNames(prototype).filter((propertyName) => {
+      const ownDescriptor = Object.getOwnPropertyDescriptor(prototype, propertyName);
+      if (!ownDescriptor || typeof ownDescriptor.value !== 'function' || propertyName === 'constructor') {
+        return false;
+      }
       if (excludePrefixes.some((prefix) => propertyName.startsWith(prefix))) {
-        return;
+        return false;
       }
-      if (excludeMethodNames.includes(propertyName)) {
-        return;
-      }
-      instance[propertyName] = instance[propertyName].bind(instance);
+      return !excludeMethodNames.includes(propertyName);
+    });
+    methodNames.push(...filteredMethodNames);
+    if (prototype === Object.prototype || prototype.constructor.hasOwnProperty('__dill_pixel_top_level_class')) {
+      // console.log('breaking on prototype', prototype.constructor.name);
+      break;
     }
-    // Note: Getters and setters are not bound here
+    prototype = Object.getPrototypeOf(prototype);
+  }
+  return methodNames;
+}
+
+export function bindAllMethods(instance: any, excludePrefixes: string[] = [], excludeMethodNames: string[] = []) {
+  // console.group('bindAllMethods', instance.constructor.name);
+  const methodNames = getInstanceMethodNames(instance, excludePrefixes, excludeMethodNames);
+  // console.groupEnd();
+  methodNames.forEach((methodName) => {
+    instance[methodName] = instance[methodName].bind(instance);
   });
 }
 

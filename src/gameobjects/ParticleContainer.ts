@@ -28,16 +28,14 @@ export interface ParticleContainerProps {
  * @extends PIXIParticleContainer
  */
 export class ParticleContainer extends PIXIParticleContainer {
-  protected _addFactory: Add;
-
-  // optionally add signals to a SignalConnections instance for easy removal
-  protected _signalConnections: SignalConnections = new SignalConnections();
-
-  protected _editMode = false;
-  protected editor: Editor;
-
+  public static __dill_pixel_top_level_class = true;
   public editable: boolean = true;
   public childrenEditable: boolean = true;
+  protected _addFactory: Add;
+  // optionally add signals to a SignalConnections instance for easy removal
+  protected _signalConnections: SignalConnections = new SignalConnections();
+  protected _editMode = false;
+  protected editor: Editor;
 
   constructor(props: Partial<ParticleContainerProps> = {}, autoResize: boolean = true, autoUpdate: boolean = false) {
     const properties = Object.assign(
@@ -67,26 +65,16 @@ export class ParticleContainer extends PIXIParticleContainer {
     }
   }
 
+  get editMode(): boolean {
+    return this._editMode;
+  }
+
   set editMode(value: boolean) {
     this._editMode = value;
     if (this._editMode) {
       this.enableEditMode();
     } else {
       this.disableEditMode();
-    }
-  }
-
-  get editMode(): boolean {
-    return this._editMode;
-  }
-
-  enableEditMode() {
-    this.editor = new Editor(this);
-  }
-
-  disableEditMode() {
-    if (this.editor) {
-      this.editor.destroy();
     }
   }
 
@@ -105,6 +93,16 @@ export class ParticleContainer extends PIXIParticleContainer {
   destroy(_options?: IDestroyOptions | boolean) {
     this.disconnectAllSignals();
     super.destroy(_options);
+  }
+
+  enableEditMode() {
+    this.editor = new Editor(this);
+  }
+
+  disableEditMode() {
+    if (this.editor) {
+      this.editor.destroy();
+    }
   }
 
   public onResize(_size: IPoint) {

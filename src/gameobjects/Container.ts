@@ -16,6 +16,7 @@ import {Add, bindAllMethods, bindMethods, Make} from '../utils';
  * @extends PIXIContainer
  */
 export class Container<T extends Application = Application> extends PIXIContainer implements IFocusable {
+  public static __dill_pixel_top_level_class = true;
   public editable: boolean = true;
   public childrenEditable: boolean = true;
   protected _addFactory: Add;

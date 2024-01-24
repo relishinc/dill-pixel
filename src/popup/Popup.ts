@@ -1,4 +1,5 @@
 import { Graphics, Point, Sprite } from 'pixi.js';
+import { Application } from '../core';
 import { hidePopupComplete } from '../functions';
 import { Container } from '../gameobjects';
 import { IPopup } from './IPopup';
@@ -15,7 +16,7 @@ export enum PopupState {
  * This is an abstract class from which all Popups should inherit.
  * However, you can also make your own implementation of {@link IPopup} if necessary.
  */
-export class Popup extends Container<any> implements IPopup {
+export class Popup<T extends Application = Application> extends Container<T> implements IPopup {
   /** @inheritdoc */
   public blackout?: Graphics | Sprite;
   public static readonly NAME: string = '__Popup';
@@ -35,16 +36,6 @@ export class Popup extends Container<any> implements IPopup {
 
   constructor(data?: any) {
     super(true, false);
-    this.bindMethods(
-      'animateInComplete',
-      'animateOutComplete',
-      'onBlackoutClicked',
-      'show',
-      'hide',
-      '_hide',
-      'animateIn',
-      'animateOut',
-    );
     this._popupData = data;
   }
 
