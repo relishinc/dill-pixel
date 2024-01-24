@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.25.2](https://github.com/relishinc/dill-pixel/compare/v2.25.1...v2.25.2) (2024-01-24)
+
+
+### Bug Fixes
+
+* bindAllMethods framework utility revamped ([c4f53e1](https://github.com/relishinc/dill-pixel/commit/c4f53e1d368bae3a88a04891cb6b2eedf877ad78))
+
 ## [2.25.1](https://github.com/relishinc/dill-pixel/compare/v2.25.0...v2.25.1) (2024-01-24)
 
 
