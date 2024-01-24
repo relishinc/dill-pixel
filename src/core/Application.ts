@@ -316,10 +316,6 @@ export class Application<T extends Application = any> extends PIXIApplication {
     this.stats.dom.style.left = 'auto';
   }
 
-  public addFocusManager() {
-    this._keyboardFocusManager = new KeyboardFocusManager(DefaultKeyboardFocusManagerSprite);
-  }
-
   public async addPhysics(type: PhysicsEngineType = PhysicsEngineType.MATTER): Promise<PhysicsBase> {
     let PhysicsModule: any;
     switch (type) {
@@ -448,6 +444,10 @@ export class Application<T extends Application = any> extends PIXIApplication {
     return Promise.resolve();
   }
 
+  protected addFocusManager() {
+    this._keyboardFocusManager = new KeyboardFocusManager(DefaultKeyboardFocusManagerSprite);
+  }
+
   protected async addSpine() {
     await import('../spine/spine');
   }
@@ -464,6 +464,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
     if (!this._initialized) {
       return;
     }
+
     if (this.stats) {
       this.stats.begin();
     }

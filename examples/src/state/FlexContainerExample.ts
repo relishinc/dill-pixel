@@ -74,10 +74,11 @@ export class FlexContainerExample extends BaseState {
 
   onResize(pSize: Point) {
     if (this.backing) {
-      this.backing.width = pSize.x - 60;
-      this.backing.height = pSize.y - 200;
       this.backing.position.set(-pSize.x * 0.5 + 30, -pSize.y * 0.5 + 100);
-      this.flexContainer.size = [this.backing.width, this.backing.height];
+      this.flexContainer.position.set(this.backing.position.x, this.backing.position.y);
+      if (this.config.useBacking) {
+        this.flexContainer.size = [this.backing.width, this.backing.height];
+      }
     }
     super.onResize(pSize);
   }
@@ -89,9 +90,12 @@ export class FlexContainerExample extends BaseState {
   }
 
   configureGUI() {
-    this.gui.add(this.config, 'useBacking').onChange(() => {
-      this.addItems();
-    });
+    this.gui
+      .add(this.config, 'useBacking')
+      .onChange(() => {
+        this.addItems();
+      })
+      .name('Show backing');
 
     this.gui.add(this.config, 'width', 0, 2000, 1).onChange(() => {
       this.addItems();
@@ -101,13 +105,19 @@ export class FlexContainerExample extends BaseState {
       this.addItems();
     });
 
-    this.gui.add(this.config, 'numItems', 1, 20, 1).onChange(() => {
-      this.addItems();
-    });
+    this.gui
+      .add(this.config, 'numItems', 1, 20, 1)
+      .onChange(() => {
+        this.addItems();
+      })
+      .name('Number of items');
 
-    this.gui.add(this.config, 'varySizes').onChange(() => {
-      this.addItems();
-    });
+    this.gui
+      .add(this.config, 'varySizes')
+      .onChange(() => {
+        this.addItems();
+      })
+      .name('Vary sizes');
 
     this.gui.add(this.config, 'gap', 0, 100, 1).onChange(() => {
       this.flexContainer.gap = this.config.gap;
@@ -150,8 +160,8 @@ export class FlexContainerExample extends BaseState {
     const { numItems, varySizes, useBacking } = this.config;
     this.backing.visible = useBacking;
 
-    const width = this.backing.visible ? this.config.width : 0;
-    const height = this.backing.visible ? this.config.height : 0;
+    const width = this.config.width;
+    const height = this.config.height;
 
     if (this.backing.visible) {
       this.backing.width = width;

@@ -82,7 +82,7 @@ export class Application extends DillPixelApplication {
     return Promise.resolve();
   }
 
-  someFunction() {
-    console.log('some function');
+  customFunction() {
+    console.log('custom function');
   }
 }

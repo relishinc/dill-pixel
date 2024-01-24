@@ -125,6 +125,7 @@ export class BaseState extends State<Application> {
     if (this._footer) {
       this._footer.position.set(pSize.x * 0.5, pSize.y * 0.5);
     }
+    this._headerBg.width = this.app.size.x;
   }
 
   public destroy() {
