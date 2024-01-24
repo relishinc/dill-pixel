@@ -36,7 +36,7 @@ export class FlexContainer extends Container {
   constructor(settings: Partial<FlexContainerSettings> = {}) {
     super(true);
 
-    this.bindMethods('handleChildAdded', 'handleChildRemoved', 'layout', '_layout');
+    this.bindMethods('onResize', 'update', 'handleChildAdded', 'handleChildRemoved', 'layout', '_layout');
 
     this._settings = Object.assign(
       {
@@ -133,7 +133,7 @@ export class FlexContainer extends Container {
     this.layout();
   }
 
-  destroy(_options?: IDestroyOptions | boolean) {
+  public destroy(_options?: IDestroyOptions | boolean) {
     this.off('childAdded', this.handleChildAdded);
     this.off('childRemoved', this.handleChildRemoved);
     super.destroy(_options);
@@ -143,19 +143,19 @@ export class FlexContainer extends Container {
     this.layout();
   }
 
-  handleChildAdded(child: any) {
+  public layout(immediate: boolean = false) {
+    this._layout();
+  }
+
+  protected handleChildAdded(child: any) {
     if (child instanceof FlexContainer) {
       this.addSignalConnection(child.onLayoutComplete.connect(this.layout));
     }
     this.layout();
   }
 
-  handleChildRemoved() {
+  protected handleChildRemoved() {
     this.layout();
-  }
-
-  public layout(immediate: boolean = false) {
-    this._layout();
   }
 
   private _layout() {
