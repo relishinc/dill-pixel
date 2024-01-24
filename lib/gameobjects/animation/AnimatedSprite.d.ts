@@ -1,4 +1,4 @@
-import { Sprite } from 'pixi.js';
+import { Sprite } from '../Sprite';
 import { SpriteAnimation } from './SpriteAnimation';
 /**
  * Animated sprite

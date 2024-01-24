@@ -5,6 +5,7 @@ import { Application } from '../core';
 import { IFocusable } from '../input';
 import { Add, Make } from '../utils';
 export declare class Sprite<T extends Application = Application> extends PIXISprite implements IFocusable {
+    static __dill_pixel_top_level_class: boolean;
     editable: boolean;
     protected _addFactory: Add;
     protected _signalConnections: SignalConnections;

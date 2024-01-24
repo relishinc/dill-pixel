@@ -14,6 +14,7 @@ import { Add, Make } from '../utils';
  * @extends PIXIContainer
  */
 export declare class Container<T extends Application = Application> extends PIXIContainer implements IFocusable {
+    static __dill_pixel_top_level_class: boolean;
     editable: boolean;
     childrenEditable: boolean;
     protected _addFactory: Add;

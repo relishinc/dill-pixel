@@ -25,21 +25,22 @@ export interface ParticleContainerProps {
  * @extends PIXIParticleContainer
  */
 export declare class ParticleContainer extends PIXIParticleContainer {
+    static __dill_pixel_top_level_class: boolean;
+    editable: boolean;
+    childrenEditable: boolean;
     protected _addFactory: Add;
     protected _signalConnections: SignalConnections;
     protected _editMode: boolean;
     protected editor: Editor;
-    editable: boolean;
-    childrenEditable: boolean;
     constructor(props?: Partial<ParticleContainerProps>, autoResize?: boolean, autoUpdate?: boolean);
-    set editMode(value: boolean);
     get editMode(): boolean;
-    enableEditMode(): void;
-    disableEditMode(): void;
+    set editMode(value: boolean);
     get add(): Add;
     get make(): typeof Make;
     get app(): Application;
     destroy(_options?: IDestroyOptions | boolean): void;
+    enableEditMode(): void;
+    disableEditMode(): void;
     onResize(_size: IPoint): void;
     update(_deltaTime: number): void;
     /**

@@ -99,7 +99,6 @@ export declare class Application<T extends Application = any> extends PIXIApplic
     get physics(): PhysicsBase;
     get htmlTextStyles(): typeof HTMLTextStyleManager;
     addStats(): Promise<void>;
-    addFocusManager(): void;
     addPhysics(type?: PhysicsEngineType): Promise<PhysicsBase>;
     /**
      *
@@ -136,6 +135,7 @@ export declare class Application<T extends Application = any> extends PIXIApplic
      * this.add.htmlText( 'This is some text', getHTMLTextStyle('style1'), ...);
      */
     loadHTMLTextStyles(): Promise<void>;
+    protected addFocusManager(): void;
     protected addSpine(): Promise<void>;
     protected setup(): Promise<void> | void;
     /**
