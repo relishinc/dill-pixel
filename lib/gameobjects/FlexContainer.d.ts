@@ -50,9 +50,9 @@ export declare class FlexContainer extends Container {
     set size(size: PointLike);
     destroy(_options?: IDestroyOptions | boolean): void;
     onResize(_size: IPoint): void;
-    handleChildAdded(child: any): void;
-    handleChildRemoved(): void;
     layout(immediate?: boolean): void;
+    protected handleChildAdded(child: any): void;
+    protected handleChildRemoved(): void;
     private _layout;
 }
 //# sourceMappingURL=FlexContainer.d.ts.map
