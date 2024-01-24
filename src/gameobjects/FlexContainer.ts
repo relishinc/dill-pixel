@@ -32,6 +32,7 @@ export class FlexContainer extends Container {
   protected paddingBottom: number = 0;
   protected _settings: FlexContainerSettings;
   private _layoutTimeout: any;
+  private _reparentAddedChild: boolean = true;
 
   constructor(settings: Partial<FlexContainerSettings> = {}) {
     super(true);
@@ -144,13 +145,33 @@ export class FlexContainer extends Container {
   }
 
   handleChildAdded(child: any) {
+    // avoid maximum call stack error b/c we're about to add a container
+    if (!this._reparentAddedChild) return;
+    this._reparentAddedChild = false;
+    // add an inner container so we can account for e.g. sprite that are added with anchors
+    // re-parent the added child to the inner container
+    const container = this.add.container();
+    container.add.existing(child);
+    // figure out the bounds of the inner container
+    // then, offset its pivot so that it's top-left corner is always at 0,0
+    const bounds = container.getLocalBounds();
+    if (bounds.x < 0) {
+      container.pivot.x = bounds.x;
+    }
+    if (bounds.y < 0) {
+      container.pivot.y = bounds.y;
+    }
+
     if (child instanceof FlexContainer) {
       this.addSignalConnection(child.onLayoutComplete.connect(this.layout));
     }
     this.layout();
+
+    this._reparentAddedChild = true;
   }
 
-  handleChildRemoved() {
+  handleChildRemoved(child: any) {
+    child.parent = null;
     this.layout();
   }
 

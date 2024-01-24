@@ -1,5 +1,5 @@
 import { BaseState } from '@/state/BaseState';
-import { AssetMapData, FlexContainer, MathUtils } from 'dill-pixel';
+import { AssetMapData, AssetType, FlexContainer, Make, MathUtils, TextureAsset } from 'dill-pixel';
 import { Point, Sprite, TextStyle } from 'pixi.js';
 
 const whiteTextStyle = (size: number) =>
@@ -31,7 +31,7 @@ export class FlexContainerExample extends BaseState {
   }
 
   public static get Assets(): AssetMapData[] {
-    return [];
+    return [new TextureAsset('pickle', AssetType.PNG)];
   }
 
   init(size: Point) {
@@ -163,13 +163,27 @@ export class FlexContainerExample extends BaseState {
     this.flexContainer.size = [width, height];
 
     Array.from({ length: numItems }).forEach((_, i) => {
-      this.flexContainer.add.text(
-        `Item ${i + 1}`,
-        whiteTextStyle(varySizes ? MathUtils.clamp(Math.random() * 48 + 24, 24, 72) : 48),
-        1,
-        0,
-        0,
-      );
+      if (Math.random() > 0.5) {
+        const container = Make.container();
+        container.add.text(
+          `Item ${i + 1}`,
+          whiteTextStyle(varySizes ? MathUtils.clamp(Math.random() * 48 + 24, 24, 72) : 48),
+          1,
+          0,
+          [0, 0.5],
+        );
+        const sprite = container.add.sprite({ asset: 'pickle', anchor: Math.random() });
+        sprite.position.set(Math.random() * 200 - 100, Math.max(50, Math.random() * 200 - 100));
+        this.flexContainer.add.existing(container);
+      } else {
+        this.flexContainer.add.text(
+          `Item ${i + 1}`,
+          whiteTextStyle(varySizes ? MathUtils.clamp(Math.random() * 48 + 24, 24, 72) : 48),
+          1,
+          0,
+          Math.random(),
+        );
+      }
     });
   }
 }
