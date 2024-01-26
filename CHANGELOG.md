@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.25.3](https://github.com/relishinc/dill-pixel/compare/v2.25.2...v2.25.3) (2024-01-26)
+
+
+### Bug Fixes
+
+* audio compress command path bugs ([48156ec](https://github.com/relishinc/dill-pixel/commit/48156eced486d559fa4f7b2e024531b06b5fa39b))
+
 ## [2.25.2](https://github.com/relishinc/dill-pixel/compare/v2.25.1...v2.25.2) (2024-01-24)
 
 
