@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.25.4](https://github.com/relishinc/dill-pixel/compare/v2.25.3...v2.25.4) (2024-01-26)
+
+
+### Bug Fixes
+
+* base path issue in HowlerTrack ([d7b4739](https://github.com/relishinc/dill-pixel/commit/d7b47396ffdc84fc43db90bced1e52fd6775a8dd))
+
 ## [2.25.3](https://github.com/relishinc/dill-pixel/compare/v2.25.2...v2.25.3) (2024-01-26)
 
 
