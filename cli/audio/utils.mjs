@@ -48,7 +48,7 @@ export function walkDir(dir, callback, promises = []) {
 		if (isDirectory) {
 			walkDir(dirPath, callback, promises);
 		} else {
-			promises.push(...callback(path.join(dir, f)));
+			promises.push(callback(path.join(dir, f)));
 		}
 	}
 	return promises;
