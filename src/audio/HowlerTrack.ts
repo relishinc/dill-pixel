@@ -34,7 +34,7 @@ export class HowlerTrack implements IAudioTrack {
     this._audioManager = audioManager;
     this._category = category;
 
-    if (Assets.resolver.basePath !== '') {
+    if (Assets.resolver.basePath) {
       this._urls = HowlerTrack.getDefaultUrls(this._id).map((url) => Assets.resolver.basePath + '/' + url);
     } else {
       this._urls = HowlerTrack.getDefaultUrls(this._id);

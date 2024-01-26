@@ -51,6 +51,10 @@ export default defineConfig((config) => ({
           src: normalizePath(path.resolve(__dirname, './src/assets/fonts/*')),
           dest: './assets/fonts',
         },
+        {
+          src: normalizePath(path.resolve(__dirname, './src/assets/audio/output/*')),
+          dest: './assets/audio',
+        },
       ],
     }),
   ],
