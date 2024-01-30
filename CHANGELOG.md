@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.27.0](https://github.com/relishinc/dill-pixel/compare/v2.26.1...v2.27.0) (2024-01-30)
+
+
+### Features
+
+* adjusted FlexContainer to account for anchor ([69e1a34](https://github.com/relishinc/dill-pixel/commit/69e1a34fb48b48b2e692380be0eeb650d09e6ffc))
+
+
+### Bug Fixes
+
+* flexcontainer import error ([9833cb8](https://github.com/relishinc/dill-pixel/commit/9833cb810490a1f49b9f39a52fe6395d169006c1))
+
 ## [2.26.1](https://github.com/relishinc/dill-pixel/compare/v2.26.0...v2.26.1) (2024-01-30)
 
 
