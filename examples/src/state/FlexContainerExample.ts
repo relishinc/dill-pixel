@@ -1,5 +1,5 @@
 import { BaseState } from '@/state/BaseState';
-import { AssetMapData, FlexContainer, MathUtils } from 'dill-pixel';
+import { AssetMapData, delay, FlexContainer, MathUtils } from 'dill-pixel';
 import { Point, Sprite, TextStyle } from 'pixi.js';
 
 const whiteTextStyle = (size: number) =>
@@ -34,7 +34,7 @@ export class FlexContainerExample extends BaseState {
     return [];
   }
 
-  init(size: Point) {
+  async init(size: Point) {
     super.init(size);
 
     this.addGUI();
@@ -52,6 +52,9 @@ export class FlexContainerExample extends BaseState {
     );
     this.flexContainer = this.add.flexContainer(1, this.backing.position);
     this.addItems();
+
+    await delay(2);
+    this.flexContainer.removeChildAt(2);
 
     // test flex container inside flex container
     // const fc1 = this.add.flexContainer({
