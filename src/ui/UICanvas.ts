@@ -61,6 +61,7 @@ function ensurePadding(padding: any): UICanvasPadding {
 }
 
 export class UICanvas extends Container {
+  private _outerBounds: Rectangle;
   private _displayBounds: Rectangle;
   private settingsMap = new Map<PIXIContainer<DisplayObject>, UICanvasChildSettings>();
   private _settings: UICanvasSettings;
@@ -95,6 +96,7 @@ export class UICanvas extends Container {
   public onResize() {
     const _size = this._settings.isBoundToStage ? this.app.size : resolvePointLike(this._settings.size);
     this._displayBounds = this.__calculateBounds(_size);
+    this._outerBounds = this.__calculateOuterBounds(_size);
     this.setPosition();
     this.layout();
   }
@@ -169,6 +171,11 @@ export class UICanvas extends Container {
     );
   }
 
+  private __calculateOuterBounds(_size: PointLike): Rectangle {
+    const pt = resolvePointLike(_size);
+    return new Rectangle(0, 0, pt.x, pt.y);
+  }
+
   private handleChildRemoved(child: any) {
     this.settingsMap.delete(child);
   }
@@ -178,9 +185,14 @@ export class UICanvas extends Container {
     const screenWidth = this._displayBounds.width;
     const screenHeight = this._displayBounds.height;
 
+    const firstChild = (child as PIXIContainer).getChildAt(0);
+
+    const childWidth = firstChild instanceof FlexContainer ? firstChild.containerWidth || child.width : child.width;
+    const childHeight = firstChild instanceof FlexContainer ? firstChild.containerHeight || child.height : child.height;
+
     switch (settings.align) {
       case 'top right':
-        child.x = screenWidth - settings.padding - child.width;
+        child.x = screenWidth - settings.padding - childWidth;
         child.y = settings.padding;
         break;
       case 'top left':
@@ -189,21 +201,22 @@ export class UICanvas extends Container {
         break;
       case 'top center':
       case 'top':
-        child.x = (screenWidth - child.width) / 2;
+        child.x = (screenWidth - childWidth) / 2;
         child.y = settings.padding;
         break;
       case 'bottom right':
-        child.x = screenWidth - settings.padding - child.width;
-        child.y = screenHeight - settings.padding - child.height;
+        child.x = screenWidth - settings.padding - childWidth;
+        child.y = screenHeight - settings.padding - childHeight;
         break;
       case 'bottom left':
+        console.log('bl', settings.padding, childHeight);
         child.x = settings.padding;
-        child.y = screenHeight - settings.padding - child.height;
+        child.y = screenHeight - settings.padding - childHeight;
         break;
       case 'bottom center':
       case 'bottom':
         child.x = (screenWidth - child.width) / 2;
-        child.y = screenHeight - settings.padding - child.height;
+        child.y = screenHeight - settings.padding - childHeight;
         break;
       case 'left top':
         child.x = settings.padding;
@@ -211,15 +224,15 @@ export class UICanvas extends Container {
         break;
       case 'left bottom':
         child.x = settings.padding;
-        child.y = screenHeight - settings.padding - child.height;
+        child.y = screenHeight - settings.padding - childHeight;
         break;
       case 'left center':
       case 'left':
         child.x = settings.padding;
-        child.y = (screenHeight - child.height) / 2;
+        child.y = (screenHeight - childHeight) / 2;
         break;
       case 'right top':
-        child.x = screenWidth - settings.padding - child.width;
+        child.x = screenWidth - settings.padding - childWidth;
         child.y = settings.padding;
         break;
       case 'right bottom':
@@ -228,12 +241,13 @@ export class UICanvas extends Container {
         break;
       case 'right center':
       case 'right':
-        child.x = screenWidth - settings.padding - child.width;
-        child.y = (screenHeight - child.height) / 2;
+        child.x = screenWidth - settings.padding - childWidth;
+        child.y = (screenHeight - childHeight) / 2;
         break;
       case 'center':
-        child.x = (screenWidth - child.width) / 2;
-        child.y = (screenHeight - child.height) / 2;
+        console.log({ childWidth });
+        child.x = (screenWidth - childWidth) / 2;
+        child.y = (screenHeight - childHeight) / 2;
         break;
     }
   }
@@ -243,8 +257,15 @@ export class UICanvas extends Container {
       this._debugGraphics = this.add.graphics();
     }
     this._debugGraphics.clear();
-    this._debugGraphics.lineStyle(1, 0xff0000, 0.5, 0.5, true);
+    this._debugGraphics.lineStyle(1, 0xff0000, 0.5, 0, true);
     this._debugGraphics.drawRect(0, 0, this._displayBounds.width, this._displayBounds.height);
+    this._debugGraphics.drawRect(
+      -this._settings.padding.left,
+      -this._settings.padding.top,
+      this._outerBounds.width,
+      this._outerBounds.height,
+    );
+
     // draw a cross in the middle
     this._debugGraphics.moveTo(this._displayBounds.width / 2, this._displayBounds.height / 2 - 10);
     this._debugGraphics.lineTo(this._displayBounds.width / 2, this._displayBounds.height / 2 + 10);
