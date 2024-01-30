@@ -20,10 +20,10 @@ import {
   Texture,
   TilingSprite,
 } from 'pixi.js';
-import { AnimatedSprite, Container, FlexContainer, FlexContainerSettings, Sprite } from '../../gameobjects';
+import { AnimatedSprite, Container, Sprite } from '../../gameobjects';
 import { Spine } from '../../global';
 import { SpineSettings } from '../../spine/Make';
-import { UICanvas } from '../../ui';
+import { FlexContainer, FlexContainerSettings, UICanvas } from '../../ui';
 import { PointLike, SpritesheetLike } from '../index';
 import {
   AnchorSettings,
