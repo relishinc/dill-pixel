@@ -1,10 +1,10 @@
 import { Geometry, State } from '@pixi/core';
 import { Container as PIXIContainer } from '@pixi/display';
 import { BitmapText, DRAW_MODES, Graphics, HTMLText, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Mesh, NineSlicePlane, Point, Shader, SimplePlane, SimpleRope, Text, TextStyle, Texture, TilingSprite } from 'pixi.js';
-import { AnimatedSprite, Container, FlexContainer, FlexContainerSettings, Sprite } from '../../gameobjects';
+import { AnimatedSprite, Container, Sprite } from '../../gameobjects';
 import { Spine } from '../../global';
 import { SpineSettings } from '../../spine/Make';
-import { UICanvas } from '../../ui';
+import { FlexContainer, FlexContainerSettings, UICanvas } from '../../ui';
 import { PointLike, SpritesheetLike } from '../index';
 import { AnchorSettings, AnimatedSpriteSettings, BitmapTextSettings, ColoredSpriteSettings, ContainerSettings, FlexContainerCreationSettings, GraphicsSettings, HTMLTextSettings, MeshSettings, NineSliceSettings, PositionSettings, ScaleSettings, SimplePlaneSettings, SimpleRopeSettings, SpriteSettings, TextSettings, TilingSpriteSettings, UICanvasMakeSettings } from './Make';
 export interface ExistingSettings extends PositionSettings, AnchorSettings, ScaleSettings {
