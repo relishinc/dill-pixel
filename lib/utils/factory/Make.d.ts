@@ -1,10 +1,10 @@
 import { Geometry, State } from '@pixi/core';
 import { BitmapText, DRAW_MODES, Graphics, HTMLText, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Mesh, NineSlicePlane, Point, Shader, SimpleMesh, SimplePlane, SimpleRope, Text, TextStyle, Texture, TilingSprite } from 'pixi.js';
-import { AnimatedSprite, Container, FlexContainer, FlexContainerSettings, Sprite, SpriteAnimation } from '../../gameobjects';
+import { AnimatedSprite, Container, Sprite, SpriteAnimation } from '../../gameobjects';
 import { SpriteAnimationProps } from '../../gameobjects/animation';
 import { Spine } from '../../global';
 import { SpineSettings } from '../../spine/Make';
-import { UICanvas, UICanvasProps } from '../../ui';
+import { FlexContainer, FlexContainerSettings, UICanvas, UICanvasProps } from '../../ui';
 import { PointLike, SpritesheetLike } from '../Types';
 /**
  * Gets a `PIXI.Texture` asset.
