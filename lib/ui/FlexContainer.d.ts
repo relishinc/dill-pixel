@@ -1,4 +1,4 @@
-import { IDestroyOptions, IPoint } from 'pixi.js';
+import { Container as PIXIContainer, DisplayObject, IDestroyOptions, IPoint } from 'pixi.js';
 import { Signal } from 'typed-signals';
 import { Container } from '../gameobjects';
 import { PointLike } from '../utils';
@@ -27,6 +27,8 @@ export declare class FlexContainer extends Container {
     protected paddingTop: number;
     protected paddingBottom: number;
     protected _settings: FlexContainerSettings;
+    protected _childMap: Map<PIXIContainer<DisplayObject>, PIXIContainer<DisplayObject>>;
+    protected _flexChildren: DisplayObject[];
     private _reparentAddedChild;
     constructor(settings?: Partial<FlexContainerSettings>);
     get gap(): number;
@@ -48,11 +50,15 @@ export declare class FlexContainer extends Container {
         height: number;
     };
     set size(size: PointLike);
+    get flexChildren(): DisplayObject[];
     destroy(_options?: IDestroyOptions | boolean): void;
     onResize(_size: IPoint): void;
-    handleChildAdded(child: any): void;
-    handleChildRemoved(child: any): void;
+    removeChildAt(index: number): DisplayObject;
+    removeChild(...children: DisplayObject[]): DisplayObject;
+    getChildAt(index: number): DisplayObject;
     layout(): void;
+    protected handleChildRemoved(child: DisplayObject): void;
+    protected handleChildAdded(child: any): void;
     private _layout;
 }
 //# sourceMappingURL=FlexContainer.d.ts.map
