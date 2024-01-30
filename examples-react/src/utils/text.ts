@@ -7,3 +7,5 @@ export const whiteTextStyle = (size: number) =>
     fill: 0xffffff,
     fontSize: size ?? 24,
   });
+
+export const titleTextStyle = new TextStyle({ fontFamily: 'Arial', fontWeight: 'bold', fill: 0xffffff, fontSize: 48 });

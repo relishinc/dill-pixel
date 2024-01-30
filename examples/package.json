@@ -1,7 +1,7 @@
 {
   "name": "dill-pixel-examples",
   "version": "0.0.0",
-  "description": "Examples of some Dill Pixel Features",
+  "description": "Examples of Dill Pixel Features",
   "main": "index.html",
   "bin": {
     "dill-pixel": "../cli/dill-pixel.mjs"

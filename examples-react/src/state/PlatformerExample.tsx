@@ -5,8 +5,9 @@ import { COLOR_GREEN } from '@/utils/Constants';
 import { Container, Text, useTick } from '@pixi/react';
 import { RectLike } from 'dill-pixel';
 import { ISprite, State } from 'dill-pixel/react';
-import { Rectangle, TextStyle } from 'pixi.js';
+import { Rectangle } from 'pixi.js';
 import React, { RefObject } from 'react';
+import { titleTextStyle } from '../utils/text';
 
 type CollisionDirection = 'top' | 'bottom' | 'left' | 'right' | 'none';
 
@@ -234,13 +235,7 @@ export const PlatformerExample: State = ({ size }) => {
   return (
     <Container>
       <BasicStateBackground />
-      <Text
-        text={`Platformer`}
-        x={30}
-        y={30}
-        anchor={0}
-        style={new TextStyle({ fontFamily: 'Arial', fontWeight: 'bold', fill: 0xffffff, fontSize: 48 })}
-      />
+      <Text text={`Platformer`} x={30} y={30} anchor={0} style={titleTextStyle} />
       {/* Walls & Floor */}
       <Platform ref={wallRefs.current[0]} x={-90} y={0} width={100} height={size.height} />
       <Platform ref={wallRefs.current[1]} x={size.width - 10} y={0} width={100} height={size.height} />

@@ -1,7 +1,7 @@
 {
-  "name": "relish-hlf-testing",
+  "name": "dill-pixel-react-examples",
   "version": "0.0.0",
-  "description": "Testing Project for ongoing work on HLF",
+  "description": "Examples of Dill Pixel (React) Features",
   "main": "index.html",
   "scripts": {
     "start": "vite",

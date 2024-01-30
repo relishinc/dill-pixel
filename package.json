@@ -17,6 +17,7 @@
   "scripts": {
     "dev": "cd ./examples && npm run dev",
     "dev:react": "cd ./examples-react && npm run dev",
+    "build:react": "cd ./examples-react && npm run build",
     "build": "npm run version && npm run compile",
     "compile": "tsc",
     "build:examples": "cd ./examples && npm run build",
