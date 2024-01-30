@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.27.1](https://github.com/relishinc/dill-pixel/compare/v2.27.0...v2.27.1) (2024-01-30)
+
+
+### Bug Fixes
+
+* patched pixi api, added methods to iterate real children in UICanvas, FlexContainer ([a7331ce](https://github.com/relishinc/dill-pixel/commit/a7331ce5aa340393aed8c191db9adbcf865eb114))
+
 ## [2.27.0](https://github.com/relishinc/dill-pixel/compare/v2.26.1...v2.27.0) (2024-01-30)
 
 
