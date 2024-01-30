@@ -1,7 +1,8 @@
-import { Container as PIXIContainer, DisplayObject, Graphics, IPoint, Rectangle } from 'pixi.js';
-import { Container } from './gameobjects';
+import { Container as PIXIContainer, DisplayObject, Graphics, Rectangle } from 'pixi.js';
+import { Container } from '../gameobjects';
+import { PointLike, resolvePointLike } from '../utils';
 
-export type Edge =
+export type UICanvasEdge =
   | 'top right'
   | 'top left'
   | 'top center'
@@ -16,20 +17,22 @@ export type Edge =
   | 'right center'
   | 'center';
 
-interface UISettings {
-  edge: Edge;
+export interface UISettings {
+  edge: UICanvasEdge;
   padding: number;
 }
 
 export type UICanvasSettings = {
   debug: boolean;
-  edge: Edge;
   padding: UICanvasPadding;
+  size: PointLike;
+  isBoundToStage: boolean;
 };
+
 export type UICanvasProps = {
   debug: boolean;
-  edge: Edge;
-  padding: UICanvasPadding | { x: number; y: number } | number;
+  padding: Partial<UICanvasPadding> | { x: number; y: number } | number;
+  size?: PointLike;
 };
 
 export type UICanvasPadding = { top: number; right: number; bottom: number; left: number };
@@ -53,19 +56,19 @@ function ensurePadding(padding: any): UICanvasPadding {
 }
 
 export class UICanvas extends Container {
-  private _screenBounds: Rectangle;
+  private _displayBounds: Rectangle;
   private settingsMap = new Map<PIXIContainer<DisplayObject>, UISettings>();
   private _settings: UICanvasSettings;
   private _debugGraphics: Graphics;
 
   constructor(settings: Partial<UICanvasProps> = { padding: 0 }) {
-    super(true, settings.debug === true, false);
+    super(true, settings.debug === true);
     this._settings = {
       debug: settings.debug === true,
-      edge: settings.edge ?? 'center',
       padding: ensurePadding(settings.padding),
+      size: settings.size ?? 0,
+      isBoundToStage: settings.size === undefined,
     };
-    this.bindMethods('onResize', 'handleChildRemoved', 'handleChildAdded');
     this.on('childRemoved', this.handleChildRemoved);
   }
 
@@ -73,13 +76,19 @@ export class UICanvas extends Container {
     return this._bounds;
   }
 
-  public onResize(_size: IPoint) {
-    this._screenBounds = this.__calculateBounds(_size);
+  set size(value: PointLike) {
+    this._settings.size = value;
+    this.onResize();
+  }
+
+  public onResize() {
+    const _size = this._settings.isBoundToStage ? this.app.size : resolvePointLike(this._settings.size);
+    this._displayBounds = this.__calculateBounds(_size);
     this.setPosition();
     this.layout();
   }
 
-  update() {
+  public update() {
     if (this._settings.debug) {
       this.drawDebug();
     }
@@ -101,22 +110,23 @@ export class UICanvas extends Container {
       padding: settings?.padding ?? 0,
     });
     this.addChild(child);
-    this.onResize(this.app.size);
+    this.onResize();
   }
 
   setPosition() {
     const appSize = this.app.size;
-    this.position.set(this._screenBounds.x, this._screenBounds.y);
+    this.position.set(this._displayBounds.x, this._displayBounds.y);
     this.position.x -= appSize.x / 2;
     this.position.y -= appSize.y / 2;
   }
 
-  private __calculateBounds(_size: IPoint): Rectangle {
+  private __calculateBounds(_size: PointLike): Rectangle {
+    const pt = resolvePointLike(_size);
     return new Rectangle(
       this._settings.padding.left,
       this._settings.padding.top,
-      _size.x - this._settings.padding.left - this._settings.padding.right,
-      _size.y - this._settings.padding.top - this._settings.padding.bottom,
+      pt.x - this._settings.padding.left - this._settings.padding.right,
+      pt.y - this._settings.padding.top - this._settings.padding.bottom,
     );
   }
 
@@ -126,8 +136,8 @@ export class UICanvas extends Container {
 
   private applySettings(child: PIXIContainer<DisplayObject>, settings: UISettings) {
     if (!settings) return;
-    const screenWidth = this._screenBounds.width;
-    const screenHeight = this._screenBounds.height;
+    const screenWidth = this._displayBounds.width;
+    const screenHeight = this._displayBounds.height;
     const anchorX = (child as any).anchor?.x || 0;
     const anchorY = (child as any).anchor?.y || 0;
     const baseX = child.width * anchorX;
@@ -195,11 +205,11 @@ export class UICanvas extends Container {
     }
     this._debugGraphics.clear();
     this._debugGraphics.lineStyle(1, 0xff0000, 0.5, 0.5, true);
-    this._debugGraphics.drawRect(0, 0, this._screenBounds.width, this._screenBounds.height);
+    this._debugGraphics.drawRect(0, 0, this._displayBounds.width, this._displayBounds.height);
     // draw a cross in the middle
-    this._debugGraphics.moveTo(this._screenBounds.width / 2, this._screenBounds.height / 2 - 10);
-    this._debugGraphics.lineTo(this._screenBounds.width / 2, this._screenBounds.height / 2 + 10);
-    this._debugGraphics.moveTo(this._screenBounds.width / 2 - 10, this._screenBounds.height / 2);
-    this._debugGraphics.lineTo(this._screenBounds.width / 2 + 10, this._screenBounds.height / 2);
+    this._debugGraphics.moveTo(this._displayBounds.width / 2, this._displayBounds.height / 2 - 10);
+    this._debugGraphics.lineTo(this._displayBounds.width / 2, this._displayBounds.height / 2 + 10);
+    this._debugGraphics.moveTo(this._displayBounds.width / 2 - 10, this._displayBounds.height / 2);
+    this._debugGraphics.lineTo(this._displayBounds.width / 2 + 10, this._displayBounds.height / 2);
   }
 }

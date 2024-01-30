@@ -4,8 +4,9 @@ import { BitmapText, DRAW_MODES, Graphics, HTMLText, HTMLTextStyle, IBitmapTextS
 import { AnimatedSprite, Container, FlexContainer, FlexContainerSettings, Sprite } from '../../gameobjects';
 import { Spine } from '../../global';
 import { SpineSettings } from '../../spine/Make';
+import { UICanvas } from '../../ui';
 import { PointLike, SpritesheetLike } from '../index';
-import { AnchorSettings, AnimatedSpriteSettings, BitmapTextSettings, ColoredSpriteSettings, ContainerSettings, FlexContainerCreationSettings, GraphicsSettings, HTMLTextSettings, MeshSettings, NineSliceSettings, PositionSettings, ScaleSettings, SimplePlaneSettings, SimpleRopeSettings, SpriteSettings, TextSettings, TilingSpriteSettings } from './Make';
+import { AnchorSettings, AnimatedSpriteSettings, BitmapTextSettings, ColoredSpriteSettings, ContainerSettings, FlexContainerCreationSettings, GraphicsSettings, HTMLTextSettings, MeshSettings, NineSliceSettings, PositionSettings, ScaleSettings, SimplePlaneSettings, SimpleRopeSettings, SpriteSettings, TextSettings, TilingSpriteSettings, UICanvasMakeSettings } from './Make';
 export interface ExistingSettings extends PositionSettings, AnchorSettings, ScaleSettings {
 }
 export declare class Add {
@@ -49,5 +50,6 @@ export declare class Add {
     simplePlane(asset?: string | Texture, sheet?: SpritesheetLike, vertsWidth?: number, vertsHeight?: number, alpha?: number, position?: PointLike, scale?: PointLike): SimplePlane;
     animatedSprite(settings: AnimatedSpriteSettings): AnimatedSprite;
     spine(settings: SpineSettings): Spine;
+    uiCanvas(settings: UICanvasMakeSettings): UICanvas;
 }
 //# sourceMappingURL=Add.d.ts.map

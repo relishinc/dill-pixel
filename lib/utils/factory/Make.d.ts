@@ -4,6 +4,7 @@ import { AnimatedSprite, Container, FlexContainer, FlexContainerSettings, Sprite
 import { SpriteAnimationProps } from '../../gameobjects/animation';
 import { Spine } from '../../global';
 import { SpineSettings } from '../../spine/Make';
+import { UICanvas, UICanvasProps } from '../../ui';
 import { PointLike, SpritesheetLike } from '../Types';
 /**
  * Gets a `PIXI.Texture` asset.
@@ -95,6 +96,8 @@ export interface AnimatedSpriteSettings extends VisibilitySettings, PositionSett
         props: SpriteAnimationProps;
     }[];
 }
+export interface UICanvasMakeSettings extends VisibilitySettings, PositionSettings, Partial<UICanvasProps> {
+}
 export declare class Make {
     static spine: (settings: SpineSettings) => Spine;
     static texture(settings: TextureSettings): Texture;
@@ -137,5 +140,6 @@ export declare class Make {
     static nineSlice(asset: string | Texture, sheet?: SpritesheetLike, leftWidth?: number, topHeight?: number, rightWidth?: number, bottomHeight?: number, alpha?: number, position?: PointLike, scale?: PointLike): NineSlicePlane;
     static spriteAnimation(props: SpriteAnimationProps): SpriteAnimation;
     static animatedSprite(settings: AnimatedSpriteSettings): AnimatedSprite;
+    static uiCanvas(settings: UICanvasMakeSettings): UICanvas;
 }
 //# sourceMappingURL=Make.d.ts.map

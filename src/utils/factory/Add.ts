@@ -23,6 +23,7 @@ import {
 import { AnimatedSprite, Container, FlexContainer, FlexContainerSettings, Sprite } from '../../gameobjects';
 import { Spine } from '../../global';
 import { SpineSettings } from '../../spine/Make';
+import { UICanvas } from '../../ui';
 import { PointLike, SpritesheetLike } from '../index';
 import {
   AnchorSettings,
@@ -43,6 +44,7 @@ import {
   SpriteSettings,
   TextSettings,
   TilingSpriteSettings,
+  UICanvasMakeSettings,
 } from './Make';
 import { resolvePointLike } from './utils';
 
@@ -411,5 +413,11 @@ export class Add {
     const spine = Make.spine(settings);
     this.defaultContainer.addChild(spine);
     return spine;
+  }
+
+  uiCanvas(settings: UICanvasMakeSettings): UICanvas {
+    const uic = Make.uiCanvas(settings);
+    this.defaultContainer.addChild(uic);
+    return uic;
   }
 }
