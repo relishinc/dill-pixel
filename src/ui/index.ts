@@ -1,2 +1,2 @@
-export * from './UICanvas';
 export * from './FlexContainer';
+export * from './UICanvas';
