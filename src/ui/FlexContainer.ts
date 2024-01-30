@@ -1,6 +1,6 @@
 import { Container as PIXIContainer, DisplayObject, IDestroyOptions, IPoint } from 'pixi.js';
 import { Signal } from 'typed-signals';
-import { Container } from '../gameobjects/Container';
+import { Container } from '../gameobjects';
 import { PointLike, resolvePointLike } from '../utils';
 
 export type ContainerLike = {
@@ -31,12 +31,12 @@ export class FlexContainer extends Container {
   protected paddingTop: number = 0;
   protected paddingBottom: number = 0;
   protected _settings: FlexContainerSettings;
-  private _layoutTimeout: any;
+  private _reparentAddedChild: boolean = true;
 
   constructor(settings: Partial<FlexContainerSettings> = {}) {
     super(true);
 
-    this.bindMethods('onResize', 'update', 'handleChildAdded', 'handleChildRemoved', 'layout', '_layout');
+    this.bindMethods('handleChildAdded', 'handleChildRemoved', 'layout', '_layout');
 
     this._settings = Object.assign(
       {
@@ -56,7 +56,7 @@ export class FlexContainer extends Container {
     this.on('childAdded', this.handleChildAdded);
     this.on('childRemoved', this.handleChildRemoved);
 
-    this._layout();
+    this.layout();
   }
 
   get gap(): number {
@@ -65,7 +65,7 @@ export class FlexContainer extends Container {
 
   set gap(value: number) {
     this._settings.gap = value;
-    this._layout();
+    this.layout();
   }
 
   get flexWrap(): 'wrap' | 'nowrap' {
@@ -74,7 +74,7 @@ export class FlexContainer extends Container {
 
   set flexWrap(value: 'wrap' | 'nowrap') {
     this._settings.flexWrap = value;
-    this._layout();
+    this.layout();
   }
 
   get flexDirection(): 'row' | 'column' {
@@ -83,7 +83,7 @@ export class FlexContainer extends Container {
 
   set flexDirection(value: 'row' | 'column') {
     this._settings.flexDirection = value;
-    this._layout();
+    this.layout();
   }
 
   get alignItems(): 'center' | 'flex-start' | 'flex-end' {
@@ -92,7 +92,7 @@ export class FlexContainer extends Container {
 
   set alignItems(value: 'center' | 'flex-start' | 'flex-end') {
     this._settings.alignItems = value;
-    this._layout();
+    this.layout();
   }
 
   get justifyContent(): 'center' | 'space-between' | 'space-around' | 'space-evenly' | 'flex-start' | 'flex-end' {
@@ -101,7 +101,7 @@ export class FlexContainer extends Container {
 
   set justifyContent(value: 'center' | 'space-between' | 'space-around' | 'space-evenly' | 'flex-start' | 'flex-end') {
     this._settings.justifyContent = value;
-    this._layout();
+    this.layout();
   }
 
   get containerHeight(): number {
@@ -110,7 +110,7 @@ export class FlexContainer extends Container {
 
   set containerHeight(value: number) {
     this._settings.height = value;
-    this._layout();
+    this.layout();
   }
 
   get containerWidth(): number {
@@ -119,7 +119,7 @@ export class FlexContainer extends Container {
 
   set containerWidth(value: number) {
     this._settings.width = value;
-    this._layout();
+    this.layout();
   }
 
   get size(): { width: number; height: number } {
@@ -130,31 +130,51 @@ export class FlexContainer extends Container {
     const { x, y } = resolvePointLike(size);
     this._settings.width = x;
     this._settings.height = y;
-    this._layout();
+    this.layout();
   }
 
-  public destroy(_options?: IDestroyOptions | boolean) {
+  destroy(_options?: IDestroyOptions | boolean) {
     this.off('childAdded', this.handleChildAdded);
     this.off('childRemoved', this.handleChildRemoved);
     super.destroy(_options);
   }
 
   public onResize(_size: IPoint) {
-    this._layout();
+    this.layout();
+  }
+
+  handleChildAdded(child: any) {
+    // avoid maximum call stack error b/c we're about to add a container
+    if (!this._reparentAddedChild) return;
+    this._reparentAddedChild = false;
+    // add an inner container so we can account for e.g. sprite that are added with anchors
+    // re-parent the added child to the inner container
+    const container = this.add.container();
+    container.add.existing(child);
+    // figure out the bounds of the inner container
+    // then, offset its pivot so that it's top-left corner is always at 0,0
+    const bounds = container.getLocalBounds();
+    if (bounds.x < 0) {
+      container.pivot.x = bounds.x;
+    }
+    if (bounds.y < 0) {
+      container.pivot.y = bounds.y;
+    }
+
+    if (child instanceof FlexContainer) {
+      this.addSignalConnection(child.onLayoutComplete.connect(this.layout));
+    }
+    this.layout();
+
+    this._reparentAddedChild = true;
+  }
+
+  handleChildRemoved(child: any) {
+    child.parent = null;
+    this.layout();
   }
 
   public layout() {
-    this._layout();
-  }
-
-  protected handleChildAdded(child: any) {
-    if (child instanceof FlexContainer) {
-      this.addSignalConnection(child.onLayoutComplete.connect(this._layout));
-    }
-    this._layout();
-  }
-
-  protected handleChildRemoved() {
     this._layout();
   }
 
@@ -329,6 +349,24 @@ export class FlexContainer extends Container {
       const item = childRef as PIXIContainer;
       const { x, y } = layoutProps[index] || { x: 0, y: 0 };
       item.position.set(x, y);
+    });
+
+    // handle alignment within container bounds
+    const totalHeight = this.children.reduce(
+      (acc, child) => Math.max(acc, child.y + (child as PIXIContainer).height),
+      0,
+    );
+    this.children.forEach((child) => {
+      if (this._settings.flexDirection === 'row') {
+        switch (this._settings.alignItems) {
+          case 'center':
+            child.y -= (totalHeight - height) * 0.5;
+            break;
+          case 'flex-end':
+            child.y += height - totalHeight;
+            break;
+        }
+      }
     });
 
     this.onLayoutComplete.emit();
