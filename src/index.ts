@@ -4,6 +4,7 @@ export * from './core';
 export * from './audio';
 export * from './copy';
 export * from './gameobjects';
+export * from './ui';
 export * from './input';
 export { KeyCodes } from './input';
 export * from './load';

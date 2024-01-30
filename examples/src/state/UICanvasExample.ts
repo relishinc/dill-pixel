@@ -1,6 +1,5 @@
-import { AssetMapData, AssetType, Make, TextureAsset } from 'dill-pixel';
+import { AssetMapData, AssetType, Make, TextureAsset, UICanvas } from 'dill-pixel';
 import { Point } from 'pixi.js';
-import { UICanvas } from '../../../src/UICanvas';
 import { BaseState } from './BaseState';
 
 export class UICanvasExample extends BaseState {
@@ -19,7 +18,7 @@ export class UICanvasExample extends BaseState {
 
     this.setHeaderText('UICanvas Example');
 
-    this.ui = this.add.existing(new UICanvas({ padding: 40 }));
+    this.ui = this.add.uiCanvas({ padding: { top: 100, bottom: 100 } });
 
     this.ui.addElement(Make.sprite({ asset: 'pickle' }), { edge: 'top left' });
     this.ui.addElement(Make.sprite({ asset: 'pickle' }), { edge: 'top right' });

@@ -34,6 +34,7 @@ import {
 import {SpriteAnimationProps} from '../../gameobjects/animation';
 import {Spine} from '../../global';
 import {SpineSettings} from '../../spine/Make';
+import {UICanvas, UICanvasProps} from '../../ui';
 import {PointLike, SpritesheetLike} from '../Types';
 import {resolvePointLike, setObjectName} from './utils';
 
@@ -156,6 +157,8 @@ export interface NineSliceSettings extends SpriteTextureSettings, PositionSettin
 export interface AnimatedSpriteSettings extends VisibilitySettings, PositionSettings, ScaleSettings {
   animations: { key: string; props: SpriteAnimationProps }[];
 }
+
+export interface UICanvasMakeSettings extends VisibilitySettings, PositionSettings, Partial<UICanvasProps> {}
 
 export class Make {
   public static spine: (settings: SpineSettings) => Spine;
@@ -994,5 +997,34 @@ export class Make {
     animatedSprite.visible = visible;
 
     return animatedSprite;
+  }
+
+  static uiCanvas(settings: UICanvasMakeSettings): UICanvas {
+    let visible = true;
+    let alpha: number = 1;
+
+    const uic = new UICanvas({
+      debug: settings.debug,
+      padding: settings.padding,
+      size: settings.size,
+    });
+
+    if (settings.position !== undefined) {
+      const resolvedPosition = resolvePointLike(settings.position);
+      uic.position.set(resolvedPosition.x, resolvedPosition.y);
+    }
+
+    if (settings.alpha) {
+      alpha = settings.alpha;
+    }
+
+    if (settings.visible === false) {
+      visible = false;
+    }
+
+    uic.alpha = alpha;
+    uic.visible = visible;
+
+    return uic;
   }
 }
