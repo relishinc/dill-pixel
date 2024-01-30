@@ -1,7 +1,7 @@
 import { Container as PIXIContainer, DisplayObject, IDestroyOptions, IPoint } from 'pixi.js';
 import { Signal } from 'typed-signals';
+import { Container } from '../gameobjects/Container';
 import { PointLike, resolvePointLike } from '../utils';
-import { Container } from './Container';
 
 export type ContainerLike = {
   x: number;
