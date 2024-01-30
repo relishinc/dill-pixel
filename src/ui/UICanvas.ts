@@ -1,24 +1,29 @@
 import { Container as PIXIContainer, DisplayObject, Graphics, Rectangle } from 'pixi.js';
 import { Container } from '../gameobjects';
 import { PointLike, resolvePointLike } from '../utils';
+import { FlexContainer } from './FlexContainer';
 
 export type UICanvasEdge =
   | 'top right'
   | 'top left'
   | 'top center'
+  | 'top'
   | 'bottom right'
   | 'bottom left'
   | 'bottom center'
+  | 'bottom'
   | 'left top'
   | 'left bottom'
   | 'left center'
+  | 'left'
   | 'right top'
   | 'right bottom'
   | 'right center'
+  | 'right'
   | 'center';
 
-export interface UISettings {
-  edge: UICanvasEdge;
+export interface UICanvasChildSettings {
+  align: UICanvasEdge;
   padding: number;
 }
 
@@ -57,7 +62,7 @@ function ensurePadding(padding: any): UICanvasPadding {
 
 export class UICanvas extends Container {
   private _displayBounds: Rectangle;
-  private settingsMap = new Map<PIXIContainer<DisplayObject>, UISettings>();
+  private settingsMap = new Map<PIXIContainer<DisplayObject>, UICanvasChildSettings>();
   private _settings: UICanvasSettings;
   private _debugGraphics: Graphics;
 
@@ -67,7 +72,7 @@ export class UICanvas extends Container {
       debug: settings.debug === true,
       padding: ensurePadding(settings.padding),
       size: settings.size ?? 0,
-      isBoundToStage: settings.size === undefined,
+      isBoundToStage: !settings.size,
     };
     this.on('childRemoved', this.handleChildRemoved);
   }
@@ -78,6 +83,12 @@ export class UICanvas extends Container {
 
   set size(value: PointLike) {
     this._settings.size = value;
+    this._settings.isBoundToStage = this._settings.size === undefined || !this._settings.size;
+    this.onResize();
+  }
+
+  set padding(value: Partial<UICanvasPadding> | { x: number; y: number } | number) {
+    this._settings.padding = ensurePadding(value);
     this.onResize();
   }
 
@@ -104,16 +115,44 @@ export class UICanvas extends Container {
     });
   }
 
-  addElement(child: PIXIContainer<DisplayObject>, settings?: Partial<UISettings>) {
-    this.settingsMap.set(child, {
-      edge: settings?.edge ?? 'top left',
+  public addElement(
+    child: PIXIContainer<DisplayObject>,
+    settings?: Partial<UICanvasChildSettings>,
+  ): PIXIContainer<DisplayObject> {
+    // avoid maximum call stack error b/c we're about to add a container
+    const container = this.add.container();
+    container.addChild(child);
+    const bounds = container.getLocalBounds();
+    if (bounds.x < 0) {
+      container.pivot.x = bounds.x;
+    }
+    if (bounds.y < 0) {
+      container.pivot.y = bounds.y;
+    }
+    if ((child as any) instanceof FlexContainer) {
+      this.addSignalConnection((child as FlexContainer).onLayoutComplete.connect(this.layout));
+    }
+    this.settingsMap.set(container, {
+      align: settings?.align ?? 'top left',
       padding: settings?.padding ?? 0,
     });
-    this.addChild(child);
     this.onResize();
+    return child;
   }
 
-  setPosition() {
+  public reAlign(child: PIXIContainer<DisplayObject>, settings: Partial<UICanvasChildSettings> | UICanvasEdge) {
+    let currentSettings = this.settingsMap.get(child?.parent);
+    if (currentSettings) {
+      const _settings = typeof settings === 'string' ? { align: settings } : settings;
+      this.settingsMap.set(child?.parent, { ...currentSettings, ..._settings });
+      currentSettings = this.settingsMap.get(child?.parent);
+      this.applySettings(child?.parent, currentSettings!);
+    } else {
+      console.warn('Cannot re-align child because it is not a child of this UICanvas', child);
+    }
+  }
+
+  protected setPosition() {
     const appSize = this.app.size;
     this.position.set(this._displayBounds.x, this._displayBounds.y);
     this.position.x -= appSize.x / 2;
@@ -134,67 +173,67 @@ export class UICanvas extends Container {
     this.settingsMap.delete(child);
   }
 
-  private applySettings(child: PIXIContainer<DisplayObject>, settings: UISettings) {
+  private applySettings(child: PIXIContainer<DisplayObject>, settings: UICanvasChildSettings) {
     if (!settings) return;
     const screenWidth = this._displayBounds.width;
     const screenHeight = this._displayBounds.height;
-    const anchorX = (child as any).anchor?.x || 0;
-    const anchorY = (child as any).anchor?.y || 0;
-    const baseX = child.width * anchorX;
-    const baseY = child.height * anchorY;
 
-    switch (settings.edge) {
+    switch (settings.align) {
       case 'top right':
-        child.x = screenWidth - baseX - settings.padding;
-        child.y = settings.padding + baseY;
+        child.x = screenWidth - settings.padding - child.width;
+        child.y = settings.padding;
         break;
       case 'top left':
-        child.x = settings.padding + baseX;
-        child.y = settings.padding + baseY;
+        child.x = settings.padding;
+        child.y = settings.padding;
         break;
       case 'top center':
-        child.x = (screenWidth - child.width) / 2 + baseX;
-        child.y = settings.padding + baseY;
+      case 'top':
+        child.x = (screenWidth - child.width) / 2;
+        child.y = settings.padding;
         break;
       case 'bottom right':
-        child.x = screenWidth - baseX - settings.padding;
-        child.y = screenHeight - baseY - settings.padding;
+        child.x = screenWidth - settings.padding - child.width;
+        child.y = screenHeight - settings.padding - child.height;
         break;
       case 'bottom left':
-        child.x = settings.padding + baseX;
-        child.y = screenHeight - baseY - settings.padding;
+        child.x = settings.padding;
+        child.y = screenHeight - settings.padding - child.height;
         break;
       case 'bottom center':
-        child.x = (screenWidth - child.width) / 2 + baseX;
-        child.y = screenHeight - baseY - settings.padding;
+      case 'bottom':
+        child.x = (screenWidth - child.width) / 2;
+        child.y = screenHeight - settings.padding - child.height;
         break;
       case 'left top':
-        child.x = settings.padding + baseX;
-        child.y = settings.padding + baseY;
+        child.x = settings.padding;
+        child.y = settings.padding;
         break;
       case 'left bottom':
-        child.x = settings.padding + baseX;
-        child.y = screenHeight - baseY - settings.padding;
+        child.x = settings.padding;
+        child.y = screenHeight - settings.padding - child.height;
         break;
       case 'left center':
-        child.x = settings.padding + baseX;
-        child.y = (screenHeight - child.height) / 2 + baseY;
+      case 'left':
+        child.x = settings.padding;
+        child.y = (screenHeight - child.height) / 2;
         break;
       case 'right top':
-        child.x = screenWidth - baseX - settings.padding;
-        child.y = settings.padding + baseY;
+        child.x = screenWidth - settings.padding - child.width;
+        child.y = settings.padding;
         break;
       case 'right bottom':
-        child.x = screenWidth - baseX - settings.padding;
-        child.y = screenHeight - baseY - settings.padding;
+        child.x = screenWidth - settings.padding;
+        child.y = screenHeight - settings.padding;
         break;
       case 'right center':
-        child.x = screenWidth - baseX - settings.padding;
-        child.y = (screenHeight - child.height) / 2 + baseY;
+      case 'right':
+        child.x = screenWidth - settings.padding - child.width;
+        child.y = (screenHeight - child.height) / 2;
         break;
       case 'center':
-        child.x = (screenWidth - child.width) / 2 + baseX;
-        child.y = (screenHeight - child.height) / 2 + baseY;
+        child.x = (screenWidth - child.width) / 2;
+        child.y = (screenHeight - child.height) / 2;
         break;
     }
   }
