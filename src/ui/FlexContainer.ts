@@ -31,12 +31,13 @@ export class FlexContainer extends Container {
   protected paddingTop: number = 0;
   protected paddingBottom: number = 0;
   protected _settings: FlexContainerSettings;
+  protected _childMap = new Map<PIXIContainer<DisplayObject>, PIXIContainer<DisplayObject>>();
+  protected _flexChildren: DisplayObject[] = [];
+
   private _reparentAddedChild: boolean = true;
 
   constructor(settings: Partial<FlexContainerSettings> = {}) {
     super(true);
-
-    this.bindMethods('handleChildAdded', 'handleChildRemoved', 'layout', '_layout');
 
     this._settings = Object.assign(
       {
@@ -133,9 +134,14 @@ export class FlexContainer extends Container {
     this.layout();
   }
 
+  get flexChildren() {
+    return this._flexChildren;
+  }
+
   destroy(_options?: IDestroyOptions | boolean) {
     this.off('childAdded', this.handleChildAdded);
     this.off('childRemoved', this.handleChildRemoved);
+
     super.destroy(_options);
   }
 
@@ -143,7 +149,39 @@ export class FlexContainer extends Container {
     this.layout();
   }
 
-  handleChildAdded(child: any) {
+  public removeChildAt(index: number): DisplayObject {
+    return this.removeChild(this.flexChildren[index]);
+  }
+
+  public removeChild(...children: DisplayObject[]): DisplayObject {
+    if (this._reparentAddedChild) {
+      children.forEach((child) => {
+        const actualChild = this._childMap.get(child as PIXIContainer<DisplayObject>) as DisplayObject;
+        if (actualChild) {
+          return super.removeChild(actualChild);
+        }
+      });
+    } else {
+      return super.removeChild(...children);
+    }
+    return children[0];
+  }
+
+  public getChildAt(index: number): DisplayObject {
+    return this._flexChildren[index];
+  }
+
+  public layout() {
+    this._layout();
+  }
+
+  protected handleChildRemoved(child: DisplayObject) {
+    this._childMap.delete(child as PIXIContainer<DisplayObject>);
+    this._flexChildren = Array.from(this._childMap.keys());
+    this.layout();
+  }
+
+  protected handleChildAdded(child: any) {
     // avoid maximum call stack error b/c we're about to add a container
     if (!this._reparentAddedChild) return;
     this._reparentAddedChild = false;
@@ -164,18 +202,12 @@ export class FlexContainer extends Container {
     if (child instanceof FlexContainer) {
       this.addSignalConnection(child.onLayoutComplete.connect(this.layout));
     }
-    this.layout();
 
+    this._childMap.set(child, container);
+    this._flexChildren = Array.from(this._childMap.keys());
+
+    this.layout();
     this._reparentAddedChild = true;
-  }
-
-  handleChildRemoved(child: any) {
-    child.parent = null;
-    this.layout();
-  }
-
-  public layout() {
-    this._layout();
   }
 
   private _layout() {
@@ -368,7 +400,6 @@ export class FlexContainer extends Container {
         }
       }
     });
-
     this.onLayoutComplete.emit();
   }
 }

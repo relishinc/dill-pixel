@@ -61,11 +61,14 @@ function ensurePadding(padding: any): UICanvasPadding {
 }
 
 export class UICanvas extends Container {
-  private _outerBounds: Rectangle;
-  private _displayBounds: Rectangle;
-  private settingsMap = new Map<PIXIContainer<DisplayObject>, UICanvasChildSettings>();
-  private _settings: UICanvasSettings;
-  private _debugGraphics: Graphics;
+  protected _outerBounds: Rectangle;
+  protected _displayBounds: Rectangle;
+  protected settingsMap = new Map<PIXIContainer<DisplayObject>, UICanvasChildSettings>();
+  protected _settings: UICanvasSettings;
+  protected _childMap = new Map<PIXIContainer<DisplayObject>, PIXIContainer<DisplayObject>>();
+  protected _canvasChildren: DisplayObject[] = [];
+
+  protected _debugGraphics: Graphics;
 
   constructor(settings: Partial<UICanvasProps> = { padding: 0 }) {
     super(true, settings.debug === true);
@@ -76,6 +79,10 @@ export class UICanvas extends Container {
       isBoundToStage: !settings.size,
     };
     this.on('childRemoved', this.handleChildRemoved);
+  }
+
+  public get canvasChildren(): DisplayObject[] {
+    return this._canvasChildren;
   }
 
   get bounds() {
@@ -107,6 +114,24 @@ export class UICanvas extends Container {
     }
   }
 
+  public removeChildAt(index: number): DisplayObject {
+    return this.removeChild(this.canvasChildren[index]);
+  }
+
+  public removeChild(...children: DisplayObject[]): DisplayObject {
+    children.forEach((child) => {
+      const actualChild = this._childMap.get(child as PIXIContainer<DisplayObject>) as DisplayObject;
+      if (actualChild) {
+        return super.removeChild(actualChild);
+      }
+    });
+    return children[0];
+  }
+
+  public getChildAt(index: number): DisplayObject {
+    return this._canvasChildren[index];
+  }
+
   public layout() {
     this.children.forEach((child) => {
       const childObj = child as PIXIContainer<DisplayObject>;
@@ -117,10 +142,7 @@ export class UICanvas extends Container {
     });
   }
 
-  public addElement(
-    child: PIXIContainer<DisplayObject>,
-    settings?: Partial<UICanvasChildSettings>,
-  ): PIXIContainer<DisplayObject> {
+  public addElement(child: PIXIContainer, settings?: Partial<UICanvasChildSettings>): PIXIContainer {
     // avoid maximum call stack error b/c we're about to add a container
     const container = this.add.container();
     container.addChild(child);
@@ -138,6 +160,9 @@ export class UICanvas extends Container {
       align: settings?.align ?? 'top left',
       padding: settings?.padding ?? 0,
     });
+    this._childMap.set(child, container);
+    this._canvasChildren = Array.from(this._childMap.keys());
+
     this.onResize();
     return child;
   }
@@ -161,7 +186,7 @@ export class UICanvas extends Container {
     this.position.y -= appSize.y / 2;
   }
 
-  private __calculateBounds(_size: PointLike): Rectangle {
+  protected __calculateBounds(_size: PointLike): Rectangle {
     const pt = resolvePointLike(_size);
     return new Rectangle(
       this._settings.padding.left,
@@ -171,13 +196,15 @@ export class UICanvas extends Container {
     );
   }
 
-  private __calculateOuterBounds(_size: PointLike): Rectangle {
+  protected __calculateOuterBounds(_size: PointLike): Rectangle {
     const pt = resolvePointLike(_size);
     return new Rectangle(0, 0, pt.x, pt.y);
   }
 
-  private handleChildRemoved(child: any) {
+  protected handleChildRemoved(child: any) {
     this.settingsMap.delete(child);
+    this._childMap.delete(child as PIXIContainer<DisplayObject>);
+    this._canvasChildren = Array.from(this._childMap.keys());
   }
 
   private applySettings(child: PIXIContainer<DisplayObject>, settings: UICanvasChildSettings) {
