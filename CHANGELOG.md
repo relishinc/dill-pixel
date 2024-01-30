@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.26.1](https://github.com/relishinc/dill-pixel/compare/v2.26.0...v2.26.1) (2024-01-30)
+
+
+### Bug Fixes
+
+* changes / upgrades to UICanvas ([c753e38](https://github.com/relishinc/dill-pixel/commit/c753e3833df67395e2de55a98056eca928ad16d7))
+
 ## [2.26.0](https://github.com/relishinc/dill-pixel/compare/v2.25.4...v2.26.0) (2024-01-30)
 
 
