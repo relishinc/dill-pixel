@@ -167,8 +167,30 @@ export class FlexContainer extends Container {
     return children[0];
   }
 
+  public addChildAt<U extends DisplayObject = DisplayObject>(child: DisplayObject, index: number): U {
+    const newChild = this.add.existing(child);
+    this.setChildIndex(newChild, index);
+    return newChild as U;
+  }
+
+  public setChildIndex(child: DisplayObject, index: number): void {
+    const actualChild = this._childMap.get(child as PIXIContainer<DisplayObject>) as DisplayObject;
+    if (actualChild) {
+      super.setChildIndex(actualChild, index);
+      this.setFlexChildren();
+      this.layout();
+    }
+  }
+
+  public getChildIndex(child: DisplayObject): number {
+    if (this._childMap.has(child as PIXIContainer<DisplayObject>)) {
+      return super.getChildIndex(child.parent);
+    }
+    return super.getChildIndex(child);
+  }
+
   public getChildAt(index: number): DisplayObject {
-    return this._flexChildren[index];
+    return (super.getChildAt(index) as PIXIContainer)?.getChildAt(0);
   }
 
   public layout() {
@@ -176,9 +198,29 @@ export class FlexContainer extends Container {
   }
 
   protected handleChildRemoved(child: DisplayObject) {
-    this._childMap.delete(child as PIXIContainer<DisplayObject>);
+    if (this._reparentAddedChild) {
+      if (!this.deleteChild(child)) {
+        child = (child as Container).getChildAt(0);
+        this.deleteChild(child);
+      }
+    }
+  }
+
+  protected deleteChild(child: DisplayObject) {
+    const isInMap = this._childMap.has(child as PIXIContainer<DisplayObject>);
+    if (isInMap) {
+      this._childMap.delete(child as PIXIContainer<DisplayObject>);
+      this.setFlexChildren();
+      this.layout();
+      return true;
+    }
+    return false;
+  }
+
+  protected setFlexChildren() {
     this._flexChildren = Array.from(this._childMap.keys());
-    this.layout();
+    // order by the actual index in the container
+    this._flexChildren.sort((a, b) => this.getChildIndex(a) - this.getChildIndex(b));
   }
 
   protected handleChildAdded(child: any) {
@@ -204,7 +246,7 @@ export class FlexContainer extends Container {
     }
 
     this._childMap.set(child, container);
-    this._flexChildren = Array.from(this._childMap.keys());
+    this.setFlexChildren();
 
     this.layout();
     this._reparentAddedChild = true;
