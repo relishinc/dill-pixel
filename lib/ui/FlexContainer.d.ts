@@ -55,9 +55,14 @@ export declare class FlexContainer extends Container {
     onResize(_size: IPoint): void;
     removeChildAt(index: number): DisplayObject;
     removeChild(...children: DisplayObject[]): DisplayObject;
+    addChildAt<U extends DisplayObject = DisplayObject>(child: DisplayObject, index: number): U;
+    setChildIndex(child: DisplayObject, index: number): void;
+    getChildIndex(child: DisplayObject): number;
     getChildAt(index: number): DisplayObject;
     layout(): void;
     protected handleChildRemoved(child: DisplayObject): void;
+    protected deleteChild(child: DisplayObject): boolean;
+    protected setFlexChildren(): void;
     protected handleChildAdded(child: any): void;
     private _layout;
 }
