@@ -1,6 +1,6 @@
 import { BaseState } from '@/state/BaseState';
-import { AssetMapData, delay, FlexContainer, MathUtils } from 'dill-pixel';
-import { Point, Sprite, TextStyle } from 'pixi.js';
+import { AssetMapData, delay, FlexContainer, Make, MathUtils } from 'dill-pixel';
+import { Point, Sprite, Text, TextStyle } from 'pixi.js';
 
 const whiteTextStyle = (size: number) =>
   new TextStyle({
@@ -55,6 +55,15 @@ export class FlexContainerExample extends BaseState {
 
     await delay(2);
     this.flexContainer.removeChildAt(2);
+    await delay(2);
+    const newChild = Make.text(`Item New`, whiteTextStyle(48), 1, 0, 0);
+    this.flexContainer.addChildAt(newChild, 0);
+    console.log(
+      this.flexContainer.flexChildren.map((c) => ({
+        index: this.flexContainer.getChildIndex(c),
+        text: (c as Text).text,
+      })),
+    );
 
     // test flex container inside flex container
     // const fc1 = this.add.flexContainer({
