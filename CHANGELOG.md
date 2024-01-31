@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.27.2](https://github.com/relishinc/dill-pixel/compare/v2.27.1...v2.27.2) (2024-01-31)
+
+
+### Bug Fixes
+
+* flexContainer api ([c2da31f](https://github.com/relishinc/dill-pixel/commit/c2da31fd1767bc9adf3ddc5493f706159bec4a6b))
+
 ## [2.27.1](https://github.com/relishinc/dill-pixel/compare/v2.27.0...v2.27.1) (2024-01-30)
 
 
