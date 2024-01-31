@@ -153,6 +153,12 @@ export class FlexContainer extends Container {
     return this.removeChild(this.flexChildren[index]);
   }
 
+  public removeChildren(): DisplayObject[] {
+    const children = this.flexChildren;
+    this.removeChild(...children);
+    return children;
+  }
+
   public removeChild(...children: DisplayObject[]): DisplayObject {
     if (this._reparentAddedChild) {
       children.forEach((child) => {
