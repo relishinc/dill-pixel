@@ -1,4 +1,4 @@
-import { Container as PIXIContainer, DisplayObject } from 'pixi.js';
+import { Container as PIXIContainer, DisplayObject, Graphics, Rectangle } from 'pixi.js';
 import { Container } from '../gameobjects';
 import { PointLike } from '../utils';
 export type UICanvasEdge = 'top right' | 'top left' | 'top center' | 'top' | 'bottom right' | 'bottom left' | 'bottom center' | 'bottom' | 'left top' | 'left bottom' | 'left center' | 'left' | 'right top' | 'right bottom' | 'right center' | 'right' | 'center';
@@ -27,12 +27,15 @@ export type UICanvasPadding = {
     left: number;
 };
 export declare class UICanvas extends Container {
-    private _outerBounds;
-    private _displayBounds;
-    private settingsMap;
-    private _settings;
-    private _debugGraphics;
+    protected _outerBounds: Rectangle;
+    protected _displayBounds: Rectangle;
+    protected settingsMap: Map<PIXIContainer<DisplayObject>, UICanvasChildSettings>;
+    protected _settings: UICanvasSettings;
+    protected _childMap: Map<PIXIContainer<DisplayObject>, PIXIContainer<DisplayObject>>;
+    protected _canvasChildren: DisplayObject[];
+    protected _debugGraphics: Graphics;
     constructor(settings?: Partial<UICanvasProps>);
+    get canvasChildren(): DisplayObject[];
     get bounds(): import("pixi.js").Bounds;
     set size(value: PointLike);
     set padding(value: Partial<UICanvasPadding> | {
@@ -41,13 +44,16 @@ export declare class UICanvas extends Container {
     } | number);
     onResize(): void;
     update(): void;
+    removeChildAt(index: number): DisplayObject;
+    removeChild(...children: DisplayObject[]): DisplayObject;
+    getChildAt(index: number): DisplayObject;
     layout(): void;
-    addElement(child: PIXIContainer<DisplayObject>, settings?: Partial<UICanvasChildSettings>): PIXIContainer<DisplayObject>;
+    addElement(child: PIXIContainer, settings?: Partial<UICanvasChildSettings>): PIXIContainer;
     reAlign(child: PIXIContainer<DisplayObject>, settings: Partial<UICanvasChildSettings> | UICanvasEdge): void;
     protected setPosition(): void;
-    private __calculateBounds;
-    private __calculateOuterBounds;
-    private handleChildRemoved;
+    protected __calculateBounds(_size: PointLike): Rectangle;
+    protected __calculateOuterBounds(_size: PointLike): Rectangle;
+    protected handleChildRemoved(child: any): void;
     private applySettings;
     private drawDebug;
 }
