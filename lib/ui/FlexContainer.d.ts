@@ -54,6 +54,7 @@ export declare class FlexContainer extends Container {
     destroy(_options?: IDestroyOptions | boolean): void;
     onResize(_size: IPoint): void;
     removeChildAt(index: number): DisplayObject;
+    removeChildren(): DisplayObject[];
     removeChild(...children: DisplayObject[]): DisplayObject;
     addChildAt<U extends DisplayObject = DisplayObject>(child: DisplayObject, index: number): U;
     setChildIndex(child: DisplayObject, index: number): void;
