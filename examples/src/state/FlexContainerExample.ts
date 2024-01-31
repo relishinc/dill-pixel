@@ -54,7 +54,8 @@ export class FlexContainerExample extends BaseState {
     this.addItems();
 
     await delay(2);
-    this.flexContainer.removeChildAt(2);
+    // this.flexContainer.removeChildAt(2);
+    this.flexContainer.removeChildren();
     await delay(2);
     const newChild = Make.text(`Item New`, whiteTextStyle(48), 1, 0, 0);
     this.flexContainer.addChildAt(newChild, 0);
