@@ -55,16 +55,27 @@ export class FlexContainerExample extends BaseState {
 
     await delay(2);
     // this.flexContainer.removeChildAt(2);
-    this.flexContainer.removeChildren();
-    await delay(2);
-    const newChild = Make.text(`Item New`, whiteTextStyle(48), 1, 0, 0);
+    // this.flexContainer.removeChildren();
+    await delay(1);
+    console.log('adding new child');
+    const newChild = Make.text(`Item New`, whiteTextStyle(48));
     this.flexContainer.addChildAt(newChild, 0);
+    await delay(1);
+    console.log('setting child index');
+    this.flexContainer.setChildIndex(newChild, this.flexContainer.children.length - 1);
+    console.log('Getting child at new index');
+    const chosen = this.flexContainer.getChildAt(this.flexContainer.children.length - 1) as Text;
+    console.log('Chosen child text:', chosen.text);
+
+    console.log('Flex Children');
     console.log(
       this.flexContainer.flexChildren.map((c) => ({
         index: this.flexContainer.getChildIndex(c),
         text: (c as Text).text,
       })),
     );
+
+    console.log({ children: this.flexContainer.children, flexChildren: this.flexContainer.flexChildren });
 
     // test flex container inside flex container
     // const fc1 = this.add.flexContainer({
