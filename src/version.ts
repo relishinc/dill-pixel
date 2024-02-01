@@ -1,2 +1,2 @@
 // This file is auto-generated during the build process.
-export const version: string = '2.27.5';
+export const version: string = '2.27.6';
