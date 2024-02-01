@@ -6,6 +6,9 @@ import { Point } from 'pixi.js';
 export class PopupExample extends BaseState {
   count: number = 0;
   button: Container;
+  onClose = () => {
+    this.count--;
+  };
 
   public static get NAME(): string {
     return 'PopupExample';
@@ -56,8 +59,4 @@ export class PopupExample extends BaseState {
       }),
     );
   }
-
-  onClose = () => {
-    this.count--;
-  };
 }

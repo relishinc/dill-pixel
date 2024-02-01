@@ -262,7 +262,7 @@ export class StateManager<T extends Application = Application> extends Container
    * @param transitionSteps
    */
   public transitionTo(
-    stateIdAndData: string | typeof State | { id: string; data: any },
+    stateIdAndData: string | typeof State<T> | { id: string; data: any },
     loadScreen?: string | undefined,
     transitionSteps?: TransitionStep[],
   ): boolean {
