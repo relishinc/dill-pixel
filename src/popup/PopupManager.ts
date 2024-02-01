@@ -11,9 +11,9 @@ import { IPopup } from './IPopup';
 import { Popup } from './Popup';
 import { IPopupToken } from './PopupToken';
 
-export class PopupManager<T extends Application> extends Container<T> {
+export class PopupManager<T extends Application = Application> extends Container<T> {
   private _activePopups: IPopup[];
-  private _popups: Dictionary<string, typeof Popup<Application>>;
+  private _popups: Dictionary<string, typeof Popup<T>>;
   private _size!: Point;
   private _debug: boolean = false;
   private _overlayColor: number;
@@ -25,7 +25,7 @@ export class PopupManager<T extends Application> extends Container<T> {
     overlayAlpha: number = 0.75,
   ) {
     super();
-    this._popups = new Dictionary<string, typeof Popup<Application>>();
+    this._popups = new Dictionary<string, typeof Popup<T>>();
     this._activePopups = new Array<IPopup>();
     this._overlayColor = overlayColor;
     this._overlayAlpha = overlayAlpha;
@@ -82,7 +82,7 @@ export class PopupManager<T extends Application> extends Container<T> {
    * @param popupClass
    * @param popupId Unique ID for this type of popup
    */
-  public register(popupClass: typeof Popup<Application>, popupId?: string): void {
+  public register(popupClass: typeof Popup<T>, popupId?: string): void {
     const id = popupClass.NAME === '__Popup' ? popupId : popupClass.NAME;
     if (!id || id === '__Popup') {
       throw new Error(
