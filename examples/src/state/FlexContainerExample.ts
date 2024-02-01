@@ -14,16 +14,17 @@ export class FlexContainerExample extends BaseState {
   protected backing: Sprite;
   protected flexContainer: FlexContainer;
   protected config = {
-    useBacking: false,
-    width: 0,
-    height: 0,
+    useBacking: true,
+    width: 800,
+    height: 200,
     numItems: 4,
     varySizes: false,
     gap: 0,
     flexWrap: 'nowrap',
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    nested: false,
   };
 
   public static get NAME(): string {
@@ -43,62 +44,30 @@ export class FlexContainerExample extends BaseState {
     this.setHeaderText('Flex Container Example');
     this.backing = this.add.coloredSprite(
       0x000000,
-      [size.x - 60, size.y - 200],
+      [size.x, size.y],
       'rectangle',
       {},
-      0.5,
-      [-size.x * 0.5 + 30, -size.y * 0.5 + 100],
+      0.25,
+      [0, 0],
       0,
     );
-    this.flexContainer = this.add.flexContainer(1, this.backing.position);
+    
+    this.flexContainer = this.add.flexContainer({ 
+      gap: this.config.gap as number, 
+      flexDirection: this.config.flexDirection as 'row' | 'column',
+      flexWrap: this.config.flexWrap as 'nowrap' | 'wrap', 
+      justifyContent: this.config.justifyContent as 'flex-start' | 'center' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly',
+      alignItems: this.config.alignItems as 'center' | 'flex-start' | 'flex-end',
+      width: this.config.width as number,
+      height: this.config.height as number,
+    });
+
     this.addItems();
-
-    await delay(2);
-    // this.flexContainer.removeChildAt(2);
-    // this.flexContainer.removeChildren();
-    await delay(1);
-    console.log('adding new child');
-    const newChild = Make.text(`Item New`, whiteTextStyle(48));
-    this.flexContainer.addChildAt(newChild, 0);
-    await delay(1);
-    console.log('setting child index');
-    this.flexContainer.setChildIndex(newChild, this.flexContainer.children.length - 1);
-    console.log('Getting child at new index');
-    const chosen = this.flexContainer.getChildAt(this.flexContainer.children.length - 1) as Text;
-    console.log('Chosen child text:', chosen.text);
-
-    console.log('Flex Children');
-    console.log(
-      this.flexContainer.flexChildren.map((c) => ({
-        index: this.flexContainer.getChildIndex(c),
-        text: (c as Text).text,
-      })),
-    );
-
-    console.log({ children: this.flexContainer.children, flexChildren: this.flexContainer.flexChildren });
-
-    // test flex container inside flex container
-    // const fc1 = this.add.flexContainer({
-    //   position: [200, -this.app.size.y * 0.5 + 100],
-    //   width: 200,
-    //   height: 300,
-    //   flexDirection: 'column',
-    //   justifyContent: 'space-between',
-    // });
-    //
-    // const fcSub1 = fc1.add.flexContainer({ gap: 10, flexDirection: 'column' });
-    // const fcSub2 = fc1.add.flexContainer({ gap: 10, flexDirection: 'column', justifyContent: 'flex-end' });
-    //
-    // fcSub1.add.text(`Top Item 1`, whiteTextStyle(24));
-    // fcSub1.add.text(`Top Item 2`, whiteTextStyle(24));
-    // fcSub2.add.text(`Bottom Item 1`, whiteTextStyle(24));
-    // fcSub2.add.text(`Bottom Item 2`, whiteTextStyle(24));
-    // end test
   }
 
   onResize(pSize: Point) {
     if (this.backing) {
-      this.backing.position.set(-pSize.x * 0.5 + 30, -pSize.y * 0.5 + 100);
+      this.backing.position.set(-this.backing.width / 2, -this.backing.height / 2);
       this.flexContainer.position.set(this.backing.position.x, this.backing.position.y);
       if (this.config.useBacking) {
         this.flexContainer.size = [this.backing.width, this.backing.height];
@@ -114,6 +83,7 @@ export class FlexContainerExample extends BaseState {
   }
 
   configureGUI() {
+
     this.gui
       .add(this.config, 'useBacking')
       .onChange(() => {
@@ -152,7 +122,6 @@ export class FlexContainerExample extends BaseState {
     });
 
     this.gui.add(this.config, 'flexDirection', ['row', 'column']).onChange(() => {
-      this.flexContainer.containerHeight = this.config.flexDirection === 'row' ? 0 : this.app.size.y - 200;
       this.flexContainer.flexDirection = this.config.flexDirection as 'row' | 'column';
     });
 
@@ -178,6 +147,14 @@ export class FlexContainerExample extends BaseState {
           | 'space-around'
           | 'space-evenly';
       });
+
+    this.gui
+      .add(this.config, 'nested')
+      .onChange(() => {
+        this.addItems();
+      })
+      .name('Nested');
+
   }
 
   addItems() {
@@ -197,6 +174,19 @@ export class FlexContainerExample extends BaseState {
     this.flexContainer.size = [width, height];
 
     Array.from({ length: numItems }).forEach((_, i) => {
+      if ( this.config.nested && numItems > 1 && i === 1 ) {
+        const nested: FlexContainer = this.flexContainer.add.flexContainer({ flexDirection: this.config.flexDirection === 'row' ? 'column' : 'row', gap: 10, alignItems: 'center', justifyContent: 'center' });
+        Array.from({ length: numItems }).forEach((_, n) => {
+          nested.add.text(
+            `Nested ${n + 1}`,
+            whiteTextStyle(24),
+            1,
+            0,
+            0,
+          );          
+        });
+        this.flexContainer.layout();
+      }
       this.flexContainer.add.text(
         `Item ${i + 1}`,
         whiteTextStyle(varySizes ? MathUtils.clamp(Math.random() * 48 + 24, 24, 72) : 48),
@@ -205,5 +195,7 @@ export class FlexContainerExample extends BaseState {
         0,
       );
     });
+
+    this.onResize(this.app.size);
   }
 }
