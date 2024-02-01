@@ -69,6 +69,8 @@ export class UICanvas extends Container {
   protected _canvasChildren: DisplayObject[] = [];
 
   protected _debugGraphics: Graphics;
+  private _reparentAddedChild: boolean = true;
+  private _disableAddChildError: boolean = false;
 
   constructor(settings: Partial<UICanvasProps> = { padding: 0 }) {
     super(true, settings.debug === true);
@@ -114,22 +116,108 @@ export class UICanvas extends Container {
     }
   }
 
+  public addChild<U extends DisplayObject[]>(...children: DisplayObject[]): U[0] {
+    if (this._disableAddChildError) {
+      return super.addChild(...children) as U[0];
+    }
+    throw new Error('UICanvas.addChild is not supported. Use UICanvas.addElement instead');
+  }
+
+  /**
+   * Removes a child from the container at the specified index
+   * Override because we need to remove from the inner container
+   * @param {number} index
+   * @returns {DisplayObject}
+   */
   public removeChildAt(index: number): DisplayObject {
     return this.removeChild(this.canvasChildren[index]);
   }
 
+  /**
+   * Removes all the children from the container
+   * Override because we need to ensure it returns the proper re-parented children
+   * @returns {DisplayObject[]}
+   */
+  public removeChildren(): DisplayObject[] {
+    const children = this.canvasChildren;
+    this.removeChild(...children);
+    return children;
+  }
+
+  /**
+   * Removes one or more children from the container
+   * Override because we need to ensure it returns the proper re-parented children
+   * @param {DisplayObject} children
+   * @returns {DisplayObject}
+   */
   public removeChild(...children: DisplayObject[]): DisplayObject {
-    children.forEach((child) => {
-      const actualChild = this._childMap.get(child as PIXIContainer<DisplayObject>) as DisplayObject;
-      if (actualChild) {
-        return super.removeChild(actualChild);
-      }
-    });
+    if (this._reparentAddedChild) {
+      children.forEach((child) => {
+        const actualChild = this._childMap.get(child as PIXIContainer<DisplayObject>) as DisplayObject;
+        if (actualChild) {
+          return super.removeChild(actualChild);
+        }
+      });
+    } else {
+      return super.removeChild(...children);
+    }
     return children[0];
   }
 
+  /**
+   * Adds a child to the container at the specified index
+   * Override because we need to ensure it sets the child index properly
+   * @param {DisplayObject} child
+   * @param {number} index
+   * @returns {U}
+   */
+  public addChildAt<U extends DisplayObject = DisplayObject>(child: DisplayObject, index: number): U {
+    if (this._disableAddChildError) {
+      const newChild = this.add.existing(child);
+      this.setChildIndex(newChild, index);
+      return newChild as U;
+    }
+    throw new Error('UICanvas.addChildAt is not supported. Use UICanvas.addElement instead');
+  }
+
+  /**
+   * Sets the index of the child in the container
+   * Override because we need to ensure it targets the parent container that we added
+   * @param {DisplayObject} child
+   * @param {number} index
+   * @returns {U}
+   */
+  public setChildIndex(child: DisplayObject, index: number): void {
+    const actualChild = this._childMap.get(child as PIXIContainer<DisplayObject>) as DisplayObject;
+    if (actualChild) {
+      super.setChildIndex(actualChild, index);
+      this.setCanvasChildren();
+      this.layout();
+    }
+  }
+
+  /**
+   * Gets the index of a child in the container
+   * Override because we need to ensure it targets the parent container that we added
+   * @param {DisplayObject} child
+   * @param {number} index
+   * @returns {U}
+   */
+  public getChildIndex(child: DisplayObject): number {
+    if (this._childMap.has(child as PIXIContainer<DisplayObject>)) {
+      return super.getChildIndex(child.parent);
+    }
+    return super.getChildIndex(child);
+  }
+
+  /**
+   * Gets the child at the specified index
+   * Override due to re-parenting
+   * @param {number} index
+   * @returns {DisplayObject}
+   */
   public getChildAt(index: number): DisplayObject {
-    return this._canvasChildren[index];
+    return (super.getChildAt(index) as PIXIContainer)?.getChildAt(0);
   }
 
   public layout() {
@@ -142,7 +230,11 @@ export class UICanvas extends Container {
     });
   }
 
-  public addElement(child: PIXIContainer, settings?: Partial<UICanvasChildSettings>): PIXIContainer {
+  public addElement<U extends PIXIContainer = PIXIContainer>(
+    child: PIXIContainer,
+    settings?: Partial<UICanvasChildSettings>,
+  ): U {
+    this._disableAddChildError = true;
     // avoid maximum call stack error b/c we're about to add a container
     const container = this.add.container();
     container.addChild(child);
@@ -164,7 +256,8 @@ export class UICanvas extends Container {
     this._canvasChildren = Array.from(this._childMap.keys());
 
     this.onResize();
-    return child;
+    this._disableAddChildError = false;
+    return child as U;
   }
 
   public reAlign(child: PIXIContainer<DisplayObject>, settings: Partial<UICanvasChildSettings> | UICanvasEdge) {
@@ -207,6 +300,33 @@ export class UICanvas extends Container {
     this._canvasChildren = Array.from(this._childMap.keys());
   }
 
+  /**
+   * Sorts the children in the container
+   * Needed because we need to ensure re-parented children are sorted by their actual index in the container
+   * @protected
+   */
+  protected setCanvasChildren() {
+    this._canvasChildren = Array.from(this._childMap.keys());
+    // order by the actual index in the container
+    this._canvasChildren.sort((a, b) => this.getChildIndex(a) - this.getChildIndex(b));
+    this.cleanup();
+  }
+
+  /**
+   * Ensure we don't leave empty containers after setting child indices or adding / removing children
+   * @protected
+   */
+  protected cleanup() {
+    if (this.canvasChildren.length === this.children.length) return;
+    // remove any children that are not in the flex children list
+    this.children.forEach((child) => {
+      if (this._settings.debug && child === this._debugGraphics) return;
+      if (!(child as PIXIContainer)?.children?.length) {
+        super.removeChild(child);
+      }
+    });
+  }
+
   private applySettings(child: PIXIContainer<DisplayObject>, settings: UICanvasChildSettings) {
     if (!settings) return;
     const screenWidth = this._displayBounds.width;
@@ -236,7 +356,6 @@ export class UICanvas extends Container {
         child.y = screenHeight - settings.padding - childHeight;
         break;
       case 'bottom left':
-        console.log('bl', settings.padding, childHeight);
         child.x = settings.padding;
         child.y = screenHeight - settings.padding - childHeight;
         break;
@@ -272,7 +391,6 @@ export class UICanvas extends Container {
         child.y = (screenHeight - childHeight) / 2;
         break;
       case 'center':
-        console.log({ childWidth });
         child.x = (screenWidth - childWidth) / 2;
         child.y = (screenHeight - childHeight) / 2;
         break;
@@ -281,7 +399,9 @@ export class UICanvas extends Container {
 
   private drawDebug() {
     if (!this._debugGraphics) {
+      this._disableAddChildError = true;
       this._debugGraphics = this.add.graphics();
+      this._disableAddChildError = false;
     }
     this._debugGraphics.clear();
     this._debugGraphics.lineStyle(1, 0xff0000, 0.5, 0, true);
