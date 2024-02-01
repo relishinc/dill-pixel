@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.27.4](https://github.com/relishinc/dill-pixel/compare/v2.27.3...v2.27.4) (2024-02-01)
+
+
+### Bug Fixes
+
+* cleanup method added in FlexContainer ([7515045](https://github.com/relishinc/dill-pixel/commit/7515045e4a99d04e274473079c679c491d627c35))
+
 ## [2.27.3](https://github.com/relishinc/dill-pixel/compare/v2.27.2...v2.27.3) (2024-01-31)
 
 
