@@ -2,9 +2,8 @@ import { GREEN } from '@/utils/Constants';
 import { Popup } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Point, Sprite, Text } from 'pixi.js';
-import { Application } from '../Application';
 
-export default class ExamplePopup extends Popup<Application> {
+export default class ExamplePopup extends Popup {
   _bg: Sprite;
   _text: Text;
 
@@ -28,8 +27,6 @@ export default class ExamplePopup extends Popup<Application> {
       shape: 'rounded_rectangle',
       radius: 20,
     });
-
-    this.app.customFunction();
   }
 
   show(token: any): void {
