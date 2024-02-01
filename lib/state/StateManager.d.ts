@@ -116,7 +116,7 @@ export declare class StateManager<T extends Application = Application> extends C
      * @param loadScreen
      * @param transitionSteps
      */
-    transitionTo(stateIdAndData: string | typeof State | {
+    transitionTo(stateIdAndData: string | typeof State<T> | {
         id: string;
         data: any;
     }, loadScreen?: string | undefined, transitionSteps?: TransitionStep[]): boolean;

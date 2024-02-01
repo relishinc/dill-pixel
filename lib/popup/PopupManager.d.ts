@@ -2,7 +2,7 @@ import { Point } from 'pixi.js';
 import { Application } from '../core';
 import { Container } from '../gameobjects';
 import { Popup } from './Popup';
-export declare class PopupManager<T extends Application> extends Container<T> {
+export declare class PopupManager<T extends Application = Application> extends Container<T> {
     protected _app: Application<T>;
     private _activePopups;
     private _popups;
@@ -32,7 +32,7 @@ export declare class PopupManager<T extends Application> extends Container<T> {
      * @param popupClass
      * @param popupId Unique ID for this type of popup
      */
-    register(popupClass: typeof Popup, popupId?: string): void;
+    register(popupClass: typeof Popup<T>, popupId?: string): void;
     /**
      * Show a Popup, and optionally get a callback when it's closed.
      * @description Note you should be using @link {Signals.showPopup} instead of calling this directly
