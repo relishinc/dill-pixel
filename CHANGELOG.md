@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.27.5](https://github.com/relishinc/dill-pixel/compare/v2.27.4...v2.27.5) (2024-02-01)
+
+
+### Bug Fixes
+
+* type casting in PopupManager was causing ts error when registering a popup ([3aa2afd](https://github.com/relishinc/dill-pixel/commit/3aa2afd3ff3a0d045133c6fe8d48c4aff942986d))
+* type casting in StateManager caused error when calling transitionTo with a class parameter ([a280450](https://github.com/relishinc/dill-pixel/commit/a2804508acae59a533d804500452a9f0013ef763))
+* updated UICanvas API to match FlexContainer for adding / removing children ([2c0f693](https://github.com/relishinc/dill-pixel/commit/2c0f6934bdeccd4a134bcd7529f1b5f0af4052f4))
+
 ## [2.27.4](https://github.com/relishinc/dill-pixel/compare/v2.27.3...v2.27.4) (2024-02-01)
 
 
