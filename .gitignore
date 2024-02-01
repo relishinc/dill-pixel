@@ -12,3 +12,5 @@
 *.iml
 
 npm-debug.log*
+examples/.cache
+examples/node_modules
