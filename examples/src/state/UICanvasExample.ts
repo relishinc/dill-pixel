@@ -1,4 +1,4 @@
-import { AssetMapData, AssetType, Make, TextureAsset, UICanvas } from 'dill-pixel';
+import { AssetMapData, AssetType, delay, FlexContainer, Make, TextureAsset, UICanvas } from 'dill-pixel';
 import { Point } from 'pixi.js';
 import { BaseState } from './BaseState';
 
@@ -48,16 +48,18 @@ export class UICanvasExample extends BaseState {
     fc2.add.text({ value: 'Item 2' });
     fc2.add.text({ value: 'Item 3' });
 
-    this.ui.addElement(fc2, { align: 'bottom left' });
+    const element = this.ui.addElement<FlexContainer>(fc2, { align: 'bottom left' });
 
-    /* await delay(2);
+    await delay(2);
 
-		this.ui.size = [1000, 500];
+    this.ui.size = [1000, 500];
 
-		await delay(2);
+    await delay(2);
 
-		this.ui.size = 0;
-		this.ui.padding = { x: 0, y: 0 };
-		 */
+    this.ui.size = 0;
+    this.ui.padding = { x: 0, y: 0 };
+
+    await delay(1);
+    this.ui.removeChild(element);
   }
 }
