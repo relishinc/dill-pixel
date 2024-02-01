@@ -185,7 +185,6 @@ export class FlexContainerExample extends BaseState {
             0,
           );          
         });
-        this.flexContainer.layout();
       }
       this.flexContainer.add.text(
         `Item ${i + 1}`,
