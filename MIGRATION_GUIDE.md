@@ -13,17 +13,15 @@ HLF is changing! We are moving towards
 
 ## New name
 
-Still TBD
+Dill Pixel
 
 ## Hosting on GitHub
 
-We are moving to GitHub for hosting the framework. This will allow us to open source the framework and allow for easier
-contribution.
+We are moving to GitHub for hosting the framework. This will allow us to open source the framework and allow for easier contribution.
 
 ## Open sourcing the framework
 
-We are discussing an open source license and looking to move to open source so we might be able to accept contributions
-from the community and easier onboarding to the framework.
+We are discussing an open source license and looking to move to open source so we might be able to accept contributions from the community and easier onboarding to the framework.
 
 ## New website / docs site / code examples
 
@@ -38,9 +36,7 @@ We are moving to a new website and docs site.
 
 - We are now using release please to manage releases. This will allow us to automate the release process (and
   the [Changelog](./CHANGELOG.md). and make it easier.
-- Commits should follow the [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0/). This will
-  allow us to automate the release process and
-  generate the changelog.
+- Commits should follow the [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0/). This will allow us to automate the release process and generate the changelog.
 
 ## New features and improvements
 
@@ -133,8 +129,7 @@ The goal is to redesign core UI elements to use PIXI UI, which will:
 ##### The API is being redesigned to be more intuitive and easier to use.
 
 - Where possible, we are trying to avoid breaking changes to the API unless absolutely necessary.
-- Mostly, we're trying to move away from the need to know about third party libraries being used under the hood, and
-  adding a "convenience layer" to bridge the gap between the framework and third party libraries.
+- Mostly, we're trying to move away from the need to know about third party libraries being used under the hood, and adding a "convenience layer" to bridge the gap between the framework and third party libraries.
 
 --- 
 
@@ -229,8 +224,7 @@ this.app.broadcast("SOME_EVENT_NAME", someData);
 
 ###### Example: Adding a new PIXI entity to a game state
 
-Factory methods serve to help with common tasks, such as adding a new PIXI entity to a game state. One method with
-parameters to set the initial state of the entity is used instead of multiple lines of code.
+Factory methods serve to help with common tasks, such as adding a new PIXI entity to a game state. One method with parameters to set the initial state of the entity is used instead of multiple lines of code.
 
 - Each state comes equipped with "add" and "make" methods to access factory methods.
 
