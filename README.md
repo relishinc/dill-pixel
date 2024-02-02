@@ -1,6 +1,5 @@
 # Dill Pixel
 
-<<<<<<< HEAD
 <!-- TODO: add image/logo -->
 
 ![GitHub package.json version (branch)](https://img.shields.io/github/package-json/v/relishinc/dill-pixel)
@@ -15,22 +14,6 @@ Framework for HTML game development, made by [Relish Studios](https://reli.sh).
 
 ## Introduction
 
-=======
-TODO: add image/logo
-
-![GitHub package.json version (branch)](https://img.shields.io/github/package-json/v/relishinc/dill-pixel)
-<!--[![npm version](https://badge.fury.io/js/dill-pixel.svg)](//npmjs.com/package/dill-pixel)-->
-<!-- test coverage badge -->
-![release builds](https://github.com/relishinc/dill-pixel/actions/workflows/release-please.yml/badge.svg)
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/relishinc/dill-pixel/issues)
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-Framework for HTML game development, made by Relish Studios [https://reli.sh].
-
-## Introduction
-
->>>>>>> 5bffa54cb25f9e8ecadcfdcdc617c331160d7697
 ### Why make this game framework?
 
 PIXI.js is a great rendering engine, but it is not a game engine. It is not opinionated about project structure and does not provide any common game development tools. This framework is designed to fill that gap. It is Relish's opinionated approach to game development using PIXI.js.
