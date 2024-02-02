@@ -4,8 +4,8 @@ import {defineConfig} from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-	site: "http://hlf.reli.sh/docs",
-	base: "/docs",
+	site: "http://docs.dillpixel.io",
+	base: "/",
 	integrations: [
 		starlight({
 			title: 'dill pixel',
