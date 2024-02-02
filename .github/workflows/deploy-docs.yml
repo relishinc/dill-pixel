@@ -1,15 +1,9 @@
 name: Deploy Docs
 
 on:
-  pull_request:
-    types: [ closed ]
-    paths:
-      - '**.json'
-      - '**.yaml'
-      - '**.yml'
+  push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   build:
@@ -46,4 +40,4 @@ jobs:
           password: ${{ secrets.DOCS_SFTP_PASSWORD }}
           port: ${{ secrets.DOCS_SFTP_PORT }}
           local: './docs/dist/'
-          remote: '/docs/'
+          remote: '/'
