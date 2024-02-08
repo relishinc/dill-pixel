@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.27.8](https://github.com/relishinc/dill-pixel/compare/v2.27.7...v2.27.8) (2024-02-08)
+
+
+### Bug Fixes
+
+* required props in PopupConfig and AudioTrackConfig types, ([43fa6e1](https://github.com/relishinc/dill-pixel/commit/43fa6e1ad3df3aefdbeee329adde0060aa753ccb))
+* some method overrides to deprecate use of PopupToken and AudioToken in favour of config objects ([16ee075](https://github.com/relishinc/dill-pixel/commit/16ee075c36735e748261d5b3c9227b34be9732c5))
+
 ## [2.27.7](https://github.com/relishinc/dill-pixel/compare/v2.27.6...v2.27.7) (2024-02-08)
 
 
