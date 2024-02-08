@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.27.7](https://github.com/relishinc/dill-pixel/compare/v2.27.6...v2.27.7) (2024-02-08)
+
+
+### Bug Fixes
+
+* merge messages that made it into the readme ([1edba88](https://github.com/relishinc/dill-pixel/commit/1edba8840b377231ddfbe4dae0919b9592f313a4))
+* some dependency / export weirdness ([33f560b](https://github.com/relishinc/dill-pixel/commit/33f560b758fa1df87771e00f99139bfc2e8e412b))
+* some dependency / export weirdness ([65fa22a](https://github.com/relishinc/dill-pixel/commit/65fa22a5fb054321e6a2bd3015f7c65881e4d5ab))
+
 ## [2.27.6](https://github.com/relishinc/dill-pixel/compare/v2.27.5...v2.27.6) (2024-02-01)
 
 
