@@ -244,24 +244,6 @@ import {
 } from 'dill-pixel';
 
 export default class Application extends DillPixelApplication {
-  constructor() {
-    if (DillPixelApplication._instance !== undefined) {
-      // display a singleton warning
-      console.warn(
-        'Application is a singleton class and should not be instantiated directly. Use Application.instance instead.',
-      );
-    }
-
-    super({ resizeTo: Application.containerElement });
-  }
-
-  static get instance(): Application {
-    if (DillPixelApplication._instance === undefined) {
-      DillPixelApplication._instance = new Application();
-    }
-    return DillPixelApplication._instance as Application;
-  }
-
   public get defaultState() {
     return this.state.getStateFromHash() || PopupExample.NAME;
   }
@@ -279,7 +261,10 @@ export default class Application extends DillPixelApplication {
     return new SplashScreen();
   }
 
-  protected setup() {
+  protected async setup() {
+    // add some setup specific functionality here, such as the State Manager using the hash to initialie a state
+    // when in development mode
+    // the boot sequence will wait for async setup to complete before continuing
     this.state.useHash = process.env.NODE_ENV === 'development';
   }
 
