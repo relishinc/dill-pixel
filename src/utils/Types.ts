@@ -9,3 +9,9 @@ export type RectLike = {
   height: number;
 };
 export type WithPointLike<T extends keyof any> = { [P in T]: PointLike };
+export type ContainerLike = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
