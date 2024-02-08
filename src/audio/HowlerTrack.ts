@@ -6,6 +6,13 @@ import * as HowlerUtils from './HowlerUtils';
 import { IAudioManager } from './IAudioManager';
 import { IAudioTrack } from './IAudioTrack';
 
+export type AudioTrackConfig = {
+  id: string;
+  category: string;
+  volume?: number;
+  loop?: boolean;
+};
+
 export class HowlerTrack implements IAudioTrack {
   /** Howler will attempt to load audio files with these extensions, in this order.
    * @default ["webm", "mp3", "ogg", "m4a"]

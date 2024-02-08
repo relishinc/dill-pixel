@@ -1,8 +1,16 @@
 // convenience methods for all the audio manager signals
-import { AudioToken } from '../audio';
+import { AudioToken, AudioTrackConfig } from '../audio';
 import { Signals } from '../signals';
 
-export function playAudio(token: AudioToken): void {
+export function playAudio(data: AudioToken): void;
+export function playAudio(data: AudioToken | AudioTrackConfig): void {
+  if (data.constructor) {
+    // it is a AudioToken
+    Signals.playAudio.emit(data as AudioToken);
+    return;
+  }
+  // it is an AudioConfig
+  const token = new AudioToken(data.id, data.volume, data.loop, data.category);
   Signals.playAudio.emit(token);
 }
 
