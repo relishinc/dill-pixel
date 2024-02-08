@@ -1,13 +1,7 @@
 import { Container as PIXIContainer, DisplayObject, IDestroyOptions, IPoint } from 'pixi.js';
 import { Signal } from 'typed-signals';
 import { Container } from '../gameobjects';
-import { PointLike } from '../utils';
-export type ContainerLike = {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-};
+import { ContainerLike, PointLike } from '../utils';
 export interface FlexContainerSettings {
     width: number;
     height: number;
