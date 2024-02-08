@@ -1,5 +1,5 @@
 import { AudioToken } from '../audio';
-export declare function playAudio(token: AudioToken): void;
+export declare function playAudio(data: AudioToken): void;
 export declare function loadAudio(opts: {
     assets: string[];
     category: string;

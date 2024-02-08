@@ -1,4 +1,5 @@
 import { Point } from 'pixi.js';
+export type WithRequiredProps<T, K extends keyof T> = Partial<T> & Pick<T, K>;
 export type SpritesheetLike = string | undefined;
 export type PointLike = {
     x: number;

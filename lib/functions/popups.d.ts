@@ -1,5 +1,5 @@
-import { IPopup, IPopupToken } from '../popup';
-export declare function showPopup(token: IPopupToken): void;
+import { IPopup, PopupConfig } from '../popup';
+export declare function showPopup(data: PopupConfig): void;
 export declare function hidePopup(id: string): void;
 export declare function hideTopMostPopup(): void;
 export declare function hideAllPopups(): void;
