@@ -2,6 +2,7 @@ import { Graphics, Point, Sprite } from 'pixi.js';
 import { Application } from '../core';
 import { hidePopupComplete } from '../functions';
 import { Container } from '../gameobjects';
+import { WithRequiredProps } from '../utils';
 import { IPopup } from './IPopup';
 import { IPopupToken } from './PopupToken';
 
@@ -12,6 +13,8 @@ export type PopupConfig = {
   keyboard?: boolean;
   data?: any;
 };
+
+export type RequiredPopupConfig = WithRequiredProps<PopupConfig, 'id'>;
 
 export enum PopupState {
   CLOSED,

@@ -1,8 +1,8 @@
-import { IPopup, IPopupToken, PopupConfig, PopupToken } from '../popup';
+import { IPopup, IPopupToken, PopupConfig, PopupToken, RequiredPopupConfig } from '../popup';
 import { Signals } from '../signals';
 
 export function showPopup(data: PopupConfig): void;
-export function showPopup(data: IPopupToken | PopupConfig): void {
+export function showPopup(data: IPopupToken | RequiredPopupConfig): void {
   if (data.constructor) {
     // it is a PopupToken
     Signals.showPopup.emit(data);
