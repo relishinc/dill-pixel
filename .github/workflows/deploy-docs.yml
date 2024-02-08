@@ -1,26 +1,19 @@
 name: Deploy Docs
 
 on:
-  pull_request:
-    types: [ closed ]
-    paths:
-      - '**.json'
-      - '**.yaml'
-      - '**.yml'
+  push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   build:
-    if: (github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'release')) || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Use Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
 
@@ -46,4 +39,4 @@ jobs:
           password: ${{ secrets.DOCS_SFTP_PASSWORD }}
           port: ${{ secrets.DOCS_SFTP_PORT }}
           local: './docs/dist/'
-          remote: '/docs/'
+          remote: '/'

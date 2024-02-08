@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.27.6](https://github.com/relishinc/dill-pixel/compare/v2.27.5...v2.27.6) (2024-02-01)
+
+
+### Bug Fixes
+
+* remove layout call ([06867ee](https://github.com/relishinc/dill-pixel/commit/06867eea6600e868d3e8ace516393abb74400fdc))
+
 ## [2.27.5](https://github.com/relishinc/dill-pixel/compare/v2.27.4...v2.27.5) (2024-02-01)
 
 
