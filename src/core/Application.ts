@@ -360,8 +360,10 @@ export class Application<T extends Application = any> extends PIXIApplication {
     if (this._initialized) {
       throw new Error('Application has already been initialized.');
     }
+
     await this.init();
     await this.setup();
+
     this._initialized = true;
   }
 
