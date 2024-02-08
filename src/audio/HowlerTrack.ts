@@ -1,7 +1,7 @@
 import { Howl } from 'howler';
 import { Assets } from 'pixi.js';
 import { audioLoadError } from '../functions';
-import { AssetUtils } from '../utils';
+import { AssetUtils, WithRequiredProps } from '../utils';
 import * as HowlerUtils from './HowlerUtils';
 import { IAudioManager } from './IAudioManager';
 import { IAudioTrack } from './IAudioTrack';
@@ -12,6 +12,8 @@ export type AudioTrackConfig = {
   volume?: number;
   loop?: boolean;
 };
+
+export type RequiredAudioTrackConfig = WithRequiredProps<AudioTrackConfig, 'id'>;
 
 export class HowlerTrack implements IAudioTrack {
   /** Howler will attempt to load audio files with these extensions, in this order.
