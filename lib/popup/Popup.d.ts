@@ -1,8 +1,17 @@
 import { Graphics, Point, Sprite } from 'pixi.js';
 import { Application } from '../core';
 import { Container } from '../gameobjects';
+import { WithRequiredProps } from '../utils';
 import { IPopup } from './IPopup';
 import { IPopupToken } from './PopupToken';
+export type PopupConfig = {
+    id: string;
+    callback?: (() => void) | undefined;
+    backdrop?: boolean | 'static';
+    keyboard?: boolean;
+    data?: any;
+};
+export type RequiredPopupConfig = WithRequiredProps<PopupConfig, 'id'>;
 export declare enum PopupState {
     CLOSED = 0,
     OPENING = 1,
