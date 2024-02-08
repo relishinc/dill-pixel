@@ -18,6 +18,7 @@ import {PopupManager} from '../popup';
 import {SaveManager} from '../save';
 import {Signals} from '../signals';
 import {State, StateManager} from '../state';
+import {Toaster} from '../toaster/Toaster';
 import {
   Add,
   AssetUtils,
@@ -88,6 +89,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
   protected _stateManager: StateManager<T>;
   protected _audioManager: IAudioManager;
   protected _popupManager: PopupManager<T>;
+  protected _toaster: Toaster<T>;
   protected _loadManager: LoadManager;
   protected _keyboardManager: KeyboardManager;
   protected _keyboardFocusManager: KeyboardFocusManager<DefaultKeyboardFocusManagerSprite>;
@@ -168,9 +170,11 @@ export class Application<T extends Application = any> extends PIXIApplication {
     this._mouseManager = new MouseManager(this.renderer.events);
     this._stateManager = new StateManager(this);
     this._popupManager = new PopupManager(this);
+    this._toaster = new Toaster(this);
     this._loadManager = new LoadManager(this, this.createSplashScreen());
     this._audioManager = new HowlerManager(this);
     this._keyboardManager = new KeyboardManager(this);
+
     this.addFocusManager();
 
     if (this.resizeTo) {

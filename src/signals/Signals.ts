@@ -5,6 +5,7 @@ import { Draggable, IFocusable, IKeyboardStatus, KeyboardMapToken } from '../inp
 import { AssetMapAudioData, LoadToken } from '../load';
 import { IPopup, IPopupToken } from '../popup';
 import { StateToken } from '../state';
+import { ToastConfig } from '../toaster';
 
 export class Signals {
   // resize signal
@@ -16,6 +17,12 @@ export class Signals {
   public static hideTopMostPopup = new Signal<() => void>();
   public static hideAllPopups = new Signal<() => void>();
   public static hidePopupComplete = new Signal<(popup: IPopup) => void>();
+
+  // toaster signals
+  public static onShowToast = new Signal<(config: ToastConfig) => void>();
+  public static onHideAllToasts = new Signal<() => void>();
+  public static onHideToastComplete = new Signal<() => void>();
+  public static onHideAllToastsComplete = new Signal<() => void>();
 
   // keyboard signals
   public static registerFocusable = new Signal<(focusable: IFocusable) => void>();
