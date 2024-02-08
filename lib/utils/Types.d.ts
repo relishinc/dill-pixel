@@ -13,4 +13,10 @@ export type RectLike = {
 export type WithPointLike<T extends keyof any> = {
     [P in T]: PointLike;
 };
+export type ContainerLike = {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+};
 //# sourceMappingURL=Types.d.ts.map
