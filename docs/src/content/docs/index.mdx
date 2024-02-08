@@ -1,6 +1,6 @@
 ---
-title: Welcome
-description: Get started building your docs site with Starlight.
+title: Dill Pixel Documentation
+description: Learn how to build HTML games using Dill Pixel
 template: splash
 hero:
   title: |
@@ -12,7 +12,7 @@ hero:
     file: ../../assets/jar.webp
   actions:
     - text: Get started
-      link: /docs/guides/setup/
+      link: /guides/setup/
       icon: right-arrow
       variant: primary
     - text: View on GitHub
@@ -26,9 +26,14 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 
 <CardGrid>
 	<Card title="Read the Guides" icon="open-book">
-		Start with the [Setup Guide](/docs/guides/setup/) to get your site up and running.
+		Start with the [Setup Guide](/guides/setup/) to get your site up and running.
 	</Card>
-	<Card title="Add new content" icon="add-document">
+</CardGrid>
+
+## More About Using Starlight
+
+<CardGrid>
+  <Card title="Add new content" icon="add-document">
 		Add Markdown or MDX files to `src/content/docs` to create new pages.
 	</Card>
 	<Card title="Configure your site" icon="setting">
