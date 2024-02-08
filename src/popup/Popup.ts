@@ -5,6 +5,14 @@ import { Container } from '../gameobjects';
 import { IPopup } from './IPopup';
 import { IPopupToken } from './PopupToken';
 
+export type PopupConfig = {
+  id: string;
+  callback?: (() => void) | undefined;
+  backdrop?: boolean | 'static';
+  keyboard?: boolean;
+  data?: any;
+};
+
 export enum PopupState {
   CLOSED,
   OPENING,

@@ -1,7 +1,14 @@
-import { IPopup, IPopupToken } from '../popup';
+import { IPopup, IPopupToken, PopupConfig, PopupToken } from '../popup';
 import { Signals } from '../signals';
 
-export function showPopup(token: IPopupToken): void {
+export function showPopup(data: PopupConfig): void;
+export function showPopup(data: IPopupToken | PopupConfig): void {
+  if (data.constructor) {
+    // it is a PopupToken
+    Signals.showPopup.emit(data);
+  }
+  // it is a PopupConfig
+  const token = new PopupToken(data.id, data.callback, data.backdrop, data.keyboard, data.data);
   Signals.showPopup.emit(token);
 }
 
