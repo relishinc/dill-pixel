@@ -6,6 +6,7 @@ export function showPopup(data: IPopupToken | RequiredPopupConfig): void {
   if (data.constructor) {
     // it is a PopupToken
     Signals.showPopup.emit(data);
+    return;
   }
   // it is a PopupConfig
   const token = new PopupToken(data.id, data.callback, data.backdrop, data.keyboard, data.data);
