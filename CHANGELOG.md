@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.27.9](https://github.com/relishinc/dill-pixel/compare/v2.27.8...v2.27.9) (2024-02-12)
+
+
+### Bug Fixes
+
+* bug in showPopup causing it to emit two 'showPopup' signals ([f59746c](https://github.com/relishinc/dill-pixel/commit/f59746c18a5d902c1852a3b5856372d8adcc7190))
+
 ## [2.27.8](https://github.com/relishinc/dill-pixel/compare/v2.27.7...v2.27.8) (2024-02-08)
 
 
