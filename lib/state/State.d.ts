@@ -1,8 +1,8 @@
-import { Point } from 'pixi.js';
-import { SignalConnections } from 'typed-signals';
+import { IPoint, Point } from 'pixi.js';
 import { Application } from '../core';
 import { Container } from '../gameobjects';
 import { AssetMapData } from '../load';
+import { SignalConnections } from '../signals';
 import { Add, Make } from '../utils';
 /**
  * State
@@ -25,8 +25,8 @@ export declare abstract class State<T extends Application = Application> extends
      * gets the Make factory
      */
     get make(): typeof Make;
-    get size(): Point;
-    set size(value: Point);
+    get size(): IPoint;
+    set size(value: IPoint);
     get data(): any;
     set data(value: any);
     /**
@@ -38,7 +38,7 @@ export declare abstract class State<T extends Application = Application> extends
      * Determines whether resize on
      * @param size
      */
-    onResize(size: Point): void;
+    onResize(size: IPoint): void;
     /**
      * Destroys state.
      * @param destroyOptions
@@ -48,7 +48,7 @@ export declare abstract class State<T extends Application = Application> extends
      * Inits state
      * @param size{Point}
      */
-    init(size: Point): Promise<void> | void;
+    init(size: IPoint): Promise<void> | void;
     positionSelfCenter(size: Point): void;
     /**
      * Animates in
