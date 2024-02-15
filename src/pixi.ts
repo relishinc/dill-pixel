@@ -1,34 +1,20 @@
-import {
-  Application,
-  BitmapText,
-  Container,
-  DisplayObject,
-  Graphics,
-  HTMLText,
-  HTMLTextStyle,
-  Point,
-  Rectangle,
-  Sprite,
-  Text,
-  TextStyle,
-  Texture,
-} from 'pixi.js';
+import { Application, DisplayObject, Container, Sprite, Graphics, Text, BitmapText, HTMLText, Texture, Point, Rectangle, TextStyle, HTMLTextStyle} from 'pixi.js';
 
 const PIXI = {
-  Application,
-  DisplayObject,
-  Container,
-  Sprite,
-  Graphics,
-  Text,
-  BitmapText,
-  HTMLText,
-  Texture,
-  Point,
-  Rectangle,
-  TextStyle,
-  HTMLTextStyle,
-};
+	Application,
+	DisplayObject,
+	Container,
+	Sprite,
+	Graphics,
+	Text,
+	BitmapText,
+	HTMLText,
+	Texture,
+	Point,
+	Rectangle,
+	TextStyle,
+	HTMLTextStyle
+}
 
 export { PIXI };
 
