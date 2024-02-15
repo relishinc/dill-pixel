@@ -15,7 +15,6 @@ const imports = [
   'Rectangle',
   'TextStyle',
   'HTMLTextStyle',
-  'BitmapTextStyle',
 ];
 
 const interfaces = ['IApplicationOptions', 'IPoint', 'IHitArea', 'ITextStyle', 'IHTMLTextStyle', 'IBitmapTextStyle'];
