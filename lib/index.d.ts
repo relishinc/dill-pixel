@@ -14,4 +14,5 @@ export * from './utils';
 export * from './signals';
 export * from './functions';
 export { Add, Make } from './utils/factory';
+export * from './pixi';
 //# sourceMappingURL=index.d.ts.map
