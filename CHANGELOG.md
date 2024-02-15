@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.28.0](https://github.com/relishinc/dill-pixel/compare/v2.27.9...v2.28.0) (2024-02-15)
+
+
+### Features
+
+* exported typed-signals classes, exported useful PIXI classes, fixed cc generation ([5327783](https://github.com/relishinc/dill-pixel/commit/5327783e28ab09df3f35f961fe9f615a731deb37))
+
 ## [2.27.9](https://github.com/relishinc/dill-pixel/compare/v2.27.8...v2.27.9) (2024-02-12)
 
 
