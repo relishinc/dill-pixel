@@ -25,7 +25,9 @@ let output = `import { ${imports.map((e) => `${e}`).join(', ')}} from 'pixi.js';
 output += `\n\nconst PIXI = {\n${imports.map((e) => `\t${e}`).join(',\n')}\n}`;
 
 output += `\n\nexport { PIXI };\n`;
-output += `\nexport type { ${interfaces.join(', ')} } from 'pixi.js';`;
+output += `\nexport type { ${imports.map((e) => `${e} as PIXI${e}`).join(', ')}, ${interfaces.join(
+  ', ',
+)} } from 'pixi.js';`;
 
 const filePath = path.join(__dirname, '../src', 'pixi.ts');
 fs.writeFileSync(filePath, output);
