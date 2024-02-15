@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.28.2](https://github.com/relishinc/dill-pixel/compare/v2.28.1...v2.28.2) (2024-02-15)
+
+
+### Bug Fixes
+
+* fixing type exports ([ea4b1e8](https://github.com/relishinc/dill-pixel/commit/ea4b1e8e058507004bf3523df513a561ee61a722))
+* fixing type exports ([b4f8de9](https://github.com/relishinc/dill-pixel/commit/b4f8de98160412130178c0a32070ac98404b6576))
+
 ## [2.28.1](https://github.com/relishinc/dill-pixel/compare/v2.28.0...v2.28.1) (2024-02-15)
 
 
