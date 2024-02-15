@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.28.1](https://github.com/relishinc/dill-pixel/compare/v2.28.0...v2.28.1) (2024-02-15)
+
+
+### Bug Fixes
+
+* fixed BitmapTextStyle import ([4bdf6d4](https://github.com/relishinc/dill-pixel/commit/4bdf6d495b5e8dfaeba95c976f851eaa5fbef1b8))
+
 ## [2.28.0](https://github.com/relishinc/dill-pixel/compare/v2.27.9...v2.28.0) (2024-02-15)
 
 
