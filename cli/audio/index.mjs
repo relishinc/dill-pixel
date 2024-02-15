@@ -34,8 +34,7 @@ export async function compress(dir) {
 	const sourceDir = path.join(dir, SOURCE_DIR);
 	if (!fs.existsSync(sourceDir)) {
 		return new Promise((resolve, reject) => {
-			console.error(`No source directory found at ${sourceDir}`);
-			reject();
+			reject(`No source directory found at ${sourceDir}`);
 		})
 	}
 	return walkDir(sourceDir, compressFile);

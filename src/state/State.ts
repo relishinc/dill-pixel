@@ -1,8 +1,8 @@
-import {Point} from 'pixi.js';
-import {SignalConnections} from 'typed-signals';
+import {IPoint, Point} from 'pixi.js';
 import {Application} from '../core';
 import {Container} from '../gameobjects';
 import {AssetMapData} from '../load';
+import {SignalConnections} from '../signals';
 import {Add, Make} from '../utils';
 
 /**
@@ -50,7 +50,7 @@ export abstract class State<T extends Application = Application> extends Contain
     return this._size;
   }
 
-  set size(value: Point) {
+  set size(value: IPoint) {
     this._size.copyFrom(value);
   }
 
@@ -74,7 +74,7 @@ export abstract class State<T extends Application = Application> extends Contain
    * Determines whether resize on
    * @param size
    */
-  public onResize(size: Point): void {
+  public onResize(size: IPoint): void {
     // override
   }
 
@@ -94,7 +94,7 @@ export abstract class State<T extends Application = Application> extends Contain
    * Inits state
    * @param size{Point}
    */
-  public init(size: Point): Promise<void> | void;
+  public init(size: IPoint): Promise<void> | void;
   public async init(size: Point): Promise<void> {
     // override
   }

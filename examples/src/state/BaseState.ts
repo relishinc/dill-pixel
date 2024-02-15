@@ -1,8 +1,8 @@
 import { GREEN } from '@/utils/Constants';
 import * as dat from 'dat.gui';
-import { AssetMapData, AssetType, Container, State, TextureAsset } from 'dill-pixel';
+import { AssetMapData, AssetType, Container, IPoint, State, TextureAsset } from 'dill-pixel';
 import { gsap } from 'gsap';
-import { Point, Sprite, Text } from 'pixi.js';
+import { Sprite, Text } from 'pixi.js';
 import { Application } from '../Application';
 
 export class BaseState extends State<Application> {
@@ -25,7 +25,7 @@ export class BaseState extends State<Application> {
     return [new TextureAsset('black2x2', AssetType.PNG)];
   }
 
-  public init(pSize: Point) {
+  public init(pSize: IPoint) {
     super.init(pSize);
 
     // add the bg first, so it's always at the bottom
@@ -113,7 +113,7 @@ export class BaseState extends State<Application> {
     pOnComplete();
   }
 
-  public onResize(pSize: Point) {
+  public onResize(pSize: IPoint) {
     super.onResize(pSize);
     if (this._bg) {
       this._bg.width = this._size.x;
