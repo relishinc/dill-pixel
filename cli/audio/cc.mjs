@@ -1,4 +1,6 @@
 import {parse} from 'csv-parse/sync';
+import {bgGreen, bold, green, white} from 'kleur/colors';
+import {exec} from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import {walkDir} from './utils.mjs';
@@ -9,6 +11,10 @@ const captions = {};
 
 async function readDurations(dir) {
 	const files = [];
+	const outputDir = path.join(dir, 'output');
+	if (!fs.existsSync(outputDir)) {
+		return Promise.reject(`Output directory not found at "${outputDir}". Please run \`dill-pixel audio compress\` first.`);
+	}
 	walkDir(path.join(dir, 'output'), file => {
 		if (/\.(wav|mp3)$/i.test(file)) {
 			files.push(file);
@@ -19,21 +25,25 @@ async function readDurations(dir) {
 			duration = parseInt((parseFloat(duration) * 1000).toFixed(0));
 			const name = path.basename(file).replace(/\.(wav|mp3)$/, '');
 			durations[name] = duration;
-			console.log('[Get Duration]', name, duration);
+			console.log(bold(bgGreen(white('Get Duration'))), green(name), white(duration));
 			resolve();
 		});
 	})));
 }
 
 async function readCaptions(dir) {
-	for (const csvFileName of fs.readdirSync(path.join(dir, 'captions'))) {
+	const captionsDir = path.join(dir, 'captions');
 
+	if (!fs.existsSync(captionsDir)) {
+		return Promise.reject(`Captions directory not found. Please create a captions directory at "${captionsDir}", and add your captions CSV files.`)
+	}
+
+	for (const csvFileName of fs.readdirSync(captionsDir)) {
 		if (path.extname(csvFileName) !== '.csv') {
 			continue;
 		}
-
-		const csvFile = path.join(__dirname, 'captions', csvFileName);
-		console.log('[Read CSV]', csvFile);
+		const csvFile = path.join(captionsDir, csvFileName);
+		console.log(bgGreen(white('[Read CSV]')), green(csvFile));
 		const csv = parse(fs.readFileSync(csvFile, {encoding: 'utf-8'}), {
 			comment: '#'
 		});
@@ -104,7 +114,8 @@ function normalizeText(text) {
 }
 
 async function writeCaptions(outputDir) {
-	fs.writeFileSync(outputDir, JSON.stringify(captions, null, 2), {encoding: 'utf-8'});
+	console.log('[Writing Captions]', outputDir, captions);
+	fs.writeFileSync(`${outputDir}/cc.json`, JSON.stringify(captions, null, 2), {encoding: 'utf-8'});
 }
 
 function fixSpecialCases(file, lines) {
@@ -116,5 +127,5 @@ function fixSpecialCases(file, lines) {
 }
 
 export async function generateCaptions(dir) {
-	return readDurations(dir).then(() => readCaptions(dir)).then(() => writeCaptions(dir));
+	return readDurations(dir).then(() => readCaptions(dir)).then(() => writeCaptions(dir))
 }

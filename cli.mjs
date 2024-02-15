@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import {green} from 'kleur/colors';
+import {bgRed, bold, green, red, white} from 'kleur/colors';
 import fs from 'node:fs';
 import {generateCaptions} from './cli/audio/cc.mjs';
 import {compress} from './cli/audio/index.mjs';
@@ -49,14 +49,22 @@ switch (args[0]) {
 			case 'compress':
 				const audioDirectory = args[2] || './src/assets/audio';
 				console.log(`${green(`Dill Pixel is compressing your audio files...`)}`);
-				await compress(audioDirectory);
+				try {
+					await compress(audioDirectory);
+				} catch (e) {
+					console.error(red(`Error compress your audio files: ${e}`))
+				}
 				console.log(`${green(`Dill Pixel has finished compressing your audio files! Find them in "${audioDirectory}/output."`)}`);
 				break;
 			case 'captions':
 				const captionsDirectory = args[2] || './src/assets/audio/captions';
 				console.log(`${green(`Dill Pixel is preparing your closed captioning files...`)}`);
-				await generateCaptions(captionsDirectory);
-				console.log(`${green(`Dill Pixel has finished prepaeing your closed captioning files! Find them in "${captionsDirectory}/output."`)}`);
+				try {
+					await generateCaptions(captionsDirectory);
+					console.log(`${green(`Dill Pixel has generating your closed captioning files! Find them in "${captionsDirectory}/cc.json"`)}`);
+				} catch (e) {
+					console.error(bold(bgRed(white(`Error generating captions:`))), red(e))
+				}
 				break;
 			default:
 				console.log(`Unknown audio command: "${args[1]}". Please use "compress" or "captions".`);

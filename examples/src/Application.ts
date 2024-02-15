@@ -19,6 +19,7 @@ import {
 } from 'dill-pixel';
 import { AudioExample } from './state/AudioExample';
 import { FocusablesExample } from './state/FocusablesExample';
+import { SignalsExample } from './state/SignalsExample';
 import { SpineExample } from './state/SpineExample';
 import { UICanvasExample } from './state/UICanvasExample';
 
@@ -64,6 +65,7 @@ export class Application extends DillPixelApplication {
     this.state.register(SpineExample);
     this.state.register(UICanvasExample);
     this.state.register(AudioExample);
+    this.state.register(SignalsExample);
   }
 
   protected createAssetMap(): void {

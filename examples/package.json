@@ -12,9 +12,9 @@
     "build": "vite build",
     "lint": "eslint src --ext .ts",
     "lint-fix": "eslint src --ext .ts --fix",
-    "audio": "node src/audio/compress_audio.js",
-    "vo": "texttospeech",
-    "captions": "node src/audio/generate_cc.js",
+    "audio:vo": "texttospeech",
+    "audio:captions": "node ../cli.mjs audio captions ./src/assets/audio",
+    "audio:compress": "node ../cli.mjs audio compress ./src/assets/audio",
     "spritesheets": "node src/assets/images/export_spritesheets"
   },
   "author": "Relish Digital<dev@reli.sh>",
