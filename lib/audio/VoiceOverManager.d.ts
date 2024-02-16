@@ -27,7 +27,7 @@ export interface IPlayOptions {
      */
     callback?: Callback;
 }
-export declare function playVO(key: string | (string | number)[], mode?: PlayMode | Callback | IPlayOptions, callback?: Callback): void;
+export declare function playVO(key: string | (string | number)[], mode?: PlayMode | Callback | Partial<IPlayOptions>, callback?: Callback): void;
 export declare function stopVO(): void;
 export interface IVoiceOverManager {
     /** Duration, in milliseconds, of the fade out when stopping voiceovers. Must be greater than or equal to zero */
@@ -57,7 +57,7 @@ export interface IVoiceOverManager {
      * @param options.mode Audio interruption behaviour. Default is {@link PlayMode.Override}
      * @param options.cb Called after the last voiceover finishes playing, or immediately if no playback occurs
      */
-    playVO(key: string | (string | number)[], options: IPlayOptions): void;
+    playVO(key: string | (string | number)[], options: Partial<IPlayOptions>): void;
     /**
      * Play a Voiceover or sequence of voiceovers
      * @param key Id or array of voiceover Ids
