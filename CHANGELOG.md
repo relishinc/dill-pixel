@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.29.0](https://github.com/relishinc/dill-pixel/compare/v2.28.3...v2.29.0) (2024-02-16)
+
+
+### Features
+
+* added AudioContext check to HowlerManager ([aa5e2b4](https://github.com/relishinc/dill-pixel/commit/aa5e2b409836b07b10c718dab34ea62e1903cf47))
+
 ## [2.28.3](https://github.com/relishinc/dill-pixel/compare/v2.28.2...v2.28.3) (2024-02-16)
 
 
