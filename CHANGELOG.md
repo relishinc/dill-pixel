@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.29.1](https://github.com/relishinc/dill-pixel/compare/v2.29.0...v2.29.1) (2024-02-16)
+
+
+### Bug Fixes
+
+* cli cc accidentally deleted processing csv rows ([93487d6](https://github.com/relishinc/dill-pixel/commit/93487d6b3cfd301dd5776773ce42ef7772baa87b))
+
 ## [2.29.0](https://github.com/relishinc/dill-pixel/compare/v2.28.3...v2.29.0) (2024-02-16)
 
 
