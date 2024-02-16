@@ -41,8 +41,8 @@ switch (args[0]) {
 		await create(cwd);
 		break;
 	case 'update':
-		hr()
-		console.log(`${bold(green(`${hr()}Updating Dill Pixel to the latest version...`))}`);
+		hr();
+		console.log(bold(green(`Updating Dill Pixel to the latest version...`)));
 		await update();
 		const {version: newVersion} = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf-8'));
 		console.log(`${bold(green(`Updated Dill Pixel to version ${newVersion}`))}`);
