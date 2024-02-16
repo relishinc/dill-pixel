@@ -86,6 +86,7 @@ export declare class HowlerManager implements IAudioManager {
      * The internal flag for print log statements.
      */
     private _debug;
+    private _ctx;
     constructor(app: Application);
     /**
      * Enabling this will print all debug logs.
@@ -105,6 +106,7 @@ export declare class HowlerManager implements IAudioManager {
     fadeTo(trackId: string, category: string, volume: number, pDuration: number): void;
     getAudioTrack(trackId: string, category: string): IAudioTrack | undefined;
     createAudioTrack(trackId: string, category?: string, volume?: number, loop?: boolean): IAudioTrack;
+    private ensureCtx;
     /**
      * Loads a group of audio tracks and adds them to the same category.
      * @param token

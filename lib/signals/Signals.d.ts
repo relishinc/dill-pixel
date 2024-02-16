@@ -59,6 +59,7 @@ export declare class Signals {
         callback: () => void;
     }) => void>;
     static stopAudio: Signal<(id: string) => void>;
+    static audioContextSuspendedError: Signal<() => void>;
     static audioLoadError: Signal<(opts: {
         id: string;
         category: string;
