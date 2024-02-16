@@ -1,6 +1,6 @@
 import ExamplePopup from '@/popups/ExamplePopup';
 import { BaseState } from '@/state/BaseState';
-import { AssetMapData, Container, playAudioTrack } from 'dill-pixel';
+import { AssetMapData, Container, playAudioTrack, Signals } from 'dill-pixel';
 import { Point } from 'pixi.js';
 
 export class AudioExample extends BaseState {
@@ -24,6 +24,8 @@ export class AudioExample extends BaseState {
 
   init(pSize: Point) {
     super.init(pSize);
+    Signals.audioContextSuspendedError.connect(this.onAudioContextSuspendedError);
+
     //
     this.setHeaderText('Audio Example');
     this.setMainText('Click the button to play a sound.');
@@ -40,9 +42,14 @@ export class AudioExample extends BaseState {
     this.button.add.text({ value: 'Click me', anchor: 0.5 });
     this.button.eventMode = 'static';
     this.button.cursor = 'pointer';
+    playAudioTrack('sample-3s', 1, false, 'sfx');
 
     this.button.on('pointerdown', (e) => {
       playAudioTrack('sample-3s', 1, false, 'sfx');
     });
+  }
+
+  onAudioContextSuspendedError() {
+    console.log('AudioContext suspended error');
   }
 }

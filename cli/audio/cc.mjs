@@ -25,7 +25,7 @@ async function readDurations(dir) {
 			duration = parseInt((parseFloat(duration) * 1000).toFixed(0));
 			const name = path.basename(file).replace(/\.(wav|mp3)$/, '');
 			durations[name] = duration;
-			console.log(bold(bgGreen(white('Get Duration'))), green(name), white(duration));
+			console.log(bold(bgGreen(white('[Get Duration]'))), green(name), white(duration));
 			resolve();
 		});
 	})));
@@ -43,7 +43,7 @@ async function readCaptions(dir) {
 			continue;
 		}
 		const csvFile = path.join(captionsDir, csvFileName);
-		console.log(bgGreen(white('[Read CSV]')), green(csvFile));
+		console.log(bold(bgGreen(white('[Read CSV]'))), green(csvFile));
 		const csv = parse(fs.readFileSync(csvFile, {encoding: 'utf-8'}), {
 			comment: '#'
 		});
@@ -77,23 +77,10 @@ async function readCaptions(dir) {
 				} else {
 					captions[file] = [{content: `<p>${text}</p>`, start: 0, end: duration}];
 				}
-				console.log('\t[Generate CC]', file);
+				console.log(`\t${bold(bgGreen(white(`[Generate CC]`)))}`, green(file));
 				for (const cc of captions[file]) {
 					console.log('\t\t', cc.start, cc.end, cc.content);
 				}
-			}
-		}
-
-		for (let i = 1; i < csv.length; i++) {
-			const row = csv[i];
-			let file = (row[fileColumn] || '').replace(/\.(wav|mp3)$/, '');
-			const section = row[sectionColumn];
-			if (section && /chris/ig.test(section) && /martin/ig.test(section)) {
-				console.log(section, file);
-				processRow(file + '-c', row);
-				processRow(file + '-m', row);
-			} else {
-				processRow(file, row);
 			}
 		}
 	}
@@ -114,7 +101,10 @@ function normalizeText(text) {
 }
 
 async function writeCaptions(outputDir) {
-	console.log('[Writing Captions]', outputDir, captions);
+	console.log(bold(bgGreen(white('[Writing Captions]'))), green(outputDir));
+	if (!fs.existsSync(outputDir)) {
+		fs.mkdirSync(outputDir, {recursive: true});
+	}
 	fs.writeFileSync(`${outputDir}/cc.json`, JSON.stringify(captions, null, 2), {encoding: 'utf-8'});
 }
 
@@ -126,6 +116,6 @@ function fixSpecialCases(file, lines) {
 	}
 }
 
-export async function generateCaptions(dir) {
-	return readDurations(dir).then(() => readCaptions(dir)).then(() => writeCaptions(dir))
+export async function generateCaptions(dir, outputDir = dir) {
+	return readDurations(dir).then(() => readCaptions(dir)).then(() => writeCaptions(outputDir))
 }

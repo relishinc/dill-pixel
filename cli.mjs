@@ -20,14 +20,16 @@ const {version} = JSON.parse(fs.readFileSync(new URL('./package.json', import.me
 
 const args = process.argv.slice(2);
 
-if (!args[0] || args[0] === 'version') {
-	console.log(`
-${green(`Dill Pixel ${version}`)}
-`);
+const hr = () => {
+	return console.log(bold(green('-'.repeat(80))));
+};
+
+if (!(!args[0] || args[0] === 'version')) {} else {
+	console.log(bold(green(`Dill Pixel ${version}`)));
 }
 
 if (args.length === 0) {
-	console.log('Please provide a subcommand.');
+	console.log(bold(green('Dill Pixel - Please provide a subcommand.')));
 	process.exit(1);
 }
 
@@ -39,39 +41,44 @@ switch (args[0]) {
 		await create(cwd);
 		break;
 	case 'update':
-		console.log(`${green(`Updating Dill Pixel to the latest version...`)}`);
+		hr()
+		console.log(`${bold(green(`${hr()}Updating Dill Pixel to the latest version...`))}`);
 		await update();
 		const {version: newVersion} = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf-8'));
-		console.log(`${green(`Updated Dill Pixel to version ${newVersion}.`)}`);
+		console.log(`${bold(green(`Updated Dill Pixel to version ${newVersion}`))}`);
+		hr();
 		break;
 	case 'audio':
+		hr();
 		switch (args[1]) {
 			case 'compress':
 				const audioDirectory = args[2] || './src/assets/audio';
-				console.log(`${green(`Dill Pixel is compressing your audio files...`)}`);
+				console.log(bold(green(`Dill Pixel is compressing your audio files...`)));
 				try {
 					await compress(audioDirectory);
 				} catch (e) {
-					console.error(red(`Error compress your audio files: ${e}`))
+					console.error(red(`Error compressing your audio files: ${e}`))
 				}
-				console.log(`${green(`Dill Pixel has finished compressing your audio files! Find them in "${audioDirectory}/output."`)}`);
+				console.log(bold(green(`Dill Pixel has finished compressing your audio files! Find them in "${audioDirectory}/output."`)));
 				break;
 			case 'captions':
-				const captionsDirectory = args[2] || './src/assets/audio/captions';
-				console.log(`${green(`Dill Pixel is preparing your closed captioning files...`)}`);
+				const captionsCSVDirectory = args[2] || './src/assets/audio/captions';
+				const captionsOutputDirectory = args[3] || './src/assets/json';
+				console.log(bold(green(`Dill Pixel is preparing your closed captioning files...`)));
 				try {
-					await generateCaptions(captionsDirectory);
-					console.log(`${green(`Dill Pixel has generating your closed captioning files! Find them in "${captionsDirectory}/cc.json"`)}`);
+					await generateCaptions(captionsCSVDirectory, captionsOutputDirectory);
+					console.log(bold(green(`Dill Pixel has generating your closed captioning files! Find them in "${captionsOutputDirectory}/cc.json"`)));
 				} catch (e) {
 					console.error(bold(bgRed(white(`Error generating captions:`))), red(e))
 				}
 				break;
 			default:
-				console.log(`Unknown audio command: "${args[1]}". Please use "compress" or "captions".`);
+				console.error(bold(bgRed(white(`Unknown audio command: "${args[1]}".`))), red(`Please use "compress" or "captions".`));
 				break;
 		}
+		hr();
 		break;
 	default:
-		console.log(`Unknown subcommand: ${args[0]}`);
+		console.error(red(bold(`Dill Pixel - Unknown subcommand: ${args[0]}`)));
 		process.exit(1);
 }

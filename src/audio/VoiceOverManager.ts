@@ -190,7 +190,12 @@ export class VoiceOverManager implements IVoiceOverManager {
       BLACK,
     );
 
-    if (key.length === 1 && this._queue.length === 1 && this._queue[0].key === key[0]) {
+    if (
+      key.length === 1 &&
+      this._queue.length === 1 &&
+      this._queue[0].key === key[0] &&
+      this.app.audio.getAudioTrack(key[0], AudioCategory.VO)?.isPlaying()
+    ) {
       this.warn('🔇 Skipped VO [%c%s%c] because it is already playing', RED, key[0], BLACK);
       if (callback) {
         callback(false);
