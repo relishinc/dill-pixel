@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.29.2](https://github.com/relishinc/dill-pixel/compare/v2.29.1...v2.29.2) (2024-02-16)
+
+
+### Bug Fixes
+
+* cli error ([e903ece](https://github.com/relishinc/dill-pixel/commit/e903eceb0c01ed8eff8b463ce38f421875cbf994))
+
 ## [2.29.1](https://github.com/relishinc/dill-pixel/compare/v2.29.0...v2.29.1) (2024-02-16)
 
 
