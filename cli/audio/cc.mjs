@@ -77,11 +77,17 @@ async function readCaptions(dir) {
 				} else {
 					captions[file] = [{content: `<p>${text}</p>`, start: 0, end: duration}];
 				}
-				console.log(`\t${bold(bgGreen(white(`[Generate CC]`)))}`, green(file));
+				console.log(bold(bgGreen(white(`[Generate CC]`))), green(file));
 				for (const cc of captions[file]) {
 					console.log('\t\t', cc.start, cc.end, cc.content);
 				}
 			}
+		}
+
+		for (let i = 1; i < csv.length; i++) {
+			const row = csv[i];
+			let file = (row[fileColumn] || '').replace(/\.(wav|mp3)$/, '');
+			processRow(file, row);
 		}
 	}
 }

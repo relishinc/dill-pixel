@@ -46,7 +46,7 @@ interface IQueueItem extends IPlayOptions {
 
 export function playVO(
   key: string | (string | number)[],
-  mode?: PlayMode | Callback | IPlayOptions,
+  mode?: PlayMode | Callback | Partial<IPlayOptions>,
   callback?: Callback,
 ) {
   Application.instance.voiceover.playVO(key, mode as any, callback as any);
@@ -92,7 +92,7 @@ export interface IVoiceOverManager {
    * @param options.mode Audio interruption behaviour. Default is {@link PlayMode.Override}
    * @param options.cb Called after the last voiceover finishes playing, or immediately if no playback occurs
    */
-  playVO(key: string | (string | number)[], options: IPlayOptions): void;
+  playVO(key: string | (string | number)[], options: Partial<IPlayOptions>): void;
 
   // 3 params
   /**
