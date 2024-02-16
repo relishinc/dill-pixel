@@ -63,6 +63,7 @@ export class Signals {
   public static playAudio = new Signal<(token: AudioToken) => void>();
   public static loadAudio = new Signal<(opts: { assets: string[]; category: string; callback: () => void }) => void>();
   public static stopAudio = new Signal<(id: string) => void>();
+  public static audioContextSuspendedError = new Signal<() => void>();
   public static audioLoadError = new Signal<
     (opts: { id: string; category: string; src: string; fallback: string[]; error: any }) => void
   >();

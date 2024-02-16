@@ -139,8 +139,10 @@ export class HowlerManager implements IAudioManager {
    * The internal flag for print log statements.
    */
   private _debug: boolean = false;
+  private _ctx: AudioContext;
 
   constructor(private app: Application) {
+    this._ctx = new AudioContext();
     this._masterVolume = 1;
     this._previousMasterVolume = this._masterVolume;
     this._collections = new Dictionary<string, AudioCollection>();
@@ -203,6 +205,8 @@ export class HowlerManager implements IAudioManager {
     category: string = AudioCategory.DEFAULT,
     pitch?: number,
   ): IAudioTrack | undefined {
+    const contextAvailable = this.ensureCtx();
+
     let loaded: HowlerTrack;
     const collection: AudioCollection = this.getCollection(category);
     const track: HowlerTrack | undefined = collection.tracks.getValue(trackId) as HowlerTrack;
@@ -331,6 +335,15 @@ export class HowlerManager implements IAudioManager {
     const collection: AudioCollection = this.getCollection(category);
     collection.tracks.setValue(trackId, track);
     return track;
+  }
+
+  private ensureCtx() {
+    if (this._ctx.state === 'suspended') {
+      Signals.audioContextSuspendedError.emit();
+      return false;
+    }
+
+    return true;
   }
 
   /**
