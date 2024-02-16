@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.28.3](https://github.com/relishinc/dill-pixel/compare/v2.28.2...v2.28.3) (2024-02-16)
+
+
+### Bug Fixes
+
+* added cli output arg for captions ([97852b3](https://github.com/relishinc/dill-pixel/commit/97852b379b1e2e6b0f33d62a96d0ab3f89bffb44))
+* voiceovermanager skipping initial vo ([97852b3](https://github.com/relishinc/dill-pixel/commit/97852b379b1e2e6b0f33d62a96d0ab3f89bffb44))
+
 ## [2.28.2](https://github.com/relishinc/dill-pixel/compare/v2.28.1...v2.28.2) (2024-02-15)
 
 
