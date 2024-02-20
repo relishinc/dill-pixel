@@ -1,4 +1,4 @@
-import { Application as PIXIPApplication, ApplicationOptions } from 'pixi.js';
+import { Application as PIXIPApplication, ApplicationOptions, autoDetectRenderer, Renderer } from 'pixi.js';
 import { IModule } from '../modules';
 import { defaultModules } from '../modules/default';
 import { IAssetManager } from '../modules/default/asset/AssetManager';
@@ -33,7 +33,7 @@ const defaultApplicationOptions: Partial<ApplicationOptions> = {
   view: undefined,
   width: 0,
   autoDensity: true,
-  resolution: isMobile() ? (isRetina() ? 2 : 1) : 2,
+  resolution: isMobile ? (isRetina ? 2 : 1) : 2,
 };
 
 export type RequiredApplicationConfig = WithRequiredProps<IApplicationOptions, 'id'>;
@@ -42,12 +42,12 @@ export interface IApplication {
   asset: IAssetManager;
   state: IStateManager;
 
-  initialize(config: RequiredApplicationConfig): Promise<IApplication>;
+  initialize<R extends Renderer = Renderer>(config: RequiredApplicationConfig): Promise<IApplication>;
 
   getModule<T extends IModule>(name: string): T;
 }
 
-export class Application extends PIXIPApplication implements IApplication {
+export class Application<R extends Renderer = Renderer> extends PIXIPApplication<R> implements IApplication {
   protected static instance: Application;
   protected config: Partial<IApplicationOptions>;
 
@@ -86,26 +86,41 @@ export class Application extends PIXIPApplication implements IApplication {
     return this._store;
   }
 
-  public async initialize(config: RequiredApplicationConfig): Promise<IApplication> {
+  public async initialize<R extends Renderer = Renderer>(config: RequiredApplicationConfig): Promise<IApplication> {
     if (Application.instance) {
       throw new Error('Application is already initialized');
     }
-    Application.instance = new Application();
+
+    Application.instance = new Application<R>();
     Application.instance.config = Object.assign({ ...defaultApplicationOptions }, config);
 
+    // initialize the pixi application
+    await Application.instance.init(Application.instance.config);
+
+    // get the renderer type (webgl or webgpu now)
+    const renderer = await autoDetectRenderer({});
+
+    // initialize the logger
     Logger.initialize(config.id || this.constructor.name);
 
+    // log the renderer for now
+    Logger.log(renderer);
+
+    // register the default modules
     if (this.config.useDefaults) {
       this.registerDefaultModules();
     }
 
+    // register the applications custom modules
     await this.registerCustomModules();
 
+    // add the store if it's enabled
     if (this.config.useStore) {
       this._store = new Store();
       await this.registerStorageAdapters();
     }
 
+    // return the Application instance to the create method, if needed
     return Application.instance;
   }
 
@@ -121,12 +136,18 @@ export class Application extends PIXIPApplication implements IApplication {
   }
 
   protected async registerCustomModules() {
-    Logger.log('No custom modules registered');
+    Logger.log(
+      'No custom modules registered. Register them by overriding the "registerCustomModules" method in your' +
+        ' Application class.',
+    );
     return Promise.resolve();
   }
 
   protected async registerStorageAdapters() {
-    Logger.log('No storage adapters registered');
+    Logger.log(
+      'No storage adapters registered. Register them by overriding the "registerStorageAdapters" method in your' +
+        ' Application class.',
+    );
     return Promise.resolve();
   }
 }

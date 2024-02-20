@@ -1,6 +1,6 @@
 import { isMobile as PIXIUtilsIsMobile } from '@pixi/utils';
 
-export function isRetina(): boolean {
+function _isRetina(): boolean {
   const mediaQuery =
     '(-webkit-min-device-pixel-ratio: 1.5),\
 						(min--moz-device-pixel-ratio: 1.5),\
@@ -13,6 +13,5 @@ export function isRetina(): boolean {
   return (window.matchMedia && window.matchMedia(mediaQuery).matches) === null;
 }
 
-export function isMobile(): boolean {
-  return PIXIUtilsIsMobile.any;
-}
+export const isRetina = _isRetina();
+export const isMobile = PIXIUtilsIsMobile.any;
