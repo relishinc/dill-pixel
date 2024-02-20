@@ -170,12 +170,12 @@ export class VoiceOverManager implements IVoiceOverManager {
     if (typeof mode === 'function') {
       callback = mode;
     } else if (typeof mode === 'object') {
-      skipCC = mode.skipCC === true;
-      priority = mode.priority || 0;
-      callback = mode.callback;
-      caption = mode.caption;
-      mode = mode.mode;
-      data = mode.data;
+      skipCC = mode?.skipCC === true;
+      priority = mode?.priority || 0;
+      callback = mode?.callback;
+      caption = mode?.caption;
+      mode = mode?.mode;
+      data = mode?.data;
     }
     if (!(typeof mode === 'string')) {
       mode = PlayMode.Override;

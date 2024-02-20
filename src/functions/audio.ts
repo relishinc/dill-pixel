@@ -33,7 +33,7 @@ export function audioLoadError(opts: {
 }
 
 // convenience methods for caption / voiceover signals
-export function playCaption(opts: { id: string; args?: any }): void {
+export function playCaption(opts: { id: string; args?: any; data?: any }): void {
   Signals.playCaption.emit(opts);
 }
 
