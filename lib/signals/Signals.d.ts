@@ -41,6 +41,8 @@ export declare class Signals {
         loadScreen: string;
     }) => void>;
     static stateTransitionHalted: Signal<(token: StateToken | undefined) => void>;
+    static stateTransitionStart: Signal<(id: string) => void>;
+    static stateTransitionComplete: Signal<(id: string) => void>;
     static loadAssets: Signal<(token: LoadToken) => void>;
     static unloadAssets: Signal<(token: LoadToken) => void>;
     static loadAudioFromAssetMap: Signal<(opts: {
