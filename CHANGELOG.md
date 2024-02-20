@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.30.2](https://github.com/relishinc/dill-pixel/compare/v2.30.1...v2.30.2) (2024-02-20)
+
+
+### Bug Fixes
+
+* playmode error in VoicOverManager.ts ([e78b4e2](https://github.com/relishinc/dill-pixel/commit/e78b4e23ccda6e090fcc2ad6edc2d74016c0f2b8))
+
 ## [2.30.1](https://github.com/relishinc/dill-pixel/compare/v2.30.0...v2.30.1) (2024-02-20)
 
 
