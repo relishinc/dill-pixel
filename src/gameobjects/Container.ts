@@ -1,6 +1,8 @@
 import {Container as PIXIContainer, IDestroyOptions, IPoint, Point, Ticker} from 'pixi.js';
 import {SignalConnection, SignalConnections} from 'typed-signals';
+import {playVO} from '../audio';
 import {Application} from '../core';
+import {stopCaption} from '../functions';
 import {IFocusable} from '../input';
 import {Editor} from '../misc';
 import {Signals} from '../signals';
@@ -28,6 +30,8 @@ export class Container<T extends Application = Application> extends PIXIContaine
   protected _focusable: boolean;
   private _focusSize: Point = new Point();
   private _focusPosition: Point = new Point();
+  private _voiceover: string;
+  private _useAsCaptionTarget: boolean = true;
 
   constructor(autoResize: boolean = true, autoUpdate: boolean = false, autoBindMethods: boolean = true) {
     super();
@@ -53,6 +57,28 @@ export class Container<T extends Application = Application> extends PIXIContaine
     this.on('childRemoved', this.updateFocusValues);
 
     this.updateFocusValues();
+  }
+
+  get useAsCaptionTarget(): boolean {
+    return this._useAsCaptionTarget;
+  }
+
+  set useAsCaptionTarget(value: boolean) {
+    this._useAsCaptionTarget = value;
+  }
+
+  public get voiceover(): string {
+    return this._voiceover;
+  }
+
+  public set voiceover(value: string) {
+    this._voiceover = value;
+    this.off('pointerover', this._onHoverForVO);
+    this.off('pointerout', this._onOutForVO);
+    if (this._voiceover) {
+      this.on('pointerover', this._onHoverForVO);
+      this.on('pointerout', this._onOutForVO);
+    }
   }
 
   public get focusPosition(): Point {
@@ -109,13 +135,23 @@ export class Container<T extends Application = Application> extends PIXIContaine
     this.off('added', this.updateFocusValues);
     this.off('childAdded', this.updateFocusValues);
     this.off('childRemoved', this.updateFocusValues);
+    this.off('pointerover', this._onHoverForVO);
+    this.off('pointerout', this._onOutForVO);
     super.destroy(_options);
   }
 
   // focus stuff
-  public onFocusBegin(): void {}
+  public onFocusBegin(): void {
+    if (this._voiceover) {
+      playVO(this._voiceover, { data: { target: this._useAsCaptionTarget ? this : null } });
+    }
+  }
 
-  public onFocusEnd(): void {}
+  public onFocusEnd(): void {
+    if (this._voiceover) {
+      stopCaption({ id: this._voiceover });
+    }
+  }
 
   public onFocusActivated(): void {}
 
@@ -147,6 +183,16 @@ export class Container<T extends Application = Application> extends PIXIContaine
 
   public update(_deltaTime: number) {
     // noop
+  }
+
+  protected _onHoverForVO() {
+    playVO(this._voiceover, { data: { target: this._useAsCaptionTarget ? this : null } });
+  }
+
+  protected _onOutForVO() {
+    if (this._voiceover) {
+      stopCaption({ id: this._voiceover });
+    }
   }
 
   protected updateFocusValues() {
