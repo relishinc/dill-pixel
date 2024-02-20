@@ -24,7 +24,13 @@ export declare class Container<T extends Application = Application> extends PIXI
     protected _focusable: boolean;
     private _focusSize;
     private _focusPosition;
+    private _voiceover;
+    private _useAsCaptionTarget;
     constructor(autoResize?: boolean, autoUpdate?: boolean, autoBindMethods?: boolean);
+    get useAsCaptionTarget(): boolean;
+    set useAsCaptionTarget(value: boolean);
+    get voiceover(): string;
+    set voiceover(value: string);
     get focusPosition(): Point;
     set focusPosition(value: Point);
     get focusSize(): Point;
@@ -47,6 +53,8 @@ export declare class Container<T extends Application = Application> extends PIXI
     disableEditMode(): void;
     onResize(_size: IPoint): void;
     update(_deltaTime: number): void;
+    protected _onHoverForVO(): void;
+    protected _onOutForVO(): void;
     protected updateFocusValues(): void;
     /**
      * @protected
