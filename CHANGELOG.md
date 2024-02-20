@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.30.0](https://github.com/relishinc/dill-pixel/compare/v2.29.2...v2.30.0) (2024-02-20)
+
+
+### Features
+
+* added data to playVO in VoiceOverManager.ts and corresponding signals ([5c9ac40](https://github.com/relishinc/dill-pixel/commit/5c9ac40893eb3461cc53705650a04b72d1864c8b))
+
 ## [2.29.2](https://github.com/relishinc/dill-pixel/compare/v2.29.1...v2.29.2) (2024-02-16)
 
 
