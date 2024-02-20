@@ -69,7 +69,7 @@ export class Signals {
   >();
 
   // caption / voiceover signals
-  public static playCaption = new Signal<(opts: { id: string; args?: any }) => void>();
+  public static playCaption = new Signal<(opts: { id: string; args?: any; data?: any }) => void>();
   public static stopCaption = new Signal<(opts: { id: string }) => void>();
   public static voiceoverStarted = new Signal<(key: string) => void>();
   public static voiceoverEnded = new Signal<(key: string) => void>();

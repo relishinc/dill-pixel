@@ -37,6 +37,8 @@ export interface IPlayOptions {
    * Not called, however, when the VO is stopped or interrupted by another VO.
    */
   callback?: Callback;
+
+  data?: any;
 }
 
 interface IQueueItem extends IPlayOptions {
@@ -164,6 +166,7 @@ export class VoiceOverManager implements IVoiceOverManager {
     let skipCC = false;
     let priority = 0;
     let caption;
+    let data;
     if (typeof mode === 'function') {
       callback = mode;
     } else if (typeof mode === 'object') {
@@ -172,6 +175,7 @@ export class VoiceOverManager implements IVoiceOverManager {
       callback = mode.callback;
       caption = mode.caption;
       mode = mode.mode;
+      data = mode.data;
     }
     if (!(typeof mode === 'string')) {
       mode = PlayMode.Override;
@@ -206,10 +210,10 @@ export class VoiceOverManager implements IVoiceOverManager {
       (mode === PlayMode.New && priority > this._queue[0].priority!)
     ) {
       this.stopVO();
-      this.addToQueue(key, callback, skipCC, priority, caption);
+      this.addToQueue(key, callback, skipCC, priority, caption, data);
       this.playNext();
     } else if (mode === PlayMode.Append) {
-      this.addToQueue(key, callback, skipCC, priority, caption);
+      this.addToQueue(key, callback, skipCC, priority, caption, data);
     } else if (callback) {
       this.warn('🎟🔇 Firing callback without playing VO(s) %c%s%c', RED, key.join(', '), BLACK);
       callback(false);
@@ -273,6 +277,7 @@ export class VoiceOverManager implements IVoiceOverManager {
       id: string;
       args: { [key: string]: string };
     },
+    data?: any,
   ) {
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
@@ -294,6 +299,7 @@ export class VoiceOverManager implements IVoiceOverManager {
         skipCC,
         priority,
         caption,
+        data,
       });
     }
     const toLoad = keys.filter((it) => typeof it === 'string') as string[];
@@ -349,9 +355,9 @@ export class VoiceOverManager implements IVoiceOverManager {
           if (!item.skipCC) {
             // TODO: Captions are not actually part of the framework
             if (item.caption) {
-              playCaption({ id: item.caption.id, args: item.caption.args });
+              playCaption({ id: item.caption.id, args: item.caption.args, data: item.data });
             } else {
-              playCaption({ id: item.key });
+              playCaption({ id: item.key, data: item.data });
             }
           }
           const onEnd = (pDidPlay: boolean) => {
