@@ -16,6 +16,7 @@ export declare function audioLoadError(opts: {
 export declare function playCaption(opts: {
     id: string;
     args?: any;
+    data?: any;
 }): void;
 export declare function stopCaption(opts: {
     id: string;

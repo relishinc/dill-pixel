@@ -26,6 +26,7 @@ export interface IPlayOptions {
      * Not called, however, when the VO is stopped or interrupted by another VO.
      */
     callback?: Callback;
+    data?: any;
 }
 export declare function playVO(key: string | (string | number)[], mode?: PlayMode | Callback | Partial<IPlayOptions>, callback?: Callback): void;
 export declare function stopVO(): void;

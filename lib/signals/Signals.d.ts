@@ -70,6 +70,7 @@ export declare class Signals {
     static playCaption: Signal<(opts: {
         id: string;
         args?: any;
+        data?: any;
     }) => void>;
     static stopCaption: Signal<(opts: {
         id: string;
