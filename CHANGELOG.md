@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.30.1](https://github.com/relishinc/dill-pixel/compare/v2.30.0...v2.30.1) (2024-02-20)
+
+
+### Bug Fixes
+
+* errors in VoiceOverManager ([2879fd2](https://github.com/relishinc/dill-pixel/commit/2879fd22f96a4f11ea7a71707f7e057b3d020d95))
+
 ## [2.30.0](https://github.com/relishinc/dill-pixel/compare/v2.29.2...v2.30.0) (2024-02-20)
 
 
