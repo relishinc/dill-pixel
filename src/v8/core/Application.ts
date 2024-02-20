@@ -42,7 +42,7 @@ export interface IApplication {
   asset: IAssetManager;
   state: IStateManager;
 
-  initialize<R extends Renderer = Renderer>(config: RequiredApplicationConfig): Promise<IApplication>;
+  initialize(config: RequiredApplicationConfig): Promise<IApplication>;
 
   getModule<T extends IModule>(name: string): T;
 }
@@ -86,7 +86,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this._store;
   }
 
-  public async initialize<R extends Renderer = Renderer>(config: RequiredApplicationConfig): Promise<IApplication> {
+  public async initialize(config: RequiredApplicationConfig): Promise<IApplication> {
     if (Application.instance) {
       throw new Error('Application is already initialized');
     }
