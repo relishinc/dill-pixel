@@ -336,6 +336,7 @@ export class StateManager<T extends Application = Application> extends Container
    * @param [loadScreen] The load screen to use.
    */
   private startTransition(stateId: string, loadScreen?: string): void {
+    Signals.stateTransitionStart.emit(stateId);
     this.log(
       'Transition requested from %c%s %cto %c%s.',
       LogUtils.STYLE_RED_BOLD,
@@ -550,6 +551,8 @@ export class StateManager<T extends Application = Application> extends Container
       if (this._statesMenu) {
         this._statesMenu.querySelector('select')?.removeAttribute('disabled');
       }
+
+      Signals.stateTransitionComplete.emit(this._currentStateId);
     }
   }
 

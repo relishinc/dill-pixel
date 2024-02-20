@@ -45,6 +45,8 @@ export class Signals {
   public static hideLoadScreen = new Signal<(data: { callback: () => void; loadScreen: string }) => void>();
 
   public static stateTransitionHalted = new Signal<(token: StateToken | undefined) => void>();
+  public static stateTransitionStart = new Signal<(id: string) => void>();
+  public static stateTransitionComplete = new Signal<(id: string) => void>();
 
   // load manager signals
   public static loadAssets = new Signal<(token: LoadToken) => void>();
