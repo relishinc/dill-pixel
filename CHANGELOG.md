@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.32.0](https://github.com/relishinc/dill-pixel/compare/v2.31.0...v2.32.0) (2024-02-20)
+
+
+### Features
+
+* added state transition start and complete signals ([ba6595c](https://github.com/relishinc/dill-pixel/commit/ba6595c2f2a55a5e762c82d27a28fd9246234a27))
+
 ## [2.31.0](https://github.com/relishinc/dill-pixel/compare/v2.30.2...v2.31.0) (2024-02-20)
 
 
