@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.31.0](https://github.com/relishinc/dill-pixel/compare/v2.30.2...v2.31.0) (2024-02-20)
+
+
+### Features
+
+* added vo settings for Container ([90498ac](https://github.com/relishinc/dill-pixel/commit/90498ac943d4acf51ec4b3663ec2e1ab95d8b0bb))
+
 ## [2.30.2](https://github.com/relishinc/dill-pixel/compare/v2.30.1...v2.30.2) (2024-02-20)
 
 
