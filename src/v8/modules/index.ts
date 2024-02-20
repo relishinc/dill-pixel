@@ -1,0 +1,1 @@
+export { IModule } from './IModule';

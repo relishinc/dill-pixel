@@ -11,7 +11,8 @@
   "types": "./lib/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./react": "./src/react/index.ts"
+    "./react": "./src/react/index.ts",
+    "./v8": "./src/v8/index.ts"
   },
   "sideEffects": false,
   "scripts": {
@@ -74,7 +75,7 @@
     "kleur": "^4.1.5",
     "matter-js": "^0.19.0",
     "pixi-spine": "^4.0.4",
-    "pixi.js": "latest",
+    "pixi.js": "^8.0.0-rc.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-fps-stats": "^0.3.1",
