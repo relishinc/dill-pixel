@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.32.2](https://github.com/relishinc/dill-pixel/compare/v2.32.1...v2.32.2) (2024-02-21)
+
+
+### Bug Fixes
+
+* added category volume changed signal ([eff9f7c](https://github.com/relishinc/dill-pixel/commit/eff9f7c701d8070509f4bb2aa1a557c636a54ca4))
+
 ## [2.32.1](https://github.com/relishinc/dill-pixel/compare/v2.32.0...v2.32.1) (2024-02-21)
 
 
