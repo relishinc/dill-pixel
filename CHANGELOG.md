@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.32.4](https://github.com/relishinc/dill-pixel/compare/v2.32.3...v2.32.4) (2024-02-21)
+
+
+### Bug Fixes
+
+* audio cli change ([90a4dc9](https://github.com/relishinc/dill-pixel/commit/90a4dc9f021b2f2321726b3f54b6b56f69587f7a))
+
 ## [2.32.3](https://github.com/relishinc/dill-pixel/compare/v2.32.2...v2.32.3) (2024-02-21)
 
 
