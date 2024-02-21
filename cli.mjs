@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import {bgRed, bold, green, red, white} from 'kleur/colors';
 import fs from 'node:fs';
-import {generateCaptions} from './cli/audio/cc.mjs';
+import {generateCaptions, generateCaptionsObj, writeCaptions} from './cli/audio/cc.mjs';
 import {compress} from './cli/audio/index.mjs';
 import {create} from './cli/create.mjs';
 import {update} from './cli/update.mjs';
@@ -62,14 +62,31 @@ switch (args[0]) {
 				console.log(bold(green(`Dill Pixel has finished compressing your audio files! Find them in "${audioDirectory}/output."`)));
 				break;
 			case 'captions':
+				const captionsOutputDirectory = args[4] || './src/assets/json';
+				const audioOutputDirectory = args[3] || './src/assets/audio/output';
 				const captionsCSVDirectory = args[2] || './src/assets/audio/captions';
-				const captionsOutputDirectory = args[3] || './src/assets/json';
 				console.log(bold(green(`Dill Pixel is preparing your closed captioning files...`)));
-				try {
-					await generateCaptions(captionsCSVDirectory, captionsOutputDirectory);
-					console.log(bold(green(`Dill Pixel has generating your closed captioning files! Find them in "${captionsOutputDirectory}/cc.json"`)));
-				} catch (e) {
-					console.error(bold(bgRed(white(`Error generating captions:`))), red(e))
+				if (captionsCSVDirectory.indexOf(',') > -1) {
+					// get multiple directories separated by comma
+					const dirs = captionsCSVDirectory.split(',');
+					let captions = {};
+					for (let dir of dirs) {
+						dir = dir.trim();
+						try {
+							const generatedCaptions = await generateCaptionsObj(dir, audioOutputDirectory);
+							Object.assign(captions, generatedCaptions);
+							await writeCaptions(captionsOutputDirectory, captions);
+						} catch (e) {
+							console.error(bold(bgRed(white(`Error generating captions:`))), red(e))
+						}
+					}
+				} else {
+					try {
+						await generateCaptions(captionsCSVDirectory, audioOutputDirectory, captionsOutputDirectory);
+						console.log(bold(green(`Dill Pixel has generating your closed captioning files! Find them in "${captionsOutputDirectory}/cc.json"`)));
+					} catch (e) {
+						console.error(bold(bgRed(white(`Error generating captions:`))), red(e))
+					}
 				}
 				break;
 			default:
