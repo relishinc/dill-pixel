@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.32.3](https://github.com/relishinc/dill-pixel/compare/v2.32.2...v2.32.3) (2024-02-21)
+
+
+### Bug Fixes
+
+* allow cli to use multiple audio output directories for caption generation ([c274669](https://github.com/relishinc/dill-pixel/commit/c274669061b2dbf4af19071bfe007fca65ff4502))
+
 ## [2.32.2](https://github.com/relishinc/dill-pixel/compare/v2.32.1...v2.32.2) (2024-02-21)
 
 
