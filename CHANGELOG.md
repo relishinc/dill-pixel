@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.32.1](https://github.com/relishinc/dill-pixel/compare/v2.32.0...v2.32.1) (2024-02-21)
+
+
+### Bug Fixes
+
+* allow captions generation to pull from more than one directory of CSVs ([8ce526f](https://github.com/relishinc/dill-pixel/commit/8ce526fbdf6fd09b2905e87d2fea1a1ed1956674))
+* allow captions generation to pull from more than one directory of CSVs ([3f18df5](https://github.com/relishinc/dill-pixel/commit/3f18df5a9c75b8b215932f9a6edc05494d6475b9))
+
 ## [2.32.0](https://github.com/relishinc/dill-pixel/compare/v2.31.0...v2.32.0) (2024-02-20)
 
 
