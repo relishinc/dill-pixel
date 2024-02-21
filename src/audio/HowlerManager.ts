@@ -421,6 +421,12 @@ export class HowlerManager implements IAudioManager {
     for (let i = tracks.length - 1; i >= 0; --i) {
       tracks[i].setVolumeWithModifiers(tracks[i].getVolume(), this._masterVolume, collection.volume);
     }
+
+    Signals.onAudioCategoryVolumeChanged.emit({
+      category,
+      volume: collection.volume,
+      masterVolume: this._masterVolume,
+    });
   }
 
   private getCollection(category: string): AudioCollection {

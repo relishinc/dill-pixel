@@ -69,6 +69,9 @@ export class Signals {
   public static audioLoadError = new Signal<
     (opts: { id: string; category: string; src: string; fallback: string[]; error: any }) => void
   >();
+  public static onAudioCategoryVolumeChanged = new Signal<
+    (detail: { category: string; volume: number; masterVolume: number }) => void
+  >();
 
   // caption / voiceover signals
   public static playCaption = new Signal<(opts: { id: string; args?: any; data?: any }) => void>();
