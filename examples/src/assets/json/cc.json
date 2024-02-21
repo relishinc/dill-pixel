@@ -1,1 +1,30 @@
-{}
+{
+  "vo_intro_0": [
+    {
+      "content": "<p>J'ai toujours voulu être un scientifique. C'est pourquoi j'ai accepté un travail mystérieux au milieu de nulle part.</p>",
+      "start": 0,
+      "end": 7320
+    }
+  ],
+  "vo_intro_1": [
+    {
+      "content": "<p>Une nuit, le ciel s'illumine. Quelque chose vient\nde s'écraser tout près. Je dois aller voir...</p>",
+      "start": 0,
+      "end": 6864
+    }
+  ],
+  "vo_intro_2": [
+    {
+      "content": "<p>C'est un vaisseau spatial, piloté par un extraterrestre\nnommé Boffin. Il a besoin d'aide pour réparer\nson vaisseau et terminer ses recherches pour\npouvoir retourner sauver sa planète.</p>",
+      "start": 0,
+      "end": 13128
+    }
+  ],
+  "vo_intro_3": [
+    {
+      "content": "<p>Si j'aide Boffin, il me donnera des technologies extraterrestres qui amélioreront le laboratoire. Je pourrais enfin devenir un vrai scientifique!</p>",
+      "start": 0,
+      "end": 9744
+    }
+  ]
+}
