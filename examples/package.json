@@ -10,7 +10,7 @@
     "lint": "eslint src --ext .ts",
     "lint-fix": "eslint src --ext .ts --fix",
     "audio:vo": "texttospeech",
-    "audio:captions": "node ../cli.mjs audio captions ./src/assets/audio/captions,./src/assets/audio/captions2 ./src/assets/audio/output ./src/assets/json",
+    "audio:captions": "node ../cli.mjs audio captions ./src/assets/audio/captions,./src/assets/audio/captions2 ./src/assets/audio/output,./src/assets/audio/output2 ./src/assets/json",
     "audio:compress": "node ../cli.mjs audio compress ./src/assets/audio",
     "spritesheets": "node src/assets/images/export_spritesheets"
   },

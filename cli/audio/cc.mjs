@@ -11,18 +11,22 @@ const captions = {};
 
 async function readDurations(dir, audioDir) {
 	const files = [];
-	const outputDir = path.resolve(audioDir)
-	if (!fs.existsSync(audioDir)) {
-		return Promise.reject(`Output directory not found at "${outputDir}". Please run \`dill-pixel audio compress\` first.`);
+	let audioDirs = [audioDir]
+	if (audioDir.indexOf(',') > -1) {
+		audioDirs = audioDir.split(',');
 	}
-	console.log(bold(bgGreen(white('[Getting Durations]'))), green(audioDir));
-	walkDir(path.join(audioDir), file => {
-		if (/\.(wav|mp3)$/i.test(file)) {
-			files.push(file);
+	for (const audioDir of audioDirs) {
+		const outputDir = path.resolve(audioDir);
+		if (!fs.existsSync(audioDir)) {
+			return Promise.reject(`Output directory not found at "${outputDir}". Please run \`dill-pixel audio compress\` first.`);
 		}
-	});
-	const captionNames = Object.keys(captions);
-
+		console.log(bold(bgGreen(white('[Getting Durations]'))), green(audioDir));
+		walkDir(path.join(audioDir), file => {
+			if (/\.(wav|mp3)$/i.test(file)) {
+				files.push(file);
+			}
+		});
+	}
 	await Promise.all(files.map(file => new Promise((resolve, reject) => {
 		const fileName = path.basename(file).replace(/\.(wav|mp3)$/, '');
 		console.log(bold(bgGreen(white('[Get Duration]'))), green(fileName));
