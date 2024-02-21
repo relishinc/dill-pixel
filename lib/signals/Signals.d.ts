@@ -69,6 +69,11 @@ export declare class Signals {
         fallback: string[];
         error: any;
     }) => void>;
+    static onAudioCategoryVolumeChanged: Signal<(detail: {
+        category: string;
+        volume: number;
+        masterVolume: number;
+    }) => void>;
     static playCaption: Signal<(opts: {
         id: string;
         args?: any;
