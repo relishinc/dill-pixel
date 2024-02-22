@@ -108,7 +108,9 @@ export const defaultFactoryMethods: IFactoryMethods = {
   },
 };
 
-export function extendContainer<T extends IFactoryMethods>(extensions: Partial<T>): new () => IExtendedContainer<T> {
+export function extendContainer<T extends IFactoryMethods = IFactoryMethods>(
+  extensions: Partial<T>,
+): new () => IExtendedContainer<T> {
   return class ExtendedContainer extends PIXIContainer implements IExtendedContainer<T> {
     add: T;
     make: T;
@@ -121,7 +123,7 @@ export function extendContainer<T extends IFactoryMethods>(extensions: Partial<T
   };
 }
 
-const Container = extendContainer<IFactoryMethods>(defaultFactoryMethods);
+const Container = extendContainer(defaultFactoryMethods);
 
 /*
 // Example of extending the factory methods
