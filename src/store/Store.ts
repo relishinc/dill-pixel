@@ -6,6 +6,8 @@ type AdapterSaveConfig = {
 };
 
 export interface IStore {
+  destroy(): void;
+
   registerAdapter(adapter: IStorageAdapter): void;
 
   getAdapter<T extends IStorageAdapter>(adapterId: string): T;

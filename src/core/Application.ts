@@ -1,12 +1,17 @@
-import { Application as PIXIPApplication, ApplicationOptions, autoDetectRenderer, Renderer } from 'pixi.js';
+import {
+  Application as PIXIPApplication,
+  ApplicationOptions,
+  autoDetectRenderer,
+  DestroyOptions,
+  Renderer,
+  RendererDestroyOptions,
+} from 'pixi.js';
 import { IModule } from '../modules';
 import { defaultModules, IAssetManager, IStateManager, IWebEventsManager } from '../modules/default';
 import { Signal } from '../signals';
 import { IStorageAdapter } from '../store';
 import { IStore, Store } from '../store/Store';
-import { isDev, isMobile, isRetina, Logger, WithRequiredProps } from '../utils';
-import { bindAllMethods } from '../utils/methodBinding';
-import { Size } from '../utils/types';
+import { bindAllMethods, isDev, isMobile, isRetina, Logger, Size, WithRequiredProps } from '../utils';
 
 export interface IApplicationOptions extends ApplicationOptions {
   id: string;
@@ -117,6 +122,20 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
   public get store(): IStore {
     return this._store;
+  }
+
+  /**
+   * Destroy the application
+   * This will destroy all modules and the store
+   * @param {RendererDestroyOptions} rendererDestroyOptions
+   * @param {DestroyOptions} options
+   */
+  public destroy(rendererDestroyOptions?: RendererDestroyOptions, options?: DestroyOptions) {
+    this._modules.forEach((module) => {
+      module.destroy();
+    });
+    this.store.destroy();
+    super.destroy(rendererDestroyOptions, options);
   }
 
   public async initialize(config: RequiredApplicationConfig): Promise<IApplication> {
