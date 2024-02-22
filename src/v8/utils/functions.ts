@@ -5,16 +5,16 @@ type PointLikeResult = { x: number; y: number } | Point;
 
 export function resolvePointLike(
   position?: PointLike,
+  asPoint?: false,
   x?: number,
   y?: number,
-  asPoint?: false,
 ): { x: number; y: number };
-export function resolvePointLike(position?: PointLike, x?: number, y?: number, asPoint?: true): Point;
+export function resolvePointLike(position?: PointLike, asPoint?: true, x?: number, y?: number): Point;
 export function resolvePointLike(
   position?: PointLike,
+  asPoint: boolean = false,
   x: number = 0,
   y: number = 0,
-  asPoint: boolean = false,
 ): PointLikeResult {
   if (position instanceof Point) {
     x = position.x;
