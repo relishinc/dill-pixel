@@ -4,7 +4,7 @@ import { defaultModules, IAssetManager, IStateManager, IWebEventsManager } from 
 import { Signal } from '../signals';
 import { IStorageAdapter } from '../store';
 import { IStore, Store } from '../store/Store';
-import { delay, isDev, isMobile, isRetina, Logger, WithRequiredProps } from '../utils';
+import { isDev, isMobile, isRetina, Logger, WithRequiredProps } from '../utils';
 import { bindAllMethods } from '../utils/methodBinding';
 import { Size } from '../utils/types';
 
@@ -252,8 +252,9 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   }
 
   private async _onResize(size: Size) {
-    await delay(0.1);
-    this.onResize.emit(this.renderer.screen);
+    this.ticker.addOnce(() => {
+      this.onResize.emit(this.renderer.screen);
+    });
   }
 
   /**
@@ -263,9 +264,14 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
    * @private
    */
   private async _setup(): Promise<void> {
+    // register for PIXI DevTools extension
     if (isDev) {
       (globalThis as any).__PIXI_APP__ = this;
     }
+
+    // connect onResize signal
     this.webEvents.onResize.connect(this._onResize);
+
+    return Promise.resolve();
   }
 }
