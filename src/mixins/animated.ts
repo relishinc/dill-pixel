@@ -17,9 +17,9 @@ export const Animated = <TBase extends Constructor<any>>(Base: TBase) => {
     public _activeTweens: gsap.core.Tween[] = [];
     public _activeTimeline?: gsap.core.Timeline;
 
-    animate(animationConfig: GSAPAnimationConfigExtended, instance: any = this) {
+    animate(animationProps: GSAPAnimationConfigExtended, instance: any = this) {
       const tween = gsap.to(instance, {
-        ...animationConfig,
+        ...animationProps,
         onStart: () => {
           this._onAnimationStart(tween);
         },
