@@ -1,11 +1,12 @@
 import { Application as PIXIPApplication, ApplicationOptions, autoDetectRenderer, Renderer } from 'pixi.js';
 import { IModule } from '../modules';
-import { defaultModules } from '../modules/default';
-import { IAssetManager } from '../modules/default/asset/AssetManager';
-import { IStateManager } from '../modules/default/state/StateManager';
+import { defaultModules, IAssetManager, IStateManager, IWebEventsManager } from '../modules/default';
+import { Signal } from '../signals';
 import { IStorageAdapter } from '../store';
 import { IStore, Store } from '../store/Store';
-import { isMobile, isRetina, Logger, WithRequiredProps } from '../utils';
+import { delay, isDev, isMobile, isRetina, Logger, WithRequiredProps } from '../utils';
+import { bindAllMethods } from '../utils/methodBinding';
+import { Size } from '../utils/types';
 
 export interface IApplicationOptions extends ApplicationOptions {
   id: string;
@@ -18,7 +19,7 @@ export interface IApplicationOptions extends ApplicationOptions {
 
 const defaultApplicationOptions: Partial<IApplicationOptions> = {
   antialias: false,
-  autoStart: false,
+  autoStart: true,
   background: undefined,
   backgroundAlpha: 0,
   backgroundColor: 'transparent',
@@ -39,6 +40,7 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   resolution: isMobile ? (isRetina ? 2 : 1) : 2,
   // dill pixel options
   useStore: true,
+  useDefaults: true,
   useSpine: false,
   storageAdapters: [],
   customModules: [],
@@ -58,13 +60,20 @@ export interface IApplication extends PIXIPApplication {
 export class Application<R extends Renderer = Renderer> extends PIXIPApplication<R> implements IApplication {
   protected static instance: Application;
   public static containerId = 'dill-pixel-game-container';
+
+  // signals
+  public onResize = new Signal<(size: { width: number; height: number }) => void>();
+
+  // config
   protected config: Partial<RequiredApplicationConfig>;
 
   // modules
   protected _modules: Map<string, IModule> = new Map();
+
   // default modules
   protected _assetManager: IAssetManager;
   protected _stateManager: IStateManager;
+  protected _webEventsManager: IWebEventsManager;
 
   // store
   protected _store: IStore;
@@ -78,6 +87,11 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     container.setAttribute('id', pId);
     document.body.appendChild(container);
     return container;
+  }
+
+  constructor() {
+    super();
+    bindAllMethods(this);
   }
 
   public get state(): IStateManager {
@@ -94,6 +108,13 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this._assetManager;
   }
 
+  public get webEvents(): IWebEventsManager {
+    if (!this._webEventsManager) {
+      this._webEventsManager = this.getModule<IWebEventsManager>('webEventsManager');
+    }
+    return this._webEventsManager;
+  }
+
   public get store(): IStore {
     return this._store;
   }
@@ -105,6 +126,8 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
     Application.instance = this;
     this.config = Object.assign({ ...defaultApplicationOptions }, config);
+
+    await this.preInitialize();
 
     // initialize the pixi application
     await Application.instance.init(Application.instance.config);
@@ -155,6 +178,9 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       await this.registerStorageAdapters();
     }
 
+    await this.setupInternal();
+    await this.setup();
+
     // return the Application instance to the create method, if needed
     return Application.instance;
   }
@@ -165,6 +191,12 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
   public getStorageAdapter(adapterId: string): IStorageAdapter {
     return this.store.getAdapter(adapterId);
+  }
+
+  protected async preInitialize(): Promise<void> {}
+
+  protected async postInitialize(): Promise<void> {
+    (globalThis as any).__PIXI_APP__ = this;
   }
 
   // modules
@@ -181,23 +213,58 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   }
 
   protected async registerCustomModules() {
-    Logger.log(
-      'No custom modules registered. Register them by overriding the "registerCustomModules" method in your' +
-        ' Application class.',
-    );
+    if (isDev) {
+      Logger.log(
+        'No custom modules registered using "registerCustomModules". Register them by overriding the "registerCustomModules" method in your' +
+          ' Application class.',
+      );
+    }
     return Promise.resolve();
   }
 
   // storage
   protected async registerStorageAdapters() {
-    Logger.log(
-      'No storage adapters registered. Register them by overriding the "registerStorageAdapters" method in your' +
-        ' Application class.',
-    );
+    if (isDev) {
+      Logger.log(
+        'No storage adapters registered using "registerStorageAdapters". Register them by overriding the' +
+          ' "registerStorageAdapters" method in your' +
+          ' Application class.',
+      );
+    }
     return Promise.resolve();
   }
 
   protected async registerStorageAdapter(adapter: IStorageAdapter): Promise<any> {
     return this.store.registerAdapter(adapter);
+  }
+
+  protected async onResizeInternal(size: Size) {
+    await delay(0.1);
+    this.onResize.emit(this.renderer.screen);
+  }
+
+  /**
+   * Set up the application
+   * This is called after the application is initialized
+   * all modules are registered
+   * and the store is created, with storage adapters registered
+   * @protected
+   */
+  protected setup(): Promise<void> | void;
+  protected async setup(): Promise<void> {
+    // override me to set up application specific stuff
+  }
+
+  /**
+   * Called after the application is initialized
+   * Here we add application specific signal listeners, etc
+   * @returns {Promise<void>}
+   * @private
+   */
+  private async setupInternal(): Promise<void> {
+    if (isDev) {
+      (globalThis as any).__PIXI_APP__ = this;
+    }
+    this.webEvents.onResize.connect(this.onResizeInternal);
   }
 }

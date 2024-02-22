@@ -2,8 +2,9 @@ import { Application, IApplication, RequiredApplicationConfig } from './core';
 import { isDev } from './utils';
 
 export * from './core';
-export * from './store';
+export * from './display';
 export * from './modules';
+export * from './store';
 export * from './utils';
 
 export async function create<T extends IApplication = Application>(
@@ -40,5 +41,6 @@ export async function create<T extends IApplication = Application>(
   if (isDev) {
     console.log('Application initialized');
   }
+
   return instance as unknown as T;
 }
