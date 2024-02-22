@@ -1,2 +1,3 @@
-export { IStorageAdapter, LocalStorageAdapter } from './adapters';
+export { LocalStorageAdapter } from './adapters';
+export type {IStorageAdapter} from './adapters';
 export { Store } from './Store';

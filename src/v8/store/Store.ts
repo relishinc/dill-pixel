@@ -1,12 +1,14 @@
+import { IStorageAdapter } from './adapters';
+
 type AdapterSaveConfig = {
   adapterKey: string;
   awaitSave: boolean;
 };
 
 export interface IStore {
-  registerAdapter(key: string, adapter: IStorageAdapter): void;
+  registerAdapter(adapter: IStorageAdapter): void;
 
-  getAdapter<T extends IStorageAdapter>(key: string): T;
+  getAdapter<T extends IStorageAdapter>(adapterId: string): T;
 }
 
 export class Store implements IStore {
@@ -18,15 +20,16 @@ export class Store implements IStore {
 
   // Use a generic type parameter with a constraint to IStorageAdapter
 
-  registerAdapter(key: string, adapter: IStorageAdapter): void {
-    this.adapters.set(key, adapter);
+  async registerAdapter(adapter: IStorageAdapter): Promise<void> {
+    this.adapters.set(adapter.id, adapter);
+    await adapter.initialize();
   }
 
   // This allows TypeScript to infer the correct adapter type when retrieved
-  getAdapter<T extends IStorageAdapter>(key: string): T {
-    const adapter = this.adapters.get(key);
+  getAdapter<T extends IStorageAdapter>(adapterId: string): T {
+    const adapter = this.adapters.get(adapterId);
     if (!adapter) {
-      throw new Error(`Adapter ${key} not found`);
+      throw new Error(`Adapter ${adapterId} not found`);
     }
     return adapter as T;
   }

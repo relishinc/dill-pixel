@@ -1,0 +1,39 @@
+{
+  "name": "dill-pixel-examples-v8",
+  "version": "0.0.0",
+  "description": "Examples of Dill Pixel Features (V8)",
+  "main": "index.html",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint src --ext .ts",
+    "lint-fix": "eslint src --ext .ts --fix",
+    "audio:vo": "texttospeech",
+    "audio:captions": "node ../cli.mjs audio captions ./src/assets/audio",
+    "audio:compress": "node ../cli.mjs audio compress ./src/assets/audio",
+    "spritesheets": "node src/assets/images/export_spritesheets"
+  },
+  "author": "Relish Digital<dev@reli.sh>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/dat.gui": "^0.7.11",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "prettier": "^3.0.3",
+    "relishinc-prettier": "github:relishinc/prettier",
+    "typescript": "^5.2.2",
+    "vite": "^4.5.2",
+    "vite-plugin-html": "^3.2.0",
+    "vite-plugin-singlefile": "^0.13.5",
+    "vite-plugin-static-copy": "^0.13.1",
+    "vite-plugin-top-level-await": "^1.3.1",
+    "vite-plugin-wasm": "^3.2.2"
+  },
+  "dependencies": {
+    "@pixi/ui": "^0.9.0",
+    "dat.gui": "^0.7.9",
+    "dill-pixel": "file:..",
+    "gsap": "^3.11.5"
+  }
+}

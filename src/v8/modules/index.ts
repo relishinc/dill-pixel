@@ -1,1 +1,1 @@
-export { IModule } from './IModule';
+export type { IModule } from './IModule';
