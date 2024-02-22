@@ -1,7 +1,6 @@
 import {
   Application as PIXIPApplication,
   ApplicationOptions,
-  autoDetectRenderer,
   DestroyOptions,
   Renderer,
   RendererDestroyOptions,
@@ -11,7 +10,7 @@ import { defaultModules, IAssetManager, IStateManager, IWebEventsManager } from 
 import { Signal } from '../signals';
 import { IStorageAdapter } from '../store';
 import { IStore, Store } from '../store/Store';
-import { bindAllMethods, isDev, isMobile, isRetina, Logger, Size, WithRequiredProps } from '../utils';
+import { bindAllMethods, isDev, isMobile, isRetina, Logger, WithRequiredProps } from '../utils';
 
 export interface IApplicationOptions extends ApplicationOptions {
   id: string;
@@ -151,14 +150,8 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     // initialize the pixi application
     await Application.instance.init(Application.instance.config);
 
-    // get the renderer type (webgl or webgpu now)
-    const renderer = await autoDetectRenderer({});
-
     // initialize the logger
-    Logger.initialize(config.id || this.constructor.name);
-
-    // log the renderer for now
-    Logger.log(renderer);
+    Logger.initialize(config.id);
 
     // register the default modules
     if (this.config.useDefaults) {
@@ -199,6 +192,8 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
     await this._setup(); // internal
     await this.setup();
+
+    await this.postInitialize();
 
     // return the Application instance to the create method, if needed
     return Application.instance;
@@ -270,7 +265,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     // override me to set up application specific stuff
   }
 
-  private async _onResize(size: Size) {
+  private async _onResize() {
     this.ticker.addOnce(() => {
       this.onResize.emit(this.renderer.screen);
     });
