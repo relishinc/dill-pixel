@@ -1,6 +1,5 @@
 import { Application, IApplication, RequiredApplicationConfig } from './core';
 import { sayHello } from './hello';
-import { isDev } from './utils';
 
 export * from './pixi';
 export * from './core';
@@ -13,7 +12,11 @@ export async function create<T extends IApplication = Application>(
   ApplicationClass: new () => T,
   config: RequiredApplicationConfig = { id: 'DillPixelApplication' },
   domElement: string | HTMLElement = Application.containerId,
+  speak: boolean = true,
 ): Promise<T> {
+  if (speak) {
+    sayHello();
+  }
   let el: HTMLElement | null = null;
   if (typeof domElement === 'string') {
     el = document.getElementById(domElement);
@@ -40,11 +43,5 @@ export async function create<T extends IApplication = Application>(
     throw new Error('No element found to append the view to.');
   }
 
-  if (isDev) {
-    console.log('Application initialized');
-  }
-
   return instance as unknown as T;
 }
-
-sayHello();
