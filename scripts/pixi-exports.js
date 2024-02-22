@@ -3,7 +3,6 @@ const path = require('path');
 
 const imports = [
   'Application',
-  'DisplayObject',
   'Container',
   'Sprite',
   'Graphics',
@@ -17,7 +16,7 @@ const imports = [
   'HTMLTextStyle',
 ];
 
-const interfaces = ['IApplicationOptions', 'IPoint', 'IHitArea', 'ITextStyle', 'IHTMLTextStyle', 'IBitmapTextStyle'];
+const interfaces = [];
 
 let output = `import { ${imports.map((e) => `${e}`).join(', ')}} from 'pixi.js';`;
 
