@@ -3,6 +3,7 @@ import { IModule } from '../modules';
 import { defaultModules } from '../modules/default';
 import { IAssetManager } from '../modules/default/asset/AssetManager';
 import { IStateManager } from '../modules/default/state/StateManager';
+import { IStorageAdapter } from '../store';
 import { IStore, Store } from '../store/Store';
 import { isMobile, isRetina, Logger, WithRequiredProps } from '../utils';
 
@@ -11,9 +12,11 @@ export interface IApplicationOptions extends ApplicationOptions {
   useStore: boolean;
   useDefaults: boolean;
   useSpine: false;
+  storageAdapters: ((new () => IStorageAdapter) | IStorageAdapter)[];
+  customModules: ((new () => IModule) | IModule)[];
 }
 
-const defaultApplicationOptions: Partial<ApplicationOptions> = {
+const defaultApplicationOptions: Partial<IApplicationOptions> = {
   antialias: false,
   autoStart: false,
   background: undefined,
@@ -34,11 +37,16 @@ const defaultApplicationOptions: Partial<ApplicationOptions> = {
   width: 0,
   autoDensity: true,
   resolution: isMobile ? (isRetina ? 2 : 1) : 2,
+  // dill pixel options
+  useStore: true,
+  useSpine: false,
+  storageAdapters: [],
+  customModules: [],
 };
 
 export type RequiredApplicationConfig = WithRequiredProps<IApplicationOptions, 'id'>;
 
-export interface IApplication {
+export interface IApplication extends PIXIPApplication {
   asset: IAssetManager;
   state: IStateManager;
 
@@ -49,7 +57,8 @@ export interface IApplication {
 
 export class Application<R extends Renderer = Renderer> extends PIXIPApplication<R> implements IApplication {
   protected static instance: Application;
-  protected config: Partial<IApplicationOptions>;
+  public static containerId = 'dill-pixel-game-container';
+  protected config: Partial<RequiredApplicationConfig>;
 
   // modules
   protected _modules: Map<string, IModule> = new Map();
@@ -64,8 +73,11 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return Application.instance;
   }
 
-  private constructor() {
-    super();
+  public static createContainer(pId: string) {
+    const container = document.createElement('div');
+    container.setAttribute('id', pId);
+    document.body.appendChild(container);
+    return container;
   }
 
   public get state(): IStateManager {
@@ -91,8 +103,8 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       throw new Error('Application is already initialized');
     }
 
-    Application.instance = new Application<R>();
-    Application.instance.config = Object.assign({ ...defaultApplicationOptions }, config);
+    Application.instance = this;
+    this.config = Object.assign({ ...defaultApplicationOptions }, config);
 
     // initialize the pixi application
     await Application.instance.init(Application.instance.config);
@@ -108,7 +120,18 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
     // register the default modules
     if (this.config.useDefaults) {
-      this.registerDefaultModules();
+      await this.registerDefaultModules();
+    }
+
+    if (this.config.customModules && this.config.customModules.length > 0) {
+      for (let i = 0; i < this.config.customModules.length; i++) {
+        const module = this.config.customModules[i];
+        if (typeof module === 'function') {
+          await this.registerModule(new module());
+        } else {
+          await this.registerModule(module);
+        }
+      }
     }
 
     // register the applications custom modules
@@ -117,6 +140,18 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     // add the store if it's enabled
     if (this.config.useStore) {
       this._store = new Store();
+      // register any storage adapters passed through the config
+      if (this.config.storageAdapters && this.config.storageAdapters.length > 0) {
+        for (let i = 0; i < this.config.storageAdapters.length; i++) {
+          const storageAdapter = this.config.storageAdapters[i];
+          if (typeof storageAdapter === 'function') {
+            await this.registerStorageAdapter(new storageAdapter());
+          } else {
+            await this.registerStorageAdapter(storageAdapter);
+          }
+        }
+      }
+      // also call the registerStorageAdapters method to allow for custom storage adapters to be registered
       await this.registerStorageAdapters();
     }
 
@@ -128,10 +163,20 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this._modules.get(moduleName) as T;
   }
 
-  protected registerDefaultModules() {
+  public getStorageAdapter(adapterId: string): IStorageAdapter {
+    return this.store.getAdapter(adapterId);
+  }
+
+  // modules
+  protected async registerModule(module: IModule) {
+    this._modules.set(module.id, module);
+    return module.initialize();
+  }
+
+  protected async registerDefaultModules() {
     for (let i = 0; i < defaultModules.length; i++) {
-      const module = defaultModules[i];
-      this._modules.set(module.constructor.name, new module());
+      const module = new defaultModules[i]();
+      await this.registerModule(module);
     }
   }
 
@@ -143,11 +188,16 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return Promise.resolve();
   }
 
+  // storage
   protected async registerStorageAdapters() {
     Logger.log(
       'No storage adapters registered. Register them by overriding the "registerStorageAdapters" method in your' +
         ' Application class.',
     );
     return Promise.resolve();
+  }
+
+  protected async registerStorageAdapter(adapter: IStorageAdapter): Promise<any> {
+    return this.store.registerAdapter(adapter);
   }
 }

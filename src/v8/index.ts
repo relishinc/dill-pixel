@@ -1,4 +1,5 @@
 import { Application, IApplication, RequiredApplicationConfig } from './core';
+import { isDev } from './utils';
 
 export * from './core';
 export * from './store';
@@ -6,8 +7,38 @@ export * from './modules';
 export * from './utils';
 
 export async function create<T extends IApplication = Application>(
-  AppClass: T,
-  config: RequiredApplicationConfig,
-): Promise<IApplication> {
-  return await AppClass.initialize(config);
+  ApplicationClass: new () => T,
+  config: RequiredApplicationConfig = { id: 'DillPixelApplication' },
+  domElement: string | HTMLElement = Application.containerId,
+): Promise<T> {
+  let el: HTMLElement | null = null;
+  if (typeof domElement === 'string') {
+    el = document.getElementById(domElement);
+    if (!el) {
+      el = Application.createContainer(domElement);
+    }
+  } else if (domElement instanceof HTMLElement) {
+    el = domElement;
+  }
+  if (!el) {
+    // no element to use
+    throw new Error(
+      'You passed in a DOM Element, but none was found. If you instead pass in a string, a container will be created for you, using the string for its id.',
+    );
+  }
+  config.resizeTo = el;
+  const instance = new ApplicationClass();
+
+  await instance.initialize(config);
+
+  if (el) {
+    el.appendChild(instance.canvas as HTMLCanvasElement);
+  } else {
+    throw new Error('No element found to append the view to.');
+  }
+
+  if (isDev) {
+    console.log('Application initialized');
+  }
+  return instance as unknown as T;
 }

@@ -1,5 +1,6 @@
+import { IModule } from '../IModule';
 import { AssetManager } from './asset';
 import { StateManager } from './state';
 
-const defaultModules = [AssetManager, StateManager];
+const defaultModules: (new () => IModule)[] = [AssetManager, StateManager];
 export { defaultModules };
