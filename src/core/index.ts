@@ -1,2 +1,2 @@
-export * from './Application';
-export * from './AppConfig';
+export { Application } from './Application';
+export type {IApplication, RequiredApplicationConfig} from './Application';

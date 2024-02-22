@@ -3,7 +3,7 @@ import * as dat from 'dat.gui';
 import { AssetMapData, AssetType, Container, IPoint, State, TextureAsset } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Sprite, Text } from 'pixi.js';
-import { Application } from '../Application';
+import { Application } from '../V8Application';
 
 export class BaseState extends State<Application> {
   public gui: any;

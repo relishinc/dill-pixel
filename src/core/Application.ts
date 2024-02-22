@@ -1,116 +1,87 @@
-// @ts-ignore
-// require the global.d.ts file
-import FontFaceObserver from 'fontfaceobserver';
-import {Application as PIXIApplication, Assets, IApplicationOptions, Point, Ticker} from 'pixi.js';
-import {AudioToken, HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverManager} from '../audio';
-import {CopyManager} from '../copy';
-import {isDev, updateFocus} from '../functions';
-import {
-  DefaultKeyboardFocusManagerSprite,
-  HitAreaRenderer,
-  KeyboardFocusManager,
-  KeyboardManager,
-  MouseManager
-} from '../input';
-import {AssetMap, AssetMapData, LoadManager, LoadScreen, LoadScreenProvider, SplashScreen} from '../load';
-import {PhysicsBase, PhysicsEngineType} from '../physics';
-import {PopupManager} from '../popup';
-import {SaveManager} from '../save';
-import {Signals} from '../signals';
-import {State, StateManager} from '../state';
-import {
-  Add,
-  AssetUtils,
-  bindMethods,
-  delay,
-  HTMLTextStyleManager,
-  Make,
-  OrientationManager,
-  ResizeManager,
-  WebEventsManager
-} from '../utils';
-import {AppConfig} from './AppConfig';
+import { Application as PIXIPApplication, ApplicationOptions, autoDetectRenderer, Renderer } from 'pixi.js';
+import { IModule } from '../modules';
+import { defaultModules, IAssetManager, IStateManager, IWebEventsManager } from '../modules/default';
+import { Signal } from '../signals';
+import { IStorageAdapter } from '../store';
+import { IStore, Store } from '../store/Store';
+import { delay, isDev, isMobile, isRetina, Logger, WithRequiredProps } from '../utils';
+import { bindAllMethods } from '../utils/methodBinding';
+import { Size } from '../utils/types';
 
-export interface DillPixelApplicationOptions extends IApplicationOptions {
-  physics?: boolean;
-  useSpine?: boolean;
-  showStatsInProduction?: boolean;
-  showStateDebugInProduction?: boolean;
+export interface IApplicationOptions extends ApplicationOptions {
+  id: string;
+  useStore: boolean;
+  useDefaults: boolean;
+  useSpine: false;
+  storageAdapters: ((new () => IStorageAdapter) | IStorageAdapter)[];
+  customModules: ((new () => IModule) | IModule)[];
 }
 
-export type Font = { family: string; data?: { weight?: number | string } };
+const defaultApplicationOptions: Partial<IApplicationOptions> = {
+  antialias: false,
+  autoStart: true,
+  background: undefined,
+  backgroundAlpha: 0,
+  backgroundColor: 'transparent',
+  clearBeforeRender: false,
+  context: null,
+  eventFeatures: undefined,
+  eventMode: undefined,
+  height: 0,
+  hello: false,
+  powerPreference: 'high-performance',
+  premultipliedAlpha: false,
+  preserveDrawingBuffer: false,
+  resizeTo: undefined,
+  sharedTicker: false,
+  view: undefined,
+  width: 0,
+  autoDensity: true,
+  resolution: isMobile ? (isRetina ? 2 : 1) : 2,
+  // dill pixel options
+  useStore: true,
+  useDefaults: true,
+  useSpine: false,
+  storageAdapters: [],
+  customModules: [],
+};
 
-export function create<T extends Application = Application>(
-  ApplicationClass: typeof Application,
-  config?: Partial<DillPixelApplicationOptions>,
-  domElement?: string | HTMLElement,
-): Promise<T> | T;
-export async function create<T extends Application = Application>(
-  ApplicationClass: typeof Application,
-  config: Partial<DillPixelApplicationOptions> = {},
-  domElement: string | HTMLElement = ApplicationClass.containerID || Application.containerID,
-): Promise<T> {
-  let el: HTMLElement | null = null;
-  if (typeof domElement === 'string') {
-    el = document.getElementById(domElement);
-    if (!el) {
-      el = Application.createContainer(domElement);
-    }
-  } else if (domElement instanceof HTMLElement) {
-    el = domElement;
-  }
-  if (!el) {
-    // no element to use
-    throw new Error(
-      'You passed in a DOM Element, but none was found. If you instead pass in a string, a container will be created for you, using the string for its id.',
-    );
-  }
-  config.resizeTo = el;
-  const instance = new ApplicationClass(config);
+export type RequiredApplicationConfig = WithRequiredProps<IApplicationOptions, 'id'>;
 
-  if (el) {
-    el.appendChild(instance.view as HTMLCanvasElement);
-  } else {
-    throw new Error('No element found to append the view to.');
-  }
+export interface IApplication extends PIXIPApplication {
+  asset: IAssetManager;
+  state: IStateManager;
 
-  await instance.initialize();
-  if (isDev()) {
-    console.log('Application initialized');
-  }
-  return instance as T;
+  initialize(config: RequiredApplicationConfig): Promise<IApplication>;
+
+  getModule<T extends IModule>(name: string): T;
 }
 
-export class Application<T extends Application = any> extends PIXIApplication {
-  protected static readonly SIZE_MIN_DEFAULT: Point = new Point(1024, 768);
-  protected static readonly SIZE_MAX_DEFAULT: Point = new Point(1365, 768);
-  protected static _instance: Application;
-  protected _stateManager: StateManager<T>;
-  protected _audioManager: IAudioManager;
-  protected _popupManager: PopupManager<T>;
-  protected _loadManager: LoadManager;
-  protected _keyboardManager: KeyboardManager;
-  protected _keyboardFocusManager: KeyboardFocusManager<DefaultKeyboardFocusManagerSprite>;
-  protected _resizeManager: ResizeManager;
-  protected _copyManager: CopyManager;
-  protected _mouseManager: MouseManager;
-  protected _webEventsManager: WebEventsManager;
-  protected _size: Point;
-  protected _hitAreaRenderer!: HitAreaRenderer;
-  protected _saveManager!: SaveManager;
-  protected _orientationManager!: OrientationManager;
-  protected _voiceoverManager!: IVoiceOverManager;
-  protected _addFactory: Add;
-  protected startSplashProcess: OmitThisParameter<(pPersistentAssets: AssetMapData[], pOnComplete: () => void) => void>;
-  protected _physics: PhysicsBase;
-  protected stats: any;
-  protected _useSpine: boolean;
-  protected _initialized: boolean = false;
+export class Application<R extends Renderer = Renderer> extends PIXIPApplication<R> implements IApplication {
+  protected static instance: Application;
+  public static containerId = 'dill-pixel-game-container';
 
-  /**
-   * Creates a container element with the given id and appends it to the DOM.
-   * @param pId{string} - The id of the element to create.
-   */
+  // signals
+  public onResize = new Signal<(size: { width: number; height: number }) => void>();
+
+  // config
+  protected config: Partial<RequiredApplicationConfig>;
+
+  // modules
+  protected _modules: Map<string, IModule> = new Map();
+
+  // default modules
+  protected _assetManager: IAssetManager;
+  protected _stateManager: IStateManager;
+  protected _webEventsManager: IWebEventsManager;
+
+  // store
+  protected _store: IStore;
+
+  public static getInstance(): Application {
+    return Application.instance;
+  }
+
   public static createContainer(pId: string) {
     const container = document.createElement('div');
     container.setAttribute('id', pId);
@@ -118,512 +89,182 @@ export class Application<T extends Application = any> extends PIXIApplication {
     return container;
   }
 
-  /**
-   * Creates a new instance of the Application class and returns it.
-   */
-  public static getInstance<T extends Application = Application>(): T {
-    if (!this._instance) {
-      throw new Error('Application has not been initialized yet.');
+  constructor() {
+    super();
+    bindAllMethods(this);
+  }
+
+  public get state(): IStateManager {
+    if (!this._stateManager) {
+      this._stateManager = this.getModule<IStateManager>('stateManager');
     }
-    return this._instance as T;
-  }
-
-  /**
-   * The config passed in can be a json object, or an `AppConfig` object.
-   * @param appConfig
-   * @see `AppConfig` for what can be contained in the passed-in config.
-   * @default autoResize: true
-   * @default resolution: utils.isMobile.any === false ? 2 : (window.devicePixelRatio > 1 ? 2 : 1);
-   */
-  constructor(appConfig?: Partial<DillPixelApplicationOptions> & { [key: string]: any }) {
-    if (Application._instance) {
-      throw new Error('Application already exists. Use Application.getInstance() instead.');
-    }
-    super(new AppConfig(appConfig));
-    Application._instance = this;
-    this._useSpine = appConfig?.useSpine || false;
-    if (isDev() || appConfig?.showStatsInProduction) {
-      this.addStats().then(() => {
-        console.log('stats.js added');
-      });
-    }
-    // start the ticker if it hasn't been started yet
-    if (!this.ticker.started) {
-      this.ticker.start();
-    }
-
-    // set the resolution suffix for loading assets
-    AssetUtils.resolutionSuffix = this.resolutionSuffix;
-
-    // bind functions
-    bindMethods(this, 'update', 'onRequiredAssetsLoaded', 'onPlayAudio');
-
-    // create factories
-    this._addFactory = new Add(this.stage);
-    this._size = new Point();
-
-    Ticker.shared.add(this.update);
-
-    this._webEventsManager = new WebEventsManager(this);
-    this._mouseManager = new MouseManager(this.renderer.events);
-    this._stateManager = new StateManager(this);
-    this._popupManager = new PopupManager(this);
-    this._loadManager = new LoadManager(this, this.createSplashScreen());
-    this._audioManager = new HowlerManager(this);
-    this._keyboardManager = new KeyboardManager(this);
-    this.addFocusManager();
-
-    if (this.resizeTo) {
-      this._resizeManager = new ResizeManager(this);
-    } else {
-      this._resizeManager = new ResizeManager(
-        this,
-        appConfig?.sizeMin || Application.SIZE_MIN_DEFAULT,
-        appConfig?.sizeMax || Application.SIZE_MAX_DEFAULT,
-      );
-    }
-
-    this._copyManager = new CopyManager(this);
-    this._saveManager = new SaveManager(this);
-    this._orientationManager = new OrientationManager(this);
-    this._voiceoverManager = new VoiceOverManager(this);
-
-    /**
-     * Bind methods from some manager classes to callable methods in the application
-     */
-    this.startSplashProcess = this._loadManager.startSplashProcess.bind(this._loadManager);
-  }
-
-  static get containerElement(): HTMLElement | undefined {
-    return document.getElementById(Application.containerID) || undefined;
-  }
-
-  static get containerID(): string {
-    return 'game-container';
-  }
-
-  /**
-   * gets the current singleton instance
-   */
-  static get instance(): Application {
-    if (Application._instance === undefined) {
-      throw new Error('Application has not been initialized yet.');
-    }
-
-    return Application._instance;
-  }
-
-  // override this to set a custom resolution suffix;
-  get resolutionSuffix(): string {
-    return '@' + this.renderer.resolution + 'x';
-  }
-
-  get add(): Add {
-    return this._addFactory;
-  }
-
-  get make(): typeof Make {
-    return Make;
-  }
-
-  get addToStage() {
-    return this.stage.addChild.bind(this.stage);
-  }
-
-  /**
-   * Override to specify assets that should persist between state loads.
-   *
-   * Note: Splash screen assets are loaded before requiredAssets
-   * @override
-   */
-  public get requiredAssets(): AssetMapData[] {
-    // override
-    return [];
-  }
-
-  public get state(): StateManager<T> {
     return this._stateManager;
   }
 
-  public get keyboard(): KeyboardManager {
-    return this._keyboardManager;
+  public get asset(): IAssetManager {
+    if (!this._assetManager) {
+      this._assetManager = this.getModule<IAssetManager>('assetManager');
+    }
+    return this._assetManager;
   }
 
-  public get popups(): PopupManager<T> {
-    return this._popupManager;
-  }
-
-  public get audio(): IAudioManager {
-    return this._audioManager;
-  }
-
-  public get voiceover(): IVoiceOverManager {
-    return this._voiceoverManager;
-  }
-
-  public get size(): Point {
-    return this._size;
-  }
-
-  public get hitAreaRenderer(): HitAreaRenderer {
-    return this._hitAreaRenderer;
-  }
-
-  public get resizer(): ResizeManager {
-    return this._resizeManager;
-  }
-
-  public get copy(): CopyManager {
-    return this._copyManager;
-  }
-
-  public get webEvents(): WebEventsManager {
+  public get webEvents(): IWebEventsManager {
+    if (!this._webEventsManager) {
+      this._webEventsManager = this.getModule<IWebEventsManager>('webEventsManager');
+    }
     return this._webEventsManager;
   }
 
-  public get saveManager(): SaveManager {
-    return this._saveManager;
+  public get store(): IStore {
+    return this._store;
   }
 
-  public get orientationManager(): OrientationManager {
-    return this._orientationManager;
-  }
-
-  public get load(): LoadManager {
-    return this._loadManager;
-  }
-
-  public get defaultState(): string | typeof State | undefined {
-    return undefined;
-  }
-
-  public get physics(): PhysicsBase {
-    return this._physics;
-  }
-
-  public get htmlTextStyles(): typeof HTMLTextStyleManager {
-    return HTMLTextStyleManager;
-  }
-
-  public async addStats() {
-    const Stats = await import('stats.js').then((m) => m.default);
-    this.stats = new Stats();
-    this.stats.dom.id = 'stats';
-    Application.containerElement?.appendChild(this.stats.dom);
-    this.stats.dom.style.position = 'absolute';
-    this.stats.dom.style.top = '24px';
-    this.stats.dom.style.right = '40px';
-    this.stats.dom.style.left = 'auto';
-  }
-
-  public async addPhysics(type: PhysicsEngineType = PhysicsEngineType.MATTER): Promise<PhysicsBase> {
-    let PhysicsModule: any;
-    switch (type) {
-      case PhysicsEngineType.RAPIER:
-        PhysicsModule = await import('../physics/rapier').then((m) => m.RapierPhysics);
-        break;
-      case PhysicsEngineType.MATTER:
-      default:
-        PhysicsModule = await import('../physics/matter').then((m) => m.MatterPhysics);
-        break;
+  public async initialize(config: RequiredApplicationConfig): Promise<IApplication> {
+    if (Application.instance) {
+      throw new Error('Application is already initialized');
     }
-    this._physics = new PhysicsModule(this);
-    return this._physics;
-  }
 
-  /**
-   *
-   * proxy function for @link {AssetMap.addAssetGroup}
-   * @param groupIdOrClass
-   * @param assets
-   */
-  public addAssetGroup(groupIdOrClass: string | typeof State<T> | typeof State, assets?: AssetMapData[]): void {
-    if (typeof groupIdOrClass === 'string') {
-      return AssetMap.addAssetGroup(groupIdOrClass as string, assets as AssetMapData[]);
-    } else {
-      const Klass: typeof State = groupIdOrClass as typeof State;
-      if (!Klass.NAME) {
-        throw new Error(`You tried to add an asset group for ${Klass}, but it has no NAME defined.`);
+    Application.instance = this;
+    this.config = Object.assign({ ...defaultApplicationOptions }, config);
+
+    await this.preInitialize();
+
+    // initialize the pixi application
+    await Application.instance.init(Application.instance.config);
+
+    // get the renderer type (webgl or webgpu now)
+    const renderer = await autoDetectRenderer({});
+
+    // initialize the logger
+    Logger.initialize(config.id || this.constructor.name);
+
+    // log the renderer for now
+    Logger.log(renderer);
+
+    // register the default modules
+    if (this.config.useDefaults) {
+      await this.registerDefaultModules();
+    }
+
+    if (this.config.customModules && this.config.customModules.length > 0) {
+      for (let i = 0; i < this.config.customModules.length; i++) {
+        const module = this.config.customModules[i];
+        if (typeof module === 'function') {
+          await this.registerModule(new module());
+        } else {
+          await this.registerModule(module);
+        }
       }
-      if (!Klass.Assets) {
-        throw new Error(`You tried to add an asset group for ${Klass.NAME}, but it has no assets defined.`);
+    }
+
+    // register the applications custom modules
+    await this.registerCustomModules();
+
+    // add the store if it's enabled
+    if (this.config.useStore) {
+      this._store = new Store();
+      // register any storage adapters passed through the config
+      if (this.config.storageAdapters && this.config.storageAdapters.length > 0) {
+        for (let i = 0; i < this.config.storageAdapters.length; i++) {
+          const storageAdapter = this.config.storageAdapters[i];
+          if (typeof storageAdapter === 'function') {
+            await this.registerStorageAdapter(new storageAdapter());
+          } else {
+            await this.registerStorageAdapter(storageAdapter);
+          }
+        }
       }
-      return AssetMap.addAssetGroup(Klass.NAME, assets || Klass.Assets);
-    }
-  }
-
-  public hasAsset(pAssetName: string) {
-    return Assets.get(pAssetName) !== undefined;
-  }
-
-  public async initialize() {
-    if (this._initialized) {
-      throw new Error('Application has already been initialized.');
+      // also call the registerStorageAdapters method to allow for custom storage adapters to be registered
+      await this.registerStorageAdapters();
     }
 
-    await this.init();
+    await this.setupInternal();
     await this.setup();
 
-    this._initialized = true;
+    // return the Application instance to the create method, if needed
+    return Application.instance;
   }
 
-  /**
-   * Initializes all managers and starts the splash screen process.
-   */
-  public async init(): Promise<void> {
-    // load required externals
-    if (this._useSpine) {
-      await this.addSpine();
-    }
-
-    this.onPlayAudio = this.onPlayAudio.bind(this);
-    this.addToStage(this._stateManager);
-    this.addToStage(this._popupManager);
-    this.addToStage(this._loadManager);
-    this._hitAreaRenderer = this.addToStage(new HitAreaRenderer(this.stage));
-    this.addToStage(this._keyboardFocusManager);
-    this._audioManager.init();
-
-    Signals.playAudio.connect(this.onPlayAudio);
-
-    this.addAssetGroups();
-    this.createAssetMap();
-
-    this.registerStates();
-    this.state.statesRegistered();
-
-    this.registerPopups();
-    this.registerLoadingScreens();
-
-    await this.loadDocumentFonts();
-    await this.loadHTMLTextStyles();
-
-    this.startSplashProcess(this.requiredAssets, this.onRequiredAssetsLoaded);
-
-    this.onResize(0);
-    // Delayed to fix incorrect iOS resizing in WKWebView. See: https://bugs.webkit.org/show_bug.cgi?id=170595
-    this.onResize(0.5);
-
-    this._webEventsManager.registerResizeCallback(() => this.onResize(0.5));
+  public getModule<T extends IModule>(moduleName: string): T {
+    return this._modules.get(moduleName) as T;
   }
 
-  public async loadDocumentFonts(): Promise<void> {
-    // check if document.fonts is supported
-    if (document?.fonts) {
-      await document.fonts.ready;
-      await this.allFontsLoaded();
+  public getStorageAdapter(adapterId: string): IStorageAdapter {
+    return this.store.getAdapter(adapterId);
+  }
+
+  protected async preInitialize(): Promise<void> {}
+
+  protected async postInitialize(): Promise<void> {
+    (globalThis as any).__PIXI_APP__ = this;
+  }
+
+  // modules
+  protected async registerModule(module: IModule) {
+    this._modules.set(module.id, module);
+    return module.initialize();
+  }
+
+  protected async registerDefaultModules() {
+    for (let i = 0; i < defaultModules.length; i++) {
+      const module = new defaultModules[i]();
+      await this.registerModule(module);
     }
   }
 
-  public listFonts(): FontFace[] {
-    if (document?.fonts?.values()) {
-      return [...document.fonts.values()];
+  protected async registerCustomModules() {
+    if (isDev) {
+      Logger.log(
+        'No custom modules registered using "registerCustomModules". Register them by overriding the "registerCustomModules" method in your' +
+          ' Application class.',
+      );
     }
-    return [];
-  }
-
-  /**
-   * Preload any custom font styles to be used later on with html text
-   * currently not sure if there's a better way to do this...
-   * @see https://github.com/pixijs/html-text/pull/30
-   * @see {HTMLTextStyleManager} for functionality
-   * @override
-   * @returns {Promise<void>}
-   * @async
-   * @example
-   * // in your Application.ts:
-   * import {loadAndAddHTMLTextStyle} from 'dill-pixel';
-   *
-   * // override loadHTMLTextStyles and do:
-   * await loadAndAddHTMLTextStyle('style1', FONT_FAMILY_NAME_1, { fontSize: 16, lineHeight: 19, fill: 'white' }, [{url:'assets/fonts/{fontFile1}.woff2', weight: 'normal'}, {url:'assets/fonts/{fontFile2}.woff2', weight: 'bold'}]);
-   *
-   * // then later on, from anywhere in your app, you can do:
-   * import {getHTMLTextStyle} from 'dill-pixel';
-   * this.add.htmlText( 'This is some text', getHTMLTextStyle('style1'), ...);
-   */
-  public async loadHTMLTextStyles(): Promise<void> {
-    // override
     return Promise.resolve();
   }
 
-  protected addFocusManager() {
-    this._keyboardFocusManager = new KeyboardFocusManager(DefaultKeyboardFocusManagerSprite);
+  // storage
+  protected async registerStorageAdapters() {
+    if (isDev) {
+      Logger.log(
+        'No storage adapters registered using "registerStorageAdapters". Register them by overriding the' +
+          ' "registerStorageAdapters" method in your' +
+          ' Application class.',
+      );
+    }
+    return Promise.resolve();
   }
 
-  protected async addSpine() {
-    await import('../spine/spine');
+  protected async registerStorageAdapter(adapter: IStorageAdapter): Promise<any> {
+    return this.store.registerAdapter(adapter);
   }
 
+  protected async onResizeInternal(size: Size) {
+    await delay(0.1);
+    this.onResize.emit(this.renderer.screen);
+  }
+
+  /**
+   * Set up the application
+   * This is called after the application is initialized
+   * all modules are registered
+   * and the store is created, with storage adapters registered
+   * @protected
+   */
   protected setup(): Promise<void> | void;
   protected async setup(): Promise<void> {
     // override me to set up application specific stuff
   }
 
   /**
-   * Called once per frame. Updates the `StateManager`, `PopupManager`, `LoadManager` and `HitAreaRenderer`.
+   * Called after the application is initialized
+   * Here we add application specific signal listeners, etc
+   * @returns {Promise<void>}
+   * @private
    */
-  protected update(): void {
-    if (!this._initialized) {
-      return;
+  private async setupInternal(): Promise<void> {
+    if (isDev) {
+      (globalThis as any).__PIXI_APP__ = this;
     }
-
-    if (this.stats) {
-      this.stats.begin();
-    }
-
-    const deltaTime: number = Ticker.shared.elapsedMS / 1000;
-    this._stateManager.update(deltaTime);
-    this._popupManager.update(deltaTime);
-    this._loadManager.update(deltaTime);
-    this._hitAreaRenderer.update(deltaTime);
-    this._physics?.update(deltaTime);
-
-    if (this.stats) {
-      this.stats.end();
-    }
-  }
-
-  /**
-   * Override to return the appropriate splash screen instance to use.
-   * @override
-   */
-  protected createSplashScreen(): SplashScreen {
-    // override
-    return new SplashScreen();
-  }
-
-  /**
-   * Override to set up the asset map for this application.
-   * @override
-   */
-  protected addAssetGroups(): void {
-    // override
-  }
-
-  protected createAssetMap(): void {
-    // override
-  }
-
-  protected registerDefaultLoadScreen(pIdOrClass: string | typeof LoadScreen, pScreen?: LoadScreenProvider): void {
-    this.load.registerLoadScreen(pIdOrClass, pScreen, true);
-  }
-
-  /**
-   * Override to register any and all loading screens needed for this application.
-   * @override
-   */
-  protected registerLoadingScreens(): void {
-    // override
-  }
-
-  /**
-   * Override to register any and all popups needed for this application.
-   * @override
-   */
-  protected registerPopups(): void {
-    // override
-  }
-
-  /**
-   * Override to register any and all states needed for this application.
-   * @override
-   */
-  protected registerStates(): void {
-    // override
-  }
-
-  /**
-   * Called when the application window is resized.
-   * @param debounceDelay A delay (in seconds) before telling the rest of the application that a resize occurred.
-   * @default 0
-   */
-  protected onResize(debounceDelay: number): Promise<void> | void;
-  protected async onResize(debounceDelay: number = 0): Promise<void> {
-    if (debounceDelay > 0) {
-      await delay(debounceDelay);
-    }
-
-    if (this._resizeManager.useAspectRatio) {
-      this._size.copyFrom(this._resizeManager.getSize());
-      const stageScale: number = this._resizeManager.getStageScale();
-      this.stage.scale.set(stageScale);
-      this.renderer.resize(this._size.x * stageScale, this._size.y * stageScale);
-    } else {
-      let w = this._size.x;
-      let h = this._size.y;
-      if ((this.resizeTo as HTMLElement)?.getBoundingClientRect) {
-        const el = this.resizeTo as HTMLElement;
-        w = el.getBoundingClientRect().width;
-        h = el.getBoundingClientRect().height;
-      } else if ((this.resizeTo as Window)?.innerWidth) {
-        const el = this.resizeTo as Window;
-        w = el.innerWidth;
-        h = el.innerHeight;
-      }
-      this._size = new Point(w, h);
-      this._resizeManager.sizeMin = this._size;
-      this._resizeManager.sizeMax = this._size;
-      this.renderer.resize(w, h);
-    }
-
-    this._stateManager.onResize(this._size);
-    this._loadManager.onResize(this._size);
-    this._popupManager.onResize(this._size);
-    this._orientationManager.onResize();
-
-    // emit a global resize signal that anything can listen to
-    Signals.onResize.emit(this._size);
-
-    updateFocus();
-
-    if (this._hitAreaRenderer.active) {
-      this._hitAreaRenderer.renderHitAreas();
-    }
-
-    this.onResizeComplete();
-  }
-
-  protected onPlayAudio(token: AudioToken) {
-    this.audio.play(token.id, token.volume, token.loop, token.category);
-  }
-
-  /**
-   * Called when resize is complete after the delay.
-   * @override
-   */
-  protected onResizeComplete() {
-    // override
-  }
-
-  protected getFontsList(): Font[] {
-    return [];
-  }
-
-  protected async allFontsLoaded(): Promise<void> {
-    const fonts = this.getFontsList();
-    if (fonts?.length > 0) {
-      return Promise.all(
-        fonts.map((ff) => {
-          const font = new FontFaceObserver(ff.family, ff.data);
-          return font.load();
-        }),
-      ).catch((e) => {
-        console.warn('Error loading fonts', e);
-      });
-    } else {
-      return Promise.resolve();
-    }
-  }
-
-  /**
-   * Override to specify what should happen after all persistent assets have been loaded.
-   * @override
-   */
-  protected onRequiredAssetsLoaded(): Promise<void> | void;
-  protected async onRequiredAssetsLoaded(): Promise<void> {
-    // transition to the default state, if set
-    if (this.state.default) {
-      this.state.transitionTo(this.state.default);
-    }
+    this.webEvents.onResize.connect(this.onResizeInternal);
   }
 }
