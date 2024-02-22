@@ -1,7 +1,7 @@
 import { Application } from '../../../core';
 import { Signal } from '../../../signals';
+import { Size } from '../../../utils';
 import { bindAllMethods } from '../../../utils/methodBinding';
-import { Size } from '../../../utils/types';
 import { IModule } from '../../IModule';
 
 export interface IWebEventsManager extends IModule {
@@ -31,28 +31,28 @@ export class WebEventsManager implements IModule {
   }
 
   initialize(): void {
-    document.addEventListener('visibilitychange', this.onVisibilityChangedInternal, false);
-    window.addEventListener('resize', this.onResizeInternal);
-    document.addEventListener('fullscreenchange', this.onResizeInternal);
+    document.addEventListener('visibilitychange', this._onVisibilityChanged, false);
+    window.addEventListener('resize', this._onResize);
+    document.addEventListener('fullscreenchange', this._onResize);
   }
 
   destroy() {
-    document.removeEventListener('visibilitychange', this.onVisibilityChangedInternal, false);
-    window.removeEventListener('resize', this.onResizeInternal);
-    document.removeEventListener('fullscreenchange', this.onResizeInternal);
+    document.removeEventListener('visibilitychange', this._onVisibilityChanged, false);
+    window.removeEventListener('resize', this._onResize);
+    document.removeEventListener('fullscreenchange', this._onResize);
   }
 
   /**
    * Called when the browser visibility changes. Passes the `hidden` flag of the document to all callbacks.
    */
-  private onVisibilityChangedInternal(): void {
+  private _onVisibilityChanged(): void {
     this.onVisibilityChanged.emit(!document.hidden);
   }
 
   /**
    * Called when the browser resizes.
    */
-  private onResizeInternal(): void {
+  private _onResize(): void {
     this.onResize.emit({ width: window.innerWidth, height: window.innerHeight });
   }
 }

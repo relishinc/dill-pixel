@@ -50,9 +50,7 @@ export class Container<T extends Application = Application> extends _Container i
     super.destroy(options);
   }
 
-  initialize() {
-    const gfx = this.add.graphics({ x: 600, y: 100, angle: 60 }).rect(0, 0, 100, 50).fill('white');
-  }
+  initialize() {}
 
   addSignalConnection(...args: SignalConnection[]) {
     for (const connection of args) {

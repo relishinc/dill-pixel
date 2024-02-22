@@ -178,7 +178,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       await this.registerStorageAdapters();
     }
 
-    await this.setupInternal();
+    await this._setup(); // internal
     await this.setup();
 
     // return the Application instance to the create method, if needed
@@ -238,11 +238,6 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this.store.registerAdapter(adapter);
   }
 
-  protected async onResizeInternal(size: Size) {
-    await delay(0.1);
-    this.onResize.emit(this.renderer.screen);
-  }
-
   /**
    * Set up the application
    * This is called after the application is initialized
@@ -251,8 +246,14 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
    * @protected
    */
   protected setup(): Promise<void> | void;
+
   protected async setup(): Promise<void> {
     // override me to set up application specific stuff
+  }
+
+  private async _onResize(size: Size) {
+    await delay(0.1);
+    this.onResize.emit(this.renderer.screen);
   }
 
   /**
@@ -261,10 +262,10 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
    * @returns {Promise<void>}
    * @private
    */
-  private async setupInternal(): Promise<void> {
+  private async _setup(): Promise<void> {
     if (isDev) {
       (globalThis as any).__PIXI_APP__ = this;
     }
-    this.webEvents.onResize.connect(this.onResizeInternal);
+    this.webEvents.onResize.connect(this._onResize);
   }
 }
