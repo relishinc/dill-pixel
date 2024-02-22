@@ -1,10 +1,9 @@
-import { DestroyOptions } from 'pixi.js';
+import { DestroyOptions, Ticker } from 'pixi.js';
 import { SignalConnection, SignalConnections } from 'typed-signals';
 import { Application } from '../core';
 import { Animated, Factory } from '../mixins';
 import { defaultFactoryMethods } from '../mixins/factory';
-import { Size } from '../utils';
-import { bindAllMethods } from '../utils/methodBinding';
+import { bindAllMethods, Size } from '../utils';
 
 const _Container = Animated(Factory(defaultFactoryMethods));
 
@@ -19,7 +18,7 @@ export interface IContainer {
 
   onResize(size: Size): void;
 
-  update(): void;
+  update(ticker: Ticker): void;
 }
 
 export class Container<T extends Application = Application> extends _Container implements IContainer {
@@ -60,5 +59,5 @@ export class Container<T extends Application = Application> extends _Container i
 
   onResize(size: Size) {}
 
-  update() {}
+  update(ticker: Ticker) {}
 }
