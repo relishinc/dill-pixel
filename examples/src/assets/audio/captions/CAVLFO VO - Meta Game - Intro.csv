@@ -1,8 +1,8 @@
-FILENAME,TYPE,ACTION,SPEAKER,LINE,SCRATCH_VOICE,SCRATCH_GENDER,SCRATCH_LANGUAGE,SCRATCH_PITCH
-vo_intro_0,VO,,Boffin,J’ai toujours voulu être un scientifique. C’est pourquoi j’ai accepté un travail mystérieux au milieu de nulle part.,fr-CA-Neural2-A,female,fr-CA,
+FILENAME,TYPE,ACTION,SPEAKER,LINE,SCRATCH_VOICE,SCRATCH_GENDER,SCRATCH_LANGUAGE,CAPTION
+vo_intro_0,VO,,Boffin,J’ai toujours voulu être un scientifique. C’est pourquoi j’ai accepté un travail mystérieux au milieu de nulle part.,fr-CA-Neural2-A,female,fr-CA,N
 vo_intro_1,VO,,Boffin,"Une nuit, le ciel s’illumine. Quelque chose vient
 de s’écraser tout près. Je dois aller voir...",fr-CA-Neural2-A,female,fr-CA,
 vo_intro_2,VO,,Boffin,"C’est un vaisseau spatial, piloté par un extraterrestre
 nommé Boffin. Il a besoin d’aide pour réparer
 son vaisseau et terminer ses recherches pour
-pouvoir retourner sauver sa planète.",fr-CA-Neural2-A,female,fr-CA,
+pouvoir retourner sauver sa planète.",fr-CA-Neural2-A,female,fr-CA,N

@@ -58,16 +58,21 @@ async function readCaptions(dir) {
 		const sectionColumn = csv[0].reduce((a, t, i) => t === 'Section' ? i : a, -1);
 		const fileColumn = csv[0].reduce((a, t, i) => t === 'FILENAME' || t === 'File Name' ? i : a, -1);
 		const textColumn = csv[0].reduce((a, t, i) => t === 'LINE' || t === 'VO Line' ? i : a, -1);
+		const captionColumn = csv[0].reduce((a, t, i) => t === 'CAPTION' ? i : a, -1);
 		const startOffsetColumn = csv[0].indexOf('START_OFFSET');
 		const endOffsetColumn = csv[0].indexOf('END_OFFSET');
 
 		function processRow(file, row) {
-
 			const duration = durations[file];
 			const text = normalizeText(row[textColumn]);
 			if (captions[file] !== undefined) {
 				console.log(bold(bgRed(white('[Process Row]'))), red(file), white('Skipping - there is already' +
 					' content for this caption'));
+				return;
+			}
+			const skip = captionColumn > -1 && row[captionColumn] === 'N';
+			if (skip) {
+				console.log(bold(bgRed(white('[Process Row]'))), red(file), white('Skipping - N'));
 				return;
 			}
 			if (file && text && duration && !captions[file]) {
