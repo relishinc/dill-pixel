@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.33.0](https://github.com/relishinc/dill-pixel/compare/v2.32.5...v2.33.0) (2024-02-23)
+
+
+### Features
+
+* added option in captioning cli to skip caption generation with flag in csv 'CAPTION' column ([9dc069c](https://github.com/relishinc/dill-pixel/commit/9dc069ca4b36d8d447b397499b8c8d2691d8836f))
+
 ## [2.32.5](https://github.com/relishinc/dill-pixel/compare/v2.32.4...v2.32.5) (2024-02-23)
 
 
