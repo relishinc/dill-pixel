@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.32.5](https://github.com/relishinc/dill-pixel/compare/v2.32.4...v2.32.5) (2024-02-23)
+
+
+### Bug Fixes
+
+* play caption even when vo is skipped when already playing ([833450c](https://github.com/relishinc/dill-pixel/commit/833450c8e20be9c79b72c8768bb1b4bf0bfd043a))
+
 ## [2.32.4](https://github.com/relishinc/dill-pixel/compare/v2.32.3...v2.32.4) (2024-02-21)
 
 
