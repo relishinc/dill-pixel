@@ -202,6 +202,7 @@ export class VoiceOverManager implements IVoiceOverManager {
       this.app.audio.getAudioTrack(key[0], AudioCategory.VO)?.isPlaying()
     ) {
       this.warn('🔇 Skipped VO [%c%s%c] because it is already playing', RED, key[0], BLACK);
+      this.playCaptionForSkippedVO(key[0], skipCC, caption, data);
       if (callback) {
         callback(false);
       }
@@ -267,6 +268,30 @@ export class VoiceOverManager implements IVoiceOverManager {
     }
     clearTimeout(this._activeTimeout);
     this._activeTimeout = undefined;
+  }
+
+  private playCaptionForSkippedVO(
+    key: string,
+    skipCC?: boolean,
+    caption?: {
+      id: string;
+      args: { [key: string]: string };
+    },
+    data?: any,
+  ) {
+    const item = {
+      key,
+      skipCC,
+      caption,
+      data,
+    };
+    if (!item.skipCC) {
+      if (item.caption) {
+        playCaption({ id: item.caption.id, args: item.caption.args, data: item.data });
+      } else {
+        playCaption({ id: item.key, data: item.data });
+      }
+    }
   }
 
   private addToQueue(
