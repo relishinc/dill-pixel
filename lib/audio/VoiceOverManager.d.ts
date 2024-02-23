@@ -88,6 +88,7 @@ export declare class VoiceOverManager implements IVoiceOverManager {
     private get activeVO();
     playVO(key: string | (string | number)[], mode?: PlayMode | Callback | IPlayOptions, callback?: Callback): void;
     stopVO(): void;
+    private playCaptionForSkippedVO;
     private addToQueue;
     private playNext;
     private onPause;
