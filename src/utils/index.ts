@@ -8,6 +8,7 @@ export type {
   PointLike,
   WithPointLike,
   Size,
+  SceneList,
 } from './types';
 export { resolvePointLike, getSheetLikeString, setObjectName } from './functions';
 export { isRetina, isMobile } from './platform';

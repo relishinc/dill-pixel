@@ -1,4 +1,4 @@
 export { Container } from './Container';
 export type { IContainer } from './Container';
-export { State } from './State';
-export type { IState } from './State';
+export { Scene } from './Scene';
+export type { IScene } from './Scene';

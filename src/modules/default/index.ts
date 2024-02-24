@@ -1,13 +1,13 @@
 import { IModule } from '../IModule';
-import { AssetManager } from './asset';
-import { StateManager } from './state';
+import { AssetManager } from './assets';
+import { SceneManager } from './scenes';
 import { WebEventsManager } from './web';
 
-const defaultModules: (new () => IModule)[] = [AssetManager, StateManager, WebEventsManager];
+const defaultModules: (new () => IModule)[] = [AssetManager, SceneManager, WebEventsManager];
 export { defaultModules };
 
-export { AssetManager, StateManager, WebEventsManager };
+export { AssetManager, SceneManager, WebEventsManager };
 
-export type { IAssetManager } from './asset';
-export type { IStateManager } from './state';
+export type { IAssetManager } from './assets';
+export type { ISceneManager } from './scenes';
 export type { IWebEventsManager } from './web';

@@ -27,3 +27,5 @@ export type ContainerLike = {
 };
 
 export type TextureLike = string | Texture;
+
+export type SceneList = { id: string; module: any }[];
