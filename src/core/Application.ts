@@ -6,11 +6,12 @@ import {
   RendererDestroyOptions,
 } from 'pixi.js';
 import { IModule } from '../modules';
-import { defaultModules, IAssetManager, IStateManager, IWebEventsManager } from '../modules/default';
+import type { IAssetManager, ISceneManager, IWebEventsManager } from '../modules/default';
+import { defaultModules } from '../modules/default';
 import { Signal } from '../signals';
 import { IStorageAdapter } from '../store';
 import { IStore, Store } from '../store/Store';
-import { bindAllMethods, isDev, isMobile, isRetina, Logger, WithRequiredProps } from '../utils';
+import { bindAllMethods, isDev, isMobile, isRetina, Logger, SceneList, WithRequiredProps } from '../utils';
 
 export interface IApplicationOptions extends ApplicationOptions {
   id: string;
@@ -19,6 +20,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   useSpine: false;
   storageAdapters: ((new () => IStorageAdapter) | IStorageAdapter)[];
   customModules: ((new () => IModule) | IModule)[];
+  scenes: SceneList;
 }
 
 const defaultApplicationOptions: Partial<IApplicationOptions> = {
@@ -48,13 +50,16 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   useSpine: false,
   storageAdapters: [],
   customModules: [],
+  scenes: [],
 };
 
 export type RequiredApplicationConfig = WithRequiredProps<IApplicationOptions, 'id'>;
 
 export interface IApplication extends PIXIPApplication {
-  asset: IAssetManager;
-  state: IStateManager;
+  config: Partial<IApplicationOptions>;
+  assets: IAssetManager;
+  scenes: ISceneManager;
+  webEvents: IWebEventsManager;
 
   initialize(config: RequiredApplicationConfig): Promise<IApplication>;
 
@@ -62,21 +67,18 @@ export interface IApplication extends PIXIPApplication {
 }
 
 export class Application<R extends Renderer = Renderer> extends PIXIPApplication<R> implements IApplication {
+  // config
+  public config: Partial<IApplicationOptions>;
   protected static instance: Application;
   public static containerId = 'dill-pixel-game-container';
-
   // signals
   public onResize = new Signal<(size: { width: number; height: number }) => void>();
-
-  // config
-  protected config: Partial<RequiredApplicationConfig>;
-
   // modules
   protected _modules: Map<string, IModule> = new Map();
 
   // default modules
   protected _assetManager: IAssetManager;
-  protected _stateManager: IStateManager;
+  protected _sceneManager: ISceneManager;
   protected _webEventsManager: IWebEventsManager;
 
   // store
@@ -98,18 +100,18 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     bindAllMethods(this);
   }
 
-  public get state(): IStateManager {
-    if (!this._stateManager) {
-      this._stateManager = this.getModule<IStateManager>('stateManager');
-    }
-    return this._stateManager;
-  }
-
-  public get asset(): IAssetManager {
+  public get assets(): IAssetManager {
     if (!this._assetManager) {
       this._assetManager = this.getModule<IAssetManager>('assetManager');
     }
     return this._assetManager;
+  }
+
+  public get scenes(): ISceneManager {
+    if (!this._sceneManager) {
+      this._sceneManager = this.getModule<ISceneManager>('sceneManager');
+    }
+    return this._sceneManager;
   }
 
   public get webEvents(): IWebEventsManager {
@@ -216,7 +218,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   // modules
   protected async registerModule(module: IModule) {
     this._modules.set(module.id, module);
-    return module.initialize();
+    return module.initialize(this);
   }
 
   protected async registerDefaultModules() {
@@ -285,6 +287,10 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
     // connect onResize signal
     this.webEvents.onResize.connect(this._onResize);
+
+    // scene manager
+    this.stage.addChild(this.scenes.view);
+    this.scenes.changeScene('TestScene');
 
     return Promise.resolve();
   }

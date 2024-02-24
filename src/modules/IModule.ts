@@ -1,7 +1,9 @@
+import { IApplication } from '../core';
+
 export interface IModule {
   id: string;
 
-  initialize(): Promise<void> | void;
+  initialize(app: IApplication): Promise<void> | void;
 
   destroy(): void;
 }
