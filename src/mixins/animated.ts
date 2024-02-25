@@ -1,4 +1,5 @@
 import { gsap } from 'gsap';
+import { PIXIContainer } from '../pixi';
 import { Signal } from '../signals';
 import { Constructor } from '../utils';
 
@@ -6,16 +7,32 @@ export interface GSAPAnimationConfigExtended extends gsap.TweenVars {}
 
 type GSAPEntity = gsap.core.Tween | gsap.core.Timeline;
 
-export const Animated = <TBase extends Constructor<any>>(Base: TBase) => {
-  return class extends Base {
+export interface IAnimated {
+  onAnimationStart: Signal<(entity: GSAPEntity) => void>;
+  onAnimationUpdate: Signal<(entity: GSAPEntity) => void>;
+  onAnimationComplete: Signal<(entity: GSAPEntity) => void>;
+
+  animate(animationProps: GSAPAnimationConfigExtended, instance?: any): gsap.core.Tween;
+
+  animateSequence(sequences: GSAPAnimationConfigExtended[], instance?: any): gsap.core.Timeline;
+
+  pauseAnimations(): void;
+
+  resumeAnimations(): void;
+
+  clearAnimations(): void;
+}
+
+export function Animated<TBase extends Constructor<PIXIContainer>>(Base: TBase): TBase & Constructor<IAnimated> {
+  return class extends Base implements IAnimated {
     // signals for animation events
-    public onAnimationStart = new Signal<(entity: GSAPEntity) => void>();
-    public onAnimationUpdate = new Signal<(entity: GSAPEntity) => void>();
-    public onAnimationComplete = new Signal<(entity: GSAPEntity) => void>();
+    onAnimationStart = new Signal<(entity: GSAPEntity) => void>();
+    onAnimationUpdate = new Signal<(entity: GSAPEntity) => void>();
+    onAnimationComplete = new Signal<(entity: GSAPEntity) => void>();
 
     // store active tweens / timelines
-    public _activeTweens: gsap.core.Tween[] = [];
-    public _activeTimeline?: gsap.core.Timeline;
+    _activeTweens: gsap.core.Tween[] = [];
+    _activeTimeline?: gsap.core.Timeline;
 
     animate(animationProps: GSAPAnimationConfigExtended, instance: any = this) {
       const tween = gsap.to(instance, {
@@ -54,31 +71,22 @@ export const Animated = <TBase extends Constructor<any>>(Base: TBase) => {
       return this._activeTimeline;
     }
 
-    playAnimation() {
-      this._activeTimeline?.play();
-    }
-
-    pauseAnimation() {
-      this._activeTimeline?.pause();
-    }
-
-    resumeAnimation() {
-      this._activeTimeline?.resume();
-    }
-
-    reverseAnimation() {
-      this._activeTimeline?.reverse();
-    }
-
-    restartAnimation() {
-      this._activeTimeline?.restart();
-    }
-
     clearAnimations() {
       this._activeTweens.forEach((tween) => tween.kill());
       this._activeTweens = [];
       this._activeTimeline?.clear();
       this._activeTimeline = undefined;
+    }
+
+    // some animation utility methods
+    pauseAnimations() {
+      this._activeTweens.forEach((tween) => tween.pause());
+      this._activeTimeline?.pause();
+    }
+
+    resumeAnimations() {
+      this._activeTweens.forEach((tween) => tween.play());
+      this._activeTimeline?.play();
     }
 
     _onAnimationStart(animationEntity: GSAPEntity | undefined) {
@@ -92,8 +100,9 @@ export const Animated = <TBase extends Constructor<any>>(Base: TBase) => {
     _onAnimationComplete(animationEntity: GSAPEntity | undefined) {
       this.onAnimationComplete.emit(animationEntity as GSAPEntity);
     }
-  };
-};
+  } as unknown as TBase & Constructor<IAnimated>;
+}
+
 
 // Example usage below
 /*

@@ -7,6 +7,7 @@ export * from './display';
 export * from './modules';
 export * from './store';
 export * from './utils';
+export * from './mixins';
 
 export async function create<T extends IApplication = Application>(
   ApplicationClass: new () => T,

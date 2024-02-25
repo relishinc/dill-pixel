@@ -10,16 +10,15 @@ export class TestScene extends Scene {
 
   public destroy(): void {}
 
-  public initialize(): Promise<void> {
-    return Promise.resolve(undefined);
-  }
-
   enter(): Promise<void> {
     return Promise.resolve();
   }
 
   start() {
-    const actor = this.addChild(new Actor()) as Actor;
-    actor.animate({ x: 600, y: 200, angle: 40, yoyo: true, repeat: -1, duration: 2, ease: 'expo.out' });
+    const actor = this.add.existing<Actor>(new Actor()) as Actor;
+  }
+
+  public initialize(): Promise<void> {
+    return Promise.resolve(undefined);
   }
 }
