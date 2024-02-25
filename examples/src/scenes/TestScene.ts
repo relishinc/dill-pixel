@@ -10,15 +10,14 @@ export class TestScene extends Scene {
 
   public destroy(): void {}
 
-  enter(): Promise<void> {
+  public enter(): Promise<void> {
     return Promise.resolve();
   }
 
-  start() {
+  public start() {
     const actor = this.add.existing<Actor>(new Actor()) as Actor;
-  }
-
-  public initialize(): Promise<void> {
-    return Promise.resolve(undefined);
+    this.app.keyboard.onKeyUp('a').connect((detail) => {
+      actor.tint = Math.random() * 0xffffff;
+    });
   }
 }
