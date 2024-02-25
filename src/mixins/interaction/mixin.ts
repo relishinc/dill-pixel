@@ -5,18 +5,6 @@ import { PIXIContainer } from '../../pixi';
 import { Signal } from '../../signals';
 import { Constructor } from '../../utils';
 
-type BaseInteractionEventName =
-  | 'pointerdown'
-  | 'pointerup'
-  | 'pointermove'
-  | 'click'
-  | 'rightclick'
-  | 'mousedown'
-  | 'mouseup';
-
-// Helper type to transform an event name into a signal property name
-type SignalPropertyName<EventName extends string> = `on${Capitalize<EventName>}`;
-
 // Step 2: Map to prefixed signal properties
 // Explicitly define an interface for all possible signals
 export interface InteractionSignals {
