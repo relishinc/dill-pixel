@@ -29,7 +29,9 @@ export class Scene extends Container implements IScene {
 
   update(ticker: Ticker) {}
 
-  start() {
-    return Promise.resolve();
+  start(): Promise<void> | void;
+
+  async start(): Promise<void> {
+    // override me to set up application specific stuff
   }
 }

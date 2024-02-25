@@ -12,7 +12,7 @@ export interface IContainer {
 
   destroy(options?: DestroyOptions): void;
 
-  initialize(): Promise<void> | void;
+  onAdded(): Promise<void> | void;
 
   addSignalConnection(...args: SignalConnection[]): void;
 
@@ -37,7 +37,7 @@ export class Container<T extends Application = Application> extends _Container i
       this.app.ticker.add(this.update);
     }
 
-    void this.initialize();
+    this.on('added', this.onAdded);
   }
 
   get app(): T {
@@ -49,7 +49,7 @@ export class Container<T extends Application = Application> extends _Container i
     super.destroy(options);
   }
 
-  initialize() {}
+  onAdded() {}
 
   addSignalConnection(...args: SignalConnection[]) {
     for (const connection of args) {
