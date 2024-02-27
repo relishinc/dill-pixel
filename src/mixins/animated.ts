@@ -14,6 +14,14 @@ export interface IAnimated {
 
   animate(animationProps: GSAPAnimationConfigExtended, instance?: any): gsap.core.Tween;
 
+  animateFrom(animationProps: GSAPAnimationConfigExtended, instance?: any): gsap.core.Tween;
+
+  animateFromTo(
+    fromProps: GSAPAnimationConfigExtended,
+    toProps: GSAPAnimationConfigExtended,
+    instance?: any,
+  ): gsap.core.Tween;
+
   animateSequence(sequences: GSAPAnimationConfigExtended[], instance?: any): gsap.core.Timeline;
 
   pauseAnimations(): void;
@@ -36,6 +44,24 @@ export function Animated<TBase extends Constructor<PIXIContainer>>(Base: TBase):
 
     public animate(animationProps: GSAPAnimationConfigExtended, instance: any = this) {
       const tween = gsap.to(instance, {
+        ...animationProps,
+        onStart: () => {
+          this._onAnimationStart(tween);
+        },
+        onUpdate: () => {
+          this._onAnimationUpdate(tween);
+        },
+        onComplete: () => {
+          this._onAnimationComplete(tween);
+          this._activeTweens = this._activeTweens.filter((t) => t !== tween);
+        },
+      });
+      this._activeTweens.push(tween);
+      return tween;
+    }
+
+    public animateFrom(animationProps: GSAPAnimationConfigExtended, instance: any = this) {
+      const tween = gsap.from(instance, {
         ...animationProps,
         onStart: () => {
           this._onAnimationStart(tween);
@@ -87,6 +113,35 @@ export function Animated<TBase extends Constructor<PIXIContainer>>(Base: TBase):
     public resumeAnimations() {
       this._activeTweens.forEach((tween) => tween.play());
       this._activeTimeline?.play();
+    }
+
+    public animateFromTo(
+      fromProps: GSAPAnimationConfigExtended,
+      toProps: GSAPAnimationConfigExtended,
+      instance: any = this,
+    ) {
+      const tween = gsap.fromTo(
+        instance,
+        {
+          ...fromProps,
+        },
+        {
+          ...toProps,
+        },
+      );
+      tween.eventCallback('onStart', () => {
+        this._onAnimationStart(tween);
+      });
+      tween.eventCallback('onUpdate', () => {
+        this._onAnimationUpdate(tween);
+      });
+      tween.eventCallback('onComplete', () => {
+        this._onAnimationComplete(tween);
+        this._activeTweens = this._activeTweens.filter((t) => t !== tween);
+      });
+
+      this._activeTweens.push(tween);
+      return tween;
     }
 
     private _onAnimationStart(animationEntity: GSAPEntity | undefined) {

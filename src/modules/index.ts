@@ -1,2 +1,3 @@
-export type { IModule } from './IModule';
-export type { IFocusManager, IFocusable, FocusManagerOptions } from './default/focus';
+export { Module } from './Module';
+export type { IModule } from './Module';
+export type { IFocusable } from './default';

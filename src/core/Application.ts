@@ -6,9 +6,15 @@ import {
   RendererDestroyOptions,
 } from 'pixi.js';
 import { IModule } from '../modules';
-import type { IAssetManager, IKeyboardManager, ISceneManager, IWebEventsManager } from '../modules/default';
+import type {
+  FocusManagerOptions,
+  IAssetManager,
+  IFocusManager,
+  IKeyboardManager,
+  ISceneManager,
+  IWebEventsManager,
+} from '../modules/default';
 import { defaultModules } from '../modules/default';
-import { FocusManagerOptions, IFocusManager } from '../modules/default/focus/FocusManager';
 import { Signal } from '../signals';
 import { IStorageAdapter } from '../store';
 import { IStore, Store } from '../store/Store';
@@ -42,7 +48,7 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   premultipliedAlpha: false,
   preserveDrawingBuffer: false,
   resizeTo: undefined,
-  sharedTicker: false,
+  sharedTicker: true,
   view: undefined,
   width: 0,
   autoDensity: true,
@@ -63,6 +69,8 @@ export interface IApplication extends PIXIPApplication {
   assets: IAssetManager;
   scenes: ISceneManager;
   webEvents: IWebEventsManager;
+  keyboard: IKeyboardManager;
+  focus: IFocusManager;
 
   initialize(config: RequiredApplicationConfig): Promise<IApplication>;
 
@@ -274,10 +282,10 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   }
 
   /**
-   * Set up the application
    * This is called after the application is initialized
-   * all modules are registered
-   * and the store is created, with storage adapters registered
+   * You can be sure that
+   * - all modules are registered
+   * - the store is created, with all storage adapters registered
    * @protected
    */
   protected setup(): Promise<void> | void;

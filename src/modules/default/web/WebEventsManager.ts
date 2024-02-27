@@ -1,7 +1,7 @@
 import { Application } from '../../../core';
 import { Signal } from '../../../signals';
 import { bindAllMethods, Size } from '../../../utils';
-import { IModule } from '../../IModule';
+import { IModule, Module } from '../../Module';
 
 export interface IWebEventsManager extends IModule {
   onResize: Signal<(size: { width: number; height: number }) => void>;
@@ -11,7 +11,7 @@ export interface IWebEventsManager extends IModule {
 /**
  * Maintains a list of callbacks for specific web events and invokes callbacks when event occurs.
  */
-export class WebEventsManager implements IModule {
+export class WebEventsManager extends Module implements IWebEventsManager {
   public readonly id = 'WebEventsManager';
 
   // signals
@@ -22,6 +22,7 @@ export class WebEventsManager implements IModule {
    * Creates callback arrays and registers to web events.
    */
   constructor() {
+    super();
     bindAllMethods(this);
   }
 

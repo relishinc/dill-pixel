@@ -12,32 +12,29 @@ export interface IContainer {
 
   destroy(options?: DestroyOptions): void;
 
-  onAdded(): Promise<void> | void;
+  added(): Promise<void> | void;
 
   addSignalConnection(...args: SignalConnection[]): void;
 
-  onResize(size: Size): void;
+  resize(size: Size): void;
 
   update(ticker: Ticker): void;
 }
 
+type ContainerConfig = {
+  autoResize: boolean;
+  autoUpdate: boolean;
+  priority: number;
+};
+
 export class Container<T extends Application = Application> extends _Container implements IContainer {
   protected _signalConnections: SignalConnections = new SignalConnections();
 
-  constructor(autoResize = true, autoUpdate = false, priority: number = 0) {
+  constructor(private __config: ContainerConfig = { autoResize: true, autoUpdate: false, priority: 0 }) {
     super();
 
     bindAllMethods(this);
-
-    if (autoResize) {
-      this.addSignalConnection(this.app.onResize.connect(this.onResize, priority));
-    }
-
-    if (autoUpdate) {
-      this.app.ticker.add(this.update);
-    }
-
-    this.on('added', this.onAdded);
+    this.on('added', this._added);
   }
 
   public get app(): T {
@@ -49,15 +46,27 @@ export class Container<T extends Application = Application> extends _Container i
     super.destroy(options);
   }
 
-  public onAdded() {}
-
   public addSignalConnection(...args: SignalConnection[]) {
     for (const connection of args) {
       this._signalConnections.add(connection);
     }
   }
 
-  public onResize(size: Size) {}
-
   public update(ticker: Ticker) {}
+
+  public resize(size: Size) {}
+
+  public added() {}
+
+  private _added() {
+    if (this.__config.autoResize) {
+      this.addSignalConnection(this.app.onResize.connect(this.resize, this.__config.priority));
+    }
+
+    if (this.__config.autoUpdate) {
+      this.app.ticker.add(this.update, this, this.__config.priority);
+    }
+
+    this.added();
+  }
 }

@@ -5,8 +5,8 @@ import { Container } from './Container';
 
 export interface IScene extends IContainer {
   id: string;
-  enter: () => Promise<void>;
-  exit: () => Promise<void>;
+  enter: () => Promise<any>;
+  exit: () => Promise<any>;
   initialize: () => Promise<void> | void;
   start: () => Promise<void> | void;
 }
@@ -15,7 +15,7 @@ export class Scene extends Container implements IScene {
   public readonly id: string;
 
   constructor() {
-    super(true, true, -9999);
+    super({ autoResize: true, autoUpdate: true, priority: -9999 });
   }
 
   /**
@@ -31,7 +31,7 @@ export class Scene extends Container implements IScene {
    * Called to animate the scene in
    * @returns {Promise<void>}
    */
-  public enter(): Promise<void> {
+  public enter(): Promise<any> {
     return Promise.resolve();
   }
 
@@ -39,7 +39,7 @@ export class Scene extends Container implements IScene {
    * Called to animate the scene out
    * @returns {Promise<void>}
    */
-  public exit(): Promise<void> {
+  public exit(): Promise<any> {
     return Promise.resolve();
   }
 
@@ -53,14 +53,14 @@ export class Scene extends Container implements IScene {
   public async start(): Promise<void> {}
 
   /**
-   * Called when the window is resized
-   * @param {Size} size
-   */
-  public onResize(size: Size): void {}
-
-  /**
    * Called every frame
    * @param {Ticker} ticker
    */
   public update(ticker: Ticker) {}
+
+  /**
+   * Called when the window is resized
+   * @param {Size} size
+   */
+  public resize(size: Size): void {}
 }
