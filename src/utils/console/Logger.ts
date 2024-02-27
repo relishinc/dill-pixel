@@ -1,4 +1,4 @@
-import { isDev } from './env';
+import { isDev } from '../env';
 
 export class Logger {
   private static _instance: Logger | null = null;

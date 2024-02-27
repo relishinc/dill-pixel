@@ -77,6 +77,6 @@ export class FocusOutliner extends Container implements IFocusOutliner {
     if (!this._focusTarget) {
       return;
     }
-    this.position.set(this._focusTarget.position.x, this._focusTarget.position.y);
+    this.position.set(this._focusTarget.getGlobalPosition().x, this._focusTarget.getGlobalPosition().y);
   }
 }

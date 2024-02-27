@@ -1,9 +1,10 @@
-import { Bounds, Container, PointLike } from 'pixi.js';
+import { Bounds, Container, PointerEvents, PointLike } from 'pixi.js';
 import { IApplication } from '../../../core';
 import { PIXIContainer } from '../../../pixi';
 import { Signal } from '../../../signals';
-import { Constructor, getLastMapEntry, getPreviousMapEntry, Logger } from '../../../utils';
-import { IModule } from '../../IModule';
+import { bindMethods, Constructor, getLastMapEntry, getPreviousMapEntry, Logger } from '../../../utils';
+import { Module } from '../../index';
+import { IModule } from '../../Module';
 import { FocusOutliner, FocusOutlinerConfig, IFocusOutliner } from './FocusOutliner';
 
 export type FocusManagerOptions = {
@@ -11,18 +12,33 @@ export type FocusManagerOptions = {
 };
 
 export interface IFocusable {
-  onFocusBegin: Signal<(focusable: IFocusable) => void>;
-  onFocusEnd: Signal<(focusable: IFocusable) => void>;
+  // pixi accessibility features
+  accessible: boolean;
+  accessibleType: string;
+  accessibleTitle: string;
+  accessibleHint: string;
+  accessiblePointerEvents?: PointerEvents;
+  tabIndex: number;
+  accessibleChildren: boolean;
+
+  // signals
+  onFocusIn: Signal<(focusable: IFocusable) => void>;
+  onFocusOut: Signal<(focusable: IFocusable) => void>;
   onFocus: Signal<(focusable: IFocusable) => void>;
+  onBlur: Signal<(focusable: IFocusable) => void>;
   position: PointLike;
 
-  focusBegin(): void;
+  focusIn(): void;
 
-  focusEnd(): void;
+  focusOut(): void;
 
   focus(): void;
 
+  blur(): void;
+
   getBounds(): Bounds;
+
+  getGlobalPosition(): PointLike;
 }
 
 export interface IFocusLayer {
@@ -34,7 +50,7 @@ export interface IFocusLayer {
 
   setCurrent(): void;
 
-  addFocusable(focusable: IFocusable): void;
+  addFocusable(focusable: IFocusable, isDefault?: boolean): void;
 
   removeFocusable(focusable: IFocusable): void;
 
@@ -55,6 +71,9 @@ class FocusLayer implements IFocusLayer {
     if (!this.defaultFocusable) {
       this.defaultFocusable = this._focusables[0];
     }
+    this._focusables.forEach((f) => {
+      f.accessible = true;
+    });
   }
 
   public hasFocusable(focusable: IFocusable | null) {
@@ -66,6 +85,7 @@ class FocusLayer implements IFocusLayer {
 
   public addFocusable(focusable: IFocusable, isDefault: boolean = false): void {
     this._focusables.push(focusable);
+    focusable.tabIndex = this._focusables.length - 1;
     if (isDefault) {
       this.defaultFocusable = focusable;
     }
@@ -93,15 +113,7 @@ class FocusLayer implements IFocusLayer {
   public navigate(direction: number): void {
     this._currentIndex = (this._currentIndex + direction + this._focusables.length) % this._focusables.length;
 
-    this.lastFocusable = this.currentFocusable;
-    this.lastFocusable?.focusEnd();
-    this.lastFocusable?.onFocusEnd?.emit(this.lastFocusable);
-
     this.currentFocusable = this._focusables[this._currentIndex];
-    this.currentFocusable?.focusBegin();
-    this.currentFocusable?.onFocusBegin?.emit(this.currentFocusable);
-    this.currentFocusable?.focus();
-    this.currentFocusable?.onFocus?.emit(this.currentFocusable);
   }
 }
 
@@ -130,14 +142,14 @@ export interface IFocusManager extends IModule {
 
   setLayerOrder(layerIds: (string | number)[]): void;
 
-  addFocusable(focusable: IFocusable | IFocusable[], layerId?: string | number): void;
+  addFocusable(focusable: IFocusable | IFocusable[], layerId?: string | number, isDefault?: boolean): void;
 
   removeFocusable(focusable: IFocusable | IFocusable[]): void;
 
   deactivate(): void;
 }
 
-export class FocusManager implements IFocusManager {
+export class FocusManager extends Module implements IFocusManager {
   public readonly id: string = 'FocusManager';
   public readonly view = new Container();
   // signals
@@ -154,8 +166,6 @@ export class FocusManager implements IFocusManager {
 
   private _active: boolean = false;
 
-  constructor() {}
-
   get active(): boolean {
     return this._active;
   }
@@ -169,6 +179,8 @@ export class FocusManager implements IFocusManager {
   }
 
   public initialize(app: IApplication): void {
+    bindMethods(this, 'removeAllFocusLayers');
+
     const options: Partial<FocusManagerOptions> = app.config?.focusOptions || {};
     this._focusOutliner =
       typeof options === 'function'
@@ -177,6 +189,7 @@ export class FocusManager implements IFocusManager {
 
     this.view.addChild(this._focusOutliner as unknown as PIXIContainer);
     this._setupKeyboardListeners();
+    this._setupAppListeners();
   }
 
   public destroy(): void {
@@ -189,7 +202,11 @@ export class FocusManager implements IFocusManager {
     this._setTarget(null);
   }
 
-  public addFocusable(focusable: IFocusable | IFocusable[], layerId?: string | number): void {
+  public addFocusable(
+    focusable: IFocusable | IFocusable[],
+    layerId?: string | number,
+    isDefault: boolean = false,
+  ): void {
     if (layerId === undefined) {
       layerId = getLastMapEntry(this._layers)?.[0];
     }
@@ -201,7 +218,7 @@ export class FocusManager implements IFocusManager {
       focusable = [focusable];
     }
     (focusable as IFocusable[]).forEach((f) => {
-      layer.addFocusable(f);
+      layer.addFocusable(f, isDefault);
     });
   }
 
@@ -275,12 +292,20 @@ export class FocusManager implements IFocusManager {
     }
     this._currentLayerId = layerId;
     const currentLayer = this._getCurrentLayer();
+
     if (currentLayer) {
       currentLayer.setCurrent();
+      if (!this._active) {
+        return;
+      }
       this._setTarget(currentLayer.currentFocusable || currentLayer.defaultFocusable || null);
     }
 
     this.onFocusLayerChange.emit(this._currentLayerId);
+  }
+
+  public removeAllFocusLayers(): void {
+    this._layers.clear();
   }
 
   private _getCurrentLayer() {
@@ -303,10 +328,24 @@ export class FocusManager implements IFocusManager {
   }
 
   private _setTarget(focusTarget: IFocusable | null) {
+    let shouldEmit = false;
+    if (this._focusTarget !== focusTarget) {
+      shouldEmit = true;
+      // call the focus out methods on the current focusable, which is changing
+      this._focusTarget?.focusOut();
+      this._focusTarget?.onFocusOut?.emit(this._focusTarget!);
+      this._focusTarget?.blur();
+      this._focusTarget?.onBlur?.emit(this._focusTarget!);
+    }
+
     this._focusTarget = focusTarget;
 
     if (this._focusTarget) {
       if (this._getCurrentLayer()?.hasFocusable(focusTarget)) {
+        // call focusIn on the focusable
+        this._focusTarget?.focusIn();
+        this._focusTarget?.onFocusIn?.emit(this._focusTarget!);
+
         this._updateOutliner();
       } else {
         Logger.warn(`The focusable ${focusTarget} does not exist on the current focus layer: ${this._currentLayerId}`);
@@ -315,30 +354,43 @@ export class FocusManager implements IFocusManager {
       this._focusOutliner.clear();
 
       if (this._active) {
+        shouldEmit = true;
         this._active = false;
         this.onDeactivated.emit();
       }
     }
 
-    this.onFocusChange.emit({ focusable: focusTarget, layer: this._currentLayerId });
+    if (shouldEmit) {
+      this.onFocusChange.emit({ focusable: focusTarget, layer: this._currentLayerId });
+    }
   }
 
   private _setupKeyboardListeners(): void {
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Tab') {
         e.preventDefault();
+        const direction = this._active ? (e.shiftKey ? -1 : 1) : 0;
         if (!this._active) {
           this._active = true;
           this.onActivated.emit();
         }
-        const direction = e.shiftKey ? -1 : 1;
         this._navigate(direction);
+      }
+      if (e.key === 'Enter' || e.key === ' ') {
+        if (this._active && this._focusTarget) {
+          this._focusTarget.focus();
+          this._focusTarget.onFocus.emit(this._focusTarget);
+        }
       }
     });
 
     window.addEventListener('mousedown', () => {
       this.deactivate();
     });
+  }
+
+  private _setupAppListeners(): void {
+    this.app.scenes.onSceneChangeStart.connect(this.removeAllFocusLayers);
   }
 
   private _navigate(direction: number): void {

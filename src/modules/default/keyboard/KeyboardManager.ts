@@ -1,5 +1,6 @@
 import { Signal } from '../../../signals';
-import { IModule } from '../../IModule';
+import { Module } from '../../index';
+import { IModule } from '../../Module';
 
 type KeyboardEventType = 'keydown' | 'keyup';
 type KeyboardEventDetail = { event: KeyboardEvent; key: string };
@@ -13,7 +14,7 @@ export interface IKeyboardManager extends IModule {
   onKeyUp(key: string): KeySignal;
 }
 
-export class KeyboardManager implements IModule {
+export class KeyboardManager extends Module implements IModule {
   public readonly id: string = 'KeyboardManager';
 
   private _keyDownSignals: Map<string, KeySignal> = new Map();
@@ -39,11 +40,11 @@ export class KeyboardManager implements IModule {
   }
 
   public onKeyDown(key: string): KeySignal {
-    return this._checkAndAddSignal(key, 'keydown');
+    return this._checkAndAddSignal(key.toLowerCase(), 'keydown');
   }
 
   public onKeyUp(key: string): KeySignal {
-    return this._checkAndAddSignal(key, 'keyup');
+    return this._checkAndAddSignal(key.toLowerCase(), 'keyup');
   }
 
   /**
@@ -74,6 +75,6 @@ export class KeyboardManager implements IModule {
       return;
     }
     const signalMap = event.type === 'keydown' ? this._keyDownSignals : this._keyUpSignals;
-    signalMap.get(event.key)?.emit({ event, key: event.key });
+    signalMap.get(event.key.toLowerCase())?.emit({ event, key: event.key });
   }
 }

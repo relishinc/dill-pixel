@@ -2,29 +2,21 @@ import { PIXIText, Scene } from 'dill-pixel';
 import { Ticker } from 'pixi.js';
 import { Actor } from '../V8Application';
 
-export class TestScene extends Scene {
-  public readonly id: string = 'TestScene';
+export class TestScene2 extends Scene {
+  public readonly id: string = 'TestScene2';
+
   private _focusLayerLabel: PIXIText;
   private actor1: Actor;
   private actor2: Actor;
 
   constructor() {
     super();
-  }
-
-  async enter() {
-    return this.animateFrom({ y: -1000, duration: 2, ease: 'bounce.out' });
-  }
-
-  async exit() {
-    return this.animate({ y: '+=1000', duration: 0.6, ease: 'back.in' });
+    this.alpha = 0;
   }
 
   public initialize() {
-    this.add.graphics().rect(0, 0, this.app.screen.width, this.app.screen.height).fill({ color: 0x222222 });
-
     this.add.text({
-      text: 'Text Scene 1',
+      text: 'Text Scene 2',
       style: { fill: 'white' },
       x: 100,
       y: 50,
@@ -49,6 +41,7 @@ export class TestScene extends Scene {
     this.addSignalConnection(this.app.focus.onActivated.connect(this._updateFocusLayerLabel));
     this.addSignalConnection(this.app.focus.onDeactivated.connect(this._updateFocusLayerLabel));
     this.addSignalConnection(this.app.focus.onFocusLayerChange.connect(this._updateFocusLayerLabel));
+    this.addSignalConnection(this.app.focus.onFocusChange.connect(({ layer, focusable }) => {}));
     this.addSignalConnection(
       this.app.keyboard.onKeyUp('a').connect(() => {
         this.actor1.setTint(Math.random() * 0xffffff);
@@ -61,7 +54,7 @@ export class TestScene extends Scene {
     );
     this.addSignalConnection(
       this.app.keyboard.onKeyUp('s').connect((detail) => {
-        void this.app.scenes.loadScene({ id: 'TestScene2', method: 'exitEnter' });
+        void this.app.scenes.loadScene({ id: 'TestScene', method: 'enterExit' });
       }),
     );
   }
@@ -69,6 +62,14 @@ export class TestScene extends Scene {
   update(ticker: Ticker) {}
 
   resize() {}
+
+  async enter() {
+    return this.animate({ alpha: 1, duration: 0.6, ease: 'sine.out' });
+  }
+
+  async exit() {
+    return this.animate({ alpha: 0, duration: 0.4, ease: 'sine.in' });
+  }
 
   private _updateFocusLayerLabel() {
     this._focusLayerLabel.text = `Focus layer: ${this.app.focus.currentLayerId}`;
