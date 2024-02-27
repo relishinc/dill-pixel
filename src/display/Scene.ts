@@ -7,6 +7,7 @@ export interface IScene extends IContainer {
   id: string;
   enter: () => Promise<void>;
   exit: () => Promise<void>;
+  initialize: () => Promise<void> | void;
   start: () => Promise<void> | void;
 }
 
@@ -17,21 +18,49 @@ export class Scene extends Container implements IScene {
     super(true, true, -9999);
   }
 
-  enter(): Promise<void> {
+  /**
+   * Called to initialize the scene
+   * Called before the scene is added to the stage
+   * and before the scene is animated in
+   * @returns {Promise<void> | void}
+   */
+  public initialize(): Promise<void> | void;
+  public async initialize(): Promise<void> {}
+
+  /**
+   * Called to animate the scene in
+   * @returns {Promise<void>}
+   */
+  public enter(): Promise<void> {
     return Promise.resolve();
   }
 
-  exit(): Promise<void> {
+  /**
+   * Called to animate the scene out
+   * @returns {Promise<void>}
+   */
+  public exit(): Promise<void> {
     return Promise.resolve();
   }
 
-  onResize(size: Size): void {}
+  /**
+   * Called after the enter resolves
+   * If enter doesn't return a promise, this is called immediately after enter
+   * @returns {Promise<void> | void}
+   */
+  public start(): Promise<void> | void;
 
-  update(ticker: Ticker) {}
+  public async start(): Promise<void> {}
 
-  start(): Promise<void> | void;
+  /**
+   * Called when the window is resized
+   * @param {Size} size
+   */
+  public onResize(size: Size): void {}
 
-  async start(): Promise<void> {
-    // override me to set up application specific stuff
-  }
+  /**
+   * Called every frame
+   * @param {Ticker} ticker
+   */
+  public update(ticker: Ticker) {}
 }
