@@ -13,6 +13,7 @@ export const defaultFactoryMethods: IFactoryMethods = {
 
     const { position, x, y, pivot, ...rest } = props;
     resolvePosition({ position, x, y }, entity);
+    resolvePivot(pivot, entity);
     resolveUnknownKeys(rest, entity);
     return entity;
   },
