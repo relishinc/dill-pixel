@@ -45,6 +45,7 @@ export class SceneManager implements IModule {
   public async loadScene(sceneIdOrLoadSceneConfig: LoadSceneConfig | string): Promise<void> {
     const newSceneId =
       typeof sceneIdOrLoadSceneConfig === 'string' ? sceneIdOrLoadSceneConfig : sceneIdOrLoadSceneConfig.id;
+
     const method =
       typeof sceneIdOrLoadSceneConfig === 'string' ? 'immediate' : sceneIdOrLoadSceneConfig?.method || 'immediate';
 
@@ -75,6 +76,9 @@ export class SceneManager implements IModule {
     // if (newScene.preload) {
     //   await newScene.loadAssets();
     // }
+
+    // TODO: implement different scene changing berhaviors depending on 'method';
+
     this.currentScene = newScene;
     await this.currentScene.initialize();
 
