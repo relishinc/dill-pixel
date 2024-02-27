@@ -34,7 +34,7 @@ export function Animated<TBase extends Constructor<PIXIContainer>>(Base: TBase):
     _activeTweens: gsap.core.Tween[] = [];
     _activeTimeline?: gsap.core.Timeline;
 
-    animate(animationProps: GSAPAnimationConfigExtended, instance: any = this) {
+    public animate(animationProps: GSAPAnimationConfigExtended, instance: any = this) {
       const tween = gsap.to(instance, {
         ...animationProps,
         onStart: () => {
@@ -52,7 +52,7 @@ export function Animated<TBase extends Constructor<PIXIContainer>>(Base: TBase):
       return tween;
     }
 
-    animateSequence(sequences: GSAPAnimationConfigExtended[], instance: any = this): gsap.core.Timeline {
+    public animateSequence(sequences: GSAPAnimationConfigExtended[], instance: any = this): gsap.core.Timeline {
       if (!this._activeTimeline) {
         this._activeTimeline = gsap.timeline({
           onStart: () => this._onAnimationStart(this._activeTimeline),
@@ -71,7 +71,7 @@ export function Animated<TBase extends Constructor<PIXIContainer>>(Base: TBase):
       return this._activeTimeline;
     }
 
-    clearAnimations() {
+    public clearAnimations() {
       this._activeTweens.forEach((tween) => tween.kill());
       this._activeTweens = [];
       this._activeTimeline?.clear();
@@ -79,25 +79,25 @@ export function Animated<TBase extends Constructor<PIXIContainer>>(Base: TBase):
     }
 
     // some animation utility methods
-    pauseAnimations() {
+    public pauseAnimations() {
       this._activeTweens.forEach((tween) => tween.pause());
       this._activeTimeline?.pause();
     }
 
-    resumeAnimations() {
+    public resumeAnimations() {
       this._activeTweens.forEach((tween) => tween.play());
       this._activeTimeline?.play();
     }
 
-    _onAnimationStart(animationEntity: GSAPEntity | undefined) {
+    private _onAnimationStart(animationEntity: GSAPEntity | undefined) {
       this.onAnimationStart.emit(animationEntity as GSAPEntity);
     }
 
-    _onAnimationUpdate(animationEntity: GSAPEntity | undefined) {
+    private _onAnimationUpdate(animationEntity: GSAPEntity | undefined) {
       this.onAnimationUpdate.emit(animationEntity as GSAPEntity);
     }
 
-    _onAnimationComplete(animationEntity: GSAPEntity | undefined) {
+    private _onAnimationComplete(animationEntity: GSAPEntity | undefined) {
       this.onAnimationComplete.emit(animationEntity as GSAPEntity);
     }
   } as unknown as TBase & Constructor<IAnimated>;

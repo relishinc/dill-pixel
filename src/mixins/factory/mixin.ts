@@ -1,12 +1,19 @@
-import { Container as PIXIContainer, Graphics, Sprite, Texture } from 'pixi.js';
+import { Container as PIXIContainer, Graphics, Sprite, Text, TextOptions, Texture } from 'pixi.js';
 import { Container } from '../../display';
-import { AbstractProps, ContainerProps, GraphicsProps, SpriteProps, TextureProps } from './props';
+import { omitKeys, resolvePointLike } from '../../utils';
+import { ContainerProps, ExistingProps, GraphicsProps, SpriteProps, TextProps, TextureProps } from './props';
 import { resolveAnchor, resolvePivot, resolvePosition, resolveTexture, resolveUnknownKeys } from './utils';
 
 // Default factory methods
 export const defaultFactoryMethods: IFactoryMethods = {
-  existing: <T>(entity: T, props?: AbstractProps) => {
-    resolveUnknownKeys(props, entity);
+  existing: <TEntity>(entity: TEntity, props?: Partial<ExistingProps>): TEntity => {
+    if (!props) {
+      return entity;
+    }
+
+    const { position, x, y, pivot, ...rest } = props;
+    resolvePosition({ position, x, y }, entity);
+    resolveUnknownKeys(rest, entity);
     return entity;
   },
   texture: (props: Partial<TextureProps>) => {
@@ -46,6 +53,44 @@ export const defaultFactoryMethods: IFactoryMethods = {
     resolveUnknownKeys(rest, entity);
     return entity;
   },
+  text: (props?: Partial<TextProps>) => {
+    const options = {} as Partial<TextOptions>;
+    if (props?.text) {
+      options.text = props.text;
+    }
+
+    if (props?.roundPixels) {
+      options.roundPixels = props.roundPixels;
+    }
+
+    if (props?.resolution) {
+      options.resolution = props.resolution;
+    }
+
+    if (props?.style) {
+      options.style = props.style;
+    }
+    if (props?.anchor) {
+      options.anchor = resolvePointLike(props.anchor, true);
+    }
+    const entity = new Text(options);
+    if (!props) {
+      return entity;
+    }
+
+    const { position, x, y, pivot } = props;
+
+    resolvePosition({ position, x, y }, entity);
+    resolvePivot(pivot, entity);
+
+    const unknowns = omitKeys<
+      TextProps,
+      'x' | 'y' | 'position' | 'text' | 'roundPixels' | 'resolution' | 'style' | 'anchor' | 'pivot'
+    >(['x', 'y', 'position', 'text', 'roundPixels', 'resolution', 'style', 'anchor', 'pivot'], props);
+
+    resolveUnknownKeys(unknowns, entity);
+    return entity;
+  },
 };
 
 // Use a generic for extending the factory methods
@@ -55,11 +100,12 @@ export interface IExtendedContainer<T extends IFactoryMethods = IFactoryMethods>
 }
 
 export interface IFactoryMethods {
-  existing: <T>(entity: T, props?: AbstractProps) => T;
+  existing: <TEntity>(entity: TEntity, props?: Partial<ExistingProps>) => TEntity;
   texture: (props: Partial<TextureProps>) => Texture;
   container: (props?: Partial<ContainerProps>) => Container;
   sprite: (props?: Partial<SpriteProps>) => Sprite;
   graphics: (props?: Partial<GraphicsProps>) => Graphics;
+  text: (props?: Partial<TextProps>) => Text;
 }
 
 function createFactoryMethods<T extends IFactoryMethods = IFactoryMethods>(
@@ -69,9 +115,9 @@ function createFactoryMethods<T extends IFactoryMethods = IFactoryMethods>(
 ): T {
   const factoryMethods: any = {};
   for (const key in methods) {
-    factoryMethods[key] = (config: any) => {
+    factoryMethods[key] = (...args: any[]) => {
       // @ts-ignore
-      const obj = methods[key](config);
+      const obj = methods[key](...args);
       if (addToStage) {
         instance.addChild(obj);
       }

@@ -1,7 +1,6 @@
 import { Application } from '../../../core';
 import { Signal } from '../../../signals';
-import { Size } from '../../../utils';
-import { bindAllMethods } from '../../../utils/methodBinding';
+import { bindAllMethods, Size } from '../../../utils';
 import { IModule } from '../../IModule';
 
 export interface IWebEventsManager extends IModule {
@@ -13,7 +12,7 @@ export interface IWebEventsManager extends IModule {
  * Maintains a list of callbacks for specific web events and invokes callbacks when event occurs.
  */
 export class WebEventsManager implements IModule {
-  public readonly id = 'webEventsManager';
+  public readonly id = 'WebEventsManager';
 
   // signals
   public onResize = new Signal<(size: Size) => void>();
@@ -30,13 +29,13 @@ export class WebEventsManager implements IModule {
     return Application.getInstance();
   }
 
-  initialize(): void {
+  public initialize(): void {
     document.addEventListener('visibilitychange', this._onVisibilityChanged, false);
     window.addEventListener('resize', this._onResize);
     document.addEventListener('fullscreenchange', this._onResize);
   }
 
-  destroy() {
+  public destroy() {
     document.removeEventListener('visibilitychange', this._onVisibilityChanged, false);
     window.removeEventListener('resize', this._onResize);
     document.removeEventListener('fullscreenchange', this._onResize);

@@ -40,24 +40,24 @@ export class Container<T extends Application = Application> extends _Container i
     this.on('added', this.onAdded);
   }
 
-  get app(): T {
+  public get app(): T {
     return Application.getInstance() as T;
   }
 
-  destroy(options?: DestroyOptions) {
+  public destroy(options?: DestroyOptions) {
     this._signalConnections.disconnectAll();
     super.destroy(options);
   }
 
-  onAdded() {}
+  public onAdded() {}
 
-  addSignalConnection(...args: SignalConnection[]) {
+  public addSignalConnection(...args: SignalConnection[]) {
     for (const connection of args) {
       this._signalConnections.add(connection);
     }
   }
 
-  onResize(size: Size) {}
+  public onResize(size: Size) {}
 
-  update(ticker: Ticker) {}
+  public update(ticker: Ticker) {}
 }

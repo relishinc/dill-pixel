@@ -6,8 +6,9 @@ import {
   RendererDestroyOptions,
 } from 'pixi.js';
 import { IModule } from '../modules';
-import type { IAssetManager, ISceneManager, IWebEventsManager } from '../modules/default';
+import type { IAssetManager, IKeyboardManager, ISceneManager, IWebEventsManager } from '../modules/default';
 import { defaultModules } from '../modules/default';
+import { FocusManagerOptions, IFocusManager } from '../modules/default/focus/FocusManager';
 import { Signal } from '../signals';
 import { IStorageAdapter } from '../store';
 import { IStore, Store } from '../store/Store';
@@ -21,6 +22,8 @@ export interface IApplicationOptions extends ApplicationOptions {
   storageAdapters: ((new () => IStorageAdapter) | IStorageAdapter)[];
   customModules: ((new () => IModule) | IModule)[];
   scenes: SceneList;
+  focusOptions: FocusManagerOptions;
+  defaultScene: string;
 }
 
 const defaultApplicationOptions: Partial<IApplicationOptions> = {
@@ -80,6 +83,8 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   protected _assetManager: IAssetManager;
   protected _sceneManager: ISceneManager;
   protected _webEventsManager: IWebEventsManager;
+  protected _keyboardManager: IKeyboardManager;
+  protected _focusManager: IFocusManager;
 
   // store
   protected _store: IStore;
@@ -102,23 +107,37 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
   public get assets(): IAssetManager {
     if (!this._assetManager) {
-      this._assetManager = this.getModule<IAssetManager>('assetManager');
+      this._assetManager = this.getModule<IAssetManager>('AssetManager');
     }
     return this._assetManager;
   }
 
   public get scenes(): ISceneManager {
     if (!this._sceneManager) {
-      this._sceneManager = this.getModule<ISceneManager>('sceneManager');
+      this._sceneManager = this.getModule<ISceneManager>('SceneManager');
     }
     return this._sceneManager;
   }
 
   public get webEvents(): IWebEventsManager {
     if (!this._webEventsManager) {
-      this._webEventsManager = this.getModule<IWebEventsManager>('webEventsManager');
+      this._webEventsManager = this.getModule<IWebEventsManager>('WebEventsManager');
     }
     return this._webEventsManager;
+  }
+
+  public get keyboard(): IKeyboardManager {
+    if (!this._keyboardManager) {
+      this._keyboardManager = this.getModule<IKeyboardManager>('KeyboardManager');
+    }
+    return this._keyboardManager;
+  }
+
+  public get focus(): IFocusManager {
+    if (!this._focusManager) {
+      this._focusManager = this.getModule<IFocusManager>('FocusManager');
+    }
+    return this._focusManager;
   }
 
   public get store(): IStore {
@@ -290,7 +309,14 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
     // scene manager
     this.stage.addChild(this.scenes.view);
-    this.scenes.changeScene('TestScene');
+    this.stage.addChild(this.focus.view);
+    const firstScene = this.config.defaultScene || this.config.scenes?.[0]?.id;
+
+    if (firstScene) {
+      void this.scenes.loadScene(firstScene);
+    } else {
+      Logger.error('No default scene set');
+    }
 
     return Promise.resolve();
   }
