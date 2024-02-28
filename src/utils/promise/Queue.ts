@@ -1,64 +1,67 @@
+import { Logger } from '../console';
+
 export function createQueue(...promises: (Promise<any> | (() => Promise<any | void>))[]): Queue {
   return new Queue(promises);
 }
 
 export class Queue<T = any | void> {
-  private promiseFunctions: (Promise<any> | (() => Promise<T>))[];
-  private currentIndex: number = 0;
-  private isPaused: boolean = false;
-  private isCanceled: boolean = false;
-  private results: T[] = [];
+  private _promises: (Promise<any> | (() => Promise<T>))[];
+  private _currentIndex: number = 0;
+  private _isPaused: boolean = false;
+  private _isCanceled: boolean = false;
+  private _results: T[];
 
-  constructor(promiseFunctions: (Promise<any> | (() => Promise<T>))[]) {
-    this.promiseFunctions = promiseFunctions;
+  constructor(promises: (Promise<any> | (() => Promise<T>))[]) {
+    this._promises = promises;
+  }
+
+  public get results(): T[] {
+    return this._results;
   }
 
   public add(...args: (Promise<any> | (() => Promise<T>))[]) {
-    this.promiseFunctions.push(...args);
+    this._promises.push(...args);
   }
 
   public start(): void {
-    if (this.currentIndex === 0) {
-      // Prevent restart if already started
-      void this.executeNext();
+    if (this._currentIndex === 0) {
+      // don't start if already started
+      this._results = [];
+      void this._next();
     }
   }
 
   public pause(): void {
-    this.isPaused = true;
+    this._isPaused = true;
   }
 
   public resume(): void {
-    if (this.isPaused) {
-      this.isPaused = false;
-      void this.executeNext();
+    if (this._isPaused) {
+      this._isPaused = false;
+      void this._next();
     }
   }
 
   public cancel(): void {
-    this.isCanceled = true;
-    this.promiseFunctions = [];
+    this._isCanceled = true;
+    this._promises = [];
   }
 
-  public getResults(): T[] {
-    return this.results;
-  }
-
-  private async executeNext(): Promise<void> {
-    if (this.isPaused || this.isCanceled || this.currentIndex >= this.promiseFunctions.length) {
+  private async _next(): Promise<void> {
+    if (this._isPaused || this._isCanceled || this._currentIndex >= this._promises.length) {
       return;
     }
 
-    const currentFunction = this.promiseFunctions[this.currentIndex];
+    const currentFunction = this._promises[this._currentIndex];
+
     try {
       const result = typeof currentFunction === 'function' ? await currentFunction() : await currentFunction;
-      this.results.push(result);
-      this.currentIndex++;
-      void this.executeNext();
+      this._results.push(result);
+      this._currentIndex++;
+      void this._next();
     } catch (error) {
-      // Handle error or reject
-      console.error('Promise execution failed:', error);
-      // Optionally, stop execution on error or handle it differently
+      Logger.error('Promise failed due to an error. Cancelling queue', error);
+      this._isCanceled = true;
     }
   }
 }
