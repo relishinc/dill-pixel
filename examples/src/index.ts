@@ -10,6 +10,7 @@ const app = await create(V8Application, {
     { id: 'TestScene', module: await import('@/scenes/TestScene') },
     { id: 'TestScene2', module: await import('@/scenes/TestScene2') },
   ],
+  defaultSceneLoadMethod: 'exitEnter',
 });
 
 Logger.log('V8Application created', app);
