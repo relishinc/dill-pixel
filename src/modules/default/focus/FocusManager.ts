@@ -295,10 +295,9 @@ export class FocusManager extends Module implements IFocusManager {
 
     if (currentLayer) {
       currentLayer.setCurrent();
-      if (!this._active) {
-        return;
+      if (this._active) {
+        this._setTarget(currentLayer.currentFocusable || currentLayer.defaultFocusable || null);
       }
-      this._setTarget(currentLayer.currentFocusable || currentLayer.defaultFocusable || null);
     }
 
     this.onFocusLayerChange.emit(this._currentLayerId);

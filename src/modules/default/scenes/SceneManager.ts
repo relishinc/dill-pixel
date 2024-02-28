@@ -6,11 +6,14 @@ import { Module } from '../../index';
 import { IModule } from '../../Module';
 
 export interface ISceneManager extends IModule {
+  isFirstScene: boolean;
   onSceneChangeStart: Signal<(detail: { exiting: string | null; entering: string }) => void>;
   onSceneChangeComplete: Signal<(detail: { current: string }) => void>;
   loadScreen?: Scene;
   view: Container;
   scenes: SceneList;
+
+  setDefaultLoadMethod(method: LoadSceneMethod): void;
 
   loadScene(sceneIdOrLoadSceneConfig: LoadSceneConfig | string): Promise<void>;
 }
@@ -19,6 +22,7 @@ export type LoadSceneMethod =
   | 'immediate'
   | 'exitEnter'
   | 'enterExit'
+  | 'enterBehind'
   | 'interStitialExitEnter'
   | 'exitInterstitialEnter';
 
@@ -39,16 +43,24 @@ export class SceneManager extends Module implements ISceneManager {
   // view container - gets added to the stage
   public view: Container = new Container();
 
+  // maybe the user wants the enter animation to be different for the first scene
+  public isFirstScene: boolean = true;
+
   // scene management
   public scenes: SceneList;
   public currentScene: IScene;
   public defaultScene: string;
   private _lastScene: IScene | null = null;
   private _queue: Queue<any> | null;
+  private _defaultLoadMethod: LoadSceneMethod = 'immediate';
 
   constructor() {
     super();
     bindAllMethods(this);
+  }
+
+  public setDefaultLoadMethod(method: LoadSceneMethod) {
+    this._defaultLoadMethod = method;
   }
 
   public destroy(): void {}
@@ -57,6 +69,7 @@ export class SceneManager extends Module implements ISceneManager {
     this.view.sortableChildren = true;
     this.scenes = app.config?.scenes || [];
     this.defaultScene = app.config?.defaultScene || this.scenes?.[0]?.id;
+    this._defaultLoadMethod = app.config.defaultSceneLoadMethod || 'immediate';
     Logger.log('SceneManager initialize::', this.scenes);
     return Promise.resolve(undefined);
   }
@@ -74,7 +87,9 @@ export class SceneManager extends Module implements ISceneManager {
       typeof sceneIdOrLoadSceneConfig === 'string' ? sceneIdOrLoadSceneConfig : sceneIdOrLoadSceneConfig.id;
 
     const method =
-      typeof sceneIdOrLoadSceneConfig === 'string' ? 'immediate' : sceneIdOrLoadSceneConfig?.method || 'immediate';
+      typeof sceneIdOrLoadSceneConfig === 'string'
+        ? this._defaultLoadMethod
+        : sceneIdOrLoadSceneConfig?.method || this._defaultLoadMethod;
 
     if (this.currentScene) {
       this._lastScene = this.currentScene;
@@ -106,7 +121,9 @@ export class SceneManager extends Module implements ISceneManager {
 
     this.onSceneChangeStart.emit({ exiting: this._lastScene?.id || null, entering: newScene.id });
 
-    // TODO: implement different scene changing behaviours depending on 'method';
+    // TODO: finish adding scene changing behaviours
+    // TODO: add loading assets into this queue
+    // TODO: add progress updates
     switch (method) {
       case 'exitEnter':
         this._queue.add(
@@ -127,6 +144,16 @@ export class SceneManager extends Module implements ISceneManager {
           this._destroyLastScene,
         );
         break;
+      case 'enterBehind':
+        this._queue.add(
+          this._initializeCurrentScene,
+          this._addCurrentSceneBehind,
+          this._enterCurrentScene,
+          this._exitLastScene,
+          this._destroyLastScene,
+          this._startCurrentScene,
+        );
+        break;
       default:
         this._queue.add(
           this._destroyLastScene,
@@ -143,6 +170,7 @@ export class SceneManager extends Module implements ISceneManager {
   }
 
   private _queueComplete() {
+    this.isFirstScene = false;
     this._lastScene = null;
     this.onSceneChangeComplete.emit({ current: this.currentScene.id });
     this._queue = null;
@@ -173,6 +201,11 @@ export class SceneManager extends Module implements ISceneManager {
 
   private _addCurrentScene(): Promise<void> {
     this.view.addChild(this.currentScene as any);
+    return Promise.resolve();
+  }
+
+  private _addCurrentSceneBehind(): Promise<void> {
+    this.view.addChildAt(this.currentScene as any, 0);
     return Promise.resolve();
   }
 

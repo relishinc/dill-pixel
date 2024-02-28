@@ -13,6 +13,7 @@ import type {
   IKeyboardManager,
   ISceneManager,
   IWebEventsManager,
+  LoadSceneMethod,
 } from '../modules/default';
 import { defaultModules } from '../modules/default';
 import { Signal } from '../signals';
@@ -30,6 +31,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   scenes: SceneList;
   focusOptions: FocusManagerOptions;
   defaultScene: string;
+  defaultSceneLoadMethod: LoadSceneMethod;
 }
 
 const defaultApplicationOptions: Partial<IApplicationOptions> = {
@@ -60,6 +62,7 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   storageAdapters: [],
   customModules: [],
   scenes: [],
+  defaultSceneLoadMethod: 'immediate',
 };
 
 export type RequiredApplicationConfig = WithRequiredProps<IApplicationOptions, 'id'>;

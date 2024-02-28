@@ -13,7 +13,13 @@ export class TestScene extends Scene {
   }
 
   async enter() {
-    return this.animateFrom({ y: -1000, duration: 2, ease: 'bounce.out' });
+    return this.app.scenes.isFirstScene
+      ? this.animateFrom({
+          alpha: 0,
+          duration: 1,
+          ease: 'sine.out',
+        })
+      : this.animateFrom({ y: -1000, duration: 2, ease: 'bounce.out' });
   }
 
   async exit() {
@@ -24,7 +30,7 @@ export class TestScene extends Scene {
     this.add.graphics().rect(0, 0, this.app.screen.width, this.app.screen.height).fill({ color: 0x222222 });
 
     this.add.text({
-      text: 'Text Scene 1',
+      text: 'Test Scene 1',
       style: { fill: 'white' },
       x: 100,
       y: 50,
@@ -61,9 +67,10 @@ export class TestScene extends Scene {
     );
     this.addSignalConnection(
       this.app.keyboard.onKeyUp('s').connect((detail) => {
-        void this.app.scenes.loadScene({ id: 'TestScene2', method: 'exitEnter' });
+        void this.app.scenes.loadScene({ id: 'TestScene2' });
       }),
     );
+    this._updateFocusLayerLabel();
   }
 
   update(ticker: Ticker) {}

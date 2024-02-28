@@ -16,7 +16,7 @@ export class TestScene2 extends Scene {
 
   public initialize() {
     this.add.text({
-      text: 'Text Scene 2',
+      text: 'Test Scene 2',
       style: { fill: 'white' },
       x: 100,
       y: 50,
@@ -57,6 +57,8 @@ export class TestScene2 extends Scene {
         void this.app.scenes.loadScene({ id: 'TestScene', method: 'enterExit' });
       }),
     );
+
+    this._updateFocusLayerLabel();
   }
 
   update(ticker: Ticker) {}
