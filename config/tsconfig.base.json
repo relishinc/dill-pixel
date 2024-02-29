@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "strict": true,
+    "strictNullChecks": false,
+    "module": "esnext",
+    "outDir": "dist",
+    "target": "ES5",
+    "rootDir": ".",
+    "moduleResolution": "node",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "lib": [
+      "dom",
+      "es2015",
+      "es2016",
+      "es2017",
+      "esNext"
+    ]
+  },
+  "include": [
+    "src",
+    "node_modules"
+  ],
+  "exclude": [
+    ".cache"
+  ]
+}
