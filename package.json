@@ -12,7 +12,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./react": "./src/react/index.ts",
-    "./vite": "./src/config/vite.mjs"
+    "./vite": "./config/vite.mjs",
+    "./tsconfig": "./config/tsconfig.base.json"
   },
   "sideEffects": false,
   "scripts": {

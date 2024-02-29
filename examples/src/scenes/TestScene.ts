@@ -12,20 +12,6 @@ export class TestScene extends Scene {
     super();
   }
 
-  async enter() {
-    return this.app.scenes.isFirstScene
-      ? this.animateFrom({
-          alpha: 0,
-          duration: 1,
-          ease: 'sine.out',
-        })
-      : this.animateFrom({ y: -1000, duration: 2, ease: 'bounce.out' });
-  }
-
-  async exit() {
-    return this.animate({ y: '+=1000', duration: 0.6, ease: 'back.in' });
-  }
-
   public initialize() {
     this.add.graphics().rect(0, 0, this.app.screen.width, this.app.screen.height).fill({ color: 0x222222 });
 
@@ -72,6 +58,20 @@ export class TestScene extends Scene {
     );
 
     this._updateFocusLayerLabel();
+  }
+
+  async enter() {
+    return this.app.scenes.isFirstScene
+      ? this.animateFrom({
+          alpha: 0,
+          duration: 1,
+          ease: 'sine.out',
+        })
+      : this.animateFrom({ y: -1000, duration: 2, ease: 'bounce.out' });
+  }
+
+  async exit() {
+    return this.animate({ y: '+=1000', duration: 0.6, ease: 'back.in' });
   }
 
   update(ticker: Ticker) {}

@@ -1,32 +1,10 @@
 {
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "rootDir": "./src",
-    "baseUrl": ".",
-    "outDir": "./lib",
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "strict": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "useDefineForClassFields": false,
-    "strictPropertyInitialization": false,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "allowJs": true,
-    "jsx": "react-jsx",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ]
-    }
-  },
+  "extends": "dill-pixel/tsconfig",
   "include": [
-    "**/*.ts"
+    "src",
+    "node_modules"
+  ],
+  "exclude": [
+    ".cache"
   ]
 }
