@@ -2,7 +2,8 @@ import { Application } from '../../../core';
 import { CoreModule } from '../../../core/decorators';
 import { Signal } from '../../../signals';
 import { bindAllMethods, Size } from '../../../utils';
-import { IModule, Module } from '../../Module';
+import type { IModule } from '../../Module';
+import { Module } from '../../Module';
 
 export interface IWebEventsManager extends IModule {
   onResize: Signal<(size: { width: number; height: number }) => void>;

@@ -1,17 +1,23 @@
+import { IApplication } from '../../core';
 import { Logger } from '../../utils';
-import { IStorageAdapter } from './IStorageAdapter';
+import { StorageAdapter } from './StorageAdapter';
 
 export interface ILocalStorageAdapterOptions {
   namespace?: string;
 }
 
-export class LocalStorageAdapter implements IStorageAdapter {
+export class LocalStorageAdapter extends StorageAdapter {
   public namespace: string = '';
-
-  constructor(public id: string = 'local') {}
 
   get prefix() {
     return this.namespace ? `${this.namespace}_` : '';
+  }
+
+  destroy() {}
+
+  public initialize(app: IApplication, options?: Partial<ILocalStorageAdapterOptions>): void {
+    Logger.log('LocalStorageAdapter initialized');
+    this.namespace = options?.namespace || '';
   }
 
   save(key: string, data: any): any {
@@ -22,14 +28,6 @@ export class LocalStorageAdapter implements IStorageAdapter {
   load<T = any>(key: string): T {
     const data = localStorage.getItem(`${this.prefix}${key}`);
     return (data ? JSON.parse(data) : null) as T;
-  }
-
-  destroy() {}
-
-  public initialize(options?: Partial<ILocalStorageAdapterOptions>): boolean {
-    Logger.log('LocalStorageAdapter initialized');
-    this.namespace = options?.namespace || '';
-    return true;
   }
 
   clear(key: string) {
