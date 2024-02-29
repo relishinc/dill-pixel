@@ -2,7 +2,14 @@ import { Container as PIXIContainer, Graphics, Sprite, Text, TextOptions, Textur
 import { Container } from '../../display';
 import { omitKeys, resolvePointLike } from '../../utils';
 import { ContainerProps, ExistingProps, GraphicsProps, SpriteProps, TextProps, TextureProps } from './props';
-import { resolveAnchor, resolvePivot, resolvePosition, resolveTexture, resolveUnknownKeys } from './utils';
+import {
+  resolveAnchor,
+  resolvePivot,
+  resolvePosition,
+  resolveScale,
+  resolveTexture,
+  resolveUnknownKeys,
+} from './utils';
 
 // Default factory methods
 export const defaultFactoryMethods: IFactoryMethods = {
@@ -11,8 +18,9 @@ export const defaultFactoryMethods: IFactoryMethods = {
       return entity;
     }
 
-    const { position, x, y, pivot, ...rest } = props;
+    const { position, x, y, pivot, scale, scaleX, scaleY, ...rest } = props;
     resolvePosition({ position, x, y }, entity);
+    resolveScale({ scale, scaleX, scaleY }, entity);
     resolvePivot(pivot, entity);
     resolveUnknownKeys(rest, entity);
     return entity;
@@ -25,8 +33,9 @@ export const defaultFactoryMethods: IFactoryMethods = {
     if (!props) {
       return entity;
     }
-    const { position, x, y, pivot, ...rest } = props;
+    const { position, x, y, pivot, scale, scaleX, scaleY, ...rest } = props;
     resolvePosition({ position, x, y }, entity);
+    resolveScale({ scale, scaleX, scaleY }, entity);
     resolvePivot(pivot, entity);
     resolveUnknownKeys(rest, entity);
     return entity;
@@ -36,8 +45,9 @@ export const defaultFactoryMethods: IFactoryMethods = {
       return new Sprite();
     }
     const entity = new Sprite(resolveTexture(props));
-    const { position, x, y, anchor, pivot, ...rest } = props;
+    const { position, x, y, anchor, pivot, scale, scaleX, scaleY, ...rest } = props;
     resolvePosition({ position, x, y }, entity);
+    resolveScale({ scale, scaleX, scaleY }, entity);
     resolveAnchor(anchor, entity);
     resolvePivot(pivot, entity);
     resolveUnknownKeys(rest, entity);
@@ -48,8 +58,9 @@ export const defaultFactoryMethods: IFactoryMethods = {
     if (!props) {
       return entity;
     }
-    const { position, x, y, pivot, ...rest } = props;
+    const { position, x, y, pivot, scale, scaleX, scaleY, ...rest } = props;
     resolvePosition({ position, x, y }, entity);
+    resolveScale({ scale, scaleX, scaleY }, entity);
     resolvePivot(pivot, entity);
     resolveUnknownKeys(rest, entity);
     return entity;
@@ -79,9 +90,10 @@ export const defaultFactoryMethods: IFactoryMethods = {
       return entity;
     }
 
-    const { position, x, y, pivot } = props;
+    const { position, x, y, scale, scaleX, scaleY, pivot } = props;
 
     resolvePosition({ position, x, y }, entity);
+    resolveScale({ scale, scaleX, scaleY }, entity);
     resolvePivot(pivot, entity);
 
     const unknowns = omitKeys<

@@ -12,7 +12,7 @@ export class TestScene extends Scene {
     super();
   }
 
-  public initialize() {
+  public async initialize() {
     this.add.graphics().rect(0, 0, this.app.screen.width, this.app.screen.height).fill({ color: 0x222222 });
 
     this.add.text({
@@ -58,6 +58,11 @@ export class TestScene extends Scene {
     );
 
     this._updateFocusLayerLabel();
+
+    const spr = this.add.sprite({ asset: 'required/jar.png', x: 200, y: 400, scale: 0.5 });
+    const sheetSpr = this.add.sprite({ asset: 'jar', sheet: 'game/game.json', x: 500, y: 400, scale: 0.5 });
+    const sheetSpr2 = this.add.sprite({ asset: 'jar2', sheet: 'game/game.json', x: 800, y: 400, scale: 0.5 });
+    console.log(spr.width);
   }
 
   async enter() {

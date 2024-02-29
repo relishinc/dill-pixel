@@ -16,6 +16,12 @@ export interface PositionProps {
   position: PointLike;
 }
 
+export interface ScaleProps {
+  scaleX: number;
+  scaleY: number;
+  scale: PointLike;
+}
+
 export interface PivotProps {
   pivot: PointLike;
 }
@@ -25,15 +31,15 @@ export interface VisibilityProps {
   visible: boolean;
 }
 
-export interface ExistingProps extends AbstractProps, PositionProps, VisibilityProps {}
+export interface ExistingProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {}
 
-export interface GraphicsProps extends AbstractProps, PositionProps, PivotProps, VisibilityProps {}
+export interface GraphicsProps extends AbstractProps, PositionProps, ScaleProps, PivotProps, VisibilityProps {}
 
-export interface SpriteProps extends AbstractProps, TextureProps, PositionProps, VisibilityProps {
+export interface SpriteProps extends AbstractProps, TextureProps, ScaleProps, PositionProps, VisibilityProps {
   anchor: PointLike;
 }
 
-export interface TextProps extends AbstractProps, PositionProps, VisibilityProps {
+export interface TextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {
   text: string;
   anchor: PointLike;
   resolution: number;
@@ -41,4 +47,4 @@ export interface TextProps extends AbstractProps, PositionProps, VisibilityProps
   style: Partial<TextStyleOptions>;
 }
 
-export interface ContainerProps extends AbstractProps, PositionProps, PivotProps, VisibilityProps {}
+export interface ContainerProps extends AbstractProps, PositionProps, ScaleProps, PivotProps, VisibilityProps {}

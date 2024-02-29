@@ -1,0 +1,63 @@
+{
+  "bundles": [
+    {
+      "name": "default",
+      "assets": []
+    },
+    {
+      "name": "game",
+      "assets": [
+        {
+          "alias": [
+            "game/game.json",
+            "game.json"
+          ],
+          "src": [
+            "game/game@1x.json",
+            "game/game@0.5x.json"
+          ],
+          "data": {
+            "tags": {
+              "m": true,
+              "tps": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "required",
+      "assets": [
+        {
+          "alias": [
+            "required/jar.png",
+            "jar.png"
+          ],
+          "src": [
+            "required/jar@1x.png",
+            "required/jar@0.5x.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "required/wordmark.svg",
+            "wordmark.svg"
+          ],
+          "src": [
+            "required/wordmark.svg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

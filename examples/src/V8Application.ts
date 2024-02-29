@@ -1,4 +1,5 @@
 import { Application, Container, Focusable, Interactive, PIXIGraphics } from 'dill-pixel';
+import { Assets } from 'pixi.js';
 
 const _Actor = Focusable(Interactive(Container));
 
@@ -47,7 +48,9 @@ export class Actor extends _Actor {
 }
 
 export class V8Application extends Application {
-  protected setup(): void {}
+  protected async setup() {
+    await Assets.loadBundle(['required', 'game']);
+  }
 
   public customFunction(): void {
     console.log('V8App custom function');
