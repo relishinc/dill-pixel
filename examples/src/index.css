@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'arboria';
-    src: url(./assets/fonts/arboria.woff2) format('woff2');
+    src: url(../assets/fonts/arboria.woff2) format('woff2');
 }
 
 :root {

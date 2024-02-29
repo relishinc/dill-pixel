@@ -1,6 +1,6 @@
 import { Assets, Sprite, Spritesheet, Texture } from 'pixi.js';
 import { Logger, PointLike, resolvePointLike } from '../../utils';
-import { PositionProps, TextureProps } from './props';
+import { PositionProps, ScaleProps, TextureProps } from './props';
 
 export function resolveUnknownKeys(props: any, entity: any) {
   for (const key in props) {
@@ -64,6 +64,25 @@ export function resolvePosition(props: Partial<PositionProps>, entity: any) {
   const pos = resolvePointLike(props.position, false, props.x, props.y);
   entity.x = pos.x;
   entity.y = pos.y;
+}
+
+export function resolveScale(props: Partial<ScaleProps>, entity: any) {
+  if (!props) {
+    return;
+  }
+  if (props.scale === undefined) {
+    if (props.scaleX === undefined && props.scaleY === undefined) {
+      return;
+    }
+    if (props.scaleX === undefined) {
+      props.scaleX = 1;
+    }
+    if (props.scaleY === undefined) {
+      props.scaleY = 1;
+    }
+  }
+  const scale = resolvePointLike(props.scale, false, props.scaleX, props.scaleY);
+  entity.scale.set(scale.x, scale.y);
 }
 
 export function resolveAnchor(anchor: PointLike | undefined, entity: any) {

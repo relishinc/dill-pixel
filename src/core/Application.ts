@@ -1,6 +1,9 @@
 import {
   Application as PIXIPApplication,
   ApplicationOptions,
+  AssetInitOptions,
+  Assets,
+  AssetsManifest,
   DestroyOptions,
   Renderer,
   RendererDestroyOptions,
@@ -30,10 +33,14 @@ import {
   StorageAdapterList,
   WithRequiredProps,
 } from '../utils';
+import { isPromise } from '../utils/async';
 import { ModuleList } from '../utils/types';
 import { coreFunctionRegistry } from './coreFunctionRegistry';
 import { coreSignalRegistry } from './coreSignalRegistry';
 import { MethodBindingRoot } from './decorators';
+
+// for now, to detect multiple spritesheet sizes
+import '../assets/resolveParser';
 
 export interface IApplicationOptions extends ApplicationOptions {
   id: string;
@@ -46,6 +53,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   focusOptions: FocusManagerOptions;
   defaultScene: string;
   defaultSceneLoadMethod: LoadSceneMethod;
+  manifest: AssetsManifest | Promise<AssetsManifest> | string;
 }
 
 const defaultApplicationOptions: Partial<IApplicationOptions> = {
@@ -77,6 +85,7 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   modules: [],
   scenes: [],
   defaultSceneLoadMethod: 'immediate',
+  manifest: './assets.json',
 };
 
 export type RequiredApplicationConfig = WithRequiredProps<IApplicationOptions, 'id'>;
@@ -245,10 +254,10 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       // also call the registerStorageAdapters method to allow for custom storage adapters to be registered
       await this.registerStorageAdapters();
     }
-
+    await this.initAssets();
     await this._setup(); // internal
     await this.setup();
-
+    await this.loadFirstScene();
     await this.postInitialize();
 
     // return the Application instance to the create method, if needed
@@ -360,6 +369,30 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     // override me to set up application specific stuff
   }
 
+  protected async initAssets(): Promise<void> {
+    const opts: Partial<AssetInitOptions> = {
+      texturePreference: { resolution: this.config.resolution! >= 1.5 ? 1 : 0.5 },
+    };
+    if (this.config.manifest) {
+      let manifest = this.config.manifest;
+      if (isPromise(manifest)) {
+        manifest = await manifest;
+      }
+      opts.manifest = manifest;
+    }
+    await Assets.init(opts);
+  }
+
+  protected async loadFirstScene(): Promise<void> {
+    const firstScene = this.config.defaultScene || this.config.scenes?.[0]?.id;
+
+    if (firstScene) {
+      void this.scenes.loadScene(firstScene);
+    } else {
+      Logger.error('No default scene set');
+    }
+  }
+
   private async _resize() {
     this.ticker.addOnce(() => {
       this.onResize.emit(this.renderer.screen);
@@ -384,13 +417,6 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     // scene manager
     this.stage.addChild(this.scenes.view);
     this.stage.addChild(this.focus.view);
-    const firstScene = this.config.defaultScene || this.config.scenes?.[0]?.id;
-
-    if (firstScene) {
-      void this.scenes.loadScene(firstScene);
-    } else {
-      Logger.error('No default scene set');
-    }
 
     return Promise.resolve();
   }

@@ -1,10 +1,12 @@
 import { V8Application } from '@/V8Application';
 import { create, LocalStorageAdapter, Logger } from 'dill-pixel';
+import manifest from './assets.json';
 
 const app = await create(V8Application, {
   id: 'V8Application',
   backgroundColor: 0x0,
   backgroundAlpha: 1,
+  manifest,
   modules: [
     { id: 'TestModule', module: () => import('@/modules/TestModule'), options: { foo: 'bar' } },
     // { id: 'test', module: TestModule, options: { test: 'bar' } },
