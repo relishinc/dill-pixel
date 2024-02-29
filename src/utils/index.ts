@@ -9,6 +9,7 @@ export type {
   WithPointLike,
   Size,
   SceneList,
+  StorageAdapterList,
 } from './types';
 export { resolvePointLike, getSheetLikeString, setObjectName } from './functions';
 export { getPreviousMapEntry, getLastMapEntry } from './map';
@@ -19,3 +20,4 @@ export { Queue, createQueue } from './promise';
 export { delay } from './async';
 export { pluck, omitKeys } from './object';
 export { bindMethods, bindAllMethods, checkAndInvokeMethod } from './methodBinding';
+export { getDynamicModuleFromListObject } from './framework';

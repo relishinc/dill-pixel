@@ -5,7 +5,7 @@ export interface IStorageAdapter {
 
   load<T = any>(key: string): Promise<T> | T;
 
-  initialize(): Promise<any> | any;
+  initialize(options?: any): Promise<any> | any;
 
   destroy(): void;
 }

@@ -1,4 +1,5 @@
 import { Application } from '../../../core';
+import { CoreModule } from '../../../core/decorators';
 import { Signal } from '../../../signals';
 import { bindAllMethods, Size } from '../../../utils';
 import { IModule, Module } from '../../Module';
@@ -11,6 +12,7 @@ export interface IWebEventsManager extends IModule {
 /**
  * Maintains a list of callbacks for specific web events and invokes callbacks when event occurs.
  */
+@CoreModule
 export class WebEventsManager extends Module implements IWebEventsManager {
   public readonly id = 'WebEventsManager';
 

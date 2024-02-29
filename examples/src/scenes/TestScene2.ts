@@ -38,8 +38,8 @@ export class TestScene2 extends Scene {
     this.app.focus.addFocusLayer('two', this.actor2);
     this.app.focus.setFocusLayer('one');
 
-    this.addSignalConnection(this.app.focus.onActivated.connect(this._updateFocusLayerLabel));
-    this.addSignalConnection(this.app.focus.onDeactivated.connect(this._updateFocusLayerLabel));
+    this.addSignalConnection(this.app.focus.onFocusManagerActivated.connect(this._updateFocusLayerLabel));
+    this.addSignalConnection(this.app.focus.onFocusManagerDeactivated.connect(this._updateFocusLayerLabel));
     this.addSignalConnection(this.app.focus.onFocusLayerChange.connect(this._updateFocusLayerLabel));
     this.addSignalConnection(this.app.focus.onFocusChange.connect(({ layer, focusable }) => {}));
     this.addSignalConnection(

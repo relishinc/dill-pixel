@@ -1,4 +1,5 @@
 import { Application, IApplication } from '../core';
+import { MethodBindingRoot } from '../core/decorators';
 
 export interface IModule {
   id: string;
@@ -10,6 +11,7 @@ export interface IModule {
   destroy(): void;
 }
 
+@MethodBindingRoot
 export class Module implements IModule {
   public readonly id: string = 'Module';
 

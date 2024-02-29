@@ -1,7 +1,16 @@
 import { IApplication } from '../../../core';
+import { CoreModule } from '../../../core/decorators';
 import { Container, IScene, Scene } from '../../../display';
 import { Signal } from '../../../signals';
-import { bindAllMethods, createQueue, Logger, Queue, SceneList } from '../../../utils';
+import {
+  bindAllMethods,
+  Constructor,
+  createQueue,
+  getDynamicModuleFromListObject,
+  Logger,
+  Queue,
+  SceneList,
+} from '../../../utils';
 import { Module } from '../../index';
 import { IModule } from '../../Module';
 
@@ -31,18 +40,16 @@ export type LoadSceneConfig = {
   method?: LoadSceneMethod;
 };
 
+@CoreModule
 export class SceneManager extends Module implements ISceneManager {
   public readonly id: string = 'SceneManager';
   // signals
   public onSceneChangeStart = new Signal<(detail: { exiting: string | null; entering: string }) => void>();
   public onSceneChangeComplete = new Signal<(detail: { current: string }) => void>();
-
   // TODO: loadScreen is a special scene that can be used right after the application starts
   public loadScreen?: Scene;
-
   // view container - gets added to the stage
   public view: Container = new Container();
-
   // maybe the user wants the enter animation to be different for the first scene
   public isFirstScene: boolean = true;
 
@@ -50,9 +57,12 @@ export class SceneManager extends Module implements ISceneManager {
   public scenes: SceneList;
   public currentScene: IScene;
   public defaultScene: string;
+  private _sceneModules: Map<string, Constructor<IScene>> = new Map();
+  //
   private _lastScene: IScene | null = null;
   private _queue: Queue<any> | null;
   private _defaultLoadMethod: LoadSceneMethod = 'immediate';
+  private _currentSceneId: string;
 
   constructor() {
     super();
@@ -95,31 +105,16 @@ export class SceneManager extends Module implements ISceneManager {
       this._lastScene = this.currentScene;
     }
 
-    let newScene: IScene;
-
-    // Dynamically import the scene, assuming the export name matches the identifier
+    // check if the scene item exists
     const sceneItem = this.scenes.find((scene) => scene.id === newSceneId);
     if (!sceneItem) {
       throw new Error(`Scene item not found  for id ${newSceneId}`);
     }
 
+    this._currentSceneId = newSceneId;
+
     // found a scene item
-    this._queue = createQueue();
-
-    const module = sceneItem.module;
-    if (!module) {
-      throw new Error(`Couldn't load ${newSceneId}"`);
-    }
-    if ((module as any)[newSceneId]) {
-      // await import
-      newScene = new (module as any)[newSceneId]();
-    } else {
-      newScene = new (module as any)();
-    }
-
-    this.currentScene = newScene;
-
-    this.onSceneChangeStart.emit({ exiting: this._lastScene?.id || null, entering: newScene.id });
+    this._queue = createQueue(this._createCurrentScene);
 
     // TODO: finish adding scene changing behaviours
     // TODO: add loading assets into this queue
@@ -167,6 +162,37 @@ export class SceneManager extends Module implements ISceneManager {
 
     this._queue.add(this._queueComplete);
     this._queue.start();
+  }
+
+  private async _createCurrentScene() {
+    const sceneItem = this.scenes.find((scene) => scene.id === this._currentSceneId)!;
+    let SceneClass: Constructor<IScene> | undefined = undefined;
+
+    if (this._sceneModules.has(this._currentSceneId)) {
+      SceneClass = this._sceneModules.get(this._currentSceneId);
+    } else {
+      const module = await getDynamicModuleFromListObject(sceneItem);
+      if (!module) {
+        throw new Error(`Couldn't load ${this._currentSceneId}"`);
+      }
+
+      if ((module as any)[this._currentSceneId]) {
+        SceneClass = (module as any)[this._currentSceneId];
+      } else {
+        SceneClass = module;
+      }
+
+      if (SceneClass) {
+        this._sceneModules.set(this._currentSceneId, SceneClass);
+      }
+    }
+
+    if (!SceneClass) {
+      throw new Error(`Couldn't load ${this._currentSceneId}"`);
+    }
+
+    this.currentScene = new SceneClass();
+    this.onSceneChangeStart.emit({ exiting: this._lastScene?.id || null, entering: this.currentScene.id });
   }
 
   private _queueComplete() {
