@@ -6,25 +6,23 @@ export interface IModule {
 
   app: IApplication;
 
-  initialize(app: IApplication): Promise<void> | void;
+  initialize(app: IApplication, options?: any): Promise<void> | void;
 
   destroy(): void;
 }
 
 @MethodBindingRoot
-export class Module implements IModule {
-  public readonly id: string = 'Module';
+export class Module<T extends Application = Application> implements IModule {
+  constructor(public readonly id: string = 'Module') {}
 
-  constructor() {}
-
-  public get app(): IApplication {
-    return Application.getInstance();
+  public get app(): T {
+    return Application.getInstance<T>();
   }
 
   public destroy(): void {}
 
-  public initialize(app: IApplication): Promise<void> | void;
-  public async initialize(app: IApplication): Promise<void> {
+  public initialize(app: IApplication, options?: any): Promise<void> | void;
+  public async initialize(app: IApplication, options?: any): Promise<void> {
     return Promise.resolve(undefined);
   }
 }

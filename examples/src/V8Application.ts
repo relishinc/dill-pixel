@@ -48,4 +48,8 @@ export class Actor extends _Actor {
 
 export class V8Application extends Application {
   protected setup(): void {}
+
+  public customFunction(): void {
+    console.log('V8App custom function');
+  }
 }

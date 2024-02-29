@@ -30,6 +30,7 @@ import {
   StorageAdapterList,
   WithRequiredProps,
 } from '../utils';
+import { ModuleList } from '../utils/types';
 import { coreFunctionRegistry } from './coreFunctionRegistry';
 import { coreSignalRegistry } from './coreSignalRegistry';
 import { MethodBindingRoot } from './decorators';
@@ -40,7 +41,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   useDefaults: boolean;
   useSpine: false;
   storageAdapters: StorageAdapterList;
-  customModules: ((new () => IModule) | IModule)[];
+  modules: ModuleList;
   scenes: SceneList;
   focusOptions: FocusManagerOptions;
   defaultScene: string;
@@ -73,7 +74,7 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   useDefaults: true,
   useSpine: false,
   storageAdapters: [],
-  customModules: [],
+  modules: [],
   scenes: [],
   defaultSceneLoadMethod: 'immediate',
 };
@@ -114,8 +115,8 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   // store
   protected _store: IStore;
 
-  public static getInstance(): Application {
-    return Application.instance;
+  public static getInstance<T extends Application = Application>(): T {
+    return Application.instance as T;
   }
 
   public static createContainer(pId: string) {
@@ -219,19 +220,16 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       await this.registerDefaultModules();
     }
 
-    if (this.config.customModules && this.config.customModules.length > 0) {
-      for (let i = 0; i < this.config.customModules.length; i++) {
-        const module = this.config.customModules[i];
-        if (typeof module === 'function') {
-          await this.registerModule(new module());
-        } else {
-          await this.registerModule(module);
-        }
+    if (this.config.modules && this.config.modules.length > 0) {
+      for (let i = 0; i < this.config.modules.length; i++) {
+        const listItem = this.config.modules[i];
+        const module = await getDynamicModuleFromListObject(listItem);
+        await this.registerModule(new module(listItem.id), listItem.options);
       }
     }
 
     // register the applications custom modules
-    await this.registerCustomModules();
+    await this.registerModules();
 
     // add the store if it's enabled
     if (this.config.useStore) {
@@ -311,9 +309,9 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   }
 
   // modules
-  protected async registerModule(module: IModule) {
+  protected async registerModule(module: IModule, options?: any) {
     this._modules.set(module.id, module);
-    return module.initialize(this);
+    return module.initialize(this, options);
   }
 
   protected async registerDefaultModules() {
@@ -323,10 +321,10 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     }
   }
 
-  protected async registerCustomModules() {
+  protected async registerModules() {
     if (isDev) {
       Logger.log(
-        'No custom modules registered using "registerCustomModules". Register them by overriding the "registerCustomModules" method in your' +
+        'No custom modules registered using "registerModules". Register them by overriding the "registerModules" method in your' +
           ' Application class.',
       );
     }

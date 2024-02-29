@@ -5,13 +5,22 @@ const app = await create(V8Application, {
   id: 'V8Application',
   backgroundColor: 0x0,
   backgroundAlpha: 1,
-  storageAdapters: [{ id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } }],
+  modules: [
+    { id: 'TestModule', module: () => import('@/modules/TestModule'), options: { foo: 'bar' } },
+    // { id: 'test', module: TestModule, options: { test: 'bar' } },
+  ],
+  storageAdapters: [
+    { id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } },
+    { id: 'TestAdapter', module: () => import('@/adapters/TestAdapter'), options: { foo: 'bar' } },
+    // { id: 'test', module: TestAdapter, options: { test: 'bar' } },
+  ],
   scenes: [
     { id: 'TestScene', module: () => import('@/scenes/TestScene') },
     { id: 'TestScene2', module: () => import('@/scenes/TestScene2') },
   ],
   defaultSceneLoadMethod: 'exitEnter',
 });
+
 Logger.log('V8Application created', app);
 Logger.log('global signals', app.globalSignals);
 Logger.log('global functions', app.globalFunctions);

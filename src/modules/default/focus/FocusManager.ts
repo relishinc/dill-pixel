@@ -4,8 +4,8 @@ import { CoreModule } from '../../../core/decorators';
 import { PIXIContainer } from '../../../pixi';
 import { Signal } from '../../../signals';
 import { bindMethods, Constructor, getLastMapEntry, getPreviousMapEntry, Logger } from '../../../utils';
-import { Module } from '../../index';
-import { IModule } from '../../Module';
+import type { IModule } from '../../Module';
+import { Module } from '../../Module';
 import { FocusOutliner, FocusOutlinerConfig, IFocusOutliner } from './FocusOutliner';
 
 export type FocusManagerOptions = {

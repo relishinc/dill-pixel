@@ -11,8 +11,8 @@ import {
   Queue,
   SceneList,
 } from '../../../utils';
-import { Module } from '../../index';
-import { IModule } from '../../Module';
+import type { IModule } from '../../Module';
+import { Module } from '../../Module';
 
 export interface ISceneManager extends IModule {
   isFirstScene: boolean;

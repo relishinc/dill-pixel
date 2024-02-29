@@ -1,5 +1,6 @@
 import { Point, Texture } from 'pixi.js';
 import { IScene } from '../display';
+import { IModule } from '../modules';
 import { IStorageAdapter } from '../store';
 
 export type Constructor<T> = new (...args: any[]) => T;
@@ -33,6 +34,13 @@ export type TextureLike = string | Texture;
 export type StorageAdapterList = {
   id: string;
   module: (() => Promise<any>) | Promise<any> | Constructor<IStorageAdapter>;
-  options: any;
+  options?: any;
 }[];
+
+export type ModuleList = {
+  id: string;
+  module: (() => Promise<any>) | Promise<any> | Constructor<IModule>;
+  options?: any;
+}[];
+
 export type SceneList = { id: string; module: (() => Promise<any>) | Promise<any> | Constructor<IScene> }[];
