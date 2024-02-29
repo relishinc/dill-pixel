@@ -1,5 +1,6 @@
 import { Bounds, Container, PointerEvents, PointLike } from 'pixi.js';
 import { IApplication } from '../../../core';
+import { CoreModule } from '../../../core/decorators';
 import { PIXIContainer } from '../../../pixi';
 import { Signal } from '../../../signals';
 import { bindMethods, Constructor, getLastMapEntry, getPreviousMapEntry, Logger } from '../../../utils';
@@ -125,8 +126,8 @@ export interface IFocusManager extends IModule {
   readonly currentLayerId: string | number | null;
   readonly active: boolean;
 
-  onActivated: Signal<() => void>;
-  onDeactivated: Signal<() => void>;
+  onFocusManagerActivated: Signal<() => void>;
+  onFocusManagerDeactivated: Signal<() => void>;
   onFocusLayerChange: Signal<(currentLayerId: string | number) => void>;
   onFocusChange: Signal<(detail: FocusChangeDetail) => void>;
 
@@ -149,12 +150,13 @@ export interface IFocusManager extends IModule {
   deactivate(): void;
 }
 
+@CoreModule
 export class FocusManager extends Module implements IFocusManager {
   public readonly id: string = 'FocusManager';
   public readonly view = new Container();
   // signals
-  public onActivated = new Signal<() => void>();
-  public onDeactivated = new Signal<() => void>();
+  public onFocusManagerActivated = new Signal<() => void>();
+  public onFocusManagerDeactivated = new Signal<() => void>();
   public onFocusLayerChange = new Signal<(currentLayerId: string | number) => void>();
   public onFocusChange = new Signal<(detail: FocusChangeDetail) => void>();
   //
@@ -355,7 +357,7 @@ export class FocusManager extends Module implements IFocusManager {
       if (this._active) {
         shouldEmit = true;
         this._active = false;
-        this.onDeactivated.emit();
+        this.onFocusManagerDeactivated.emit();
       }
     }
 
@@ -371,7 +373,7 @@ export class FocusManager extends Module implements IFocusManager {
         const direction = this._active ? (e.shiftKey ? -1 : 1) : 0;
         if (!this._active) {
           this._active = true;
-          this.onActivated.emit();
+          this.onFocusManagerActivated.emit();
         }
         this._navigate(direction);
       }

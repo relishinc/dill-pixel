@@ -1,11 +1,14 @@
 import { Logger } from '../../utils';
 import { IStorageAdapter } from './IStorageAdapter';
 
+export interface ILocalStorageAdapterOptions {
+  namespace?: string;
+}
+
 export class LocalStorageAdapter implements IStorageAdapter {
-  constructor(
-    protected namespace: string = '',
-    public readonly id: string = 'local',
-  ) {}
+  public namespace: string = '';
+
+  constructor(public id: string = 'local') {}
 
   get prefix() {
     return this.namespace ? `${this.namespace}_` : '';
@@ -13,6 +16,7 @@ export class LocalStorageAdapter implements IStorageAdapter {
 
   save(key: string, data: any): any {
     localStorage.setItem(`${this.prefix}${key}`, JSON.stringify(data));
+    return JSON.stringify(data);
   }
 
   load<T = any>(key: string): T {
@@ -22,8 +26,9 @@ export class LocalStorageAdapter implements IStorageAdapter {
 
   destroy() {}
 
-  public initialize(): boolean {
+  public initialize(options?: Partial<ILocalStorageAdapterOptions>): boolean {
     Logger.log('LocalStorageAdapter initialized');
+    this.namespace = options?.namespace || '';
     return true;
   }
 

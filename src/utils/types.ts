@@ -1,4 +1,6 @@
 import { Point, Texture } from 'pixi.js';
+import { IScene } from '../display';
+import { IStorageAdapter } from '../store';
 
 export type Constructor<T> = new (...args: any[]) => T;
 
@@ -28,4 +30,9 @@ export type ContainerLike = {
 
 export type TextureLike = string | Texture;
 
-export type SceneList = { id: string; module: any }[];
+export type StorageAdapterList = {
+  id: string;
+  module: (() => Promise<any>) | Promise<any> | Constructor<IStorageAdapter>;
+  options: any;
+}[];
+export type SceneList = { id: string; module: (() => Promise<any>) | Promise<any> | Constructor<IScene> }[];

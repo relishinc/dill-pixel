@@ -5,12 +5,23 @@ const app = await create(V8Application, {
   id: 'V8Application',
   backgroundColor: 0x0,
   backgroundAlpha: 1,
-  storageAdapters: [LocalStorageAdapter],
+  storageAdapters: [{ id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } }],
   scenes: [
-    { id: 'TestScene', module: await import('@/scenes/TestScene') },
-    { id: 'TestScene2', module: await import('@/scenes/TestScene2') },
+    { id: 'TestScene', module: () => import('@/scenes/TestScene') },
+    { id: 'TestScene2', module: () => import('@/scenes/TestScene2') },
   ],
   defaultSceneLoadMethod: 'exitEnter',
 });
-
 Logger.log('V8Application created', app);
+Logger.log('global signals', app.globalSignals);
+Logger.log('global functions', app.globalFunctions);
+
+// global signal registry
+app.on('sceneChangeComplete').connect(() => {
+  console.log('sceneChangeComplete');
+});
+
+// global function registry
+app.func('onKeyDown', 'enter').connect(() => {
+  console.log('global onKeyDown: enter pressed');
+});

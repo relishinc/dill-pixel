@@ -1,3 +1,4 @@
+import { CoreFunction, CoreModule } from '../../../core/decorators';
 import { Signal } from '../../../signals';
 import { Module } from '../../index';
 import { IModule } from '../../Module';
@@ -14,7 +15,8 @@ export interface IKeyboardManager extends IModule {
   onKeyUp(key: string): KeySignal;
 }
 
-export class KeyboardManager extends Module implements IModule {
+@CoreModule
+export class KeyboardManager extends Module implements IKeyboardManager {
   public readonly id: string = 'KeyboardManager';
 
   private _keyDownSignals: Map<string, KeySignal> = new Map();
@@ -39,10 +41,12 @@ export class KeyboardManager extends Module implements IModule {
     document.removeEventListener('keyup', this._handleEvent);
   }
 
+  @CoreFunction
   public onKeyDown(key: string): KeySignal {
     return this._checkAndAddSignal(key.toLowerCase(), 'keydown');
   }
 
+  @CoreFunction
   public onKeyUp(key: string): KeySignal {
     return this._checkAndAddSignal(key.toLowerCase(), 'keyup');
   }

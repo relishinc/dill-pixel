@@ -40,7 +40,7 @@ function getInstanceMethodNames(
       return !excludeMethodNames.includes(propertyName);
     });
     methodNames.push(...filteredMethodNames);
-    if (prototype === Object.prototype || prototype.constructor.hasOwnProperty('__dill_pixel_top_level_class')) {
+    if (prototype === Object.prototype || prototype.constructor.hasOwnProperty('__dill_pixel_method_binding_root')) {
       // console.log('breaking on prototype', prototype.constructor.name);
       break;
     }

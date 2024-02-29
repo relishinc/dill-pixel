@@ -60,7 +60,7 @@ export class Queue<T = any | void> {
       this._currentIndex++;
       void this._next();
     } catch (error) {
-      Logger.error('Promise failed due to an error. Cancelling queue', error);
+      Logger.error("Queue didn't complete due to an error:", error, 'Cancelling Queue');
       this._isCanceled = true;
     }
   }

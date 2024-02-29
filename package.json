@@ -21,6 +21,7 @@
     "build:react": "cd ./examples-react && npm run build",
     "build": "npm run version && npm run pixi-exports && npm run compile",
     "pixi-exports": "node ./scripts/pixi-exports.js",
+    "prebuild": "npx ts-node ./scripts/prebuild.mjs",
     "compile": "tsc",
     "build:examples": "cd ./examples && npm run build",
     "visualize:examples": "cd ./examples && npx vite-bundle-visualizer",
@@ -54,6 +55,7 @@
     "prettier": "^3.0.3",
     "relishinc-prettier": "github:relishinc/prettier",
     "standard-version": "^9.5.0",
+    "ts-node": "^10.9.2",
     "tslint": "^6.1.3",
     "typedoc": "^0.25.1",
     "typescript": "^5.2.2"

@@ -19,14 +19,27 @@ import { defaultModules } from '../modules/default';
 import { Signal } from '../signals';
 import { IStorageAdapter } from '../store';
 import { IStore, Store } from '../store/Store';
-import { bindAllMethods, isDev, isMobile, isRetina, Logger, SceneList, WithRequiredProps } from '../utils';
+import {
+  bindAllMethods,
+  getDynamicModuleFromListObject,
+  isDev,
+  isMobile,
+  isRetina,
+  Logger,
+  SceneList,
+  StorageAdapterList,
+  WithRequiredProps,
+} from '../utils';
+import { coreFunctionRegistry } from './coreFunctionRegistry';
+import { coreSignalRegistry } from './coreSignalRegistry';
+import { MethodBindingRoot } from './decorators';
 
 export interface IApplicationOptions extends ApplicationOptions {
   id: string;
   useStore: boolean;
   useDefaults: boolean;
   useSpine: false;
-  storageAdapters: ((new () => IStorageAdapter) | IStorageAdapter)[];
+  storageAdapters: StorageAdapterList;
   customModules: ((new () => IModule) | IModule)[];
   scenes: SceneList;
   focusOptions: FocusManagerOptions;
@@ -80,6 +93,7 @@ export interface IApplication extends PIXIPApplication {
   getModule<T extends IModule>(name: string): T;
 }
 
+@MethodBindingRoot
 export class Application<R extends Renderer = Renderer> extends PIXIPApplication<R> implements IApplication {
   // config
   public config: Partial<IApplicationOptions>;
@@ -156,6 +170,21 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   }
 
   /**
+   * Returns the global signals
+   */
+  public get globalSignals(): string[] {
+    return Object.keys(coreSignalRegistry);
+  }
+
+  /**
+   * Returns the global functions
+   * @returns {{[functionName: string]: any}}
+   */
+  public get globalFunctions(): string[] {
+    return Object.keys(coreFunctionRegistry);
+  }
+
+  /**
    * Destroy the application
    * This will destroy all modules and the store
    * @param {RendererDestroyOptions} rendererDestroyOptions
@@ -210,12 +239,9 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       // register any storage adapters passed through the config
       if (this.config.storageAdapters && this.config.storageAdapters.length > 0) {
         for (let i = 0; i < this.config.storageAdapters.length; i++) {
-          const storageAdapter = this.config.storageAdapters[i];
-          if (typeof storageAdapter === 'function') {
-            await this.registerStorageAdapter(new storageAdapter());
-          } else {
-            await this.registerStorageAdapter(storageAdapter);
-          }
+          const listItem = this.config.storageAdapters[i];
+          const storageAdapter = await getDynamicModuleFromListObject(listItem);
+          await this.registerStorageAdapter(new storageAdapter(listItem.id), listItem.options);
         }
       }
       // also call the registerStorageAdapters method to allow for custom storage adapters to be registered
@@ -235,6 +261,45 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this._modules.get(moduleName) as T;
   }
 
+  /**
+   * Connect to a global signal
+   * signals registered in core modules are added to the global signal registry
+   * and can be connected to from anywhere in the application
+   * syntactically, we remove the "on" from the signal name, and lowercase the first letter
+   * e.g. "onSceneChangeComplete" becomes "sceneChangeComplete"
+   * @example app.on('sceneChangeComplete').connect(() => {...}) is the same as app.scene.onSceneChangeComplete.connect(() => {...})
+   * unfortunately, the signal's type is lost, so you will have to cast it to the correct type when using the global signal registry
+   * @param {string} signalName
+   * @returns {Signal<any>}
+   */
+  public on(signalName: string): Signal<any> {
+    if (!coreSignalRegistry[signalName]) {
+      throw new Error(`Signal with name ${signalName} does not exist in the global signal registry`);
+    }
+    return coreSignalRegistry[signalName];
+  }
+
+  /**
+   * Call a global function
+   * functions registered in core modules are added to the global function registry
+   * and can be called from anywhere in the application
+   * @example app.func('onKeyDown', 'enter').connect(() => {...})
+   * @param {string} functionName
+   * @param args
+   * @returns {any}
+   */
+  public func(functionName: string, ...args: any[]): any {
+    if (!coreFunctionRegistry[functionName]) {
+      throw new Error(`Function with name ${functionName} does not exist in the global function registry`);
+    }
+    return coreFunctionRegistry[functionName](...args);
+  }
+
+  /**
+   * Get a storage adapter by id
+   * @param {string} adapterId
+   * @returns {IStorageAdapter}
+   */
   public getStorageAdapter(adapterId: string): IStorageAdapter {
     return this.store.getAdapter(adapterId);
   }
@@ -280,8 +345,8 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return Promise.resolve();
   }
 
-  protected async registerStorageAdapter(adapter: IStorageAdapter): Promise<any> {
-    return this.store.registerAdapter(adapter);
+  protected async registerStorageAdapter(adapter: IStorageAdapter, adapterOptions: any): Promise<any> {
+    return this.store.registerAdapter(adapter, adapterOptions);
   }
 
   /**
@@ -297,7 +362,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     // override me to set up application specific stuff
   }
 
-  private async _onResize() {
+  private async _resize() {
     this.ticker.addOnce(() => {
       this.onResize.emit(this.renderer.screen);
     });
@@ -316,7 +381,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     }
 
     // connect onResize signal
-    this.webEvents.onResize.connect(this._onResize);
+    this.webEvents.onResize.connect(this._resize);
 
     // scene manager
     this.stage.addChild(this.scenes.view);

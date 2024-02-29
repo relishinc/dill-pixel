@@ -52,8 +52,8 @@ export class TestScene extends Scene {
     this.app.focus.addFocusLayer('two', this.actor2);
     this.app.focus.setFocusLayer('one');
 
-    this.addSignalConnection(this.app.focus.onActivated.connect(this._updateFocusLayerLabel));
-    this.addSignalConnection(this.app.focus.onDeactivated.connect(this._updateFocusLayerLabel));
+    this.addSignalConnection(this.app.focus.onFocusManagerActivated.connect(this._updateFocusLayerLabel));
+    this.addSignalConnection(this.app.focus.onFocusManagerDeactivated.connect(this._updateFocusLayerLabel));
     this.addSignalConnection(this.app.focus.onFocusLayerChange.connect(this._updateFocusLayerLabel));
     this.addSignalConnection(
       this.app.keyboard.onKeyUp('a').connect(() => {
@@ -70,6 +70,7 @@ export class TestScene extends Scene {
         void this.app.scenes.loadScene({ id: 'TestScene2' });
       }),
     );
+
     this._updateFocusLayerLabel();
   }
 

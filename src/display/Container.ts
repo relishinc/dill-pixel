@@ -1,6 +1,7 @@
 import { DestroyOptions, Ticker } from 'pixi.js';
 import { SignalConnection, SignalConnections } from 'typed-signals';
 import { Application } from '../core';
+import { MethodBindingRoot } from '../core/decorators';
 import { Animated, Factory } from '../mixins';
 import { defaultFactoryMethods } from '../mixins/factory';
 import { bindAllMethods, Size } from '../utils';
@@ -27,6 +28,7 @@ type ContainerConfig = {
   priority: number;
 };
 
+@MethodBindingRoot
 export class Container<T extends Application = Application> extends _Container implements IContainer {
   protected _signalConnections: SignalConnections = new SignalConnections();
 
