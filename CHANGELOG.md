@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.34.0](https://github.com/relishinc/dill-pixel/compare/v2.33.0...v2.34.0) (2024-03-01)
+
+
+### Features
+
+* added some features to VoiceOverManager to help determine actively playing items ([500b1de](https://github.com/relishinc/dill-pixel/commit/500b1de964a293164e2de561a965ca6b6e023282))
+
 ## [2.33.0](https://github.com/relishinc/dill-pixel/compare/v2.32.5...v2.33.0) (2024-02-23)
 
 
