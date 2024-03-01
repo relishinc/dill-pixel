@@ -65,12 +65,34 @@ export interface IVoiceOverManager {
   debug: boolean;
 
   // tslint:disable: unified-signatures
+  /**
+   * Whether a voiceover is currently playing
+   */
+  isPlaying: boolean;
+
+  /**
+   * Number of voiceovers in the queue
+   */
+  numInQueue: number;
+
+  /**
+   * Ids of voiceovers in the queue
+   */
+  queueIds: string[];
+
+  /**
+   * The currently playing voiceover
+   */
+  activeVO: HowlerTrack | undefined;
+
   // 1 param
   /**
    * Play a Voiceover or sequence of voiceovers
    * @param key Id or array of voiceover Ids
    */
   playVO(key: string | (string | number)[]): void;
+
+  // tslint:enable: unified-signatures
 
   // 2 params
   /**
@@ -104,8 +126,6 @@ export interface IVoiceOverManager {
    * @param callback Called after the last voiceover finishes playing, or immediately if no playback occurs
    */
   playVO(key: string | (string | number)[], mode: PlayMode, callback: Callback): void;
-
-  // tslint:enable: unified-signatures
 
   /**
    * Stop any currently playing VOs, and cancel any queued VOs.
@@ -152,11 +172,23 @@ export class VoiceOverManager implements IVoiceOverManager {
     Signals.unpause.connect(this.onResume);
   }
 
-  private get activeVO(): HowlerTrack | undefined {
+  public get activeVO(): HowlerTrack | undefined {
     if (this._queue.length > 0 && this._queue[0].key) {
       return Application.instance.audio.getAudioTrack(this._queue[0].key, AudioCategory.VO) as HowlerTrack | undefined;
     }
     return undefined;
+  }
+
+  public get isPlaying(): boolean {
+    return this.activeVO !== undefined;
+  }
+
+  public get numInQueue(): number {
+    return this._queue.length;
+  }
+
+  public get queueIds(): string[] {
+    return this._queue.map((item) => item.key);
   }
 
   public playVO(key: string | (string | number)[], mode?: PlayMode | Callback | IPlayOptions, callback?: Callback) {
