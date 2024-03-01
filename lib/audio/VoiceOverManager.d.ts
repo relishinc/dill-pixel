@@ -1,4 +1,5 @@
 import { Application } from '../core';
+import { HowlerTrack } from './HowlerTrack';
 type Callback = (pDidPlay: boolean) => void;
 export declare enum PlayMode {
     /** Play immediately if nothing else is playing, otherwise add to end of queue */
@@ -34,6 +35,22 @@ export interface IVoiceOverManager {
     /** Duration, in milliseconds, of the fade out when stopping voiceovers. Must be greater than or equal to zero */
     FADE_OUT_DURATION: number;
     debug: boolean;
+    /**
+     * Whether a voiceover is currently playing
+     */
+    isPlaying: boolean;
+    /**
+     * Number of voiceovers in the queue
+     */
+    numInQueue: number;
+    /**
+     * Ids of voiceovers in the queue
+     */
+    queueIds: string[];
+    /**
+     * The currently playing voiceover
+     */
+    activeVO: HowlerTrack | undefined;
     /**
      * Play a Voiceover or sequence of voiceovers
      * @param key Id or array of voiceover Ids
@@ -85,7 +102,10 @@ export declare class VoiceOverManager implements IVoiceOverManager {
     private warn;
     private error;
     constructor(app: Application);
-    private get activeVO();
+    get activeVO(): HowlerTrack | undefined;
+    get isPlaying(): boolean;
+    get numInQueue(): number;
+    get queueIds(): string[];
     playVO(key: string | (string | number)[], mode?: PlayMode | Callback | IPlayOptions, callback?: Callback): void;
     stopVO(): void;
     private playCaptionForSkippedVO;
