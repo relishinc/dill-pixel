@@ -240,7 +240,7 @@ export class SceneManager extends Module implements ISceneManager {
   }
 
   private async _startCurrentScene(): Promise<void> {
-    await this.currentScene.start();
+    void this.currentScene.start();
     return Promise.resolve();
   }
 }
