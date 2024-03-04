@@ -1,4 +1,4 @@
-import { Logger, Scene } from 'dill-pixel';
+import { delay, Scene } from 'dill-pixel';
 import { Ticker } from 'pixi.js';
 
 export class AudioScene extends Scene {
@@ -16,8 +16,8 @@ export class AudioScene extends Scene {
   }
 
   async start() {
-    const sound = await this.app.audio.play('horizon.mp3', 'sfx', { loop: true });
-    Logger.log(sound);
+    await delay(2);
+    this.app.audio.play('horizon.mp3', 'music');
   }
 
   update(ticker: Ticker) {}

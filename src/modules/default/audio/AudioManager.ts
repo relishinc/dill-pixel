@@ -1,4 +1,5 @@
-import { IMediaInstance, PlayOptions, sound, Sound, soundAsset, SoundSourceMap } from '@pixi/sound';
+import { IMediaInstance, PlayOptions, sound, soundAsset, SoundSourceMap } from '@pixi/sound';
+import { gsap } from 'gsap';
 import { AssetsManifest, extensions, UnresolvedAsset } from 'pixi.js';
 import { IApplication } from '../../../core';
 import { CoreModule } from '../../../core/decorators';
@@ -11,16 +12,20 @@ extensions.add(soundAsset);
 class AudioChannel {
   public volume: number = 1.0;
   public muted: boolean = false;
-  private _sounds: Map<string, Sound> = new Map<string, Sound>();
+  private _sounds: Map<string, IMediaInstance> = new Map<string, IMediaInstance>();
 
   constructor(public name: string) {}
 
-  add(id: string, instance: Sound): void {
+  add(id: string, instance: IMediaInstance): void {
     instance.volume = this.volume;
     this._sounds.set(id, instance);
   }
 
-  remove(id: string): Sound | undefined {
+  get(id: string): IMediaInstance | undefined {
+    return this._sounds.get(id);
+  }
+
+  remove(id: string): IMediaInstance | undefined {
     const instance = this._sounds.get(id);
     if (instance) {
       instance.stop();
@@ -53,13 +58,26 @@ export interface IAudioManager extends IModule {
 
   play(soundId: string, channelName: ChannelName, options?: PlayOptions): Promise<IMediaInstance>;
 
-  stop(soundId: string, channelName: ChannelName): Sound | undefined;
+  stop(soundId: string, channelName: ChannelName): IMediaInstance | undefined;
 
   setVolume(channelName: ChannelName | ChannelName[], volume: number): void;
 
   addAllFromManifest(manifest: AssetsManifest): void;
 
   add(soundAsset: UnresolvedAsset): void;
+
+  fade(soundId: string, channelName: ChannelName, props?: gsap.TweenVars): Promise<gsap.core.Tween | null>;
+
+  fadeIn(soundId: string, channelName: ChannelName, props?: gsap.TweenVars): Promise<gsap.core.Tween | null>;
+
+  fadeOut(soundId: string, channelName: ChannelName, props?: gsap.TweenVars): Promise<gsap.core.Tween | null>;
+
+  crossFade(
+    outSoundId: string,
+    inSoundId: string,
+    channelName: ChannelName,
+    duration?: number,
+  ): Promise<gsap.core.Tween | null>;
 
   mute(): void;
 
@@ -156,25 +174,25 @@ export class AudioManager extends Module implements IAudioManager {
     if (alias) {
       const obj: SoundSourceMap = {};
       (alias as string[]).forEach((a: string) => {
-        console.log(a);
         if (a === undefined) {
           return;
         }
         // @ts-ignore
         obj[a] = soundAsset.src;
       });
-      console.log(obj);
       sound.add(obj);
     }
   }
 
   public async play(soundId: string, channelName: ChannelName = 'sfx', options?: PlayOptions): Promise<IMediaInstance> {
-    const createdSound = Sound.from(soundId);
     const channel = this._channels.get(channelName);
-    Logger.log('play', soundId, channelName, options);
+    Logger.log('play', soundId, channelName, options, channel);
     if (channel) {
-      channel.add(soundId, createdSound);
       const instance = await sound.play(soundId, options);
+      channel.add(soundId, instance);
+      if (options?.volume !== undefined) {
+        instance.volume = options.volume;
+      }
       instance.on('start', () => this._soundStarted(soundId, instance, channelName));
       instance.on('end', () => this._soundEnded(soundId, instance, channelName));
       return instance;
@@ -183,13 +201,65 @@ export class AudioManager extends Module implements IAudioManager {
     }
   }
 
-  public stop(soundId: string, channelName: ChannelName = 'sfx'): Sound | undefined {
+  public stop(soundId: string, channelName: ChannelName = 'sfx'): IMediaInstance | undefined {
     const channel = this._channels.get(channelName);
     if (channel) {
       return channel.remove(soundId);
     } else {
       throw new Error(`Channel ${channelName} does not exist.`);
     }
+  }
+
+  public async fadeIn(
+    soundId: string,
+    channelName: ChannelName = 'music',
+    props: gsap.TweenVars,
+  ): Promise<gsap.core.Tween | null> {
+    const channel = this._channels.get(channelName);
+    if (!channel?.get(soundId)) {
+      await this.play(soundId, channelName, { volume: 0 });
+    }
+    if (props?.volume === 0) {
+      Logger.warn('fadeIn volume is 0', soundId, channelName, props);
+    }
+    const fadeProps = Object.assign({ volume: 1, duration: 1, ease: 'linear.easeNone' }, props);
+    return this.fade(soundId, channelName, fadeProps);
+  }
+
+  public async fadeOut(
+    soundId: string,
+    channelName: ChannelName = 'music',
+    props: Partial<gsap.TweenVars>,
+  ): Promise<gsap.core.Tween | null> {
+    if (props?.volume !== 0) {
+      Logger.warn('fadeOut volume should probably be 0', soundId, channelName, props);
+    }
+    const fadeProps = Object.assign({ volume: 0, duration: 1, ease: 'linear.easeNone' }, props);
+    return this.fade(soundId, channelName, fadeProps);
+  }
+
+  public async crossFade(
+    outSoundId: string,
+    inSoundId: string,
+    channelName: ChannelName = 'music',
+    duration: number = 2,
+  ): Promise<gsap.core.Tween | null> {
+    const crossfadeProps = { duration, ease: 'linear.easeNone' };
+    void this.fadeOut(outSoundId, channelName, crossfadeProps);
+    return this.fadeIn(inSoundId, channelName, crossfadeProps);
+  }
+
+  public async fade(
+    soundId: string,
+    channelName: ChannelName = 'music',
+    props: gsap.TweenVars,
+  ): Promise<gsap.core.Tween | null> {
+    const channel = this._channels.get(channelName);
+    const soundInstance = channel?.get(soundId);
+    if (soundInstance) {
+      return gsap.to(soundInstance, props);
+    }
+    return null;
   }
 
   private _setMuted(): void {
@@ -214,12 +284,12 @@ export class AudioManager extends Module implements IAudioManager {
   }
 
   private _soundStarted(id: string, instance: IMediaInstance, channelName: ChannelName): void {
-    console.log(`${id} started in ${channelName} channel`);
+    // Logger.log(`${id} started in ${channelName} channel`);
     this.onSoundStarted.emit({ id, instance, channelName });
   }
 
   private _soundEnded(id: string, instance: IMediaInstance, channelName: ChannelName): void {
-    console.log(`${id} ended in ${channelName} channel`);
+    // Logger.log(`${id} ended in ${channelName} channel`);
     this.onSoundEnded.emit({ id, instance, channelName });
   }
 }
