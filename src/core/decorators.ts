@@ -80,5 +80,8 @@ export function CoreModule(constructor: Constructor<any>) {
     return construct(original, args);
   };
   newConstructor.prototype = original.prototype;
+
+  // reset its name to the original constructor's name
+  Object.defineProperty(newConstructor, 'name', { value: constructor.name, configurable: true });
   return newConstructor;
 }

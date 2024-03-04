@@ -7,18 +7,16 @@ const app = await create(V8Application, {
   backgroundColor: 0x0,
   backgroundAlpha: 1,
   manifest,
-  modules: [
-    { id: 'TestModule', module: () => import('@/modules/TestModule'), options: { foo: 'bar' } },
-    // { id: 'test', module: TestModule, options: { test: 'bar' } },
-  ],
+  modules: [{ id: 'test', module: () => import('@/modules/TestModule'), options: { foo: 'bar' } }],
   storageAdapters: [
     { id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } },
-    { id: 'TestAdapter', module: () => import('@/adapters/TestAdapter'), options: { foo: 'bar' } },
-    // { id: 'test', module: TestAdapter, options: { test: 'bar' } },
+    { id: 'test', module: () => import('@/adapters/TestAdapter'), options: { foo: 'bar' } },
   ],
   scenes: [
-    { id: 'TestScene', module: () => import('@/scenes/TestScene') },
-    { id: 'TestScene2', module: () => import('@/scenes/TestScene2') },
+    { id: 'audio', namedExport: 'AudioScene', module: () => import('./scenes/AudioScene.ts') },
+    { id: 'cam', namedExport: 'CameraScene', module: () => import('@/scenes/CameraScene') },
+    { id: 'test', namedExport: 'TestScene', module: () => import('@/scenes/TestScene') },
+    { id: 'test1', namedExport: 'TestScene2', module: () => import('@/scenes/TestScene2') },
   ],
   defaultSceneLoadMethod: 'exitEnter',
 });

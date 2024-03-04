@@ -5,6 +5,41 @@
       "assets": []
     },
     {
+      "name": "audio",
+      "assets": [
+        {
+          "alias": [
+            "audio/music/bubble-land-sfx.wav",
+            "bubble-land-sfx.wav"
+          ],
+          "src": [
+            "audio/music/bubble-land-sfx.mp3",
+            "audio/music/bubble-land-sfx.ogg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "audio/music/horizon.mp3",
+            "horizon.mp3"
+          ],
+          "src": [
+            "audio/music/horizon.mp3",
+            "audio/music/horizon.ogg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "game",
       "assets": [
         {

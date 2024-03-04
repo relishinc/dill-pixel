@@ -1,4 +1,6 @@
-export { FocusManager } from './FocusManager';
+import { FocusManager } from './FocusManager';
+
+export default FocusManager;
 export type { IFocusManager, IFocusable, FocusManagerOptions } from './FocusManager';
 
 export { FocusOutliner } from './FocusOutliner';
