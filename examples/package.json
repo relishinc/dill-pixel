@@ -10,7 +10,6 @@
     "assets": "assetpack -c .assetpack.mjs",
     "start": "vite",
     "dev": "vite",
-    "prebuild": "run-s clean format:check lint assets types",
     "build": "vite build",
     "prepreview": "run-s build",
     "preview": "vite preview --open",
@@ -35,6 +34,7 @@
     "@pixi/ui": "^0.9.0",
     "dat.gui": "^0.7.9",
     "dill-pixel": "file:..",
-    "gsap": "^3.11.5"
+    "gsap": "^3.11.5",
+    "pixi-rive": "^1.0.3"
   }
 }

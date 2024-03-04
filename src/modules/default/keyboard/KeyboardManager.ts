@@ -4,23 +4,23 @@ import type { IModule } from '../../Module';
 import { Module } from '../../Module';
 
 type KeyboardEventType = 'keydown' | 'keyup';
-type KeyboardEventDetail = { event: KeyboardEvent; key: string };
+export type KeyboardEventDetail = { event: KeyboardEvent; key: string };
 type KeySignal = Signal<(detail: KeyboardEventDetail) => void>;
 
 export interface IKeyboardManager extends IModule {
   enabled: boolean;
 
-  onKeyDown(key: string): KeySignal;
+  onKeyDown(key?: string): KeySignal;
 
-  onKeyUp(key: string): KeySignal;
+  onKeyUp(key?: string): KeySignal;
 }
 
 @CoreModule
 export class KeyboardManager extends Module implements IKeyboardManager {
   public readonly id: string = 'KeyboardManager';
 
-  private _keyDownSignals: Map<string, KeySignal> = new Map();
-  private _keyUpSignals: Map<string, KeySignal> = new Map();
+  private _keyDownSignals: Map<string | undefined, KeySignal> = new Map();
+  private _keyUpSignals: Map<string | undefined, KeySignal> = new Map();
 
   private _enabled: boolean = true;
 
@@ -42,13 +42,13 @@ export class KeyboardManager extends Module implements IKeyboardManager {
   }
 
   @CoreFunction
-  public onKeyDown(key: string): KeySignal {
-    return this._checkAndAddSignal(key.toLowerCase(), 'keydown');
+  public onKeyDown(key?: string): KeySignal {
+    return this._checkAndAddSignal(key?.toLowerCase() || undefined, 'keydown');
   }
 
   @CoreFunction
-  public onKeyUp(key: string): KeySignal {
-    return this._checkAndAddSignal(key.toLowerCase(), 'keyup');
+  public onKeyUp(key?: string): KeySignal {
+    return this._checkAndAddSignal(key?.toLowerCase() || undefined, 'keyup');
   }
 
   /**
@@ -59,14 +59,21 @@ export class KeyboardManager extends Module implements IKeyboardManager {
    * @returns {KeySignal}
    * @private
    */
-  private _checkAndAddSignal(key: string, eventType: KeyboardEventType): KeySignal {
+  private _checkAndAddSignal(key: string | undefined, eventType: KeyboardEventType): KeySignal {
     const signalMap = eventType === 'keydown' ? this._keyDownSignals : this._keyUpSignals;
+
     if (!signalMap.size) {
       this._listen(eventType);
     }
+
+    if (key === undefined) {
+      key = '*undefined*';
+    }
+
     if (!signalMap.has(key)) {
       signalMap.set(key, new Signal<(detail: KeyboardEventDetail) => void>());
     }
+
     return signalMap.get(key) as KeySignal;
   }
 
@@ -79,6 +86,7 @@ export class KeyboardManager extends Module implements IKeyboardManager {
       return;
     }
     const signalMap = event.type === 'keydown' ? this._keyDownSignals : this._keyUpSignals;
+    signalMap.get('*undefined*')?.emit({ event, key: event.key.toLowerCase() });
     signalMap.get(event.key.toLowerCase())?.emit({ event, key: event.key });
   }
 }

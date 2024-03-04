@@ -1,4 +1,5 @@
 import { Partial } from 'react-spring';
+import { Logger } from '../utils';
 import { IStorageAdapter } from './adapters';
 
 type AdapterSaveConfig = {
@@ -13,6 +14,8 @@ export interface IStore {
 
   getAdapter<T extends IStorageAdapter>(adapterId: string): T;
 
+  hasAdapter(adapterId: string): boolean;
+
   save(
     adapterId: string | string[] | Partial<AdapterSaveConfig>[],
     key: string,
@@ -24,33 +27,37 @@ export interface IStore {
 }
 
 export class Store implements IStore {
-  protected adapters: Map<string, IStorageAdapter>;
-
-  constructor() {
-    this.adapters = new Map<string, IStorageAdapter>();
-  }
+  private _adapters: Map<string, IStorageAdapter> = new Map<string, IStorageAdapter>();
 
   // Use a generic type parameter with a constraint to IStorageAdapter
 
   async registerAdapter(adapter: IStorageAdapter, adapterOptions: any): Promise<void> {
-    this.adapters.set(adapter.id, adapter);
+    if (this._adapters.has(adapter.id)) {
+      Logger.error(`Storage Adapter with id "${adapter.id}" already registered. Not registering.`);
+      return Promise.resolve();
+    }
+    this._adapters.set(adapter.id, adapter);
     await adapter.initialize(adapterOptions);
   }
 
   // This allows TypeScript to infer the correct adapter type when retrieved
   getAdapter<T extends IStorageAdapter>(adapterId: string): T {
-    const adapter = this.adapters.get(adapterId);
+    const adapter = this._adapters.get(adapterId);
     if (!adapter) {
       throw new Error(`Adapter ${adapterId} not found`);
     }
     return adapter as T;
   }
 
+  public hasAdapter(adapterId: string): boolean {
+    return this._adapters.has(adapterId);
+  }
+
   public destroy(): void {
-    this.adapters.forEach((adapter) => {
+    this._adapters.forEach((adapter) => {
       adapter.destroy();
     });
-    this.adapters.clear();
+    this._adapters.clear();
   }
 
   public async save(
@@ -72,7 +79,7 @@ export class Store implements IStore {
 
     if ((keys[0] as string) === '*' || (keys[0] as Partial<AdapterSaveConfig>)?.adapterId === '*') {
       // use all adapter
-      keys = Array.from(this.adapters.keys());
+      keys = Array.from(this._adapters.keys());
     }
     for (let i = 0; i < keys.length; i++) {
       let aKey: string;
@@ -85,7 +92,7 @@ export class Store implements IStore {
         aKey = keys[i] as unknown as string;
         shouldAwait = awaitSave;
       }
-      const adapter = this.adapters.get(aKey);
+      const adapter = this._adapters.get(aKey);
       if (!adapter) {
         throw new Error(`Adapter ${keys[i]} not found`);
       }
@@ -100,7 +107,7 @@ export class Store implements IStore {
   }
 
   public async load(adapterId: string, key: string): Promise<any> {
-    const adapter = this.adapters.get(adapterId);
+    const adapter = this._adapters.get(adapterId);
     if (!adapter) {
       throw new Error(`Adapter ${adapterId} not found`);
     }

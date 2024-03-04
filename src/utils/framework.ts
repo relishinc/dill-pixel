@@ -1,31 +1,29 @@
 import { isPromise } from './async';
-import { Constructor } from './types';
+import { Constructor, ImportListItem } from './types';
 
 function isClass(value: any): boolean {
   return typeof value === 'function' && /^class\s/.test(Function.prototype.toString.call(value));
 }
 
-export async function getDynamicModuleFromListObject<T = any>(obj: {
-  id: string;
-  module: (() => Promise<any>) | Promise<any> | Constructor<T>;
-}): Promise<Constructor<T>> {
+export async function getDynamicModuleFromImportListItem<T = any>(item: ImportListItem<T>): Promise<Constructor<T>> {
   let module;
-  let ctor;
+  let ctor: Constructor<T>;
 
-  if (isPromise(obj.module)) {
-    module = await obj.module;
-  } else if (typeof obj.module === 'function') {
-    if (isClass(obj.module)) {
-      module = obj.module;
+  if (isPromise(item.module)) {
+    module = await item.module;
+    ctor = item?.namedExport ? module[item.namedExport] : module.default;
+  } else if (typeof item.module === 'function') {
+    if (isClass(item.module)) {
+      module = item.module;
       ctor = module as Constructor<T>;
     } else {
-      module = await (obj.module as () => Promise<any>)();
-      ctor = (module[obj.id] ? module[obj.id] : module) as Constructor<T>;
+      module = await (item.module as () => Promise<any>)();
+      ctor = item?.namedExport ? module[item.namedExport] : module.default;
     }
   } else {
-    module = obj.module;
-    ctor = module as Constructor<T>;
+    module = item.module;
+    ctor = module;
   }
 
-  return ctor as Constructor<T>;
+  return ctor;
 }

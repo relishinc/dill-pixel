@@ -6,10 +6,10 @@ import {
   bindAllMethods,
   Constructor,
   createQueue,
-  getDynamicModuleFromListObject,
+  getDynamicModuleFromImportListItem,
+  ImportList,
   Logger,
   Queue,
-  SceneList,
 } from '../../../utils';
 import type { IModule } from '../../Module';
 import { Module } from '../../Module';
@@ -20,7 +20,7 @@ export interface ISceneManager extends IModule {
   onSceneChangeComplete: Signal<(detail: { current: string }) => void>;
   loadScreen?: Scene;
   view: Container;
-  scenes: SceneList;
+  scenes: ImportList<IScene>;
 
   setDefaultLoadMethod(method: LoadSceneMethod): void;
 
@@ -43,7 +43,6 @@ export type LoadSceneConfig = {
 @CoreModule
 export class SceneManager extends Module implements ISceneManager {
   public readonly id: string = 'SceneManager';
-  // signals
   public onSceneChangeStart = new Signal<(detail: { exiting: string | null; entering: string }) => void>();
   public onSceneChangeComplete = new Signal<(detail: { current: string }) => void>();
   // TODO: loadScreen is a special scene that can be used right after the application starts
@@ -54,7 +53,7 @@ export class SceneManager extends Module implements ISceneManager {
   public isFirstScene: boolean = true;
 
   // scene management
-  public scenes: SceneList;
+  public scenes: ImportList<IScene> = [];
   public currentScene: IScene;
   public defaultScene: string;
   private _sceneModules: Map<string, Constructor<IScene>> = new Map();
@@ -171,7 +170,7 @@ export class SceneManager extends Module implements ISceneManager {
     if (this._sceneModules.has(this._currentSceneId)) {
       SceneClass = this._sceneModules.get(this._currentSceneId);
     } else {
-      const module = await getDynamicModuleFromListObject(sceneItem);
+      const module = await getDynamicModuleFromImportListItem(sceneItem);
       if (!module) {
         throw new Error(`Couldn't load ${this._currentSceneId}"`);
       }

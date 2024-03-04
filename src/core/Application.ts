@@ -8,10 +8,12 @@ import {
   Renderer,
   RendererDestroyOptions,
 } from 'pixi.js';
+import { IScene } from '../display';
 import { IModule } from '../modules';
 import type {
   FocusManagerOptions,
   IAssetManager,
+  IAudioManager,
   IFocusManager,
   IKeyboardManager,
   ISceneManager,
@@ -24,17 +26,15 @@ import { IStorageAdapter } from '../store';
 import { IStore, Store } from '../store/Store';
 import {
   bindAllMethods,
-  getDynamicModuleFromListObject,
+  getDynamicModuleFromImportListItem,
+  ImportList,
   isDev,
   isMobile,
   isRetina,
   Logger,
-  SceneList,
-  StorageAdapterList,
   WithRequiredProps,
 } from '../utils';
 import { isPromise } from '../utils/async';
-import { ModuleList } from '../utils/types';
 import { coreFunctionRegistry } from './coreFunctionRegistry';
 import { coreSignalRegistry } from './coreSignalRegistry';
 import { MethodBindingRoot } from './decorators';
@@ -47,9 +47,9 @@ export interface IApplicationOptions extends ApplicationOptions {
   useStore: boolean;
   useDefaults: boolean;
   useSpine: false;
-  storageAdapters: StorageAdapterList;
-  modules: ModuleList;
-  scenes: SceneList;
+  storageAdapters: ImportList<IStorageAdapter>;
+  modules: ImportList<IModule>;
+  scenes: ImportList<IScene>;
   focusOptions: FocusManagerOptions;
   defaultScene: string;
   defaultSceneLoadMethod: LoadSceneMethod;
@@ -92,6 +92,7 @@ export type RequiredApplicationConfig = WithRequiredProps<IApplicationOptions, '
 
 export interface IApplication extends PIXIPApplication {
   config: Partial<IApplicationOptions>;
+  manifest: AssetsManifest | string | undefined;
   assets: IAssetManager;
   scenes: ISceneManager;
   webEvents: IWebEventsManager;
@@ -107,7 +108,9 @@ export interface IApplication extends PIXIPApplication {
 export class Application<R extends Renderer = Renderer> extends PIXIPApplication<R> implements IApplication {
   // config
   public config: Partial<IApplicationOptions>;
+  public manifest: string | AssetsManifest | undefined;
   protected static instance: Application;
+  //
   public static containerId = 'dill-pixel-game-container';
   // signals
   public onResize = new Signal<(size: { width: number; height: number }) => void>();
@@ -120,6 +123,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   protected _webEventsManager: IWebEventsManager;
   protected _keyboardManager: IKeyboardManager;
   protected _focusManager: IFocusManager;
+  protected _audioManager: IAudioManager;
 
   // store
   protected _store: IStore;
@@ -175,6 +179,13 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this._focusManager;
   }
 
+  public get audio(): IAudioManager {
+    if (!this._audioManager) {
+      this._audioManager = this.getModule<IAudioManager>('AudioManager');
+    }
+    return this._audioManager;
+  }
+
   public get store(): IStore {
     return this._store;
   }
@@ -217,6 +228,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     this.config = Object.assign({ ...defaultApplicationOptions }, config);
 
     await this.preInitialize();
+    await this.initAssets();
 
     // initialize the pixi application
     await Application.instance.init(Application.instance.config);
@@ -232,7 +244,11 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     if (this.config.modules && this.config.modules.length > 0) {
       for (let i = 0; i < this.config.modules.length; i++) {
         const listItem = this.config.modules[i];
-        const module = await getDynamicModuleFromListObject(listItem);
+        if (this._modules.has(listItem.id)) {
+          Logger.error(`Module with id "${listItem.id}" already registered. Not registering.`);
+          continue;
+        }
+        const module = await getDynamicModuleFromImportListItem(listItem);
         await this.registerModule(new module(listItem.id), listItem.options);
       }
     }
@@ -247,14 +263,18 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       if (this.config.storageAdapters && this.config.storageAdapters.length > 0) {
         for (let i = 0; i < this.config.storageAdapters.length; i++) {
           const listItem = this.config.storageAdapters[i];
-          const storageAdapter = await getDynamicModuleFromListObject(listItem);
+          if (this.store.hasAdapter(listItem.id)) {
+            Logger.error(`Storage Adapter with id "${listItem.id}" already registered. Not registering.`);
+            continue;
+          }
+          const storageAdapter = await getDynamicModuleFromImportListItem(listItem);
           await this.registerStorageAdapter(new storageAdapter(listItem.id), listItem.options);
         }
       }
       // also call the registerStorageAdapters method to allow for custom storage adapters to be registered
       await this.registerStorageAdapters();
     }
-    await this.initAssets();
+
     await this._setup(); // internal
     await this.setup();
     await this.loadFirstScene();
@@ -319,11 +339,16 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
   // modules
   protected async registerModule(module: IModule, options?: any) {
+    if (this._modules.has(module.id)) {
+      Logger.error(`Module with id "${module.id}" already registered. Not registering.`);
+      return Promise.resolve();
+    }
     this._modules.set(module.id, module);
     return module.initialize(this, options);
   }
 
   protected async registerDefaultModules() {
+    console.log(defaultModules);
     for (let i = 0; i < defaultModules.length; i++) {
       const module = new defaultModules[i]();
       await this.registerModule(module);
@@ -380,6 +405,8 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       }
       opts.manifest = manifest;
     }
+    console.log('MANIFEST', opts.manifest);
+    this.manifest = opts.manifest;
     await Assets.init(opts);
   }
 

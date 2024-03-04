@@ -1,7 +1,4 @@
 import { Point, Texture } from 'pixi.js';
-import { IScene } from '../display';
-import { IModule } from '../modules';
-import { IStorageAdapter } from '../store';
 
 export type Constructor<T> = new (...args: any[]) => T;
 
@@ -27,20 +24,17 @@ export type ContainerLike = {
   y: number;
   width: number;
   height: number;
+  position: Point;
+  getGlobalPosition: () => Point;
 };
 
 export type TextureLike = string | Texture;
 
-export type StorageAdapterList = {
+export type ImportListItem<T> = {
   id: string;
-  module: (() => Promise<any>) | Promise<any> | Constructor<IStorageAdapter>;
+  namedExport?: string;
   options?: any;
-}[];
+  module: (() => Promise<any>) | Promise<any> | Constructor<T>;
+};
 
-export type ModuleList = {
-  id: string;
-  module: (() => Promise<any>) | Promise<any> | Constructor<IModule>;
-  options?: any;
-}[];
-
-export type SceneList = { id: string; module: (() => Promise<any>) | Promise<any> | Constructor<IScene> }[];
+export type ImportList<T> = ImportListItem<T>[];
