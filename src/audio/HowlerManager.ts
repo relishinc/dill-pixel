@@ -211,12 +211,14 @@ export class HowlerManager implements IAudioManager {
     const collection: AudioCollection = this.getCollection(category);
     const track: HowlerTrack | undefined = collection.tracks.getValue(trackId) as HowlerTrack;
     if (track === undefined) {
+      console.log('track was undefined', trackId, category);
       this.load(trackId, category, () => {
         loaded = collection.tracks.getValue(trackId) as HowlerTrack;
         loaded.setLooped(loop);
         loaded.setVolumeWithModifiers(volume, this._masterVolume, collection.volume);
         loaded.setPitch(pitch);
         loaded.play();
+        console.log(loaded);
         return loaded;
       });
     } else {
@@ -331,8 +333,8 @@ export class HowlerManager implements IAudioManager {
       category,
       LogUtils.STYLE_BLACK,
     );
-    const track: HowlerTrack = new HowlerTrack(trackId, category, this, volume, loop);
     const collection: AudioCollection = this.getCollection(category);
+    const track: HowlerTrack = new HowlerTrack(trackId, category, this, volume, loop);
     collection.tracks.setValue(trackId, track);
     return track;
   }

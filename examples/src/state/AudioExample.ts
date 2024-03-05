@@ -42,7 +42,8 @@ export class AudioExample extends BaseState {
     this.button.add.text({ value: 'Click me', anchor: 0.5 });
     this.button.eventMode = 'static';
     this.button.cursor = 'pointer';
-    playAudioTrack('sample-3s', 1, false, 'sfx');
+
+    const track = playAudioTrack('sample-3s', 1, false, 'sfx');
 
     this.button.on('pointerdown', (e) => {
       playAudioTrack('sample-3s', 1, false, 'sfx');
