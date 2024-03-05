@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.35.0](https://github.com/relishinc/dill-pixel/compare/v2.34.0...v2.35.0) (2024-03-05)
+
+
+### Features
+
+* added normalization to the cli audio functionality ([9c6219d](https://github.com/relishinc/dill-pixel/commit/9c6219d72ba12c2a93046ae91907d8ef19b2adad))
+
 ## [2.34.0](https://github.com/relishinc/dill-pixel/compare/v2.33.0...v2.34.0) (2024-03-01)
 
 
