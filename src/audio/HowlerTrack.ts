@@ -64,7 +64,6 @@ export class HowlerTrack implements IAudioTrack {
       console.error(this._id + ' source Howl is not loaded. Call loadSource() before playing.');
       return;
     }
-    console.log('playing', this._source);
     this._source.play();
   }
 
@@ -137,10 +136,8 @@ export class HowlerTrack implements IAudioTrack {
   }
 
   public setVolumeWithModifiers(volume: number, masterVolume: number, categoryVolume: number): void {
-    console.log('setting volume', volume, masterVolume, categoryVolume);
     this._volume = volume;
     const trackVolume = this._volume * masterVolume * categoryVolume;
-    console.log('setting volume to', trackVolume);
 
     this._source.volume(trackVolume);
   }

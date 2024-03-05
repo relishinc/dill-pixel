@@ -211,14 +211,12 @@ export class HowlerManager implements IAudioManager {
     const collection: AudioCollection = this.getCollection(category);
     const track: HowlerTrack | undefined = collection.tracks.getValue(trackId) as HowlerTrack;
     if (track === undefined) {
-      console.log('track was undefined', trackId, category);
       this.load(trackId, category, () => {
         loaded = collection.tracks.getValue(trackId) as HowlerTrack;
         loaded.setLooped(loop);
         loaded.setVolumeWithModifiers(volume, this._masterVolume, collection.volume);
         loaded.setPitch(pitch);
         loaded.play();
-        console.log(loaded);
         return loaded;
       });
     } else {
