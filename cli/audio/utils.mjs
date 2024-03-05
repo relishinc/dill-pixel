@@ -26,7 +26,7 @@ export function execPromise(command) {
 			if (err) {
 				reject(err);
 			}
-			resolve();
+			resolve({stdout, stderr, err});
 		});
 	})
 }

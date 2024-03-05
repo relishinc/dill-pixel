@@ -12,6 +12,7 @@
     "audio:vo": "texttospeech",
     "audio:captions": "node ../cli.mjs audio captions ./src/assets/audio/captions,./src/assets/audio/captions2 ./src/assets/audio/output,./src/assets/audio/output2 ./src/assets/json",
     "audio:compress": "node ../cli.mjs audio compress ./src/assets/audio",
+    "audio:compress:normalize": "node ../cli.mjs audio compress ./src/assets/audio normalize",
     "spritesheets": "node src/assets/images/export_spritesheets"
   },
   "author": "Relish Digital<dev@reli.sh>",

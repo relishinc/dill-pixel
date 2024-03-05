@@ -53,9 +53,11 @@ switch (args[0]) {
 		switch (args[1]) {
 			case 'compress':
 				const audioDirectory = args[2] || './src/assets/audio';
+				// check for args[3] to see if we should normalize the audio
+				const normalize = args[3] === 'normalize';
 				console.log(bold(green(`Dill Pixel is compressing your audio files...`)));
 				try {
-					await compress(audioDirectory);
+					await compress(audioDirectory, normalize);
 				} catch (e) {
 					console.error(red(`Error compressing your audio files: ${e}`))
 				}
