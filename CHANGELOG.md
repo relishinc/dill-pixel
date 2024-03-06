@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.35.2](https://github.com/relishinc/dill-pixel/compare/v2.35.1...v2.35.2) (2024-03-06)
+
+
+### Bug Fixes
+
+* allow playing captions for 'append mode' voiceovers ([9526365](https://github.com/relishinc/dill-pixel/commit/9526365b93007ee1185c8192666236ffa9f65f7e))
+
 ## [2.35.1](https://github.com/relishinc/dill-pixel/compare/v2.35.0...v2.35.1) (2024-03-06)
 
 
