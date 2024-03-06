@@ -24,6 +24,7 @@ interface INeighbourMap {
 export class KeyboardMap {
   private _isActive: boolean = false;
   private _currentFocusable: IFocusable | undefined;
+  private _lastFocusable: IFocusable | undefined;
   private _focusables: IFocusable[] = [];
   private _neighbours: INeighbourMap[] = [];
 
@@ -33,9 +34,9 @@ export class KeyboardMap {
    */
   public set isActive(pValue: boolean) {
     this._isActive = pValue;
-    if (this._isActive === false && this._currentFocusable !== undefined) {
+    if (!this._isActive && this._currentFocusable !== undefined) {
       this.clearFocus();
-    } else if (this._isActive === true && this._currentFocusable === undefined) {
+    } else if (this._isActive && this._currentFocusable === undefined) {
       this.focusFirstNode();
     }
   }
@@ -66,7 +67,7 @@ export class KeyboardMap {
         this._focusables.push(focusable);
       }
     }
-    if (this._isActive === true && this._currentFocusable === undefined) {
+    if (this._isActive && this._currentFocusable === undefined) {
       this.focusFirstNode();
     }
   }
@@ -125,6 +126,7 @@ export class KeyboardMap {
     if (this._currentFocusable !== undefined) {
       this._currentFocusable.onFocusEnd();
       keyboardFocusEnd(this._currentFocusable);
+      this._lastFocusable = this._currentFocusable;
       this._currentFocusable = undefined;
     }
   }
@@ -138,6 +140,7 @@ export class KeyboardMap {
       if (this._currentFocusable !== undefined) {
         this._currentFocusable.onFocusEnd();
         keyboardFocusEnd(this._currentFocusable);
+        this._lastFocusable = this._currentFocusable;
       }
       this._currentFocusable = pFocusable;
       this._currentFocusable.onFocusBegin();
@@ -149,6 +152,10 @@ export class KeyboardMap {
    * Focuses the first node that is both interactive and visible
    */
   public focusFirstNode(): void {
+    if (this._lastFocusable && this.isFocusable(this._lastFocusable)) {
+      this.setFocus(this._lastFocusable);
+      return;
+    }
     for (const focusable of this._focusables) {
       if (this.isFocusable(focusable)) {
         this.setFocus(focusable);
