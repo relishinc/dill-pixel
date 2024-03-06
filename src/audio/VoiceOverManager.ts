@@ -247,7 +247,11 @@ export class VoiceOverManager implements IVoiceOverManager {
       this.addToQueue(key, callback, skipCC, priority, caption, data);
       this.playNext();
     } else if (mode === PlayMode.Append) {
-      this.addToQueue(key, callback, skipCC, priority, caption, data);
+      // don't append it if it's the same as the last one
+      this.playCaptionForSkippedVO(key[0] as string, skipCC, caption, data);
+      if (this._queue[this._queue.length - 1].key === key[0]) {
+        this.addToQueue(key, callback, skipCC, priority, caption, data);
+      }
     } else if (callback) {
       this.warn('🎟🔇 Firing callback without playing VO(s) %c%s%c', RED, key.join(', '), BLACK);
       callback(false);
