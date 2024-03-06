@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.35.1](https://github.com/relishinc/dill-pixel/compare/v2.35.0...v2.35.1) (2024-03-06)
+
+
+### Bug Fixes
+
+* remember last focused element in KeyboardMap so we can return to it ([cbb05ff](https://github.com/relishinc/dill-pixel/commit/cbb05ff632b2594cec4c52821803e61ecb11a92d))
+
 ## [2.35.0](https://github.com/relishinc/dill-pixel/compare/v2.34.0...v2.35.0) (2024-03-05)
 
 
