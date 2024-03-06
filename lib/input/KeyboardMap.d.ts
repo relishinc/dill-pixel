@@ -13,6 +13,7 @@ export declare enum Direction {
 export declare class KeyboardMap {
     private _isActive;
     private _currentFocusable;
+    private _lastFocusable;
     private _focusables;
     private _neighbours;
     /**
