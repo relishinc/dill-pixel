@@ -1,4 +1,4 @@
-import { IApplication } from '../../../core';
+import { Application, IApplication } from '../../../core';
 import { CoreModule } from '../../../core/decorators';
 import { Container, IScene, Scene } from '../../../display';
 import { Signal } from '../../../signals';
@@ -8,6 +8,7 @@ import {
   createQueue,
   getDynamicModuleFromImportListItem,
   ImportList,
+  isDev,
   Logger,
   Queue,
 } from '../../../utils';
@@ -23,6 +24,8 @@ export interface ISceneManager extends IModule {
   scenes: ImportList<IScene>;
 
   setDefaultLoadMethod(method: LoadSceneMethod): void;
+
+  loadDefaultScene(): Promise<void>;
 
   loadScene(sceneIdOrLoadSceneConfig: LoadSceneConfig | string): Promise<void>;
 }
@@ -62,6 +65,8 @@ export class SceneManager extends Module implements ISceneManager {
   private _queue: Queue<any> | null;
   private _defaultLoadMethod: LoadSceneMethod = 'immediate';
   private _currentSceneId: string;
+  // debug
+  private _debugMenu: HTMLDivElement;
 
   constructor() {
     super();
@@ -77,10 +82,20 @@ export class SceneManager extends Module implements ISceneManager {
   public initialize(app: IApplication): Promise<void> {
     this.view.sortableChildren = true;
     this.scenes = app.config?.scenes || [];
-    this.defaultScene = app.config?.defaultScene || this.scenes?.[0]?.id;
+    if (isDev) {
+      this.defaultScene = this._getSceneFromHash() || '';
+    }
+    this.defaultScene = this.defaultScene || app.config?.defaultScene || this.scenes?.[0]?.id;
     this._defaultLoadMethod = app.config.defaultSceneLoadMethod || 'immediate';
     Logger.log('SceneManager initialize::', this.scenes);
+    if (this.app.config?.showSceneDebugMenu === true || (isDev && this.app.config?.showSceneDebugMenu !== false)) {
+      this._createDebugMenu();
+    }
     return Promise.resolve(undefined);
+  }
+
+  public async loadDefaultScene(): Promise<void> {
+    return this.loadScene(this.defaultScene);
   }
 
   public async loadScene(sceneIdOrLoadSceneConfig: string): Promise<void>;
@@ -191,6 +206,7 @@ export class SceneManager extends Module implements ISceneManager {
     }
 
     this.currentScene = new SceneClass();
+    this.currentScene.id = this._currentSceneId;
     this.onSceneChangeStart.emit({ exiting: this._lastScene?.id || null, entering: this.currentScene.id });
   }
 
@@ -242,5 +258,69 @@ export class SceneManager extends Module implements ISceneManager {
   private async _startCurrentScene(): Promise<void> {
     void this.currentScene.start();
     return Promise.resolve();
+  }
+
+  private _createDebugMenu() {
+    this._debugMenu = document.createElement('div');
+    this._debugMenu.style.cssText =
+      'position: absolute; bottom: 0; left: 0; z-index: 1000; background-color: rgba(0,0,0,0.8); color: white; padding: 10px; border-top-right-radius:8px';
+
+    (Application.containerElement || document.body).appendChild(this._debugMenu);
+
+    const sceneSelect = document.createElement('select');
+    sceneSelect.style.cssText = 'width: 100%; padding:4px; border-radius:5px;';
+    sceneSelect.value = this.defaultScene || '';
+
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.innerHTML = 'Select a scene';
+
+    sceneSelect.appendChild(defaultOption);
+
+    this.scenes.forEach((value) => {
+      const option = document.createElement('option');
+      option.value = value.id;
+      option.innerHTML = value.id;
+      if (value.id === this.defaultScene) {
+        option.selected = true;
+      }
+      sceneSelect.appendChild(option);
+    });
+
+    this._debugMenu.appendChild(sceneSelect);
+
+    this._debugMenu.addEventListener('change', (e: Event) => {
+      if (this._queue) {
+        e.preventDefault();
+        return;
+      }
+      const target = e.target as HTMLSelectElement;
+      const sceneId = target.value;
+      if (sceneId) {
+        window.location.hash = sceneId.toLowerCase();
+      }
+    });
+
+    window.addEventListener('hashchange', () => {
+      const sceneId = this._getSceneFromHash();
+      if (sceneId) {
+        this.loadScene(sceneId);
+      }
+    });
+  }
+
+  private _getSceneFromHash(): string | null {
+    let hash = window?.location?.hash;
+    if (hash) {
+      hash = hash.replace('#', '');
+      if (hash.length > 0) {
+        for (let i = 0; i < this.scenes.length; i++) {
+          if (this.scenes[i]?.id?.toLowerCase() === hash.toLowerCase()) {
+            return this.scenes[i].id;
+          }
+        }
+      }
+    }
+    return null;
   }
 }

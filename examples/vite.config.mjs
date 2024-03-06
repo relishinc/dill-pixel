@@ -1,5 +1,5 @@
 import {extendConfig} from 'dill-pixel/vite';
-import path from 'path';
+import path from 'node:path';
 
 export default extendConfig({
 	resolve: {

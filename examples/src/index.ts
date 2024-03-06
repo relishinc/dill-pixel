@@ -13,10 +13,9 @@ const app = await create(V8Application, {
     { id: 'test', module: () => import('@/adapters/TestAdapter'), options: { foo: 'bar' } },
   ],
   scenes: [
-    { id: 'audio', namedExport: 'AudioScene', module: () => import('./scenes/AudioScene.ts') },
+    { id: 'audio', namedExport: 'AudioScene', module: () => import('@/scenes/AudioScene.ts') },
+    { id: 'focus', namedExport: 'FocusScene', module: () => import('@/scenes/FocusScene') },
     { id: 'cam', namedExport: 'CameraScene', module: () => import('@/scenes/CameraScene') },
-    { id: 'test', namedExport: 'TestScene', module: () => import('@/scenes/TestScene') },
-    { id: 'test1', namedExport: 'TestScene2', module: () => import('@/scenes/TestScene2') },
   ],
   defaultSceneLoadMethod: 'exitEnter',
 });

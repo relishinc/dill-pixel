@@ -1,12 +1,11 @@
-import { IPointData } from '@pixi/math';
-import { Application, bindAllMethods, ContainerLike, KeyboardEventDetail, Scene } from 'dill-pixel';
-import * as PIXI from 'pixi.js';
-import { Container, Ticker } from 'pixi.js';
-import { V8Application } from '../V8Application.ts';
+import { Application, bindAllMethods, ContainerLike, KeyboardEventDetail } from 'dill-pixel';
+import { Container, Point, Ticker } from 'pixi.js';
+import { V8Application } from '../V8Application';
+import { BaseScene } from './BaseScene';
 
 class Camera {
   constructor(
-    public container: PIXI.Container,
+    public container: Container,
     public viewportWidth: number,
     public viewportHeight: number,
     public worldWidth: number,
@@ -69,7 +68,7 @@ class Camera {
 
 class CameraController {
   private dragging: boolean = false;
-  private previousPointerPosition: IPointData | null = null;
+  private previousPointerPosition: Point | null = null;
 
   constructor(
     public camera: Camera,
@@ -144,17 +143,17 @@ class CameraController {
     this.previousPointerPosition = null;
   }
 
-  private getEventPosition(event: MouseEvent | TouchEvent): PIXI.Point {
+  private getEventPosition(event: MouseEvent | TouchEvent): Point {
     if (event instanceof TouchEvent) {
-      return new PIXI.Point(event.touches[0].clientX, event.touches[0].clientY);
+      return new Point(event.touches[0].clientX, event.touches[0].clientY);
     } else {
-      return new PIXI.Point(event.clientX, event.clientY);
+      return new Point(event.clientX, event.clientY);
     }
   }
 }
 
-export class CameraScene extends Scene {
-  public readonly id: string = 'CameraScene';
+export class CameraScene extends BaseScene {
+  protected readonly title = 'Camera Scene';
   private camera: Camera;
   private cameraController: CameraController;
 
@@ -165,16 +164,7 @@ export class CameraScene extends Scene {
   }
 
   public async initialize() {
-    this.add.graphics({ x: 0, y: 0 }).rect(0, 0, this.app.screen.width, this.app.screen.height).fill({
-      color: 0x00ff00,
-      alpha: 0.5,
-    });
-    this.add.text({
-      text: 'Camera Scene',
-      style: { fill: 'white' },
-      x: 100,
-      y: 50,
-    });
+    await super.initialize();
     this.camera = new Camera(this, this.app.screen.width, this.app.screen.height, 4000, 4000);
     new CameraController(this.camera, this.app.stage);
   }
@@ -182,12 +172,4 @@ export class CameraScene extends Scene {
   update(ticker: Ticker) {}
 
   resize() {}
-
-  async enter() {
-    return this.animate({ alpha: 1, duration: 0.6, ease: 'sine.out' });
-  }
-
-  async exit() {
-    return this.animate({ alpha: 0, duration: 0.4, ease: 'sine.in' });
-  }
 }
