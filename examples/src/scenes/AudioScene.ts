@@ -1,34 +1,59 @@
-import { delay, Scene } from 'dill-pixel';
 import { Ticker } from 'pixi.js';
+import { BaseScene } from './BaseScene';
 
-export class AudioScene extends Scene {
+export class AudioScene extends BaseScene {
+  protected readonly title = 'Audio';
+
+  protected config = {
+    master: 1,
+    music: 0.005,
+    sfx: 1,
+    muted: true,
+  };
+
   constructor() {
     super();
     this.alpha = 0;
-    this.app.stage.eventMode = 'static';
   }
 
-  public async initialize() {
-    this.add.graphics({ x: 0, y: 0 }).rect(0, 0, this.app.screen.width, this.app.screen.height).fill({
-      color: 0x00ff00,
-      alpha: 0.5,
-    });
+  public async start() {
+    this.app.audio.masterVolume = this.config.master;
+    this.app.audio.muted = this.config.muted;
+    this.app.audio.channels.get('music').volume = this.config.music;
+    this.app.audio.channels.get('sfx').volume = this.config.sfx;
+
+    void this.app.audio.fadeIn('horizon.mp3', 'music', { volume: 1 });
   }
 
-  async start() {
-    await delay(2);
-    this.app.audio.play('horizon.mp3', 'music');
+  public destroy() {
+    void this.app.audio.fadeOut('horizon.mp3', 'music');
+    super.destroy();
   }
 
   update(ticker: Ticker) {}
 
   resize() {}
 
-  async enter() {
-    return this.animate({ alpha: 1, duration: 0.6, ease: 'sine.out' });
+  protected configureGUI() {
+    this.gui.add(this.config, 'master', 0, 5, 0.001).name('Master Volume').onChange(this._handleMasterVolumeChanged);
+    this.gui.add(this.config, 'music', 0, 5, 0.001).name('Music Volume').onChange(this._handleMusicVolumeChanged);
+    this.gui.add(this.config, 'sfx', 0, 5, 0.001).name('SFX Volume').onChange(this._handleSFXVolumeChanged);
+    this.gui.add(this.config, 'muted').name('Mute').onChange(this._handleMuteChanged);
   }
 
-  async exit() {
-    return this.animate({ alpha: 0, duration: 0.4, ease: 'sine.in' });
+  _handleMasterVolumeChanged(value: number) {
+    this.app.audio.masterVolume = value;
+  }
+
+  _handleMusicVolumeChanged(value: number) {
+    this.app.audio.setChannelVolume('music', value);
+  }
+
+  _handleSFXVolumeChanged(value: number) {
+    this.app.audio.setChannelVolume('sfx', value);
+  }
+
+  _handleMuteChanged(value: boolean) {
+    this.app.audio.muted = value;
   }
 }

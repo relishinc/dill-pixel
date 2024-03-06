@@ -40,7 +40,7 @@ import { coreSignalRegistry } from './coreSignalRegistry';
 import { MethodBindingRoot } from './decorators';
 
 // for now, to detect multiple spritesheet sizes
-import '../assets/resolveParser';
+// import '../assets/resolveParser';
 
 export interface IApplicationOptions extends ApplicationOptions {
   id: string;
@@ -53,6 +53,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   focusOptions: FocusManagerOptions;
   defaultScene: string;
   defaultSceneLoadMethod: LoadSceneMethod;
+  showSceneDebugMenu: boolean;
   manifest: AssetsManifest | Promise<AssetsManifest> | string;
 }
 
@@ -112,6 +113,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   protected static instance: Application;
   //
   public static containerId = 'dill-pixel-game-container';
+  public static containerElement: HTMLElement;
   // signals
   public onResize = new Signal<(size: { width: number; height: number }) => void>();
   // modules
@@ -134,6 +136,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
   public static createContainer(pId: string) {
     const container = document.createElement('div');
+    Application.containerElement = container;
     container.setAttribute('id', pId);
     document.body.appendChild(container);
     return container;
@@ -277,7 +280,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
     await this._setup(); // internal
     await this.setup();
-    await this.loadFirstScene();
+    await this.loadDefaultScene();
     await this.postInitialize();
 
     // return the Application instance to the create method, if needed
@@ -410,14 +413,8 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     await Assets.init(opts);
   }
 
-  protected async loadFirstScene(): Promise<void> {
-    const firstScene = this.config.defaultScene || this.config.scenes?.[0]?.id;
-
-    if (firstScene) {
-      void this.scenes.loadScene(firstScene);
-    } else {
-      Logger.error('No default scene set');
-    }
+  protected async loadDefaultScene(): Promise<void> {
+    return this.scenes.loadDefaultScene();
   }
 
   private async _resize() {

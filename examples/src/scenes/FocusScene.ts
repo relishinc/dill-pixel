@@ -1,9 +1,9 @@
-import { PIXIText, Scene } from 'dill-pixel';
-import { Ticker } from 'pixi.js';
+import { PIXIText } from 'dill-pixel';
 import { Actor } from '../V8Application';
+import { BaseScene } from './BaseScene.ts';
 
-export class TestScene extends Scene {
-  public readonly id: string = 'TestScene';
+export class FocusScene extends BaseScene {
+  protected title = 'Focus Management';
   private _focusLayerLabel: PIXIText;
   private actor1: Actor;
   private actor2: Actor;
@@ -13,14 +13,7 @@ export class TestScene extends Scene {
   }
 
   public async initialize() {
-    this.add.graphics().rect(0, 0, this.app.screen.width, this.app.screen.height).fill({ color: 0x222222 });
-
-    this.add.text({
-      text: 'Test Scene 1',
-      style: { fill: 'white' },
-      x: 100,
-      y: 50,
-    });
+    await super.initialize();
 
     this._focusLayerLabel = this.add.text({
       text: 'Focus layer:',
@@ -62,26 +55,20 @@ export class TestScene extends Scene {
     const spr = this.add.sprite({ asset: 'required/jar.png', x: 200, y: 400, scale: 0.5 });
     const sheetSpr = this.add.sprite({ asset: 'jar', sheet: 'game/game.json', x: 500, y: 400, scale: 0.5 });
     const sheetSpr2 = this.add.sprite({ asset: 'jar2', sheet: 'game/game.json', x: 800, y: 400, scale: 0.5 });
-    console.log(spr.width);
   }
 
   async enter() {
     return this.app.scenes.isFirstScene
-      ? this.animateFrom({
-          alpha: 0,
-          duration: 1,
-          ease: 'sine.out',
-        })
+      ? this.animateFromTo(
+          { alpha: 0 },
+          {
+            alpha: 1,
+            duration: 1,
+            ease: 'sine.out',
+          },
+        )
       : this.animateFrom({ y: -1000, duration: 2, ease: 'bounce.out' });
   }
-
-  async exit() {
-    return this.animate({ y: '+=1000', duration: 0.6, ease: 'back.in' });
-  }
-
-  update(ticker: Ticker) {}
-
-  resize() {}
 
   private _updateFocusLayerLabel() {
     this._focusLayerLabel.text = `Focus layer: ${this.app.focus.currentLayerId}`;
