@@ -1,7 +1,14 @@
-export function delay(delayInSeconds: number = 0): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, delayInSeconds * 1000));
-}
+/**
+ * Delays the execution of the subsequent code.
+ * @param {number} seconds The delay time in seconds. Default is 0.
+ * @returns {Promise<void>} A promise that resolves after the specified delay.
+ */
+export const delay = (seconds: number = 0): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 
-export function isPromise(value: any): value is Promise<any> {
-  return value && typeof value.then === 'function';
-}
+/**
+ * Checks if the given value is a promise.
+ * @param {any} value The value to check.
+ * @returns {boolean} True if the value is a promise, false otherwise.
+ */
+export const isPromise = (value: any): value is Promise<any> => value && typeof value.then === 'function';
