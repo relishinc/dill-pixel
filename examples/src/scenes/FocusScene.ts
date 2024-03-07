@@ -59,6 +59,8 @@ export class FocusScene extends BaseScene {
     const spr = this.add.sprite({ asset: 'required/jar.png', x: 200, y: 400, scale: 0.5 });
     const sheetSpr = this.add.sprite({ asset: 'jar', sheet: 'game/game.json', x: 500, y: 400, scale: 0.5 });
     const sheetSpr2 = this.add.sprite({ asset: 'jar2', sheet: 'game/game.json', x: 800, y: 400, scale: 0.5 });
+
+    this.actor1.bob();
   }
 
   async enter() {

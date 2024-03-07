@@ -1,11 +1,17 @@
 import { Logger } from '../utils/console/Logger';
 import { IStorageAdapter } from './adapters/StorageAdapter';
 
+/**
+ * Configuration for saving data with an adapter.
+ */
 type AdapterSaveConfig = {
   adapterId: string;
   awaitSave: boolean;
 };
 
+/**
+ * Interface for the Store class.
+ */
 export interface IStore {
   destroy(): void;
 
@@ -25,11 +31,18 @@ export interface IStore {
   load(adapterId: string, key: string): Promise<any>;
 }
 
+/**
+ * A class representing a store of data, with multiple storage adapters.
+ */
 export class Store implements IStore {
   private _adapters: Map<string, IStorageAdapter> = new Map<string, IStorageAdapter>();
 
-  // Use a generic type parameter with a constraint to IStorageAdapter
-
+  /**
+   * Registers a new storage adapter with the store.
+   * @param {IStorageAdapter} adapter The adapter to register.
+   * @param {any} adapterOptions The options to initialize the adapter with.
+   * @returns {Promise<void>} A promise that resolves when the adapter has been registered and initialized.
+   */
   async registerAdapter(adapter: IStorageAdapter, adapterOptions: any): Promise<void> {
     if (this._adapters.has(adapter.id)) {
       Logger.error(`Storage Adapter with id "${adapter.id}" already registered. Not registering.`);
@@ -39,7 +52,12 @@ export class Store implements IStore {
     await adapter.initialize(adapterOptions);
   }
 
-  // This allows TypeScript to infer the correct adapter type when retrieved
+  /**
+   * Retrieves a registered storage adapter.
+   * @template T The type of the adapter.
+   * @param {string} adapterId The ID of the adapter.
+   * @returns {T} The adapter.
+   */
   getAdapter<T extends IStorageAdapter>(adapterId: string): T {
     const adapter = this._adapters.get(adapterId);
     if (!adapter) {
@@ -48,18 +66,34 @@ export class Store implements IStore {
     return adapter as T;
   }
 
-  public hasAdapter(adapterId: string): boolean {
+  /**
+   * Checks if a storage adapter is registered.
+   * @param {string} adapterId The ID of the adapter.
+   * @returns {boolean} True if the adapter is registered, false otherwise.
+   */
+  hasAdapter(adapterId: string): boolean {
     return this._adapters.has(adapterId);
   }
 
-  public destroy(): void {
+  /**
+   * Destroys the store and all its adapters.
+   */
+  destroy(): void {
     this._adapters.forEach((adapter) => {
       adapter.destroy();
     });
     this._adapters.clear();
   }
 
-  public async save(
+  /**
+   * Saves data with a storage adapter.
+   * @param {string | string[] | Partial<AdapterSaveConfig> | Partial<AdapterSaveConfig>[]} adapterId The ID of the adapter, or an array of IDs, or an array of save configurations.
+   * @param {string} key The key to save the data under.
+   * @param {any} data The data to save.
+   * @param {boolean} [awaitSave] Whether to wait for the save operation to complete before returning.
+   * @returns {Promise<any>} A promise that resolves with the result of the save operation.
+   */
+  async save(
     adapterId: string | string[] | Partial<AdapterSaveConfig> | Partial<AdapterSaveConfig>[],
     key: string,
     data: any,
@@ -104,7 +138,13 @@ export class Store implements IStore {
     }
     return result;
   }
-
+  
+  /**
+   * Loads data from a storage adapter.
+   * @param {string} adapterId The ID of the adapter.
+   * @param {string} key The key to load the data from.
+   * @returns {Promise<any>} A promise that resolves with the loaded data.
+   */
   public async load(adapterId: string, key: string): Promise<any> {
     const adapter = this._adapters.get(adapterId);
     if (!adapter) {

@@ -1,22 +1,25 @@
+/**
+ * Plucks the specified keys from an object and returns a new object with only those keys.
+ * @template T The type of the original object.
+ * @template K The keys to pluck from the original object.
+ * @param {T} obj The original object.
+ * @param {K[]} keys The keys to pluck from the original object.
+ * @returns {Pick<T, K>} A new object with only the plucked keys.
+ */
 export function pluck<T extends object, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
-  const pluckedObj: Partial<T> = {};
-  keys.forEach((key) => {
-    if (key in obj) {
-      pluckedObj[key] = obj[key];
-    }
-  });
-  return pluckedObj as Pick<T, K>;
+  return keys.reduce((acc, key) => (key in obj ? { ...acc, [key]: obj[key] } : acc), {} as Pick<T, K>);
 }
 
+/**
+ * Omits the specified keys from an object and returns a new object without those keys.
+ * @template T The type of the original object.
+ * @template K The keys to omit from the original object.
+ * @param {K[]} keysToOmit The keys to omit from the original object.
+ * @param {Partial<T>} obj The original object.
+ * @returns {Omit<T, K>} A new object without the omitted keys.
+ */
 export function omitKeys<T extends object, K extends keyof T>(keysToOmit: K[], obj: Partial<T>): Omit<T, K> {
-  // Convert the object into an array of [key, value] pairs,
-  // then filter out the pairs where the key is in the keysToOmit array,
-  const entries = Object.entries(obj).filter(([key]) => !keysToOmit.includes(key as K));
-  const result = {} as Omit<T, K>;
-  entries.forEach(([key, value]) => {
-    if (key !== undefined) {
-      (result as any)[key] = value;
-    }
-  });
-  return result;
+  return Object.entries(obj)
+    .filter(([key]) => !keysToOmit.includes(key as K))
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as Omit<T, K>);
 }
