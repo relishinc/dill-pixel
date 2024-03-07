@@ -1,4 +1,4 @@
-import { DestroyOptions, PointerEvents } from 'pixi.js';
+import { PointerEvents } from 'pixi.js';
 import { IFocusable } from '../modules';
 import { PIXIContainer } from '../pixi';
 import { Signal } from '../signals';
@@ -6,6 +6,8 @@ import { Constructor } from '../utils';
 
 export function Focusable<TBase extends Constructor<PIXIContainer>>(Base: TBase): TBase & Constructor<IFocusable> {
   return class extends Base implements IFocusable {
+    focusEnabled = true;
+
     // pixi accessibility options
     accessible = false;
     accessibleType: 'button' | 'div' | 'heading' = 'button';
@@ -15,25 +17,22 @@ export function Focusable<TBase extends Constructor<PIXIContainer>>(Base: TBase)
     tabIndex = 0;
     accessibleChildren = false;
     onFocus = new Signal<(focusable: IFocusable) => void>();
+
     // signals
     onFocusIn = new Signal<(focusable: IFocusable) => void>();
     onFocusOut = new Signal<(focusable: IFocusable) => void>();
     onBlur = new Signal<(focusable: IFocusable) => void>();
 
-    constructor(...args: any[]) {
-      super(...args);
-    }
+    public focus() {}
 
-    focus() {}
+    public focusIn() {}
 
-    focusIn() {}
+    public blur() {}
 
-    blur() {}
+    public focusOut() {}
 
-    focusOut() {}
-
-    public destroy(options: DestroyOptions): void {
-      super.destroy(options);
+    public getFocusArea() {
+      return this.getBounds();
     }
   } as unknown as TBase & Constructor<IFocusable>;
 }

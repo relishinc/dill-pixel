@@ -1,4 +1,4 @@
-import { PIXIText } from 'dill-pixel';
+import { Logger, PIXIText } from 'dill-pixel';
 import { Actor } from '../V8Application';
 import { BaseScene } from './BaseScene.ts';
 
@@ -51,6 +51,10 @@ export class FocusScene extends BaseScene {
     );
 
     this._updateFocusLayerLabel();
+
+    this.actor1.onInteraction('pointerdown').connect(() => {
+      Logger.log('actor 1 clicked');
+    });
 
     const spr = this.add.sprite({ asset: 'required/jar.png', x: 200, y: 400, scale: 0.5 });
     const sheetSpr = this.add.sprite({ asset: 'jar', sheet: 'game/game.json', x: 500, y: 400, scale: 0.5 });

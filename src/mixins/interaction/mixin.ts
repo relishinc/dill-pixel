@@ -1,4 +1,4 @@
-import { DestroyOptions, FederatedEvent } from 'pixi.js';
+import { AllFederatedEventMap, DestroyOptions, FederatedEvent } from 'pixi.js';
 import { PIXIContainer } from '../../pixi';
 
 // Step 1: Define the base interaction event names
@@ -6,16 +6,18 @@ import { Signal } from '../../signals';
 import { Constructor } from '../../utils';
 
 // list all pixi interaction events
-type InteractionEventName =
-  | 'pointerdown'
-  | 'pointerup'
-  | 'pointerupoutside'
-  | 'pointermove'
-  | 'click'
-  | 'rightclick'
-  | 'tap'
-  | 'mousedown'
-  | 'mouseup';
+// type InteractionEventName =
+//   | 'pointerdown'
+//   | 'pointerup'
+//   | 'pointerupoutside'
+//   | 'pointermove'
+//   | 'click'
+//   | 'rightclick'
+//   | 'tap'
+//   | 'mousedown'
+//   | 'mouseup';
+
+type InteractionEventName = keyof AllFederatedEventMap;
 
 type InteractionSignal = Signal<(event: FederatedEvent) => void>;
 

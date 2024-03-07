@@ -41,7 +41,7 @@ export class FocusOutliner extends Container implements IFocusOutliner {
 
   public draw(focusTarget: IFocusable): void {
     this.clear();
-    const bounds = focusTarget.getBounds();
+    const bounds = focusTarget.getFocusArea();
     this._graphics.strokeStyle = { width: this._config.lineWidth, color: this._config.color, alpha: 1 };
     if (this._config.shape === 'rectangle') {
       this._graphics.rect(-bounds.width * 0.5, -bounds.height * 0.5, bounds.width, bounds.height);

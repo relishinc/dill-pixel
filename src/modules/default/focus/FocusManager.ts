@@ -13,6 +13,8 @@ export type FocusManagerOptions = {
 };
 
 export interface IFocusable {
+  focusEnabled: boolean;
+
   // pixi accessibility features
   accessible: boolean;
   accessibleType: string;
@@ -37,9 +39,9 @@ export interface IFocusable {
 
   blur(): void;
 
-  getBounds(): Bounds;
-
   getGlobalPosition(): PointLike;
+
+  getFocusArea(): Bounds;
 }
 
 export interface IFocusLayer {
@@ -67,6 +69,10 @@ class FocusLayer implements IFocusLayer {
   private _currentIndex: number = 0;
 
   constructor() {}
+
+  private get _availableFocusables(): IFocusable[] {
+    return this._focusables.filter((f) => f.focusEnabled);
+  }
 
   public setCurrent() {
     if (!this.defaultFocusable) {
@@ -112,9 +118,11 @@ class FocusLayer implements IFocusLayer {
   }
 
   public navigate(direction: number): void {
-    this._currentIndex = (this._currentIndex + direction + this._focusables.length) % this._focusables.length;
+    const available = this._availableFocusables;
 
-    this.currentFocusable = this._focusables[this._currentIndex];
+    this._currentIndex = (this._currentIndex + direction + available.length) % available.length;
+
+    this.currentFocusable = available[this._currentIndex];
   }
 }
 
