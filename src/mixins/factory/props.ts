@@ -1,5 +1,5 @@
 import { TextStyleOptions } from 'pixi.js';
-import { PointLike, SpriteSheetLike, TextureLike } from '../../utils';
+import { PointLike, SpriteSheetLike, TextureLike } from '../../utils/types';
 
 export interface AbstractProps {
   [key: string]: any;

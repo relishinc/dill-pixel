@@ -1,7 +1,7 @@
 import { gsap } from 'gsap';
 import { PIXIContainer } from '../pixi';
 import { Signal } from '../signals';
-import { Constructor } from '../utils';
+import { Constructor } from '../utils/types';
 
 export interface GSAPAnimationConfigExtended extends gsap.TweenVars {}
 

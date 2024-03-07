@@ -1,4 +1,4 @@
-import { Logger } from '../console';
+import { Logger } from '../console/Logger';
 
 export function createQueue(...promises: (Promise<any> | (() => Promise<any | void>))[]): Queue {
   return new Queue(promises);

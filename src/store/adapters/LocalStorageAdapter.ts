@@ -1,5 +1,5 @@
-import { IApplication } from '../../core';
-import { Logger } from '../../utils';
+import { IApplication } from '../../core/Application';
+import { Logger } from '../../utils/console/Logger';
 import { StorageAdapter } from './StorageAdapter';
 
 export interface ILocalStorageAdapterOptions {

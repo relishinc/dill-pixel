@@ -1,6 +1,5 @@
-import { Partial } from 'react-spring';
-import { Logger } from '../utils';
-import { IStorageAdapter } from './adapters';
+import { Logger } from '../utils/console/Logger';
+import { IStorageAdapter } from './adapters/StorageAdapter';
 
 type AdapterSaveConfig = {
   adapterId: string;
