@@ -1,7 +1,8 @@
-import {Signal} from '../signals';
-import {Constructor, Logger} from '../utils';
-import {coreFunctionRegistry} from './coreFunctionRegistry';
-import {coreSignalRegistry} from './coreSignalRegistry';
+import { Signal } from '../signals';
+import { Logger } from '../utils/console/Logger';
+import { Constructor } from '../utils/types';
+import { coreFunctionRegistry } from './coreFunctionRegistry';
+import { coreSignalRegistry } from './coreSignalRegistry';
 
 /**
  * MethodBindingRoot is a decorator that marks a class as the root of a method binding tree

@@ -1,4 +1,4 @@
-import { Application, IApplication } from '../core';
+import { Application, IApplication } from '../core/Application';
 import { MethodBindingRoot } from '../core/decorators';
 
 export interface IModule {

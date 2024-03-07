@@ -1,12 +1,13 @@
 import { DestroyOptions, Ticker } from 'pixi.js';
 import { SignalConnection, SignalConnections } from 'typed-signals';
-import { Application } from '../core';
+import { Application } from '../core/Application';
 import { MethodBindingRoot } from '../core/decorators';
-import { Animated, Factory } from '../mixins';
-import { defaultFactoryMethods } from '../mixins/factory';
-import { bindAllMethods, Size } from '../utils';
+import { Animated } from '../mixins/animated';
+import { Factory } from '../mixins/factory';
+import { bindAllMethods } from '../utils/methodBinding';
+import { Size } from '../utils/types';
 
-const _Container = Animated(Factory(defaultFactoryMethods));
+const _Container = Animated(Factory());
 
 export interface IContainer {
   app: Application;

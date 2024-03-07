@@ -1,10 +1,10 @@
 import { PlayOptions, sound, SoundSourceMap } from '@pixi/sound';
 import { gsap } from 'gsap';
 import { AssetsManifest, UnresolvedAsset } from 'pixi.js';
-import { IApplication } from '../../../core';
+import { IApplication } from '../../../core/Application';
 import { CoreModule } from '../../../core/decorators';
 import { Signal } from '../../../signals';
-import { Logger } from '../../../utils';
+import { Logger } from '../../../utils/console/Logger';
 import { IModule, Module } from '../../Module';
 import { AudioChannel, IAudioChannel } from './AudioChannel';
 import { AudioInstance, IAudioInstance } from './AudioInstance';

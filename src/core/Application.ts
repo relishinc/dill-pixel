@@ -8,33 +8,26 @@ import {
   Renderer,
   RendererDestroyOptions,
 } from 'pixi.js';
-import { IScene } from '../display';
-import { IModule } from '../modules';
-import type {
-  FocusManagerOptions,
-  IAssetManager,
-  IAudioManager,
-  IFocusManager,
-  IKeyboardManager,
-  ISceneManager,
-  IWebEventsManager,
-  LoadSceneMethod,
-} from '../modules/default';
-import { defaultModules } from '../modules/default';
+import { IScene } from '../display/Scene';
+import { IAssetManager } from '../modules/default/AssetManager';
+import { IAudioManager } from '../modules/default/audio/AudioManager';
+
+import defaultModules from '../modules/default/defaultModules';
+import { FocusManagerOptions, IFocusManager } from '../modules/default/focus/FocusManager';
+import { IKeyboardManager } from '../modules/default/KeyboardManager';
+import { ISceneManager, LoadSceneMethod } from '../modules/default/SceneManager';
+import { IWebEventsManager } from '../modules/default/WebEventsManager';
+import { IModule } from '../modules/Module';
 import { Signal } from '../signals';
-import { IStorageAdapter } from '../store';
+import { IStorageAdapter } from '../store/adapters/StorageAdapter';
 import { IStore, Store } from '../store/Store';
-import {
-  bindAllMethods,
-  getDynamicModuleFromImportListItem,
-  ImportList,
-  isDev,
-  isMobile,
-  isRetina,
-  Logger,
-  WithRequiredProps,
-} from '../utils';
 import { isPromise } from '../utils/async';
+import { Logger } from '../utils/console/Logger';
+import { isDev } from '../utils/env';
+import { getDynamicModuleFromImportListItem } from '../utils/framework';
+import { bindAllMethods } from '../utils/methodBinding';
+import { isMobile, isRetina } from '../utils/platform';
+import { ImportList, WithRequiredProps } from '../utils/types';
 import { coreFunctionRegistry } from './coreFunctionRegistry';
 import { coreSignalRegistry } from './coreSignalRegistry';
 import { MethodBindingRoot } from './decorators';

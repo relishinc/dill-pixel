@@ -1,5 +1,8 @@
 import { Assets, Sprite, Spritesheet, Texture } from 'pixi.js';
-import { Logger, PointLike, resolvePointLike } from '../../utils';
+import { Logger } from '../../utils/console/Logger';
+import { resolvePointLike } from '../../utils/functions';
+import { PointLike } from '../../utils/types';
+
 import { PositionProps, ScaleProps, TextureProps } from './props';
 
 export function resolveUnknownKeys(props: any, entity: any) {

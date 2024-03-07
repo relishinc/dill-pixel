@@ -1,81 +1,77 @@
-import {Ticker, UnresolvedAsset} from 'pixi.js';
-import {Application} from '../core';
-import {Size} from '../utils';
-import type {IContainer} from './Container';
-import {Container} from './Container';
+import { Ticker, UnresolvedAsset } from 'pixi.js';
+import { Application } from '../core/Application';
+import { Size } from '../utils/types';
+import type { IContainer } from './Container';
+import { Container } from './Container';
 
 export interface IScene extends IContainer {
-	id: string;
-	enter: () => Promise<any>;
-	exit: () => Promise<any>;
-	initialize: () => Promise<void> | void;
-	start: () => Promise<void> | void;
-	bundles?: string[] | null;
-	assets?: string[] | UnresolvedAsset[] | null;
+  id: string;
+  enter: () => Promise<any>;
+  exit: () => Promise<any>;
+  initialize: () => Promise<void> | void;
+  start: () => Promise<void> | void;
+  bundles?: string[] | null;
+  assets?: string[] | UnresolvedAsset[] | null;
 }
 
 export class Scene<T extends Application = Application> extends Container<T> implements IScene {
-	public readonly id: string;
+  public readonly id: string;
 
-	get assets(): string[] | UnresolvedAsset[] | null {
-		return null;
-	}
+  constructor() {
+    super({ autoResize: true, autoUpdate: true, priority: -9999 });
+  }
 
-	get bundles(): string[] | null {
-		return null;
-	}
+  get assets(): string[] | UnresolvedAsset[] | null {
+    return null;
+  }
 
-	constructor() {
-		super({autoResize: true, autoUpdate: true, priority: -9999});
-	}
+  get bundles(): string[] | null {
+    return null;
+  }
 
-	/**
-	 * Called to initialize the scene
-	 * Called before the scene is added to the stage
-	 * and before the scene is animated in
-	 * @returns {Promise<void> | void}
-	 */
-	public initialize(): Promise<void> | void;
-	public async initialize(): Promise<void> {
-	}
+  /**
+   * Called to initialize the scene
+   * Called before the scene is added to the stage
+   * and before the scene is animated in
+   * @returns {Promise<void> | void}
+   */
+  public initialize(): Promise<void> | void;
+  public async initialize(): Promise<void> {}
 
-	/**
-	 * Called to animate the scene in
-	 * @returns {Promise<void>}
-	 */
-	public enter(): Promise<any> {
-		return Promise.resolve();
-	}
+  /**
+   * Called to animate the scene in
+   * @returns {Promise<void>}
+   */
+  public enter(): Promise<any> {
+    return Promise.resolve();
+  }
 
-	/**
-	 * Called to animate the scene out
-	 * @returns {Promise<void>}
-	 */
-	public exit(): Promise<any> {
-		return Promise.resolve();
-	}
+  /**
+   * Called to animate the scene out
+   * @returns {Promise<void>}
+   */
+  public exit(): Promise<any> {
+    return Promise.resolve();
+  }
 
-	/**
-	 * Called after the enter resolves
-	 * If enter doesn't return a promise, this is called immediately after enter
-	 * @returns {Promise<void> | void}
-	 */
-	public start(): Promise<void> | void;
+  /**
+   * Called after the enter resolves
+   * If enter doesn't return a promise, this is called immediately after enter
+   * @returns {Promise<void> | void}
+   */
+  public start(): Promise<void> | void;
 
-	public async start(): Promise<void> {
-	}
+  public async start(): Promise<void> {}
 
-	/**
-	 * Called every frame
-	 * @param {Ticker} ticker
-	 */
-	public update(ticker: Ticker) {
-	}
+  /**
+   * Called every frame
+   * @param {Ticker} ticker
+   */
+  public update(ticker: Ticker) {}
 
-	/**
-	 * Called when the window is resized
-	 * @param {Size} size
-	 */
-	public resize(size: Size): void {
-	}
+  /**
+   * Called when the window is resized
+   * @param {Size} size
+   */
+  public resize(size: Size): void {}
 }

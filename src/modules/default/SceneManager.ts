@@ -1,19 +1,16 @@
-import { Application, IApplication } from '../../../core';
-import { CoreModule } from '../../../core/decorators';
-import { Container, IScene, Scene } from '../../../display';
-import { Signal } from '../../../signals';
-import {
-  bindAllMethods,
-  Constructor,
-  createQueue,
-  getDynamicModuleFromImportListItem,
-  ImportList,
-  isDev,
-  Logger,
-  Queue,
-} from '../../../utils';
-import type { IModule } from '../../Module';
-import { Module } from '../../Module';
+import { Container } from 'pixi.js';
+import { Application, IApplication } from '../../core/Application';
+import { CoreModule } from '../../core/decorators';
+import { IScene, Scene } from '../../display/Scene';
+import { Signal } from '../../signals';
+import { Logger } from '../../utils/console/Logger';
+import { isDev } from '../../utils/env';
+import { getDynamicModuleFromImportListItem } from '../../utils/framework';
+import { bindAllMethods } from '../../utils/methodBinding';
+import { createQueue, Queue } from '../../utils/promise/Queue';
+import { Constructor, ImportList } from '../../utils/types';
+import type { IModule } from '../Module';
+import { Module } from '../Module';
 
 export interface ISceneManager extends IModule {
   isFirstScene: boolean;

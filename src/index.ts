@@ -1,48 +1,62 @@
-import { Application, IApplication, RequiredApplicationConfig } from './core';
-import { sayHello } from './hello';
-
 export * from './pixi';
-export * from './core';
-export * from './display';
-export * from './modules';
-export * from './store';
-export * from './utils';
-export * from './mixins';
 
-export async function create<T extends IApplication = Application>(
-  ApplicationClass: new () => T,
-  config: RequiredApplicationConfig = { id: 'DillPixelApplication' },
-  domElement: string | HTMLElement = Application.containerId,
-  speak: boolean = true,
-): Promise<T> {
-  if (speak) {
-    sayHello();
-  }
-  let el: HTMLElement | null = null;
-  if (typeof domElement === 'string') {
-    el = document.getElementById(domElement);
-    if (!el) {
-      el = Application.createContainer(domElement);
-    }
-  } else if (domElement instanceof HTMLElement) {
-    el = domElement;
-  }
-  if (!el) {
-    // no element to use
-    throw new Error(
-      'You passed in a DOM Element, but none was found. If you instead pass in a string, a container will be created for you, using the string for its id.',
-    );
-  }
-  config.resizeTo = el;
-  const instance = new ApplicationClass();
+// core
+export { Application } from './core/Application';
+export type { IApplication, RequiredApplicationConfig } from './core/Application';
 
-  await instance.initialize(config);
+// modules
+export type { IAssetManager } from './modules/default/AssetManager';
+export type { ISceneManager, LoadSceneMethod } from './modules/default/SceneManager';
+export type { IWebEventsManager } from './modules/default/WebEventsManager';
+export type { IKeyboardManager, KeyboardEventDetail } from './modules/default/KeyboardManager';
+export type { IFocusable, IFocusManager, FocusManagerOptions } from './modules/default/focus/FocusManager';
+export type { IAudioManager } from './modules/default/audio/AudioManager';
+export type { IModule } from './modules/Module';
+export { Module } from './modules/Module';
+export { default as defaultModules } from './modules/default/defaultModules';
 
-  if (el) {
-    el.appendChild(instance.canvas as HTMLCanvasElement);
-  } else {
-    throw new Error('No element found to append the view to.');
-  }
+// store
+export { StorageAdapter } from './store/adapters/StorageAdapter';
+export { LocalStorageAdapter } from './store/adapters/LocalStorageAdapter';
+export type { IStorageAdapter } from './store/adapters/StorageAdapter';
+export { Store } from './store/Store';
 
-  return instance as unknown as T;
-}
+// utils
+export type {
+  WithRequiredProps,
+  Constructor,
+  TextureLike,
+  SpriteSheetLike,
+  ContainerLike,
+  RectLike,
+  PointLike,
+  WithPointLike,
+  Size,
+  ImportListItem,
+  ImportList,
+} from './utils/types';
+export { resolvePointLike, getSheetLikeString, setObjectName } from './utils/functions';
+export { getPreviousMapEntry, getLastMapEntry } from './utils/map';
+export { isRetina, isMobile } from './utils/platform';
+export { isDev, isProduction, env } from './utils/env';
+export { Logger } from './utils/console/Logger';
+export { Queue, createQueue } from './utils/promise/Queue';
+export { delay } from './utils/async';
+export { pluck, omitKeys } from './utils/object';
+export { bindMethods, bindAllMethods, checkAndInvokeMethod } from './utils/methodBinding';
+export { getDynamicModuleFromImportListItem } from './utils/framework';
+
+// mixins
+export { Factory, defaultFactoryMethods } from './mixins/factory';
+export { Animated } from './mixins/animated';
+export { Interactive } from './mixins/interaction';
+export { Focusable } from './mixins/focus';
+
+// display
+export { Container } from './display/Container';
+export { Scene } from './display/Scene';
+export type { IContainer } from './display/Container';
+export type { IScene } from './display/Scene';
+
+// create
+export { create } from './core/create';

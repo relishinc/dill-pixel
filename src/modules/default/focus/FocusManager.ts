@@ -1,9 +1,12 @@
 import { Bounds, Container, PointerEvents, PointLike } from 'pixi.js';
-import { IApplication } from '../../../core';
+import { IApplication } from '../../../core/Application';
 import { CoreModule } from '../../../core/decorators';
 import { PIXIContainer } from '../../../pixi';
 import { Signal } from '../../../signals';
-import { bindMethods, Constructor, getLastMapEntry, getPreviousMapEntry, Logger } from '../../../utils';
+import { Logger } from '../../../utils/console/Logger';
+import { getLastMapEntry, getPreviousMapEntry } from '../../../utils/map';
+import { bindMethods } from '../../../utils/methodBinding';
+import { Constructor } from '../../../utils/types';
 import type { IModule } from '../../Module';
 import { Module } from '../../Module';
 import { FocusOutliner, FocusOutlinerConfig, IFocusOutliner } from './FocusOutliner';
