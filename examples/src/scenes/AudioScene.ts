@@ -8,7 +8,7 @@ export class AudioScene extends BaseScene {
     master: 1,
     music: 0.005,
     sfx: 1,
-    muted: true,
+    muted: false,
   };
 
   constructor() {
@@ -21,7 +21,6 @@ export class AudioScene extends BaseScene {
     this.app.audio.muted = this.config.muted;
     this.app.audio.channels.get('music').volume = this.config.music;
     this.app.audio.channels.get('sfx').volume = this.config.sfx;
-
     void this.app.audio.fadeIn('horizon.mp3', 'music', { volume: 1 });
   }
 

@@ -1,139 +1,16 @@
-import { IMediaInstance, PlayOptions, sound, soundAsset, SoundSourceMap } from '@pixi/sound';
+import { PlayOptions, sound, SoundSourceMap } from '@pixi/sound';
 import { gsap } from 'gsap';
-import { AssetsManifest, extensions, UnresolvedAsset } from 'pixi.js';
+import { AssetsManifest, UnresolvedAsset } from 'pixi.js';
 import { IApplication } from '../../../core';
 import { CoreModule } from '../../../core/decorators';
 import { Signal } from '../../../signals';
 import { Logger } from '../../../utils';
 import { IModule, Module } from '../../Module';
-
-extensions.add(soundAsset);
-
-export interface IAudioInstance {
-  volume: number;
-  media: IMediaInstance;
-  channel: IAudioChannel;
-  muted: boolean;
-
-  updateVolume(): void;
-}
-
-class AudioInstance implements IAudioInstance {
-  private _volume: number = 1;
-  private _muted: boolean = false;
-
-  constructor(
-    public id: string,
-    public media: IMediaInstance,
-    public channel: IAudioChannel,
-    public manager: IAudioManager,
-  ) {
-    this.volume = this.media.volume;
-    this.muted = this.channel.muted;
-  }
-
-  get muted(): boolean {
-    return this._muted;
-  }
-
-  set muted(value: boolean) {
-    this._muted = value;
-    this.media.muted = this._muted;
-  }
-
-  public get volume(): number {
-    return this._volume;
-  }
-
-  public set volume(value: number) {
-    this._volume = value;
-    this.media.volume = this._volume * this.channel.volume * this.manager.masterVolume;
-  }
-
-  updateVolume(): void {
-    this.volume = this._volume;
-  }
-}
-
-export interface IAudioChannel {
-  name: string;
-  muted: boolean;
-  volume: number;
-
-  add(id: string, instance: AudioInstance): IAudioInstance;
-
-  get(id: string): IAudioInstance | undefined;
-
-  remove(id: string): IAudioInstance | undefined;
-
-  updateVolume(): void;
-}
-
-class AudioChannel {
-  private _muted: boolean = false;
-  private _volume: number = 1.0;
-  private _sounds: Map<string, AudioInstance> = new Map<string, AudioInstance>();
-
-  constructor(
-    public name: string,
-    public manager: IAudioManager,
-  ) {
-    this.muted = this.manager.muted;
-  }
-
-  get muted(): boolean {
-    return this._muted;
-  }
-
-  set muted(value: boolean) {
-    this._muted = value;
-    this._setMuted();
-  }
-
-  get volume(): number {
-    return this._volume;
-  }
-
-  set volume(value: number) {
-    this._volume = value;
-    this.updateVolume();
-  }
-
-  add(id: string, instance: AudioInstance): IAudioInstance {
-    this._sounds.set(id, instance);
-    return instance;
-  }
-
-  get(id: string): IAudioInstance | undefined {
-    return this._sounds.get(id);
-  }
-
-  remove(id: string): IAudioInstance | undefined {
-    const instance = this._sounds.get(id);
-    if (instance) {
-      instance.media.stop();
-      this._sounds.delete(id);
-    }
-    return instance;
-  }
-
-  _setMuted(): void {
-    this._sounds.forEach((sound) => {
-      sound.muted = this._muted;
-    });
-  }
-
-  updateVolume() {
-    this._sounds.forEach((sound) => {
-      sound.updateVolume();
-    });
-    this.manager.onChannelVolumeChanged.emit({ channel: this, volume: this._volume });
-  }
-}
+import { AudioChannel, IAudioChannel } from './AudioChannel';
+import { AudioInstance, IAudioInstance } from './AudioInstance';
 
 type SoundDetail = { id: string; instance: IAudioInstance; channelName: string };
 type ChannelVolumeDetail = { channel: IAudioChannel; volume: number };
-
 type ChannelName = 'music' | 'sfx' | 'voiceover' | string;
 
 export interface IAudioManager extends IModule {
@@ -158,6 +35,8 @@ export interface IAudioManager extends IModule {
   getChannel(name: ChannelName): IAudioChannel | undefined;
 
   addAllFromManifest(manifest: AssetsManifest): void;
+
+  addAllFromBundle(bundleName: string, manifest?: AssetsManifest | string | undefined): void;
 
   add(soundAsset: UnresolvedAsset): void;
 
@@ -277,20 +156,34 @@ export class AudioManager extends Module implements IAudioManager {
 
   public addAllFromManifest(manifest: AssetsManifest) {
     manifest.bundles.forEach((bundle) => {
-      if (!Array.isArray(bundle?.assets)) {
-        bundle.assets = [bundle.assets];
+      this.addAllFromBundle(bundle.name, manifest);
+    });
+  }
+
+  public addAllFromBundle(bundleName: string, manifest?: AssetsManifest | string | undefined) {
+    if (!manifest) {
+      manifest = this.app.manifest;
+    }
+    if (manifest === undefined || typeof manifest === 'string') {
+      throw new Error('Manifest is not available');
+    }
+    const bundle = manifest.bundles.find((b) => b.name === bundleName);
+    if (bundle === undefined) {
+      throw new Error(`Bundle with name ${bundleName} does not exist.`);
+    }
+    if (!Array.isArray(bundle?.assets)) {
+      bundle.assets = [bundle.assets];
+    }
+    bundle.assets.forEach((asset) => {
+      // detect sound assets by asset.src extension
+      let src = asset.src;
+      if (Array.isArray(src)) {
+        src = src[0];
       }
-      bundle.assets.forEach((asset) => {
-        // detect sound assets by asset.src extension
-        let src = asset.src;
-        if (Array.isArray(src)) {
-          src = src[0];
-        }
-        const ext = (src as string).split('.').pop();
-        if (ext === 'mp3' || ext === 'ogg' || ext === 'wav') {
-          this.add(asset);
-        }
-      });
+      const ext = (src as string).split('.').pop();
+      if (ext === 'mp3' || ext === 'ogg' || ext === 'wav' || ext === 'webm') {
+        this.add(asset);
+      }
     });
   }
 
