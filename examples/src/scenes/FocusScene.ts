@@ -1,6 +1,6 @@
+import { Actor } from '@/entities/Actor';
+import { BaseScene } from '@/scenes/BaseScene';
 import { Logger, PIXIText } from 'dill-pixel';
-import { Actor } from '../V8Application';
-import { BaseScene } from './BaseScene.ts';
 
 export class FocusScene extends BaseScene {
   protected title = 'Focus Management';

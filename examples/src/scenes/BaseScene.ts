@@ -46,7 +46,7 @@ export class BaseScene extends Scene<V8Application> {
   protected async addGUI() {
     const dat = await import('dat.gui');
     this.gui = new dat.GUI({ name: 'Controls', closeOnTop: true });
-    this.app.view.parentNode?.appendChild(this.gui.domElement.parentNode);
+    this.app.canvas.parentNode?.appendChild(this.gui.domElement.parentNode);
     (this.gui.domElement.parentNode as HTMLElement).style.cssText = `position: absolute;
     top: 0;
     left: 0;
