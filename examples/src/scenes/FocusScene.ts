@@ -1,6 +1,6 @@
 import { Actor } from '@/entities/Actor';
 import { BaseScene } from '@/scenes/BaseScene';
-import { Logger, PIXIText } from 'dill-pixel';
+import { Button, Logger, PIXIText } from 'dill-pixel';
 
 export class FocusScene extends BaseScene {
   protected title = 'Focus Management';
@@ -25,9 +25,26 @@ export class FocusScene extends BaseScene {
     this.actor1 = this.add.existing<Actor>(new Actor(), { x: 500, y: 300 });
     this.actor2 = this.add.existing<Actor>(new Actor(0x00fff0), { x: 700, y: 300 });
 
+    const button = this.add.existing(
+      new Button({
+        textures: { default: 'jar', hover: 'jar2' },
+        sheet: 'game/game.json',
+      }),
+      {
+        x: 1100,
+        y: 400,
+        scale: 0.5,
+      },
+    );
+
+    button.onPress.connect(() => {
+      console.log('button pressed');
+    });
+
     this.app.focus.addFocusLayer('one');
     this.app.focus.addFocusable(this.actor1, 'one', true);
     this.app.focus.addFocusable(this.actor2, 'one');
+    this.app.focus.addFocusable(button, 'one');
     this.app.focus.addFocusLayer('two', this.actor2);
     this.app.focus.setFocusLayer('one');
 

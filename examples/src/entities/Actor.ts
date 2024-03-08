@@ -29,9 +29,13 @@ export class Actor extends _Actor {
     this.y = this._originalY;
   }
 
+  getFocusPosition() {
+    return { x: -this._view.width * 0.5 - 15, y: -this._view.height * 0.5 - 15 };
+  }
+
   getFocusArea() {
     // custom boundary
-    const bounds = this.getBounds();
+    const bounds = this._view.getBounds();
     bounds.width += 30;
     bounds.height += 30;
     bounds.x -= 15;

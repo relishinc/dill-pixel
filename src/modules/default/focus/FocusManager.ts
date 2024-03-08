@@ -6,7 +6,7 @@ import { Signal } from '../../../signals';
 import { Logger } from '../../../utils/console/Logger';
 import { getLastMapEntry, getPreviousMapEntry } from '../../../utils/map';
 import { bindMethods } from '../../../utils/methodBinding';
-import { Constructor } from '../../../utils/types';
+import { Constructor, PointLike as DillPixelPointLike } from '../../../utils/types';
 import type { IModule } from '../../Module';
 import { Module } from '../../Module';
 import { FocusOutliner, FocusOutlinerConfig, IFocusOutliner } from './FocusOutliner';
@@ -16,6 +16,7 @@ export type FocusManagerOptions = {
 };
 
 export interface IFocusable {
+  isFocused: boolean;
   focusEnabled: boolean;
 
   // pixi accessibility features
@@ -45,6 +46,8 @@ export interface IFocusable {
   getGlobalPosition(): PointLike;
 
   getFocusArea(): Bounds;
+
+  getFocusPosition(): DillPixelPointLike | null;
 }
 
 export interface IFocusLayer {
@@ -325,13 +328,16 @@ export class FocusManager extends Module implements IFocusManager {
   }
 
   private _removeTopLayer() {
-    const layerId = getLastMapEntry(this._layers)[0];
+    const layerId = getLastMapEntry(this._layers)?.[0];
     const nextLayerId = getPreviousMapEntry(this._layers, layerId)?.[0];
+    if (layerId === undefined) {
+      return;
+    }
     this._layers.delete(layerId);
     this._postDelete(nextLayerId);
   }
 
-  private _postDelete(nextLayerId: string | number) {
+  private _postDelete(nextLayerId: string | number | undefined) {
     if (this._layers.size === 0) {
       this._currentLayerId = null;
     } else if (nextLayerId !== undefined) {
@@ -344,10 +350,13 @@ export class FocusManager extends Module implements IFocusManager {
     if (this._focusTarget !== focusTarget) {
       shouldEmit = true;
       // call the focus out methods on the current focusable, which is changing
-      this._focusTarget?.focusOut();
-      this._focusTarget?.onFocusOut?.emit(this._focusTarget!);
-      this._focusTarget?.blur();
-      this._focusTarget?.onBlur?.emit(this._focusTarget!);
+      if (this._focusTarget) {
+        this._focusTarget.focusOut();
+        this._focusTarget.isFocused = false;
+        this._focusTarget.onFocusOut.emit(this._focusTarget);
+        this._focusTarget.blur();
+        this._focusTarget.onBlur.emit(this._focusTarget);
+      }
     }
 
     this._focusTarget = focusTarget;
@@ -355,10 +364,12 @@ export class FocusManager extends Module implements IFocusManager {
     if (this._focusTarget) {
       if (this._getCurrentLayer()?.hasFocusable(focusTarget)) {
         // call focusIn on the focusable
-        this._focusTarget?.focusIn();
-        this._focusTarget?.onFocusIn?.emit(this._focusTarget!);
-
-        this._updateOutliner();
+        if (this._focusTarget) {
+          this._focusTarget.focusIn();
+          this._focusTarget.isFocused = true;
+          this._focusTarget.onFocusIn.emit(this._focusTarget);
+          this._updateOutliner();
+        }
       } else {
         Logger.warn(`The focusable ${focusTarget} does not exist on the current focus layer: ${this._currentLayerId}`);
       }

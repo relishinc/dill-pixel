@@ -20,6 +20,7 @@ export function Interactive<TBase extends Constructor<PIXIContainer>>(Base: TBas
     constructor(...args: any[]) {
       super(...args);
       this._emitSignal = this._emitSignal.bind(this);
+      this.eventMode = 'static';
     }
 
     public onInteraction(eventName: InteractionEventName) {

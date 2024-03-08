@@ -6,6 +6,7 @@ import { Constructor } from '../utils/types';
 
 export function Focusable<TBase extends Constructor<PIXIContainer>>(Base: TBase): TBase & Constructor<IFocusable> {
   return class extends Base implements IFocusable {
+    isFocused = false;
     focusEnabled = true;
 
     // pixi accessibility options
@@ -30,6 +31,10 @@ export function Focusable<TBase extends Constructor<PIXIContainer>>(Base: TBase)
     public blur() {}
 
     public focusOut() {}
+
+    public getFocusPosition() {
+      return null;
+    }
 
     public getFocusArea() {
       return this.getBounds();

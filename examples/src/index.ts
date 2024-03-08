@@ -32,4 +32,4 @@ app.on('sceneChangeComplete').connect(() => {
 // global function registry
 app.func('onKeyDown', 'enter').connect(() => {
   console.log('global onKeyDown: enter pressed');
-});
+}, -1);
