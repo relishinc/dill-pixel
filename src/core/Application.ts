@@ -48,6 +48,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   defaultSceneLoadMethod: LoadSceneMethod;
   showSceneDebugMenu: boolean;
   manifest: AssetsManifest | Promise<AssetsManifest> | string;
+  showStats: boolean;
 }
 
 const defaultApplicationOptions: Partial<IApplicationOptions> = {

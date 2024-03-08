@@ -1,5 +1,6 @@
 import { Container, DestroyOptions, Graphics, PointLike } from 'pixi.js';
 import { Application } from '../../../core/Application';
+import { resolvePointLike } from '../../../utils/functions';
 import { bindMethods } from '../../../utils/methodBinding';
 import { IFocusable } from './FocusManager';
 
@@ -41,18 +42,13 @@ export class FocusOutliner extends Container implements IFocusOutliner {
 
   public draw(focusTarget: IFocusable): void {
     this.clear();
-    const bounds = focusTarget.getFocusArea();
+    const bounds = focusTarget.getFocusArea().clone();
+
     this._graphics.strokeStyle = { width: this._config.lineWidth, color: this._config.color, alpha: 1 };
     if (this._config.shape === 'rectangle') {
-      this._graphics.rect(-bounds.width * 0.5, -bounds.height * 0.5, bounds.width, bounds.height);
+      this._graphics.rect(0, 0, bounds.width, bounds.height);
     } else {
-      this._graphics.roundRect(
-        -bounds.width * 0.5,
-        -bounds.height * 0.5,
-        bounds.width,
-        bounds.height,
-        this._config.radius,
-      );
+      this._graphics.roundRect(0, 0, bounds.width, bounds.height, this._config.radius);
     }
 
     this._graphics.stroke();
@@ -77,6 +73,14 @@ export class FocusOutliner extends Container implements IFocusOutliner {
     if (!this._focusTarget) {
       return;
     }
-    this.position.set(this._focusTarget.getGlobalPosition().x, this._focusTarget.getGlobalPosition().y);
+    const pos = this._focusTarget.getGlobalPosition();
+    const focusPos = this._focusTarget.getFocusPosition();
+    if (focusPos) {
+      const fp = resolvePointLike(focusPos);
+      pos.x += fp.x;
+      pos.y += fp.y;
+    }
+
+    this.position.set(pos.x, pos.y);
   }
 }
