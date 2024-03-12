@@ -22,8 +22,7 @@
     "strictPropertyInitialization": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "allowJs": true,
-    "jsx": "react-jsx"
+    "allowJs": true
   },
   "ts-node": {
     "compilerOptions": {
@@ -36,8 +35,7 @@
     "./node_modules/@dimforge/rapier2d"
   ],
   "include": [
-    "./src/**/*.ts",
-    "./src/**/*.tsx"
+    "./src/**/*.ts"
   ],
   "exclude": [
     "./lib"

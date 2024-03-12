@@ -205,7 +205,7 @@ export class HowlerManager implements IAudioManager {
     category: string = AudioCategory.DEFAULT,
     pitch?: number,
   ): IAudioTrack | undefined {
-    const contextAvailable = this.ensureCtx();
+    this.ensureCtx();
 
     let loaded: HowlerTrack;
     const collection: AudioCollection = this.getCollection(category);
