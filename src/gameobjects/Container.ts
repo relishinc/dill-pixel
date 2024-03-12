@@ -205,8 +205,8 @@ export class Container<T extends Application = Application> extends PIXIContaine
    * @protected
    * adds a signal connection
    */
-  protected addSignalConnection(pConnection: SignalConnection) {
-    this._signalConnections.add(pConnection);
+  protected addSignalConnection(...signalConnection: SignalConnection) {
+    signalConnection.forEach((connection) => this._signalConnections.add(connection));
   }
 
   /**
