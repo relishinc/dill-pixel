@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.35.6](https://github.com/relishinc/dill-pixel/compare/v2.35.5...v2.35.6) (2024-03-12)
+
+
+### Bug Fixes
+
+* downgrade to pixi.js 7.3.3 ([2f75df2](https://github.com/relishinc/dill-pixel/commit/2f75df288ddae1a4ef61fa9abfca7aeeab41b2bd))
+
 ## [2.35.5](https://github.com/relishinc/dill-pixel/compare/v2.35.4...v2.35.5) (2024-03-12)
 
 
