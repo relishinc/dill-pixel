@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.35.3](https://github.com/relishinc/dill-pixel/compare/v2.35.2...v2.35.3) (2024-03-12)
+
+
+### Bug Fixes
+
+* modified addSignalConnection utility method to accept N signal connection params ([70d8379](https://github.com/relishinc/dill-pixel/commit/70d8379aac7c29342486c04e5bf66258a705a10f))
+
 ## [2.35.2](https://github.com/relishinc/dill-pixel/compare/v2.35.1...v2.35.2) (2024-03-06)
 
 
