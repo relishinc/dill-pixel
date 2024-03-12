@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.35.4](https://github.com/relishinc/dill-pixel/compare/v2.35.3...v2.35.4) (2024-03-12)
+
+
+### Bug Fixes
+
+* addSignalConnection parameter type mismatch ([1a3f871](https://github.com/relishinc/dill-pixel/commit/1a3f871e8ecc7c10097e01739779421f08da073e))
+
 ## [2.35.3](https://github.com/relishinc/dill-pixel/compare/v2.35.2...v2.35.3) (2024-03-12)
 
 
