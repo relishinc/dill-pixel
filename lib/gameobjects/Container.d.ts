@@ -60,7 +60,7 @@ export declare class Container<T extends Application = Application> extends PIXI
      * @protected
      * adds a signal connection
      */
-    protected addSignalConnection(pConnection: SignalConnection): void;
+    protected addSignalConnection(...signalConnection: SignalConnection[]): void;
     /**
      * @protected
      * removes all signal connections
