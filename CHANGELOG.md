@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.35.7](https://github.com/relishinc/dill-pixel/compare/v2.35.6...v2.35.7) (2024-03-12)
+
+
+### Bug Fixes
+
+* fixed pixi dependency, removed react dependencies for now ([f2629d6](https://github.com/relishinc/dill-pixel/commit/f2629d6f1a2d7c4c33229d75ae9dc9c98bf65dc7))
+
 ## [2.35.6](https://github.com/relishinc/dill-pixel/compare/v2.35.5...v2.35.6) (2024-03-12)
 
 
