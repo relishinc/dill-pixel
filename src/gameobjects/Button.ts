@@ -1,201 +1,219 @@
-import {
-  Assets,
-  BitmapText,
-  Circle,
-  Container,
-  Ellipse,
-  FederatedPointerEvent,
-  IHitArea,
-  IPoint,
-  Point,
-  Polygon,
-  Rectangle,
-  RoundedRectangle,
-  Sprite,
-  Texture
-} from 'pixi.js';
-import {IFocusable} from '../input';
-import * as InputUtils from '../input/InputUtils';
-import {RectUtils} from '../utils';
-import * as PixiUtils from '../utils/PixiUtils';
+import { Point, Sprite } from 'pixi.js';
+import { IFocusable } from '../input';
+import { Signal } from '../signals';
+import { SpritesheetLike, TextureLike } from '../utils';
+import { Container } from './Container';
+
+type ButtonConfig = {
+  textures: {
+    default: TextureLike;
+    hover?: TextureLike;
+    active?: TextureLike;
+    disabled?: TextureLike;
+  };
+  sheet: SpritesheetLike;
+  enabled: boolean;
+  focusable: boolean;
+};
 
 /**
- * Button
+ * @class
+ * @extends {Container}
+ * @implements {IFocusable}
+ * @description A class representing a button.
  */
 export class Button extends Container implements IFocusable {
-  protected _image: Sprite | undefined;
-  protected _enabledTexture: Texture | undefined;
-  protected _disabledTexture: Texture | undefined;
-  protected _icon: Sprite | undefined;
-  protected _callback: () => void;
-  protected _hitArea!: Rectangle | Circle | Ellipse | Polygon | RoundedRectangle | IHitArea;
-  // Visuals in separate container to hitArea is not affected by scaling
-  // (prevents weird behaviours with touch input at image borders)
-  protected _visuals: Container;
-  protected _text: BitmapText | undefined;
-  protected _eventData: FederatedPointerEvent | undefined;
+  // signals
+  public onDown = new Signal<() => void>();
+  public onUp = new Signal<() => void>();
+  public onOut = new Signal<() => void>();
+  public onOver = new Signal<() => void>();
+  public onPress = new Signal<() => void>();
 
-  // TODO:SH: Look into "buttonifying" an object, similar to how Dijon did it.
-  // Might be javacsript black magic, but would also allow us to easily add input to any object
+  // visual
+  public view: Sprite;
+
+  // whether the button is down
+  public isDown: boolean;
+
+  // config
+  protected config: ButtonConfig;
+
+  // enabled state
+  protected _enabled: boolean;
+
   /**
-   * Creates an instance of button.
-   * @todo SH: Look into "buttonifying" an object, similar to how Dijon did it.
-   * @param pCallback
-   * @param [pAsset]
-   * @param [pSheet]
+   * @constructor
+   * @param {Partial<ButtonConfig>} config - The configuration for the button.
    */
-  constructor(pCallback: () => void, pAsset?: string, pSheet?: string | string[]) {
+  constructor(config: Partial<ButtonConfig>) {
     super();
-    this._callback = pCallback;
+    this.config = Object.assign(
+      { textures: { default: '' }, sheet: undefined, enabled: true, focusable: true },
+      config,
+    );
 
-    this._visuals = new Container();
-    this.addChild(this._visuals);
+    // Create a sprite with the default texture and add it to the container.
+    this.view = this.add.sprite({ asset: this.config.textures.default, sheet: this.config.sheet });
+    this.addChild(this.view);
 
-    if (pAsset !== undefined) {
-      this._image = PixiUtils.makeSprite(pAsset, pSheet);
-      this._enabledTexture = this._image.texture;
-      this._visuals.addChild(this._image!);
-    }
-
-    this.interactive = true;
-    this.cursor = 'pointer';
-
-    this.hitArea =
-      this._image !== undefined
-        ? new Rectangle(-this._image.width * 0.5, -this._image.height * 0.5, this._image.width, this._image.height)
-        : new Rectangle(-50, -50, 100, 100);
-
-    this.on(InputUtils.Events.POINTER_OVER, this.onPointerOver);
-    this.on(InputUtils.Events.POINTER_DOWN, this.onPointerDown);
-    this.on(InputUtils.Events.POINTER_UP, this.onPointerUp);
-    this.on(InputUtils.Events.POINTER_OUT, this.onPointerOut);
-  }
-
-  public onFocusBegin(): void {
-    // override this if you want
-  }
-
-  public onFocusEnd(): void {
-    // override this if you want
-  }
-
-  public onFocusActivated(): void {
-    if (this.interactive) {
-      this._callback();
-    }
-  }
-
-  public getFocusPosition(): Point {
-    if (this.hitArea instanceof Rectangle) {
-      return new Point().copyFrom(this.toGlobal(RectUtils.center(this.hitArea)));
-    } else {
-      return this.getGlobalPosition();
-    }
-  }
-
-  public getFocusSize(): IPoint {
-    let bounds: Rectangle;
-    if (this.hitArea instanceof Rectangle) {
-      bounds = PixiUtils.getGlobalBounds(this, this.hitArea.clone());
-    } else {
-      bounds = PixiUtils.getGlobalBounds(this);
-    }
-    return RectUtils.size(bounds);
+    this.enabled = config.enabled !== false;
+    this._focusable = config.focusable !== false;
   }
 
   /**
-   * Adds text to the centre of the button.
-   * @param pText The text to be displayed.
-   * @param pFont The font to use.
-   * @param pFontSize The size of the font as a string or number.
-   * @param pColor The color of the font.
+   * @description Sets the enabled state of the button.
+   * @param {boolean} enabled - Whether the button is enabled.
    */
-  public addText(pText: string, pFont: string, pFontSize: number | string, pColor: number = 0x000000): void {
-    this._text = new BitmapText(pText, {
-      fontName: pFont,
-      fontSize: typeof pFontSize === 'number' ? pFontSize : parseInt(pFontSize, 10),
-      align: 'center',
-      tint: pColor,
+  public set enabled(enabled: boolean) {
+    this._enabled = enabled;
+    this.focusable = enabled;
+
+    if (this._enabled) {
+      this.addListeners();
+      this.eventMode = 'static';
+      this.view.texture = this.make.texture({
+        asset: this.config.textures.default,
+        sheet: this.config.sheet,
+      });
+    } else {
+      this.removeListeners();
+      this.eventMode = 'none';
+      this.view.texture = this.make.texture({
+        asset: this.config.textures.disabled || this.config.textures.default,
+        sheet: this.config.sheet,
+      });
+    }
+  }
+
+  /**
+   * @description Handles the focus begin event.
+   */
+  public onFocusBegin() {
+    this.handlePointerOver();
+  }
+
+  /**
+   * @description Handles the focus activated event.
+   */
+  public onFocusActivated() {
+    this.handlePointerDown();
+    window.addEventListener('keyup', this.handleKeyUp);
+  }
+
+  /**
+   * @description Handles the focus end event.
+   */
+  public onFocusEnd() {
+    this.handlePointerUp();
+  }
+
+  /**
+   * @description Gets the focus size of the button.
+   * @returns {Point} The focus size.
+   */
+  public getFocusSize(): Point {
+    const bounds = this.view.getBounds().clone();
+    bounds.x += this.view.width * 0.5;
+    bounds.y += this.view.width * 0.5;
+    return new Point(bounds.width, bounds.height);
+  }
+
+  /**
+   * @description Adds the event listeners for the button.
+   */
+  protected addListeners() {
+    this.on('pointerover', this.handlePointerOver);
+    this.on('pointerout', this.handlePointerOut);
+    this.on('pointerup', this.handlePointerUp);
+    this.on('pointerupoutside', this.handlePointerUp);
+    this.on('pointerdown', this.handlePointerDown);
+    this.on('tap', this.handlePointerUp);
+  }
+
+  /**
+   * @description Removes the event listeners for the button.
+   */
+  protected removeListeners() {
+    this.off('pointerover', this.handlePointerOver);
+    this.off('pointerout', this.handlePointerOut);
+    this.off('pointerup', this.handlePointerUp);
+    this.off('pointerupoutside', this.handlePointerUp);
+    this.off('pointerdown', this.handlePointerDown);
+    this.off('tap', this.handlePointerUp);
+  }
+
+  /**
+   * @description Handles the pointer over event.
+   * Sets the texture of the button to the hover texture and emits the onOver event.
+   */
+  protected handlePointerOver() {
+    if (!this._enabled) {
+      return;
+    }
+    this.view.texture = this.make.texture({
+      asset: this.config.textures.hover || this.config.textures.default,
+      sheet: this.config.sheet,
     });
-    this._text.position.set(0, 0);
-    this._text.anchor.set(0.5);
-    this._visuals.addChild(this._text);
+    this.onOver.emit();
   }
 
   /**
-   * Change the text of the button. Make sure to call `addText` first.
-   * @param pText The text to be displayed.
+   * @description Handles the pointer out event.
+   * Sets the texture of the button to the default texture and emits the onOut event.
    */
-  public changeText(pText: string) {
-    if (this._text !== undefined) {
-      this._text.text = pText;
+  protected handlePointerOut() {
+    if (!this._enabled) {
+      return;
+    }
+    this.view.texture = this.make.texture({ asset: this.config.textures.default, sheet: this.config.sheet });
+    this.onOut.emit();
+  }
+
+  /**
+   * @description Handles the pointer down event.
+   * Sets the isDown property to true and changes the texture of the button.
+   */
+  protected handlePointerDown() {
+    if (!this._enabled) {
+      return;
+    }
+
+    if (!this.isDown) {
+      this.isDown = true;
+      this.view.texture = this.make.texture({
+        asset: this.config.textures.active || this.config.textures.hover || this.config.textures.default,
+        sheet: this.config.sheet,
+      });
+      this.onDown.emit();
     }
   }
 
   /**
-   * Sets callback
-   * @param pCallback
+   * @description Handles the pointer up event.
+   * Removes the keyup event listener and emits the onPress and onUp events.
    */
-  public setCallback(pCallback: () => void): void {
-    this._callback = pCallback;
-  }
-
-  public setDisabledImage(pTexture: Texture | string, pSheet?: string): void {
-    if (typeof pTexture === 'string') {
-      if (pSheet === undefined) {
-        this._disabledTexture = Texture.from(pTexture);
-      } else {
-        this._disabledTexture = Assets.cache.get(pSheet).textures![pTexture];
-      }
-    } else {
-      this._disabledTexture = pTexture;
+  protected handlePointerUp() {
+    if (!this._enabled) {
+      return;
     }
-  }
-
-  /**
-   * Sets the interactive flag and tries to change the default texture to enabled or disabled if those textures exist.
-   * @param pInteractive Should this button be interactive or not.
-   */
-  public setInteractive(pInteractive: boolean) {
-    this.interactive = pInteractive;
-
-    if (this._image !== undefined) {
-      if (this._disabledTexture !== undefined && this._enabledTexture !== undefined) {
-        this._image.texture = pInteractive ? this._enabledTexture : this._disabledTexture;
-      }
+    window.removeEventListener('keyup', this.handleKeyUp);
+    this.view.texture = this.make.texture({ asset: this.config.textures.default, sheet: this.config.sheet });
+    if (this.isDown) {
+      this.isDown = false;
+      this.onPress.emit();
     }
+    this.onUp.emit();
   }
 
   /**
-   * Event fired when pointer is over button
+   * @description Handles the key up event.
+   * checks if the key is the enter or space key and calls handlePointerUp.
+   * @param {KeyboardEvent} e - The keyboard event.
    */
-  protected onPointerOver(_event: FederatedPointerEvent): void {
-    // override
-  }
-
-  /**`
-   * Event fired when pointer pressed on button
-   * @param pEvent
-   */
-  protected onPointerDown(pEvent: FederatedPointerEvent): void {
-    this._eventData = pEvent;
-  }
-
-  /**
-   * Event fired when pointer released on button
-   */
-  protected onPointerUp(pEvent: FederatedPointerEvent): void {
-    if (this._eventData !== undefined && this._eventData.pointerId === pEvent.pointerId) {
-      this._callback();
-      this._eventData = undefined;
+  protected handleKeyUp(e: KeyboardEvent) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      this.handlePointerUp();
     }
-  }
-
-  /**
-   * Event fired when pointer no longer over button
-   */
-  protected onPointerOut(_event: FederatedPointerEvent): void {
-    // override
-    this._eventData = undefined;
   }
 }

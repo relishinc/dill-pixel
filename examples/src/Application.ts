@@ -18,6 +18,7 @@ import {
   TransitionType,
 } from 'dill-pixel';
 import { AudioExample } from './state/AudioExample';
+import { ButtonExample } from './state/ButtonExample';
 import { FocusablesExample } from './state/FocusablesExample';
 import { SignalsExample } from './state/SignalsExample';
 import { SpineExample } from './state/SpineExample';
@@ -66,6 +67,7 @@ export class Application extends DillPixelApplication {
     this.state.register(UICanvasExample);
     this.state.register(AudioExample);
     this.state.register(SignalsExample);
+    this.state.register(ButtonExample);
   }
 
   protected createAssetMap(): void {

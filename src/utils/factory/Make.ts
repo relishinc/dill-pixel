@@ -38,7 +38,7 @@ import {resolvePointLike, setObjectName} from './utils';
  */
 
 export interface TextureSettings {
-  asset: string;
+  asset: string | Texture<Resource>;
   sheet?: SpritesheetLike;
 }
 
@@ -163,6 +163,9 @@ export class Make {
     let texture: Texture<Resource> | undefined;
     if (typeof asset === 'object') {
       const settings = asset as TextureSettings;
+      if (settings.asset instanceof Texture) {
+        return settings.asset;
+      }
       asset = settings.asset;
       sheet = settings?.sheet;
     }
