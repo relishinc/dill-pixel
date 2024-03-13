@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.36.0](https://github.com/relishinc/dill-pixel/compare/v2.35.7...v2.36.0) (2024-03-13)
+
+
+### Features
+
+* added Button to gameobjects ([fb5ae54](https://github.com/relishinc/dill-pixel/commit/fb5ae5405c13bdb033a6a2a8c72969043785d42e))
+
 ## [2.35.7](https://github.com/relishinc/dill-pixel/compare/v2.35.6...v2.35.7) (2024-03-12)
 
 
