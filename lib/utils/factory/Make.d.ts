@@ -1,5 +1,5 @@
 import { Geometry, State } from '@pixi/core';
-import { BitmapText, DRAW_MODES, Graphics, HTMLText, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Mesh, NineSlicePlane, Point, Shader, SimpleMesh, SimplePlane, SimpleRope, Text, TextStyle, Texture, TilingSprite } from 'pixi.js';
+import { BitmapText, DRAW_MODES, Graphics, HTMLText, HTMLTextStyle, IBitmapTextStyle, ITextStyle, Mesh, NineSlicePlane, Point, Resource, Shader, SimpleMesh, SimplePlane, SimpleRope, Text, TextStyle, Texture, TilingSprite } from 'pixi.js';
 import { AnimatedSprite, Container, Sprite, SpriteAnimation } from '../../gameobjects';
 import { SpriteAnimationProps } from '../../gameobjects/animation';
 import { Spine } from '../../global';
@@ -12,7 +12,7 @@ import { PointLike, SpritesheetLike } from '../Types';
  * @param pSheet (optional) The spritesheet(s) that the texture is in. You can leave this out unless you have two textures with the same name in different spritesheets
  */
 export interface TextureSettings {
-    asset: string;
+    asset: string | Texture<Resource>;
     sheet?: SpritesheetLike;
 }
 export interface SpriteTextureSettings {

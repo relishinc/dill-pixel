@@ -1,71 +1,96 @@
-import { BitmapText, Circle, Container, Ellipse, FederatedPointerEvent, IHitArea, IPoint, Point, Polygon, Rectangle, RoundedRectangle, Sprite, Texture } from 'pixi.js';
+import { Point, Sprite } from 'pixi.js';
 import { IFocusable } from '../input';
+import { Signal } from '../signals';
+import { SpritesheetLike, TextureLike } from '../utils';
+import { Container } from './Container';
+type ButtonConfig = {
+    textures: {
+        default: TextureLike;
+        hover?: TextureLike;
+        active?: TextureLike;
+        disabled?: TextureLike;
+    };
+    sheet: SpritesheetLike;
+    enabled: boolean;
+    focusable: boolean;
+};
 /**
- * Button
+ * @class
+ * @extends {Container}
+ * @implements {IFocusable}
+ * @description A class representing a button.
  */
 export declare class Button extends Container implements IFocusable {
-    protected _image: Sprite | undefined;
-    protected _enabledTexture: Texture | undefined;
-    protected _disabledTexture: Texture | undefined;
-    protected _icon: Sprite | undefined;
-    protected _callback: () => void;
-    protected _hitArea: Rectangle | Circle | Ellipse | Polygon | RoundedRectangle | IHitArea;
-    protected _visuals: Container;
-    protected _text: BitmapText | undefined;
-    protected _eventData: FederatedPointerEvent | undefined;
+    onDown: Signal<() => void>;
+    onUp: Signal<() => void>;
+    onOut: Signal<() => void>;
+    onOver: Signal<() => void>;
+    onPress: Signal<() => void>;
+    view: Sprite;
+    isDown: boolean;
+    protected config: ButtonConfig;
+    protected _enabled: boolean;
     /**
-     * Creates an instance of button.
-     * @todo SH: Look into "buttonifying" an object, similar to how Dijon did it.
-     * @param pCallback
-     * @param [pAsset]
-     * @param [pSheet]
+     * @constructor
+     * @param {Partial<ButtonConfig>} config - The configuration for the button.
      */
-    constructor(pCallback: () => void, pAsset?: string, pSheet?: string | string[]);
+    constructor(config: Partial<ButtonConfig>);
+    /**
+     * @description Sets the enabled state of the button.
+     * @param {boolean} enabled - Whether the button is enabled.
+     */
+    set enabled(enabled: boolean);
+    /**
+     * @description Handles the focus begin event.
+     */
     onFocusBegin(): void;
-    onFocusEnd(): void;
+    /**
+     * @description Handles the focus activated event.
+     */
     onFocusActivated(): void;
-    getFocusPosition(): Point;
-    getFocusSize(): IPoint;
     /**
-     * Adds text to the centre of the button.
-     * @param pText The text to be displayed.
-     * @param pFont The font to use.
-     * @param pFontSize The size of the font as a string or number.
-     * @param pColor The color of the font.
+     * @description Handles the focus end event.
      */
-    addText(pText: string, pFont: string, pFontSize: number | string, pColor?: number): void;
+    onFocusEnd(): void;
     /**
-     * Change the text of the button. Make sure to call `addText` first.
-     * @param pText The text to be displayed.
+     * @description Gets the focus size of the button.
+     * @returns {Point} The focus size.
      */
-    changeText(pText: string): void;
+    getFocusSize(): Point;
     /**
-     * Sets callback
-     * @param pCallback
+     * @description Adds the event listeners for the button.
      */
-    setCallback(pCallback: () => void): void;
-    setDisabledImage(pTexture: Texture | string, pSheet?: string): void;
+    protected addListeners(): void;
     /**
-     * Sets the interactive flag and tries to change the default texture to enabled or disabled if those textures exist.
-     * @param pInteractive Should this button be interactive or not.
+     * @description Removes the event listeners for the button.
      */
-    setInteractive(pInteractive: boolean): void;
+    protected removeListeners(): void;
     /**
-     * Event fired when pointer is over button
+     * @description Handles the pointer over event.
+     * Sets the texture of the button to the hover texture and emits the onOver event.
      */
-    protected onPointerOver(_event: FederatedPointerEvent): void;
-    /**`
-     * Event fired when pointer pressed on button
-     * @param pEvent
-     */
-    protected onPointerDown(pEvent: FederatedPointerEvent): void;
+    protected handlePointerOver(): void;
     /**
-     * Event fired when pointer released on button
+     * @description Handles the pointer out event.
+     * Sets the texture of the button to the default texture and emits the onOut event.
      */
-    protected onPointerUp(pEvent: FederatedPointerEvent): void;
+    protected handlePointerOut(): void;
     /**
-     * Event fired when pointer no longer over button
+     * @description Handles the pointer down event.
+     * Sets the isDown property to true and changes the texture of the button.
      */
-    protected onPointerOut(_event: FederatedPointerEvent): void;
+    protected handlePointerDown(): void;
+    /**
+     * @description Handles the pointer up event.
+     * Removes the keyup event listener and emits the onPress and onUp events.
+     */
+    protected handlePointerUp(): void;
+    /**
+     * @description Handles the key up event.
+     * checks if the key is the enter or space key and calls handlePointerUp.
+     * @param {KeyboardEvent} e - The keyboard event.
+     */
+    protected handleKeyUp(e: KeyboardEvent): void;
 }
+export {};
 //# sourceMappingURL=Button.d.ts.map
