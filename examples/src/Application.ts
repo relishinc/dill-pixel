@@ -18,6 +18,7 @@ import {
   TransitionType,
 } from 'dill-pixel';
 import { AudioExample } from './state/AudioExample';
+import { BitmapFontsExample } from './state/BitmapFontsExample';
 import { ButtonExample } from './state/ButtonExample';
 import { FocusablesExample } from './state/FocusablesExample';
 import { SignalsExample } from './state/SignalsExample';
@@ -68,6 +69,7 @@ export class Application extends DillPixelApplication {
     this.state.register(AudioExample);
     this.state.register(SignalsExample);
     this.state.register(ButtonExample);
+    this.state.register(BitmapFontsExample);
   }
 
   protected createAssetMap(): void {
