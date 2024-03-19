@@ -1,7 +1,15 @@
 import { BaseState } from '@/state/BaseState';
-import { AssetMapData, FontAsset } from 'dill-pixel';
-import { Point } from 'pixi.js';
+import { DropShadowFilter } from '@pixi/filter-drop-shadow';
+import { AssetMapData, delay, FontAsset } from 'dill-pixel';
+import { Filter, Point } from 'pixi.js';
 import { FONT_OPEN_SANS, FONT_OPEN_SANS_BOLD, FONT_PADALOMA } from '../utils/Constants';
+
+const shadow = new DropShadowFilter({
+  blur: 2,
+  offset: { x: 1, y: 1 },
+  color: 0x000000,
+  alpha: 1,
+}) as unknown as Filter;
 
 export class BitmapFontsExample extends BaseState {
   public static get NAME(): string {
@@ -39,5 +47,16 @@ export class BitmapFontsExample extends BaseState {
       1,
       [0, 0],
     );
+
+    padaloma.filters = [shadow];
+    // cache as bitmap to improve performance(?)
+    padaloma.cacheAsBitmap = true;
+
+    await delay(2);
+    // To update you update the text you need to remove cacheAsBitmap
+    padaloma.cacheAsBitmap = false;
+    padaloma.text = 'Some other text!!!';
+    padaloma.cacheAsBitmap = true;
+    list.layout();
   }
 }
