@@ -210,6 +210,7 @@ export class PopupManager<T extends Application = Application> extends Container
    * @param popup
    */
   private _hidePopup(popup: IPopup) {
+    popKeyboardLayer();
     popup.hide();
   }
 
@@ -244,7 +245,6 @@ export class PopupManager<T extends Application = Application> extends Container
 
       popup.destroy(); // TODO: Pool popups
       this.log('onHidePopupComplete: Destroyed popup');
-      popKeyboardLayer();
     } else {
       this.logE('onHidePopupComplete: parameter pPopup is undefined!');
     }

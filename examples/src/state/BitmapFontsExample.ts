@@ -51,6 +51,7 @@ export class BitmapFontsExample extends BaseState {
     padaloma.filters = [shadow];
     // cache as bitmap to improve performance(?)
     padaloma.cacheAsBitmap = true;
+    padaloma.roundPixels = true;
 
     await delay(2);
     // To update you update the text you need to remove cacheAsBitmap
