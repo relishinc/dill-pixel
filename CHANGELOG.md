@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.36.1](https://github.com/relishinc/dill-pixel/compare/v2.36.0...v2.36.1) (2024-03-20)
+
+
+### Bug Fixes
+
+* removes keyboard layer in PopupManager as soon as a popup is hidden ([b7e88bd](https://github.com/relishinc/dill-pixel/commit/b7e88bd2445bdbabfe17a0398ace2cc731ffa432))
+
 ## [2.36.0](https://github.com/relishinc/dill-pixel/compare/v2.35.7...v2.36.0) (2024-03-13)
 
 
