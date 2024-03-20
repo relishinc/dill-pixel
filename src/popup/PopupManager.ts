@@ -237,13 +237,13 @@ export class PopupManager<T extends Application = Application> extends Container
       if (overlay !== undefined) {
         this.removeChild(overlay);
         this.log('onHidePopupComplete: Removed overlay from stage');
-        overlay.destroy(); // TODO: Pool overlays
+        overlay.destroy({ children: true }); // TODO: Pool overlays
         this.log('onHidePopupComplete: Destroyed overlay');
       } else {
         this.logE("onHidePopupComplete: Can't find overlay to remove");
       }
 
-      popup.destroy(); // TODO: Pool popups
+      popup.destroy({ children: true }); // TODO: Pool popups
       this.log('onHidePopupComplete: Destroyed popup');
     } else {
       this.logE('onHidePopupComplete: parameter pPopup is undefined!');
