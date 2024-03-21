@@ -15,7 +15,7 @@ export declare class ResizeManager {
     private get windowAspectRatio();
     private get gameAspectRatio();
     setDesiredSize(desiredSize: Point, maxFactor?: number): void;
-    getScaleRatio(size: Point): number;
+    getScaleRatio(size?: Point): number;
     getSize(): Point;
     getStageScale(): number;
     private updateRatio;
