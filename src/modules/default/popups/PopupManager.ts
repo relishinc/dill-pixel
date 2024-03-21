@@ -101,6 +101,7 @@ export class PopupManager extends Module implements IPopupManager {
       const instance = this.view.add.existing(new popup(id, config));
       instance.initialize();
       await instance.show();
+      instance.afterShow();
       this._activePopups.set(id, instance);
       this._currentPopupId = id;
       this.onPopupShown.emit();
@@ -118,6 +119,7 @@ export class PopupManager extends Module implements IPopupManager {
   async hide(id: string | number) {
     const popup = this._activePopups.get(id);
     if (popup) {
+      popup.beforeHide();
       await popup.hide();
       this.view.removeChild(popup as any);
       this._activePopups.delete(id);
