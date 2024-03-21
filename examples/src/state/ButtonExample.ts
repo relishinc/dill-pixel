@@ -43,6 +43,8 @@ export class ButtonExample extends BaseState {
 
     this.flex = flex;
     this.buttons = this.flex.flexChildren as Button[];
+
+    this.app.resizer.setDesiredSize();
   }
 
   update() {

@@ -76,7 +76,7 @@ export class ResizeManager {
     };
   }
 
-  getScaleRatio(size: Point) {
+  getScaleRatio(size: Point = this.app.size) {
     let scale = 1;
     if (this._desiredSizeConfig) {
       const newAspectRatio = size.x / size.y;
