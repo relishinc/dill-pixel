@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.37.0](https://github.com/relishinc/dill-pixel/compare/v2.36.1...v2.37.0) (2024-03-21)
+
+
+### Features
+
+* added desired size options to ResizeManager ([97a8d96](https://github.com/relishinc/dill-pixel/commit/97a8d96a36d6da5f5936f4a4771aac5b03a5c2ed))
+
+
+### Bug Fixes
+
+* popup destroy method now destroys children ([4a0dc82](https://github.com/relishinc/dill-pixel/commit/4a0dc82514c97799f553e39ae53b7e596ee89c77))
+
 ## [2.36.1](https://github.com/relishinc/dill-pixel/compare/v2.36.0...v2.36.1) (2024-03-20)
 
 
