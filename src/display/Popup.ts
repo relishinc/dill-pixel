@@ -40,7 +40,7 @@ export type BackingConfig = {
 
 const defaultBackingConfig = {
   color: 0x0,
-  alpha: 0.8,
+  alpha: 0.75,
 };
 
 /**
@@ -49,7 +49,7 @@ const defaultBackingConfig = {
 export type PopupConfig = {
   closeOnEscape: boolean;
   closeOnPointerDownOutside: boolean;
-  backing: boolean | BackingConfig;
+  backing: boolean | Partial<BackingConfig>;
   data?: any;
 };
 
@@ -72,12 +72,11 @@ export class Popup extends Container implements IPopup {
    * @param size - The size of the backing
    * @returns The backing container
    */
-  private static makeBacking(config: boolean | BackingConfig, size: Size): Container {
+  private static makeBacking(config: boolean | Partial<BackingConfig>, size: Size): Container {
     let finalConfig = {};
     if (typeof config === 'object') {
       finalConfig = config;
     }
-
     const backingConfig: BackingConfig = Object.assign({ ...defaultBackingConfig }, finalConfig);
     if (Popup.BACKING_TEXTURE === undefined) {
       const gfx = new Graphics();

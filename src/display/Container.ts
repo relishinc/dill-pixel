@@ -3,12 +3,13 @@ import { Application } from '../core/Application';
 import { MethodBindingRoot } from '../core/decorators';
 import { Animated } from '../mixins/animated';
 import { Factory } from '../mixins/factory';
+import { SignalContainer } from '../mixins/signalContainer';
 import { SignalConnection, SignalConnections } from '../signals';
 import { bindAllMethods } from '../utils/methodBinding';
 import { Size } from '../utils/types';
 
 // Create a new class that extends PIXI.Container and includes the Animated and Factory mixins.
-const _Container = Animated(Factory());
+const _Container = Animated(SignalContainer(Factory()));
 
 /**
  * Interface for the Container class.
@@ -63,25 +64,6 @@ export class Container<T extends Application = Application> extends _Container i
    */
   public get app(): T {
     return Application.getInstance() as T;
-  }
-
-  /**
-   * Destroy the container and disconnect all signal connections.
-   * @param options - The options for destroying the container.
-   */
-  public destroy(options?: DestroyOptions) {
-    this._signalConnections.disconnectAll();
-    super.destroy(options);
-  }
-
-  /**
-   * Add signal connections to the container.
-   * @param args - The signal connections to add.
-   */
-  public addSignalConnection(...args: SignalConnection[]) {
-    for (const connection of args) {
-      this._signalConnections.add(connection);
-    }
   }
 
   /**

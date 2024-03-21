@@ -1,5 +1,6 @@
 import { TextStyleOptions } from 'pixi.js';
-import { PointLike, SpriteSheetLike, TextureLike } from '../../utils/types';
+import { ButtonConfig } from '../../display/Button';
+import { PointLike, SpriteSheetLike, TextureLike, WithRequiredProps } from '../../utils/types';
 
 export interface AbstractProps {
   [key: string]: any;
@@ -58,3 +59,9 @@ type SpineData = {
 export interface SpineProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps {
   data: string | SpineData;
 }
+
+interface _ButtonProps extends AbstractProps, ScaleProps, PositionProps, PivotProps, VisibilityProps {
+  config: Partial<ButtonConfig>;
+}
+
+export type ButtonProps = WithRequiredProps<_ButtonProps, 'config'>;

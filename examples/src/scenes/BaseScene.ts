@@ -48,6 +48,7 @@ export class BaseScene extends Scene<V8Application> {
     if (this.gui) {
       this.gui.destroy();
     }
+    super.destroy();
   }
 
   protected async addGUI() {

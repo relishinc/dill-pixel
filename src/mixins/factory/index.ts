@@ -1,9 +1,10 @@
 /// <reference types="@pixi/spine-pixi" />
 import { Container as PIXIContainer, Graphics, Sprite, Text } from 'pixi.js';
+import { Button } from '../../display/Button';
 import { Container } from '../../display/Container';
 import { resolvePointLike } from '../../utils/functions';
 import { omitKeys } from '../../utils/object';
-import { ContainerProps, ExistingProps, GraphicsProps, SpineProps, SpriteProps, TextProps } from './props';
+import { ButtonProps, ContainerProps, ExistingProps, GraphicsProps, SpineProps, SpriteProps, TextProps } from './props';
 import {
   resolveAnchor,
   resolvePivot,
@@ -76,6 +77,17 @@ export const defaultFactoryMethods = {
       props,
     );
     resolveUnknownKeys(unknowns, entity);
+    return entity;
+  },
+  // dill pixel specific stuff
+  button: (props?: Partial<ButtonProps>) => {
+    const entity = new Button(props?.config ?? {});
+    if (!props) return entity;
+    const { position, x, y, pivot, scale, scaleX, scaleY, ...rest } = props;
+    resolvePosition({ position, x, y }, entity);
+    resolveScale({ scale, scaleX, scaleY }, entity);
+    resolvePivot(pivot, entity);
+    resolveUnknownKeys(rest, entity);
     return entity;
   },
   spine: (props?: Partial<SpineProps>): import('@pixi/spine-pixi').Spine => {

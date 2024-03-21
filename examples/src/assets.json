@@ -93,6 +93,22 @@
         },
         {
           "alias": [
+            "required/ui/ui.json",
+            "ui.json"
+          ],
+          "src": [
+            "required/ui/ui@1x.json",
+            "required/ui/ui@0.5x.json"
+          ],
+          "data": {
+            "tags": {
+              "tps": true,
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "required/wordmark.svg"
           ],
           "src": [
