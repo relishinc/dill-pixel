@@ -32,7 +32,7 @@ body {
     display: block;
 }
 
-canvas {
+#dill-pixel-game-container canvas {
     display: block;
     margin: auto;
     position: absolute;

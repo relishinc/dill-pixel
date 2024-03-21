@@ -31,7 +31,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@pixi/ui": "^0.9.0",
+    "@rive-app/canvas-advanced": "^2.10.4",
     "dat.gui": "^0.7.9",
     "dill-pixel": "file:.."
   }

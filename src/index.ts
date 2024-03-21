@@ -86,9 +86,11 @@ export { Focusable } from './mixins/focus';
  * These classes are used for managing the application's display.
  */
 export { Container } from './display/Container';
+export { Popup } from './display/Popup';
 export { Button } from './display/Button';
 export { Scene } from './display/Scene';
 export type { IContainer } from './display/Container';
+export type { IPopup } from './display/Popup';
 export type { IScene } from './display/Scene';
 
 // create

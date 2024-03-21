@@ -48,3 +48,13 @@ export interface TextProps extends AbstractProps, PositionProps, ScaleProps, Vis
 }
 
 export interface ContainerProps extends AbstractProps, PositionProps, ScaleProps, PivotProps, VisibilityProps {}
+
+// spine
+type SpineData = {
+  skeleton: string;
+  atlas: string;
+};
+
+export interface SpineProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps {
+  data: string | SpineData;
+}

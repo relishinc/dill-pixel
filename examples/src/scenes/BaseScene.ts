@@ -12,14 +12,21 @@ export class BaseScene extends Scene<V8Application> {
   }
 
   public async initialize() {
-    this.add.graphics({ x: 0, y: 0 }).rect(0, 0, this.app.screen.width, this.app.screen.height).fill({
-      color: COLOR_GREEN,
-    });
+    this.add
+      .graphics({
+        x: -this.app.center.x,
+        y: -this.app.center.y,
+      })
+      .rect(0, 0, this.app.size.width, this.app.screen.height)
+      .fill({
+        color: COLOR_GREEN,
+      });
+
     this.add.text({
       text: this.title ?? this.id,
       style: { fill: 'white', fontWeight: 'bold', fontFamily: 'Arial' },
-      x: 100,
-      y: 50,
+      x: -this.app.center.x + 100,
+      y: -this.app.center.y + 50,
     });
 
     if (this.config) {

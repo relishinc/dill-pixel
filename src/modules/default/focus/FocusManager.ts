@@ -149,6 +149,8 @@ export interface IFocusManager extends IModule {
 
   forceFocus(focusable: IFocusable): void;
 
+  setFocus(focusable: IFocusable): void;
+
   addFocusLayer(layerId?: string | number, focusables?: IFocusable | IFocusable[], setAsCurrent?: boolean): IFocusLayer;
 
   removeFocusLayer(layerId?: string | number): void;
@@ -157,7 +159,11 @@ export interface IFocusManager extends IModule {
 
   setLayerOrder(layerIds: (string | number)[]): void;
 
+  add(focusable: IFocusable | IFocusable[], layerId?: string | number, isDefault?: boolean): void;
+
   addFocusable(focusable: IFocusable | IFocusable[], layerId?: string | number, isDefault?: boolean): void;
+
+  remove(focusable: IFocusable | IFocusable[]): void;
 
   removeFocusable(focusable: IFocusable | IFocusable[]): void;
 
@@ -218,6 +224,10 @@ export class FocusManager extends Module implements IFocusManager {
     this._setTarget(null);
   }
 
+  public add(focusable: IFocusable | IFocusable[], layerId?: string | number, isDefault: boolean = false): void {
+    this.addFocusable(focusable, layerId, isDefault);
+  }
+
   public addFocusable(
     focusable: IFocusable | IFocusable[],
     layerId?: string | number,
@@ -228,7 +238,8 @@ export class FocusManager extends Module implements IFocusManager {
     }
     const layer = this._layers.get(layerId!);
     if (!layer) {
-      throw new Error(`Layer with ID ${layerId} does not exist.`);
+      Logger.error(`Layer with ID ${layerId} does not exist.`);
+      return;
     }
     if (!Array.isArray(focusable)) {
       focusable = [focusable];
@@ -236,6 +247,10 @@ export class FocusManager extends Module implements IFocusManager {
     (focusable as IFocusable[]).forEach((f) => {
       layer.addFocusable(f, isDefault);
     });
+  }
+
+  public remove(focusable: IFocusable | IFocusable[]) {
+    this.removeFocusable(focusable);
   }
 
   public removeFocusable(focusable: IFocusable | IFocusable[]) {
@@ -268,11 +283,15 @@ export class FocusManager extends Module implements IFocusManager {
     if (layerId === undefined) {
       layerId = this._layers.size;
     }
+    let newLayer;
     if (this._layers.has(layerId)) {
-      throw new Error(`Layer with ID ${layerId} already exists.`);
+      Logger.error(`Layer with ID ${layerId} already exists.`);
+      newLayer = this._layers.get(layerId)!;
+    } else {
+      newLayer = new FocusLayer();
+      this._layers.set(layerId, newLayer);
     }
-    const newLayer = new FocusLayer();
-    this._layers.set(layerId, newLayer);
+
     if (setAsCurrent || this._currentLayerId === null) {
       this.setFocusLayer(layerId);
     }
@@ -298,6 +317,10 @@ export class FocusManager extends Module implements IFocusManager {
     this.focus(focusable);
   }
 
+  public setFocus(focusable: IFocusable) {
+    this.focus(focusable);
+  }
+
   public focus(focusable: IFocusable) {
     this._setTarget(focusable);
   }
@@ -311,9 +334,7 @@ export class FocusManager extends Module implements IFocusManager {
 
     if (currentLayer) {
       currentLayer.setCurrent();
-      if (this._active) {
-        this._setTarget(currentLayer.currentFocusable || currentLayer.defaultFocusable || null);
-      }
+      this._setTarget(currentLayer.currentFocusable || currentLayer.defaultFocusable || null, !this._active);
     }
 
     this.onFocusLayerChange.emit(this._currentLayerId);
@@ -345,7 +366,10 @@ export class FocusManager extends Module implements IFocusManager {
     }
   }
 
-  private _setTarget(focusTarget: IFocusable | null) {
+  private _setTarget(focusTarget: IFocusable | null, setInactiveOnNull: boolean = true) {
+    if (!this._active) {
+      return;
+    }
     let shouldEmit = false;
     if (this._focusTarget !== focusTarget) {
       shouldEmit = true;
@@ -376,7 +400,7 @@ export class FocusManager extends Module implements IFocusManager {
     } else {
       this._focusOutliner.clear();
 
-      if (this._active) {
+      if (this._active && setInactiveOnNull) {
         shouldEmit = true;
         this._active = false;
         this.onFocusManagerDeactivated.emit();

@@ -5,6 +5,7 @@ import {
   Assets,
   AssetsManifest,
   DestroyOptions,
+  Point,
   Renderer,
   RendererDestroyOptions,
 } from 'pixi.js';
@@ -15,6 +16,7 @@ import { IAudioManager } from '../modules/default/audio/AudioManager';
 import defaultModules from '../modules/default/defaultModules';
 import { FocusManagerOptions, IFocusManager } from '../modules/default/focus/FocusManager';
 import { IKeyboardManager } from '../modules/default/KeyboardManager';
+import { IPopupManager } from '../modules/default/popups/PopupManager';
 import { ISceneManager, LoadSceneMethod } from '../modules/default/SceneManager';
 import { IWebEventsManager } from '../modules/default/WebEventsManager';
 import { IModule } from '../modules/Module';
@@ -27,7 +29,7 @@ import { isDev } from '../utils/env';
 import { getDynamicModuleFromImportListItem } from '../utils/framework';
 import { bindAllMethods } from '../utils/methodBinding';
 import { isMobile, isRetina } from '../utils/platform';
-import { ImportList, WithRequiredProps } from '../utils/types';
+import { ImportList, Size, WithRequiredProps } from '../utils/types';
 import { coreFunctionRegistry } from './coreFunctionRegistry';
 import { coreSignalRegistry } from './coreSignalRegistry';
 import { MethodBindingRoot } from './decorators';
@@ -39,7 +41,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   id: string;
   useStore: boolean;
   useDefaults: boolean;
-  useSpine: false;
+  useSpine: boolean;
   storageAdapters: ImportList<IStorageAdapter>;
   modules: ImportList<IModule>;
   scenes: ImportList<IScene>;
@@ -87,6 +89,8 @@ export type RequiredApplicationConfig = WithRequiredProps<IApplicationOptions, '
 
 export interface IApplication extends PIXIPApplication {
   config: Partial<IApplicationOptions>;
+  readonly size: Size;
+  readonly center: Point;
   manifest: AssetsManifest | string | undefined;
   assets: IAssetManager;
   scenes: ISceneManager;
@@ -119,10 +123,15 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   protected _webEventsManager: IWebEventsManager;
   protected _keyboardManager: IKeyboardManager;
   protected _focusManager: IFocusManager;
+  protected _popupManager: IPopupManager;
   protected _audioManager: IAudioManager;
 
   // store
   protected _store: IStore;
+
+  // size
+  protected _size: Size = { width: 0, height: 0 };
+  protected _center = new Point(0, 0);
 
   public static getInstance<T extends Application = Application>(): T {
     return Application.instance as T;
@@ -139,6 +148,10 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   constructor() {
     super();
     bindAllMethods(this);
+  }
+
+  public get size(): { width: number; height: number } {
+    return this._size;
   }
 
   public get assets(): IAssetManager {
@@ -176,6 +189,17 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this._focusManager;
   }
 
+  public get center(): Point {
+    return this._center;
+  }
+
+  public get popups(): IPopupManager {
+    if (!this._popupManager) {
+      this._popupManager = this.getModule<IPopupManager>('PopupManager');
+    }
+    return this._popupManager;
+  }
+
   public get audio(): IAudioManager {
     if (!this._audioManager) {
       this._audioManager = this.getModule<IAudioManager>('AudioManager');
@@ -200,6 +224,10 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
    */
   public get globalFunctions(): string[] {
     return Object.keys(coreFunctionRegistry);
+  }
+
+  private get views(): any[] {
+    return [this.scenes.view, this.popups.view];
   }
 
   /**
@@ -412,6 +440,15 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   }
 
   private async _resize() {
+    this._size.width = this.renderer.screen.width;
+    this._size.height = this.renderer.screen.height;
+
+    this._center.set(this._size.width * 0.5, this._size.height * 0.5);
+
+    this.views.forEach((view) => {
+      view.position.set(this._center.x, this._center.y);
+    });
+
     this.ticker.addOnce(() => {
       this.onResize.emit(this.renderer.screen);
     });
@@ -433,8 +470,17 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     this.webEvents.onResize.connect(this._resize);
 
     // scene manager
+    this.scenes.view.label = 'SceneManager';
     this.stage.addChild(this.scenes.view);
+
+    // popup manager
+    this.stage.addChild(this.popups.view);
+
+    // focus manager
+    this.focus.view.label = 'FocusManager';
     this.stage.addChild(this.focus.view);
+
+    this._resize();
 
     return Promise.resolve();
   }
