@@ -7,6 +7,7 @@ export class FocusScene extends BaseScene {
   private _focusLayerLabel: PIXIText;
   private actor1: Actor;
   private actor2: Actor;
+  private button: Button;
 
   constructor() {
     super();
@@ -18,21 +19,25 @@ export class FocusScene extends BaseScene {
     this._focusLayerLabel = this.add.text({
       text: 'Focus layer:',
       style: { fill: 'white' },
-      x: 450,
-      y: 100,
+      x: -this.app.center.x + 450,
+      y: -this.app.center.y + 100,
     });
 
-    this.actor1 = this.add.existing<Actor>(new Actor(), { x: 500, y: 300 });
-    this.actor2 = this.add.existing<Actor>(new Actor(0x00fff0), { x: 700, y: 300 });
+    this.actor1 = this.add.existing<Actor>(new Actor(), { x: -this.app.center.x + 500, y: -this.app.center.y + 300 });
+    this.actor2 = this.add.existing<Actor>(new Actor(0x00fff0), {
+      x: -this.app.center.x + 700,
+      y: -this.app.center.y + 300,
+    });
 
     const button = this.add.existing(
       new Button({
         textures: { default: 'jar', hover: 'jar2' },
-        sheet: 'game/game.json',
+        sheet: 'sheet.json',
+        cursor: 'pointer',
       }),
       {
-        x: 1100,
-        y: 400,
+        x: -this.app.center.x + 1100,
+        y: -this.app.center.y + 400,
         scale: 0.5,
       },
     );
@@ -40,6 +45,12 @@ export class FocusScene extends BaseScene {
     button.onPress.connect(() => {
       console.log('button pressed');
     });
+
+    button.onDown.connect(() => {
+      console.log('button down');
+    });
+
+    this.button = button;
 
     this.app.focus.addFocusLayer('one');
     this.app.focus.addFocusable(this.actor1, 'one', true);
@@ -73,9 +84,26 @@ export class FocusScene extends BaseScene {
       Logger.log('actor 1 clicked');
     });
 
-    const spr = this.add.sprite({ asset: 'required/jar.png', x: 200, y: 400, scale: 0.5 });
-    const sheetSpr = this.add.sprite({ asset: 'jar', sheet: 'game/game.json', x: 500, y: 400, scale: 0.5 });
-    const sheetSpr2 = this.add.sprite({ asset: 'jar2', sheet: 'game/game.json', x: 800, y: 400, scale: 0.5 });
+    const spr = this.add.sprite({
+      asset: 'required/jar.png',
+      x: -this.app.center.x + 200,
+      y: -this.app.center.y + 400,
+      scale: 0.5,
+    });
+    const sheetSpr = this.add.sprite({
+      asset: 'jar',
+      sheet: 'sheet.json',
+      x: -this.app.center.x + 500,
+      y: -this.app.center.y + 400,
+      scale: 0.5,
+    });
+    const sheetSpr2 = this.add.sprite({
+      asset: 'jar2',
+      sheet: 'sheet.json',
+      x: -this.app.center.x + 800,
+      y: -this.app.center.y + 400,
+      scale: 0.5,
+    });
 
     this.actor1.bob();
   }
@@ -91,6 +119,12 @@ export class FocusScene extends BaseScene {
           },
         )
       : this.animateFrom({ y: -1000, duration: 2, ease: 'bounce.out' });
+  }
+
+  update() {
+    if (this.button.isDown) {
+      console.log('button is down!');
+    }
   }
 
   private _updateFocusLayerLabel() {

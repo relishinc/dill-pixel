@@ -7,6 +7,7 @@ export default class TestAdapter extends StorageAdapter<V8Application> {
   public async initialize(options?: any): Promise<void> {
     console.log('TestAdapter initialized', this.id, options);
     console.log('TestAdapter this.app', this.app);
+    console.log('TestAdapter this.app', this.app);
     return Promise.resolve();
   }
 

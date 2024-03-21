@@ -32,7 +32,7 @@ export class Logger {
     if (!Logger._instance || !Logger._instance._namespace) {
       console.warn(...args);
     } else {
-      console.error(`%c[${Logger._instance._namespace}]`, 'background: orange; color: black;', ...args);
+      console.warn(`%c[${Logger._instance._namespace}]`, 'background: orange; color: black;', ...args);
       if (isDev) Logger.trace();
     }
   }

@@ -44,17 +44,30 @@
       "assets": [
         {
           "alias": [
-            "game/game.json",
-            "game.json"
+            "game/sheet/sheet.json",
+            "sheet.json"
           ],
           "src": [
-            "game/game@1x.json",
-            "game/game@0.5x.json"
+            "game/sheet/sheet@1x.json",
+            "game/sheet/sheet@0.5x.json"
           ],
           "data": {
             "tags": {
-              "m": true,
-              "tps": true
+              "tps": true,
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "game/wordmark.svg"
+          ],
+          "src": [
+            "game/wordmark.svg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
             }
           }
         }
@@ -80,11 +93,101 @@
         },
         {
           "alias": [
-            "required/wordmark.svg",
-            "wordmark.svg"
+            "required/wordmark.svg"
           ],
           "src": [
             "required/wordmark.svg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "spine",
+      "assets": [
+        {
+          "alias": [
+            "spine/cauldron-skeleton.atlas",
+            "cauldron-skeleton.atlas"
+          ],
+          "src": [
+            "spine/cauldron-skeleton.atlas"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spine/cauldron-skeleton.json",
+            "cauldron-skeleton.json"
+          ],
+          "src": [
+            "spine/cauldron-skeleton.json"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spine/cauldron-skeleton.png",
+            "cauldron-skeleton.png"
+          ],
+          "src": [
+            "spine/cauldron-skeleton@1x.png",
+            "spine/cauldron-skeleton@0.5x.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spine/spineboy-pro.atlas",
+            "spineboy-pro.atlas"
+          ],
+          "src": [
+            "spine/spineboy-pro.atlas"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spine/spineboy-pro.json",
+            "spineboy-pro.json"
+          ],
+          "src": [
+            "spine/spineboy-pro.json"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spine/spineboy-pro.png",
+            "spineboy-pro.png"
+          ],
+          "src": [
+            "spine/spineboy-pro@1x.png",
+            "spine/spineboy-pro@0.5x.png"
           ],
           "data": {
             "tags": {

@@ -3,7 +3,9 @@ import { AssetManager } from './AssetManager';
 import { AudioManager } from './audio/AudioManager';
 import { FocusManager } from './focus/FocusManager';
 import { KeyboardManager } from './KeyboardManager';
+import { PopupManager } from './popups/PopupManager';
 import { SceneManager } from './SceneManager';
+import { SpineModule } from './SpineModule';
 import { StatsModule } from './StatsModule';
 import { WebEventsManager } from './WebEventsManager';
 
@@ -14,8 +16,10 @@ const defaultModules: (new () => IModule)[] = [
   WebEventsManager,
   KeyboardManager,
   FocusManager,
+  PopupManager,
   AudioManager,
   StatsModule,
+  SpineModule,
 ];
 
 export default defaultModules;
