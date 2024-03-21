@@ -2,12 +2,22 @@ import { Point } from 'pixi.js';
 import { Application } from '../core/Application';
 import * as MathUtils from './MathUtils';
 
+type DesiredSizeConfig = {
+  size: Point;
+  maxFactor: number;
+  sizeMin: Point;
+  sizeMax: Point;
+  ratioMin: number;
+  ratioMax: number;
+};
+
 export class ResizeManager {
   private _sizeMin: Point;
   private _sizeMax: Point;
   private _ratioMin!: number;
   private _ratioMax!: number;
   private _useAspectRatio: boolean = false;
+  private _desiredSizeConfig: DesiredSizeConfig;
 
   constructor(
     private app: Application,
@@ -51,6 +61,39 @@ export class ResizeManager {
 
   private get gameAspectRatio(): number {
     return MathUtils.clamp(this.windowAspectRatio, this._ratioMin, this._ratioMax);
+  }
+
+  setDesiredSize(desiredSize: Point, maxFactor: number = 4): void {
+    const sizeMin = new Point(desiredSize.x, desiredSize.y);
+    const sizeMax = new Point(desiredSize.x * maxFactor, desiredSize.y * maxFactor);
+    this._desiredSizeConfig = {
+      size: desiredSize,
+      maxFactor: maxFactor,
+      sizeMin,
+      sizeMax,
+      ratioMin: sizeMin.x / sizeMin.y,
+      ratioMax: sizeMax.x / sizeMax.y,
+    };
+  }
+
+  getScaleRatio(size: Point) {
+    let scale = 1;
+    if (this._desiredSizeConfig) {
+      const newAspectRatio = size.x / size.y;
+      const desiredAspectRatio = MathUtils.clamp(
+        newAspectRatio,
+        this._desiredSizeConfig.ratioMin,
+        this._desiredSizeConfig.ratioMax,
+      );
+      if (desiredAspectRatio < newAspectRatio) {
+        scale = size.y / this._desiredSizeConfig.size.y;
+      } else {
+        scale = size.x / this._desiredSizeConfig.size.x;
+      }
+    } else {
+      console.warn('ResizeManager: desiredSize is not set. Set it first using setDesiredSize()');
+    }
+    return scale;
   }
 
   public getSize(): Point {
