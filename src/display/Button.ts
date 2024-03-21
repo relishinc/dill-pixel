@@ -1,11 +1,15 @@
 import { Cursor, Sprite } from 'pixi.js';
+import { Application } from '../core/Application';
+import { Factory } from '../mixins/factory';
 import { Focusable } from '../mixins/focus';
 import { Interactive } from '../mixins/interaction';
+import { SignalContainer } from '../mixins/signalContainer';
 import { Signal } from '../signals';
+import { bindAllMethods } from '../utils/methodBinding';
 import { SpriteSheetLike, TextureLike } from '../utils/types';
 import { Container } from './Container';
 
-type ButtonConfig = {
+export type ButtonConfig = {
   textures: {
     default: TextureLike;
     hover?: TextureLike;
@@ -19,7 +23,7 @@ type ButtonConfig = {
 };
 
 // Create a new class that extends Container and includes the Interactive and Focusable mixins.
-const _Button = Focusable(Interactive(Container));
+const _Button = Focusable(Interactive(SignalContainer(Factory())));
 
 /**
  * @class
@@ -31,6 +35,7 @@ export class Button extends _Button {
   // signals
   public onDown = new Signal<() => void>();
   public onUp = new Signal<() => void>();
+  public onUpOutside = new Signal<() => void>();
   public onOut = new Signal<() => void>();
   public onOver = new Signal<() => void>();
   public onPress = new Signal<() => void>();
@@ -42,6 +47,7 @@ export class Button extends _Button {
   public view: Sprite;
   // whether the button is down
   public isDown: boolean;
+  public isOver: boolean;
   // config
   protected config: ButtonConfig;
   // enabled state
@@ -53,6 +59,9 @@ export class Button extends _Button {
    */
   constructor(config: Partial<ButtonConfig>) {
     super();
+
+    bindAllMethods(this);
+
     this.config = Object.assign(
       {
         textures: { default: '' },
@@ -65,18 +74,18 @@ export class Button extends _Button {
     );
 
     // Create a sprite with the default texture and add it to the container.
-    this.view = this.add.sprite({ asset: this.config.textures.default, sheet: this.config.sheet });
-    this.addChild(this.view);
+    this.view = this.add.sprite({ asset: this.config.textures.default, sheet: this.config.sheet, anchor: 0.5 });
 
     this.cursor = this.config.cursor;
     this.enabled = config.enabled !== false;
+
     // Set up interaction handlers.
     // make them high priority so they run before any other interaction handlers
     this.addSignalConnection(
       this.onInteraction('pointerover').connect(this.handlePointerOver, -1),
       this.onInteraction('pointerout').connect(this.handlePointerOut, -1),
       this.onInteraction('pointerup').connect(this.handlePointerUp, -1),
-      this.onInteraction('pointerupoutside').connect(this.handlePointerOut, -1),
+
       this.onInteraction('pointerdown').connect(this.handlePointerDown, -1),
       this.onInteraction('tap').connect(this.handlePointerDown, -1),
     );
@@ -108,6 +117,10 @@ export class Button extends _Button {
     }
   }
 
+  get app() {
+    return Application.getInstance();
+  }
+
   public focusIn() {
     this.handlePointerOver();
   }
@@ -126,10 +139,11 @@ export class Button extends _Button {
   }
 
   public getFocusArea() {
-    const bounds = this.view.getBounds().clone();
-    bounds.x += this.view.width * 0.5;
-    bounds.y += this.view.width * 0.5;
-    return bounds;
+    return this.view.getBounds().clone();
+  }
+
+  public getFocusPosition() {
+    return [-this.width * 0.5, -this.height * 0.5];
   }
 
   /**
@@ -138,6 +152,12 @@ export class Button extends _Button {
    */
   protected handlePointerOver() {
     if (!this._enabled) {
+      return;
+    }
+    if (!this.isOver) {
+      this.isOver = true;
+    }
+    if (this.isDown) {
       return;
     }
     this.view.texture = this.make.texture({
@@ -152,7 +172,11 @@ export class Button extends _Button {
    * Sets the texture of the button to the default texture and emits the onOut event.
    */
   protected handlePointerOut() {
+    this.isOver = false;
     if (!this._enabled) {
+      return;
+    }
+    if (this.isDown) {
       return;
     }
     this.view.texture = this.make.texture({ asset: this.config.textures.default, sheet: this.config.sheet });
@@ -164,10 +188,12 @@ export class Button extends _Button {
    * Sets the isDown property to true and changes the texture of the button.
    */
   protected handlePointerDown() {
-    if (!this._enabled) {
+    if (!this._enabled || !this.isOver) {
       return;
     }
     if (!this.isDown) {
+      window.removeEventListener('pointerup', this.handlePointerUpOutside);
+      window.addEventListener('pointerup', this.handlePointerUpOutside);
       this.isDown = true;
       this.view.texture = this.make.texture({
         asset: this.config.textures.active || this.config.textures.hover || this.config.textures.default,
@@ -182,9 +208,10 @@ export class Button extends _Button {
    * Removes the keyup event listener and emits the onPress and onUp events.
    */
   protected handlePointerUp() {
-    if (!this._enabled) {
+    if (!this._enabled || !this.isOver) {
       return;
     }
+    window.removeEventListener('pointerup', this.handlePointerUpOutside);
     window.removeEventListener('keyup', this.handleKeyUp);
     this.view.texture = this.make.texture({ asset: this.config.textures.default, sheet: this.config.sheet });
     if (this.isDown) {
@@ -192,6 +219,22 @@ export class Button extends _Button {
       this.onPress.emit();
     }
     this.onUp.emit();
+  }
+
+  /**
+   * @description Handles the pointer up event.
+   * Removes the keyup event listener and emits the onPress and onUp events.
+   */
+  protected handlePointerUpOutside() {
+    if (!this._enabled || this.isOver) {
+      return;
+    }
+    window.removeEventListener('pointerup', this.handlePointerUpOutside);
+    window.removeEventListener('keyup', this.handleKeyUp);
+    this.view.texture = this.make.texture({ asset: this.config.textures.default, sheet: this.config.sheet });
+    this.isDown = false;
+    this.isOver = false;
+    this.onUpOutside.emit();
   }
 
   /**

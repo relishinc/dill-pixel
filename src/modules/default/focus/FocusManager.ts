@@ -342,6 +342,7 @@ export class FocusManager extends Module implements IFocusManager {
 
   public removeAllFocusLayers(): void {
     this._layers.clear();
+    this._setTarget(null);
   }
 
   private _getCurrentLayer() {

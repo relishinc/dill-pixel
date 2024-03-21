@@ -72,7 +72,7 @@ class CameraController {
 
   constructor(
     public camera: Camera,
-    public interactiveArea: Container | Application,
+    public interactiveArea: Container,
   ) {
     bindAllMethods(this);
     this.camera = camera;
@@ -94,6 +94,13 @@ class CameraController {
 
   get app(): V8Application {
     return Application.getInstance();
+  }
+
+  destroy() {
+    // Mouse and touch events
+    this.interactiveArea.removeAllListeners();
+    this.app.stage.off('pointerup', this.onPointerUp.bind(this));
+    this.app.stage.off('pointerupoutside', this.onPointerUp.bind(this));
   }
 
   private handleKeyDown(detail: KeyboardEventDetail) {
@@ -166,10 +173,15 @@ export class CameraScene extends BaseScene {
   public async initialize() {
     await super.initialize();
     this.camera = new Camera(this, this.app.screen.width, this.app.screen.height, 4000, 4000);
-    new CameraController(this.camera, this.app.stage);
+    this.cameraController = new CameraController(this.camera, this.app.stage);
   }
 
   update(ticker: Ticker) {}
 
   resize() {}
+
+  destroy() {
+    this.cameraController.destroy();
+    super.destroy();
+  }
 }
