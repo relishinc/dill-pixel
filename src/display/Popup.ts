@@ -2,12 +2,12 @@ import { ColorSource, Graphics, Sprite, Texture } from 'pixi.js';
 import { Application } from '../core/Application';
 import { IFocusable } from '../modules/default/focus/FocusManager';
 import { Size } from '../utils/types';
-import { Container } from './Container';
+import { Container, IContainer } from './Container';
 
 /**
  * Interface for Popup
  */
-export interface IPopup {
+export interface IPopup extends IContainer {
   readonly id: string | number; // Unique identifier for the popup
   config: PopupConfig; // Configuration for the popup
   view: Container; // The view of the popup
@@ -18,7 +18,9 @@ export interface IPopup {
   initialize(): void; // Initialize the popup
 
   show(): void | Promise<any>; // Show the popup
+  afterShow(): void; // Show the popup
 
+  beforeHide(): void; // Hide the popup
   hide(): void | Promise<any>; // Hide the popup
 
   start(): void | Promise<any>; // Start the popup
@@ -110,6 +112,10 @@ export class Popup extends Container implements IPopup {
 
   initialize() {}
 
+  public beforeHide() {
+    this.app.focus.removeFocusLayer(this.id);
+  }
+
   /**
    * Hide the popup
    * @returns A promise that resolves when the popup is hidden
@@ -136,7 +142,9 @@ export class Popup extends Container implements IPopup {
    * Start the popup
    */
   start(): void | Promise<any>;
-  async start() {
+  async start() {}
+
+  afterShow() {
     if (this.firstFocusableEntity) {
       this.app.focus.add(this.firstFocusableEntity, this.id, true);
       this.app.focus.setFocus(this.firstFocusableEntity);
