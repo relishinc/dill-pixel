@@ -42,7 +42,7 @@ export class FocusScene extends BaseScene {
       },
     );
 
-    button.onPress.connect(() => {
+    button.onClick.connect(() => {
       console.log('button pressed');
     });
 

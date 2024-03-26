@@ -100,7 +100,7 @@ export const defaultFactoryMethods = {
     resolveUnknownKeys(rest, entity);
     return entity;
   },
-  flexContainer: (props?: Partial<FlexContainerProps>) => {
+  flexContainer: (props?: Partial<FlexContainerProps>): FlexContainer => {
     const config = pluck(props ?? {}, FlexContainerConfigKeys);
     const otherProps = omitKeys<FlexContainerProps, keyof FlexContainerConfig>(FlexContainerConfigKeys, props ?? {});
     const entity = new FlexContainer(config);

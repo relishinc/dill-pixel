@@ -1,4 +1,4 @@
-import { clamp, FlexContainer, FlexDirection, JustifyContent, Size } from 'dill-pixel';
+import { AlignItems, clamp, FlexContainer, FlexDirection, FlexWrap, JustifyContent } from 'dill-pixel';
 import { Graphics, TextStyle } from 'pixi.js';
 import { BaseScene } from './BaseScene';
 
@@ -124,7 +124,7 @@ export class FlexContainerScene extends BaseScene {
     this.addItems();
   }
 
-  resize(size: Size) {
+  resize() {
     if (this.backing) {
       this.backing.position.set(-this.backing.width / 2, -this.backing.height / 2);
       this.flexContainer.position.set(this.backing.position.x, this.backing.position.y);
@@ -132,7 +132,7 @@ export class FlexContainerScene extends BaseScene {
         this.flexContainer.size = [this.backing.width, this.backing.height];
       }
     }
-    super.resize(size);
+    super.resize();
   }
 
   addItems() {
@@ -169,6 +169,6 @@ export class FlexContainerScene extends BaseScene {
       });
     });
 
-    this.resize(this.app.size);
+    this.resize();
   }
 }

@@ -37,11 +37,10 @@ export class Button extends _Button {
   public onUpOutside = new Signal<() => void>();
   public onOut = new Signal<() => void>();
   public onOver = new Signal<() => void>();
-  public onPress = new Signal<() => void>();
+  public onClick = new Signal<() => void>();
   public onEnabled = new Signal<() => void>();
   public onDisabled = new Signal<() => void>();
   public onKeyboardEvent = new Signal<(key: string) => void>();
-
   // visual
   public view: Sprite;
   // whether the button is down
@@ -84,9 +83,9 @@ export class Button extends _Button {
       this.onInteraction('pointerover').connect(this.handlePointerOver, -1),
       this.onInteraction('pointerout').connect(this.handlePointerOut, -1),
       this.onInteraction('pointerup').connect(this.handlePointerUp, -1),
-
+      this.onInteraction('click').connect(this.handleClick, -1),
       this.onInteraction('pointerdown').connect(this.handlePointerDown, -1),
-      this.onInteraction('tap').connect(this.handlePointerDown, -1),
+      this.onInteraction('tap').connect(this.handleClick, -1),
     );
   }
 
@@ -118,23 +117,6 @@ export class Button extends _Button {
 
   get app() {
     return Application.getInstance();
-  }
-
-  public focusIn() {
-    this.handlePointerOver();
-  }
-
-  public focus() {
-    this.handlePointerDown();
-    window.addEventListener('keyup', this.handleKeyUp);
-  }
-
-  public focusOut() {
-    this.handlePointerOut();
-  }
-
-  public blur() {
-    window.removeEventListener('keyup', this.handleKeyUp);
   }
 
   public getFocusArea() {
@@ -187,7 +169,7 @@ export class Button extends _Button {
    * Sets the isDown property to true and changes the texture of the button.
    */
   protected handlePointerDown() {
-    if (!this._enabled || !this.isOver) {
+    if ((!this._enabled || !this.isOver) && !this.isKeyDown) {
       return;
     }
     if (!this.isDown) {
@@ -211,47 +193,32 @@ export class Button extends _Button {
       return;
     }
     window.removeEventListener('pointerup', this.handlePointerUpOutside);
-    window.removeEventListener('keyup', this.handleKeyUp);
+
     this.view.texture = this.make.texture({ asset: this.config.textures.default, sheet: this.config.sheet });
-    if (this.isDown) {
-      this.isDown = false;
-      this.onPress.emit();
-    }
     this.onUp.emit();
+  }
+
+  protected handleClick() {
+    if ((!this._enabled || !this.isOver) && !this.isKeyDown) {
+      return;
+    }
+    if (this.isDown || this.isKeyDown) {
+      this.isDown = false;
+      this.onClick.emit();
+    }
   }
 
   /**
    * @description Handles the pointer up event.
-   * Removes the keyup event listener and emits the onPress and onUp events.
    */
   protected handlePointerUpOutside() {
     if (!this._enabled || this.isOver) {
       return;
     }
     window.removeEventListener('pointerup', this.handlePointerUpOutside);
-    window.removeEventListener('keyup', this.handleKeyUp);
     this.view.texture = this.make.texture({ asset: this.config.textures.default, sheet: this.config.sheet });
     this.isDown = false;
     this.isOver = false;
     this.onUpOutside.emit();
-  }
-
-  /**
-   * @description Handles the key up event.
-   * checks if the key is the enter or space key and calls handlePointerUp.
-   * @param {KeyboardEvent} e - The keyboard event.
-   */
-  protected handleKeyUp(e: KeyboardEvent) {
-    if (!this._enabled) {
-      return;
-    }
-    if (e.key === 'Enter' || e.key === ' ') {
-      this.onKeyboardEvent.emit(e.key);
-      if (this.isFocused) {
-        return;
-      } else {
-        this.handlePointerUp();
-      }
-    }
   }
 }

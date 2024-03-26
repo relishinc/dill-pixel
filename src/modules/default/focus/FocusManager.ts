@@ -17,6 +17,7 @@ export type FocusManagerOptions = {
 
 export interface IFocusable {
   isFocused: boolean;
+  isKeyDown: boolean;
   focusEnabled: boolean;
 
   // pixi accessibility features

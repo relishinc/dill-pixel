@@ -9,38 +9,37 @@ export class PopupScene extends BaseScene {
   protected buttons: Button[] = [];
   protected buttonContainer: Container;
 
-  constructor() {
-    super();
-  }
-
   public async initialize() {
     await super.initialize();
-    this.buttonContainer = this.add.container();
-    this.app.focus.addFocusLayer(this.id);
-  }
-
-  public async start() {
     this.app.popups.add('one', ExamplePopup);
     this.app.popups.add('two', ExamplePopup);
     this.app.popups.add('three', ExamplePopup);
 
-    this.addButton('Popup 1', () => this.showPopup('one'));
+    this.buttonContainer = this.add.container();
+
+    this.addButton('Popup 1', () =>
+      this.showPopup('one', {
+        data: { title: `Example Popup 1` },
+      }),
+    );
     this.addButton('Popup 2', () =>
       this.showPopup('two', {
-        data: { title: "Won't close on ESC" },
+        data: { title: `Example Popup 2:\nWon't close on ESC` },
         closeOnEscape: false,
       }),
     );
     this.addButton('Popup 3', () =>
       this.showPopup('three', {
-        data: { title: "Won't close on click outside" },
+        data: { title: "Example Popup 3:\nWon't close on click outside" },
         closeOnPointerDownOutside: false,
         backing: { color: 'red' },
       }),
     );
 
-    this.resize();
+    this.app.focus.addFocusLayer(this.id);
+  }
 
+  public async start() {
     this.buttons.forEach((btn, idx) => {
       this.app.focus.add(btn, this.id, idx === 0);
     });
@@ -49,6 +48,7 @@ export class PopupScene extends BaseScene {
   update(ticker: Ticker) {}
 
   resize() {
+    super.resize();
     this.buttons.forEach((btn, idx) => {
       btn.x = idx * (btn.width + 10);
     });
@@ -74,10 +74,11 @@ export class PopupScene extends BaseScene {
       style: { fill: 0xffffff, fontWeight: 'bold', fontSize: 48, align: 'center' },
     });
 
-    this.addSignalConnection(btn.onPress.connect(callback));
-    this.addSignalConnection(btn.onFocus.connect(callback));
+    this.addSignalConnection(btn.onClick.connect(callback));
 
     this.buttons.push(btn);
+
+    btn.label = label;
 
     return btn;
   }

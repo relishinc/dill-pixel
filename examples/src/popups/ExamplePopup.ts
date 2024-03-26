@@ -32,8 +32,8 @@ export class ExamplePopup extends Popup implements IPopup {
     this.title = this.window.add.text({
       text: this.config.data?.title ?? 'Example Popup',
       style: { fill: 'white', fontWeight: 'bold', fontFamily: 'Arial' },
-      x: 100,
-      y: 100,
+      x: 50,
+      y: 80,
     });
 
     this.closeButton = this.window.add.existing(new SimpleButton(), { x: 530, y: 10 });
@@ -59,7 +59,7 @@ export class ExamplePopup extends Popup implements IPopup {
 
   public start() {
     this.closeButton.onInteraction('click').connectOnce(this.close);
-    this.closeButton.onFocus.connectOnce(this.close);
+    this.closeButton.onInteraction('tap').connectOnce(this.close);
   }
 
   async hide() {
