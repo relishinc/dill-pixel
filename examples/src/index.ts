@@ -20,10 +20,12 @@ const app = await create(V8Application, {
     { id: 'focus', namedExport: 'FocusScene', module: () => import('@/scenes/FocusScene') },
     { id: 'cam', namedExport: 'CameraScene', module: () => import('@/scenes/CameraScene') },
     { id: 'popups', namedExport: 'PopupScene', module: () => import('@/scenes/PopupScene') },
+    { id: 'spine', namedExport: 'SpineScene', module: () => import('@/scenes/SpineScene') },
+    { id: 'flexContainer', namedExport: 'FlexContainerScene', module: () => import('@/scenes/FlexContainerScene') },
     // { id: 'rive', namedExport: 'RiveScene', module: () => import('@/scenes/RiveScene') },
-    // { id: 'spine', namedExport: 'SpineScene', module: () => import('@/scenes/SpineScene') },
   ],
   defaultSceneLoadMethod: 'exitEnter',
+  useSpine: true,
 });
 
 Logger.log('V8Application created', app);
