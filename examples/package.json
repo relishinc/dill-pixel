@@ -15,6 +15,7 @@
     "preview": "vite preview --open",
     "lint": "eslint src --ext .ts",
     "lint-fix": "eslint src --ext .ts --fix",
+    "visualize": "npx vite-bundle-visualizer -c vite.config.mjs",
     "audio:vo": "texttospeech",
     "audio:captions": "node ../cli.mjs audio captions assets/audio",
     "audio:compress": "node ../cli.mjs audio compress assets/audio",

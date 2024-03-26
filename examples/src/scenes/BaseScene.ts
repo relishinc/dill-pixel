@@ -1,4 +1,5 @@
-import { Scene } from 'dill-pixel';
+import { Scene, Size } from 'dill-pixel';
+import { Graphics, Text } from 'pixi.js';
 import { COLOR_GREEN } from '../utils/Constants';
 import { V8Application } from '../V8Application';
 
@@ -6,23 +7,17 @@ export class BaseScene extends Scene<V8Application> {
   protected readonly title: string;
   protected gui: any;
   protected config: any;
+  protected _bg: Graphics;
+  protected _title: Text;
 
   constructor() {
     super();
   }
 
   public async initialize() {
-    this.add
-      .graphics({
-        x: -this.app.center.x,
-        y: -this.app.center.y,
-      })
-      .rect(0, 0, this.app.size.width, this.app.screen.height)
-      .fill({
-        color: COLOR_GREEN,
-      });
+    this._bg = this.add.graphics();
 
-    this.add.text({
+    this._title = this.add.text({
       text: this.title ?? this.id,
       style: { fill: 'white', fontWeight: 'bold', fontFamily: 'Arial' },
       x: -this.app.center.x + 100,
@@ -51,6 +46,17 @@ export class BaseScene extends Scene<V8Application> {
     super.destroy();
   }
 
+  resize(size: Size) {
+    this._bg.clear();
+    this._bg
+      .rect(-this.app.size.width * 0.5, -this.app.size.height * 0.5, this.app.size.width, this.app.screen.height)
+      .fill({
+        color: COLOR_GREEN,
+      });
+
+    this._title.position.set(-this.app.center.x + 100, -this.app.center.y + 50);
+  }
+
   protected async addGUI() {
     const dat = await import('dat.gui');
     this.gui = new dat.GUI({ name: 'Controls', closeOnTop: true });
@@ -64,11 +70,4 @@ export class BaseScene extends Scene<V8Application> {
   }
 
   protected configureGUI() {}
-
-  private _getConfigArgs(value: any) {
-    if (Array.isArray(value)) {
-      return value;
-    }
-    return [value];
-  }
 }

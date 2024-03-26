@@ -170,6 +170,49 @@
         },
         {
           "alias": [
+            "spine/dragon-skeleton.atlas",
+            "dragon-skeleton.atlas"
+          ],
+          "src": [
+            "spine/dragon-skeleton.atlas"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spine/dragon-skeleton.json",
+            "dragon-skeleton.json"
+          ],
+          "src": [
+            "spine/dragon-skeleton.json"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spine/dragon-skeleton.png",
+            "dragon-skeleton.png"
+          ],
+          "src": [
+            "spine/dragon-skeleton@1x.png",
+            "spine/dragon-skeleton@0.5x.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "spine/spineboy-pro.atlas",
             "spineboy-pro.atlas"
           ],
