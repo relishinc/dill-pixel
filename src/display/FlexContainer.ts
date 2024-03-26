@@ -593,7 +593,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
   }
 
   private _added() {
-    this.addSignalConnection(this.app.onResize.connect(this.resize, 0));
+    this.addSignalConnection(this.app.onResize.connect(this.layout, 0));
     this.added();
   }
 }
