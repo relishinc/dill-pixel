@@ -1,5 +1,6 @@
 import { TextStyleOptions } from 'pixi.js';
 import { ButtonConfig } from '../../display/Button';
+import { FlexContainerConfig } from '../../display/FlexContainer';
 import { PointLike, SpriteSheetLike, TextureLike, WithRequiredProps } from '../../utils/types';
 
 export interface AbstractProps {
@@ -50,6 +51,8 @@ export interface TextProps extends AbstractProps, PositionProps, ScaleProps, Vis
 
 export interface ContainerProps extends AbstractProps, PositionProps, ScaleProps, PivotProps, VisibilityProps {}
 
+export interface FlexContainerProps extends ContainerProps, FlexContainerConfig {}
+
 // spine
 type SpineData = {
   skeleton: string;
@@ -58,6 +61,10 @@ type SpineData = {
 
 export interface SpineProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps {
   data: string | SpineData;
+  autoUpdate: boolean;
+  animationName: string;
+  trackIndex: number;
+  loop: boolean;
 }
 
 interface _ButtonProps extends AbstractProps, ScaleProps, PositionProps, PivotProps, VisibilityProps {

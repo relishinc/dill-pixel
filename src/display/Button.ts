@@ -7,7 +7,6 @@ import { SignalContainer } from '../mixins/signalContainer';
 import { Signal } from '../signals';
 import { bindAllMethods } from '../utils/methodBinding';
 import { SpriteSheetLike, TextureLike } from '../utils/types';
-import { Container } from './Container';
 
 export type ButtonConfig = {
   textures: {

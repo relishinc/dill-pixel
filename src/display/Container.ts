@@ -4,7 +4,6 @@ import { MethodBindingRoot } from '../core/decorators';
 import { Animated } from '../mixins/animated';
 import { Factory } from '../mixins/factory';
 import { SignalContainer } from '../mixins/signalContainer';
-import { SignalConnection, SignalConnections } from '../signals';
 import { bindAllMethods } from '../utils/methodBinding';
 import { Size } from '../utils/types';
 
@@ -20,8 +19,6 @@ export interface IContainer {
   destroy(options?: DestroyOptions): void;
 
   added(): Promise<void> | void;
-
-  addSignalConnection(...args: SignalConnection[]): void;
 
   resize(size: Size): void;
 
@@ -43,16 +40,12 @@ type ContainerConfig = {
  */
 @MethodBindingRoot
 export class Container<T extends Application = Application> extends _Container implements IContainer {
-  // A collection of signal connections.
-  protected _signalConnections: SignalConnections = new SignalConnections();
-
   /**
    * The constructor for the Container class.
    * @param __config - The configuration for the container.
    */
   constructor(private __config: ContainerConfig = { autoResize: true, autoUpdate: false, priority: 0 }) {
     super();
-
     // Bind all methods of this class to the current instance.
     bindAllMethods(this);
     // Add an event listener for the 'added' event.
@@ -82,6 +75,13 @@ export class Container<T extends Application = Application> extends _Container i
    * This method is called when the container is added to the stage. It is meant to be overridden by subclasses.
    */
   public added() {}
+
+  destroy() {
+    if (this.__config.autoUpdate) {
+      this.app.ticker.remove(this.update, this);
+    }
+    super.destroy();
+  }
 
   /**
    * This method is called when the container is added to the stage. It sets up auto-resizing and auto-updating if enabled.

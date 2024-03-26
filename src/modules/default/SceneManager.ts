@@ -234,6 +234,7 @@ export class SceneManager extends Module implements ISceneManager {
 
   private async _initializeCurrentScene(): Promise<void> {
     await this.currentScene.initialize();
+    this.currentScene.resize(this.app.size);
     return Promise.resolve();
   }
 

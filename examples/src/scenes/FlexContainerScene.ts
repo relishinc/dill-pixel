@@ -1,4 +1,4 @@
-import { clamp, FlexContainer, Size } from 'dill-pixel';
+import { clamp, FlexContainer, FlexDirection, JustifyContent, Size } from 'dill-pixel';
 import { Graphics, TextStyle } from 'pixi.js';
 import { BaseScene } from './BaseScene';
 
@@ -90,13 +90,7 @@ export class FlexContainerScene extends BaseScene {
         'space-evenly',
       ])
       .onChange(() => {
-        this.flexContainer.justifyContent = this.config.justifyContent as
-          | 'flex-start'
-          | 'center'
-          | 'flex-end'
-          | 'space-between'
-          | 'space-around'
-          | 'space-evenly';
+        this.flexContainer.justifyContent = this.config.justifyContent as JustifyContent;
       });
 
     this.gui
@@ -120,17 +114,10 @@ export class FlexContainerScene extends BaseScene {
     this.flexContainer = this.add.flexContainer({
       position: [-100, -100],
       gap: this.config.gap,
-      flexDirection: this.config.flexDirection as 'row' | 'column',
-      flexWrap: this.config.flexWrap as 'nowrap' | 'wrap',
-      justifyContent: this.config.justifyContent as
-        | 'flex-start'
-        | 'center'
-        | 'flex-end'
-        | 'space-between'
-        | 'space-around'
-        | 'space-evenly',
-      alignItems: this.config.alignItems as 'center' | 'flex-start' | 'flex-end',
-      width: this.config.width as number,
+      flexDirection: this.config.flexDirection as FlexDirection,
+      flexWrap: this.config.flexWrap as FlexWrap,
+      justifyContent: this.config.justifyContent as JustifyContent,
+      alignItems: this.config.alignItems as AlignItems,
       height: this.config.height as number,
     });
 
