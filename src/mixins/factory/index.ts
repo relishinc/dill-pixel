@@ -2,9 +2,19 @@
 import { Container as PIXIContainer, Graphics, Sprite, Text } from 'pixi.js';
 import { Button } from '../../display/Button';
 import { Container } from '../../display/Container';
+import { FlexContainer, FlexContainerConfig, FlexContainerConfigKeys } from '../../display/FlexContainer';
 import { resolvePointLike } from '../../utils/functions';
-import { omitKeys } from '../../utils/object';
-import { ButtonProps, ContainerProps, ExistingProps, GraphicsProps, SpineProps, SpriteProps, TextProps } from './props';
+import { omitKeys, pluck } from '../../utils/object';
+import {
+  ButtonProps,
+  ContainerProps,
+  ExistingProps,
+  FlexContainerProps,
+  GraphicsProps,
+  SpineProps,
+  SpriteProps,
+  TextProps,
+} from './props';
 import {
   resolveAnchor,
   resolvePivot,
@@ -90,6 +100,18 @@ export const defaultFactoryMethods = {
     resolveUnknownKeys(rest, entity);
     return entity;
   },
+  flexContainer: (props?: Partial<FlexContainerProps>) => {
+    const config = pluck(props ?? {}, FlexContainerConfigKeys);
+    const otherProps = omitKeys<FlexContainerProps, keyof FlexContainerConfig>(FlexContainerConfigKeys, props ?? {});
+    const entity = new FlexContainer(config);
+    if (!otherProps) return entity;
+    const { position, x, y, pivot, scale, scaleX, scaleY, ...rest } = otherProps;
+    resolvePosition({ position, x, y }, entity);
+    resolveScale({ scale, scaleX, scaleY }, entity);
+    resolvePivot(pivot, entity);
+    resolveUnknownKeys(rest, entity);
+    return entity;
+  },
   spine: (props?: Partial<SpineProps>): import('@pixi/spine-pixi').Spine => {
     let data = props?.data;
     if (typeof data === 'string') {
@@ -100,9 +122,9 @@ export const defaultFactoryMethods = {
       }
     }
     const entity: import('@pixi/spine-pixi').Spine = (globalThis as any).Spine.from(data);
-    entity.autoUpdate = true;
-    entity.state.setAnimation(0, 'aim', true);
     if (!props) return entity;
+    if (props.autoUpdate !== undefined) entity.autoUpdate = props.autoUpdate;
+    if (props.animationName) entity.state.setAnimation(props.trackIndex ?? 0, props.animationName, props.loop);
     const { position, x, y, anchor, pivot, scale, scaleX, scaleY, ...rest } = props;
     resolvePosition({ position, x, y }, entity);
     resolveScale({ scale, scaleX, scaleY }, entity);

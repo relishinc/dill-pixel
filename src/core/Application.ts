@@ -18,12 +18,13 @@ import { FocusManagerOptions, IFocusManager } from '../modules/default/focus/Foc
 import { IKeyboardManager } from '../modules/default/KeyboardManager';
 import { IPopupManager } from '../modules/default/popups/PopupManager';
 import { ISceneManager, LoadSceneMethod } from '../modules/default/SceneManager';
+import { SpineModule } from '../modules/default/SpineModule';
 import { IWebEventsManager } from '../modules/default/WebEventsManager';
 import { IModule } from '../modules/Module';
 import { Signal } from '../signals';
 import { IStorageAdapter } from '../store/adapters/StorageAdapter';
 import { IStore, Store } from '../store/Store';
-import { isPromise } from '../utils/async';
+import { delay, isPromise } from '../utils/async';
 import { Logger } from '../utils/console/Logger';
 import { isDev } from '../utils/env';
 import { getDynamicModuleFromImportListItem } from '../utils/framework';
@@ -252,7 +253,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     Application.instance = this;
     this.config = Object.assign({ ...defaultApplicationOptions }, config);
 
-    await this.preInitialize();
+    await this.preInitialize(this.config);
     await this.initAssets();
 
     // initialize the pixi application
@@ -356,7 +357,19 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this.store.getAdapter(adapterId);
   }
 
-  protected async preInitialize(): Promise<void> {}
+  /**
+   * Pre-initialize the application
+   * This is called before the application is initialized
+   * should register any pixi extensions, etc
+   * @param {Partial<IApplicationOptions>} config
+   * @returns {Promise<void>}
+   * @protected
+   */
+  protected async preInitialize(config: Partial<IApplicationOptions>): Promise<void> {
+    if (config.useSpine) {
+      await this.registerModule(new SpineModule());
+    }
+  }
 
   protected async postInitialize(): Promise<void> {
     (globalThis as any).__PIXI_APP__ = this;
@@ -373,7 +386,6 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   }
 
   protected async registerDefaultModules() {
-    console.log(defaultModules);
     for (let i = 0; i < defaultModules.length; i++) {
       const module = new defaultModules[i]();
       await this.registerModule(module);
@@ -440,17 +452,27 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   }
 
   private async _resize() {
-    this._size.width = this.renderer.screen.width;
-    this._size.height = this.renderer.screen.height;
-
+    let w = this._size.width;
+    let h = this._size.height;
+    await delay(0.1);
+    console.log(this.resizeTo);
+    if ((this.resizeTo as HTMLElement)?.getBoundingClientRect) {
+      const el = this.resizeTo as HTMLElement;
+      w = el.getBoundingClientRect().width;
+      h = el.getBoundingClientRect().height;
+    } else if ((this.resizeTo as Window)?.innerWidth) {
+      const el = this.resizeTo as Window;
+      w = el.innerWidth;
+      h = el.innerHeight;
+    }
+    this._size = { width: w, height: h };
     this._center.set(this._size.width * 0.5, this._size.height * 0.5);
 
-    this.views.forEach((view) => {
-      view.position.set(this._center.x, this._center.y);
-    });
-
     this.ticker.addOnce(() => {
-      this.onResize.emit(this.renderer.screen);
+      this.views.forEach((view) => {
+        view.position.set(this._center.x, this._center.y);
+      });
+      this.onResize.emit(this._size);
     });
   }
 

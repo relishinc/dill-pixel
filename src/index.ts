@@ -59,6 +59,7 @@ export type {
   ImportListItem,
   ImportList,
 } from './utils/types';
+export { clamp, lerp } from './utils/math';
 export { resolvePointLike, getSheetLikeString, setObjectName } from './utils/functions';
 export { getPreviousMapEntry, getLastMapEntry } from './utils/map';
 export { isRetina, isMobile } from './utils/platform';
@@ -89,6 +90,15 @@ export { Container } from './display/Container';
 export { Popup } from './display/Popup';
 export { Button } from './display/Button';
 export { Scene } from './display/Scene';
+export { FlexContainer } from './display/FlexContainer';
+export type {
+  IFlexContainer,
+  FlexWrap,
+  FlexDirection,
+  JustifyContent,
+  AlignItems,
+  FlexContainerConfig,
+} from './display/FlexContainer';
 export type { IContainer } from './display/Container';
 export type { IPopup } from './display/Popup';
 export type { IScene } from './display/Scene';

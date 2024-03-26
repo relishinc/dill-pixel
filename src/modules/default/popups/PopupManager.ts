@@ -31,7 +31,7 @@ export interface IPopupManager extends IModule {
 }
 
 /**
- * Class representing a PopupManager
+ * PopupManager
  */
 @CoreModule
 export class PopupManager extends Module implements IPopupManager {
