@@ -20,9 +20,9 @@ export interface IContainer {
 
   added(): Promise<void> | void;
 
-  resize(size: Size): void;
+  resize(size?: Size): void;
 
-  update(ticker: Ticker): void;
+  update(ticker?: Ticker): void;
 }
 
 /**
@@ -69,7 +69,7 @@ export class Container<T extends Application = Application> extends _Container i
    * Resize the container. This method is meant to be overridden by subclasses.
    * @param size - The new size of the parent application.
    */
-  public resize(size: Size) {}
+  public resize(size?: Size) {}
 
   /**
    * This method is called when the container is added to the stage. It is meant to be overridden by subclasses.

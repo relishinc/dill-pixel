@@ -73,10 +73,6 @@ export interface IFlexContainer {
 
   layout(): void;
 
-  resize(): void;
-
-  update(): void;
-
   added(): void;
 }
 
