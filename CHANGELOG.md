@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.37.1](https://github.com/relishinc/dill-pixel/compare/v2.37.0...v2.37.1) (2024-03-21)
+
+
+### Bug Fixes
+
+* made app size the default in getScaleRatio ([3614b9a](https://github.com/relishinc/dill-pixel/commit/3614b9a06359701aafbfcade0555a4c2a3bdb2b7))
+
 ## [2.37.0](https://github.com/relishinc/dill-pixel/compare/v2.36.1...v2.37.0) (2024-03-21)
 
 
