@@ -6,9 +6,19 @@ import { getDynamicModuleFromImportListItem } from '../../utils/framework';
 import { Constructor, ImportListItem } from '../../utils/types';
 import { IModule, Module } from '../Module';
 
+/**
+ * Type definition for i18n dictionary.
+ */
 export type i18nDict = Record<string, any>;
+
+/**
+ * Type definition for i18n translation parameters.
+ */
 type i18nTParams = { variant?: number | 'random' } & Record<string, any>;
 
+/**
+ * Type definition for i18n import list item.
+ */
 type i18nImportListItem<T> = {
   id: string;
   namedExport?: string;
@@ -18,6 +28,9 @@ type i18nImportListItem<T> = {
   json?: string;
 };
 
+/**
+ * Type definition for i18n options.
+ */
 export type i18nOptions = {
   defaultLocale: string;
   locales: string[];
@@ -25,6 +38,9 @@ export type i18nOptions = {
   files: i18nImportListItem<i18nDict>[];
 };
 
+/**
+ * Default options for i18n module.
+ */
 const defaultOptions: i18nOptions = {
   defaultLocale: 'en',
   locales: ['en'],
@@ -32,6 +48,9 @@ const defaultOptions: i18nOptions = {
   files: [],
 };
 
+/**
+ * Interface for i18n module.
+ */
 export interface Ii18nModule extends IModule {
   readonly locale: string;
   onLocaleChanged: Signal<(locale: string) => void>;
@@ -45,6 +64,9 @@ export interface Ii18nModule extends IModule {
   parse(input: string, locale?: string): string;
 }
 
+/**
+ * i18n module class.
+ */
 export class i18nModule extends Module implements Ii18nModule {
   public readonly id = 'i18n';
   public onLocaleChanged = new Signal<(locale: string) => void>();
@@ -54,16 +76,32 @@ export class i18nModule extends Module implements Ii18nModule {
   private _locale: string;
   private _options: i18nOptions;
 
+  /**
+   * Getter for locale.
+   */
   get locale(): string {
     return this._locale;
   }
 
+  /**
+   * Sets the locale.
+   * If the locale is not loaded, it will load it first.
+   * @param localeId The locale id to set.
+   * @returns Promise<string>
+   */
   async setLocale(localeId: string) {
     this._locale = localeId;
     await this._loadAndSetLocale(localeId);
     return this._locale;
   }
 
+  /**
+   * Initializes the i18n module.
+   * sets the default locale and loads the locale files.
+   * @param app The application instance.
+   * @param options The i18n options.
+   * @returns Promise<void>
+   */
   public async initialize(app: IApplication, options: Partial<i18nOptions>): Promise<void> {
     super.initialize(app);
     this._options = { ...defaultOptions, ...options };
@@ -79,6 +117,17 @@ export class i18nModule extends Module implements Ii18nModule {
     this._dict = this._dicts[this._locale];
   }
 
+  /**
+   * Translates a key into a string.
+   * If the key is not found, it will return an empty string.
+   * If the key is found, it will replace any placeholders in the string with the values from the params object.
+   * If the key contains a variant, it will select a random variant if the variant param is set to 'random'.
+   * If the key contains a number variant, it will select the variant based on the variant param.
+   * @param key The key to translate.
+   * @param params The parameters to replace in the string.
+   * @param locale The locale to use for translation.
+   * @returns The translated string.
+   */
   t(key: string, params?: i18nTParams, locale: string = this._locale): string {
     const dict = this._dicts[locale];
     if (!dict) {
@@ -124,7 +173,7 @@ export class i18nModule extends Module implements Ii18nModule {
   }
 
   /**
-   * parse the input string and replace anything in between {} braces, assuming it is a key in the dictionary
+   * Parses the input string and replaces anything in between {} braces, assuming it is a key in the dictionary.
    * @param {string} input
    * @param locale
    * @returns {string}
@@ -148,18 +197,27 @@ export class i18nModule extends Module implements Ii18nModule {
     return str;
   }
 
+  /**
+   * Loads a locale.
+   * @param localeId The locale id to load.
+   * @returns Promise<void>
+   */
   async loadLocale(localeId: string) {
     const file = this._options.files.find((file) => localeId === file.id);
     if (!file) {
       Logger.error(`i18n:: Could not find locale file for ${localeId}`);
       return;
     }
-    console.log('loading file for ', localeId, file);
     this._dicts[localeId] = file.json
       ? await Assets.load(file.json)
       : await getDynamicModuleFromImportListItem(file as ImportListItem<i18nDict>);
   }
 
+  /**
+   * Loads and sets a locale.
+   * If the locale is not loaded, it will load it first.
+   * @param localeId The locale id to load and set.
+   */
   private async _loadAndSetLocale(localeId: string) {
     if (!this._dicts[localeId]) {
       await this.loadLocale(localeId);
