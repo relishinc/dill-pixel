@@ -27,6 +27,7 @@ export type { IWebEventsManager } from './modules/default/WebEventsManager';
 export type { IKeyboardManager, KeyboardEventDetail } from './modules/default/KeyboardManager';
 export type { IFocusable, IFocusManager, FocusManagerOptions } from './modules/default/focus/FocusManager';
 export type { IAudioManager } from './modules/default/audio/AudioManager';
+export type { Ii18nModule, i18nOptions } from './modules/default/i18nModule';
 export type { IModule } from './modules/Module';
 export { Module } from './modules/Module';
 export { default as defaultModules } from './modules/default/defaultModules';

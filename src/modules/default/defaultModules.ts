@@ -2,6 +2,7 @@ import type { IModule } from '../Module';
 import { AssetManager } from './AssetManager';
 import { AudioManager } from './audio/AudioManager';
 import { FocusManager } from './focus/FocusManager';
+import { i18nModule } from './i18nModule';
 import { KeyboardManager } from './KeyboardManager';
 import { PopupManager } from './popups/PopupManager';
 import { SceneManager } from './SceneManager';
@@ -18,6 +19,7 @@ const defaultModules: (new () => IModule)[] = [
   PopupManager,
   AudioManager,
   StatsModule,
+  i18nModule,
 ];
 
 export default defaultModules;

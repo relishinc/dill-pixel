@@ -15,6 +15,7 @@ import { IAudioManager } from '../modules/default/audio/AudioManager';
 
 import defaultModules from '../modules/default/defaultModules';
 import { FocusManagerOptions, IFocusManager } from '../modules/default/focus/FocusManager';
+import { i18nOptions, Ii18nModule } from '../modules/default/i18nModule';
 import { IKeyboardManager } from '../modules/default/KeyboardManager';
 import { IPopupManager } from '../modules/default/popups/PopupManager';
 import { ISceneManager, LoadSceneMethod } from '../modules/default/SceneManager';
@@ -51,6 +52,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   defaultSceneLoadMethod: LoadSceneMethod;
   showSceneDebugMenu: boolean;
   manifest: AssetsManifest | Promise<AssetsManifest> | string;
+  i18n: Partial<i18nOptions>;
   showStats: boolean;
 }
 
@@ -126,6 +128,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   protected _focusManager: IFocusManager;
   protected _popupManager: IPopupManager;
   protected _audioManager: IAudioManager;
+  protected _i18n: Ii18nModule;
 
   // store
   protected _store: IStore;
@@ -192,6 +195,13 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
   public get center(): Point {
     return this._center;
+  }
+
+  public get i18n(): Ii18nModule {
+    if (!this._i18n) {
+      this._i18n = this.getModule<Ii18nModule>('i18n');
+    }
+    return this._i18n;
   }
 
   public get popups(): IPopupManager {
@@ -388,7 +398,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   protected async registerDefaultModules() {
     for (let i = 0; i < defaultModules.length; i++) {
       const module = new defaultModules[i]();
-      await this.registerModule(module);
+      await this.registerModule(module, this.config[module.id as keyof IApplicationOptions] || undefined);
     }
   }
 
