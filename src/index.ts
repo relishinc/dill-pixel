@@ -77,10 +77,11 @@ export { getDynamicModuleFromImportListItem } from './utils/framework';
  * Export various mixin classes from the 'mixins' module.
  * These mixins are used to add additional functionality to the application's classes.
  */
-export { Factory } from './mixins/factory';
+export { FactoryContainer } from './mixins/factory';
 export { Animated } from './mixins/animated';
 export { Interactive } from './mixins/interaction';
 export { Focusable } from './mixins/focus';
+export { WithSignals } from './mixins/signals';
 
 // display
 /**

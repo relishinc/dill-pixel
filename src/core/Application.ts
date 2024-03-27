@@ -452,7 +452,6 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       }
       opts.manifest = manifest;
     }
-    console.log('MANIFEST', opts.manifest);
     this.manifest = opts.manifest;
     await Assets.init(opts);
   }
@@ -465,7 +464,6 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     let w = this._size.width;
     let h = this._size.height;
     await delay(0.1);
-    console.log(this.resizeTo);
     if ((this.resizeTo as HTMLElement)?.getBoundingClientRect) {
       const el = this.resizeTo as HTMLElement;
       w = el.getBoundingClientRect().width;

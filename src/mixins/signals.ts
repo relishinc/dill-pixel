@@ -1,5 +1,4 @@
 import { DestroyOptions } from 'pixi.js';
-import { PIXIContainer } from '../pixi';
 import { SignalConnection, SignalConnections } from '../signals';
 import { Constructor } from '../utils/types';
 
@@ -14,9 +13,7 @@ export interface ISignalContainer {
   addSignalConnection(...args: SignalConnection[]): void;
 }
 
-export function SignalContainer<TBase extends Constructor<PIXIContainer>>(
-  Base: TBase,
-): TBase & Constructor<ISignalContainer> {
+export function WithSignals<TBase extends Constructor<any>>(Base: TBase): TBase & Constructor<ISignalContainer> {
   return class extends Base implements ISignalContainer {
     signalConnections: SignalConnections = new SignalConnections();
 

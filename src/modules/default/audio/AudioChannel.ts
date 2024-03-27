@@ -13,6 +13,8 @@ export interface IAudioChannel {
   remove(id: string): IAudioInstance | undefined;
 
   updateVolume(): void;
+
+  destroy(): void;
 }
 
 export class AudioChannel {
@@ -75,4 +77,6 @@ export class AudioChannel {
     });
     this.manager.onChannelVolumeChanged.emit({ channel: this, volume: this._volume });
   }
+
+  destroy() {}
 }

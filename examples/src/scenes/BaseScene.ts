@@ -40,6 +40,7 @@ export class BaseScene extends Scene<V8Application> {
   }
 
   public destroy() {
+    console.log('destroying', this.id);
     if (this.gui) {
       this.gui.destroy();
     }

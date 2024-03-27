@@ -1,4 +1,3 @@
-import { Ticker } from 'pixi.js';
 import { BaseScene } from './BaseScene';
 
 export class AudioScene extends BaseScene {
@@ -16,11 +15,15 @@ export class AudioScene extends BaseScene {
     this.alpha = 0;
   }
 
-  public async start() {
+  public async initialize() {
+    await super.initialize();
     this.app.audio.masterVolume = this.config.master;
     this.app.audio.muted = this.config.muted;
     this.app.audio.channels.get('music').volume = this.config.music;
     this.app.audio.channels.get('sfx').volume = this.config.sfx;
+  }
+
+  public async start() {
     void this.app.audio.fadeIn('horizon.mp3', 'music', { volume: 1 });
   }
 
@@ -28,10 +31,6 @@ export class AudioScene extends BaseScene {
     void this.app.audio.fadeOut('horizon.mp3', 'music');
     super.destroy();
   }
-
-  update(ticker: Ticker) {}
-
-  resize() {}
 
   protected configureGUI() {
     this.gui.add(this.config, 'master', 0, 5, 0.001).name('Master Volume').onChange(this._handleMasterVolumeChanged);

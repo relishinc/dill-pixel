@@ -1,6 +1,6 @@
 /// <reference types="@pixi/spine-pixi" />
 import { Container as PIXIContainer, Graphics, Sprite, Text } from 'pixi.js';
-import { Button } from '../../display/Button';
+import { Button, ButtonConfig, ButtonConfigKeys } from '../../display/Button';
 import { Container } from '../../display/Container';
 import { FlexContainer, FlexContainerConfig, FlexContainerConfigKeys } from '../../display/FlexContainer';
 import { resolvePointLike } from '../../utils/functions';
@@ -91,9 +91,11 @@ export const defaultFactoryMethods = {
   },
   // dill pixel specific stuff
   button: (props?: Partial<ButtonProps>) => {
-    const entity = new Button(props?.config ?? {});
-    if (!props) return entity;
-    const { position, x, y, pivot, scale, scaleX, scaleY, ...rest } = props;
+    const config = pluck(props ?? {}, ButtonConfigKeys);
+    const otherProps = omitKeys<ButtonProps, keyof ButtonConfig>(ButtonConfigKeys, props ?? {});
+    const entity = new Button(config);
+    if (!otherProps) return entity;
+    const { position, x, y, pivot, scale, scaleX, scaleY, ...rest } = otherProps;
     resolvePosition({ position, x, y }, entity);
     resolveScale({ scale, scaleX, scaleY }, entity);
     resolvePivot(pivot, entity);
@@ -135,7 +137,7 @@ export const defaultFactoryMethods = {
   },
 };
 
-export interface IExtendedContainer<T extends typeof defaultFactoryMethods = typeof defaultFactoryMethods>
+export interface IFactoryContainer<T extends typeof defaultFactoryMethods = typeof defaultFactoryMethods>
   extends PIXIContainer {
   add: T;
   make: T;
@@ -158,10 +160,10 @@ function createFactoryMethods<T extends typeof defaultFactoryMethods = typeof de
   return factoryMethods as T;
 }
 
-export function Factory<T extends typeof defaultFactoryMethods = typeof defaultFactoryMethods>(
+export function FactoryContainer<T extends typeof defaultFactoryMethods = typeof defaultFactoryMethods>(
   extensions?: Partial<T>,
-): new () => IExtendedContainer<T> {
-  return class ExtendedContainer extends PIXIContainer implements IExtendedContainer<T> {
+): new () => IFactoryContainer<T> {
+  return class ExtendedContainer extends PIXIContainer implements IFactoryContainer<T> {
     add: T;
     make: T;
 

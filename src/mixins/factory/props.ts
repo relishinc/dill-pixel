@@ -67,8 +67,6 @@ export interface SpineProps extends AbstractProps, ScaleProps, PositionProps, Vi
   loop: boolean;
 }
 
-interface _ButtonProps extends AbstractProps, ScaleProps, PositionProps, PivotProps, VisibilityProps {
-  config: Partial<ButtonConfig>;
-}
+interface _ButtonProps extends AbstractProps, ScaleProps, PositionProps, PivotProps, VisibilityProps, ButtonConfig {}
 
-export type ButtonProps = WithRequiredProps<_ButtonProps, 'config'>;
+export type ButtonProps = WithRequiredProps<_ButtonProps, 'textures'>;

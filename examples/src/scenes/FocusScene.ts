@@ -1,6 +1,6 @@
 import { Actor } from '@/entities/Actor';
 import { BaseScene } from '@/scenes/BaseScene';
-import { Button, Logger, PIXIText } from 'dill-pixel';
+import { Button, FlexContainer, Logger, PIXIText } from 'dill-pixel';
 
 export class FocusScene extends BaseScene {
   protected title = 'Focus Management';
@@ -8,6 +8,9 @@ export class FocusScene extends BaseScene {
   private actor1: Actor;
   private actor2: Actor;
   private button: Button;
+
+  private actorList: FlexContainer;
+  private list: FlexContainer;
 
   constructor() {
     super();
@@ -23,39 +26,63 @@ export class FocusScene extends BaseScene {
       y: -this.app.center.y + 100,
     });
 
-    this.actor1 = this.add.existing<Actor>(new Actor(), { x: -this.app.center.x + 500, y: -this.app.center.y + 300 });
-    this.actor2 = this.add.existing<Actor>(new Actor(0x00fff0), {
-      x: -this.app.center.x + 700,
-      y: -this.app.center.y + 300,
+    this.actorList = this.add.flexContainer({
+      gap: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+      y: -200,
     });
 
-    const button = this.add.existing(
-      new Button({
-        textures: { default: 'jar', hover: 'jar2' },
-        sheet: 'sheet.json',
-        cursor: 'pointer',
-      }),
-      {
-        x: -this.app.center.x + 1100,
-        y: -this.app.center.y + 400,
-        scale: 0.5,
-      },
-    );
+    this.actor1 = this.actorList.add.existing<Actor>(new Actor());
+    this.actor2 = this.actorList.add.existing<Actor>(new Actor(0x00fff0));
 
-    button.onClick.connect(() => {
+    this.actor1.onInteraction('pointerdown').connect(() => {
+      Logger.log('actor 1 clicked');
+    });
+
+    this.list = this.add.flexContainer({
+      gap: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+      y: 100,
+    });
+
+    const spr = this.list.add.sprite({
+      asset: 'required/jar.png',
+      scale: 0.5,
+    });
+    const sheetSpr = this.list.add.sprite({
+      asset: 'jar',
+      sheet: 'sheet.json',
+      scale: 0.5,
+    });
+    const sheetSpr2 = this.list.add.sprite({
+      asset: 'jar2',
+      sheet: 'sheet.json',
+      scale: 0.5,
+    });
+
+    this.button = this.list.add.button({
+      scale: 0.5,
+      textures: { default: 'jar', hover: 'jar2' },
+      sheet: 'sheet.json',
+      cursor: 'pointer',
+    });
+
+    this.button.onClick.connect(() => {
       console.log('button pressed');
     });
 
-    button.onDown.connect(() => {
+    this.button.onDown.connect(() => {
       console.log('button down');
     });
 
-    this.button = button;
+    this.actor1.bob();
 
     this.app.focus.addFocusLayer('one');
     this.app.focus.addFocusable(this.actor1, 'one', true);
     this.app.focus.addFocusable(this.actor2, 'one');
-    this.app.focus.addFocusable(button, 'one');
+    this.app.focus.addFocusable(this.button, 'one');
     this.app.focus.addFocusLayer('two', this.actor2);
     this.app.focus.setFocusLayer('one');
 
@@ -79,33 +106,6 @@ export class FocusScene extends BaseScene {
     );
 
     this._updateFocusLayerLabel();
-
-    this.actor1.onInteraction('pointerdown').connect(() => {
-      Logger.log('actor 1 clicked');
-    });
-
-    const spr = this.add.sprite({
-      asset: 'required/jar.png',
-      x: -this.app.center.x + 200,
-      y: -this.app.center.y + 400,
-      scale: 0.5,
-    });
-    const sheetSpr = this.add.sprite({
-      asset: 'jar',
-      sheet: 'sheet.json',
-      x: -this.app.center.x + 500,
-      y: -this.app.center.y + 400,
-      scale: 0.5,
-    });
-    const sheetSpr2 = this.add.sprite({
-      asset: 'jar2',
-      sheet: 'sheet.json',
-      x: -this.app.center.x + 800,
-      y: -this.app.center.y + 400,
-      scale: 0.5,
-    });
-
-    this.actor1.bob();
   }
 
   async enter() {
@@ -125,6 +125,10 @@ export class FocusScene extends BaseScene {
     if (this.button.isDown) {
       console.log('button is down!');
     }
+  }
+
+  resize() {
+    super.resize();
   }
 
   private _updateFocusLayerLabel() {

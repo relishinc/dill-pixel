@@ -105,7 +105,19 @@ export class AudioManager extends Module implements IAudioManager {
     this._setMuted();
   }
 
-  public destroy(): void {}
+  public destroy(): void {
+    this._channels.forEach((channel) => {
+      channel.destroy();
+    });
+    this._channels.clear();
+    this.onSoundStarted.disconnectAll();
+    this.onSoundEnded.disconnectAll();
+    this.onMuted.disconnectAll();
+    this.onMasterVolumeChanged.disconnectAll();
+    this.onChannelVolumeChanged.disconnectAll();
+
+    super.destroy();
+  }
 
   public initialize(app: IApplication): Promise<void> {
     Logger.log('AudioManager initialized', app);

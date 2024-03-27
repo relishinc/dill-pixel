@@ -126,9 +126,11 @@ class FocusLayer implements IFocusLayer {
 
   public navigate(direction: number): void {
     const available = this._availableFocusables;
-
+    if (!available?.length) {
+      return;
+    }
+    
     this._currentIndex = (this._currentIndex + direction + available.length) % available.length;
-
     this.currentFocusable = available[this._currentIndex];
   }
 }
@@ -140,6 +142,7 @@ export interface IFocusManager extends IModule {
   readonly layerCount: number;
   readonly currentLayerId: string | number | null;
   readonly active: boolean;
+  readonly layers: Map<string | number, IFocusLayer>;
 
   onFocusManagerActivated: Signal<() => void>;
   onFocusManagerDeactivated: Signal<() => void>;
@@ -199,6 +202,10 @@ export class FocusManager extends Module implements IFocusManager {
 
   public get layerCount(): number {
     return this._layers.size;
+  }
+
+  public get layers(): Map<string | number, IFocusLayer> {
+    return this._layers;
   }
 
   public initialize(app: IApplication): void {
@@ -342,6 +349,7 @@ export class FocusManager extends Module implements IFocusManager {
   }
 
   public removeAllFocusLayers(): void {
+    Logger.log('FocusManager:: removing all layers');
     this._layers.clear();
     this._setTarget(null);
   }
