@@ -1,14 +1,14 @@
 import { DestroyOptions } from 'pixi.js';
 import { Application } from '../core/Application';
-import { Factory } from '../mixins/factory';
-import { SignalContainer } from '../mixins/signalContainer';
+import { FactoryContainer } from '../mixins/factory';
+import { WithSignals } from '../mixins/signals';
 import { PIXIContainer } from '../pixi';
 import { Signal } from '../signals';
 import { resolvePointLike } from '../utils/functions';
 import { bindAllMethods } from '../utils/methodBinding';
 import { ContainerLike, PointLike } from '../utils/types';
 
-const _FlexContainer = SignalContainer(Factory());
+const _FlexContainer = WithSignals(FactoryContainer());
 
 export interface FlexContainerConfig {
   width: number;

@@ -1,5 +1,4 @@
 import { Button, Container } from 'dill-pixel';
-import { Ticker } from 'pixi.js';
 import { PopupConfig } from '../../../src/display/Popup.ts';
 import { ExamplePopup } from '../popups/ExamplePopup.ts';
 import { BaseScene } from './BaseScene';
@@ -11,6 +10,8 @@ export class PopupScene extends BaseScene {
 
   public async initialize() {
     await super.initialize();
+    this.app.focus.addFocusLayer(this.id);
+    
     this.app.popups.add('one', ExamplePopup);
     this.app.popups.add('two', ExamplePopup);
     this.app.popups.add('three', ExamplePopup);
@@ -35,8 +36,6 @@ export class PopupScene extends BaseScene {
         backing: { color: 'red' },
       }),
     );
-
-    this.app.focus.addFocusLayer(this.id);
   }
 
   public async start() {
@@ -44,8 +43,6 @@ export class PopupScene extends BaseScene {
       this.app.focus.add(btn, this.id, idx === 0);
     });
   }
-
-  update(ticker: Ticker) {}
 
   resize() {
     super.resize();
@@ -61,11 +58,9 @@ export class PopupScene extends BaseScene {
   addButton(label: string = 'Button', callback: () => void) {
     const btn = this.buttonContainer.add.button({
       scale: 0.5,
-      config: {
-        cursor: 'pointer',
-        textures: { default: 'btn/blue', hover: 'btn/yellow', disabled: 'btn/grey', active: 'btn/red' },
-        sheet: 'ui.json',
-      },
+      cursor: 'pointer',
+      textures: { default: 'btn/blue', hover: 'btn/yellow', disabled: 'btn/grey', active: 'btn/red' },
+      sheet: 'ui.json',
     });
 
     btn.add.text({

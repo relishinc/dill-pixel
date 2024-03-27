@@ -2,7 +2,17 @@
   "bundles": [
     {
       "name": "default",
-      "assets": []
+      "assets": [
+        {
+          "alias": [
+            "locales/fr.json",
+            "fr.json"
+          ],
+          "src": [
+            "locales/fr.json"
+          ]
+        }
+      ]
     },
     {
       "name": "audio",

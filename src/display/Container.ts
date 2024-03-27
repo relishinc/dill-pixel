@@ -2,14 +2,14 @@ import { DestroyOptions, Ticker } from 'pixi.js';
 import { Application } from '../core/Application';
 import { MethodBindingRoot } from '../core/decorators';
 import { Animated } from '../mixins/animated';
-import { Factory } from '../mixins/factory';
-import { SignalContainer } from '../mixins/signalContainer';
+import { FactoryContainer } from '../mixins/factory';
+import { WithSignals } from '../mixins/signals';
 import { bindAllMethods } from '../utils/methodBinding';
 import { Size } from '../utils/types';
 
 // Create a new class that extends PIXI.Container and includes the Animated and Factory mixins.
-const _Container = Animated(SignalContainer(Factory()));
-
+const _Container = Animated(WithSignals(FactoryContainer()));
+ 
 /**
  * Interface for the Container class.
  */

@@ -1,5 +1,5 @@
 import { Application, bindAllMethods, ContainerLike, KeyboardEventDetail } from 'dill-pixel';
-import { Container, Point, Ticker } from 'pixi.js';
+import { Container, Point } from 'pixi.js';
 import { V8Application } from '../V8Application';
 import { BaseScene } from './BaseScene';
 
@@ -176,9 +176,9 @@ export class CameraScene extends BaseScene {
     this.cameraController = new CameraController(this.camera, this.app.stage);
   }
 
-  update(ticker: Ticker) {}
-
-  resize() {}
+  resize() {
+    super.resize();
+  }
 
   destroy() {
     this.cameraController.destroy();

@@ -1,9 +1,9 @@
 import { Cursor, Sprite } from 'pixi.js';
 import { Application } from '../core/Application';
-import { Factory } from '../mixins/factory';
+import { FactoryContainer } from '../mixins/factory';
 import { Focusable } from '../mixins/focus';
 import { Interactive } from '../mixins/interaction';
-import { SignalContainer } from '../mixins/signalContainer';
+import { WithSignals } from '../mixins/signals';
 import { Signal } from '../signals';
 import { bindAllMethods } from '../utils/methodBinding';
 import { SpriteSheetLike, TextureLike } from '../utils/types';
@@ -21,8 +21,10 @@ export type ButtonConfig = {
   enabled: boolean;
 };
 
+export const ButtonConfigKeys: (keyof ButtonConfig)[] = ['textures', 'cursor', 'disabledCursor', 'sheet', 'enabled'];
+
 // Create a new class that extends Container and includes the Interactive and Focusable mixins.
-const _Button = Focusable(Interactive(SignalContainer(Factory())));
+const _Button = Focusable(Interactive(WithSignals(FactoryContainer())));
 
 /**
  * @class
