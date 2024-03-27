@@ -57,7 +57,7 @@ export type ImportListItem<T> = {
   id: string;
   namedExport?: string;
   options?: any;
-  module: (() => Promise<any>) | Promise<any> | Constructor<T>;
+  module: (() => Promise<any>) | Promise<any> | Constructor<T> | T;
 };
 
 /**
