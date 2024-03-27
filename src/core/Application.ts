@@ -2,7 +2,7 @@
 // require the global.d.ts file
 import FontFaceObserver from 'fontfaceobserver';
 import {Application as PIXIApplication, Assets, IApplicationOptions, Point, Ticker} from 'pixi.js';
-import {AudioToken, HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverManager} from '../audio';
+import {HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverManager} from '../audio';
 import {CopyManager} from '../copy';
 import {isDev, updateFocus} from '../functions';
 import {
@@ -156,7 +156,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
     AssetUtils.resolutionSuffix = this.resolutionSuffix;
 
     // bind functions
-    bindMethods(this, 'update', 'onRequiredAssetsLoaded', 'onPlayAudio');
+    bindMethods(this, 'update', 'onRequiredAssetsLoaded');
 
     // create factories
     this._addFactory = new Add(this.stage);
@@ -376,15 +376,12 @@ export class Application<T extends Application = any> extends PIXIApplication {
       await this.addSpine();
     }
 
-    this.onPlayAudio = this.onPlayAudio.bind(this);
     this.addToStage(this._stateManager);
     this.addToStage(this._popupManager);
     this.addToStage(this._loadManager);
     this._hitAreaRenderer = this.addToStage(new HitAreaRenderer(this.stage));
     this.addToStage(this._keyboardFocusManager);
     this._audioManager.init();
-
-    Signals.playAudio.connect(this.onPlayAudio);
 
     this.addAssetGroups();
     this.createAssetMap();
@@ -581,10 +578,6 @@ export class Application<T extends Application = any> extends PIXIApplication {
     }
 
     this.onResizeComplete();
-  }
-
-  protected onPlayAudio(token: AudioToken) {
-    this.audio.play(token.id, token.volume, token.loop, token.category);
   }
 
   /**
