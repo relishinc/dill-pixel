@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.37.2](https://github.com/relishinc/dill-pixel/compare/v2.37.1...v2.37.2) (2024-03-27)
+
+
+### Bug Fixes
+
+* bug in Application / AudioManager that caused sounds to be triggered twice ([9c3df1a](https://github.com/relishinc/dill-pixel/commit/9c3df1af98230e456de7b666955c546b60c66314))
+
 ## [2.37.1](https://github.com/relishinc/dill-pixel/compare/v2.37.0...v2.37.1) (2024-03-21)
 
 
