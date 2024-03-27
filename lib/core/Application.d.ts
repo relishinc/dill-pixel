@@ -1,5 +1,5 @@
 import { Application as PIXIApplication, IApplicationOptions, Point } from 'pixi.js';
-import { AudioToken, IAudioManager, IVoiceOverManager } from '../audio';
+import { IAudioManager, IVoiceOverManager } from '../audio';
 import { CopyManager } from '../copy';
 import { DefaultKeyboardFocusManagerSprite, HitAreaRenderer, KeyboardFocusManager, KeyboardManager, MouseManager } from '../input';
 import { AssetMapData, LoadManager, LoadScreen, LoadScreenProvider, SplashScreen } from '../load';
@@ -175,7 +175,6 @@ export declare class Application<T extends Application = any> extends PIXIApplic
      * @default 0
      */
     protected onResize(debounceDelay: number): Promise<void> | void;
-    protected onPlayAudio(token: AudioToken): void;
     /**
      * Called when resize is complete after the delay.
      * @override
