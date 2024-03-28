@@ -23,6 +23,7 @@ const app = await create(V8Application, {
     { id: 'popups', namedExport: 'PopupScene', module: () => import('@/scenes/PopupScene') },
     { id: 'spine', namedExport: 'SpineScene', module: () => import('@/scenes/SpineScene') },
     { id: 'flexContainer', namedExport: 'FlexContainerScene', module: () => import('@/scenes/FlexContainerScene') },
+    { id: 'uiCanvas', namedExport: 'UICanvasScene', module: () => import('@/scenes/UICanvasScene') },
     // { id: 'rive', namedExport: 'RiveScene', module: () => import('@/scenes/RiveScene') },
   ],
   i18n: {
