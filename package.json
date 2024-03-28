@@ -10,7 +10,8 @@
   },
   "files": [
     "lib",
-    "src"
+    "src",
+    "cli"
   ],
   "types": "./lib/index.d.ts",
   "sideEffects": false,
