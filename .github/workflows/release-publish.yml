@@ -11,6 +11,7 @@ jobs:
         with:
           node-version: '18.x'
           registry-url: 'https://registry.npmjs.org'
+      - run: sleep 10
       - run: npm ci
       - run: npm publish
         env:

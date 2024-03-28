@@ -43,6 +43,3 @@ jobs:
           git add .
           git commit -m "Update version.ts"
           git push
-
-      - name: Delay 2
-        run: sleep 10
