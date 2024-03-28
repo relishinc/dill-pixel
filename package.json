@@ -30,16 +30,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/relishinc/hlf.git"
+    "url": "git+https://github.com/relishinc/dill-pixel.git"
   },
   "keywords": [
     "game",
     "framework",
-    "html"
+    "html",
+    "pixi.js",
+    "typescript"
   ],
   "author": "Relish Interactive",
   "license": "MIT",
-  "homepage": "https://github.com/relishinc/hlf#readme",
+  "homepage": "https://github.com/relishinc/dill-pixel#readme",
   "devDependencies": {
     "@commitlint/cli": "^17.6.5",
     "@commitlint/config-conventional": "^17.6.5",
