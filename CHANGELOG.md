@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.38.0](https://github.com/relishinc/dill-pixel/compare/v2.37.2...v2.38.0) (2024-03-28)
+
+
+### Features
+
+* publish to npm ([4561762](https://github.com/relishinc/dill-pixel/commit/4561762991352dffd320d6b1438a6687b67e5fbd))
+
+
+### Bug Fixes
+
+* allow npm publishing automatically ([e24dfdc](https://github.com/relishinc/dill-pixel/commit/e24dfdc741832ccd893c5269c3d4d2c6022e9154))
+
 ## [2.37.2](https://github.com/relishinc/dill-pixel/compare/v2.37.1...v2.37.2) (2024-03-27)
 
 
