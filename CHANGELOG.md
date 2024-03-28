@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.38.6](https://github.com/relishinc/dill-pixel/compare/v2.38.5...v2.38.6) (2024-03-28)
+
+
+### Bug Fixes
+
+* working on npm publish action ([114d145](https://github.com/relishinc/dill-pixel/commit/114d1454ccb4b2b959c8f5fe403db3a2566b98d3))
+
 ## [2.38.5](https://github.com/relishinc/dill-pixel/compare/v2.38.4...v2.38.5) (2024-03-28)
 
 
