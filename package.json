@@ -3,15 +3,12 @@
   "version": "2.37.1",
   "title": "Dill Pixel",
   "description": "Relish framework for HTML games",
-  "main": "src/index.ts",
+  "main": "lib/index.js",
   "bin": {
     "dill-pixel": "./cli.mjs",
     "create-dill-pixel": "./cli/create-dill-pixel.mjs"
   },
   "types": "./lib/index.d.ts",
-  "exports": {
-    ".": "./src/index.ts"
-  },
   "sideEffects": false,
   "scripts": {
     "dev": "cd ./examples && npm run dev",
