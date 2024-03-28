@@ -2,7 +2,7 @@
   "name": "dill-pixel",
   "version": "2.37.2",
   "title": "Dill Pixel",
-  "description": "Relish framework for HTML games",
+  "description": "Relish's framework for HTML games",
   "main": "lib/index.js",
   "bin": {
     "dill-pixel": "./cli.mjs",
@@ -38,7 +38,7 @@
   ],
   "author": "Relish Interactive",
   "license": "MIT",
-  "homepage": "https://github.com/relishinc/dill-pixel#readme",
+  "homepage": "https://docs.dillpixel.io/",
   "devDependencies": {
     "@commitlint/cli": "^17.6.5",
     "@commitlint/config-conventional": "^17.6.5",
