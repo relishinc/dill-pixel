@@ -1,7 +1,10 @@
+import { LocalStorageAdapter, Logger, create } from 'dill-pixel';
+
 import EN from '@/locales/en';
 import { V8Application } from '@/V8Application';
-import { create, LocalStorageAdapter, Logger } from 'dill-pixel';
 import manifest from './assets.json';
+
+console.log('resolution', Math.max(window.devicePixelRatio, 2));
 
 const app = await create(V8Application, {
   id: 'V8Application',
@@ -37,6 +40,7 @@ const app = await create(V8Application, {
   },
   defaultSceneLoadMethod: 'exitEnter',
   useSpine: true,
+  resolution: Math.max(window.devicePixelRatio, 2),
 });
 
 Logger.log('V8Application created', app);

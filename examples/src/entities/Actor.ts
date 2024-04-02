@@ -18,7 +18,7 @@ export class Actor extends _Actor {
     this.alpha = 0.5;
   }
 
-  focus() {
+  click() {
     this._view.tint = 0xff0000;
     this.animateFromTo({ y: this._originalY }, { y: 400, yoyo: true, repeat: -1, duration: 1, ease: 'sine.inOut' });
   }
@@ -45,11 +45,12 @@ export class Actor extends _Actor {
 
   added() {
     this.eventMode = 'static';
+    this.accessibleType = 'div';
+    this.accessibleChildren = true;
+
     this._view = this.add.graphics().circle(0, 0, 50).fill('white');
     this._view.tint = this.color;
-    this.accessibleType = 'button';
-    this.accessibleTitle = 'Actor';
-    this.accessibleHint = 'Press enter to change color';
+
     this.alpha = 0.5;
     this._originalY = this.y;
   }

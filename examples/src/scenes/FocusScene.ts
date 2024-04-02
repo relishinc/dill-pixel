@@ -22,7 +22,7 @@ export class FocusScene extends BaseScene {
     this._focusLayerLabel = this.add.text({
       text: 'Focus layer:',
       style: { fill: 'white' },
-      x: -this.app.center.x + 450,
+      x: -this.app.center.x + 100,
       y: -this.app.center.y + 100,
     });
 
@@ -33,11 +33,20 @@ export class FocusScene extends BaseScene {
       y: -200,
     });
 
-    this.actor1 = this.actorList.add.existing<Actor>(new Actor());
-    this.actor2 = this.actorList.add.existing<Actor>(new Actor(0x00fff0));
+    this.actor1 = this.actorList.add.existing<Actor>(new Actor(), {
+      accessibleTitle: 'Actor  1',
+      accessibleHint: 'one',
+    });
+    this.actor2 = this.actorList.add.existing<Actor>(new Actor(0x00fff0), {
+      accessibleTitle: 'Actor 2',
+      accessibleHint: 'two',
+    });
 
     this.actor1.onInteraction('pointerdown').connect(() => {
       Logger.log('actor 1 clicked');
+    });
+    this.actor2.onInteraction('pointerdown').connect(() => {
+      Logger.log('actor 2 clicked');
     });
 
     this.list = this.add.flexContainer({
@@ -67,6 +76,9 @@ export class FocusScene extends BaseScene {
       textures: { default: 'jar', hover: 'jar2' },
       sheet: 'sheet.json',
       cursor: 'pointer',
+      accessible: true,
+      accessibleTitle: 'Button',
+      accessibleHint: 'HI!',
     });
 
     this.button.onClick.connect(() => {

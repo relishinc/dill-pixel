@@ -1,4 +1,5 @@
 import { Container, Focusable, Interactive, IPopup, Popup } from 'dill-pixel';
+
 import { gsap } from 'gsap';
 import { Graphics, Text } from 'pixi.js';
 
@@ -12,16 +13,16 @@ export class SimpleButton extends _Button {
     this.init();
   }
 
-  focusIn() {}
-
   init() {
     this.view = this.add.graphics().roundRect(0, 0, 60, 40).fill(0xff0000);
   }
 }
 
+class FocusableText extends Focusable(Text) {}
+
 export class ExamplePopup extends Popup implements IPopup {
   window: Container;
-  title: Text;
+  title: FocusableText;
   closeButton: SimpleButton;
 
   protected _showAnimation: gsap.core.Timeline;
@@ -29,16 +30,31 @@ export class ExamplePopup extends Popup implements IPopup {
   initialize() {
     this.window = this.view.add.container({ x: -300, y: -200 });
     this.window.add.graphics().roundRect(0, 0, 600, 400, 10).fill({ color: 0x000fff });
-    this.title = this.window.add.text({
-      text: this.config.data?.title ?? 'Example Popup',
-      style: { fill: 'white', fontWeight: 'bold', fontFamily: 'Arial' },
-      x: 50,
-      y: 80,
-    });
+
+    this.title = this.window.add.existing(
+      new FocusableText({
+        text: this.config.data?.title ?? 'Example Popup',
+        style: {
+          fill: 'white',
+          fontWeight: 'bold',
+          fontFamily: 'Arial',
+        },
+      }),
+      {
+        x: 50,
+        y: 80,
+        accessibleTitle: 'Popup text',
+        accessibleType: 'div',
+        accessibleHint: this.config.data?.title ?? 'Example' + ' Popup',
+      },
+    );
 
     this.closeButton = this.window.add.existing(new SimpleButton(), { x: 530, y: 10 });
+    this.closeButton.accessibleTitle = 'Close button';
+    this.closeButton.accessibleHint = 'Click to close popup';
 
     this.firstFocusableEntity = this.closeButton;
+    this.app.focus.add(this.title, this.id, false);
 
     if (this.backing) {
       this.backing.alpha = 0;
@@ -59,7 +75,6 @@ export class ExamplePopup extends Popup implements IPopup {
 
   public start() {
     this.closeButton.onInteraction('click').connectOnce(this.close);
-    this.closeButton.onInteraction('tap').connectOnce(this.close);
   }
 
   async hide() {
