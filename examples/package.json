@@ -5,7 +5,6 @@
   "main": "index.html",
   "scripts": {
     "clean": "rimraf dist/* public/* .assetpack/*",
-    "prestart": "run-s assets",
     "predev": "run-s assets",
     "assets": "assetpack -c .assetpack.mjs",
     "start": "vite",
@@ -27,6 +26,7 @@
     "@types/dat.gui": "^0.7.11",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
+    "npm-run-all": "^4.1.5",
     "prettier": "^3.0.3",
     "relishinc-prettier": "github:relishinc/prettier",
     "typescript": "^5.2.2"

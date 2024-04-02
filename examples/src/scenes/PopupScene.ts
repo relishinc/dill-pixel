@@ -1,6 +1,7 @@
 import { Button, Container } from 'dill-pixel';
 import { PopupConfig } from '../../../src/display/Popup.ts';
 import { ExamplePopup } from '../popups/ExamplePopup.ts';
+
 import { BaseScene } from './BaseScene';
 
 export class PopupScene extends BaseScene {
@@ -11,18 +12,19 @@ export class PopupScene extends BaseScene {
   public async initialize() {
     await super.initialize();
     this.app.focus.addFocusLayer(this.id);
-    
+
     this.app.popups.add('one', ExamplePopup);
     this.app.popups.add('two', ExamplePopup);
     this.app.popups.add('three', ExamplePopup);
 
     this.buttonContainer = this.add.container();
 
-    this.addButton('Popup 1', () =>
+    this.addButton('Popup 1', () => {
+      console.log('p1');
       this.showPopup('one', {
         data: { title: `Example Popup 1` },
-      }),
-    );
+      });
+    });
     this.addButton('Popup 2', () =>
       this.showPopup('two', {
         data: { title: `Example Popup 2:\nWon't close on ESC` },
@@ -61,6 +63,8 @@ export class PopupScene extends BaseScene {
       cursor: 'pointer',
       textures: { default: 'btn/blue', hover: 'btn/yellow', disabled: 'btn/grey', active: 'btn/red' },
       sheet: 'ui.json',
+      accessibleTitle: label,
+      accessibleHint: `Press me to show a popup`,
     });
 
     btn.add.text({
