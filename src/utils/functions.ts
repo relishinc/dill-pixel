@@ -1,5 +1,5 @@
 import { Point } from 'pixi.js';
-import { PointLike, SpriteSheetLike, TextureLike } from './types';
+import { PointLike, Size, SizeLike, SpriteSheetLike, TextureLike } from './types';
 
 type PointLikeResult = { x: number; y: number } | Point;
 
@@ -33,6 +33,23 @@ export function resolvePointLike(
   }
 
   return asPoint ? new Point(x, y) : { x, y };
+}
+
+export function resolveSizeLike(size?: SizeLike): Size {
+  if (size === undefined) {
+    return { width: 0, height: 0 };
+  }
+  if (Array.isArray(size)) {
+    return { width: size[0], height: size[1] === undefined ? size[0] : size[1] };
+  } else if (size instanceof Point) {
+    return { width: size.x, height: size.y };
+  } else if (typeof size === 'object') {
+    // cast as an object
+    const obj = size as { width: number; height: number };
+    return { width: obj.width || 0, height: obj.height || 0 };
+  } else {
+    return { width: size ?? 0, height: size ?? 0 };
+  }
 }
 
 export function getSheetLikeString(sheet: SpriteSheetLike) {

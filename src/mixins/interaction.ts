@@ -1,7 +1,7 @@
 import { AllFederatedEventMap, DestroyOptions, FederatedEvent } from 'pixi.js';
 import { PIXIContainer } from '../pixi';
-
 import { Signal } from '../signals';
+
 import { Constructor } from '../utils/types';
 
 // gets all the event names from the PIXI event map

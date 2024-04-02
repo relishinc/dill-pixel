@@ -45,7 +45,6 @@
   "license": "MIT",
   "homepage": "https://github.com/relishinc/hlf#readme",
   "devDependencies": {
-    "@biomejs/biome": "^1.6.0",
     "@commitlint/cli": "^17.6.5",
     "@commitlint/config-conventional": "^17.6.5",
     "@types/stats.js": "^0.17.3",
