@@ -20,7 +20,6 @@ export class PopupScene extends BaseScene {
     this.buttonContainer = this.add.container();
 
     this.addButton('Popup 1', () => {
-      console.log('p1');
       this.showPopup('one', {
         data: { title: `Example Popup 1` },
       });

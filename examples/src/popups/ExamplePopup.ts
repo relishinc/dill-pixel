@@ -75,6 +75,7 @@ export class ExamplePopup extends Popup implements IPopup {
 
   public start() {
     this.closeButton.onInteraction('click').connectOnce(this.close);
+    this.closeButton.onInteraction('tap').connectOnce(this.close);
   }
 
   async hide() {

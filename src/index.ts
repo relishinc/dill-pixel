@@ -93,6 +93,7 @@ export { Popup } from './display/Popup';
 export { Button } from './display/Button';
 export { Scene } from './display/Scene';
 export { FlexContainer } from './display/FlexContainer';
+export { UICanvas } from './display/UICanvas';
 export type {
   IFlexContainer,
   FlexWrap,

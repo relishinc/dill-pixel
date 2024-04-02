@@ -3,6 +3,7 @@ import { Container as PIXIContainer, Graphics, Sprite, Text } from 'pixi.js';
 import { Button, ButtonConfig, ButtonConfigKeys } from '../../display/Button';
 import { Container } from '../../display/Container';
 import { FlexContainer, FlexContainerConfig, FlexContainerConfigKeys } from '../../display/FlexContainer';
+import { UICanvas, UICanvasConfig, UICanvasConfigKeys } from '../../display/UICanvas';
 import { resolvePointLike } from '../../utils/functions';
 import { omitKeys, pluck } from '../../utils/object';
 import {
@@ -14,6 +15,7 @@ import {
   SpineProps,
   SpriteProps,
   TextProps,
+  UICanvasFactoryProps,
 } from './props';
 import {
   resolveAnchor,
@@ -106,6 +108,18 @@ export const defaultFactoryMethods = {
     const config = pluck(props ?? {}, FlexContainerConfigKeys);
     const otherProps = omitKeys<FlexContainerProps, keyof FlexContainerConfig>(FlexContainerConfigKeys, props ?? {});
     const entity = new FlexContainer(config);
+    if (!otherProps) return entity;
+    const { position, x, y, pivot, scale, scaleX, scaleY, ...rest } = otherProps;
+    resolvePosition({ position, x, y }, entity);
+    resolveScale({ scale, scaleX, scaleY }, entity);
+    resolvePivot(pivot, entity);
+    resolveUnknownKeys(rest, entity);
+    return entity;
+  },
+  uiCanvas: (props?: Partial<UICanvasFactoryProps>): UICanvas => {
+    const config = pluck(props ?? {}, UICanvasConfigKeys);
+    const otherProps = omitKeys<FlexContainerProps, keyof UICanvasConfig>(UICanvasConfigKeys, props ?? {});
+    const entity = new UICanvas(config);
     if (!otherProps) return entity;
     const { position, x, y, pivot, scale, scaleX, scaleY, ...rest } = otherProps;
     resolvePosition({ position, x, y }, entity);

@@ -1,4 +1,5 @@
 import { Cursor, Sprite } from 'pixi.js';
+
 import { Application } from '../core/Application';
 import { FactoryContainer } from '../mixins/factory';
 import { Focusable } from '../mixins/focus';
@@ -86,8 +87,8 @@ export class Button extends _Button {
       this.onInteraction('pointerout').connect(this.handlePointerOut, -1),
       this.onInteraction('pointerup').connect(this.handlePointerUp, -1),
       this.onInteraction('click').connect(this.handleClick, -1),
-      this.onInteraction('pointerdown').connect(this.handlePointerDown, -1),
       this.onInteraction('tap').connect(this.handleClick, -1),
+      this.onInteraction('pointerdown').connect(this.handlePointerDown, -1),
     );
   }
 
@@ -119,6 +120,18 @@ export class Button extends _Button {
 
   get app() {
     return Application.getInstance();
+  }
+
+  focusOut() {
+    super.focusOut();
+    this.isDown = false;
+    this.isOver = false;
+  }
+
+  blur() {
+    super.blur();
+    this.isDown = false;
+    this.isOver = false;
   }
 
   public getFocusArea() {
@@ -201,13 +214,8 @@ export class Button extends _Button {
   }
 
   protected handleClick() {
-    if ((!this._enabled || !this.isOver) && !this.isKeyDown) {
-      return;
-    }
-    if (this.isDown || this.isKeyDown) {
-      this.isDown = false;
-      this.onClick.emit();
-    }
+    this.isDown = false;
+    this.onClick.emit();
   }
 
   /**

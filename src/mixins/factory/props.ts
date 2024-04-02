@@ -1,6 +1,7 @@
 import { TextStyleOptions } from 'pixi.js';
 import { ButtonConfig } from '../../display/Button';
 import { FlexContainerConfig } from '../../display/FlexContainer';
+import { UICanvasProps } from '../../display/UICanvas';
 import { PointLike, SpriteSheetLike, TextureLike, WithRequiredProps } from '../../utils/types';
 
 export interface AbstractProps {
@@ -52,6 +53,8 @@ export interface TextProps extends AbstractProps, PositionProps, ScaleProps, Vis
 export interface ContainerProps extends AbstractProps, PositionProps, ScaleProps, PivotProps, VisibilityProps {}
 
 export interface FlexContainerProps extends ContainerProps, FlexContainerConfig {}
+
+export interface UICanvasFactoryProps extends ContainerProps, UICanvasProps {}
 
 // spine
 type SpineData = {

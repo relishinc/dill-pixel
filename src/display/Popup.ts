@@ -165,7 +165,6 @@ export class Popup extends Container implements IPopup {
     if (this.config.backing) {
       this.backing = this.add.existing(Popup.makeBacking(this.config.backing, this.app.size));
       this.backing.eventMode = 'static';
-
       if (this.config.closeOnPointerDownOutside) {
         this.backing.once('pointerup', this._handlePointerUp);
         this.backing.once('tap', this._handlePointerUp);

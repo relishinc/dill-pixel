@@ -1,5 +1,6 @@
 import { Bounds, Container, PointerEvents, PointLike } from 'pixi.js';
 import { IApplication } from '../../../core/Application';
+
 import { CoreModule } from '../../../core/decorators';
 import { PIXIContainer } from '../../../pixi';
 import { Signal } from '../../../signals';
@@ -19,6 +20,8 @@ export interface IFocusable {
   isFocused: boolean;
   isKeyDown: boolean;
   focusEnabled: boolean;
+  tabIndex: number;
+  _accessibleDiv?: HTMLElement;
 
   // pixi accessibility features
   accessible: boolean;
@@ -26,7 +29,6 @@ export interface IFocusable {
   accessibleTitle: string;
   accessibleHint: string;
   accessiblePointerEvents?: PointerEvents;
-  tabIndex: number;
   accessibleChildren: boolean;
 
   // signals
@@ -40,7 +42,7 @@ export interface IFocusable {
 
   focusOut(): void;
 
-  focus(): void;
+  click(): void;
 
   blur(): void;
 
@@ -55,6 +57,10 @@ export interface IFocusLayer {
   currentFocusable: IFocusable | null;
   defaultFocusable: IFocusable | null;
   lastFocusable: IFocusable | null;
+  current: boolean;
+  availableFocusables: IFocusable[];
+
+  setCurrentFocusable(focusable: IFocusable | null): IFocusable | null;
 
   hasFocusable(focusable: IFocusable | null): boolean;
 
@@ -64,7 +70,7 @@ export interface IFocusLayer {
 
   removeFocusable(focusable: IFocusable): void;
 
-  navigate(direction: number): void;
+  sortFocusables(): void;
 }
 
 class FocusLayer implements IFocusLayer {
@@ -74,20 +80,30 @@ class FocusLayer implements IFocusLayer {
 
   private _focusables: IFocusable[] = [];
   private _currentIndex: number = 0;
+  private _current: boolean = false;
 
-  constructor() {}
+  constructor(public id: string | number) {}
 
-  private get _availableFocusables(): IFocusable[] {
+  set current(value: boolean) {
+    this._current = value;
+    this.setCurrent();
+  }
+
+  public get availableFocusables(): IFocusable[] {
     return this._focusables.filter((f) => f.focusEnabled);
   }
 
   public setCurrent() {
-    if (!this.defaultFocusable) {
-      this.defaultFocusable = this._focusables[0];
+    if (this._current) {
+      if (!this.defaultFocusable) {
+        this.defaultFocusable = this._focusables[0];
+      }
+      this.sortFocusables();
+    } else {
+      for (let i = 0; i < this._focusables.length; i++) {
+        this._focusables[i].accessible = false;
+      }
     }
-    this._focusables.forEach((f) => {
-      f.accessible = true;
-    });
   }
 
   public hasFocusable(focusable: IFocusable | null) {
@@ -99,9 +115,11 @@ class FocusLayer implements IFocusLayer {
 
   public addFocusable(focusable: IFocusable, isDefault: boolean = false): void {
     this._focusables.push(focusable);
-    focusable.tabIndex = this._focusables.length - 1;
     if (isDefault) {
       this.defaultFocusable = focusable;
+    }
+    if (this._current) {
+      this.sortFocusables();
     }
   }
 
@@ -122,16 +140,33 @@ class FocusLayer implements IFocusLayer {
         this.defaultFocusable = null;
       }
     }
+    if (this._current) {
+      this.sortFocusables();
+    }
   }
 
-  public navigate(direction: number): void {
-    const available = this._availableFocusables;
-    if (!available?.length) {
-      return;
+  public sortFocusables() {
+    for (let i = 0; i < this._focusables.length; i++) {
+      this._focusables[i].accessible = this._current;
+      this._focusables[i].tabIndex = this._current ? Math.max(i, 1) + 1 : -1;
+      if (this._focusables[i] === this.defaultFocusable) {
+        this._focusables[i].tabIndex = this._current ? 1 : -1;
+      }
     }
-    
-    this._currentIndex = (this._currentIndex + direction + available.length) % available.length;
-    this.currentFocusable = available[this._currentIndex];
+    if (this._current) {
+      this._focusables.sort((a, b) => a.tabIndex - b.tabIndex);
+    }
+  }
+
+  setCurrentFocusable(focusable: IFocusable | null) {
+    if (focusable) {
+      this._currentIndex = this._focusables.indexOf(focusable);
+      this.currentFocusable = focusable;
+    } else {
+      this._currentIndex = -1;
+      this.currentFocusable = null;
+    }
+    return this.currentFocusable;
   }
 }
 
@@ -148,6 +183,10 @@ export interface IFocusManager extends IModule {
   onFocusManagerDeactivated: Signal<() => void>;
   onFocusLayerChange: Signal<(currentLayerId: string | number) => void>;
   onFocusChange: Signal<(detail: FocusChangeDetail) => void>;
+
+  enabled: boolean;
+
+  restart(): void;
 
   focus(focusable: IFocusable): void;
 
@@ -191,6 +230,15 @@ export class FocusManager extends Module implements IFocusManager {
   private _focusTarget: IFocusable | null = null;
 
   private _active: boolean = false;
+  private _enabled: boolean = true;
+
+  get enabled() {
+    return this._enabled;
+  }
+
+  set enabled(value: boolean) {
+    this._enabled = value;
+  }
 
   get active(): boolean {
     return this._active;
@@ -209,7 +257,9 @@ export class FocusManager extends Module implements IFocusManager {
   }
 
   public initialize(app: IApplication): void {
-    bindMethods(this, 'removeAllFocusLayers');
+    this._updateAccesibilityDivId();
+
+    bindMethods(this, 'removeAllFocusLayers', '_handleGlobalMouseMove', '_handleGlobalPointerDown');
 
     const options: Partial<FocusManagerOptions> = app.config?.focusOptions || {};
     this._focusOutliner =
@@ -223,13 +273,17 @@ export class FocusManager extends Module implements IFocusManager {
   }
 
   public destroy(): void {
+    this._removeGlobalListeners();
     this.deactivate();
     this._focusOutliner.destroy();
     this._layers.clear();
+    super.destroy();
   }
 
   public deactivate(): void {
     this._setTarget(null);
+    this._updateOutliner();
+    this._active = false;
   }
 
   public add(focusable: IFocusable | IFocusable[], layerId?: string | number, isDefault: boolean = false): void {
@@ -238,11 +292,11 @@ export class FocusManager extends Module implements IFocusManager {
 
   public addFocusable(
     focusable: IFocusable | IFocusable[],
-    layerId?: string | number,
+    layerId?: string | number | null | undefined,
     isDefault: boolean = false,
   ): void {
-    if (layerId === undefined) {
-      layerId = getLastMapEntry(this._layers)?.[0];
+    if (layerId === undefined || layerId == null) {
+      layerId = this._currentLayerId ?? null;
     }
     const layer = this._layers.get(layerId!);
     if (!layer) {
@@ -252,9 +306,13 @@ export class FocusManager extends Module implements IFocusManager {
     if (!Array.isArray(focusable)) {
       focusable = [focusable];
     }
-    (focusable as IFocusable[]).forEach((f) => {
-      layer.addFocusable(f, isDefault);
+    (focusable as IFocusable[]).forEach((f, idx) => {
+      layer.addFocusable(f, idx === 0 && isDefault);
     });
+
+    if (this._active && this.app.renderer.accessibility.isActive && isDefault) {
+      this._setTarget(layer.currentFocusable || layer.defaultFocusable || null, !this._active);
+    }
   }
 
   public remove(focusable: IFocusable | IFocusable[]) {
@@ -296,7 +354,7 @@ export class FocusManager extends Module implements IFocusManager {
       Logger.error(`Layer with ID ${layerId} already exists.`);
       newLayer = this._layers.get(layerId)!;
     } else {
-      newLayer = new FocusLayer();
+      newLayer = new FocusLayer(layerId);
       this._layers.set(layerId, newLayer);
     }
 
@@ -321,6 +379,15 @@ export class FocusManager extends Module implements IFocusManager {
     this._postDelete(nextLayerId);
   }
 
+  public restart(reverse: boolean = false) {
+    const layer = this._getCurrentLayer();
+    this._setTarget(
+      reverse
+        ? layer?.availableFocusables?.[layer?.availableFocusables?.length - 1] || null
+        : layer?.defaultFocusable || null,
+    );
+  }
+
   public forceFocus(focusable: IFocusable) {
     this.focus(focusable);
   }
@@ -339,19 +406,25 @@ export class FocusManager extends Module implements IFocusManager {
     }
     this._currentLayerId = layerId;
     const currentLayer = this._getCurrentLayer();
-
     if (currentLayer) {
-      currentLayer.setCurrent();
+      currentLayer.current = true;
+      this._layers.forEach((layer, key) => {
+        layer.current = key === layerId;
+      });
+      currentLayer.sortFocusables();
       this._setTarget(currentLayer.currentFocusable || currentLayer.defaultFocusable || null, !this._active);
     }
-
     this.onFocusLayerChange.emit(this._currentLayerId);
   }
 
   public removeAllFocusLayers(): void {
-    Logger.log('FocusManager:: removing all layers');
     this._layers.clear();
     this._setTarget(null);
+  }
+
+  private _updateAccesibilityDivId() {
+    // @ts-ignore
+    this.app.renderer.accessibility._div.setAttribute('id', 'pixi-accessibility');
   }
 
   private _getCurrentLayer() {
@@ -377,86 +450,129 @@ export class FocusManager extends Module implements IFocusManager {
   }
 
   private _setTarget(focusTarget: IFocusable | null, setInactiveOnNull: boolean = true) {
-    if (!this._active) {
-      return;
-    }
-    let shouldEmit = false;
-    if (this._focusTarget !== focusTarget) {
-      shouldEmit = true;
-      // call the focus out methods on the current focusable, which is changing
-      if (this._focusTarget) {
-        this._focusTarget.focusOut();
-        this._focusTarget.isFocused = false;
-        this._focusTarget.onFocusOut.emit(this._focusTarget);
-        this._focusTarget.blur();
-        this._focusTarget.onBlur.emit(this._focusTarget);
-      }
-    }
-
+    const layer = this._getCurrentLayer();
+    const oldFocusTarget = this._focusTarget;
     this._focusTarget = focusTarget;
-
-    if (this._focusTarget) {
-      if (this._getCurrentLayer()?.hasFocusable(focusTarget)) {
-        // call focusIn on the focusable
-        if (this._focusTarget) {
-          this._focusTarget.focusIn();
-          this._focusTarget.isFocused = true;
-          this._focusTarget.onFocusIn.emit(this._focusTarget);
-          this._updateOutliner();
+    // call the focus out methods on the current focusable, which is changing
+    if (oldFocusTarget && this._active) {
+      this._clearFocusTarget(oldFocusTarget);
+    }
+    if (this.app.renderer.accessibility.isActive) {
+      if (this._focusTarget) {
+        if (!this._active) {
+          this._active = true;
         }
-      } else {
-        Logger.warn(`The focusable ${focusTarget} does not exist on the current focus layer: ${this._currentLayerId}`);
+        //@ts-ignore
+        if (!this._focusTarget._accessibleDiv) {
+          this.app.renderer.accessibility.postrender();
+        }
+        this.app.ticker.addOnce(() => {
+          this._focusTarget?._accessibleDiv?.focus();
+        });
+
+        if (layer?.hasFocusable(focusTarget)) {
+          // call focusIn on the focusable
+          if (this._focusTarget) {
+            this._focusTarget.focusIn();
+            this._focusTarget.isFocused = true;
+            this._focusTarget.onFocusIn.emit(this._focusTarget);
+            layer.setCurrentFocusable(this._focusTarget);
+            this._updateOutliner();
+          }
+        } else {
+          Logger.warn(
+            `The focusable`,
+            focusTarget,
+            `does not exist on the current focus layer: ${this._currentLayerId}`,
+          );
+        }
       }
     } else {
       this._focusOutliner.clear();
-
       if (this._active && setInactiveOnNull) {
-        shouldEmit = true;
         this._active = false;
         this.onFocusManagerDeactivated.emit();
+        return;
       }
     }
 
-    if (shouldEmit) {
-      this.onFocusChange.emit({ focusable: focusTarget, layer: this._currentLayerId });
+    if (oldFocusTarget !== focusTarget && this._active) {
+      this.onFocusChange.emit({ focusable: this._focusTarget, layer: this._currentLayerId });
     }
+  }
+
+  private _clearFocusTarget(focusTarget: IFocusable | null) {
+    if (!focusTarget) {
+      return;
+    }
+    focusTarget.focusOut();
+    focusTarget.isFocused = false;
+    focusTarget.onFocusOut.emit(focusTarget);
+    focusTarget.blur();
+    focusTarget.onBlur.emit(focusTarget);
   }
 
   private _setupKeyboardListeners(): void {
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Tab') {
-        e.preventDefault();
-        const direction = this._active ? (e.shiftKey ? -1 : 1) : 0;
-        if (!this._active) {
-          this._active = true;
-          this.onFocusManagerActivated.emit();
-        }
-        this._navigate(direction);
+      if (!this._enabled) {
+        return;
       }
-      if (e.key === 'Enter' || e.key === ' ') {
-        if (this._active && this._focusTarget) {
-          this._focusTarget.focus();
-          this._focusTarget.onFocus.emit(this._focusTarget);
+      if (e.key === 'Tab') {
+        const layer = this._getCurrentLayer();
+        const focusables = layer?.availableFocusables;
+
+        if (!focusables) {
+          return;
+        }
+        // check if we're on the last focusable
+
+        if (
+          (e.shiftKey && this._focusTarget === focusables[0]) ||
+          (!e.shiftKey && this._focusTarget === focusables[focusables.length - 1])
+        ) {
+          e.preventDefault();
+          this.restart(e.shiftKey);
         }
       }
     });
 
-    window.addEventListener('mousedown', () => {
+    this._addGlobalListeners();
+  }
+
+  private _addGlobalListeners() {
+    globalThis.document.addEventListener('mousemove', this._handleGlobalMouseMove);
+    globalThis.document.addEventListener('pointerdown', this._handleGlobalPointerDown);
+  }
+
+  private _removeGlobalListeners() {
+    globalThis.document.removeEventListener('mousemove', this._handleGlobalMouseMove);
+    globalThis.document.removeEventListener('pointerdown', this._handleGlobalPointerDown);
+  }
+
+  private _handleGlobalMouseMove(e: MouseEvent) {
+    if (!this._enabled) {
+      return;
+    }
+    if (this._active) {
       this.deactivate();
-    });
+    }
+  }
+
+  private _handleGlobalPointerDown(e: PointerEvent) {
+    if (!this._enabled) {
+      return;
+    }
+    if (this._active) {
+      this.deactivate();
+    }
+    if (this.app.renderer.accessibility.isActive) {
+      // @ts-ignore
+      this.app.renderer.accessibility._deactivate();
+    }
   }
 
   private _setupAppListeners(): void {
     this.app.scenes.onSceneChangeStart.connect(this.removeAllFocusLayers);
-  }
-
-  private _navigate(direction: number): void {
-    if (this._currentLayerId == null || this._layers.size === 0) return;
-    const currentLayer = this._layers.get(this._currentLayerId);
-    if (currentLayer) {
-      currentLayer.navigate(direction);
-      this._setTarget(currentLayer.currentFocusable);
-    }
   }
 
   private _updateOutliner() {

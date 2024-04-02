@@ -27,6 +27,7 @@ export type Size = { width: number; height: number };
  * A type that represents a point, which can be a number, an object with x and y properties, an array of two numbers, or a Point instance.
  */
 export type PointLike = number | { x: number; y: number } | [number, number?] | [number] | number[] | Point;
+export type SizeLike = PointLike | { width: number; height: number } | Size;
 
 /**
  * A type that represents a rectangle, with x, y, width, and height properties.
