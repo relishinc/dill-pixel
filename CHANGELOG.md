@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.38.9](https://github.com/relishinc/dill-pixel/compare/v2.38.8...v2.38.9) (2024-04-03)
+
+
+### Bug Fixes
+
+* autoDensity ([55e85ea](https://github.com/relishinc/dill-pixel/commit/55e85ea1eb5c35c49c13fdbe2c0255f929e90205))
+
 ## [2.38.8](https://github.com/relishinc/dill-pixel/compare/v2.38.7...v2.38.8) (2024-03-28)
 
 
