@@ -54,7 +54,7 @@ export class AppConfig {
       };
     } else {
       // If a config is provided but particular properties are not set that need to be, do your sanity checks here.
-      if (pConfig.autoDensity === undefined || !pConfig.autoDensity) {
+      if (pConfig.autoDensity === undefined) {
         pConfig.autoDensity = true;
       }
       if (pConfig.powerPreference === undefined) {
