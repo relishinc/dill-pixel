@@ -44,11 +44,13 @@ export function create<T extends Application = Application>(
   ApplicationClass: typeof Application,
   config?: Partial<DillPixelApplicationOptions>,
   domElement?: string | HTMLElement,
+  resizeToDOMElement?: boolean,
 ): Promise<T> | T;
 export async function create<T extends Application = Application>(
   ApplicationClass: typeof Application,
   config: Partial<DillPixelApplicationOptions> = {},
   domElement: string | HTMLElement = ApplicationClass.containerID || Application.containerID,
+  resizeToDOMElement = true,
 ): Promise<T> {
   let el: HTMLElement | null = null;
   if (typeof domElement === 'string') {
@@ -65,7 +67,9 @@ export async function create<T extends Application = Application>(
       'You passed in a DOM Element, but none was found. If you instead pass in a string, a container will be created for you, using the string for its id.',
     );
   }
-  config.resizeTo = el;
+  if (resizeToDOMElement) {
+    config.resizeTo = el;
+  }
   const instance = new ApplicationClass(config);
 
   if (el) {
