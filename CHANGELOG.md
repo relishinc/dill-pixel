@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.38.10](https://github.com/relishinc/dill-pixel/compare/v2.38.9...v2.38.10) (2024-04-04)
+
+
+### Bug Fixes
+
+* auto setting resizeTo in create method ([524f2be](https://github.com/relishinc/dill-pixel/commit/524f2be1f1315ab76fb8ea79d96a927a4b62ab16))
+
 ## [2.38.9](https://github.com/relishinc/dill-pixel/compare/v2.38.8...v2.38.9) (2024-04-03)
 
 
