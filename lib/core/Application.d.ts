@@ -20,7 +20,7 @@ export type Font = {
         weight?: number | string;
     };
 };
-export declare function create<T extends Application = Application>(ApplicationClass: typeof Application, config?: Partial<DillPixelApplicationOptions>, domElement?: string | HTMLElement): Promise<T> | T;
+export declare function create<T extends Application = Application>(ApplicationClass: typeof Application, config?: Partial<DillPixelApplicationOptions>, domElement?: string | HTMLElement, resizeToDOMElement?: boolean): Promise<T> | T;
 export declare class Application<T extends Application = any> extends PIXIApplication {
     protected static readonly SIZE_MIN_DEFAULT: Point;
     protected static readonly SIZE_MAX_DEFAULT: Point;
