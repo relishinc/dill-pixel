@@ -1,7 +1,7 @@
 import { UPDATE_PRIORITY } from 'pixi.js';
-import { Application, IApplication } from '../../core/Application';
-import { isDev } from '../../utils/env';
-import { Module } from '../Module';
+import { Application, IApplication } from '../core/Application';
+import { isDev } from '../utils/env';
+import { Module } from './Module';
 
 export class StatsModule extends Module {
   public readonly id = 'StatsModule';

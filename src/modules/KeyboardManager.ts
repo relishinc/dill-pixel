@@ -1,7 +1,7 @@
-import { CoreFunction, CoreModule } from '../../core/decorators';
-import { Signal } from '../../signals';
-import type { IModule } from '../Module';
-import { Module } from '../Module';
+import { CoreFunction, CoreModule } from '../core/decorators';
+import { Signal } from '../signals';
+import type { IModule } from './Module';
+import { Module } from './Module';
 
 type KeyboardEventType = 'keydown' | 'keyup';
 export type KeyboardEventDetail = { event: KeyboardEvent; key: string };

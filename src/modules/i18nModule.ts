@@ -1,10 +1,10 @@
 import { Assets } from 'pixi.js';
-import { IApplication } from '../../core/Application';
-import { Signal } from '../../signals';
-import { Logger } from '../../utils/console/Logger';
-import { getDynamicModuleFromImportListItem } from '../../utils/framework';
-import { Constructor, ImportListItem } from '../../utils/types';
-import { IModule, Module } from '../Module';
+import { IApplication } from '../core/Application';
+import { Signal } from '../signals';
+import { Logger } from '../utils/console/Logger';
+import { getDynamicModuleFromImportListItem } from '../utils/framework';
+import { ImportListItem, ImportListItemModule } from '../utils/types';
+import { IModule, Module } from './Module';
 
 /**
  * Type definition for i18n dictionary.
@@ -23,7 +23,7 @@ type i18nImportListItem<T> = {
   id: string;
   namedExport?: string;
   options?: any;
-  module?: (() => Promise<any>) | Promise<any> | Constructor<T> | T;
+  module?: ImportListItemModule<T>;
 } & {
   json?: string;
 };

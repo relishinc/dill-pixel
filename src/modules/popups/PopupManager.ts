@@ -1,12 +1,12 @@
-import { IApplication } from '../../../core/Application';
-import { CoreModule } from '../../../core/decorators';
-import { Container } from '../../../display/Container';
-import { IPopup, PopupConfig, PopupConstructor } from '../../../display/Popup';
-import { Signal } from '../../../signals';
-import { getLastMapEntry } from '../../../utils/map';
-import { bindAllMethods } from '../../../utils/methodBinding';
-import type { IModule } from '../../Module';
-import { Module } from '../../Module';
+import { IApplication } from '../../core/Application';
+import { CoreModule } from '../../core/decorators';
+import { Container } from '../../display/Container';
+import { IPopup, PopupConfig, PopupConstructor } from '../../display/Popup';
+import { Signal } from '../../signals';
+import { getLastMapEntry } from '../../utils/map';
+import { bindAllMethods } from '../../utils/methodBinding';
+import type { IModule } from '../Module';
+import { Module } from '../Module';
 
 /**`
  * Interface for PopupManager

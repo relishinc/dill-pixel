@@ -1,5 +1,5 @@
 import { isPromise } from './async';
-import { Constructor, ImportListItem } from './types';
+import { Constructor, ImportListItem, ImportListItemModule } from './types';
 
 /**
  * Checks if the given value is a class.
@@ -19,9 +19,11 @@ function isClass(value: any): boolean {
  * @param {ImportListItem<T>} item The import list item to get the module from.
  * @returns {Promise<Constructor<T>>} A promise that resolves to the constructor of the module.
  */
-export async function getDynamicModuleFromImportListItem<T = any>(item: ImportListItem<T>): Promise<Constructor<T>> {
+export async function getDynamicModuleFromImportListItem<T = any>(
+  item: ImportListItem<T>,
+): Promise<ImportListItemModule<T>> {
   let module;
-  let ctor: Constructor<T>;
+  let ctor: ImportListItemModule<T>;
 
   if (isPromise(item.module)) {
     module = await item.module;

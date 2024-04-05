@@ -10,28 +10,28 @@ import {
   RendererDestroyOptions,
 } from 'pixi.js';
 import { IScene } from '../display/Scene';
-import { IAssetManager } from '../modules/default/AssetManager';
-import { IAudioManager } from '../modules/default/audio/AudioManager';
+import { IAssetManager } from '../modules/AssetManager';
+import { IAudioManager } from '../modules/audio/AudioManager';
 
-import defaultModules from '../modules/default/defaultModules';
-import { FocusManagerOptions, IFocusManager } from '../modules/default/focus/FocusManager';
-import { i18nOptions, Ii18nModule } from '../modules/default/i18nModule';
-import { IKeyboardManager } from '../modules/default/KeyboardManager';
-import { IPopupManager } from '../modules/default/popups/PopupManager';
-import { ISceneManager, LoadSceneMethod } from '../modules/default/SceneManager';
-import { SpineModule } from '../modules/default/SpineModule';
-import { IWebEventsManager } from '../modules/default/WebEventsManager';
+import defaultModules from '../modules/defaultModules';
+import { FocusManagerOptions, IFocusManager } from '../modules/focus/FocusManager';
+import { i18nOptions, Ii18nModule } from '../modules/i18nModule';
+import { IKeyboardManager } from '../modules/KeyboardManager';
 import { IModule } from '../modules/Module';
+import { IPopupManager } from '../modules/popups/PopupManager';
+import { IResizer, ResizerOptions } from '../modules/Resizer';
+import { ISceneManager, LoadSceneMethod } from '../modules/SceneManager';
+import { SpineModule } from '../modules/SpineModule';
+import { IWebEventsManager } from '../modules/WebEventsManager';
 import { Signal } from '../signals';
 import { IStorageAdapter } from '../store/adapters/StorageAdapter';
 import { IStore, Store } from '../store/Store';
-import { delay, isPromise } from '../utils/async';
+import { isPromise } from '../utils/async';
 import { Logger } from '../utils/console/Logger';
 import { isDev } from '../utils/env';
 import { getDynamicModuleFromImportListItem } from '../utils/framework';
 import { bindAllMethods } from '../utils/methodBinding';
-import { isMobile, isRetina } from '../utils/platform';
-import { ImportList, Size, WithRequiredProps } from '../utils/types';
+import { AppSize, ImportList, Size, WithRequiredProps } from '../utils/types';
 import { coreFunctionRegistry } from './coreFunctionRegistry';
 import { coreSignalRegistry } from './coreSignalRegistry';
 import { MethodBindingRoot } from './decorators';
@@ -41,6 +41,7 @@ import { MethodBindingRoot } from './decorators';
 
 export interface IApplicationOptions extends ApplicationOptions {
   id: string;
+  resizeToContainer: boolean;
   useStore: boolean;
   useDefaults: boolean;
   useSpine: boolean;
@@ -53,12 +54,14 @@ export interface IApplicationOptions extends ApplicationOptions {
   showSceneDebugMenu: boolean;
   manifest: AssetsManifest | Promise<AssetsManifest> | string;
   i18n: Partial<i18nOptions>;
+  resizer: Partial<ResizerOptions>;
   showStats: boolean;
 }
 
 const defaultApplicationOptions: Partial<IApplicationOptions> = {
   antialias: false,
   autoStart: true,
+  resizeToContainer: false,
   background: undefined,
   backgroundAlpha: 0,
   backgroundColor: 'transparent',
@@ -75,8 +78,8 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   sharedTicker: true,
   view: undefined,
   width: 0,
-  autoDensity: true,
-  resolution: isMobile ? (isRetina ? 2 : 1) : 2,
+  autoDensity: false,
+  resolution: Math.max(window.devicePixelRatio, 2),
   // dill pixel options
   useStore: true,
   useDefaults: true,
@@ -116,7 +119,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   public static containerId = 'dill-pixel-game-container';
   public static containerElement: HTMLElement;
   // signals
-  public onResize = new Signal<(size: { width: number; height: number }) => void>();
+  public onResize = new Signal<(size: AppSize) => void>();
   // modules
   protected _modules: Map<string, IModule> = new Map();
 
@@ -129,12 +132,12 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   protected _popupManager: IPopupManager;
   protected _audioManager: IAudioManager;
   protected _i18n: Ii18nModule;
+  protected _resizer: IResizer;
 
   // store
   protected _store: IStore;
 
   // size
-  protected _size: Size = { width: 0, height: 0 };
   protected _center = new Point(0, 0);
 
   public static getInstance<T extends Application = Application>(): T {
@@ -152,10 +155,6 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   constructor() {
     super();
     bindAllMethods(this);
-  }
-
-  public get size(): { width: number; height: number } {
-    return this._size;
   }
 
   public get assets(): IAssetManager {
@@ -197,6 +196,10 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this._center;
   }
 
+  get size() {
+    return this.resizer.size;
+  }
+
   public get i18n(): Ii18nModule {
     if (!this._i18n) {
       this._i18n = this.getModule<Ii18nModule>('i18n');
@@ -216,6 +219,13 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       this._audioManager = this.getModule<IAudioManager>('AudioManager');
     }
     return this._audioManager;
+  }
+
+  public get resizer(): IResizer {
+    if (!this._resizer) {
+      this._resizer = this.getModule<IResizer>('resizer');
+    }
+    return this._resizer;
   }
 
   public get store(): IStore {
@@ -460,27 +470,16 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this.scenes.loadDefaultScene();
   }
 
-  private async _resize() {
-    let w = this._size.width;
-    let h = this._size.height;
-    await delay(0.1);
-    if ((this.resizeTo as HTMLElement)?.getBoundingClientRect) {
-      const el = this.resizeTo as HTMLElement;
-      w = el.getBoundingClientRect().width;
-      h = el.getBoundingClientRect().height;
-    } else if ((this.resizeTo as Window)?.innerWidth) {
-      const el = this.resizeTo as Window;
-      w = el.innerWidth;
-      h = el.innerHeight;
-    }
-    this._size = { width: w, height: h };
-    this._center.set(this._size.width * 0.5, this._size.height * 0.5);
+  private async _resize(size: Size) {
+    this.resizer.resize(size);
+
+    this._center.set(this.size.width * 0.5, this.size.height * 0.5);
 
     this.ticker.addOnce(() => {
       this.views.forEach((view) => {
         view.position.set(this._center.x, this._center.y);
       });
-      this.onResize.emit(this._size);
+      this.onResize.emit(this.size);
     });
   }
 
@@ -497,7 +496,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     }
 
     // connect onResize signal
-    this.webEvents.onResize.connect(this._resize);
+    this.webEvents.onResize.connect(this._resize, -1);
 
     // scene manager
     this.scenes.view.label = 'SceneManager';
@@ -510,7 +509,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     this.focus.view.label = 'FocusManager';
     this.stage.addChild(this.focus.view);
 
-    this._resize();
+    void this._resize({ width: window.innerWidth, height: window.innerHeight });
 
     return Promise.resolve();
   }

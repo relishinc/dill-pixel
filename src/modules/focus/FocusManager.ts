@@ -1,15 +1,15 @@
 import { Bounds, Container, PointerEvents, PointLike } from 'pixi.js';
-import { IApplication } from '../../../core/Application';
+import { IApplication } from '../../core/Application';
 
-import { CoreModule } from '../../../core/decorators';
-import { PIXIContainer } from '../../../pixi';
-import { Signal } from '../../../signals';
-import { Logger } from '../../../utils/console/Logger';
-import { getLastMapEntry, getPreviousMapEntry } from '../../../utils/map';
-import { bindMethods } from '../../../utils/methodBinding';
-import { Constructor, PointLike as DillPixelPointLike } from '../../../utils/types';
-import type { IModule } from '../../Module';
-import { Module } from '../../Module';
+import { CoreModule } from '../../core/decorators';
+import { PIXIContainer } from '../../pixi';
+import { Signal } from '../../signals';
+import { Logger } from '../../utils/console/Logger';
+import { getLastMapEntry, getPreviousMapEntry } from '../../utils/map';
+import { bindMethods } from '../../utils/methodBinding';
+import { Constructor, PointLike as DillPixelPointLike } from '../../utils/types';
+import type { IModule } from '../Module';
+import { Module } from '../Module';
 import { FocusOutliner, FocusOutlinerConfig, IFocusOutliner } from './FocusOutliner';
 
 export type FocusManagerOptions = {

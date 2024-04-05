@@ -21,16 +21,27 @@ export type { IApplication, RequiredApplicationConfig } from './core/Application
  * These types are used for type checking the different modules of the application.
  */
 // modules
-export type { IAssetManager } from './modules/default/AssetManager';
-export type { ISceneManager, LoadSceneMethod } from './modules/default/SceneManager';
-export type { IWebEventsManager } from './modules/default/WebEventsManager';
-export type { IKeyboardManager, KeyboardEventDetail } from './modules/default/KeyboardManager';
-export type { IFocusable, IFocusManager, FocusManagerOptions } from './modules/default/focus/FocusManager';
-export type { IAudioManager } from './modules/default/audio/AudioManager';
-export type { Ii18nModule, i18nOptions } from './modules/default/i18nModule';
+export type { IAssetManager } from './modules/AssetManager';
+export type { ISceneManager, LoadSceneMethod } from './modules/SceneManager';
+export type { IWebEventsManager } from './modules/WebEventsManager';
+export type { IKeyboardManager, KeyboardEventDetail } from './modules/KeyboardManager';
+export type { IFocusable, IFocusManager, FocusManagerOptions } from './modules/focus/FocusManager';
+export type { IAudioManager } from './modules/audio/AudioManager';
+export type { Ii18nModule, i18nOptions } from './modules/i18nModule';
+export type { IResizer } from './modules/Resizer';
 export type { IModule } from './modules/Module';
+
 export { Module } from './modules/Module';
-export { default as defaultModules } from './modules/default/defaultModules';
+export { AssetManager } from './modules/AssetManager';
+export { i18nModule } from './modules/i18nModule';
+export { KeyboardManager } from './modules/KeyboardManager';
+export { Resizer } from './modules/Resizer';
+export { SceneManager } from './modules/SceneManager';
+export { SpineModule } from './modules/SpineModule';
+export { StatsModule } from './modules/StatsModule';
+export { WebEventsManager } from './modules/WebEventsManager';
+
+export { default as defaultModules } from './modules/defaultModules';
 
 // store
 /**

@@ -4,7 +4,7 @@ import { Application, IApplication, RequiredApplicationConfig } from './Applicat
 export async function create<T extends IApplication = Application>(
   ApplicationClass: new () => T,
   config: RequiredApplicationConfig = { id: 'DillPixelApplication' },
-  domElement: string | HTMLElement = Application.containerId,
+  domElement: string | Window | HTMLElement = Application.containerId,
   speak: boolean = true,
 ): Promise<T> {
   if (speak) {
@@ -18,6 +18,8 @@ export async function create<T extends IApplication = Application>(
     }
   } else if (domElement instanceof HTMLElement) {
     el = domElement;
+  } else if (domElement === window) {
+    el = document.body;
   }
   if (!el) {
     // no element to use
@@ -25,7 +27,9 @@ export async function create<T extends IApplication = Application>(
       'You passed in a DOM Element, but none was found. If you instead pass in a string, a container will be created for you, using the string for its id.',
     );
   }
-  config.resizeTo = el;
+  if (config.resizeToContainer) {
+    config.resizeTo = el;
+  }
   const instance = new ApplicationClass();
 
   await instance.initialize(config);

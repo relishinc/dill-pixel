@@ -1,16 +1,16 @@
 import { Container } from 'pixi.js';
-import { Application, IApplication } from '../../core/Application';
-import { CoreModule } from '../../core/decorators';
-import { IScene, Scene } from '../../display/Scene';
-import { Signal } from '../../signals';
-import { Logger } from '../../utils/console/Logger';
-import { isDev } from '../../utils/env';
-import { getDynamicModuleFromImportListItem } from '../../utils/framework';
-import { bindAllMethods } from '../../utils/methodBinding';
-import { createQueue, Queue } from '../../utils/promise/Queue';
-import { Constructor, ImportList } from '../../utils/types';
-import type { IModule } from '../Module';
-import { Module } from '../Module';
+import { Application, IApplication } from '../core/Application';
+import { CoreModule } from '../core/decorators';
+import { IScene, Scene } from '../display/Scene';
+import { Signal } from '../signals';
+import { Logger } from '../utils/console/Logger';
+import { isDev } from '../utils/env';
+import { getDynamicModuleFromImportListItem } from '../utils/framework';
+import { bindAllMethods } from '../utils/methodBinding';
+import { createQueue, Queue } from '../utils/promise/Queue';
+import { Constructor, ImportList } from '../utils/types';
+import type { IModule } from './Module';
+import { Module } from './Module';
 
 export interface ISceneManager extends IModule {
   isFirstScene: boolean;
