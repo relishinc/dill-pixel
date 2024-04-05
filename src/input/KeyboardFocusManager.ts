@@ -15,6 +15,7 @@ export class KeyboardFocusManager<T extends DisplayObject & IKeyboardFocus> exte
     this.onFocusBegin = this.onFocusBegin.bind(this);
     this.onFocusEnd = this.onFocusEnd.bind(this);
     this.reFocus = this.reFocus.bind(this);
+    this.clearFocus = this.clearFocus.bind(this);
 
     this._focusPool = [];
 
@@ -22,11 +23,25 @@ export class KeyboardFocusManager<T extends DisplayObject & IKeyboardFocus> exte
     this._connections.add(Signals.keyboardFocusBegin.connect(this.onFocusBegin));
     this._connections.add(Signals.keyboardFocusEnd.connect(this.onFocusEnd));
     this._connections.add(Signals.keyboardReFocus.connect(this.reFocus));
+    this._connections.add(Signals.clearFocus.connect(this.clearFocus));
   }
 
   public destroy(pOptions?: Parameters<typeof Container.prototype.destroy>[0]): void {
     this._connections.disconnectAll();
     super.destroy(pOptions);
+  }
+
+  protected clearFocus() {
+    if (this._activeFocus === undefined) {
+      return;
+    }
+    const focus = this._activeFocus;
+
+    focus.hide(() => {
+      this.removeChild(focus);
+      this._focusPool.push(focus);
+    });
+    this._activeFocus = undefined;
   }
 
   protected onFocusBegin(pFocusable: IFocusable): void {
