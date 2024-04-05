@@ -1,10 +1,10 @@
-import { Application } from '../../core/Application';
-import { CoreModule } from '../../core/decorators';
-import { Signal } from '../../signals';
-import { bindAllMethods } from '../../utils/methodBinding';
-import { Size } from '../../utils/types';
-import type { IModule } from '../Module';
-import { Module } from '../Module';
+import { Application } from '../core/Application';
+import { CoreModule } from '../core/decorators';
+import { Signal } from '../signals';
+import { bindAllMethods } from '../utils/methodBinding';
+import { Size } from '../utils/types';
+import type { IModule } from './Module';
+import { Module } from './Module';
 
 export interface IWebEventsManager extends IModule {
   onResize: Signal<(size: { width: number; height: number }) => void>;

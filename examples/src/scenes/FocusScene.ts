@@ -1,6 +1,7 @@
 import { Actor } from '@/entities/Actor';
 import { BaseScene } from '@/scenes/BaseScene';
 import { Button, FlexContainer, Logger, PIXIText } from 'dill-pixel';
+import { AppSize } from '../../../src/utils/types.ts';
 
 export class FocusScene extends BaseScene {
   protected title = 'Focus Management';
@@ -139,8 +140,9 @@ export class FocusScene extends BaseScene {
     }
   }
 
-  resize() {
-    super.resize();
+  resize(size: AppSize) {
+    super.resize(size);
+    console.log({ size });
   }
 
   private _updateFocusLayerLabel() {

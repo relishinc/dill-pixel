@@ -1,5 +1,5 @@
-import { IApplication } from '../../core/Application';
-import { Module } from '../Module';
+import { IApplication } from '../core/Application';
+import { Module } from './Module';
 
 export class SpineModule extends Module {
   public readonly id = 'SpineModule';

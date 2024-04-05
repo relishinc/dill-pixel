@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "rootDir": "./src",
@@ -22,8 +22,7 @@
     "strictPropertyInitialization": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "allowJs": true,
-    "jsx": "react-jsx"
+    "allowJs": true
   },
   "ts-node": {
     "compilerOptions": {

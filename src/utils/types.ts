@@ -50,7 +50,9 @@ export type ContainerLike = RectLike & { position: Point; getGlobalPosition: () 
  */
 export type TextureLike = string | Texture;
 
-/**
+export type ImportListItemModule<T> = (() => Promise<any>) | Promise<any> | Constructor<T> | T;
+
+/**+
  * A type that represents an item in an import list.
  * @template T The type of the instance that the constructor creates.
  */
@@ -58,7 +60,7 @@ export type ImportListItem<T> = {
   id: string;
   namedExport?: string;
   options?: any;
-  module: (() => Promise<any>) | Promise<any> | Constructor<T> | T;
+  module: ImportListItemModule<T>;
 };
 
 /**
@@ -66,3 +68,10 @@ export type ImportListItem<T> = {
  * @template T The type of the instance that the constructor creates.
  */
 export type ImportList<T> = ImportListItem<T>[];
+
+export type AppSize = {
+  width: number;
+  height: number;
+  screenWidth: number;
+  screenHeight: number;
+};
