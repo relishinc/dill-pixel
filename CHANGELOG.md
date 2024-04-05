@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.38.11](https://github.com/relishinc/dill-pixel/compare/v2.38.10...v2.38.11) (2024-04-05)
+
+
+### Bug Fixes
+
+* added focus clearing functionality ([78ef8c4](https://github.com/relishinc/dill-pixel/commit/78ef8c4d778aab1194d4d03f6c49966ed7e34b56))
+* keyboardmap error on not finding lastFocusable ([6fe9cbd](https://github.com/relishinc/dill-pixel/commit/6fe9cbd2de57b1b6103198d91c8927064f09e7be))
+
 ## [2.38.10](https://github.com/relishinc/dill-pixel/compare/v2.38.9...v2.38.10) (2024-04-04)
 
 
