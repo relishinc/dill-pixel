@@ -47,9 +47,9 @@ export declare class KeyboardMap {
     clearFocus(): void;
     /**
      * Sets focus on a node if that node is interactive AND visible.
-     * @param pFocusable
+     * @param focusable
      */
-    setFocus(pFocusable: IFocusable): void;
+    setFocus(focusable: IFocusable): void;
     /**
      * Focuses the first node that is both interactive and visible
      */

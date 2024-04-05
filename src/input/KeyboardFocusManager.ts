@@ -1,10 +1,10 @@
-import { Container, DisplayObject } from 'pixi.js';
+import { Container } from 'pixi.js';
 import { SignalConnections } from 'typed-signals';
 import { Signals } from '../signals';
 import { IFocusable } from './IFocusable';
 import { IKeyboardFocus } from './IKeyboardFocus';
 
-export class KeyboardFocusManager<T extends DisplayObject & IKeyboardFocus> extends Container {
+export class KeyboardFocusManager<T extends IKeyboardFocus> extends Container {
   protected _activeFocus?: T;
   protected _focusPool: T[];
   private _connections: SignalConnections;

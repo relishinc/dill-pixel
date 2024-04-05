@@ -1,5 +1,6 @@
-import { IPoint, Point } from "pixi.js";
+import { IPoint, Point } from 'pixi.js';
 export interface IFocusable {
+    parent?: any;
     /** For debugging purposes */
     readonly name: string | undefined | null;
     /**
