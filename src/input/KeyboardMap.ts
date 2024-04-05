@@ -133,16 +133,16 @@ export class KeyboardMap {
 
   /**
    * Sets focus on a node if that node is interactive AND visible.
-   * @param pFocusable
+   * @param focusable
    */
-  public setFocus(pFocusable: IFocusable): void {
-    if (this._currentFocusable !== pFocusable) {
+  public setFocus(focusable: IFocusable): void {
+    if (this._currentFocusable !== focusable) {
       if (this._currentFocusable !== undefined) {
         this._currentFocusable.onFocusEnd();
         keyboardFocusEnd(this._currentFocusable);
         this._lastFocusable = this._currentFocusable;
       }
-      this._currentFocusable = pFocusable;
+      this._currentFocusable = focusable;
       this._currentFocusable.onFocusBegin();
       keyboardFocusBegin(this._currentFocusable);
     }
@@ -152,7 +152,7 @@ export class KeyboardMap {
    * Focuses the first node that is both interactive and visible
    */
   public focusFirstNode(): void {
-    if (this._lastFocusable && this.isFocusable(this._lastFocusable)) {
+    if (this._lastFocusable && this._lastFocusable?.parent && this.isFocusable(this._lastFocusable)) {
       this.setFocus(this._lastFocusable);
       return;
     }
@@ -292,7 +292,7 @@ export class KeyboardMap {
     return focusable.isFocusable
       ? focusable.isFocusable()
       : focusable instanceof Container
-      ? (focusable.interactive || focusable.eventMode !== 'none') && focusable.worldVisible
-      : false;
+        ? (focusable.interactive || focusable.eventMode !== 'none') && focusable.worldVisible
+        : false;
   }
 }
