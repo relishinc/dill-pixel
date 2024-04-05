@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.38.12](https://github.com/relishinc/dill-pixel/compare/v2.38.11...v2.38.12) (2024-04-05)
+
+
+### Bug Fixes
+
+* added focus clearing functionality ([d3834b3](https://github.com/relishinc/dill-pixel/commit/d3834b38429ee975f26ec072c49de558bd2ee2bf))
+
 ## [2.38.11](https://github.com/relishinc/dill-pixel/compare/v2.38.10...v2.38.11) (2024-04-05)
 
 
