@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.39.0](https://github.com/relishinc/dill-pixel/compare/v2.38.12...v2.39.0) (2024-04-08)
+
+
+### Features
+
+* added some signals to popupmanager, ([c5d493f](https://github.com/relishinc/dill-pixel/commit/c5d493fbabfa6b53156caa17ec63a04606b8ec15))
+
+
+### Bug Fixes
+
+* export SignalConnection from framework ([c5d493f](https://github.com/relishinc/dill-pixel/commit/c5d493fbabfa6b53156caa17ec63a04606b8ec15))
+
 ## [2.38.12](https://github.com/relishinc/dill-pixel/compare/v2.38.11...v2.38.12) (2024-04-05)
 
 
