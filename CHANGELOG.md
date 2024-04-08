@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.39.1](https://github.com/relishinc/dill-pixel/compare/v2.39.0...v2.39.1) (2024-04-08)
+
+
+### Bug Fixes
+
+* export signalConnection properly ([366d424](https://github.com/relishinc/dill-pixel/commit/366d424c9e76542451f7c6251f01c7fd99cc3cb5))
+
 ## [2.39.0](https://github.com/relishinc/dill-pixel/compare/v2.38.12...v2.39.0) (2024-04-08)
 
 
