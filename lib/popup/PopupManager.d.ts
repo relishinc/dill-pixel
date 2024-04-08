@@ -1,9 +1,13 @@
 import { Point } from 'pixi.js';
 import { Application } from '../core';
 import { Container } from '../gameobjects';
+import { Signal } from '../signals';
 import { Popup } from './Popup';
 export declare class PopupManager<T extends Application = Application> extends Container<T> {
     protected _app: Application<T>;
+    onPopupShow: Signal<(id: string) => void>;
+    onPopupHideComplete: Signal<(id: string) => void>;
+    onPopupHide: Signal<(id: string) => void>;
     private _activePopups;
     private _popups;
     private _size;
@@ -110,21 +114,21 @@ export declare class PopupManager<T extends Application = Application> extends C
     /**
      * Logs a message with class name and colour coding if debug flag is true.
      * @param text The message to print.
-     * @param [rest] Optional data to be included in the message.
+     * @param rest
      * @todo Decide if this should live in its own class, be in an interface or within each manager.
      */
     private log;
     /**
      * Logs a warning message with class name and colour coding if debug flag is true.
      * @param text The message to print.
-     * @param [rest] Optional data to be included in the message.
+     * @param rest
      * @todo Decide if this should live in its own class, be in an interface or within each manager.
      */
     private logW;
     /**
      * Logs an error message with class name and colour coding.
      * @param text The message to print.
-     * @param [rest] Optional data to be included in the message.
+     * @param rest
      * @todo Decide if this should live in its own class, be in an interface or within each manager.
      */
     private logE;

@@ -3,5 +3,5 @@ declare class Signal<THandler extends (...args: any[]) => any> extends TsSignal<
     connectOnce(callback: THandler, order?: number): SignalConnection;
     connectNTimes(callback: THandler, times: number, order?: number): SignalConnection;
 }
-export { Signal, SignalConnections, Collector, CollectorLast, CollectorArray, CollectorUntil0, CollectorWhile0 };
+export { Signal, SignalConnection, SignalConnections, Collector, CollectorLast, CollectorArray, CollectorUntil0, CollectorWhile0, };
 //# sourceMappingURL=Signal.d.ts.map
