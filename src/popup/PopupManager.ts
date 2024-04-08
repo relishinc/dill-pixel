@@ -5,13 +5,16 @@ import { popKeyboardLayer, pushKeyboardLayer } from '../functions';
 import { Container } from '../gameobjects';
 import * as Input from '../input';
 import { KeyValues } from '../input/KeyValues';
-import { Signals } from '../signals';
+import { Signal, Signals } from '../signals';
 import * as LogUtils from '../utils/LogUtils';
 import { IPopup } from './IPopup';
 import { Popup } from './Popup';
 import { IPopupToken } from './PopupToken';
 
 export class PopupManager<T extends Application = Application> extends Container<T> {
+  public onPopupShow = new Signal<(id: string) => void>();
+  public onPopupHideComplete = new Signal<(id: string) => void>();
+  public onPopupHide = new Signal<(id: string) => void>();
   private _activePopups: IPopup[];
   private _popups: Dictionary<string, typeof Popup<T>>;
   private _size!: Point;
@@ -131,6 +134,7 @@ export class PopupManager<T extends Application = Application> extends Container
       this._activePopups.push(popup);
       this.log('ShowPopup: Showing popup');
       popup.show(token);
+      this.onPopupShow.emit(token.id);
       // TODO: Emit events for when the first popup is opened and when the last popup is closed
     } else {
       this.logW(`ShowPopup: No popup with the ID "${token.id}" has been registered`);
@@ -212,6 +216,7 @@ export class PopupManager<T extends Application = Application> extends Container
   private _hidePopup(popup: IPopup) {
     popKeyboardLayer();
     popup.hide();
+    this.onPopupHide.emit(popup.id);
   }
 
   private handleEscapeKeyDown(event: KeyboardEvent): void {
@@ -242,7 +247,7 @@ export class PopupManager<T extends Application = Application> extends Container
       } else {
         this.logE("onHidePopupComplete: Can't find overlay to remove");
       }
-
+      this.onPopupHideComplete.emit(popup.id);
       popup.destroy({ children: true }); // TODO: Pool popups
       this.log('onHidePopupComplete: Destroyed popup');
     } else {
@@ -324,7 +329,7 @@ export class PopupManager<T extends Application = Application> extends Container
   /**
    * Logs a message with class name and colour coding if debug flag is true.
    * @param text The message to print.
-   * @param [rest] Optional data to be included in the message.
+   * @param rest
    * @todo Decide if this should live in its own class, be in an interface or within each manager.
    */
   private log(text: string, ...rest: any[]): void {
@@ -336,7 +341,7 @@ export class PopupManager<T extends Application = Application> extends Container
   /**
    * Logs a warning message with class name and colour coding if debug flag is true.
    * @param text The message to print.
-   * @param [rest] Optional data to be included in the message.
+   * @param rest
    * @todo Decide if this should live in its own class, be in an interface or within each manager.
    */
   private logW(text: string, ...rest: any[]): void {
@@ -348,7 +353,7 @@ export class PopupManager<T extends Application = Application> extends Container
   /**
    * Logs an error message with class name and colour coding.
    * @param text The message to print.
-   * @param [rest] Optional data to be included in the message.
+   * @param rest
    * @todo Decide if this should live in its own class, be in an interface or within each manager.
    */
   private logE(text: string, ...rest: any[]): void {

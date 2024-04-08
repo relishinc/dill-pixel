@@ -1,5 +1,6 @@
 export {
   Signal,
+  SignalConnection,
   SignalConnections,
   Collector,
   CollectorLast,
