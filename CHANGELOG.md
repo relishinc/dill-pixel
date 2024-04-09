@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.39.3](https://github.com/relishinc/dill-pixel/compare/v2.39.2...v2.39.3) (2024-04-09)
+
+
+### Bug Fixes
+
+* clear last & current focusable when clearing keyboard map ([f5852a6](https://github.com/relishinc/dill-pixel/commit/f5852a6831d1ac415c518cb6ba06dcef35a72a7d))
+
 ## [2.39.2](https://github.com/relishinc/dill-pixel/compare/v2.39.1...v2.39.2) (2024-04-09)
 
 
