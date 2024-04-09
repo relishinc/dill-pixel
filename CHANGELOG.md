@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.39.4](https://github.com/relishinc/dill-pixel/compare/v2.39.3...v2.39.4) (2024-04-09)
+
+
+### Bug Fixes
+
+* bug in KeyboardMap where trying to access a _currentFocusable that doesn't exist ([5a2d912](https://github.com/relishinc/dill-pixel/commit/5a2d912c09d6983277202c23c29137ae8fa52b02))
+
 ## [2.39.3](https://github.com/relishinc/dill-pixel/compare/v2.39.2...v2.39.3) (2024-04-09)
 
 
