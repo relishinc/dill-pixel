@@ -52,6 +52,9 @@ export class KeyboardMap {
     this._focusables.length = 0;
     this._neighbours.length = 0;
     this.clearFocus();
+    // additionally, ensure we clear the last focusable
+    this._lastFocusable = undefined;
+    this._currentFocusable = undefined;
   }
 
   /**
