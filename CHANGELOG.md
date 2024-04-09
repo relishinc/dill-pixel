@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.39.2](https://github.com/relishinc/dill-pixel/compare/v2.39.1...v2.39.2) (2024-04-09)
+
+
+### Bug Fixes
+
+* voiceovermanager append logic ([755bfcb](https://github.com/relishinc/dill-pixel/commit/755bfcb8e0c5407009f3929889d861faa6d76a21))
+
 ## [2.39.1](https://github.com/relishinc/dill-pixel/compare/v2.39.0...v2.39.1) (2024-04-08)
 
 
