@@ -139,15 +139,17 @@ export class KeyboardMap {
    * @param focusable
    */
   public setFocus(focusable: IFocusable): void {
-    if (this._currentFocusable !== undefined && this._currentFocusable !== focusable) {
+    if (this._currentFocusable !== focusable) {
       if (this._currentFocusable !== undefined) {
         this._currentFocusable.onFocusEnd();
         keyboardFocusEnd(this._currentFocusable);
         this._lastFocusable = this._currentFocusable;
       }
       this._currentFocusable = focusable;
-      this._currentFocusable.onFocusBegin();
-      keyboardFocusBegin(this._currentFocusable);
+      if (this._currentFocusable !== undefined) {
+        this._currentFocusable.onFocusBegin();
+        keyboardFocusBegin(this._currentFocusable);
+      }
     }
   }
 
