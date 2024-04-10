@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.39.6](https://github.com/relishinc/dill-pixel/compare/v2.39.5...v2.39.6) (2024-04-10)
+
+
+### Bug Fixes
+
+* in keyboard map, make auto focusing a node optional ([c4617f8](https://github.com/relishinc/dill-pixel/commit/c4617f865f277279277f656efea177b37fc91cf7))
+
 ## [2.39.5](https://github.com/relishinc/dill-pixel/compare/v2.39.4...v2.39.5) (2024-04-10)
 
 
