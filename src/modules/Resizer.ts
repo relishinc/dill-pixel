@@ -1,12 +1,14 @@
+import { Graphics } from 'pixi.js';
 import { IApplication } from '../core/Application';
 import { CoreModule } from '../core/decorators';
+import { Container } from '../display/Container';
 import { AppSize, Size } from '../utils/types';
 import { IModule, Module } from './Module';
 
 export interface IResizer extends IModule {
   size: AppSize;
 
-  resize(size: Size): void;
+  resize(): void;
 }
 
 /**
@@ -18,6 +20,7 @@ export type ResizerOptions = {
   fixed: boolean;
   minSize: { width: number; height: number };
   maxSize: { width: number; height: number };
+  debug: boolean;
 };
 
 /**
@@ -29,13 +32,16 @@ const defaultOptions: ResizerOptions = {
   fixed: false,
   minSize: { width: 0, height: 0 },
   maxSize: { width: 0, height: 0 },
+  debug: false,
 };
 
 @CoreModule
 export class Resizer extends Module {
   public readonly id = 'resizer';
   private _options: ResizerOptions;
-  private _size: AppSize;
+  private _size: Size;
+  private _debugContainer: Container;
+  private _gfx: Graphics;
 
   get size() {
     return this._size;
@@ -45,16 +51,20 @@ export class Resizer extends Module {
     this._options = { ...defaultOptions, ...options };
   }
 
+  async postInitialize(app: IApplication) {
+    this.resize();
+  }
+
   resize() {
     let screenWidth = window.innerWidth;
     let screenHeight = window.innerHeight;
-    if (this.app.resizeTo !== document.body) {
-      if ((this.app.resizeTo as HTMLElement)?.getBoundingClientRect) {
-        const el = this.app.resizeTo as HTMLElement;
-        screenWidth = el.getBoundingClientRect().width;
-        screenHeight = el.getBoundingClientRect().height;
-      }
+
+    const el = this.app.renderer.canvas?.parentElement;
+    if (el && el?.getBoundingClientRect()) {
+      screenWidth = el.offsetWidth;
+      screenHeight = el.offsetHeight;
     }
+
     const minWidth = this._options.minSize.width;
     const minHeight = this._options.minSize.height;
 
@@ -75,6 +85,21 @@ export class Resizer extends Module {
 
     // Update renderer and navigation screens dimensions
     this.app.renderer.resize(width, height);
-    this._size = { width, height, screenWidth, screenHeight };
+    this._size = { width, height };
+
+    if (this._options.debug) {
+      this._drawDebug();
+    }
+  }
+
+  private _drawDebug() {
+    if (!this._debugContainer) {
+      this._debugContainer = this.app.stage.addChild(new Container());
+      this._gfx = this._debugContainer.add.graphics();
+    }
+
+    this._gfx.clear();
+    this._gfx.rect(0, 0, this._size.width, this._size.height);
+    this._gfx.stroke({ width: 4, color: 0x000fff });
   }
 }

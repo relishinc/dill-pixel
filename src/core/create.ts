@@ -1,4 +1,5 @@
 import { sayHello } from '../hello';
+import { delay } from '../utils/async';
 import { Application, IApplication, RequiredApplicationConfig } from './Application';
 
 export async function create<T extends IApplication = Application>(
@@ -31,14 +32,13 @@ export async function create<T extends IApplication = Application>(
     config.resizeTo = el;
   }
   const instance = new ApplicationClass();
-
   await instance.initialize(config);
-
   if (el) {
     el.appendChild(instance.canvas as HTMLCanvasElement);
   } else {
     throw new Error('No element found to append the view to.');
   }
-
+  await delay(0.01);
+  await instance.postInitialize();
   return instance as unknown as T;
 }
