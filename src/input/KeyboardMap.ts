@@ -60,8 +60,9 @@ export class KeyboardMap {
   /**
    * Registers focusable
    * @param pFocusable
+   * @param autoFocus
    */
-  public registerFocusable(pFocusable: IFocusable | IFocusable[]): void {
+  public registerFocusable(pFocusable: IFocusable | IFocusable[], autoFocus: boolean = false): void {
     if (!Array.isArray(pFocusable)) {
       pFocusable = [pFocusable];
     }
@@ -70,7 +71,7 @@ export class KeyboardMap {
         this._focusables.push(focusable);
       }
     }
-    if (this._isActive && this._currentFocusable === undefined) {
+    if (autoFocus && this._isActive && this._currentFocusable === undefined) {
       this.focusFirstNode();
     }
   }
@@ -78,9 +79,11 @@ export class KeyboardMap {
   /**
    * Unregisters focusable
    * @param pFocusable
+   * @param autoFocus
    */
   public unregisterFocusable(
     pFocusable: (IFocusable | ((it: IFocusable) => boolean)) | (IFocusable | ((it: IFocusable) => boolean))[],
+    autoFocus: boolean = false,
   ): void {
     if (!Array.isArray(pFocusable)) {
       pFocusable = [pFocusable];
@@ -95,9 +98,13 @@ export class KeyboardMap {
         }
       }
     }
-    if (this._currentFocusable && pFocusable.indexOf(this._currentFocusable) > -1) {
+
+    // check if the current focusable is in pFocusable, if so, clear focus
+    if (this._currentFocusable && pFocusable.includes(this._currentFocusable)) {
       this.clearFocus();
-      this.focusFirstNode();
+      if (autoFocus) {
+        this.focusFirstNode();
+      }
     }
   }
 
@@ -129,7 +136,10 @@ export class KeyboardMap {
     if (this._currentFocusable !== undefined) {
       this._currentFocusable.onFocusEnd();
       keyboardFocusEnd(this._currentFocusable);
-      this._lastFocusable = this._currentFocusable;
+      // check if this._currentFocusable is still registered
+      if (this._focusables.includes(this._currentFocusable)) {
+        this._lastFocusable = this._currentFocusable;
+      }
       this._currentFocusable = undefined;
     }
   }
