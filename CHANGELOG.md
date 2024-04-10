@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.39.5](https://github.com/relishinc/dill-pixel/compare/v2.39.4...v2.39.5) (2024-04-10)
+
+
+### Bug Fixes
+
+* keyboardMap setFocus error ([ed19770](https://github.com/relishinc/dill-pixel/commit/ed197706b0d12fd4fbc703dcc1030589b81437c8))
+
 ## [2.39.4](https://github.com/relishinc/dill-pixel/compare/v2.39.3...v2.39.4) (2024-04-09)
 
 
