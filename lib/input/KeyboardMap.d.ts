@@ -29,13 +29,15 @@ export declare class KeyboardMap {
     /**
      * Registers focusable
      * @param pFocusable
+     * @param autoFocus
      */
-    registerFocusable(pFocusable: IFocusable | IFocusable[]): void;
+    registerFocusable(pFocusable: IFocusable | IFocusable[], autoFocus?: boolean): void;
     /**
      * Unregisters focusable
      * @param pFocusable
+     * @param autoFocus
      */
-    unregisterFocusable(pFocusable: (IFocusable | ((it: IFocusable) => boolean)) | (IFocusable | ((it: IFocusable) => boolean))[]): void;
+    unregisterFocusable(pFocusable: (IFocusable | ((it: IFocusable) => boolean)) | (IFocusable | ((it: IFocusable) => boolean))[], autoFocus?: boolean): void;
     /**
      * Steps keyboard map
      * @param pDirection
