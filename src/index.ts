@@ -20,7 +20,6 @@ export type { IApplication, RequiredApplicationConfig } from './core/Application
  * Export various types from the 'modules' module.
  * These types are used for type checking the different modules of the application.
  */
-// modules
 export type { IAssetManager } from './modules/AssetManager';
 export type { ISceneManager, LoadSceneMethod } from './modules/SceneManager';
 export type { IWebEventsManager } from './modules/WebEventsManager';
@@ -43,7 +42,6 @@ export { WebEventsManager } from './modules/WebEventsManager';
 
 export { default as defaultModules } from './modules/defaultModules';
 
-// store
 /**
  * Export the StorageAdapter and LocalStorageAdapter classes from the 'store' module.
  * These classes are used for managing the application's storage.
@@ -53,7 +51,6 @@ export { LocalStorageAdapter } from './store/adapters/LocalStorageAdapter';
 export type { IStorageAdapter } from './store/adapters/StorageAdapter';
 export { Store } from './store/Store';
 
-// utils
 /**
  * Export various utility types and functions from the 'utils' module.
  * These utilities are used throughout the application for various tasks.
@@ -83,7 +80,6 @@ export { pluck, omitKeys } from './utils/object';
 export { bindMethods, bindAllMethods, checkAndInvokeMethod } from './utils/methodBinding';
 export { getDynamicModuleFromImportListItem } from './utils/framework';
 
-// mixins
 /**
  * Export various mixin classes from the 'mixins' module.
  * These mixins are used to add additional functionality to the application's classes.
@@ -94,7 +90,6 @@ export { Interactive } from './mixins/interaction';
 export { Focusable } from './mixins/focus';
 export { WithSignals } from './mixins/signals';
 
-// display
 /**
  * Export the Container and Scene classes from the 'display' module.
  * These classes are used for managing the application's display.
@@ -117,7 +112,6 @@ export type { IContainer } from './display/Container';
 export type { IPopup } from './display/Popup';
 export type { IScene } from './display/Scene';
 
-// create
 /**
  * Export the create function from the 'core' module.
  * This function is used to create a new application instance.

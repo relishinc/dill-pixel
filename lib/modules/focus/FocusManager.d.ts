@@ -1,0 +1,128 @@
+import { Bounds, Container, PointerEvents, PointLike } from 'pixi.js';
+import { IApplication } from '../../core/Application';
+import { Signal } from '../../signals';
+import { PointLike as DillPixelPointLike } from '../../utils/types';
+import type { IModule } from '../Module';
+import { Module } from '../Module';
+import { FocusOutlinerConfig, IFocusOutliner } from './FocusOutliner';
+export type FocusManagerOptions = {
+    outliner: IFocusOutliner | Partial<FocusOutlinerConfig>;
+};
+export interface IFocusable {
+    isFocused: boolean;
+    isKeyDown: boolean;
+    focusEnabled: boolean;
+    tabIndex: number;
+    _accessibleDiv?: HTMLElement;
+    accessible: boolean;
+    accessibleType: string;
+    accessibleTitle: string;
+    accessibleHint: string;
+    accessiblePointerEvents?: PointerEvents;
+    accessibleChildren: boolean;
+    onFocusIn: Signal<(focusable: IFocusable) => void>;
+    onFocusOut: Signal<(focusable: IFocusable) => void>;
+    onFocus: Signal<(focusable: IFocusable) => void>;
+    onBlur: Signal<(focusable: IFocusable) => void>;
+    position: PointLike;
+    focusIn(): void;
+    focusOut(): void;
+    click(): void;
+    blur(): void;
+    getGlobalPosition(): PointLike;
+    getFocusArea(): Bounds;
+    getFocusPosition(): DillPixelPointLike | null;
+}
+export interface IFocusLayer {
+    currentFocusable: IFocusable | null;
+    defaultFocusable: IFocusable | null;
+    lastFocusable: IFocusable | null;
+    current: boolean;
+    availableFocusables: IFocusable[];
+    setCurrentFocusable(focusable: IFocusable | null): IFocusable | null;
+    hasFocusable(focusable: IFocusable | null): boolean;
+    setCurrent(): void;
+    addFocusable(focusable: IFocusable, isDefault?: boolean): void;
+    removeFocusable(focusable: IFocusable): void;
+    sortFocusables(): void;
+}
+type FocusChangeDetail = {
+    layer: string | number | null;
+    focusable: IFocusable | null;
+};
+export interface IFocusManager extends IModule {
+    readonly view: Container;
+    readonly layerCount: number;
+    readonly currentLayerId: string | number | null;
+    readonly active: boolean;
+    readonly layers: Map<string | number, IFocusLayer>;
+    onFocusManagerActivated: Signal<() => void>;
+    onFocusManagerDeactivated: Signal<() => void>;
+    onFocusLayerChange: Signal<(currentLayerId: string | number) => void>;
+    onFocusChange: Signal<(detail: FocusChangeDetail) => void>;
+    enabled: boolean;
+    restart(): void;
+    focus(focusable: IFocusable): void;
+    forceFocus(focusable: IFocusable): void;
+    setFocus(focusable: IFocusable): void;
+    addFocusLayer(layerId?: string | number, focusables?: IFocusable | IFocusable[], setAsCurrent?: boolean): IFocusLayer;
+    removeFocusLayer(layerId?: string | number): void;
+    setFocusLayer(layerId: string | number): void;
+    setLayerOrder(layerIds: (string | number)[]): void;
+    add(focusable: IFocusable | IFocusable[], layerId?: string | number, isDefault?: boolean): void;
+    addFocusable(focusable: IFocusable | IFocusable[], layerId?: string | number, isDefault?: boolean): void;
+    remove(focusable: IFocusable | IFocusable[]): void;
+    removeFocusable(focusable: IFocusable | IFocusable[]): void;
+    deactivate(): void;
+}
+export declare class FocusManager extends Module implements IFocusManager {
+    readonly id: string;
+    readonly view: Container<import("pixi.js").ContainerChild>;
+    onFocusManagerActivated: Signal<() => void>;
+    onFocusManagerDeactivated: Signal<() => void>;
+    onFocusLayerChange: Signal<(currentLayerId: string | number) => void>;
+    onFocusChange: Signal<(detail: FocusChangeDetail) => void>;
+    private _focusOutliner;
+    private _layers;
+    private _currentLayerId;
+    private _focusTarget;
+    private _active;
+    private _enabled;
+    get enabled(): boolean;
+    set enabled(value: boolean);
+    get active(): boolean;
+    get currentLayerId(): string | number | null;
+    get layerCount(): number;
+    get layers(): Map<string | number, IFocusLayer>;
+    initialize(app: IApplication): void;
+    destroy(): void;
+    deactivate(): void;
+    add(focusable: IFocusable | IFocusable[], layerId?: string | number, isDefault?: boolean): void;
+    addFocusable(focusable: IFocusable | IFocusable[], layerId?: string | number | null | undefined, isDefault?: boolean): void;
+    remove(focusable: IFocusable | IFocusable[]): void;
+    removeFocusable(focusable: IFocusable | IFocusable[]): void;
+    setLayerOrder(layerIds: (string | number)[]): void;
+    addFocusLayer(layerId?: string | number, focusables?: IFocusable | IFocusable[], setAsCurrent?: boolean): IFocusLayer;
+    removeFocusLayer(layerId?: string | number, removeTopLayerIfUndefined?: boolean): void;
+    restart(reverse?: boolean): void;
+    forceFocus(focusable: IFocusable): void;
+    setFocus(focusable: IFocusable): void;
+    focus(focusable: IFocusable): void;
+    setFocusLayer(layerId: string | number): void;
+    removeAllFocusLayers(): void;
+    private _updateAccesibilityDivId;
+    private _getCurrentLayer;
+    private _removeTopLayer;
+    private _postDelete;
+    private _setTarget;
+    private _clearFocusTarget;
+    private _setupKeyboardListeners;
+    private _addGlobalListeners;
+    private _removeGlobalListeners;
+    private _handleGlobalMouseMove;
+    private _handleGlobalPointerDown;
+    private _setupAppListeners;
+    private _updateOutliner;
+}
+export {};
+//# sourceMappingURL=FocusManager.d.ts.map

@@ -1,0 +1,1 @@
+{"version":3,"file":"StatsModule.d.ts","sourceRoot":"","sources":["../../src/modules/StatsModule.ts"],"names":[],"mappings":"AACA,OAAO,EAAe,YAAY,EAAE,MAAM,qBAAqB,CAAC;AAEhE,OAAO,EAAE,MAAM,EAAE,MAAM,UAAU,CAAC;AAElC,qBAAa,WAAY,SAAQ,MAAM;IACrC,SAAgB,EAAE,iBAAiB;IAC5B,KAAK,EAAE,GAAG,CAAC;IAEL,UAAU,CAAC,GAAG,EAAE,YAAY;CAqB1C"}

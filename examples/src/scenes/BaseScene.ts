@@ -1,6 +1,5 @@
-import { Scene } from 'dill-pixel';
+import { Scene, Size } from 'dill-pixel';
 import { Graphics, Text } from 'pixi.js';
-import { AppSize } from '../../../src/utils/types.ts';
 import { COLOR_GREEN } from '../utils/Constants';
 import { V8Application } from '../V8Application';
 
@@ -48,7 +47,7 @@ export class BaseScene extends Scene<V8Application> {
     super.destroy();
   }
 
-  resize(size: AppSize) {
+  resize(size?: Size) {
     this._bg.clear();
     this._bg
       .rect(-this.app.size.width * 0.5, -this.app.size.height * 0.5, this.app.size.width, this.app.screen.height)
