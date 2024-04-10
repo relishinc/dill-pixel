@@ -1,0 +1,1 @@
+{"version":3,"file":"PixiStatsModule.d.ts","sourceRoot":"","sources":["../../src/modules/PixiStatsModule.ts"],"names":[],"mappings":"AACA,OAAO,EAAe,YAAY,EAAE,MAAM,qBAAqB,CAAC;AAEhE,OAAO,EAAE,MAAM,EAAE,MAAM,UAAU,CAAC;AAElC,qBAAa,eAAgB,SAAQ,MAAM;IACzC,SAAgB,EAAE,qBAAqB;IAChC,KAAK,EAAE,OAAO,YAAY,EAAE,cAAc,CAAC;IAErC,UAAU,CAAC,GAAG,EAAE,YAAY;CAoB1C"}

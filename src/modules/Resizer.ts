@@ -5,6 +5,9 @@ import { Container } from '../display/Container';
 import { AppSize, Size } from '../utils/types';
 import { IModule, Module } from './Module';
 
+/**
+ * Interface for Resizer module.
+ */
 export interface IResizer extends IModule {
   size: AppSize;
 
@@ -12,7 +15,7 @@ export interface IResizer extends IModule {
 }
 
 /**
- * Type definition for i18n options.
+ * Type definition for Resizer options.
  */
 export type ResizerOptions = {
   autoScroll: boolean;
@@ -24,7 +27,7 @@ export type ResizerOptions = {
 };
 
 /**
- * Default options for i18n module.
+ * Default options for Resizer module.
  */
 const defaultOptions: ResizerOptions = {
   autoScroll: false,
@@ -47,14 +50,25 @@ export class Resizer extends Module {
     return this._size;
   }
 
+  /**
+   * Initializes the Resizer module.
+   */
   async initialize(app: IApplication, options: Partial<ResizerOptions> = {}) {
     this._options = { ...defaultOptions, ...options };
   }
 
+  /**
+   * Post-initialization of the Resizer module.
+   * when this is called, the renderer is already created, and the dom element has been appended
+   * @param app - The application instance.
+   */
   async postInitialize(app: IApplication) {
     this.resize();
   }
 
+  /**
+   * Resizes the application based on window size and module options.
+   */
   resize() {
     let screenWidth = window.innerWidth;
     let screenHeight = window.innerHeight;
@@ -91,7 +105,10 @@ export class Resizer extends Module {
       this._drawDebug();
     }
   }
-
+  
+  /**
+   * Draws debug information if debug option is enabled.
+   */
   private _drawDebug() {
     if (!this._debugContainer) {
       this._debugContainer = this.app.stage.addChild(new Container());

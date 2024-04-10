@@ -3,7 +3,7 @@
   "version": "2.29.2",
   "title": "Dill Pixel",
   "description": "Relish framework for HTML games",
-  "main": "src/index.ts",
+  "main": "lib/index.js",
   "bin": {
     "dill-pixel": "./cli.mjs",
     "create-dill-pixel": "./cli/create-dill-pixel.mjs"
@@ -20,7 +20,6 @@
     "dev": "cd ./examples && npm run dev",
     "build": "npm run version && npm run pixi-exports && npm run compile",
     "pixi-exports": "node ./scripts/pixi-exports.js",
-    "prebuild": "npx ts-node ./scripts/prebuild.mjs",
     "compile": "tsc",
     "build:examples": "cd ./examples && npm run build",
     "visualize:examples": "cd ./examples && npx vite-bundle-visualizer",
