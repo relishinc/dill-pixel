@@ -57,6 +57,13 @@ export class WebEventsManager extends Module implements IWebEventsManager {
    * Called when the browser resizes.
    */
   private _onResize(): void {
-    this.onResize.emit({ width: window.innerWidth, height: window.innerHeight });
+    const el = this.app.renderer.canvas?.parentElement;
+    let screenWidth = window.innerWidth;
+    let screenHeight = window.innerHeight;
+    if (el && el?.getBoundingClientRect()) {
+      screenWidth = el.offsetWidth;
+      screenHeight = el.offsetHeight;
+    }
+    this.onResize.emit({ width: screenWidth, height: screenHeight });
   }
 }

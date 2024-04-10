@@ -20,6 +20,7 @@ const defaultModules: (new () => IModule)[] = [
   PopupManager,
   AudioManager,
   StatsModule,
+  // PixiStatsModule, doesn't work for pixi v8
   i18nModule,
   Resizer,
 ];

@@ -106,6 +106,8 @@ export interface IApplication extends PIXIPApplication {
 
   initialize(config: RequiredApplicationConfig): Promise<IApplication>;
 
+  postInitialize(): Promise<void>;
+
   getModule<T extends IModule>(name: string): T;
 }
 
@@ -324,14 +326,20 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     await this._setup(); // internal
     await this.setup();
     await this.loadDefaultScene();
-    await this.postInitialize();
-
     // return the Application instance to the create method, if needed
     return Application.instance;
   }
 
   public getModule<T extends IModule>(moduleName: string): T {
     return this._modules.get(moduleName) as T;
+  }
+
+  async postInitialize(): Promise<void> {
+    (globalThis as any).__PIXI_APP__ = this;
+    this._modules.forEach((module) => {
+      module.postInitialize(this);
+    });
+    void this._resize();
   }
 
   /**
@@ -389,10 +397,6 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     if (config.useSpine) {
       await this.registerModule(new SpineModule());
     }
-  }
-
-  protected async postInitialize(): Promise<void> {
-    (globalThis as any).__PIXI_APP__ = this;
   }
 
   // modules
@@ -470,11 +474,9 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this.scenes.loadDefaultScene();
   }
 
-  private async _resize(size: Size) {
-    this.resizer.resize(size);
-
+  private async _resize() {
+    this.resizer.resize();
     this._center.set(this.size.width * 0.5, this.size.height * 0.5);
-
     this.ticker.addOnce(() => {
       this.views.forEach((view) => {
         view.position.set(this._center.x, this._center.y);
@@ -509,7 +511,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     this.focus.view.label = 'FocusManager';
     this.stage.addChild(this.focus.view);
 
-    void this._resize({ width: window.innerWidth, height: window.innerHeight });
+    void this._resize();
 
     return Promise.resolve();
   }

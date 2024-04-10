@@ -11,11 +11,12 @@ export class SpineScene extends BaseScene {
   public async initialize() {
     await Assets.loadBundle('spine');
     await super.initialize();
-    this.dragon = new Dragon();
-    this.add.existing(this.dragon, { x: 0, y: 200, scale: 0.5 });
   }
 
   public async start() {
+    console.log(Assets.get('spine/dragon-skeleton.json'));
+    this.dragon = new Dragon();
+    this.add.existing(this.dragon, { x: 0, y: 200, scale: 0.5 });
     void this.dragon.show();
   }
 

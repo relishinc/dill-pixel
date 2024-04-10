@@ -9,6 +9,8 @@ export interface IModule {
 
   initialize(app: IApplication, options?: any): Promise<void> | void;
 
+  postInitialize(app: IApplication): Promise<void> | void;
+
   destroy(): void;
 
   addSignalConnection(...args: SignalConnection[]): void;
@@ -31,6 +33,11 @@ export class Module<T extends Application = Application> implements IModule {
 
   public initialize(app: IApplication, options?: any): Promise<void> | void;
   public async initialize(app: IApplication, options?: any): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  public postInitialize(app: IApplication): Promise<void> | void;
+  public async postInitialize(app: IApplication): Promise<void> {
     return Promise.resolve(undefined);
   }
 

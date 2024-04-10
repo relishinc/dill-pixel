@@ -42,23 +42,16 @@ export type UICanvasConfig = {
   debug: boolean;
   padding: UICanvasPadding;
   size: Size;
-  resizeToStage: boolean;
-  alignToStage: boolean;
+  useAppSize: boolean;
 };
 
-export const UICanvasConfigKeys: (keyof UICanvasConfig)[] = [
-  'debug',
-  'padding',
-  'size',
-  'resizeToStage',
-  'alignToStage',
-];
+export const UICanvasConfigKeys: (keyof UICanvasConfig)[] = ['debug', 'padding', 'size', 'useAppSize'];
 
 export type UICanvasProps = {
   debug: boolean;
   padding: Partial<UICanvasPadding> | PointLike;
   size?: SizeLike;
-  alignToStage?: boolean;
+  useAppSize?: boolean;
 };
 
 export type UICanvasPadding = { top: number; right: number; bottom: number; left: number };
@@ -173,10 +166,8 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
       debug: config.debug === true,
       padding: ensurePadding(config?.padding ?? 0),
       size: config.size !== undefined ? resolveSizeLike(config.size) : { width: 0, height: 0 },
-      resizeToStage: config.size === undefined,
-      alignToStage: config.alignToStage === true,
+      useAppSize: config.useAppSize === true,
     };
-    this._checkAlignToStageWarning();
     this._disableAddChildError = true;
     this._inner = this.add.container({ x: this.config.padding.left, y: this.config.padding.top });
     this._disableAddChildError = false;
@@ -206,15 +197,8 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
   }
 
   set size(value: SizeLike) {
+    this.config.useAppSize = false;
     this.config.size = value === undefined ? { width: 0, height: 0 } : resolveSizeLike(value);
-    this.config.resizeToStage = value === undefined || !this.config.size;
-    this._checkAlignToStageWarning();
-    this.resize();
-  }
-
-  set alignToStage(value: boolean) {
-    this.config.alignToStage = value;
-    this._checkAlignToStageWarning();
     this.resize();
   }
 
@@ -255,15 +239,15 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
   }
 
   public resize() {
-    const _size = this.config.resizeToStage ? this.app.size : this.config.size;
+    const _size = this.config.useAppSize ? this.app.size : this.config.size;
 
     this._displayBounds = this.__calculateBounds(_size);
     this._outerBounds = this.__calculateOuterBounds(_size);
 
     this.layout();
 
-    if (this.config.alignToStage) {
-      this.position.set(-this.app.center.x, -this.app.center.y);
+    if (this.config.useAppSize) {
+      this.position.set(-_size.width * 0.5, -_size.height * 0.5);
     }
 
     if (this.config.debug) {
@@ -345,16 +329,7 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
   }
 
   private _added() {
-    this.resize();
-  }
-
-  private _checkAlignToStageWarning() {
-    if (this.config.alignToStage && !this.config.resizeToStage) {
-      Logger.warn(
-        'UICanvas:: alignToStage is set to true, but resizeToStage is set to false. This may cause unexpected' +
-          ' behavior.',
-      );
-    }
+    this.layout();
   }
 
   private applySettings(child: PIXIContainer, settings: UICanvasChildSettings) {

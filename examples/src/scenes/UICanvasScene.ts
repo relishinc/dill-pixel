@@ -1,4 +1,4 @@
-import { UICanvas } from 'dill-pixel';
+import { delay, UICanvas } from 'dill-pixel';
 import { TextStyle } from 'pixi.js';
 import { BaseScene } from './BaseScene';
 
@@ -19,8 +19,8 @@ export class UICanvasScene extends BaseScene {
     await super.initialize();
 
     this.ui = this.add.uiCanvas({
-      padding: [125, 100, 50],
-      alignToStage: true,
+      // padding: [125, 100, 50],
+      useAppSize: true,
       debug: true,
     });
   }
@@ -33,7 +33,9 @@ export class UICanvasScene extends BaseScene {
     this.ui.addElement(this.make.text({ text: 'top center', style: whiteTextStyle(24) }), {
       align: 'top',
     });
-    this.ui.addElement(this.make.text({ text: 'too right', style: whiteTextStyle(24) }), { align: 'top right' });
+    this.ui.addElement(this.make.text({ text: 'top right', style: whiteTextStyle(24) }), {
+      align: 'top right',
+    });
     this.ui.addElement(this.make.text({ text: 'right center', style: whiteTextStyle(24) }), { align: 'right' });
     this.ui.addElement(this.make.text({ text: 'bottom left', style: whiteTextStyle(24) }), { align: 'bottom left' });
     this.ui.addElement(this.make.text({ text: 'left center', style: whiteTextStyle(24) }), { align: 'left' });
@@ -61,8 +63,8 @@ export class UICanvasScene extends BaseScene {
     );
 
     // set new padding
-    // await delay(2);
-    // this.ui.padding = [50, 50];
+    await delay(2);
+    this.ui.padding = [100, 50];
 
     // set size
     // await delay(2);

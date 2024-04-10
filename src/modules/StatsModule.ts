@@ -1,4 +1,4 @@
-import { UPDATE_PRIORITY } from 'pixi.js';
+import { Ticker, UPDATE_PRIORITY } from 'pixi.js';
 import { Application, IApplication } from '../core/Application';
 import { isDev } from '../utils/env';
 import { Module } from './Module';
@@ -26,6 +26,6 @@ export class StatsModule extends Module {
     this.stats.dom.style.right = '40px';
     this.stats.dom.style.left = 'auto';
 
-    this.app.ticker.add(this.stats.update, this.stats, UPDATE_PRIORITY.UTILITY);
+    Ticker.shared.add(this.stats.update, this.stats, UPDATE_PRIORITY.UTILITY);
   }
 }
