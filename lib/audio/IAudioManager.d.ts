@@ -3,6 +3,7 @@ import { IAudioTrack } from './IAudioTrack';
  * All audio manager implementations need to implement this interface to function with the framework.
  */
 export interface IAudioManager {
+    autoMuteOnVisibilityChange: boolean;
     /**
      * Enabling this will print all debug logs.
      */

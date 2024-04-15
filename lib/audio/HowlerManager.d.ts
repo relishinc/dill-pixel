@@ -62,6 +62,7 @@ export declare function pauseAudioTrack(trackId: string, category: string): IAud
 export declare function stopAudioTrack(trackId: string, category: string): IAudioTrack | undefined;
 export declare class HowlerManager implements IAudioManager {
     private app;
+    autoMuteOnVisibilityChange: boolean;
     private _masterVolume;
     private _collections;
     private _previousMasterVolume;
