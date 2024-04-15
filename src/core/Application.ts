@@ -153,7 +153,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
     Application._instance = this;
     this._useSpine = appConfig?.useSpine || false;
     this._useNewResizeManager = appConfig?.useNewResizeManager || false;
-    this._resizeOptions = appConfig?.resizeOptions || false;
+    this._resizeOptions = appConfig?.resizeOptions || {};
     if (isDev() || appConfig?.showStatsInProduction) {
       this.addStats().then(() => {
         console.log('stats.js added');
