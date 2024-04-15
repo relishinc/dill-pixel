@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.39.7](https://github.com/relishinc/dill-pixel/compare/v2.39.6...v2.39.7) (2024-04-15)
+
+
+### Bug Fixes
+
+* added option to use a new resize manager ([5db4335](https://github.com/relishinc/dill-pixel/commit/5db4335e87084d8489dd77055745dea097522450))
+* back ported api to old resizer ([b83466e](https://github.com/relishinc/dill-pixel/commit/b83466e58edcc92dfa20ba9c8047dd2b813559c5))
+
 ## [2.39.6](https://github.com/relishinc/dill-pixel/compare/v2.39.5...v2.39.6) (2024-04-10)
 
 
