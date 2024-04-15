@@ -283,7 +283,11 @@ export class Application<T extends Application = any> extends PIXIApplication {
   }
 
   public get size(): Point {
-    return this._size;
+    return this._size || new Point();
+  }
+
+  public get screenSize(): Point {
+    return this.resizer?.screenSize || new Point();
   }
 
   public get hitAreaRenderer(): HitAreaRenderer {
@@ -591,7 +595,6 @@ export class Application<T extends Application = any> extends PIXIApplication {
 
     // emit a global resize signal that anything can listen to
     this.ticker.addOnce(() => {
-      console.log('hi', this._size);
       this._stateManager.onResize(this._size);
       this._loadManager.onResize(this._size);
       this._popupManager.onResize(this._size);

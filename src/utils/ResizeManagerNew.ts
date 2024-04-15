@@ -25,9 +25,19 @@ export class ResizeManagerNew extends ResizeManager {
   public readonly id = 'resizer';
   private _options: ResizeManagerOptions;
   private _size: Point = new Point();
+  private _screenSize: Point = new Point();
+  private _scale: number;
 
   get size() {
     return this._size;
+  }
+
+  get screenSize(): Point {
+    return this._screenSize;
+  }
+
+  get scale() {
+    return this._scale;
   }
 
   /**
@@ -59,6 +69,7 @@ export class ResizeManagerNew extends ResizeManager {
     const scaleX = screenWidth < minWidth ? minWidth / screenWidth : 1;
     const scaleY = screenHeight < minHeight ? minHeight / screenHeight : 1;
     const scale = scaleX > scaleY ? scaleX : scaleY;
+    this._scale = scale;
     const width = screenWidth * scale;
     const height = screenHeight * scale;
 
@@ -70,8 +81,10 @@ export class ResizeManagerNew extends ResizeManager {
       window?.scrollTo(0, 0);
     }
 
+    this._screenSize.x = screenWidth;
+    this._screenSize.y = screenHeight;
+
     // Update renderer and navigation screens dimensions
-    console.log('ResizeManagerNew: resize', width, height);
     this.app.renderer.resize(width, height);
     this._size.x = width;
     this._size.y = height;
@@ -79,13 +92,5 @@ export class ResizeManagerNew extends ResizeManager {
 
   getSize(): Point {
     return this._size;
-  }
-
-  /**
-   * Post-initialization of the Resizer module.
-   * when this is called, the renderer is already created, and the dom element has been appended
-   */
-  async postInitialize() {
-    this.resize();
   }
 }

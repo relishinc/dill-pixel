@@ -45,6 +45,21 @@ export class ResizeManager implements IResizeManager {
     }
   }
 
+  get size() {
+    return this.getSize();
+  }
+
+  get screenSize(): Point {
+    return new Point(this.app.renderer.view.width, this.app.renderer.view.height);
+  }
+
+  get scale() {
+    console.warn(
+      "ResizeManager: this is the old ResizeManager - scale isn't implemented.  Probably use getStageScale() instead",
+    );
+    return 1;
+  }
+
   public get useAspectRatio(): boolean {
     return this._useAspectRatio;
   }
@@ -70,6 +85,13 @@ export class ResizeManager implements IResizeManager {
   public initialize(): void {}
 
   public resize(): void {}
+
+  public getSize(): Point {
+    const size: Point = new Point();
+    size.y = this._sizeMax.y;
+    size.x = size.y * this.gameAspectRatio;
+    return size;
+  }
 
   setDesiredSize(desiredSize: Point, maxFactor: number = 4): void {
     const sizeMin = new Point(desiredSize.x, desiredSize.y);
@@ -102,13 +124,6 @@ export class ResizeManager implements IResizeManager {
       console.warn('ResizeManager: desiredSize is not set. Set it first using setDesiredSize()');
     }
     return scale;
-  }
-
-  public getSize(): Point {
-    const size: Point = new Point();
-    size.y = this._sizeMax.y;
-    size.x = size.y * this.gameAspectRatio;
-    return size;
   }
 
   public getStageScale(): number {
