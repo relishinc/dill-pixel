@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.39.8](https://github.com/relishinc/dill-pixel/compare/v2.39.7...v2.39.8) (2024-04-15)
+
+
+### Bug Fixes
+
+* added ability to properly re-set Resizer options ([f9e175d](https://github.com/relishinc/dill-pixel/commit/f9e175d76e507e38744c13010ab4a60b605c60eb))
+* resizeManagerOptions error in Application.ts ([c2a8290](https://github.com/relishinc/dill-pixel/commit/c2a8290e184b2c4d7193f0f4b4337897d58d963e))
+
 ## [2.39.7](https://github.com/relishinc/dill-pixel/compare/v2.39.6...v2.39.7) (2024-04-15)
 
 
