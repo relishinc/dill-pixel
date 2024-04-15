@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.39.9](https://github.com/relishinc/dill-pixel/compare/v2.39.8...v2.39.9) (2024-04-15)
+
+
+### Bug Fixes
+
+* added auto muting as optional in howlermanager ([c3c5911](https://github.com/relishinc/dill-pixel/commit/c3c5911247bbd0a1d1fd83db64439b75d368475a))
+
 ## [2.39.8](https://github.com/relishinc/dill-pixel/compare/v2.39.7...v2.39.8) (2024-04-15)
 
 
