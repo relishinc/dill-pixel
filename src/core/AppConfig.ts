@@ -1,5 +1,6 @@
 import { IApplicationOptions } from 'pixi.js';
 import { MathUtils, PlatformUtils } from '../utils';
+import { ResizeManagerOptions } from '../utils/ResizeManagerNew';
 
 export class AppConfig {
   // index signature
@@ -23,6 +24,8 @@ export class AppConfig {
   public sharedTicker?: boolean;
   public sharedLoader?: boolean;
   public resizeTo?: Window | HTMLElement;
+  public useNewResizeManager?: boolean;
+  public resizeOptions?: Partial<ResizeManagerOptions>;
 
   constructor(pConfig?: Partial<IApplicationOptions> & { [key: string]: any }) {
     // If no config is provided, create a default one
@@ -50,6 +53,8 @@ export class AppConfig {
         view: undefined,
         width: 0,
         autoDensity: true,
+        useNewResizeManager: false,
+        resizeOptions: undefined,
         resolution: PlatformUtils.isMobile() ? (PlatformUtils.isRetina() ? 2 : 1) : 2,
       };
     } else {

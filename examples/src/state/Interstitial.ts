@@ -1,4 +1,4 @@
-import * as HLF from 'dill-pixel';
+import * as HLF from '@relish-studios/dill-pixel';
 import { gsap, Sine } from 'gsap';
 import * as PIXI from 'pixi.js';
 

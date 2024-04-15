@@ -8,7 +8,7 @@ import {
   RapierPhysics,
   RapierPhysicsComposite,
   TextureAsset,
-} from 'dill-pixel';
+} from '@relish-studios/dill-pixel';
 import { Point } from 'pixi.js';
 
 export class RapierPhysicsExample extends BaseState {

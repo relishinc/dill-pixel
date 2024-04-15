@@ -1,6 +1,9 @@
+import * as console from 'node:console';
 import { Point } from 'pixi.js';
 import { Application } from '../core/Application';
+import { IResizeManager } from './IResizeManager';
 import * as MathUtils from './MathUtils';
+import { ResizeManagerOptions } from './ResizeManagerNew';
 
 type DesiredSizeConfig = {
   size: Point;
@@ -11,7 +14,8 @@ type DesiredSizeConfig = {
   ratioMax: number;
 };
 
-export class ResizeManager {
+export class ResizeManager implements IResizeManager {
+  public options: ResizeManagerOptions;
   private _sizeMin: Point;
   private _sizeMax: Point;
   private _ratioMin!: number;
@@ -20,7 +24,7 @@ export class ResizeManager {
   private _desiredSizeConfig: DesiredSizeConfig;
 
   constructor(
-    private app: Application,
+    protected app: Application,
     pSizeMin?: Point | undefined,
     pSizeMax?: Point | undefined,
   ) {
@@ -62,6 +66,10 @@ export class ResizeManager {
   private get gameAspectRatio(): number {
     return MathUtils.clamp(this.windowAspectRatio, this._ratioMin, this._ratioMax);
   }
+
+  public initialize(): void {}
+
+  public resize(): void {}
 
   setDesiredSize(desiredSize: Point, maxFactor: number = 4): void {
     const sizeMin = new Point(desiredSize.x, desiredSize.y);

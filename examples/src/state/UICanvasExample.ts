@@ -1,4 +1,12 @@
-import { AssetMapData, AssetType, delay, FlexContainer, Make, TextureAsset, UICanvas } from 'dill-pixel';
+import {
+  AssetMapData,
+  AssetType,
+  delay,
+  FlexContainer,
+  Make,
+  TextureAsset,
+  UICanvas,
+} from '@relish-studios/dill-pixel';
 import { Point } from 'pixi.js';
 import { BaseState } from './BaseState';
 

@@ -1,6 +1,6 @@
 import { BaseState } from '@/state/BaseState';
 import { MatterPhysicsSpriteExample } from '@/state/gameobjects/MatterPhysicsSpriteExample';
-import { AssetMapData, AssetType, MatterPhysics, PhysicsBodyType, TextureAsset } from 'dill-pixel';
+import { AssetMapData, AssetType, MatterPhysics, PhysicsBodyType, TextureAsset } from '@relish-studios/dill-pixel';
 import { Point } from 'pixi.js';
 
 export class MatterPhysicsExample extends BaseState {

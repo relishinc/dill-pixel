@@ -1,6 +1,6 @@
 import ExamplePopup from '@/popups/ExamplePopup';
 import { BaseState } from '@/state/BaseState';
-import { AssetMapData, Container, playAudioTrack, Signals } from 'dill-pixel';
+import { AssetMapData, Container, playAudioTrack, Signals } from '@relish-studios/dill-pixel';
 import { Point } from 'pixi.js';
 
 export class AudioExample extends BaseState {

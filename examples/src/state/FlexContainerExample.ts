@@ -1,5 +1,5 @@
 import { BaseState } from '@/state/BaseState';
-import { AssetMapData, delay, FlexContainer, Make, MathUtils } from 'dill-pixel';
+import { AssetMapData, delay, FlexContainer, Make, MathUtils } from '@relish-studios/dill-pixel';
 import { Point, Sprite, Text, TextStyle } from 'pixi.js';
 
 const whiteTextStyle = (size: number) =>
@@ -42,21 +42,19 @@ export class FlexContainerExample extends BaseState {
     this.configureGUI();
 
     this.setHeaderText('Flex Container Example');
-    this.backing = this.add.coloredSprite(
-      0x000000,
-      [size.x, size.y],
-      'rectangle',
-      {},
-      0.25,
-      [0, 0],
-      0,
-    );
-    
-    this.flexContainer = this.add.flexContainer({ 
-      gap: this.config.gap as number, 
+    this.backing = this.add.coloredSprite(0x000000, [size.x, size.y], 'rectangle', {}, 0.25, [0, 0], 0);
+
+    this.flexContainer = this.add.flexContainer({
+      gap: this.config.gap as number,
       flexDirection: this.config.flexDirection as 'row' | 'column',
-      flexWrap: this.config.flexWrap as 'nowrap' | 'wrap', 
-      justifyContent: this.config.justifyContent as 'flex-start' | 'center' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly',
+      flexWrap: this.config.flexWrap as 'nowrap' | 'wrap',
+      justifyContent: this.config.justifyContent as
+        | 'flex-start'
+        | 'center'
+        | 'flex-end'
+        | 'space-between'
+        | 'space-around'
+        | 'space-evenly',
       alignItems: this.config.alignItems as 'center' | 'flex-start' | 'flex-end',
       width: this.config.width as number,
       height: this.config.height as number,
@@ -83,7 +81,6 @@ export class FlexContainerExample extends BaseState {
   }
 
   configureGUI() {
-
     this.gui
       .add(this.config, 'useBacking')
       .onChange(() => {
@@ -154,7 +151,6 @@ export class FlexContainerExample extends BaseState {
         this.addItems();
       })
       .name('Nested');
-
   }
 
   addItems() {
@@ -174,16 +170,15 @@ export class FlexContainerExample extends BaseState {
     this.flexContainer.size = [width, height];
 
     Array.from({ length: numItems }).forEach((_, i) => {
-      if ( this.config.nested && numItems > 1 && i === 1 ) {
-        const nested: FlexContainer = this.flexContainer.add.flexContainer({ flexDirection: this.config.flexDirection === 'row' ? 'column' : 'row', gap: 10, alignItems: 'center', justifyContent: 'center' });
+      if (this.config.nested && numItems > 1 && i === 1) {
+        const nested: FlexContainer = this.flexContainer.add.flexContainer({
+          flexDirection: this.config.flexDirection === 'row' ? 'column' : 'row',
+          gap: 10,
+          alignItems: 'center',
+          justifyContent: 'center',
+        });
         Array.from({ length: numItems }).forEach((_, n) => {
-          nested.add.text(
-            `Nested ${n + 1}`,
-            whiteTextStyle(24),
-            1,
-            0,
-            0,
-          );          
+          nested.add.text(`Nested ${n + 1}`, whiteTextStyle(24), 1, 0, 0);
         });
       }
       this.flexContainer.add.text(

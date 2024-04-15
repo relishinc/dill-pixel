@@ -1,5 +1,5 @@
 import { GREEN } from '@/utils/Constants';
-import { AssetMapData, LoadScreen, SplashScreen as DillPixelSplashScreen } from 'dill-pixel';
+import { AssetMapData, LoadScreen, SplashScreen as DillPixelSplashScreen } from '@relish-studios/dill-pixel';
 import { gsap } from 'gsap';
 import { Point, Sprite } from 'pixi.js';
 

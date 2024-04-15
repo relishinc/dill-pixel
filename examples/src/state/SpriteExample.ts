@@ -1,6 +1,6 @@
 import ExamplePopup from '@/popups/ExamplePopup';
 import { BaseState } from '@/state/BaseState';
-import { AssetMapData, AssetType, TextureAsset, TextureAtlasAsset } from 'dill-pixel';
+import { AssetMapData, AssetType, TextureAsset, TextureAtlasAsset } from '@relish-studios/dill-pixel';
 import { Point, Texture } from 'pixi.js';
 
 export class SpriteExample extends BaseState {

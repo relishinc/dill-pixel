@@ -29,6 +29,8 @@ import {
   ResizeManager,
   WebEventsManager
 } from '../utils';
+import {IResizeManager} from '../utils/IResizeManager';
+import {ResizeManagerNew, ResizeManagerOptions} from '../utils/ResizeManagerNew';
 import {AppConfig} from './AppConfig';
 
 export interface DillPixelApplicationOptions extends IApplicationOptions {
@@ -36,6 +38,8 @@ export interface DillPixelApplicationOptions extends IApplicationOptions {
   useSpine?: boolean;
   showStatsInProduction?: boolean;
   showStateDebugInProduction?: boolean;
+  useNewResizeManager?: boolean;
+  resizeOptions?: Partial<ResizeManagerOptions>;
 }
 
 export type Font = { family: string; data?: { weight?: number | string } };
@@ -109,6 +113,8 @@ export class Application<T extends Application = any> extends PIXIApplication {
   protected _physics: PhysicsBase;
   protected stats: any;
   protected _useSpine: boolean;
+  protected _useNewResizeManager: boolean;
+  protected _resizeOptions: Partial<ResizeManagerOptions>;
   protected _initialized: boolean = false;
 
   /**
@@ -146,6 +152,8 @@ export class Application<T extends Application = any> extends PIXIApplication {
     super(new AppConfig(appConfig));
     Application._instance = this;
     this._useSpine = appConfig?.useSpine || false;
+    this._useNewResizeManager = appConfig?.useNewResizeManager || false;
+    this._resizeOptions = appConfig?.resizeOptions || false;
     if (isDev() || appConfig?.showStatsInProduction) {
       this.addStats().then(() => {
         console.log('stats.js added');
@@ -177,14 +185,18 @@ export class Application<T extends Application = any> extends PIXIApplication {
     this._keyboardManager = new KeyboardManager(this);
     this.addFocusManager();
 
-    if (this.resizeTo) {
-      this._resizeManager = new ResizeManager(this);
+    if (this._useNewResizeManager && this._resizeOptions) {
+      this._resizeManager = new ResizeManagerNew(this);
     } else {
-      this._resizeManager = new ResizeManager(
-        this,
-        appConfig?.sizeMin || Application.SIZE_MIN_DEFAULT,
-        appConfig?.sizeMax || Application.SIZE_MAX_DEFAULT,
-      );
+      if (this.resizeTo) {
+        this._resizeManager = new ResizeManager(this);
+      } else {
+        this._resizeManager = new ResizeManager(
+          this,
+          appConfig?.sizeMin || Application.SIZE_MIN_DEFAULT,
+          appConfig?.sizeMax || Application.SIZE_MAX_DEFAULT,
+        );
+      }
     }
 
     this._copyManager = new CopyManager(this);
@@ -215,6 +227,11 @@ export class Application<T extends Application = any> extends PIXIApplication {
     }
 
     return Application._instance;
+  }
+
+  set resizeOptions(value: Partial<ResizeManagerOptions>) {
+    this._resizeOptions = value;
+    this.resizer.options = this._resizeOptions;
   }
 
   // override this to set a custom resolution suffix;
@@ -273,7 +290,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
     return this._hitAreaRenderer;
   }
 
-  public get resizer(): ResizeManager {
+  public get resizer(): IResizeManager {
     return this._resizeManager;
   }
 
@@ -379,7 +396,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
     if (this._useSpine) {
       await this.addSpine();
     }
-
+    await this.resizer.initialize(this._resizeOptions);
     this.addToStage(this._stateManager);
     this.addToStage(this._popupManager);
     this.addToStage(this._loadManager);
@@ -544,44 +561,52 @@ export class Application<T extends Application = any> extends PIXIApplication {
       await delay(debounceDelay);
     }
 
-    if (this._resizeManager.useAspectRatio) {
-      this._size.copyFrom(this._resizeManager.getSize());
-      const stageScale: number = this._resizeManager.getStageScale();
-      this.stage.scale.set(stageScale);
-      this.renderer.resize(this._size.x * stageScale, this._size.y * stageScale);
+    if (this._useNewResizeManager) {
+      this.resizer.resize();
+      this._size = this._size.copyFrom(this.resizer.getSize());
     } else {
-      let w = this._size.x;
-      let h = this._size.y;
-      if ((this.resizeTo as HTMLElement)?.getBoundingClientRect) {
-        const el = this.resizeTo as HTMLElement;
-        w = el.getBoundingClientRect().width;
-        h = el.getBoundingClientRect().height;
-      } else if ((this.resizeTo as Window)?.innerWidth) {
-        const el = this.resizeTo as Window;
-        w = el.innerWidth;
-        h = el.innerHeight;
+      if (this._resizeManager.useAspectRatio) {
+        this._size.copyFrom(this._resizeManager.getSize());
+        const stageScale: number = this._resizeManager.getStageScale();
+        this.stage.scale.set(stageScale);
+        this.renderer.resize(this._size.x * stageScale, this._size.y * stageScale);
+      } else {
+        let w = this._size.x;
+        let h = this._size.y;
+        if ((this.resizeTo as HTMLElement)?.getBoundingClientRect) {
+          const el = this.resizeTo as HTMLElement;
+          w = el.getBoundingClientRect().width;
+          h = el.getBoundingClientRect().height;
+        } else if ((this.resizeTo as Window)?.innerWidth) {
+          const el = this.resizeTo as Window;
+          w = el.innerWidth;
+          h = el.innerHeight;
+        }
+        this._size = new Point(w, h);
+        this._resizeManager.sizeMin = this._size;
+        this._resizeManager.sizeMax = this._size;
+        this.renderer.resize(w, h);
       }
-      this._size = new Point(w, h);
-      this._resizeManager.sizeMin = this._size;
-      this._resizeManager.sizeMax = this._size;
-      this.renderer.resize(w, h);
     }
-
-    this._stateManager.onResize(this._size);
-    this._loadManager.onResize(this._size);
-    this._popupManager.onResize(this._size);
-    this._orientationManager.onResize();
 
     // emit a global resize signal that anything can listen to
-    Signals.onResize.emit(this._size);
+    this.ticker.addOnce(() => {
+      console.log('hi', this._size);
+      this._stateManager.onResize(this._size);
+      this._loadManager.onResize(this._size);
+      this._popupManager.onResize(this._size);
+      this._orientationManager.onResize();
 
-    updateFocus();
+      Signals.onResize.emit(this._size);
 
-    if (this._hitAreaRenderer.active) {
-      this._hitAreaRenderer.renderHitAreas();
-    }
+      updateFocus();
 
-    this.onResizeComplete();
+      if (this._hitAreaRenderer.active) {
+        this._hitAreaRenderer.renderHitAreas();
+      }
+
+      this.onResizeComplete();
+    });
   }
 
   /**
