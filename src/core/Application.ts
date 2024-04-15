@@ -425,7 +425,6 @@ export class Application<T extends Application = any> extends PIXIApplication {
     this.onResize(0);
     // Delayed to fix incorrect iOS resizing in WKWebView. See: https://bugs.webkit.org/show_bug.cgi?id=170595
     this.onResize(0.5);
-
     this._webEventsManager.registerResizeCallback(() => this.onResize(0.5));
   }
 

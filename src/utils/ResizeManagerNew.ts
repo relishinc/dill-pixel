@@ -28,6 +28,15 @@ export class ResizeManagerNew extends ResizeManager {
   private _screenSize: Point = new Point();
   private _scale: number;
 
+  get options(): ResizeManagerOptions {
+    return this._options;
+  }
+
+  set options(value: ResizeManagerOptions) {
+    this._options = value;
+    window?.dispatchEvent(new Event('resize'));
+  }
+
   get size() {
     return this._size;
   }
@@ -45,6 +54,7 @@ export class ResizeManagerNew extends ResizeManager {
    */
   async initialize(options: Partial<ResizeManagerOptions> = {}) {
     this._options = { ...defaultOptions, ...options };
+    this.resize();
   }
 
   /**
@@ -62,8 +72,6 @@ export class ResizeManagerNew extends ResizeManager {
 
     const minWidth = this._options.minSize.width;
     const minHeight = this._options.minSize.height;
-
-    console.log({ screenWidth, screenHeight, minWidth, minHeight });
 
     // Calculate renderer and canvas sizes based on current dimensions
     const scaleX = screenWidth < minWidth ? minWidth / screenWidth : 1;

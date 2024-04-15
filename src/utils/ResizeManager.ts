@@ -15,7 +15,6 @@ type DesiredSizeConfig = {
 };
 
 export class ResizeManager implements IResizeManager {
-  public options: ResizeManagerOptions;
   private _sizeMin: Point;
   private _sizeMax: Point;
   private _ratioMin!: number;
@@ -43,6 +42,20 @@ export class ResizeManager implements IResizeManager {
       this._sizeMin = new Point(0, 0);
       this._sizeMax = new Point(0, 0);
     }
+  }
+
+  get options(): ResizeManagerOptions {
+    console.error('ResizeManager: options is not implemented in the old ResizeManager');
+    return {
+      autoScroll: false,
+      useAspectRatio: false,
+      fixed: false,
+      minSize: { width: 0, height: 0 },
+    };
+  }
+
+  set options(value: ResizeManagerOptions) {
+    console.error('ResizeManager: options is not implemented in the old ResizeManager');
   }
 
   get size() {
