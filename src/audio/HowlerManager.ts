@@ -113,6 +113,7 @@ export function stopAudioTrack(trackId: string, category: string): IAudioTrack |
 }
 
 export class HowlerManager implements IAudioManager {
+  public autoMuteOnVisibilityChange: boolean = true;
   private _masterVolume: number;
   private _collections: Dictionary<string, AudioCollection>;
   private _previousMasterVolume: number;
@@ -129,12 +130,10 @@ export class HowlerManager implements IAudioManager {
    * @param progress is a number from 0 to 100
    */
   private _audioLoadTokenProgressCallback!: (progress: number) => void;
-
   /**
    * How many of the {@link _audioloadTokens} have been loaded so far
    */
   private _loadedCount: number = 0;
-
   /**
    * The internal flag for print log statements.
    */
@@ -445,13 +444,15 @@ export class HowlerManager implements IAudioManager {
   }
 
   private onVisibilityChanged(isVisible: boolean): void {
-    if (isVisible) {
-      this._masterVolume = this._previousMasterVolume;
-      this.updateAllCategoryVolume();
-    } else {
-      this._previousMasterVolume = this._masterVolume;
-      this._masterVolume = 0;
-      this.updateAllCategoryVolume();
+    if (this.autoMuteOnVisibilityChange) {
+      if (isVisible) {
+        this._masterVolume = this._previousMasterVolume;
+        this.updateAllCategoryVolume();
+      } else {
+        this._previousMasterVolume = this._masterVolume;
+        this._masterVolume = 0;
+        this.updateAllCategoryVolume();
+      }
     }
   }
 
