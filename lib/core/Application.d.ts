@@ -8,11 +8,15 @@ import { PopupManager } from '../popup';
 import { SaveManager } from '../save';
 import { State, StateManager } from '../state';
 import { Add, HTMLTextStyleManager, Make, OrientationManager, ResizeManager, WebEventsManager } from '../utils';
+import { IResizeManager } from '../utils/IResizeManager';
+import { ResizeManagerOptions } from '../utils/ResizeManagerNew';
 export interface DillPixelApplicationOptions extends IApplicationOptions {
     physics?: boolean;
     useSpine?: boolean;
     showStatsInProduction?: boolean;
     showStateDebugInProduction?: boolean;
+    useNewResizeManager?: boolean;
+    resizeOptions?: Partial<ResizeManagerOptions>;
 }
 export type Font = {
     family: string;
@@ -45,6 +49,8 @@ export declare class Application<T extends Application = any> extends PIXIApplic
     protected _physics: PhysicsBase;
     protected stats: any;
     protected _useSpine: boolean;
+    protected _useNewResizeManager: boolean;
+    protected _resizeOptions: Partial<ResizeManagerOptions>;
     protected _initialized: boolean;
     /**
      * Creates a container element with the given id and appends it to the DOM.
@@ -71,6 +77,7 @@ export declare class Application<T extends Application = any> extends PIXIApplic
      * gets the current singleton instance
      */
     static get instance(): Application;
+    set resizeOptions(value: Partial<ResizeManagerOptions>);
     get resolutionSuffix(): string;
     get add(): Add;
     get make(): typeof Make;
@@ -88,8 +95,9 @@ export declare class Application<T extends Application = any> extends PIXIApplic
     get audio(): IAudioManager;
     get voiceover(): IVoiceOverManager;
     get size(): Point;
+    get screenSize(): Point;
     get hitAreaRenderer(): HitAreaRenderer;
-    get resizer(): ResizeManager;
+    get resizer(): IResizeManager;
     get copy(): CopyManager;
     get webEvents(): WebEventsManager;
     get saveManager(): SaveManager;

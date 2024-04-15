@@ -1,4 +1,5 @@
 import { IApplicationOptions } from 'pixi.js';
+import { ResizeManagerOptions } from '../utils/ResizeManagerNew';
 export declare class AppConfig {
     [key: string]: any;
     autoStart?: boolean;
@@ -19,6 +20,8 @@ export declare class AppConfig {
     sharedTicker?: boolean;
     sharedLoader?: boolean;
     resizeTo?: Window | HTMLElement;
+    useNewResizeManager?: boolean;
+    resizeOptions?: Partial<ResizeManagerOptions>;
     constructor(pConfig?: Partial<IApplicationOptions> & {
         [key: string]: any;
     });
