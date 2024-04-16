@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.39.10](https://github.com/relishinc/dill-pixel/compare/v2.39.9...v2.39.10) (2024-04-16)
+
+
+### Bug Fixes
+
+* accidental node:console import in ResizeManager ([ca2f360](https://github.com/relishinc/dill-pixel/commit/ca2f3602a2d15a2c56491a70afca00fce99007bc))
+
 ## [2.39.9](https://github.com/relishinc/dill-pixel/compare/v2.39.8...v2.39.9) (2024-04-15)
 
 
