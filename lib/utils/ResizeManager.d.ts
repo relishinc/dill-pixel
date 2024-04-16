@@ -1,5 +1,5 @@
 import { Point } from 'pixi.js';
-import { Application } from '../core/Application';
+import { Application } from '../core';
 import { IResizeManager } from './IResizeManager';
 import { ResizeManagerOptions } from './ResizeManagerNew';
 export declare class ResizeManager implements IResizeManager {
