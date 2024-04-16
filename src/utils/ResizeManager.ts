@@ -1,6 +1,5 @@
-import * as console from 'node:console';
 import { Point } from 'pixi.js';
-import { Application } from '../core/Application';
+import { Application } from '../core';
 import { IResizeManager } from './IResizeManager';
 import * as MathUtils from './MathUtils';
 import { ResizeManagerOptions } from './ResizeManagerNew';
