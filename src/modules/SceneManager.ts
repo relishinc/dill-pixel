@@ -1,6 +1,6 @@
 import { Container } from 'pixi.js';
 import { Application, IApplication } from '../core/Application';
-import { CoreModule } from '../core/decorators';
+import { CoreFunction, CoreModule } from '../core/decorators';
 import { IScene, Scene } from '../display/Scene';
 import { Signal } from '../signals';
 import { Logger } from '../utils/console/Logger';
@@ -43,8 +43,12 @@ export type LoadSceneConfig = {
 @CoreModule
 export class SceneManager extends Module implements ISceneManager {
   public readonly id: string = 'SceneManager';
-  public onSceneChangeStart = new Signal<(detail: { exiting: string | null; entering: string }) => void>();
-  public onSceneChangeComplete = new Signal<(detail: { current: string }) => void>();
+  public onSceneChangeStart: Signal<(detail: { exiting: string | null; entering: string }) => void> = new Signal<
+    (detail: { exiting: string | null; entering: string }) => void
+  >();
+  public onSceneChangeComplete: Signal<(detail: { current: string }) => void> = new Signal<
+    (detail: { current: string }) => void
+  >();
   // TODO: loadScreen is a special scene that can be used right after the application starts
   public loadScreen?: Scene;
   // view container - gets added to the stage
@@ -96,6 +100,7 @@ export class SceneManager extends Module implements ISceneManager {
   }
 
   public async loadScene(sceneIdOrLoadSceneConfig: string): Promise<void>;
+  @CoreFunction
   public async loadScene(sceneIdOrLoadSceneConfig: LoadSceneConfig | string): Promise<void> {
     if (this._queue) {
       // TODO: maybe allow halting the queue and starting a fresh scene load

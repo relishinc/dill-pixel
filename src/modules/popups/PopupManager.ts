@@ -1,5 +1,5 @@
 import { IApplication } from '../../core/Application';
-import { CoreModule } from '../../core/decorators';
+import { CoreFunction, CoreModule } from '../../core/decorators';
 import { Container } from '../../display/Container';
 import { IPopup, PopupConfig, PopupConstructor } from '../../display/Popup';
 import { Signal } from '../../signals';
@@ -21,13 +21,13 @@ export interface IPopupManager extends IModule {
   onPopupHidden: Signal<() => void>; // Signal for when a popup is hidden
 
   // methods
-  add(id: string | number, popup: PopupConstructor): void; // Add a popup
+  addPopup(id: string | number, popup: PopupConstructor): void; // Add a popup
 
-  show(id: string | number, config?: Partial<PopupConfig>): Promise<IPopup | undefined>; // Show a popup
+  showPopup(id: string | number, config?: Partial<PopupConfig>): Promise<IPopup | undefined>; // Show a popup
 
-  hide(id: string | number): Promise<IPopup | undefined>; // Hide a popup
+  hidePopup(id: string | number): Promise<IPopup | undefined>; // Hide a popup
 
-  removeAll(animate?: boolean): void; // Remove all popups
+  removeAllPopups(animate?: boolean): void; // Remove all popups
 }
 
 /**
@@ -39,8 +39,8 @@ export class PopupManager extends Module implements IPopupManager {
   public readonly view = new Container(); // The view of the PopupManager
 
   // signals
-  public onPopupShown = new Signal<() => void>(); // Signal for when a popup is shown
-  public onPopupHidden = new Signal<() => void>(); // Signal for when a popup is hidden
+  public onPopupShown: Signal<() => void> = new Signal<() => void>(); // Signal for when a popup is shown
+  public onPopupHidden: Signal<() => void> = new Signal<() => void>(); // Signal for when a popup is hidden
 
   private _currentPopupId: string | number | undefined = undefined; // The id of the current popup
 
@@ -85,7 +85,8 @@ export class PopupManager extends Module implements IPopupManager {
    * @param id - The id of the popup
    * @param popup - The popup constructor
    */
-  add(id: string | number, popup: PopupConstructor): void {
+  @CoreFunction
+  addPopup(id: string | number, popup: PopupConstructor): void {
     this._popups.set(id, popup);
   }
 
@@ -95,7 +96,8 @@ export class PopupManager extends Module implements IPopupManager {
    * @param config - The configuration for the popup
    * @returns a promise resolving to the popup, if it exists
    */
-  async show(id: string | number, config: Partial<PopupConfig> = {}) {
+  @CoreFunction
+  async showPopup(id: string | number, config: Partial<PopupConfig> = {}) {
     const popup = this._popups.get(id);
     if (popup) {
       const instance = this.view.add.existing(new popup(id, config));
@@ -116,7 +118,8 @@ export class PopupManager extends Module implements IPopupManager {
    * @param id - The id of the popup
    * @returns a promise resolving to the popup, if it exists
    */
-  async hide(id: string | number) {
+  @CoreFunction
+  async hidePopup(id: string | number) {
     const popup = this._activePopups.get(id);
     if (popup) {
       popup.beforeHide();
@@ -135,7 +138,8 @@ export class PopupManager extends Module implements IPopupManager {
    * Remove all popups
    * @param animate - Whether to animate the removal
    */
-  removeAll(animate: boolean = false): void {
+  @CoreFunction
+  removeAllPopups(animate: boolean = false): void {
     if (animate) {
       this._activePopups.forEach((popup) => {
         popup.hide();
@@ -151,7 +155,7 @@ export class PopupManager extends Module implements IPopupManager {
    * @private
    */
   private _setupAppListeners(): void {
-    this.addSignalConnection(this.app.scenes.onSceneChangeStart.connect(() => this.removeAll()));
+    this.addSignalConnection(this.app.scenes.onSceneChangeStart.connect(() => this.removeAllPopups()));
     this.app.keyboard.onKeyUp('Escape').connect(this._handleEscape);
   }
 
@@ -162,7 +166,7 @@ export class PopupManager extends Module implements IPopupManager {
    */
   private _handleEscape() {
     if (this.current && this.current.config.closeOnEscape) {
-      void this.hide(this.current.id);
+      void this.hidePopup(this.current.id);
     }
   }
 }

@@ -1,7 +1,7 @@
 import { Bounds, Container, PointerEvents, PointLike } from 'pixi.js';
 import { IApplication } from '../../core/Application';
 
-import { CoreModule } from '../../core/decorators';
+import { CoreFunction, CoreModule } from '../../core/decorators';
 import { PIXIContainer } from '../../pixi';
 import { Signal } from '../../signals';
 import { Logger } from '../../utils/console/Logger';
@@ -218,10 +218,12 @@ export class FocusManager extends Module implements IFocusManager {
   public readonly id: string = 'FocusManager';
   public readonly view = new Container();
   // signals
-  public onFocusManagerActivated = new Signal<() => void>();
-  public onFocusManagerDeactivated = new Signal<() => void>();
-  public onFocusLayerChange = new Signal<(currentLayerId: string | number) => void>();
-  public onFocusChange = new Signal<(detail: FocusChangeDetail) => void>();
+  public onFocusManagerActivated: Signal<() => void> = new Signal<() => void>();
+  public onFocusManagerDeactivated: Signal<() => void> = new Signal<() => void>();
+  public onFocusLayerChange: Signal<(currentLayerId: string | number) => void> = new Signal<
+    (currentLayerId: string | number) => void
+  >();
+  public onFocusChange: Signal<(detail: FocusChangeDetail) => void> = new Signal<(detail: FocusChangeDetail) => void>();
   //
   private _focusOutliner: IFocusOutliner;
   private _layers: Map<string | number, IFocusLayer> = new Map();
@@ -290,6 +292,7 @@ export class FocusManager extends Module implements IFocusManager {
     this.addFocusable(focusable, layerId, isDefault);
   }
 
+  @CoreFunction
   public addFocusable(
     focusable: IFocusable | IFocusable[],
     layerId?: string | number | null | undefined,
@@ -319,6 +322,7 @@ export class FocusManager extends Module implements IFocusManager {
     this.removeFocusable(focusable);
   }
 
+  @CoreFunction
   public removeFocusable(focusable: IFocusable | IFocusable[]) {
     if (!Array.isArray(focusable)) {
       focusable = [focusable];
@@ -330,6 +334,7 @@ export class FocusManager extends Module implements IFocusManager {
     });
   }
 
+  @CoreFunction
   public setLayerOrder(layerIds: (string | number)[]): void {
     const newLayers: Map<string | number, IFocusLayer> = new Map();
     layerIds.forEach((layerId) => {
@@ -341,6 +346,7 @@ export class FocusManager extends Module implements IFocusManager {
     this._layers = newLayers;
   }
 
+  @CoreFunction
   public addFocusLayer(
     layerId?: string | number,
     focusables?: IFocusable | IFocusable[],
@@ -367,6 +373,7 @@ export class FocusManager extends Module implements IFocusManager {
     return newLayer;
   }
 
+  @CoreFunction
   public removeFocusLayer(layerId?: string | number, removeTopLayerIfUndefined = true): void {
     if (layerId === undefined && removeTopLayerIfUndefined) {
       return this._removeTopLayer();
@@ -392,6 +399,7 @@ export class FocusManager extends Module implements IFocusManager {
     this.focus(focusable);
   }
 
+  @CoreFunction
   public setFocus(focusable: IFocusable) {
     this.focus(focusable);
   }
@@ -400,6 +408,7 @@ export class FocusManager extends Module implements IFocusManager {
     this._setTarget(focusable);
   }
 
+  @CoreFunction
   public setFocusLayer(layerId: string | number): void {
     if (!this._layers.has(layerId)) {
       throw new Error(`Layer with ID ${layerId} does not exist.`);
@@ -417,6 +426,7 @@ export class FocusManager extends Module implements IFocusManager {
     this.onFocusLayerChange.emit(this._currentLayerId);
   }
 
+  @CoreFunction
   public removeAllFocusLayers(): void {
     this._layers.clear();
     this._setTarget(null);

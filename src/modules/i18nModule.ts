@@ -1,5 +1,6 @@
 import { Assets } from 'pixi.js';
 import { IApplication } from '../core/Application';
+import { CoreFunction, CoreModule } from '../core/decorators';
 import { Signal } from '../signals';
 import { Logger } from '../utils/console/Logger';
 import { getDynamicModuleFromImportListItem } from '../utils/framework';
@@ -67,9 +68,10 @@ export interface Ii18nModule extends IModule {
 /**
  * i18n module class.
  */
+@CoreModule
 export class i18nModule extends Module implements Ii18nModule {
   public readonly id = 'i18n';
-  public onLocaleChanged = new Signal<(locale: string) => void>();
+  public onLocaleChanged: Signal<(locale: string) => void> = new Signal<(locale: string) => void>();
 
   private _dicts: Record<string, i18nDict> = {};
   private _dict: i18nDict = {};
@@ -89,6 +91,7 @@ export class i18nModule extends Module implements Ii18nModule {
    * @param localeId The locale id to set.
    * @returns Promise<string>
    */
+  @CoreFunction
   async setLocale(localeId: string) {
     this._locale = localeId;
     await this._loadAndSetLocale(localeId);
@@ -128,6 +131,7 @@ export class i18nModule extends Module implements Ii18nModule {
    * @param locale The locale to use for translation.
    * @returns The translated string.
    */
+  @CoreFunction
   t(key: string, params?: i18nTParams, locale: string = this._locale): string {
     const dict = this._dicts[locale];
     if (!dict) {

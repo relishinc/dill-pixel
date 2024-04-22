@@ -19,8 +19,8 @@ export class WebEventsManager extends Module implements IWebEventsManager {
   public readonly id = 'WebEventsManager';
 
   // signals
-  public onResize = new Signal<(size: Size) => void>();
-  public onVisibilityChanged = new Signal<(visible: boolean) => void>();
+  public onResize: Signal<(size: Size) => void> = new Signal<(size: Size) => void>();
+  public onVisibilityChanged: Signal<(visible: boolean) => void> = new Signal<(visible: boolean) => void>();
 
   /**
    * Creates callback arrays and registers to web events.

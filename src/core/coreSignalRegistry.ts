@@ -1,3 +1,4 @@
-import { Signal } from '../signals';
+import { ICoreSignals } from './CoreSignals';
 
-export const coreSignalRegistry: { [signalName: string]: Signal<any> } = {};
+// @ts-ignore
+export const coreSignalRegistry: { [K in keyof ICoreSignals]: ICoreSignals[K] } = {};

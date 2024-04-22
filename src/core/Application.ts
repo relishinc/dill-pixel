@@ -5,6 +5,7 @@ import {
   Assets,
   AssetsManifest,
   DestroyOptions,
+  isMobile,
   Point,
   Renderer,
   RendererDestroyOptions,
@@ -16,6 +17,7 @@ import { IAudioManager } from '../modules/audio/AudioManager';
 import defaultModules from '../modules/defaultModules';
 import { FocusManagerOptions, IFocusManager } from '../modules/focus/FocusManager';
 import { i18nOptions, Ii18nModule } from '../modules/i18nModule';
+import { ActionSignal, IInputManager, InputContext } from '../modules/input/InputManager';
 import { IKeyboardManager } from '../modules/KeyboardManager';
 import { IModule } from '../modules/Module';
 import { IPopupManager } from '../modules/popups/PopupManager';
@@ -31,9 +33,11 @@ import { Logger } from '../utils/console/Logger';
 import { isDev } from '../utils/env';
 import { getDynamicModuleFromImportListItem } from '../utils/framework';
 import { bindAllMethods } from '../utils/methodBinding';
-import { AppSize, ImportList, Size, WithRequiredProps } from '../utils/types';
+import { ImportList, Size, WithRequiredProps } from '../utils/types';
 import { coreFunctionRegistry } from './coreFunctionRegistry';
+import { ICoreFunctions } from './CoreFunctions';
 import { coreSignalRegistry } from './coreSignalRegistry';
+import { ICoreSignals } from './CoreSignals';
 import { MethodBindingRoot } from './decorators';
 
 // for now, to detect multiple spritesheet sizes
@@ -103,6 +107,16 @@ export interface IApplication extends PIXIPApplication {
   webEvents: IWebEventsManager;
   keyboard: IKeyboardManager;
   focus: IFocusManager;
+  popups: IPopupManager;
+  audio: IAudioManager;
+  i18n: Ii18nModule;
+  resizer: IResizer;
+  input: IInputManager;
+  store: IStore;
+
+  actionContext: string | InputContext;
+
+  actions(action: string): ActionSignal;
 
   initialize(config: RequiredApplicationConfig): Promise<IApplication>;
 
@@ -121,7 +135,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   public static containerId = 'dill-pixel-game-container';
   public static containerElement: HTMLElement;
   // signals
-  public onResize = new Signal<(size: AppSize) => void>();
+  public onResize = new Signal<(size: Size) => void>();
   // modules
   protected _modules: Map<string, IModule> = new Map();
 
@@ -136,9 +150,11 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   protected _i18n: Ii18nModule;
   protected _resizer: IResizer;
 
+  // input
+  protected _input: IInputManager;
+  protected _actions: ActionSignal;
   // store
   protected _store: IStore;
-
   // size
   protected _center = new Point(0, 0);
 
@@ -230,8 +246,23 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this._resizer;
   }
 
+  public get input(): IInputManager {
+    if (!this._input) {
+      this._input = this.getModule<IInputManager>('InputManager');
+    }
+    return this._input;
+  }
+
   public get store(): IStore {
     return this._store;
+  }
+
+  public get actionContext(): string | InputContext {
+    return this.input.context;
+  }
+
+  public set actionContext(context: string | InputContext) {
+    this.input.context = context;
   }
 
   /**
@@ -247,6 +278,14 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
    */
   public get globalFunctions(): string[] {
     return Object.keys(coreFunctionRegistry);
+  }
+
+  get isMobile() {
+    return isMobile.any;
+  }
+
+  get isTouch() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   }
 
   private get views(): any[] {
@@ -342,6 +381,14 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     void this._resize();
   }
 
+  public actions<T = any>(action: string): ActionSignal<T> {
+    return this.input.actions(action);
+  }
+
+  public sendAction(action: string) {
+    this.input.sendAction(action);
+  }
+
   /**
    * Connect to a global signal
    * signals registered in core modules are added to the global signal registry
@@ -353,11 +400,12 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
    * @param {string} signalName
    * @returns {Signal<any>}
    */
-  public on(signalName: string): Signal<any> {
-    if (!coreSignalRegistry[signalName]) {
-      throw new Error(`Signal with name ${signalName} does not exist in the global signal registry`);
+  on<K extends keyof ICoreSignals>(signalName: K): ICoreSignals[K] {
+    const signal = coreSignalRegistry[signalName];
+    if (!signal) {
+      throw new Error('Signal not found in registry');
     }
-    return coreSignalRegistry[signalName];
+    return signal;
   }
 
   /**
@@ -369,11 +417,24 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
    * @param args
    * @returns {any}
    */
-  public func(functionName: string, ...args: any[]): any {
-    if (!coreFunctionRegistry[functionName]) {
-      throw new Error(`Function with name ${functionName} does not exist in the global function registry`);
+  // public do(functionName: string, ...args: any[]): any {
+  //   if (!coreFunctionRegistry[functionName]) {
+  //     throw new Error(`Function with name ${functionName} does not exist in the global function registry`);
+  //   }
+  //   return coreFunctionRegistry[functionName](...args);
+  // }
+
+  // Type-safe 'do' function
+  do<K extends keyof ICoreFunctions>(
+    functionName: K,
+    ...args: Parameters<ICoreFunctions[K]>
+  ): ReturnType<ICoreFunctions[K]> {
+    const func = coreFunctionRegistry[functionName];
+    if (!func) {
+      throw new Error('Function not found in registry');
     }
-    return coreFunctionRegistry[functionName](...args);
+    // @ts-ignore
+    return func(...args) as ReturnType<ICoreFunctions[K]>;
   }
 
   /**
@@ -512,7 +573,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     this.stage.addChild(this.focus.view);
 
     void this._resize();
-
+    // is touch device
     return Promise.resolve();
   }
 }

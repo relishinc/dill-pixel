@@ -2,14 +2,14 @@ import { Graphics } from 'pixi.js';
 import { IApplication } from '../core/Application';
 import { CoreModule } from '../core/decorators';
 import { Container } from '../display/Container';
-import { AppSize, Size } from '../utils/types';
+import { Size } from '../utils/types';
 import { IModule, Module } from './Module';
 
 /**
  * Interface for Resizer module.
  */
 export interface IResizer extends IModule {
-  size: AppSize;
+  size: Size;
 
   resize(): void;
 }
@@ -69,6 +69,7 @@ export class Resizer extends Module {
   /**
    * Resizes the application based on window size and module options.
    */
+  
   resize() {
     let screenWidth = window.innerWidth;
     let screenHeight = window.innerHeight;
@@ -105,7 +106,7 @@ export class Resizer extends Module {
       this._drawDebug();
     }
   }
-  
+
   /**
    * Draws debug information if debug option is enabled.
    */

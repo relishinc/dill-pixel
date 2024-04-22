@@ -41,7 +41,7 @@ export function CoreFunction(target: any, prop: string | symbol) {
  * @returns {any}
  * @constructor
  */
-export function CoreModule(constructor: Constructor<any>) {
+export function CoreModule(constructor: Constructor<any>): any {
   const original = constructor;
 
   function construct(constructor: Constructor<any>, args: any[]) {
@@ -56,20 +56,24 @@ export function CoreModule(constructor: Constructor<any>) {
         // remove "on" prefix and lowercase first letter
         signalName = signalName.charAt(2).toLowerCase() + signalName.slice(3);
         // check if signal registry exists
+        // @ts-ignore
         if (coreSignalRegistry[signalName]) {
           // throw
           Logger.error(`Signal with name ${signalName} already exists in the global signal registry`);
         } else {
+          // @ts-ignore;
           coreSignalRegistry[signalName] = instance[key];
         }
       }
     });
     const coreFunctions = (constructor as any).__dill_pixel_core_functions;
     coreFunctions?.forEach((functionName: string) => {
+      // @ts-ignore
       if (coreFunctionRegistry[functionName]) {
         // throw
         Logger.error(`Function with name ${functionName} already exists in the global function registry`);
       } else {
+        // @ts-ignore
         coreFunctionRegistry[functionName] = instance[functionName].bind(instance);
       }
     });

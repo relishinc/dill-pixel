@@ -108,6 +108,7 @@ export type {
   AlignItems,
   FlexContainerConfig,
 } from './display/FlexContainer';
+
 export type { IContainer } from './display/Container';
 export type { IPopup } from './display/Popup';
 export type { IScene } from './display/Scene';

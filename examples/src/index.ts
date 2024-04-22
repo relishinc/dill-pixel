@@ -1,6 +1,7 @@
 import EN from '@/locales/en';
 import { V8Application } from '@/V8Application';
-import { create, LocalStorageAdapter } from 'dill-pixel';
+import { create, LocalStorageAdapter, Logger } from 'dill-pixel';
+import { InputContext } from '../../src/modules/input/InputManager.ts';
 import manifest from './assets.json';
 
 const app = await create(V8Application, {
@@ -43,12 +44,36 @@ const app = await create(V8Application, {
   useSpine: true,
 });
 
-/*
+// Core signals / functions testing
 Logger.log('V8Application created', app);
 Logger.log('V8Application renderer', app.renderer);
 Logger.log('global signals', app.globalSignals);
 Logger.log('global functions', app.globalFunctions);
-*/
+
+// actions testing
+app.actions('up').connect(() => {
+  console.log('up action');
+});
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowUp') {
+    app.sendAction('up');
+  }
+});
+
+app.input.onControllerActivated.connect((controller) => {
+  console.log('controller activated:', controller);
+});
+
+app.actionContext = InputContext.Game;
+
+app.on('sceneChangeComplete').connect(async (detail: { current: string }) => {
+  console.log('sceneChangeComplete', detail.current);
+});
+
+app.do('onKeyUp', 'Enter').connect(() => {
+  console.log('onKeyUp: Enter');
+});
 
 // i18n testing
 /*

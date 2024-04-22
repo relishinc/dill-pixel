@@ -1,5 +1,5 @@
 export default {
-  foo: 'bar',
+  foo: 'baz',
   opts: '[bar|baz|bal]',
   obj: {
     foo: 'bar',
