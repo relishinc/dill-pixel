@@ -18,6 +18,7 @@
     "audio:vo": "texttospeech",
     "audio:captions": "node ../cli.mjs audio captions assets/audio",
     "audio:compress": "node ../cli.mjs audio compress assets/audio",
+    "vo:generate": "node ../cli.mjs vo generate",
     "spritesheets": "node assets/images/export_spritesheets"
   },
   "author": "Relish Digital<dev@reli.sh>",

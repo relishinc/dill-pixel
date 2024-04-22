@@ -18,7 +18,7 @@
   "sideEffects": false,
   "scripts": {
     "dev": "cd ./examples && npm run dev",
-    "build": "npm run version && npm run pixi-exports && npm run compile",
+    "build": "npm run version && npm run pixi-exports && npm run generate && npm run compile",
     "pixi-exports": "node ./scripts/pixi-exports.js",
     "compile": "tsc",
     "build:examples": "cd ./examples && npm run build",
@@ -29,7 +29,10 @@
     "build:docs": "cd ./docs && npm run build",
     "dev:docs": "cd ./docs && npm run dev",
     "typedoc": "npm run version && typedoc --out typedoc src",
-    "version": "node ./scripts/generate-version.js"
+    "version": "node ./scripts/generate-version.js",
+    "generate": "npm run generate:core-functions && npm run generate:core-signals",
+    "generate:core-functions": "node scripts/generate-core-functions.mjs",
+    "generate:core-signals": "node scripts/generate-core-signals.mjs"
   },
   "repository": {
     "type": "git",

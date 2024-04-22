@@ -1,6 +1,8 @@
 import { IApplication } from '../core/Application';
+import { CoreModule } from '../core/decorators';
 import { Module } from './Module';
 
+@CoreModule
 export class SpineModule extends Module {
   public readonly id = 'SpineModule';
 

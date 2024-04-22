@@ -27,7 +27,9 @@
   "ts-node": {
     "compilerOptions": {
       "module": "ESNext",
-      "moduleResolution": "Node"
+      "moduleResolution": "Node",
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true
     }
   },
   "typeRoots": [
@@ -39,6 +41,6 @@
     "./src/**/*.ts"
   ],
   "exclude": [
-    "./lib"
+    "./lib/**/*"
   ]
 }

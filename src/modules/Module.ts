@@ -1,6 +1,7 @@
 import { Application, IApplication } from '../core/Application';
 import { MethodBindingRoot } from '../core/decorators';
 import { SignalConnection, SignalConnections } from '../signals/Signal';
+import { bindAllMethods } from '../utils/methodBinding';
 
 export interface IModule {
   id: string;
@@ -21,7 +22,9 @@ export class Module<T extends Application = Application> implements IModule {
   // A collection of signal connections.
   protected _signalConnections: SignalConnections = new SignalConnections();
 
-  constructor(public readonly id: string = 'Module') {}
+  constructor(public readonly id: string = 'Module') {
+    bindAllMethods(this);
+  }
 
   public get app(): T {
     return Application.getInstance<T>();

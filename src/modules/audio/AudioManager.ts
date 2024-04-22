@@ -65,11 +65,13 @@ export interface IAudioManager extends IModule {
 @CoreModule
 export class AudioManager extends Module implements IAudioManager {
   // signals
-  public onSoundStarted = new Signal<(detail: SoundDetail) => void>();
-  public onSoundEnded = new Signal<(detail: SoundDetail) => void>();
+  public onSoundStarted: Signal<(detail: SoundDetail) => void> = new Signal<(detail: SoundDetail) => void>();
+  public onSoundEnded: Signal<(detail: SoundDetail) => void> = new Signal<(detail: SoundDetail) => void>();
   public onMuted: Signal<(muted: boolean) => void> = new Signal<(muted: boolean) => void>();
-  public onMasterVolumeChanged = new Signal<(volume: number) => void>();
-  public onChannelVolumeChanged = new Signal<(detail: ChannelVolumeDetail) => void>();
+  public onMasterVolumeChanged: Signal<(volume: number) => void> = new Signal<(volume: number) => void>();
+  public onChannelVolumeChanged: Signal<(detail: ChannelVolumeDetail) => void> = new Signal<
+    (detail: ChannelVolumeDetail) => void
+  >();
 
   private _masterVolume: number = 1;
   private _muted: boolean = false;
@@ -284,9 +286,9 @@ export class AudioManager extends Module implements IAudioManager {
     channelName: ChannelName = 'music',
     duration: number = 2,
   ): Promise<gsap.core.Tween | null> {
-    const crossfadeProps = { duration, ease: 'linear.easeNone' };
-    void this.fadeOut(outSoundId, channelName, crossfadeProps);
-    return this.fadeIn(inSoundId, channelName, crossfadeProps);
+    const crossFadeProps = { duration, ease: 'linear.easeNone' };
+    void this.fadeOut(outSoundId, channelName, crossFadeProps);
+    return this.fadeIn(inSoundId, channelName, crossFadeProps);
   }
 
   public async fade(
