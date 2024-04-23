@@ -1,3 +1,4 @@
+import { IApplication } from '../core/Application';
 import { CoreFunction, CoreModule } from '../core/decorators';
 import { Signal } from '../signals';
 import type { IModule } from './Module';
@@ -13,12 +14,18 @@ export interface IKeyboardManager extends IModule {
   onKeyDown(key?: string): KeySignal;
 
   onKeyUp(key?: string): KeySignal;
+
+  isKeyDown(key: string): boolean;
 }
 
 @CoreModule
 export class KeyboardManager extends Module implements IKeyboardManager {
   public readonly id: string = 'KeyboardManager';
+  // global signals
+  public onGlobalKeyDown: Signal<(detail: KeyboardEventDetail) => void> = new Signal();
+  public onGlobalKeyUp: Signal<(detail: KeyboardEventDetail) => void> = new Signal();
 
+  private _keysDown: Set<string> = new Set();
   private _keyDownSignals: Map<string | undefined, KeySignal> = new Map();
   private _keyUpSignals: Map<string | undefined, KeySignal> = new Map();
 
@@ -32,13 +39,18 @@ export class KeyboardManager extends Module implements IKeyboardManager {
     this._enabled = value;
   }
 
-  public initialize(): void {
-    this._handleEvent = this._handleEvent.bind(this);
+  public initialize(app: IApplication): void {
+    // track which keys are down
+    document.addEventListener('keydown', this._handleKeyDown);
+    document.addEventListener('keyup', this._handleKeyUp);
   }
 
   public destroy() {
     document.removeEventListener('keydown', this._handleEvent);
     document.removeEventListener('keyup', this._handleEvent);
+
+    document.addEventListener('keydown', this._handleKeyDown);
+    document.addEventListener('keyup', this._handleKeyUp);
   }
 
   @CoreFunction
@@ -49,6 +61,25 @@ export class KeyboardManager extends Module implements IKeyboardManager {
   @CoreFunction
   public onKeyUp(key?: string): KeySignal {
     return this._checkAndAddSignal(key?.toLowerCase() || undefined, 'keyup');
+  }
+
+  @CoreFunction
+  public isKeyDown(key: string): boolean {
+    return this._keysDown.has(key);
+  }
+
+  _update() {
+    //
+  }
+
+  private _handleKeyDown(e: KeyboardEvent): void {
+    this._keysDown.add(e.key);
+    this.onGlobalKeyDown.emit({ event: e, key: e.key });
+  }
+
+  private _handleKeyUp(e: KeyboardEvent): void {
+    this._keysDown.delete(e.key);
+    this.onGlobalKeyUp.emit({ event: e, key: e.key });
   }
 
   /**

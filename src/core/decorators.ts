@@ -52,9 +52,9 @@ export function CoreModule(constructor: Constructor<any>): any {
     const instance = new c();
     Object.keys(instance).forEach((key) => {
       if (instance[key] instanceof Signal) {
-        let signalName = key.toString();
+        const signalName = key.toString();
         // remove "on" prefix and lowercase first letter
-        signalName = signalName.charAt(2).toLowerCase() + signalName.slice(3);
+        // signalName = signalName.charAt(2).toLowerCase() + signalName.slice(3);
         // check if signal registry exists
         // @ts-ignore
         if (coreSignalRegistry[signalName]) {

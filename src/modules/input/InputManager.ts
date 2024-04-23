@@ -1,5 +1,5 @@
 import { IApplication } from '../../core/Application';
-import { CoreModule } from '../../core/decorators';
+import { CoreFunction, CoreModule } from '../../core/decorators';
 import { Signal } from '../../signals';
 import { IModule, Module } from '../Module';
 import { ActionsList } from './types';
@@ -32,17 +32,7 @@ export interface IInputManager extends IModule {
 
   sendAction(action: string, data?: any): void;
 
-  initialize(app: IApplication, options?: InputManagerOptions): Promise<void>;
-
   isControllerActive(controller: InputController): boolean;
-
-  activateController(inputController: string): void;
-
-  deactivateController(inputController: string): void;
-
-  activateGamepad(gamepad: Gamepad): void;
-
-  deactivateGamepad(gamepadId: string): void;
 
   isGamepadActive(gamepad: Gamepad): boolean;
 }
@@ -143,11 +133,30 @@ export class InputManager extends Module implements IInputManager {
     super.destroy();
   }
 
+  @CoreFunction
   isControllerActive(controller: InputController): boolean {
     return this.activeControllers.has(controller);
   }
 
-  activateController(inputController: string): void {
+  @CoreFunction
+  isGamepadActive(gamepad: Gamepad): boolean {
+    return this.activeGamepads.has(gamepad.id);
+  }
+
+  @CoreFunction
+  actions<T = any>(action: string): ActionSignal<T> {
+    if (!this._actionSignals.has(action)) {
+      this._actionSignals.set(action, new Signal<(actionDetail: Action<T>) => void>());
+    }
+    return this._actionSignals.get(action)!;
+  }
+
+  @CoreFunction
+  sendAction<T = any>(action: string, data?: T): void {
+    this.actions<T>(action).emit({ action, context: this.context, data });
+  }
+
+  private _activateController(inputController: string): void {
     if (this.activeControllers.has(inputController)) {
       return;
     }
@@ -156,7 +165,7 @@ export class InputManager extends Module implements IInputManager {
     this.onControllerActivated.emit(inputController);
   }
 
-  deactivateController(inputController: InputController): void {
+  private _deactivateController(inputController: InputController): void {
     const wasControllerActive = this.activeControllers.has(inputController);
     if (!wasControllerActive) {
       return;
@@ -166,52 +175,37 @@ export class InputManager extends Module implements IInputManager {
     this.onControllerDeactivated.emit(inputController);
   }
 
-  public activateGamepad(gamepad: Gamepad): void {
+  private _activateGamepad(gamepad: Gamepad): void {
     this.activeGamepads.set(gamepad.id, gamepad);
   }
 
-  public deactivateGamepad(gamepadId: string): void {
+  private _deactivateGamepad(gamepadId: string): void {
     this.activeGamepads.delete(gamepadId);
   }
 
-  public isGamepadActive(gamepad: Gamepad): boolean {
-    return this.activeGamepads.has(gamepad.id);
-  }
-
-  public actions<T = any>(action: string): ActionSignal<T> {
-    if (!this._actionSignals.has(action)) {
-      this._actionSignals.set(action, new Signal<(actionDetail: Action<T>) => void>());
-    }
-    return this._actionSignals.get(action)!;
-  }
-
-  public sendAction<T = any>(action: string, data?: T): void {
-    this.actions<T>(action).emit({ action, context: this.context, data });
-  }
-
   private _onTouchStart(): void {
-    this.activateController(InputController.Touch);
+    this._activateController(InputController.Touch);
   }
 
   private _onMouseMove(): void {
-    this.activateController(InputController.Mouse);
+    this._activateController(InputController.Mouse);
   }
 
   private _onKeyDown(): void {
-    this.activateController(InputController.Keyboard);
+    this._activateController(InputController.Keyboard);
   }
 
   private _onGamepadConnected(event: GamepadEvent): void {
-    this.activateController(InputController.Gamepad);
+    this._activateController(InputController.Gamepad);
     // add the gamepad id just in case we need it (?)
-    this.activateController(event.gamepad.id);
+    this._activateController(event.gamepad.id);
     // emit the gamepad connected signal
     this.onGamepadConnected.emit(event.gamepad);
   }
 
   private _onGamepadDisconnected(event: GamepadEvent): void {
     // remove the gamepad
-    this.deactivateGamepad(event.gamepad.id);
+    this._deactivateGamepad(event.gamepad.id);
 
     // pause the game any time there is a controller disconnect
     this.sendAction(InputAction.Pause);
@@ -221,7 +215,7 @@ export class InputManager extends Module implements IInputManager {
 
     // check if all gamepads are disconnected
     if (this.activeGamepads.size === 0) {
-      this.deactivateController(InputController.Gamepad);
+      this._deactivateController(InputController.Gamepad);
     }
   }
 }

@@ -1,4 +1,5 @@
 export interface ICoreFunctions {
+    // FocusManager;
     addFocusable(focusable: IFocusable | IFocusable[], layerId?: string | number | null | undefined, isDefault: boolean = false): void;
     removeFocusable(focusable: IFocusable | IFocusable[]);
     setLayerOrder(layerIds: (string | number)[]): void;
@@ -7,13 +8,23 @@ export interface ICoreFunctions {
     setFocus(focusable: IFocusable);
     setFocusLayer(layerId: string | number): void;
     removeAllFocusLayers(): void;
+    // i18nModule;
     setLocale(localeId: string);
     t(key: string, params?: i18nTParams, locale: string = this._locale): string;
+    // InputManager;
+    isControllerActive(controller: InputController): boolean;
+    isGamepadActive(gamepad: Gamepad): boolean;
+    actions(action: string): ActionSignal<T>;
+    sendAction(action: string, data?: T): void;
+    // KeyboardManager;
     onKeyDown(key?: string): KeySignal;
     onKeyUp(key?: string): KeySignal;
+    isKeyDown(key: string): boolean;
+    // PopupManager;
     addPopup(id: string | number, popup: PopupConstructor): void;
     showPopup(id: string | number, config: Partial<PopupConfig> = {});
     hidePopup(id: string | number);
     removeAllPopups(animate: boolean = false): void;
+    // SceneManager;
     loadScene(sceneIdOrLoadSceneConfig: LoadSceneConfig | string): Promise<void>;
 }

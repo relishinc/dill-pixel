@@ -13,7 +13,6 @@ import {
 import { IScene } from '../display/Scene';
 import { IAssetManager } from '../modules/AssetManager';
 import { IAudioManager } from '../modules/audio/AudioManager';
-
 import defaultModules from '../modules/defaultModules';
 import { FocusManagerOptions, IFocusManager } from '../modules/focus/FocusManager';
 import { i18nOptions, Ii18nModule } from '../modules/i18nModule';
@@ -288,6 +287,18 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   }
 
+  get signal(): ICoreSignals {
+    return coreSignalRegistry;
+  }
+
+  get func(): ICoreFunctions {
+    return coreFunctionRegistry;
+  }
+
+  get exec(): ICoreFunctions {
+    return coreFunctionRegistry;
+  }
+
   private get views(): any[] {
     return [this.scenes.view, this.popups.view];
   }
@@ -389,53 +400,42 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     this.input.sendAction(action);
   }
 
-  /**
-   * Connect to a global signal
-   * signals registered in core modules are added to the global signal registry
-   * and can be connected to from anywhere in the application
-   * syntactically, we remove the "on" from the signal name, and lowercase the first letter
-   * e.g. "onSceneChangeComplete" becomes "sceneChangeComplete"
-   * @example app.on('sceneChangeComplete').connect(() => {...}) is the same as app.scene.onSceneChangeComplete.connect(() => {...})
-   * unfortunately, the signal's type is lost, so you will have to cast it to the correct type when using the global signal registry
-   * @param {string} signalName
-   * @returns {Signal<any>}
-   */
-  on<K extends keyof ICoreSignals>(signalName: K): ICoreSignals[K] {
-    const signal = coreSignalRegistry[signalName];
-    if (!signal) {
-      throw new Error('Signal not found in registry');
-    }
-    return signal;
-  }
-
-  /**
-   * Call a global function
-   * functions registered in core modules are added to the global function registry
-   * and can be called from anywhere in the application
-   * @example app.func('onKeyDown', 'enter').connect(() => {...})
-   * @param {string} functionName
-   * @param args
-   * @returns {any}
-   */
-  // public do(functionName: string, ...args: any[]): any {
-  //   if (!coreFunctionRegistry[functionName]) {
-  //     throw new Error(`Function with name ${functionName} does not exist in the global function registry`);
+  // /**
+  //  * Connect to a global signal
+  //  * signals registered in core modules are added to the global signal registry
+  //  * and can be connected to from anywhere in the application
+  //  * syntactically, we remove the "on" from the signal name, and lowercase the first letter
+  //  * e.g. "onSceneChangeComplete" becomes "sceneChangeComplete"
+  //  * @param {string} signalName
+  //  * @returns {Signal<any>}
+  //  */
+  // on<K extends keyof ICoreSignals>(signalName: K): ICoreSignals[K] {
+  //   const signal = coreSignalRegistry[signalName];
+  //   if (!signal) {
+  //     throw new Error('Signal not found in registry');
   //   }
-  //   return coreFunctionRegistry[functionName](...args);
+  //   return signal;
   // }
-
-  // Type-safe 'do' function
-  do<K extends keyof ICoreFunctions>(
-    functionName: K,
-    ...args: Parameters<ICoreFunctions[K]>
-  ): ReturnType<ICoreFunctions[K]> {
-    const func = coreFunctionRegistry[functionName];
-    if (!func) {
-      throw new Error('Function not found in registry');
-    }
-    // @ts-ignore
-    return func(...args) as ReturnType<ICoreFunctions[K]>;
-  }
+  //
+  // /**
+  //  * Call a global function
+  //  * functions registered in core modules are added to the global function registry
+  //  * and can be called from anywhere in the application
+  //  * @param {string} functionName
+  //  * @param args
+  //  * @returns {any}
+  //  */
+  // call<K extends keyof ICoreFunctions>(
+  //   functionName: K,
+  //   ...args: Parameters<ICoreFunctions[K]>
+  // ): ReturnType<ICoreFunctions[K]> {
+  //   const func = coreFunctionRegistry[functionName];
+  //   if (!func) {
+  //     throw new Error('Function not found in registry');
+  //   }
+  //   // @ts-ignore
+  //   return func(...args) as ReturnType<ICoreFunctions[K]>;
+  // }
 
   /**
    * Get a storage adapter by id
