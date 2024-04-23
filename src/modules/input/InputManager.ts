@@ -74,7 +74,7 @@ const defaultOptions = {
 };
 
 export type Action<T = any> = {
-  action: string;
+  id: string;
   context: string | InputContext;
   data?: T;
 };
@@ -104,7 +104,7 @@ export class InputManager extends Module implements IInputManager {
     return this._context;
   }
 
-  set context(context: InputContext) {
+  set context(context: string | InputContext) {
     if (this._context === context) {
       return;
     }
@@ -152,8 +152,13 @@ export class InputManager extends Module implements IInputManager {
   }
 
   @CoreFunction
-  sendAction<T = any>(action: string, data?: T): void {
-    this.actions<T>(action).emit({ action, context: this.context, data });
+  sendAction<T = any>(actionId: string, data?: T): void {
+    this.actions<T>(actionId).emit({ id: actionId, context: this.context, data });
+  }
+
+  @CoreFunction
+  setActionContext(context: string | InputContext): void {
+    this.context = context;
   }
 
   private _activateController(inputController: string): void {

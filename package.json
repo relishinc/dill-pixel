@@ -1,6 +1,6 @@
 {
   "name": "dill-pixel",
-  "version": "2.29.2",
+  "version": "8.0.0",
   "title": "Dill Pixel",
   "description": "Relish framework for HTML games",
   "main": "lib/index.js",

@@ -82,8 +82,4 @@ export class ExamplePopup extends Popup implements IPopup {
     this._showAnimation.timeScale(2);
     return this._showAnimation.reverse();
   }
-
-  async close() {
-    void this.app.popups.hide(this.id);
-  }
 }

@@ -17,18 +17,20 @@ export interface IPopupManager extends IModule {
   readonly popupCount: number; // The count of popups
   readonly currentPopupId: string | number | undefined; // The id of the current popup
   // signals
-  onPopupShown: Signal<() => void>; // Signal for when a popup is shown
-  onPopupHidden: Signal<() => void>; // Signal for when a popup is hidden
+  onShowPopup: Signal<(detail: PopupSignalDetail) => void>; // Signal for when a popup is shown
+  onHidePopup: Signal<(detail: PopupSignalDetail) => void>; // Signal for when a popup is hidden
 
   // methods
   addPopup(id: string | number, popup: PopupConstructor): void; // Add a popup
 
-  showPopup(id: string | number, config?: Partial<PopupConfig>): Promise<IPopup | undefined>; // Show a popup
+  showPopup<T = any>(id: string | number, config: Partial<PopupConfig<T>>): Promise<IPopup<T> | undefined>;
 
-  hidePopup(id: string | number): Promise<IPopup | undefined>; // Hide a popup
+  hidePopup<T = any>(id: string | number, data?: any): Promise<IPopup<T> | undefined>; // Hide a popup
 
   removeAllPopups(animate?: boolean): void; // Remove all popups
 }
+
+type PopupSignalDetail<T = any> = { id: string | number; data?: T };
 
 /**
  * PopupManager
@@ -39,8 +41,8 @@ export class PopupManager extends Module implements IPopupManager {
   public readonly view = new Container(); // The view of the PopupManager
 
   // signals
-  public onPopupShown: Signal<() => void> = new Signal<() => void>(); // Signal for when a popup is shown
-  public onPopupHidden: Signal<() => void> = new Signal<() => void>(); // Signal for when a popup is hidden
+  public onShowPopup: Signal<(detail: PopupSignalDetail) => void> = new Signal<(detail: PopupSignalDetail) => void>(); // Signal for when a popup is shown
+  public onHidePopup: Signal<(detail: PopupSignalDetail) => void> = new Signal<(detail: PopupSignalDetail) => void>(); // Signal for when a popup is hidden
 
   private _currentPopupId: string | number | undefined = undefined; // The id of the current popup
 
@@ -86,7 +88,7 @@ export class PopupManager extends Module implements IPopupManager {
    * @param popup - The popup constructor
    */
   @CoreFunction
-  addPopup(id: string | number, popup: PopupConstructor): void {
+  addPopup<T = any>(id: string | number, popup: PopupConstructor<T>): void {
     this._popups.set(id, popup);
   }
 
@@ -97,16 +99,19 @@ export class PopupManager extends Module implements IPopupManager {
    * @returns a promise resolving to the popup, if it exists
    */
   @CoreFunction
-  async showPopup(id: string | number, config: Partial<PopupConfig> = {}) {
-    const popup = this._popups.get(id);
+  async showPopup<T = any>(id: string | number, config: Partial<PopupConfig<T>> = {}): Promise<IPopup<T> | undefined> {
+    const popup: PopupConstructor<T> | undefined = this._popups.get(id);
     if (popup) {
+      config.id = id;
       const instance = this.view.add.existing(new popup(id, config));
       instance.initialize();
+      this.app.focus.clearFocus();
       await instance.show();
+      this.app.focus.setFocusLayer(id);
       instance.afterShow();
       this._activePopups.set(id, instance);
       this._currentPopupId = id;
-      this.onPopupShown.emit();
+      this.onShowPopup.emit({ id, data: config?.data });
       instance.start();
       return instance;
     }
@@ -116,10 +121,11 @@ export class PopupManager extends Module implements IPopupManager {
   /**
    * Hide a popup
    * @param id - The id of the popup
+   * @param data
    * @returns a promise resolving to the popup, if it exists
    */
   @CoreFunction
-  async hidePopup(id: string | number) {
+  async hidePopup<T = any>(id: string | number, data?: T): Promise<IPopup<T> | undefined> {
     const popup = this._activePopups.get(id);
     if (popup) {
       popup.beforeHide();
@@ -127,7 +133,7 @@ export class PopupManager extends Module implements IPopupManager {
       this.view.removeChild(popup as any);
       this._activePopups.delete(id);
       this._currentPopupId = getLastMapEntry(this._activePopups)?.[0] || undefined;
-      this.onPopupHidden.emit();
+      this.onHidePopup.emit({ id, data });
       popup.end();
       return popup;
     }

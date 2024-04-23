@@ -96,7 +96,7 @@ export class FocusScene extends BaseScene {
     this.app.focus.addFocusable(this.actor1, 'one', true);
     this.app.focus.addFocusable(this.actor2, 'one');
     this.app.focus.addFocusable(this.button, 'one');
-    this.app.focus.addFocusLayer('two', this.actor2);
+    this.app.focus.addFocusLayer('two', false, this.actor2);
     this.app.focus.setFocusLayer('one');
 
     this.addSignalConnection(this.app.focus.onFocusManagerActivated.connect(this._updateFocusLayerLabel));
