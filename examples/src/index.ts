@@ -1,7 +1,6 @@
 import EN from '@/locales/en';
 import { V8Application } from '@/V8Application';
 import { create, LocalStorageAdapter, Logger } from 'dill-pixel';
-import { InputContext } from '../../src/modules/input/InputManager.ts';
 import manifest from './assets.json';
 
 const app = await create(V8Application, {
@@ -10,23 +9,19 @@ const app = await create(V8Application, {
   backgroundAlpha: 1,
   resizeToContainer: false,
   manifest,
-  modules: [
-    { id: 'test', module: () => import('@/modules/TestModule'), options: { foo: 'bar' } },
-    { id: 'rive', module: () => import('@/modules/RiveModule') },
-  ],
+  modules: [{ id: 'test', module: () => import('@/modules/TestModule'), options: { foo: 'bar' }, autoLoad: false }],
   storageAdapters: [
     { id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } },
     { id: 'test', module: () => import('@/adapters/TestAdapter'), options: { foo: 'bar' } },
   ],
   scenes: [
     { id: 'audio', namedExport: 'AudioScene', module: () => import('@/scenes/AudioScene.ts') },
-    { id: 'focus', namedExport: 'FocusScene', module: () => import('@/scenes/FocusScene') },
+    { id: 'focus', namedExport: 'FocusScene', module: () => import('@/scenes/FocusScene'), modules: ['test'] },
     { id: 'cam', namedExport: 'CameraScene', module: () => import('@/scenes/CameraScene') },
-    { id: 'popups', namedExport: 'PopupScene', module: () => import('@/scenes/PopupScene') },
+    { id: 'popups', namedExport: 'PopupScene', module: () => import('@/scenes/PopupScene'), modules: ['test'] },
     { id: 'spine', namedExport: 'SpineScene', module: () => import('@/scenes/SpineScene') },
     { id: 'flexContainer', namedExport: 'FlexContainerScene', module: () => import('@/scenes/FlexContainerScene') },
     { id: 'uiCanvas', namedExport: 'UICanvasScene', module: () => import('@/scenes/UICanvasScene') },
-    // { id: 'rive', namedExport: 'RiveScene', module: () => import('@/scenes/RiveScene') },
   ],
   i18n: {
     loadAll: true,
@@ -46,31 +41,8 @@ const app = await create(V8Application, {
 
 // Core signals / functions testing
 Logger.log('V8Application created', app);
-Logger.log('V8Application renderer', app.renderer);
 Logger.log('global signals', app.globalSignals);
 Logger.log('global functions', app.globalFunctions);
-
-// actions testing
-app.actions('up').connect(() => {
-  console.log('up action');
-});
-
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowUp') {
-    app.sendAction('up');
-  }
-});
-
-app.signal.onControllerActivated.connect((controller: string) => {
-  console.log('controller activated:', controller);
-});
-
-app.actionContext = InputContext.Game;
-
-app.signal.onSceneChangeComplete.connect(async (detail: { current: string }) => {
-  console.log('sceneChangeComplete', detail.current);
-});
-
 
 // i18n testing
 /*

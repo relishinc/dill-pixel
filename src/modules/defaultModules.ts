@@ -2,7 +2,7 @@ import { AssetManager } from './AssetManager';
 import { AudioManager } from './audio/AudioManager';
 import { FocusManager } from './focus/FocusManager';
 import { i18nModule } from './i18nModule';
-import { InputManager } from './input/InputManager';
+import { InputManager } from './InputManager';
 import { KeyboardManager } from './KeyboardManager';
 import type { IModule } from './Module';
 import { PopupManager } from './popups/PopupManager';

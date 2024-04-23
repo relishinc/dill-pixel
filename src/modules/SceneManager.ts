@@ -8,7 +8,7 @@ import { isDev } from '../utils/env';
 import { getDynamicModuleFromImportListItem } from '../utils/framework';
 import { bindAllMethods } from '../utils/methodBinding';
 import { createQueue, Queue } from '../utils/promise/Queue';
-import { Constructor, ImportList } from '../utils/types';
+import { Constructor, ImportList, SceneImportList } from '../utils/types';
 import type { IModule } from './Module';
 import { Module } from './Module';
 
@@ -57,7 +57,7 @@ export class SceneManager extends Module implements ISceneManager {
   public isFirstScene: boolean = true;
 
   // scene management
-  public scenes: ImportList<IScene> = [];
+  public scenes: SceneImportList<IScene> = [];
   public currentScene: IScene;
   public defaultScene: string;
   private _sceneModules: Map<string, Constructor<IScene>> = new Map();
@@ -125,6 +125,15 @@ export class SceneManager extends Module implements ISceneManager {
     const sceneItem = this.scenes.find((scene) => scene.id === newSceneId);
     if (!sceneItem) {
       throw new Error(`Scene item not found  for id ${newSceneId}`);
+    }
+
+    if (sceneItem?.modules?.length) {
+      for (const module of sceneItem.modules) {
+        const moduleItem = this.app.getUnloadedModule(module);
+        if (moduleItem) {
+          await this.app.loadModule(moduleItem);
+        }
+      }
     }
 
     this._currentSceneId = newSceneId;
