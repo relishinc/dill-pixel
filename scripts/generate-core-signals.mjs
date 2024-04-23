@@ -58,7 +58,6 @@ function getTypeInfo(node, checker) {
 function findSignalMembers(classDeclaration, checker) {
   return classDeclaration.members.filter(member => ts.isPropertyDeclaration(member)).map(member => {
     const typeInfo = getTypeInfo(member, checker);
-    console.log('typeInfo', typeInfo);
     return typeInfo?.type?.indexOf('Signal') === 0 ? typeInfo : null;
   }).filter(Boolean);
 }
@@ -67,7 +66,6 @@ function findSignalMembers(classDeclaration, checker) {
 function generateDeclarationFile(signals) {
   let content = 'export interface ICoreSignals {\n';
   signals.forEach(signalMember => {
-    console.log('signalMember', signalMember);
     content += `    ${signalMember.signature};\n`;
   });
   content += '}\n';
@@ -98,15 +96,21 @@ tsFiles.forEach(fileName => {
   if (sourceFile) {
     const coreModuleClass = findClassWithDecorator(sourceFile, 'CoreModule');
     if (coreModuleClass) {
-      const members = findSignalMembers(coreModuleClass, checker);
 
+      const members = findSignalMembers(coreModuleClass, checker);
+      if (!members?.length) {
+        return;
+      }
+      coreSignals.push({
+        signature: `// ${path.basename(fileName).replace('.ts', '')}`,
+      });
       members.forEach(member => {
         // push only the functions signature, not the function body, to the coreFunctions array,
         // we want to generate an interface, not the full function
         // generate name
         let signalName = member.name.toString();
         // remove "on" prefix and lowercase first letter
-        signalName = signalName.charAt(2).toLowerCase() + signalName.slice(3);
+        // signalName = signalName.charAt(2).toLowerCase() + signalName.slice(3);
         coreSignals.push({
           signature: `${signalName}: ${member.type.trim()}`,
         });

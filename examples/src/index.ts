@@ -61,19 +61,16 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-app.input.onControllerActivated.connect((controller) => {
+app.signal.onControllerActivated.connect((controller: string) => {
   console.log('controller activated:', controller);
 });
 
 app.actionContext = InputContext.Game;
 
-app.on('sceneChangeComplete').connect(async (detail: { current: string }) => {
+app.signal.onSceneChangeComplete.connect(async (detail: { current: string }) => {
   console.log('sceneChangeComplete', detail.current);
 });
 
-app.do('onKeyUp', 'Enter').connect(() => {
-  console.log('onKeyUp: Enter');
-});
 
 // i18n testing
 /*

@@ -89,6 +89,12 @@ tsFiles.forEach(fileName => {
     const coreModuleClass = findClassWithDecorator(sourceFile, 'CoreModule');
     if (coreModuleClass) {
       const members = findMembersWithDecorator(coreModuleClass, 'CoreFunction');
+      if (!members.length) {
+        return;
+      }
+      coreFunctions.push({
+        signature: `// ${path.basename(fileName).replace('.ts', '')}`,
+      });
       members.forEach(member => {
         // push only the functions signature, not the function body, to the coreFunctions array,
         // we want to generate an interface, not the full function
