@@ -60,6 +60,10 @@ export interface IAudioManager extends IModule {
   pause(): void;
 
   resume(): void;
+
+  suspend(): void;
+
+  restore(): void;
 }
 
 @CoreModule
@@ -74,6 +78,7 @@ export class AudioManager extends Module implements IAudioManager {
   >();
 
   private _masterVolume: number = 1;
+  private _storedVolume: number | undefined = undefined;
   private _muted: boolean = false;
   private _paused: boolean = false;
   private _channels: Map<string, IAudioChannel> = new Map();
@@ -311,10 +316,29 @@ export class AudioManager extends Module implements IAudioManager {
     return null;
   }
 
+  public restore() {
+    if (this._storedVolume !== undefined) {
+      this.masterVolume = this._storedVolume;
+    }
+    this.muted = this._muted;
+    this.resume();
+  }
+
+  public suspend() {
+    this._storedVolume = this._masterVolume;
+    this.masterVolume = 0;
+    this.pause();
+  }
+
   private _setMuted(): void {
     this._channels.forEach((channel) => {
       channel.muted = this._muted;
     });
+    if (this._muted) {
+      sound.muteAll();
+    } else {
+      sound.unmuteAll();
+    }
     this.onMuted.emit(this._muted);
   }
 

@@ -1,1 +1,0 @@
-{"version":3,"file":"SpineModule.d.ts","sourceRoot":"","sources":["../../src/modules/SpineModule.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,EAAE,MAAM,qBAAqB,CAAC;AACnD,OAAO,EAAE,MAAM,EAAE,MAAM,UAAU,CAAC;AAElC,qBAAa,WAAY,SAAQ,MAAM;IACrC,SAAgB,EAAE,iBAAiB;IAEtB,UAAU,CAAC,GAAG,EAAE,YAAY;CAK1C"}

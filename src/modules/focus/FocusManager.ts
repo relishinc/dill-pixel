@@ -51,6 +51,8 @@ export interface IFocusable {
   getFocusArea(): Bounds;
 
   getFocusPosition(): DillPixelPointLike | null;
+
+  getFocusSize(): DillPixelPointLike | null;
 }
 
 export interface IFocusLayer {
@@ -194,7 +196,7 @@ export interface IFocusManager extends IModule {
 
   setFocus(focusable: IFocusable): void;
 
-  addFocusLayer(layerId?: string | number, focusables?: IFocusable | IFocusable[], setAsCurrent?: boolean): IFocusLayer;
+  addFocusLayer(layerId?: string | number, setAsCurrent?: boolean, focusables?: IFocusable | IFocusable[]): IFocusLayer;
 
   removeFocusLayer(layerId?: string | number): void;
 
@@ -211,6 +213,10 @@ export interface IFocusManager extends IModule {
   removeFocusable(focusable: IFocusable | IFocusable[]): void;
 
   deactivate(): void;
+
+  clearFocus(): void;
+
+  removeAllFocusLayers(): void;
 }
 
 @CoreModule
@@ -349,8 +355,8 @@ export class FocusManager extends Module implements IFocusManager {
   @CoreFunction
   public addFocusLayer(
     layerId?: string | number,
-    focusables?: IFocusable | IFocusable[],
     setAsCurrent: boolean = true,
+    focusables?: IFocusable | IFocusable[],
   ): IFocusLayer {
     if (layerId === undefined) {
       layerId = this._layers.size;
@@ -427,6 +433,11 @@ export class FocusManager extends Module implements IFocusManager {
   }
 
   @CoreFunction
+  public clearFocus() {
+    this._setTarget(null);
+  }
+
+  @CoreFunction
   public removeAllFocusLayers(): void {
     this._layers.clear();
     this._setTarget(null);
@@ -496,6 +507,8 @@ export class FocusManager extends Module implements IFocusManager {
             `does not exist on the current focus layer: ${this._currentLayerId}`,
           );
         }
+      } else {
+        this._focusOutliner.clear();
       }
     } else {
       this._focusOutliner.clear();

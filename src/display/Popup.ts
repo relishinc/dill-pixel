@@ -7,20 +7,25 @@ import { Container, IContainer } from './Container';
 /**
  * Interface for Popup
  */
-export interface IPopup extends IContainer {
+export interface IPopup<T = any> extends IContainer {
   readonly id: string | number; // Unique identifier for the popup
-  config: PopupConfig; // Configuration for the popup
+  config: PopupConfig<T>; // Configuration for the popup
   view: Container; // The view of the popup
   backing?: any; // The backing of the popup
   isShowing: boolean; // Whether the popup is currently showing
   firstFocusableEntity?: IFocusable; // The first focusable entity in the popup
+  data: T;
+
+  close(): void;
 
   initialize(): void; // Initialize the popup
 
   show(): void | Promise<any>; // Show the popup
+
   afterShow(): void; // Show the popup
 
   beforeHide(): void; // Hide the popup
+
   hide(): void | Promise<any>; // Hide the popup
 
   start(): void | Promise<any>; // Start the popup
@@ -28,7 +33,7 @@ export interface IPopup extends IContainer {
   end(): void; // End the popup
 }
 
-export type PopupConstructor = new (id: string | number, config?: Partial<PopupConfig>) => IPopup;
+export type PopupConstructor<T = any> = new (id: string | number, config?: Partial<PopupConfig<T>>) => IPopup<T>;
 
 /**
  * Configuration for the backing of the popup
@@ -46,11 +51,12 @@ const defaultBackingConfig = {
 /**
  * Configuration for the popup
  */
-export type PopupConfig = {
+export type PopupConfig<T = any> = {
+  id: string | number;
   closeOnEscape: boolean;
   closeOnPointerDownOutside: boolean;
   backing: boolean | Partial<BackingConfig>;
-  data?: any;
+  data?: T;
 };
 
 const defaultPopupConfig = { backing: true, closeOnEscape: true, closeOnPointerDownOutside: true };
@@ -58,12 +64,12 @@ const defaultPopupConfig = { backing: true, closeOnEscape: true, closeOnPointerD
 /**
  * Class representing a Popup
  */
-export class Popup extends Container implements IPopup {
+export class Popup<T = any> extends Container implements IPopup<T> {
   public isShowing: boolean = false;
   public firstFocusableEntity: IFocusable;
   public view: Container;
   public backing?: Container;
-  public config: PopupConfig;
+  public config: PopupConfig<T>;
   public static BACKING_TEXTURE: Texture;
 
   /**
@@ -104,9 +110,13 @@ export class Popup extends Container implements IPopup {
     config: Partial<PopupConfig> = {},
   ) {
     super();
-    this.config = Object.assign({ ...defaultPopupConfig }, config);
+    this.config = Object.assign({ id, ...defaultPopupConfig }, config);
 
     this._initialize();
+  }
+
+  get data(): T {
+    return this.config.data as T;
   }
 
   initialize() {}
@@ -155,31 +165,28 @@ export class Popup extends Container implements IPopup {
    */
   end() {}
 
+  close(): void | Promise<void>;
+  async close(): Promise<void> {
+    void this.app.popups.hidePopup(this.id, this.config.data);
+  }
+
   /**
    * Initialize the popup
    * @private
    */
   private _initialize() {
-    this.app.focus.addFocusLayer(this.id);
+    this.app.focus.addFocusLayer(this.id, false);
 
     if (this.config.backing) {
       this.backing = this.add.existing(Popup.makeBacking(this.config.backing, this.app.size));
       this.backing.eventMode = 'static';
       if (this.config.closeOnPointerDownOutside) {
-        this.backing.once('pointerup', this._handlePointerUp);
-        this.backing.once('tap', this._handlePointerUp);
+        this.backing.once('click', this.close);
+        this.backing.once('tap', this.close);
       }
     }
 
     this.view = this.add.container();
     this.view.eventMode = 'static';
-  }
-
-  /**
-   * Handle pointer up event
-   * @private
-   */
-  private _handlePointerUp() {
-    void this.app.popups.hide(this.id);
   }
 }

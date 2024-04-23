@@ -389,6 +389,15 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     this._modules.forEach((module) => {
       module.postInitialize(this);
     });
+
+    this.webEvents.onVisibilityChanged.connect((visible) => {
+      if (visible) {
+        this.audio.restore();
+      } else {
+        this.audio.suspend();
+      }
+    });
+
     void this._resize();
   }
 
@@ -396,8 +405,8 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this.input.actions(action);
   }
 
-  public sendAction(action: string) {
-    this.input.sendAction(action);
+  public sendAction(action: string, data?: any) {
+    this.input.sendAction(action, data);
   }
 
   // /**

@@ -22,8 +22,8 @@ export interface ICoreSignals {
     onGlobalKeyDown: Signal<(detail: KeyboardEventDetail) => void>;
     onGlobalKeyUp: Signal<(detail: KeyboardEventDetail) => void>;
     // PopupManager;
-    onPopupShown: Signal<() => void>;
-    onPopupHidden: Signal<() => void>;
+    onShowPopup: Signal<(detail: PopupSignalDetail) => void>;
+    onHidePopup: Signal<(detail: PopupSignalDetail) => void>;
     // SceneManager;
     onSceneChangeStart: Signal<(detail: {    exiting: string | null;    entering: string;}) => void>;
     onSceneChangeComplete: Signal<(detail: {    current: string;}) => void>;

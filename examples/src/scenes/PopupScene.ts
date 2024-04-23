@@ -1,5 +1,6 @@
 import { Button, Container } from 'dill-pixel';
 import { PopupConfig } from '../../../src/display/Popup.ts';
+import { Action } from '../../../src/modules/input/InputManager.ts';
 import { ExamplePopup } from '../popups/ExamplePopup.ts';
 
 import { BaseScene } from './BaseScene';
@@ -13,30 +14,38 @@ export class PopupScene extends BaseScene {
     await super.initialize();
     this.app.focus.addFocusLayer(this.id);
 
-    this.app.popups.add('one', ExamplePopup);
-    this.app.popups.add('two', ExamplePopup);
-    this.app.popups.add('three', ExamplePopup);
+    this.app.popups.addPopup('one', ExamplePopup);
+    this.app.popups.addPopup('two', ExamplePopup);
+    this.app.popups.addPopup('three', ExamplePopup);
 
     this.buttonContainer = this.add.container();
 
     this.addButton('Popup 1', () => {
-      this.showPopup('one', {
+      this.app.sendAction('showPopup', {
+        id: 'one',
         data: { title: `Example Popup 1` },
       });
     });
     this.addButton('Popup 2', () =>
-      this.showPopup('two', {
+      this.app.sendAction('showPopup', {
+        id: 'two',
         data: { title: `Example Popup 2:\nWon't close on ESC` },
         closeOnEscape: false,
       }),
     );
     this.addButton('Popup 3', () =>
-      this.showPopup('three', {
+      this.app.sendAction('showPopup', {
+        id: 'one',
         data: { title: "Example Popup 3:\nWon't close on click outside" },
         closeOnPointerDownOutside: false,
         backing: { color: 'red' },
       }),
     );
+
+    this.app.actions('showPopup').connect(this._handleShowPopup);
+    this.app.signal.onHidePopup.connect(() => {
+      this.app.func.setActionContext('game');
+    });
   }
 
   public async start() {
@@ -54,6 +63,14 @@ export class PopupScene extends BaseScene {
       -this.buttonContainer.width * 0.5 + (this.buttonContainer.getChildAt(0)?.width * 0.5 || 0),
       0,
     );
+  }
+
+  _handleShowPopup(action: Action<PopupConfig<{ title: string }>>) {
+    if (action.context === 'popup') {
+      return;
+    }
+    this.app.func.setActionContext('popup');
+    this.showPopup(action.data.id, action.data);
   }
 
   addButton(label: string = 'Button', callback: () => void) {
@@ -82,12 +99,12 @@ export class PopupScene extends BaseScene {
   }
 
   showPopup(
-    popupId: string,
+    popupId: string | number,
     config: Partial<PopupConfig> = {
       backing: { color: 0x222222 },
       data: { title: `Example Popup ${popupId}` },
     },
   ) {
-    void this.app.popups.show(popupId, config);
+    void this.app.popups.showPopup(popupId, config);
   }
 }
