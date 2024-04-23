@@ -28,6 +28,7 @@ export type { IFocusable, IFocusManager, FocusManagerOptions } from './modules/f
 export type { IAudioManager } from './modules/audio/AudioManager';
 export type { Ii18nModule, i18nOptions } from './modules/i18nModule';
 export type { IResizer } from './modules/Resizer';
+export type { IInputManager, ActionDetail } from './modules/InputManager';
 export type { IModule } from './modules/Module';
 
 export { Module } from './modules/Module';
@@ -39,6 +40,7 @@ export { SceneManager } from './modules/SceneManager';
 export { SpineModule } from './modules/SpineModule';
 export { StatsModule } from './modules/StatsModule';
 export { WebEventsManager } from './modules/WebEventsManager';
+export { InputManager, ActionContext, Action } from './modules/InputManager';
 
 export { default as defaultModules } from './modules/defaultModules';
 
@@ -67,6 +69,8 @@ export type {
   Size,
   ImportListItem,
   ImportList,
+  SceneImportList,
+  SceneImportListItem,
 } from './utils/types';
 export { clamp, lerp } from './utils/math';
 export { resolvePointLike, getSheetLikeString, setObjectName } from './utils/functions';
@@ -96,6 +100,7 @@ export { WithSignals } from './mixins/signals';
  */
 export { Container } from './display/Container';
 export { Popup } from './display/Popup';
+export type { PopupConfig } from './display/Popup';
 export { Button } from './display/Button';
 export { Scene } from './display/Scene';
 export { FlexContainer } from './display/FlexContainer';

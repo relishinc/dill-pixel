@@ -1,8 +1,5 @@
-import { Button, Container } from 'dill-pixel';
-import { PopupConfig } from '../../../src/display/Popup.ts';
-import { Action } from '../../../src/modules/input/InputManager.ts';
-import { ExamplePopup } from '../popups/ExamplePopup.ts';
-
+import { ActionDetail, Button, Container, PopupConfig } from 'dill-pixel';
+import { ExamplePopup } from '../popups/ExamplePopup';
 import { BaseScene } from './BaseScene';
 
 export class PopupScene extends BaseScene {
@@ -65,7 +62,7 @@ export class PopupScene extends BaseScene {
     );
   }
 
-  _handleShowPopup(action: Action<PopupConfig<{ title: string }>>) {
+  _handleShowPopup(action: ActionDetail<PopupConfig<{ title: string }>>) {
     if (action.context === 'popup') {
       return;
     }
@@ -105,6 +102,6 @@ export class PopupScene extends BaseScene {
       data: { title: `Example Popup ${popupId}` },
     },
   ) {
-    void this.app.popups.showPopup(popupId, config);
+    void this.app.func.showPopup(popupId, config);
   }
 }

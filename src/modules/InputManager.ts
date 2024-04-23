@@ -1,8 +1,9 @@
-import { IApplication } from '../../core/Application';
-import { CoreFunction, CoreModule } from '../../core/decorators';
-import { Signal } from '../../signals';
-import { IModule, Module } from '../Module';
-import { ActionsList } from './types';
+import { IApplication } from '../core/Application';
+import { CoreFunction, CoreModule } from '../core/decorators';
+import { Signal } from '../signals';
+import { IModule, Module } from './Module';
+
+export type ActionsList = string[];
 
 export enum InputController {
   Keyboard = 'keyboard',
@@ -15,7 +16,7 @@ export type InputManagerOptions = {
   actions?: ActionsList;
 };
 
-export type ActionSignal<T = any> = Signal<(action: Action<T>) => void>;
+export type ActionSignal<T = any> = Signal<(detail: ActionDetail<T>) => void>;
 
 export interface IInputManager extends IModule {
   activeGamepads: Map<string, Gamepad>;
@@ -25,8 +26,8 @@ export interface IInputManager extends IModule {
   onGamepadDisconnected: Signal<(gamepad: Gamepad) => void>;
   onControllerActivated: Signal<(controller: string) => void>;
   onControllerDeactivated: Signal<(controller: string) => void>;
-  onContextChanged: Signal<(context: string | InputContext) => void>;
-  context: string | InputContext;
+  onContextChanged: Signal<(context: string | ActionContext) => void>;
+  context: string | ActionContext;
 
   actions(action: string): ActionSignal;
 
@@ -37,13 +38,13 @@ export interface IInputManager extends IModule {
   isGamepadActive(gamepad: Gamepad): boolean;
 }
 
-export enum InputContext {
+export enum ActionContext {
   General = 'general',
   Menu = 'menu',
   Game = 'game',
 }
 
-export enum InputAction {
+export enum Action {
   Up = 'up',
   Down = 'down',
   Left = 'left',
@@ -57,25 +58,25 @@ export enum InputAction {
 }
 
 const defaultActions = [
-  InputAction.Up,
-  InputAction.Down,
-  InputAction.Left,
-  InputAction.Right,
-  InputAction.Action,
-  InputAction.Pause,
-  InputAction.Start,
-  InputAction.Menu,
-  InputAction.Back,
-  InputAction.Next,
+  Action.Up,
+  Action.Down,
+  Action.Left,
+  Action.Right,
+  Action.Action,
+  Action.Pause,
+  Action.Start,
+  Action.Menu,
+  Action.Back,
+  Action.Next,
 ];
 
 const defaultOptions = {
   actions: defaultActions,
 };
 
-export type Action<T = any> = {
+export type ActionDetail<T = any> = {
   id: string;
-  context: string | InputContext;
+  context: string | ActionContext;
   data?: T;
 };
 
@@ -91,20 +92,20 @@ export class InputManager extends Module implements IInputManager {
   public onGamepadDisconnected: Signal<(gamepad: Gamepad) => void> = new Signal<(gamepad: Gamepad) => void>();
   public onControllerActivated: Signal<(controller: string) => void> = new Signal<(controller: string) => void>();
   public onControllerDeactivated: Signal<(controller: string) => void> = new Signal<(controller: string) => void>();
-  public onContextChanged: Signal<(context: string | InputContext) => void> = new Signal<
-    (context: string | InputContext) => void
+  public onContextChanged: Signal<(context: string | ActionContext) => void> = new Signal<
+    (context: string | ActionContext) => void
   >();
 
   // private properties
-  private _context: string | InputContext = InputContext.General;
+  private _context: string | ActionContext = ActionContext.General;
 
   private _actionSignals: Map<string, ActionSignal> = new Map();
 
-  get context(): string | InputContext {
+  get context(): string | ActionContext {
     return this._context;
   }
 
-  set context(context: string | InputContext) {
+  set context(context: string | ActionContext) {
     if (this._context === context) {
       return;
     }
@@ -146,7 +147,7 @@ export class InputManager extends Module implements IInputManager {
   @CoreFunction
   actions<T = any>(action: string): ActionSignal<T> {
     if (!this._actionSignals.has(action)) {
-      this._actionSignals.set(action, new Signal<(actionDetail: Action<T>) => void>());
+      this._actionSignals.set(action, new Signal<(actionDetail: ActionDetail<T>) => void>());
     }
     return this._actionSignals.get(action)!;
   }
@@ -157,7 +158,7 @@ export class InputManager extends Module implements IInputManager {
   }
 
   @CoreFunction
-  setActionContext(context: string | InputContext): void {
+  setActionContext(context: string | ActionContext): void {
     this.context = context;
   }
 
@@ -213,7 +214,7 @@ export class InputManager extends Module implements IInputManager {
     this._deactivateGamepad(event.gamepad.id);
 
     // pause the game any time there is a controller disconnect
-    this.sendAction(InputAction.Pause);
+    this.sendAction(Action.Pause);
 
     // emit the gamepad disconnected signal
     this.onGamepadDisconnected.emit(event.gamepad);

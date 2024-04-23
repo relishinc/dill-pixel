@@ -16,7 +16,7 @@ import { IAudioManager } from '../modules/audio/AudioManager';
 import defaultModules from '../modules/defaultModules';
 import { FocusManagerOptions, IFocusManager } from '../modules/focus/FocusManager';
 import { i18nOptions, Ii18nModule } from '../modules/i18nModule';
-import { ActionSignal, IInputManager, InputContext } from '../modules/input/InputManager';
+import { ActionContext, ActionSignal, IInputManager } from '../modules/InputManager';
 import { IKeyboardManager } from '../modules/KeyboardManager';
 import { IModule } from '../modules/Module';
 import { IPopupManager } from '../modules/popups/PopupManager';
@@ -32,7 +32,7 @@ import { Logger } from '../utils/console/Logger';
 import { isDev } from '../utils/env';
 import { getDynamicModuleFromImportListItem } from '../utils/framework';
 import { bindAllMethods } from '../utils/methodBinding';
-import { ImportList, Size, WithRequiredProps } from '../utils/types';
+import { ImportList, ImportListItem, SceneImportList, Size, WithRequiredProps } from '../utils/types';
 import { coreFunctionRegistry } from './coreFunctionRegistry';
 import { ICoreFunctions } from './CoreFunctions';
 import { coreSignalRegistry } from './coreSignalRegistry';
@@ -50,7 +50,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   useSpine: boolean;
   storageAdapters: ImportList<IStorageAdapter>;
   modules: ImportList<IModule>;
-  scenes: ImportList<IScene>;
+  scenes: SceneImportList<IScene>;
   focusOptions: FocusManagerOptions;
   defaultScene: string;
   defaultSceneLoadMethod: LoadSceneMethod;
@@ -113,7 +113,7 @@ export interface IApplication extends PIXIPApplication {
   input: IInputManager;
   store: IStore;
 
-  actionContext: string | InputContext;
+  actionContext: string | ActionContext;
 
   actions(action: string): ActionSignal;
 
@@ -256,11 +256,11 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this._store;
   }
 
-  public get actionContext(): string | InputContext {
+  public get actionContext(): string | ActionContext {
     return this.input.context;
   }
 
-  public set actionContext(context: string | InputContext) {
+  public set actionContext(context: string | ActionContext) {
     this.input.context = context;
   }
 
@@ -329,7 +329,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     await this.initAssets();
 
     // initialize the pixi application
-    await Application.instance.init(Application.instance.config);
+    await this.init(this.config);
 
     // initialize the logger
     Logger.initialize(config.id);
@@ -342,12 +342,9 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     if (this.config.modules && this.config.modules.length > 0) {
       for (let i = 0; i < this.config.modules.length; i++) {
         const listItem = this.config.modules[i];
-        if (this._modules.has(listItem.id)) {
-          Logger.error(`Module with id "${listItem.id}" already registered. Not registering.`);
-          continue;
+        if (listItem && listItem?.autoLoad !== false) {
+          await this.loadModule(listItem);
         }
-        const module = await getDynamicModuleFromImportListItem(listItem);
-        await this.registerModule(new module(listItem.id), listItem.options);
       }
     }
 
@@ -376,6 +373,10 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     await this._setup(); // internal
     await this.setup();
     await this.loadDefaultScene();
+
+    // focus the canvas
+    this.renderer.canvas.focus();
+
     // return the Application instance to the create method, if needed
     return Application.instance;
   }
@@ -403,6 +404,19 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
   public actions<T = any>(action: string): ActionSignal<T> {
     return this.input.actions(action);
+  }
+
+  public getUnloadedModule(id: string): ImportListItem<IModule> | undefined {
+    return this.config.modules?.find((module) => module.id === id);
+  }
+
+  async loadModule(listItem: ImportListItem) {
+    if (this._modules.has(listItem.id)) {
+      Logger.error(`Module with id "${listItem.id}" already registered. Not registering.`);
+      return Promise.resolve(false);
+    }
+    const module = await getDynamicModuleFromImportListItem(listItem);
+    await this.registerModule(new module(listItem.id), listItem.options);
   }
 
   public sendAction(action: string, data?: any) {

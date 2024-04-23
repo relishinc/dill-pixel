@@ -56,18 +56,22 @@ export type ImportListItemModule<T> = (() => Promise<any>) | Promise<any> | Cons
  * A type that represents an item in an import list.
  * @template T The type of the instance that the constructor creates.
  */
-export type ImportListItem<T> = {
+export type ImportListItem<T = any> = {
   id: string;
+  module: ImportListItemModule<T>;
   namedExport?: string;
   options?: any;
-  module: ImportListItemModule<T>;
+  autoLoad?: boolean;
 };
+
+export type SceneImportListItem<T> = ImportListItem<T> & { modules?: string[] };
 
 /**
  * A type that represents an import list.
  * @template T The type of the instance that the constructor creates.
  */
 export type ImportList<T> = ImportListItem<T>[];
+export type SceneImportList<T> = SceneImportListItem<T>[];
 
 export type AppSize = {
   width: number;
