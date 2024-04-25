@@ -1,8 +1,8 @@
-import { IApplication, IModule, Module } from 'dill-pixel';
+import { IApplication, IPlugin, Plugin } from 'dill-pixel';
 import { checkExtension, DOMAdapter, extensions, ExtensionType, LoaderParserPriority } from 'pixi.js';
 import type { V8Application } from '../V8Application';
 
-export default class TestModule extends Module<V8Application> implements IModule {
+export default class TestModule extends Plugin<V8Application> implements IPlugin {
   public destroy(): void {}
 
   public async initialize(app: IApplication, options?: any): Promise<void> {

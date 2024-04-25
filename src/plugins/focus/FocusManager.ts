@@ -1,15 +1,15 @@
 import { Bounds, Container, PointerEvents, PointLike } from 'pixi.js';
 import { IApplication } from '../../core/Application';
 
-import { CoreFunction, CoreModule } from '../../core/decorators';
+import { CoreFunction, CorePlugin } from '../../core/decorators';
 import { PIXIContainer } from '../../pixi';
 import { Signal } from '../../signals';
 import { Logger } from '../../utils/console/Logger';
 import { getLastMapEntry, getPreviousMapEntry } from '../../utils/map';
 import { bindMethods } from '../../utils/methodBinding';
 import { Constructor, PointLike as DillPixelPointLike } from '../../utils/types';
-import type { IModule } from '../Module';
-import { Module } from '../Module';
+import type { IPlugin } from '../Plugin';
+import { Plugin } from '../Plugin';
 import { FocusOutliner, FocusOutlinerConfig, IFocusOutliner } from './FocusOutliner';
 
 export type FocusManagerOptions = {
@@ -174,7 +174,7 @@ class FocusLayer implements IFocusLayer {
 
 type FocusChangeDetail = { layer: string | number | null; focusable: IFocusable | null };
 
-export interface IFocusManager extends IModule {
+export interface IFocusManager extends IPlugin {
   readonly view: Container;
   readonly layerCount: number;
   readonly currentLayerId: string | number | null;
@@ -219,8 +219,8 @@ export interface IFocusManager extends IModule {
   removeAllFocusLayers(): void;
 }
 
-@CoreModule
-export class FocusManager extends Module implements IFocusManager {
+@CorePlugin
+export class FocusManager extends Plugin implements IFocusManager {
   public readonly id: string = 'FocusManager';
   public readonly view = new Container();
   // signals

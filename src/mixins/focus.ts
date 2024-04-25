@@ -1,7 +1,7 @@
 import { Application } from 'dill-pixel';
 import { FederatedEvent, PointerEvents } from 'pixi.js';
-import { IFocusable } from '../modules/focus/FocusManager';
 import { PIXIContainer } from '../pixi';
+import { IFocusable } from '../plugins/focus/FocusManager';
 import { Signal } from '../signals';
 import { Constructor } from '../utils/types';
 

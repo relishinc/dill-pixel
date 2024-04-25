@@ -167,7 +167,10 @@ function createFactoryMethods<T extends typeof defaultFactoryMethods = typeof de
     factoryMethods[key] = (...args: any[]) => {
       // @ts-ignore
       const obj = methods[key](...args);
-      if (addToStage) instance.addChild(obj);
+      if (addToStage) {
+        instance.addChild(obj);
+        // instance.addChild(obj);
+      }
       return obj;
     };
   }

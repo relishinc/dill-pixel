@@ -3,7 +3,7 @@ import { MethodBindingRoot } from '../core/decorators';
 import { SignalConnection, SignalConnections } from '../signals/Signal';
 import { bindAllMethods } from '../utils/methodBinding';
 
-export interface IModule {
+export interface IPlugin {
   id: string;
 
   app: IApplication;
@@ -18,11 +18,11 @@ export interface IModule {
 }
 
 @MethodBindingRoot
-export class Module<T extends Application = Application> implements IModule {
+export class Plugin<T extends Application = Application> implements IPlugin {
   // A collection of signal connections.
   protected _signalConnections: SignalConnections = new SignalConnections();
 
-  constructor(public readonly id: string = 'Module') {
+  constructor(public id: string = 'Plugin') {
     bindAllMethods(this);
   }
 

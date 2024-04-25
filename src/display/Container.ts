@@ -9,7 +9,7 @@ import { Size } from '../utils/types';
 
 // Create a new class that extends PIXI.Container and includes the Animated and Factory mixins.
 const _Container = Animated(WithSignals(FactoryContainer()));
- 
+
 /**
  * Interface for the Container class.
  */
@@ -22,7 +22,7 @@ export interface IContainer {
 
   resize(size?: Size): void;
 
-  update(ticker?: Ticker): void;
+  update(ticker?: Ticker | number): void;
 }
 
 /**
@@ -39,7 +39,7 @@ type ContainerConfig = {
  * It represents a container for PIXI.js display objects.
  */
 @MethodBindingRoot
-export class Container<T extends Application = Application> extends _Container implements IContainer {
+export class Container<A extends Application = Application> extends _Container implements IContainer {
   /**
    * The constructor for the Container class.
    * @param __config - The configuration for the container.
@@ -50,20 +50,21 @@ export class Container<T extends Application = Application> extends _Container i
     bindAllMethods(this);
     // Add an event listener for the 'added' event.
     this.on('added', this._added);
+    this.on('removed', this._removed);
   }
 
   /**
    * Get the application instance.
    */
-  public get app(): T {
-    return Application.getInstance() as T;
+  public get app(): A {
+    return Application.getInstance() as A;
   }
 
   /**
    * Update the container. This method is meant to be overridden by subclasses.
-   * @param ticker - The PIXI.js ticker.
+   * @param ticker
    */
-  public update(ticker: Ticker) {}
+  public update(ticker: Ticker | number) {}
 
   /**
    * Resize the container. This method is meant to be overridden by subclasses.
@@ -83,6 +84,8 @@ export class Container<T extends Application = Application> extends _Container i
     super.destroy();
   }
 
+  public removed() {}
+
   /**
    * This method is called when the container is added to the stage. It sets up auto-resizing and auto-updating if enabled.
    */
@@ -94,7 +97,18 @@ export class Container<T extends Application = Application> extends _Container i
     if (this.__config.autoUpdate) {
       this.app.ticker.add(this.update, this, this.__config.priority);
     }
-
     this.added();
+  }
+
+  private _removed() {
+    if (this.__config.autoResize) {
+      this.app.onResize.disconnect(this.resize);
+    }
+
+    if (this.__config.autoUpdate) {
+      this.app.ticker.remove(this.update, this);
+    }
+
+    this.removed();
   }
 }

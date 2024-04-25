@@ -32,7 +32,7 @@ export function CoreFunction(target: any, prop: string | symbol) {
 }
 
 /**
- * CoreModule is a decorator that marks a class as a core module
+ * CorePlugin is a decorator that marks a core plugin
  * core modules' signals get added to the global signal registry
  * and can be connected to from anywhere in the application
  * using the app.on method
@@ -41,7 +41,7 @@ export function CoreFunction(target: any, prop: string | symbol) {
  * @returns {any}
  * @constructor
  */
-export function CoreModule(constructor: Constructor<any>): any {
+export function CorePlugin(constructor: Constructor<any>): any {
   const original = constructor;
 
   function construct(constructor: Constructor<any>, args: any[]) {

@@ -1,9 +1,9 @@
 import { IApplication } from '../core/Application';
-import { CoreModule } from '../core/decorators';
-import { Module } from './Module';
+import { CorePlugin } from '../core/decorators';
+import { Plugin } from './Plugin';
 
-@CoreModule
-export class SpineModule extends Module {
+@CorePlugin
+export class SpinePlugin extends Plugin {
   public readonly id = 'SpineModule';
 
   public async initialize(app: IApplication) {

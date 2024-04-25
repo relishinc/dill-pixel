@@ -20,29 +20,29 @@ export type { IApplication, RequiredApplicationConfig } from './core/Application
  * Export various types from the 'modules' module.
  * These types are used for type checking the different modules of the application.
  */
-export type { IAssetManager } from './modules/AssetManager';
-export type { ISceneManager, LoadSceneMethod } from './modules/SceneManager';
-export type { IWebEventsManager } from './modules/WebEventsManager';
-export type { IKeyboardManager, KeyboardEventDetail } from './modules/KeyboardManager';
-export type { IFocusable, IFocusManager, FocusManagerOptions } from './modules/focus/FocusManager';
-export type { IAudioManager } from './modules/audio/AudioManager';
-export type { Ii18nModule, i18nOptions } from './modules/i18nModule';
-export type { IResizer } from './modules/Resizer';
-export type { IInputManager, ActionDetail } from './modules/InputManager';
-export type { IModule } from './modules/Module';
+export type { IAssetManager } from './plugins/AssetManager';
+export type { ISceneManager, LoadSceneMethod } from './plugins/SceneManager';
+export type { IWebEventsManager } from './plugins/WebEventsManager';
+export type { IKeyboardManager, KeyboardEventDetail } from './plugins/KeyboardManager';
+export type { IFocusable, IFocusManager, FocusManagerOptions } from './plugins/focus/FocusManager';
+export type { IAudioManager } from './plugins/audio/AudioManager';
+export type { Ii18nPlugin, i18nOptions } from './plugins/i18nPlugin';
+export type { IResizer } from './plugins/Resizer';
+export type { IInputManager, ActionDetail } from './plugins/InputManager';
+export type { IPlugin } from './plugins/Plugin';
 
-export { Module } from './modules/Module';
-export { AssetManager } from './modules/AssetManager';
-export { i18nModule } from './modules/i18nModule';
-export { KeyboardManager } from './modules/KeyboardManager';
-export { Resizer } from './modules/Resizer';
-export { SceneManager } from './modules/SceneManager';
-export { SpineModule } from './modules/SpineModule';
-export { StatsModule } from './modules/StatsModule';
-export { WebEventsManager } from './modules/WebEventsManager';
-export { InputManager, ActionContext, Action } from './modules/InputManager';
+export { Plugin } from './plugins/Plugin';
+export { AssetManager } from './plugins/AssetManager';
+export { i18nPlugin } from './plugins/i18nPlugin';
+export { KeyboardManager } from './plugins/KeyboardManager';
+export { Resizer } from './plugins/Resizer';
+export { SceneManager } from './plugins/SceneManager';
+export { SpinePlugin } from './plugins/SpinePlugin';
+export { StatsPlugin } from './plugins/StatsPlugin';
+export { WebEventsManager } from './plugins/WebEventsManager';
+export { InputManager, ActionContext, Action } from './plugins/InputManager';
 
-export { default as defaultModules } from './modules/defaultModules';
+export { default as defaultModules } from './plugins/defaultPlugins';
 
 /**
  * Export the StorageAdapter and LocalStorageAdapter classes from the 'store' module.
@@ -118,8 +118,18 @@ export type { IContainer } from './display/Container';
 export type { IPopup } from './display/Popup';
 export type { IScene } from './display/Scene';
 
+export {
+  Signal,
+  SignalConnection,
+  SignalConnections,
+  Collector,
+  CollectorLast,
+  CollectorArray,
+  CollectorUntil0,
+  CollectorWhile0,
+} from './signals/Signal';
+
 /**
- * Export the create function from the 'core' module.
  * This function is used to create a new application instance.
  */
 export { create } from './core/create';

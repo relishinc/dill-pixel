@@ -11,19 +11,19 @@ import {
   RendererDestroyOptions,
 } from 'pixi.js';
 import { IScene } from '../display/Scene';
-import { IAssetManager } from '../modules/AssetManager';
-import { IAudioManager } from '../modules/audio/AudioManager';
-import defaultModules from '../modules/defaultModules';
-import { FocusManagerOptions, IFocusManager } from '../modules/focus/FocusManager';
-import { i18nOptions, Ii18nModule } from '../modules/i18nModule';
-import { ActionContext, ActionSignal, IInputManager } from '../modules/InputManager';
-import { IKeyboardManager } from '../modules/KeyboardManager';
-import { IModule } from '../modules/Module';
-import { IPopupManager } from '../modules/popups/PopupManager';
-import { IResizer, ResizerOptions } from '../modules/Resizer';
-import { ISceneManager, LoadSceneMethod } from '../modules/SceneManager';
-import { SpineModule } from '../modules/SpineModule';
-import { IWebEventsManager } from '../modules/WebEventsManager';
+import { IAssetManager } from '../plugins/AssetManager';
+import { IAudioManager } from '../plugins/audio/AudioManager';
+import defaultPlugins from '../plugins/defaultPlugins';
+import { FocusManagerOptions, IFocusManager } from '../plugins/focus/FocusManager';
+import { i18nOptions, Ii18nPlugin } from '../plugins/i18nPlugin';
+import { ActionContext, ActionSignal, IInputManager } from '../plugins/InputManager';
+import { IKeyboardManager } from '../plugins/KeyboardManager';
+import { IPlugin } from '../plugins/Plugin';
+import { IPopupManager } from '../plugins/popups/PopupManager';
+import { IResizer, ResizerOptions } from '../plugins/Resizer';
+import { ISceneManager, LoadSceneMethod } from '../plugins/SceneManager';
+import { SpinePlugin } from '../plugins/SpinePlugin';
+import { IWebEventsManager } from '../plugins/WebEventsManager';
 import { Signal } from '../signals';
 import { IStorageAdapter } from '../store/adapters/StorageAdapter';
 import { IStore, Store } from '../store/Store';
@@ -49,7 +49,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   useDefaults: boolean;
   useSpine: boolean;
   storageAdapters: ImportList<IStorageAdapter>;
-  modules: ImportList<IModule>;
+  plugins: ImportList<IPlugin>;
   scenes: SceneImportList<IScene>;
   focusOptions: FocusManagerOptions;
   defaultScene: string;
@@ -65,9 +65,8 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   antialias: false,
   autoStart: true,
   resizeToContainer: false,
-  background: undefined,
-  backgroundAlpha: 0,
-  backgroundColor: 'transparent',
+  backgroundColor: 0x0,
+  backgroundAlpha: 1,
   clearBeforeRender: false,
   context: null,
   eventFeatures: undefined,
@@ -88,7 +87,7 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   useDefaults: true,
   useSpine: false,
   storageAdapters: [],
-  modules: [],
+  plugins: [],
   scenes: [],
   defaultSceneLoadMethod: 'immediate',
   manifest: './assets.json',
@@ -108,7 +107,7 @@ export interface IApplication extends PIXIPApplication {
   focus: IFocusManager;
   popups: IPopupManager;
   audio: IAudioManager;
-  i18n: Ii18nModule;
+  i18n: Ii18nPlugin;
   resizer: IResizer;
   input: IInputManager;
   store: IStore;
@@ -121,7 +120,7 @@ export interface IApplication extends PIXIPApplication {
 
   postInitialize(): Promise<void>;
 
-  getModule<T extends IModule>(name: string): T;
+  getPlugin<T extends IPlugin>(name: string): T;
 }
 
 @MethodBindingRoot
@@ -129,16 +128,15 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   // config
   public config: Partial<IApplicationOptions>;
   public manifest: string | AssetsManifest | undefined;
+  // plugins
+  protected _plugins: Map<string, IPlugin> = new Map();
   protected static instance: Application;
   //
   public static containerId = 'dill-pixel-game-container';
   public static containerElement: HTMLElement;
   // signals
   public onResize = new Signal<(size: Size) => void>();
-  // modules
-  protected _modules: Map<string, IModule> = new Map();
-
-  // default modules
+  // default plugins
   protected _assetManager: IAssetManager;
   protected _sceneManager: ISceneManager;
   protected _webEventsManager: IWebEventsManager;
@@ -146,7 +144,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   protected _focusManager: IFocusManager;
   protected _popupManager: IPopupManager;
   protected _audioManager: IAudioManager;
-  protected _i18n: Ii18nModule;
+  protected _i18n: Ii18nPlugin;
   protected _resizer: IResizer;
 
   // input
@@ -176,35 +174,35 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
   public get assets(): IAssetManager {
     if (!this._assetManager) {
-      this._assetManager = this.getModule<IAssetManager>('AssetManager');
+      this._assetManager = this.getPlugin<IAssetManager>('AssetManager');
     }
     return this._assetManager;
   }
 
   public get scenes(): ISceneManager {
     if (!this._sceneManager) {
-      this._sceneManager = this.getModule<ISceneManager>('SceneManager');
+      this._sceneManager = this.getPlugin<ISceneManager>('SceneManager');
     }
     return this._sceneManager;
   }
 
   public get webEvents(): IWebEventsManager {
     if (!this._webEventsManager) {
-      this._webEventsManager = this.getModule<IWebEventsManager>('WebEventsManager');
+      this._webEventsManager = this.getPlugin<IWebEventsManager>('WebEventsManager');
     }
     return this._webEventsManager;
   }
 
   public get keyboard(): IKeyboardManager {
     if (!this._keyboardManager) {
-      this._keyboardManager = this.getModule<IKeyboardManager>('KeyboardManager');
+      this._keyboardManager = this.getPlugin<IKeyboardManager>('KeyboardManager');
     }
     return this._keyboardManager;
   }
 
   public get focus(): IFocusManager {
     if (!this._focusManager) {
-      this._focusManager = this.getModule<IFocusManager>('FocusManager');
+      this._focusManager = this.getPlugin<IFocusManager>('FocusManager');
     }
     return this._focusManager;
   }
@@ -217,37 +215,37 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this.resizer.size;
   }
 
-  public get i18n(): Ii18nModule {
+  public get i18n(): Ii18nPlugin {
     if (!this._i18n) {
-      this._i18n = this.getModule<Ii18nModule>('i18n');
+      this._i18n = this.getPlugin<Ii18nPlugin>('i18n');
     }
     return this._i18n;
   }
 
   public get popups(): IPopupManager {
     if (!this._popupManager) {
-      this._popupManager = this.getModule<IPopupManager>('PopupManager');
+      this._popupManager = this.getPlugin<IPopupManager>('PopupManager');
     }
     return this._popupManager;
   }
 
   public get audio(): IAudioManager {
     if (!this._audioManager) {
-      this._audioManager = this.getModule<IAudioManager>('AudioManager');
+      this._audioManager = this.getPlugin<IAudioManager>('AudioManager');
     }
     return this._audioManager;
   }
 
   public get resizer(): IResizer {
     if (!this._resizer) {
-      this._resizer = this.getModule<IResizer>('resizer');
+      this._resizer = this.getPlugin<IResizer>('resizer');
     }
     return this._resizer;
   }
 
   public get input(): IInputManager {
     if (!this._input) {
-      this._input = this.getModule<IInputManager>('InputManager');
+      this._input = this.getPlugin<IInputManager>('InputManager');
     }
     return this._input;
   }
@@ -305,13 +303,13 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
   /**
    * Destroy the application
-   * This will destroy all modules and the store
+   * This will destroy all plugins and the store
    * @param {RendererDestroyOptions} rendererDestroyOptions
    * @param {DestroyOptions} options
    */
   public destroy(rendererDestroyOptions?: RendererDestroyOptions, options?: DestroyOptions) {
-    this._modules.forEach((module) => {
-      module.destroy();
+    this._plugins.forEach((plugin) => {
+      plugin.destroy();
     });
     this.store.destroy();
     super.destroy(rendererDestroyOptions, options);
@@ -334,22 +332,22 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     // initialize the logger
     Logger.initialize(config.id);
 
-    // register the default modules
+    // register the default plugins
     if (this.config.useDefaults) {
-      await this.registerDefaultModules();
+      await this.registerDefaultPlugins();
     }
 
-    if (this.config.modules && this.config.modules.length > 0) {
-      for (let i = 0; i < this.config.modules.length; i++) {
-        const listItem = this.config.modules[i];
+    if (this.config.plugins && this.config.plugins.length > 0) {
+      for (let i = 0; i < this.config.plugins.length; i++) {
+        const listItem = this.config.plugins[i];
         if (listItem && listItem?.autoLoad !== false) {
-          await this.loadModule(listItem);
+          await this.loadPlugin(listItem);
         }
       }
     }
 
-    // register the applications custom modules
-    await this.registerModules();
+    // register the applications custom plugins
+    await this.registerPlugins();
 
     // add the store if it's enabled
     if (this.config.useStore) {
@@ -381,14 +379,18 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return Application.instance;
   }
 
-  public getModule<T extends IModule>(moduleName: string): T {
-    return this._modules.get(moduleName) as T;
+  public getPlugin<T extends IPlugin>(pluginName: string): T {
+    const plugin = this._plugins.get(pluginName) as T;
+    if (!plugin) {
+      Logger.error(`Plugin with name "${pluginName}" not found.`);
+    }
+    return plugin;
   }
 
   async postInitialize(): Promise<void> {
     (globalThis as any).__PIXI_APP__ = this;
-    this._modules.forEach((module) => {
-      module.postInitialize(this);
+    this._plugins.forEach((plugin) => {
+      plugin.postInitialize(this);
     });
 
     this.webEvents.onVisibilityChanged.connect((visible) => {
@@ -406,59 +408,26 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this.input.actions(action);
   }
 
-  public getUnloadedModule(id: string): ImportListItem<IModule> | undefined {
-    return this.config.modules?.find((module) => module.id === id);
+  public getUnloadedPlugin(id: string): ImportListItem<IPlugin> | undefined {
+    return this.config.plugins?.find((plugin) => plugin.id === id);
   }
 
-  async loadModule(listItem: ImportListItem) {
-    if (this._modules.has(listItem.id)) {
-      Logger.error(`Module with id "${listItem.id}" already registered. Not registering.`);
+  async loadPlugin(listItem: ImportListItem) {
+    if (this._plugins.has(listItem.id)) {
+      Logger.error(`Plugin with id "${listItem.id}" already registered. Not registering.`);
       return Promise.resolve(false);
     }
-    const module = await getDynamicModuleFromImportListItem(listItem);
-    await this.registerModule(new module(listItem.id), listItem.options);
+    const plugin = await getDynamicModuleFromImportListItem(listItem);
+    const pluginInstance = new plugin(listItem.id);
+    if (pluginInstance.id !== listItem.id) {
+      pluginInstance.id = listItem.id;
+    }
+    await this.registerPlugin(pluginInstance, listItem.options);
   }
 
   public sendAction(action: string, data?: any) {
     this.input.sendAction(action, data);
   }
-
-  // /**
-  //  * Connect to a global signal
-  //  * signals registered in core modules are added to the global signal registry
-  //  * and can be connected to from anywhere in the application
-  //  * syntactically, we remove the "on" from the signal name, and lowercase the first letter
-  //  * e.g. "onSceneChangeComplete" becomes "sceneChangeComplete"
-  //  * @param {string} signalName
-  //  * @returns {Signal<any>}
-  //  */
-  // on<K extends keyof ICoreSignals>(signalName: K): ICoreSignals[K] {
-  //   const signal = coreSignalRegistry[signalName];
-  //   if (!signal) {
-  //     throw new Error('Signal not found in registry');
-  //   }
-  //   return signal;
-  // }
-  //
-  // /**
-  //  * Call a global function
-  //  * functions registered in core modules are added to the global function registry
-  //  * and can be called from anywhere in the application
-  //  * @param {string} functionName
-  //  * @param args
-  //  * @returns {any}
-  //  */
-  // call<K extends keyof ICoreFunctions>(
-  //   functionName: K,
-  //   ...args: Parameters<ICoreFunctions[K]>
-  // ): ReturnType<ICoreFunctions[K]> {
-  //   const func = coreFunctionRegistry[functionName];
-  //   if (!func) {
-  //     throw new Error('Function not found in registry');
-  //   }
-  //   // @ts-ignore
-  //   return func(...args) as ReturnType<ICoreFunctions[K]>;
-  // }
 
   /**
    * Get a storage adapter by id
@@ -479,31 +448,33 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
    */
   protected async preInitialize(config: Partial<IApplicationOptions>): Promise<void> {
     if (config.useSpine) {
-      await this.registerModule(new SpineModule());
+      await this.registerPlugin(new SpinePlugin());
     }
   }
 
-  // modules
-  protected async registerModule(module: IModule, options?: any) {
-    if (this._modules.has(module.id)) {
-      Logger.error(`Module with id "${module.id}" already registered. Not registering.`);
+  // plugins
+  protected async registerPlugin(plugin: IPlugin, options?: any) {
+    if (this._plugins.has(plugin.id)) {
+      Logger.error(`Plugin with id "${plugin.id}" already registered. Not registering.`);
       return Promise.resolve();
     }
-    this._modules.set(module.id, module);
-    return module.initialize(this, options);
+    Logger.log(`Registering plugin: ${plugin.id}`);
+    this._plugins.set(plugin.id, plugin);
+    return plugin.initialize(this, options);
   }
 
-  protected async registerDefaultModules() {
-    for (let i = 0; i < defaultModules.length; i++) {
-      const module = new defaultModules[i]();
-      await this.registerModule(module, this.config[module.id as keyof IApplicationOptions] || undefined);
+  protected async registerDefaultPlugins() {
+    for (let i = 0; i < defaultPlugins.length; i++) {
+      const plugin = new defaultPlugins[i]();
+      await this.registerPlugin(plugin, this.config[plugin.id as keyof IApplicationOptions] || undefined);
     }
   }
 
-  protected async registerModules() {
+  protected async registerPlugins() {
     if (isDev) {
       Logger.log(
-        'No custom modules registered using "registerModules". Register them by overriding the "registerModules" method in your' +
+        'No custom plugins registered using "registerPlugins". Register them by overriding the "registerPlugins"' +
+          ' method in your' +
           ' Application class.',
       );
     }
@@ -529,7 +500,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   /**
    * This is called after the application is initialized
    * You can be sure that
-   * - all modules are registered
+   * - all plugins are registered
    * - the store is created, with all storage adapters registered
    * @protected
    */

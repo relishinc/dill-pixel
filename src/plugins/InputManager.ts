@@ -1,7 +1,7 @@
 import { IApplication } from '../core/Application';
-import { CoreFunction, CoreModule } from '../core/decorators';
+import { CoreFunction, CorePlugin } from '../core/decorators';
 import { Signal } from '../signals';
-import { IModule, Module } from './Module';
+import { IPlugin, Plugin } from './Plugin';
 
 export type ActionsList = string[];
 
@@ -18,7 +18,7 @@ export type InputManagerOptions = {
 
 export type ActionSignal<T = any> = Signal<(detail: ActionDetail<T>) => void>;
 
-export interface IInputManager extends IModule {
+export interface IInputManager extends IPlugin {
   activeGamepads: Map<string, Gamepad>;
   activeControllers: Set<string>;
   options: InputManagerOptions;
@@ -80,8 +80,8 @@ export type ActionDetail<T = any> = {
   data?: T;
 };
 
-@CoreModule
-export class InputManager extends Module implements IInputManager {
+@CorePlugin
+export class InputManager extends Plugin implements IInputManager {
   public readonly id = 'InputManager';
   // properties
   public activeGamepads = new Map<string, Gamepad>();

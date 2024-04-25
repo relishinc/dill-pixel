@@ -1,28 +1,25 @@
 import EN from '@/locales/en';
+import { scenes } from '@/scenes';
 import { V8Application } from '@/V8Application';
 import { create, LocalStorageAdapter, Logger } from 'dill-pixel';
 import manifest from './assets.json';
 
 const app = await create(V8Application, {
   id: 'V8Application',
-  backgroundColor: 0x0,
-  backgroundAlpha: 1,
-  resizeToContainer: false,
-  manifest,
-  modules: [{ id: 'test', module: () => import('@/modules/TestModule'), options: { foo: 'bar' }, autoLoad: false }],
+  manifest: manifest,
+  plugins: [
+    {
+      id: 'physics',
+      namedExport: 'TowerFallPhysicsPlugin',
+      module: () => import('../../src/plugins/physics/towerfall'),
+      autoLoad: false,
+    },
+  ],
   storageAdapters: [
     { id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } },
     { id: 'test', module: () => import('@/adapters/TestAdapter'), options: { foo: 'bar' } },
   ],
-  scenes: [
-    { id: 'audio', namedExport: 'AudioScene', module: () => import('@/scenes/AudioScene.ts') },
-    { id: 'focus', namedExport: 'FocusScene', module: () => import('@/scenes/FocusScene'), modules: ['test'] },
-    { id: 'cam', namedExport: 'CameraScene', module: () => import('@/scenes/CameraScene') },
-    { id: 'popups', namedExport: 'PopupScene', module: () => import('@/scenes/PopupScene'), modules: ['test'] },
-    { id: 'spine', namedExport: 'SpineScene', module: () => import('@/scenes/SpineScene') },
-    { id: 'flexContainer', namedExport: 'FlexContainerScene', module: () => import('@/scenes/FlexContainerScene') },
-    { id: 'uiCanvas', namedExport: 'UICanvasScene', module: () => import('@/scenes/UICanvasScene') },
-  ],
+  scenes: scenes,
   i18n: {
     loadAll: true,
     locales: ['en', 'fr', 'fr-json'],

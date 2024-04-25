@@ -1,14 +1,14 @@
 import { IApplication } from '../core/Application';
-import { CoreFunction, CoreModule } from '../core/decorators';
+import { CoreFunction, CorePlugin } from '../core/decorators';
 import { Signal } from '../signals';
-import type { IModule } from './Module';
-import { Module } from './Module';
+import type { IPlugin } from './Plugin';
+import { Plugin } from './Plugin';
 
 type KeyboardEventType = 'keydown' | 'keyup';
 export type KeyboardEventDetail = { event: KeyboardEvent; key: string };
 type KeySignal = Signal<(detail: KeyboardEventDetail) => void>;
 
-export interface IKeyboardManager extends IModule {
+export interface IKeyboardManager extends IPlugin {
   enabled: boolean;
 
   onKeyDown(key?: string): KeySignal;
@@ -18,8 +18,8 @@ export interface IKeyboardManager extends IModule {
   isKeyDown(key: string): boolean;
 }
 
-@CoreModule
-export class KeyboardManager extends Module implements IKeyboardManager {
+@CorePlugin
+export class KeyboardManager extends Plugin implements IKeyboardManager {
   public readonly id: string = 'KeyboardManager';
   // global signals
   public onGlobalKeyDown: Signal<(detail: KeyboardEventDetail) => void> = new Signal();

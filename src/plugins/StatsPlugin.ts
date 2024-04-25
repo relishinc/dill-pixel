@@ -1,11 +1,11 @@
 import { Ticker, UPDATE_PRIORITY } from 'pixi.js';
 import { Application, IApplication } from '../core/Application';
-import { CoreModule } from '../core/decorators';
+import { CorePlugin } from '../core/decorators';
 import { isDev } from '../utils/env';
-import { Module } from './Module';
+import { Plugin } from './Plugin';
 
-@CoreModule
-export class StatsModule extends Module {
+@CorePlugin
+export class StatsPlugin extends Plugin {
   public readonly id = 'StatsModule';
   public stats: any;
 

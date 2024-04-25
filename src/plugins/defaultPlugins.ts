@@ -1,18 +1,18 @@
 import { AssetManager } from './AssetManager';
 import { AudioManager } from './audio/AudioManager';
 import { FocusManager } from './focus/FocusManager';
-import { i18nModule } from './i18nModule';
+import { i18nPlugin } from './i18nPlugin';
 import { InputManager } from './InputManager';
 import { KeyboardManager } from './KeyboardManager';
-import type { IModule } from './Module';
+import type { IPlugin } from './Plugin';
 import { PopupManager } from './popups/PopupManager';
 import { Resizer } from './Resizer';
 import { SceneManager } from './SceneManager';
-import { StatsModule } from './StatsModule';
+import { StatsPlugin } from './StatsPlugin';
 import { WebEventsManager } from './WebEventsManager';
 
 // define a set of default modules that all apps will probably want to use
-const defaultModules: (new () => IModule)[] = [
+const defaultPlugins: (new () => IPlugin)[] = [
   AssetManager,
   InputManager,
   SceneManager,
@@ -21,10 +21,9 @@ const defaultModules: (new () => IModule)[] = [
   FocusManager,
   PopupManager,
   AudioManager,
-  StatsModule,
-  // PixiStatsModule, doesn't work for pixi v8
-  i18nModule,
+  StatsPlugin,
+  i18nPlugin,
   Resizer,
 ];
 
-export default defaultModules;
+export default defaultPlugins;
