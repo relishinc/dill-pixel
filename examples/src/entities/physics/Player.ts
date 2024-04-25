@@ -1,11 +1,13 @@
-import { ActionDetail, Logger, Signal } from 'dill-pixel';
-import { Sprite, Texture } from 'pixi.js';
+import { ActionDetail, Signal } from 'dill-pixel';
+import { Texture } from 'pixi.js';
 import { Actor as TowerFallActor, World } from '../../../../src/plugins/physics/towerfall';
-import { OverlapResult } from '../../../../src/plugins/physics/towerfall/types.ts';
+import { Collision } from '../../../../src/plugins/physics/towerfall/types.ts';
 
 export class Player extends TowerFallActor {
-  public view: Sprite;
-  public onKilled = new Signal();
+  type = 'Player';
+  onKilled = new Signal();
+  speed: number = 3;
+
   private _canJump: boolean = false;
   private _isJumping: boolean = false;
   private _jumpPower: number = 0;
@@ -14,13 +16,6 @@ export class Player extends TowerFallActor {
   constructor() {
     super();
     this.initialize();
-  }
-
-  get offset() {
-    if (!this.view) {
-      return { x: 0, y: 0 };
-    }
-    return { x: -this.view.width * 0.5, y: -this.view.height * 0.5 };
   }
 
   protected initialize() {
@@ -40,18 +35,18 @@ export class Player extends TowerFallActor {
   public update(deltaTime: number) {
     if (this._isJumping) {
       this._jumpTimeElapsed += deltaTime;
-      this._jumpPower -= this._jumpTimeElapsed > 15 ? 0.75 : 1.25;
+      this._jumpPower -= this._jumpTimeElapsed > 15 ? 1.25 : 0.75;
       if (this._jumpPower <= 0) {
         this._jumpPower = 0;
+        this._resetJump();
       }
     }
     if (this.affectedByGravity) {
-      this.moveY(World.gravity - this._jumpPower, this._handleCollideBottom, this._disableJump);
+      this.moveY(World.gravity - this._jumpPower, this._handleCollision, this._disableJump);
     }
   }
 
-  public squish(collisions?: OverlapResult[]) {
-    Logger.log('squished', collisions);
+  public squish(collision: Collision) {
     this.onKilled.emit();
   }
 
@@ -59,13 +54,16 @@ export class Player extends TowerFallActor {
     this._canJump = false;
   }
 
-  private _handleCollideBottom(collisions: OverlapResult[]) {
-    if (collisions.find((c) => c && c.top)) {
-      this._resetJump();
+  private _handleCollision(collision: Collision) {
+    if (collision.bottom) {
+      if (this.isRiding(collision.entity2)) {
+        // reset the jump if we're sure we're on top of the solid
+        this._resetJump();
+      }
     }
   }
 
-  private _handleCollideX(collisions: OverlapResult[]) {}
+  private _handleCollideX(collision: Collision) {}
 
   private _resetJump() {
     this._canJump = true;
@@ -77,10 +75,10 @@ export class Player extends TowerFallActor {
   private _handleAction(actionDetail: ActionDetail) {
     switch (actionDetail.id) {
       case 'move_left':
-        this.moveX(-5, this._handleCollideX);
+        this.moveX(-this.speed, this._handleCollision);
         break;
       case 'move_right':
-        this.moveX(5, this._handleCollideX);
+        this.moveX(this.speed, this._handleCollision);
         break;
       case 'jump':
         if (this._canJump && !this._isJumping) {
