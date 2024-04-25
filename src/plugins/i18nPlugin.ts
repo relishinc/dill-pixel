@@ -1,11 +1,11 @@
 import { Assets } from 'pixi.js';
 import { IApplication } from '../core/Application';
-import { CoreFunction, CoreModule } from '../core/decorators';
+import { CoreFunction, CorePlugin } from '../core/decorators';
 import { Signal } from '../signals';
 import { Logger } from '../utils/console/Logger';
 import { getDynamicModuleFromImportListItem } from '../utils/framework';
 import { ImportListItem, ImportListItemModule } from '../utils/types';
-import { IModule, Module } from './Module';
+import { IPlugin, Plugin } from './Plugin';
 
 /**
  * Type definition for i18n dictionary.
@@ -52,7 +52,7 @@ const defaultOptions: i18nOptions = {
 /**
  * Interface for i18n module.
  */
-export interface Ii18nModule extends IModule {
+export interface Ii18nPlugin extends IPlugin {
   readonly locale: string;
   onLocaleChanged: Signal<(locale: string) => void>;
 
@@ -68,8 +68,8 @@ export interface Ii18nModule extends IModule {
 /**
  * i18n module class.
  */
-@CoreModule
-export class i18nModule extends Module implements Ii18nModule {
+@CorePlugin
+export class i18nPlugin extends Plugin implements Ii18nPlugin {
   public readonly id = 'i18n';
   public onLocaleChanged: Signal<(locale: string) => void> = new Signal<(locale: string) => void>();
 
@@ -82,19 +82,6 @@ export class i18nModule extends Module implements Ii18nModule {
    * Getter for locale.
    */
   get locale(): string {
-    return this._locale;
-  }
-
-  /**
-   * Sets the locale.
-   * If the locale is not loaded, it will load it first.
-   * @param localeId The locale id to set.
-   * @returns Promise<string>
-   */
-  @CoreFunction
-  async setLocale(localeId: string) {
-    this._locale = localeId;
-    await this._loadAndSetLocale(localeId);
     return this._locale;
   }
 
@@ -118,6 +105,19 @@ export class i18nModule extends Module implements Ii18nModule {
       await this.loadLocale(this._locale);
     }
     this._dict = this._dicts[this._locale];
+  }
+
+  /**
+   * Sets the locale.
+   * If the locale is not loaded, it will load it first.
+   * @param localeId The locale id to set.
+   * @returns Promise<string>
+   */
+  @CoreFunction
+  async setLocale(localeId: string) {
+    this._locale = localeId;
+    await this._loadAndSetLocale(localeId);
+    return this._locale;
   }
 
   /**

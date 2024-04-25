@@ -48,14 +48,17 @@ export class BaseScene extends Scene<V8Application> {
   }
 
   resize(size?: Size) {
-    this._bg.clear();
-    this._bg
-      .rect(-this.app.size.width * 0.5, -this.app.size.height * 0.5, this.app.size.width, this.app.screen.height)
-      .fill({
-        color: COLOR_GREEN,
-      });
-
-    this._title.position.set(-this.app.center.x + 100, -this.app.center.y + 50);
+    if (this._bg) {
+      this._bg.clear();
+      this._bg
+        .rect(-this.app.size.width * 0.5, -this.app.size.height * 0.5, this.app.size.width, this.app.screen.height)
+        .fill({
+          color: COLOR_GREEN,
+        });
+    }
+    if (this._title) {
+      this._title.position.set(-this.app.center.x + 100, -this.app.center.y + 50);
+    }
   }
 
   protected async addGUI() {

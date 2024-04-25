@@ -1,10 +1,10 @@
 import type { Application } from '../../core/Application';
-import { IModule, Module } from '../../modules/Module';
+import { IPlugin, Plugin } from '../../plugins/Plugin';
 
 /**
  * Interface for a storage adapter module.
  */
-export interface IStorageAdapter extends IModule {
+export interface IStorageAdapter extends IPlugin {
   /**
    * Saves data under a specified key.
    * @param {string} key The key under which to save the data.
@@ -26,7 +26,7 @@ export interface IStorageAdapter extends IModule {
  * A class representing a storage adapter module.
  * @template T The type of the application that the module belongs to.
  */
-export class StorageAdapter<T extends Application = Application> extends Module<T> implements IStorageAdapter {
+export class StorageAdapter<T extends Application = Application> extends Plugin<T> implements IStorageAdapter {
   /**
    * Creates a new StorageAdapter.
    * @param {string} id The ID of the adapter. Default is 'StorageAdapter'.

@@ -20,8 +20,9 @@ export function resolveTexture(props?: Partial<TextureProps>): Texture {
   const asset = props?.asset;
   const assetAsString = asset as string;
   const sheet = props?.sheet;
-
-  if (!sheet || sheet?.length === 0) {
+  if (asset instanceof Texture) {
+    texture = asset;
+  } else if (!sheet || sheet?.length === 0) {
     if (Assets.cache.has(assetAsString)) {
       texture = Assets.get(assetAsString)!;
     } else if (Assets.get(assetAsString)) {

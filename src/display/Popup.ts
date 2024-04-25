@@ -1,6 +1,6 @@
 import { ColorSource, Graphics, Sprite, Texture } from 'pixi.js';
 import { Application } from '../core/Application';
-import { IFocusable } from '../modules/focus/FocusManager';
+import { IFocusable } from '../plugins/focus/FocusManager';
 import { Size } from '../utils/types';
 import { Container, IContainer } from './Container';
 

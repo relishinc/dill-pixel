@@ -1,17 +1,17 @@
 import { IApplication } from '../../core/Application';
-import { CoreFunction, CoreModule } from '../../core/decorators';
+import { CoreFunction, CorePlugin } from '../../core/decorators';
 import { Container } from '../../display/Container';
 import { IPopup, PopupConfig, PopupConstructor } from '../../display/Popup';
 import { Signal } from '../../signals';
 import { getLastMapEntry } from '../../utils/map';
 import { bindAllMethods } from '../../utils/methodBinding';
-import type { IModule } from '../Module';
-import { Module } from '../Module';
+import type { IPlugin } from '../Plugin';
+import { Plugin } from '../Plugin';
 
 /**`
  * Interface for PopupManager
  */
-export interface IPopupManager extends IModule {
+export interface IPopupManager extends IPlugin {
   readonly view: Container; // The view of the PopupManager
   readonly current: IPopup | undefined; // The current active popup
   readonly popupCount: number; // The count of popups
@@ -35,8 +35,8 @@ type PopupSignalDetail<T = any> = { id: string | number; data?: T };
 /**
  * PopupManager
  */
-@CoreModule
-export class PopupManager extends Module implements IPopupManager {
+@CorePlugin
+export class PopupManager extends Plugin implements IPopupManager {
   public readonly id: string = 'PopupManager'; // The id of the PopupManager
   public readonly view = new Container(); // The view of the PopupManager
 

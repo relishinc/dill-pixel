@@ -2,10 +2,10 @@ import { PlayOptions, sound, SoundSourceMap } from '@pixi/sound';
 import { gsap } from 'gsap';
 import { AssetsManifest, UnresolvedAsset } from 'pixi.js';
 import { IApplication } from '../../core/Application';
-import { CoreModule } from '../../core/decorators';
+import { CorePlugin } from '../../core/decorators';
 import { Signal } from '../../signals';
 import { Logger } from '../../utils/console/Logger';
-import { IModule, Module } from '../Module';
+import { IPlugin, Plugin } from '../Plugin';
 import { AudioChannel, IAudioChannel } from './AudioChannel';
 import { AudioInstance, IAudioInstance } from './AudioInstance';
 
@@ -13,7 +13,7 @@ type SoundDetail = { id: string; instance: IAudioInstance; channelName: string }
 type ChannelVolumeDetail = { channel: IAudioChannel; volume: number };
 type ChannelName = 'music' | 'sfx' | 'voiceover' | string;
 
-export interface IAudioManager extends IModule {
+export interface IAudioManager extends IPlugin {
   onSoundStarted: Signal<(detail: SoundDetail) => void>;
   onSoundEnded: Signal<(detail: SoundDetail) => void>;
   onMasterVolumeChanged: Signal<(volume: number) => void>;
@@ -75,8 +75,8 @@ export interface IAudioManager extends IModule {
  * const audioManager = new AudioManager();
  * audioManager.play('soundId', 'music');
  */
-@CoreModule
-export class AudioManager extends Module implements IAudioManager {
+@CorePlugin
+export class AudioManager extends Plugin implements IAudioManager {
   // signals
   /**
    * Signal that is emitted when a sound starts playing.

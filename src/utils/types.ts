@@ -64,7 +64,14 @@ export type ImportListItem<T = any> = {
   autoLoad?: boolean;
 };
 
-export type SceneImportListItem<T> = ImportListItem<T> & { modules?: string[] };
+type SceneItemOptions = {
+  debugLabel?: string;
+  plugins?: string[];
+  assets?: string | string[];
+  autoUnloadAssets?: boolean;
+};
+
+export type SceneImportListItem<T> = ImportListItem<T> & SceneItemOptions;
 
 /**
  * A type that represents an import list.

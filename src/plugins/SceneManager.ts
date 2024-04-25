@@ -1,6 +1,6 @@
 import { Container } from 'pixi.js';
 import { Application, IApplication } from '../core/Application';
-import { CoreFunction, CoreModule } from '../core/decorators';
+import { CoreFunction, CorePlugin } from '../core/decorators';
 import { IScene, Scene } from '../display/Scene';
 import { Signal } from '../signals';
 import { Logger } from '../utils/console/Logger';
@@ -9,10 +9,10 @@ import { getDynamicModuleFromImportListItem } from '../utils/framework';
 import { bindAllMethods } from '../utils/methodBinding';
 import { createQueue, Queue } from '../utils/promise/Queue';
 import { Constructor, ImportList, SceneImportList } from '../utils/types';
-import type { IModule } from './Module';
-import { Module } from './Module';
+import type { IPlugin } from './Plugin';
+import { Plugin } from './Plugin';
 
-export interface ISceneManager extends IModule {
+export interface ISceneManager extends IPlugin {
   isFirstScene: boolean;
   onSceneChangeStart: Signal<(detail: { exiting: string | null; entering: string }) => void>;
   onSceneChangeComplete: Signal<(detail: { current: string }) => void>;
@@ -40,8 +40,8 @@ export type LoadSceneConfig = {
   method?: LoadSceneMethod;
 };
 
-@CoreModule
-export class SceneManager extends Module implements ISceneManager {
+@CorePlugin
+export class SceneManager extends Plugin implements ISceneManager {
   public readonly id: string = 'SceneManager';
   public onSceneChangeStart: Signal<(detail: { exiting: string | null; entering: string }) => void> = new Signal<
     (detail: { exiting: string | null; entering: string }) => void
@@ -127,11 +127,11 @@ export class SceneManager extends Module implements ISceneManager {
       throw new Error(`Scene item not found  for id ${newSceneId}`);
     }
 
-    if (sceneItem?.modules?.length) {
-      for (const module of sceneItem.modules) {
-        const moduleItem = this.app.getUnloadedModule(module);
-        if (moduleItem) {
-          await this.app.loadModule(moduleItem);
+    if (sceneItem?.plugins?.length) {
+      for (const plugin of sceneItem.plugins) {
+        const pluginListItem = this.app.getUnloadedPlugin(plugin);
+        if (pluginListItem) {
+          await this.app.loadPlugin(pluginListItem);
         }
       }
     }
@@ -292,7 +292,7 @@ export class SceneManager extends Module implements ISceneManager {
     this.scenes.forEach((value) => {
       const option = document.createElement('option');
       option.value = value.id;
-      option.innerHTML = value.id;
+      option.innerHTML = value?.debugLabel || value.id;
       if (value.id === this.defaultScene) {
         option.selected = true;
       }

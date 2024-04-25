@@ -1,12 +1,12 @@
 import { Application } from '../core/Application';
-import { CoreModule } from '../core/decorators';
+import { CorePlugin } from '../core/decorators';
 import { Signal } from '../signals';
 import { bindAllMethods } from '../utils/methodBinding';
 import { Size } from '../utils/types';
-import type { IModule } from './Module';
-import { Module } from './Module';
+import type { IPlugin } from './Plugin';
+import { Plugin } from './Plugin';
 
-export interface IWebEventsManager extends IModule {
+export interface IWebEventsManager extends IPlugin {
   onResize: Signal<(size: { width: number; height: number }) => void>;
   onVisibilityChanged: Signal<(visible: boolean) => void>;
 }
@@ -14,8 +14,8 @@ export interface IWebEventsManager extends IModule {
 /**
  * Maintains a list of callbacks for specific web events and invokes callbacks when event occurs.
  */
-@CoreModule
-export class WebEventsManager extends Module implements IWebEventsManager {
+@CorePlugin
+export class WebEventsManager extends Plugin implements IWebEventsManager {
   public readonly id = 'WebEventsManager';
 
   // signals

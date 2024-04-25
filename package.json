@@ -18,6 +18,7 @@
   "sideEffects": false,
   "scripts": {
     "dev": "cd ./examples && npm run dev",
+    "start": "cd ./examples && npm run start",
     "build": "npm run version && npm run pixi-exports && npm run generate && npm run compile",
     "pixi-exports": "node ./scripts/pixi-exports.js",
     "compile": "tsc",
