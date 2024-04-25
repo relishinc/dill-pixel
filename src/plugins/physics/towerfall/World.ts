@@ -1,30 +1,23 @@
-import { Bounds, Container, Graphics } from 'pixi.js';
+import { Container, Graphics } from 'pixi.js';
+import { Signal } from '../../../signals';
 import { Actor } from './Actor';
-import { Entity } from './Entity';
+import { Sensor } from './Sensor';
 import { Solid } from './Solid';
+import { Collision, Side } from './types';
+import { Wall } from './Wall';
 
 export class World {
   private static gfx: Graphics;
   static debug: boolean = true;
   static actors: Actor[] = [];
   static solids: Solid[] = [];
+  static sensors: Sensor[] = [];
   static enabled: boolean = true;
   static gravity: number = 10;
   static container: Container<any>;
+  static onCollision: Signal<(collision: Collision) => void> = new Signal<(collision: Collision) => void>();
 
-  static getEntityBounds(entity: Entity) {
-    const pos = entity.getGlobalPosition();
-    const localPos = World.container.toLocal(pos);
-    const entityBounds = entity.getBounds();
-    const bounds = new Bounds(
-      localPos.x + entity.offset.x,
-      localPos.y + entity.offset.y,
-      localPos.x + entityBounds.width + entity.offset.x,
-      localPos.y + entityBounds.height + entity.offset.y,
-    );
-
-    return bounds;
-  }
+  static worldBounds: Wall[] = [];
 
   static addActor(actor: Actor) {
     World.actors.push(actor);
@@ -32,6 +25,10 @@ export class World {
 
   static addSolid(solid: Solid) {
     World.solids.push(solid);
+  }
+
+  static addSensor(sensor: Sensor) {
+    World.sensors.push(sensor);
   }
 
   static removeActor(actor: Actor) {
@@ -48,6 +45,13 @@ export class World {
     }
   }
 
+  static removeSensor(sensor: Sensor) {
+    const index = World.sensors.indexOf(sensor);
+    if (index !== -1) {
+      World.sensors.splice(index, 1);
+    }
+  }
+
   static worldStep(deltaTime: number) {
     if (!World.enabled) {
       return;
@@ -56,13 +60,73 @@ export class World {
     World.solids.forEach((solid: Solid) => {
       solid.update(deltaTime);
     });
+
     World.actors.forEach((actor: Actor) => {
       actor.update(deltaTime);
+    });
+
+    World.sensors.forEach((sensor: Sensor) => {
+      sensor.update(deltaTime);
     });
 
     if (World.debug) {
       World.drawDebug();
     }
+  }
+
+  static addWorldBounds(
+    width: number,
+    height: number,
+    size: number = 10,
+    padding: number = 5,
+    sides: Side[] = ['top', 'bottom', 'left', 'right'],
+  ) {
+    if (!World.container) {
+      throw new Error('World container not set. Set World.container before calling World.addWorldBounds().');
+    }
+    if (World.worldBounds.length > 0) {
+      // World bounds already added
+      // remove existing bounds
+      World.worldBounds.forEach((wall: Wall) => {
+        wall.parent.removeChild(wall);
+        wall.destroy();
+      });
+      World.worldBounds = [];
+    }
+    const pos = World.container.getGlobalPosition();
+    const container = World.container;
+    let wall: Wall;
+
+    if (sides.includes('bottom')) {
+      wall = container.addChild(new Wall({ width, height: size }));
+      wall.position.set(pos.x, pos.y + height * 0.5 + padding);
+      World.worldBounds.push(wall);
+    }
+
+    if (sides.includes('top')) {
+      wall = container.addChild(new Wall({ width, height: size }));
+      wall.position.set(pos.x, pos.y - height * 0.5 - padding);
+      World.worldBounds.push(wall);
+    }
+
+    if (sides.includes('left')) {
+      wall = container.addChild(new Wall({ width: size, height }));
+      wall.position.set(pos.x - width * 0.5 - padding, pos.y);
+      World.worldBounds.push(wall);
+    }
+
+    if (sides.includes('right')) {
+      wall = container.addChild(new Wall({ width: size, height }));
+      wall.position.set(pos.x + width * 0.5 + padding, pos.y);
+      World.worldBounds.push(wall);
+    }
+  }
+
+  static collide(collision: Collision) {
+    if (!collision.type && collision.entity1 && collision.entity2) {
+      collision.type = `${collision.entity1.type}|${collision.entity2.type}`;
+    }
+    this.onCollision.emit(collision);
   }
 
   static drawDebug() {
@@ -74,7 +138,7 @@ export class World {
     World.container.setChildIndex(World.gfx, World.container.children.length - 1);
     World.gfx.clear();
     World.solids.forEach((solid: Solid) => {
-      const bounds = World.getEntityBounds(solid);
+      const bounds = solid.getBoundingBox();
       World.gfx
         .rect(bounds.x, bounds.y, bounds.width, bounds.height)
         .fill({
@@ -85,7 +149,17 @@ export class World {
     });
 
     World.actors.forEach((actor: Actor) => {
-      const bounds = World.getEntityBounds(actor);
+      const bounds = actor.getBoundingBox();
+      World.gfx
+        .rect(bounds.x, bounds.y, bounds.width, bounds.height)
+        .fill({
+          color: 0xff0000,
+          alpha: 0.25,
+        })
+        .stroke({ width: 1, color: 0xff0000, alignment: 0.5 });
+    });
+    World.sensors.forEach((actor: Actor) => {
+      const bounds = actor.getBoundingBox();
       World.gfx
         .rect(bounds.x, bounds.y, bounds.width, bounds.height)
         .fill({
