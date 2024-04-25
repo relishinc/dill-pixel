@@ -7,6 +7,10 @@ import { World } from './World';
 export class TowerFallPhysicsPlugin extends Plugin {
   public readonly id = 'TowerFallPhysicsPlugin';
 
+  public get world(): typeof World {
+    return World;
+  }
+
   public async initialize(app: IApplication, options?: any) {
     console.log('TowerFallPhysicsPlugin initialized!');
   }
