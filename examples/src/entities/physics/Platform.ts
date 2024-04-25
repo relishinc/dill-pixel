@@ -1,6 +1,6 @@
 import { PointLike, resolvePointLike } from 'dill-pixel';
-import { Point, Sprite, Texture } from 'pixi.js';
-import { Solid as TowerFallSolid } from '../../../../src/plugins/physics/towerfall';
+import { Point, Texture } from 'pixi.js';
+import { Solid as TowerFallSolid, World } from '../../../../src/plugins/physics/towerfall';
 
 type Direction = -1 | 0 | 1;
 
@@ -40,7 +40,6 @@ const defaults: PlatformConfig = {
 };
 
 export class Platform extends TowerFallSolid<PlatformConfig> {
-  public view: Sprite;
   private _startPos: Point;
 
   static resolveConfig(config: Partial<PlatformConfigOpts>): PlatformConfig {
@@ -64,13 +63,23 @@ export class Platform extends TowerFallSolid<PlatformConfig> {
     this.initialize();
   }
 
-  get offset() {
-    if (!this.view) return { x: 0, y: 0 };
-    return { x: -this.view.width * 0.5, y: -this.view.height * 0.5 };
+  get collideables() {
+    return [...World.actors, ...World.sensors];
+  }
+
+  get moving() {
+    return this.config.moving;
+  }
+
+  protected handleCollisionChange(isColliding: boolean) {
+    if (isColliding) {
+      this.view.tint = 0x0;
+    } else {
+      this.view.tint = this.config.color;
+    }
   }
 
   protected initialize() {
-    this._startPos = this.position.clone();
     this.view = this.add.sprite({
       asset: Texture.WHITE,
       width: this.config.width,
@@ -80,12 +89,16 @@ export class Platform extends TowerFallSolid<PlatformConfig> {
     });
   }
 
+  added() {
+    this._startPos = this.position.clone();
+    super.added();
+  }
+
   update(deltaTime: number) {
     if (!this.config.moving) return;
     if (Math.abs(this.x - this._startPos.x) > this.config.movementConfig.range.x) {
       this.config.movementConfig.startingDirection.x *= -1;
     }
-
     if (Math.abs(this.y - this._startPos.y) > this.config.movementConfig.range.y) {
       this.config.movementConfig.startingDirection.y *= -1;
     }
