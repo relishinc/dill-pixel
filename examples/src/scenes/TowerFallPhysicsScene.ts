@@ -1,4 +1,4 @@
-import { delay } from 'dill-pixel';
+import { Container, delay } from 'dill-pixel';
 import { Ticker } from 'pixi.js';
 import { Collision, TowerFallPhysicsPlugin } from '../../../src/plugins/physics/towerfall';
 import { Door } from '../entities/physics/Door.ts';
@@ -9,7 +9,7 @@ import { BaseScene } from './BaseScene';
 
 export class TowerFallPhysicsScene extends BaseScene {
   protected readonly title = 'TowerFall Physics';
-
+  platformContainer: Container = this.add.container();
   player: Player;
   platforms: Platform[] = [];
   doors: Door[] = [];
@@ -24,7 +24,6 @@ export class TowerFallPhysicsScene extends BaseScene {
     await super.initialize();
     this.physics.setWorldContainer(this);
     this.physics.world.addWorldBounds(this.app.size.width, this.app.size.height, 10, 0, ['bottom', 'left', 'right']);
-
     this.addPlatforms();
     this.addDoors();
     this.addPortals();
@@ -39,6 +38,7 @@ export class TowerFallPhysicsScene extends BaseScene {
 
   update(ticker: Ticker) {
     if (this._isPaused) return;
+
     if (this.app.keyboard.isKeyDown('ArrowLeft')) {
       this.app.func.sendAction('move_left');
     }
@@ -89,7 +89,16 @@ export class TowerFallPhysicsScene extends BaseScene {
     movementConfig?: PlatformMovementConfigOpts,
     color: number = 0x00ff00,
   ) {
-    const platform = this.add.existing(new Platform({ width, height, color, moving, movementConfig }), { x, y });
+    const platform = this.platformContainer.add.existing(
+      new Platform({
+        width,
+        height,
+        color,
+        moving,
+        movementConfig,
+      }),
+      { x, y },
+    );
     this.platforms.push(platform);
   }
 
