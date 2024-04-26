@@ -8,7 +8,7 @@ const defaults: DoorConfig = {
 };
 
 export class Portal extends Door {
-  debug = true;
+  debug = false;
   passThroughTypes: EntityType[] = [];
   type = 'Portal';
   enabled: boolean = true;
@@ -21,7 +21,7 @@ export class Portal extends Door {
   }
 
   get collideables(): Entity[] {
-    return System.getEntitiesByType('Player', 'Platform');
+    return System.getEntitiesByType('Player', 'FX', 'Platform');
   }
 
   getBoundingBox() {
@@ -42,12 +42,11 @@ export class Portal extends Door {
 
   update(deltaTime: number) {
     // Implement update logic
-    this.moveY(System.gravity * 10 * deltaTime, null);
-
+    this.moveY(System.gravity * deltaTime, null);
     if (this.entities.size) {
       for (const entity of this.entities) {
         // check if the entity is colliding with the portal
-        if (!checkCollision(this.getOuterBoundingBox(), entity.getBoundingBox(), this, entity)) {
+        if (!entity?.parent || !checkCollision(this.getOuterBoundingBox(), entity.getBoundingBox(), this, entity)) {
           this.entities.delete(entity);
         }
       }

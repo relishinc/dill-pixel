@@ -50,7 +50,6 @@ export class System {
     if (type.length === 0) {
       return (System.typeMap.get(type[0]) as T[]) || [];
     }
-
     return type.reduce((acc: T[], t: EntityType) => {
       const entities = System.typeMap.get(t) as T[];
       if (entities?.length) {

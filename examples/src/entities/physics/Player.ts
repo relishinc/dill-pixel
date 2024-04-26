@@ -1,17 +1,19 @@
 import { ActionDetail, PointLike, resolvePointLike, Signal } from 'dill-pixel';
 import { gsap } from 'gsap';
-import { Pool, Texture } from 'pixi.js';
+import { Point, Pool, Texture } from 'pixi.js';
 import { Actor as TowerFallActor, Collision, System } from '../../../../src/plugins/physics/towerfall';
 
 export class Player extends TowerFallActor {
   type = 'Player';
+  passThroughTypes = ['FX'];
   onKilled = new Signal();
   speed: number = 3;
-
+  private _velocity: Point = new Point(0, 0);
   private _canJump: boolean = false;
   private _isJumping: boolean = false;
   private _jumpPower: number = 0;
   private _jumpTimeElapsed: number = 0;
+  private _hitHead: boolean = false;
 
   constructor() {
     super();
@@ -35,13 +37,14 @@ export class Player extends TowerFallActor {
   public update(deltaTime: number) {
     if (this._isJumping) {
       this._jumpTimeElapsed += deltaTime;
-      this._jumpPower -= this._jumpTimeElapsed > 15 ? 1 : 2;
+      this._jumpPower -= this._velocity.y >= 0 ? 20 : 3;
       if (this._jumpPower <= 0) {
         this._jumpPower = 0;
         this._resetJump();
       }
     }
-    this.moveY((System.gravity * 2 - this._jumpPower) * deltaTime, this._handleCollision, this._disableJump);
+    this._velocity.y = this.system.gravity * deltaTime - this._jumpPower;
+    this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
   }
 
   public squish(collision: Collision) {
@@ -64,19 +67,19 @@ export class Player extends TowerFallActor {
   private _handleCollision(collision: Collision) {
     if (collision.bottom) {
       if (this.isRiding(collision.entity2)) {
-        // reset the jump if we're sure we're on top of the solid
         this._resetJump();
       }
+    } else if (collision.top) {
+      this._hitHead = true;
     }
   }
-
-  private _handleCollideX(collision: Collision) {}
 
   private _resetJump() {
     this._canJump = true;
     this._isJumping = false;
     this._jumpPower = 0;
     this._jumpTimeElapsed = 0;
+    this._hitHead = false;
   }
 
   private _handleAction(actionDetail: ActionDetail) {
@@ -88,32 +91,35 @@ export class Player extends TowerFallActor {
         this.moveX(this.speed, this._handleCollision);
         break;
       case 'jump':
-        if (this._canJump && !this._isJumping) {
-          this._isJumping = true;
-          this._jump();
-        }
+        this._jump();
         break;
     }
   }
 
   private _jump() {
-    this._jumpPower = 70;
-    this._spawnJumpFx();
+    if (!this._isJumping && this._canJump) {
+      this._canJump = false;
+      this._isJumping = true;
+      this._jumpPower = this.system.gravity * 6;
+      this._spawnJumpFx();
+    }
   }
 
   private _spawnJumpFx() {
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 10; i++) {
       const jumpFx = FX.pool.get({
         speed: Math.random() * 4 + 1,
         color: Math.random() * 0xffffff,
       });
-      jumpFx.position.set(this.x, this.y - 100);
+      jumpFx.position.set(this.x, this.y - this.height * 0.5 - 50);
     }
   }
 }
 
 class FX extends TowerFallActor {
-  static pool = new Pool<FX>(FX, 100);
+  type = 'FX';
+  passThroughTypes = ['FX', 'Player'];
+  static pool = new Pool<FX>(FX, 200);
   vertVector: number = 0;
   enabled = false;
   speed = 2;
@@ -123,6 +129,7 @@ class FX extends TowerFallActor {
 
   constructor() {
     super();
+
     this.view = this.add.sprite({
       asset: Texture.WHITE,
       width: 5,

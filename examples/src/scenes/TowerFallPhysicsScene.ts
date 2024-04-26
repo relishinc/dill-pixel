@@ -100,12 +100,10 @@ export class TowerFallPhysicsScene extends BaseScene {
 
   _handleCollision(collision: Collision) {
     switch (collision.type) {
-      case 'Door|Player':
-        // console.log(collision);
-        break;
       case 'Portal|Player':
+      case 'Portal|FX':
         if ((collision.entity1 as Portal).connectedPortal && (collision.entity1 as Portal).connectedPortal.enabled) {
-          (collision.entity1 as Portal).passThrough(this.player);
+          (collision.entity1 as Portal).passThrough(collision.entity2);
         }
         break;
     }
@@ -167,6 +165,7 @@ export class TowerFallPhysicsScene extends BaseScene {
     const portal1 = this.addPortal(this.app.size.width * 0.5 - 100, -200);
     const portal2 = this.addPortal(-500, 0);
     const portal3 = this.addPortal(-230, 200);
+    portal1.debug = true;
     portal1.connect(portal3);
     portal2.connect(portal1);
     portal3.connect(portal2);
@@ -221,7 +220,7 @@ export class TowerFallPhysicsScene extends BaseScene {
   private _resolveCollision(collision: Collision) {
     switch (collision.type) {
       case 'Portal|Player':
-      case 'Player|Portal':
+      case 'Portal|FX':
         return false;
       default:
         return true;
