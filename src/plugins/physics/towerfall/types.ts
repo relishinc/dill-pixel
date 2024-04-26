@@ -10,7 +10,7 @@ export type Collision = {
   bottom: boolean;
   left: boolean;
   right: boolean;
-  entity1?: Entity;
-  entity2?: Entity;
+  entity1: Entity;
+  entity2: Entity;
   type: `${EntityType}|${EntityType}`;
 };

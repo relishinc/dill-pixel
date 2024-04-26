@@ -1,24 +1,25 @@
 import { Rectangle } from 'pixi.js';
 import { Application } from '../../../core/Application';
 import { Entity } from './Entity';
-import { Collision } from './types';
+import { System } from './System';
+import { Collision, EntityType } from './types';
 import { checkCollision } from './utils';
-import { World } from './World';
 
 export class Actor<T = any, A extends Application = Application> extends Entity<T, A> {
   type = 'Actor';
   affectedByGravity: boolean = true;
+  passThroughTypes: EntityType[] = [];
 
   get collideables(): Entity[] {
-    return World.solids;
+    return System.solids;
   }
 
   added() {
-    World.addActor(this);
+    System.addActor(this);
   }
 
   removed() {
-    World.removeActor(this);
+    System.removeActor(this);
   }
 
   squish(collision?: Collision) {}
@@ -77,14 +78,14 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
     // TOOD: Implement broad-phase collision detection
     let collision = null;
     for (const entity of this.collideables) {
-      if (!entity.isCollideable) {
+      if (!entity.isCollideable || this.passThroughTypes.includes(entity.type)) {
         continue;
       }
       const solidBounds = entity.getBoundingBox();
       const collisionResult = checkCollision(nextPosition, solidBounds, this, entity);
       if (collisionResult && !collision /*&& sidesToCheck.some((side) => overlapResult[side] !== null)*/) {
         collision = collisionResult;
-        World.collide(collision);
+        System.collide(collision);
       }
     }
     return collision || false;

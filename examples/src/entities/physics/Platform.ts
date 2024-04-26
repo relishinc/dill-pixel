@@ -1,6 +1,6 @@
 import { PointLike, resolvePointLike } from 'dill-pixel';
 import { Point, Texture } from 'pixi.js';
-import { Solid as TowerFallSolid, World } from '../../../../src/plugins/physics/towerfall';
+import { Solid as TowerFallSolid, System } from '../../../../src/plugins/physics/towerfall';
 
 type Direction = -1 | 0 | 1;
 
@@ -40,14 +40,15 @@ const defaults: PlatformConfig = {
 };
 
 export class Platform extends TowerFallSolid<PlatformConfig> {
+  type = 'Platform';
   private _startPos: Point;
 
   static resolveConfig(config: Partial<PlatformConfigOpts>): PlatformConfig {
     return {
-      width: config.width || defaults.width,
-      height: config.height || defaults.height,
-      color: config.color || defaults.color,
-      moving: config.moving || defaults.moving,
+      width: config.width ?? defaults.width,
+      height: config.height ?? defaults.height,
+      color: config.color ?? defaults.color,
+      moving: config.moving ?? defaults.moving,
       movementConfig: config.movementConfig
         ? {
             speed: resolvePointLike(config.movementConfig.speed, true),
@@ -64,7 +65,7 @@ export class Platform extends TowerFallSolid<PlatformConfig> {
   }
 
   get collideables() {
-    return [...World.actors, ...World.sensors];
+    return [...System.actors, ...System.sensors];
   }
 
   get moving() {
