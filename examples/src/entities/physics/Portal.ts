@@ -34,14 +34,6 @@ export class Portal extends Door {
   }
 
   protected initialize() {
-    // this.view = this.add.sprite({
-    //   asset: Texture.WHITE,
-    //   width: this.config.width,
-    //   height: this.config.height,
-    //   tint: this.config.color,
-    //   anchor: 0.5,
-    // });
-
     this.view = this.add
       .graphics()
       .ellipse(0, 0, this.config.width * 0.5, this.config.height * 0.5)
@@ -50,12 +42,12 @@ export class Portal extends Door {
 
   update(deltaTime: number) {
     // Implement update logic
-    this.moveY(System.gravity * deltaTime, null);
+    this.moveY(System.gravity * 10 * deltaTime, null);
 
     if (this.entities.size) {
       for (const entity of this.entities) {
         // check if the entity is colliding with the portal
-        if (!checkCollision(this.getOuterBoundingBox(), entity.getBoundingBox())) {
+        if (!checkCollision(this.getOuterBoundingBox(), entity.getBoundingBox(), this, entity)) {
           this.entities.delete(entity);
         }
       }

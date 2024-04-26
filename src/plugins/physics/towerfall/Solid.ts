@@ -97,7 +97,7 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
         }
       } else if (actor.isRiding(this)) {
         actor.moveX(deltaX, () => {});
-        actor.moveY(deltaY - System.gravity, () => {});
+        actor.moveY(deltaY, () => {});
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Container, Graphics } from 'pixi.js';
+import { Container, Graphics, Point } from 'pixi.js';
 import { PIXIContainer } from '../../../pixi';
 import { Signal } from '../../../signals';
 import { Logger } from '../../../utils/console/Logger';
@@ -11,7 +11,8 @@ import { Wall } from './Wall';
 
 export class System {
   private static gfx: Graphics;
-  private static container: Container<any>;
+  private static _collisionResolver: ((collision: Collision) => boolean) | null = null;
+  public static container: Container<any>;
   //
   static debug: boolean = true;
   static typeMap: Map<EntityType, Entity[]> = new Map();
@@ -22,6 +23,11 @@ export class System {
   static gravity: number = 10;
   static onCollision: Signal<(collision: Collision) => void> = new Signal<(collision: Collision) => void>();
   static worldBounds: Wall[] = [];
+
+  static resolveCollision(collision: Collision) {
+    // Implement collision resolution logic
+    return System._collisionResolver ? System._collisionResolver(collision) : true;
+  }
 
   static addEntity(entity: Entity) {
     if (!System.typeMap.has(entity.type)) {
@@ -101,16 +107,15 @@ export class System {
       Logger.error('TowerFallPhysicsPlugin: World container not set!');
     }
     // Implement world step logic
+
     System.solids.forEach((solid: Solid) => {
       solid.update(deltaTime);
     });
-
-    System.actors.forEach((actor: Actor) => {
-      actor.update(deltaTime);
-    });
-
     System.sensors.forEach((sensor: Sensor) => {
       sensor.update(deltaTime);
+    });
+    System.actors.forEach((actor: Actor) => {
+      actor.update(deltaTime);
     });
 
     if (System.debug) {
@@ -141,10 +146,9 @@ export class System {
       });
       System.worldBounds = [];
     }
-    const pos = System.container.getGlobalPosition();
+    const pos = new Point(0, 0);
     const container = System.container;
     let wall: Wall;
-
     if (sides.includes('bottom')) {
       wall = container.addChild(new Wall({ width, height: size }));
       wall.position.set(pos.x, pos.y + height * 0.5 + padding);
@@ -213,6 +217,10 @@ export class System {
     if (opts.debug !== undefined) {
       System.debug = opts.debug;
     }
+
+    if (opts.collisionResolver) {
+      System.collisionResolver = opts.collisionResolver;
+    }
     if (opts.boundary) {
       if (opts.boundary.width && opts.boundary.height) {
         System.addBoundary(
@@ -226,6 +234,14 @@ export class System {
         Logger.error('TowerFallPhysicsPlugin System.initialize: Boundary width and height required.');
       }
     }
+  }
+
+  static get totalEntities(): number {
+    return System.actors.length + System.solids.length + System.sensors.length;
+  }
+
+  static set collisionResolver(collisionResolverMethod: (collision: Collision) => boolean) {
+    System._collisionResolver = collisionResolverMethod;
   }
 }
 
@@ -245,4 +261,5 @@ type TowerFallPhysicsSystemOptions = {
   container: PIXIContainer;
   debug: boolean;
   boundary: CustomTowerFallPhysicsBoundaryOptions;
+  collisionResolver: (collision: Collision) => boolean;
 };

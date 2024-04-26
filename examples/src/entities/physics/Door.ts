@@ -37,7 +37,6 @@ export class Door extends Sensor<DoorConfig> {
   }
 
   update(deltaTime: number) {
-    // Implement update logic
     this.moveY(System.gravity * deltaTime, null);
   }
 
