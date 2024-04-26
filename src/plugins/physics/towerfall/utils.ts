@@ -10,8 +10,8 @@ export function checkPointIntersection(point: Point, collider: ICollider): boole
 export function checkCollision(
   rectA: Rectangle,
   rectB: Rectangle,
-  entity1?: Entity,
-  entity2?: Entity,
+  entity1: Entity,
+  entity2: Entity,
 ): Collision | false {
   const overlap: Collision = {
     top: false,

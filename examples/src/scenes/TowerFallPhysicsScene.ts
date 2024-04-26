@@ -1,6 +1,7 @@
 import { Container, delay } from 'dill-pixel';
 import { Ticker } from 'pixi.js';
 import { Collision, TowerFallPhysicsPlugin } from '../../../src/plugins/physics/towerfall';
+import { Camera, CameraController } from '../entities/Camera.ts';
 import { Door } from '../entities/physics/Door.ts';
 import { Platform, PlatformMovementConfigOpts } from '../entities/physics/Platform.ts';
 import { Player } from '../entities/physics/Player.ts';
@@ -9,32 +10,60 @@ import { BaseScene } from './BaseScene';
 
 export class TowerFallPhysicsScene extends BaseScene {
   protected readonly title = 'TowerFall Physics';
-  protected readonly subtitle = 'Press D to toggle debugging bounding boxes';
-  platformContainer: Container;
+  protected readonly subtitle = 'Arrows to move, up to jump';
+  protected config = {
+    useCamera: false,
+    debug: false,
+  };
+
+  level: Container;
   player: Player;
   platforms: Platform[] = [];
   doors: Door[] = [];
   portals: Portal[] = [];
   _isPaused: boolean = false;
 
+  camera: Camera;
+  cameraController: CameraController;
+
   protected get physics(): TowerFallPhysicsPlugin {
     return this.app.getPlugin('physics') as TowerFallPhysicsPlugin;
   }
 
+  configureGUI() {
+    this.gui
+      .add(this.config, 'useCamera')
+      .onChange(() => {
+        this._handleUseCameraChanged();
+      })
+      .name('Use Camera');
+
+    this.gui
+      .add(this.config, 'debug')
+      .onChange(() => {
+        this._handleDebugChanged();
+      })
+      .name('Debug Physics');
+  }
+
   async initialize() {
     await super.initialize();
+    this.level = this.add.container();
+
     this.physics.system.initialize({
       gravity: 9.8,
-      container: this,
+      container: this.level,
       debug: false,
       boundary: {
         width: this.app.size.width,
         height: this.app.size.height,
         thickness: 10,
-        padding: 0,
+        padding: 5,
         sides: ['bottom', 'left', 'right'],
       },
+      collisionResolver: this._resolveCollision,
     });
+
     this.addPlatforms();
     this.addDoors();
     this.addPortals();
@@ -64,6 +93,9 @@ export class TowerFallPhysicsScene extends BaseScene {
     }
 
     this.physics.system.update(ticker.deltaTime);
+    if (this.camera) {
+      this.camera.update();
+    }
   }
 
   _handleCollision(collision: Collision) {
@@ -72,21 +104,24 @@ export class TowerFallPhysicsScene extends BaseScene {
         // console.log(collision);
         break;
       case 'Portal|Player':
-        const portal = collision.entity1 as Portal;
-        const connectedPortal = portal.connectedPortal;
-        if (connectedPortal && connectedPortal.enabled) {
-          portal.passThrough(this.player);
+        if ((collision.entity1 as Portal).connectedPortal && (collision.entity1 as Portal).connectedPortal.enabled) {
+          (collision.entity1 as Portal).passThrough(this.player);
         }
         break;
     }
   }
 
   addPlatforms() {
-    this.platformContainer = this.add.container();
-    this.addPlatForm(0, 300, 2000);
+    this.addPlatForm(0, 300, this.app.size.width);
     this.addPlatForm(-300, 213, 30, 160);
     this.addPlatForm(-300, 123, 150, 20);
     this.addPlatForm(300, 118, 30, 350);
+    this.addPlatForm(365, 100, 100, 20);
+    this.addPlatForm(this.app.size.width * 0.5 - 100, -120, 200, 20, true, {
+      speed: [0, 1],
+      startingDirection: { x: 0, y: 1 },
+      range: [200, 300],
+    });
     // vert
     this.addPlatForm(210, 100, 150, 20, true, { speed: [0, 1], startingDirection: { x: 0, y: 1 }, range: [200, 300] });
 
@@ -106,7 +141,7 @@ export class TowerFallPhysicsScene extends BaseScene {
     movementConfig?: PlatformMovementConfigOpts,
     color: number = 0x00fff0,
   ) {
-    const platform = this.platformContainer.add.existing(
+    const platform = this.level.add.existing(
       new Platform({
         width,
         height,
@@ -124,12 +159,12 @@ export class TowerFallPhysicsScene extends BaseScene {
   }
 
   addDoor(x: number, y: number) {
-    const door = this.add.existing(new Door(), { x, y });
+    const door = this.level.add.existing(new Door(), { x, y });
     this.doors.push(door);
   }
 
   addPortals() {
-    const portal1 = this.addPortal(500, 0);
+    const portal1 = this.addPortal(this.app.size.width * 0.5 - 100, -200);
     const portal2 = this.addPortal(-500, 0);
     const portal3 = this.addPortal(-230, 200);
     portal1.connect(portal3);
@@ -138,7 +173,7 @@ export class TowerFallPhysicsScene extends BaseScene {
   }
 
   addPortal(x: number, y: number) {
-    const portal = this.add.existing(new Portal(), { x, y });
+    const portal = this.level.add.existing(new Portal(), { x, y });
     this.portals.push(portal);
     return portal;
   }
@@ -150,12 +185,46 @@ export class TowerFallPhysicsScene extends BaseScene {
       this.player = new Player();
       this.player.onKilled.connect(this._handlePlayerKilled);
     }
-    this.add.existing(this.player);
+    this.level.add.existing(this.player);
     this.player.spawn({ x: this.doors[0].x, y: this.doors[0].y }, delay);
   }
 
   _handlePlayerKilled() {
     this.removeChild(this.player);
     this.addPlayer();
+  }
+
+  protected _handleDebugChanged() {
+    const { debug } = this.config;
+    this.physics.system.debug = debug;
+  }
+
+  protected _handleUseCameraChanged() {
+    const { useCamera } = this.config;
+    if (useCamera) {
+      this.camera = new Camera({
+        container: this.level,
+        viewportWidth: this.app.size.width,
+        viewportHeight: this.app.size.height,
+        worldWidth: 4000,
+        worldHeight: 4000,
+        target: this.player,
+        lerp: 0.05,
+      });
+    } else {
+      this.camera = null;
+      this.level.position.set(0, 0);
+      this.level.pivot.set(0, 0);
+    }
+  }
+
+  private _resolveCollision(collision: Collision) {
+    switch (collision.type) {
+      case 'Portal|Player':
+      case 'Player|Portal':
+        return false;
+      default:
+        return true;
+    }
   }
 }

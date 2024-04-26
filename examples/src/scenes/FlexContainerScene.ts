@@ -28,12 +28,6 @@ export class FlexContainerScene extends BaseScene {
   protected backing: Graphics;
   protected flexContainer: FlexContainer;
 
-  destroy() {
-    if (this.gui) {
-      this.gui.destroy();
-    }
-  }
-
   configureGUI() {
     this.gui
       .add(this.config, 'useBacking')

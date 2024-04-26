@@ -7,7 +7,6 @@ import { checkCollision } from './utils';
 
 export class Actor<T = any, A extends Application = Application> extends Entity<T, A> {
   type = 'Actor';
-  affectedByGravity: boolean = true;
   passThroughTypes: EntityType[] = [];
 
   get collideables(): Entity[] {
@@ -24,7 +23,7 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
 
   squish(collision?: Collision) {}
 
-  moveX(amount: number, onCollide: (collision: Collision) => void): void {
+  moveX(amount: number, onCollide?: (collision: Collision) => void): void {
     this.xRemainder += amount;
     let move = Math.round(this.xRemainder);
     const sign = Math.sign(move);
@@ -44,7 +43,7 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
     }
   }
 
-  moveY(amount: number, onCollide: (collision: Collision) => void, onNoCollisions?: () => void): void {
+  moveY(amount: number, onCollide?: (collision: Collision) => void, onNoCollisions?: () => void): void {
     this.yRemainder += amount;
     let move = Math.round(this.yRemainder);
     const sign = Math.sign(move);
@@ -67,28 +66,26 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   }
 
   // Simple bounding box collision check
-  collideAt(
-    x: number,
-    y: number,
-    box: Rectangle,
-    // sidesToCheck: Side[] = ['top', 'bottom', 'left', 'right'],
-  ): Collision | false {
+  collideAt(x: number, y: number, box: Rectangle): Collision | false {
     const nextPosition = new Rectangle(box.x + x, box.y + y, box.width, box.height);
     // Iterate through all solids in the level to check for collisions
-    // TOOD: Implement broad-phase collision detection
-    let collision = null;
     for (const entity of this.collideables) {
       if (!entity.isCollideable || this.passThroughTypes.includes(entity.type)) {
         continue;
       }
       const solidBounds = entity.getBoundingBox();
       const collisionResult = checkCollision(nextPosition, solidBounds, this, entity);
-      if (collisionResult && !collision /*&& sidesToCheck.some((side) => overlapResult[side] !== null)*/) {
-        collision = collisionResult;
-        System.collide(collision);
+      if (collisionResult) {
+        System.collide(collisionResult);
+        // if the collision resolver returns true,
+        // we should stop and return this collision
+        // this will stop actor movement if returned
+        if (System.resolveCollision(collisionResult)) {
+          return collisionResult;
+        }
       }
     }
-    return collision || false;
+    return false;
   }
 
   isRiding(solid: Entity): boolean {

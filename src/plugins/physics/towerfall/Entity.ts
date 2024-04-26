@@ -40,12 +40,16 @@ export class Entity<T = any, A extends Application = Application> extends Contai
     return this.getBoundingBox().right;
   }
 
+  get system(): typeof System {
+    return System;
+  }
+
   get collideables(): Entity[] {
     return [];
   }
 
   getWorldBounds(): Bounds {
-    const pos = System.container.toLocal(this.view.getGlobalPosition());
+    const pos = this.system.container.toLocal(this.view.getGlobalPosition());
     const bounds = this.view.getBounds();
     bounds.x = pos.x;
     bounds.y = pos.y;
