@@ -72,7 +72,7 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
   private handleActorInteractions(deltaX: number, deltaY: number): void {
     // Check for collisions with non-riding actors
     this.collideables.forEach((actor) => {
-      if (this.collidesWith(actor)) {
+      if (!actor.passThroughTypes.includes(this.type) && this.collidesWith(actor)) {
         // Push actors only the minimum amount necessary to avoid overlap
         const overlapX =
           deltaX !== 0
