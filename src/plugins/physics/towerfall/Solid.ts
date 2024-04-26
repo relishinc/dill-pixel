@@ -1,14 +1,14 @@
 import { Application } from '../../../core/Application';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
-import { World } from './World';
+import { System } from './System';
 
 export class Solid<T = any, A extends Application = Application> extends Entity<T, A> {
   type = 'Solid';
   protected _isColliding: boolean = false;
 
   get collideables(): Actor[] {
-    return World.actors;
+    return System.actors;
   }
 
   get isColliding(): boolean {
@@ -23,11 +23,11 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
   }
 
   added() {
-    World.addSolid(this);
+    System.addSolid(this);
   }
 
   removed() {
-    World.removeSolid(this);
+    System.removeSolid(this);
   }
 
   move(x: number, y: number): void {
@@ -57,7 +57,7 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
 
   getAllRidingActors(): Actor[] {
     // Implement logic to get all actors riding this solid
-    return World.actors.filter((actor: Actor) => {
+    return System.actors.filter((actor: Actor) => {
       return actor.isRiding(this);
     });
   }
@@ -97,7 +97,7 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
         }
       } else if (actor.isRiding(this)) {
         actor.moveX(deltaX, () => {});
-        actor.moveY(deltaY - World.gravity, () => {});
+        actor.moveY(deltaY - System.gravity, () => {});
       }
     });
   }

@@ -1,6 +1,4 @@
-import { Texture } from 'pixi.js';
-import { Entity, World } from '../../../../src/plugins/physics/towerfall';
-import { checkCollision } from '../../../../src/plugins/physics/towerfall/utils.ts';
+import { checkCollision, Entity, EntityType, System } from '../../../../src/plugins/physics/towerfall';
 import { Door, DoorConfig } from './Door';
 
 const defaults: DoorConfig = {
@@ -10,6 +8,8 @@ const defaults: DoorConfig = {
 };
 
 export class Portal extends Door {
+  debug = true;
+  passThroughTypes: EntityType[] = [];
   type = 'Portal';
   enabled: boolean = true;
   connectedPortal: Portal | null = null;
@@ -21,31 +21,36 @@ export class Portal extends Door {
   }
 
   get collideables(): Entity[] {
-    return [...World.actors, ...World.solids];
+    return System.getEntitiesByType('Player', 'Platform');
   }
 
   getBoundingBox() {
     const rect = super.getBoundingBox();
-    rect.y += rect.height * 0.25;
-    rect.width = rect.width * 0.5;
+    rect.y -= rect.height * 0.25;
+    rect.width = rect.width * 0.3;
     rect.height = rect.height * 0.75;
-    rect.x += rect.width * 0.5;
+    rect.x -= this.config.width * 0.15;
     return rect;
   }
 
   protected initialize() {
-    this.view = this.add.sprite({
-      asset: Texture.WHITE,
-      width: this.config.width,
-      height: this.config.height,
-      tint: this.config.color,
-      anchor: 0.5,
-    });
+    // this.view = this.add.sprite({
+    //   asset: Texture.WHITE,
+    //   width: this.config.width,
+    //   height: this.config.height,
+    //   tint: this.config.color,
+    //   anchor: 0.5,
+    // });
+
+    this.view = this.add
+      .graphics()
+      .ellipse(0, 0, this.config.width * 0.5, this.config.height * 0.5)
+      .fill({ color: this.config.color });
   }
 
   update(deltaTime: number) {
     // Implement update logic
-    this.moveY(World.gravity * deltaTime, null);
+    this.moveY(System.gravity * deltaTime, null);
 
     if (this.entities.size) {
       for (const entity of this.entities) {
@@ -66,7 +71,10 @@ export class Portal extends Door {
   }
 
   getOuterBoundingBox() {
-    return super.getBoundingBox();
+    const bb = this.getWorldBounds();
+    bb.x -= this.config.width * 0.5;
+    bb.y -= this.config.height * 0.5;
+    return bb.rectangle;
   }
 
   addEntity(entity: Entity) {

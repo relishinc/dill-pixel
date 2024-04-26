@@ -3,10 +3,15 @@ import { Application } from '../../../core/Application';
 import { Container } from '../../../display/Container';
 import { PIXIContainer } from '../../../pixi';
 import { ICollider } from './ICollider';
+import { System } from './System';
 import { EntityType } from './types';
-import { World } from './World';
 
 export class Entity<T = any, A extends Application = Application> extends Container<A> implements ICollider {
+  debug: boolean = false;
+  debugColors = {
+    bounds: 0xff0000,
+    outerBounds: 0x00ff00,
+  };
   type: EntityType = 'Solid';
   view: PIXIContainer;
   isCollideable: boolean = true;
@@ -40,7 +45,7 @@ export class Entity<T = any, A extends Application = Application> extends Contai
   }
 
   getWorldBounds(): Bounds {
-    const pos = World.container.toLocal(this.view.getGlobalPosition());
+    const pos = System.container.toLocal(this.view.getGlobalPosition());
     const bounds = this.view.getBounds();
     bounds.x = pos.x;
     bounds.y = pos.y;
@@ -54,6 +59,10 @@ export class Entity<T = any, A extends Application = Application> extends Contai
 
   getBoundingBox(): Rectangle {
     return this.getWorldBounds().rectangle;
+  }
+
+  getOuterBoundingBox(): Rectangle | null {
+    return null;
   }
 
   protected initialize() {}

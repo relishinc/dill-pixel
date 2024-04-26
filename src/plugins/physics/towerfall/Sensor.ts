@@ -1,20 +1,20 @@
 import { Application } from '../../../core/Application';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
-import { World } from './World';
+import { System } from './System';
 
 export class Sensor<T = any, A extends Application = Application> extends Actor<T, A> {
   type = 'Sensor';
 
   get collideables(): Entity[] {
-    return World.actors;
+    return System.actors;
   }
 
   added() {
-    World.addSensor(this);
+    System.addSensor(this);
   }
 
   removed() {
-    World.removeSensor(this);
+    System.removeSensor(this);
   }
 }

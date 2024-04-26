@@ -5,10 +5,12 @@ import { V8Application } from '../V8Application';
 
 export class BaseScene extends Scene<V8Application> {
   protected readonly title: string;
+  protected readonly subtitle: string;
   protected gui: any;
   protected config: any;
   protected _bg: Graphics;
   protected _title: Text;
+  protected _subtitle: Text;
 
   constructor() {
     super();
@@ -19,9 +21,16 @@ export class BaseScene extends Scene<V8Application> {
 
     this._title = this.add.text({
       text: this.title ?? this.id,
-      style: { fill: 'white', fontWeight: 'bold', fontFamily: 'Arial' },
+      style: { fill: 'white', fontWeight: 'bold', fontFamily: 'Arial', align: 'left' },
       x: -this.app.center.x + 100,
       y: -this.app.center.y + 50,
+    });
+
+    this._subtitle = this.add.text({
+      text: this.subtitle,
+      style: { fill: 'white', align: 'left', fontWeight: 'bold', fontFamily: 'Arial', fontSize: 14 },
+      x: -this.app.center.x + 105,
+      y: -this.app.center.y + 90,
     });
 
     if (this.config) {

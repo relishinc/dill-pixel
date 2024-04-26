@@ -1,5 +1,5 @@
 import { Texture } from 'pixi.js';
-import { Entity, Sensor, World } from '../../../../src/plugins/physics/towerfall';
+import { Entity, Sensor, System } from '../../../../src/plugins/physics/towerfall';
 
 export type DoorConfig = {
   width: number;
@@ -15,6 +15,7 @@ const defaults: DoorConfig = {
 
 export class Door extends Sensor<DoorConfig> {
   type = 'Door';
+  passThroughTypes = ['Player'];
 
   constructor(config: Partial<DoorConfig> = {}) {
     super({ ...defaults, ...config });
@@ -22,7 +23,7 @@ export class Door extends Sensor<DoorConfig> {
   }
 
   get collideables(): Entity[] {
-    return [...World.actors, ...World.solids];
+    return [...System.actors, ...System.solids];
   }
 
   protected initialize() {
@@ -37,7 +38,7 @@ export class Door extends Sensor<DoorConfig> {
 
   update(deltaTime: number) {
     // Implement update logic
-    this.moveY(World.gravity * deltaTime, null);
+    this.moveY(System.gravity * deltaTime, null);
   }
 
   protected handleCollisionChange(isColliding: boolean) {

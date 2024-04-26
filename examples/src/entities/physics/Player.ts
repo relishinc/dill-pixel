@@ -1,7 +1,7 @@
-import { ActionDetail, Signal } from 'dill-pixel';
+import { ActionDetail, PointLike, resolvePointLike, Signal } from 'dill-pixel';
+import { gsap } from 'gsap';
 import { Texture } from 'pixi.js';
-import { Actor as TowerFallActor, World } from '../../../../src/plugins/physics/towerfall';
-import { Collision } from '../../../../src/plugins/physics/towerfall/types.ts';
+import { Actor as TowerFallActor, Collision, System } from '../../../../src/plugins/physics/towerfall';
 
 export class Player extends TowerFallActor {
   type = 'Player';
@@ -21,8 +21,8 @@ export class Player extends TowerFallActor {
   protected initialize() {
     this.view = this.add.sprite({
       asset: Texture.WHITE,
-      width: 50,
-      height: 75,
+      width: 40,
+      height: 80,
       tint: 0xff0000,
       anchor: 0.5,
     });
@@ -42,12 +42,21 @@ export class Player extends TowerFallActor {
       }
     }
     if (this.affectedByGravity) {
-      this.moveY(World.gravity - this._jumpPower, this._handleCollision, this._disableJump);
+      this.moveY(System.gravity - this._jumpPower, this._handleCollision, this._disableJump);
     }
   }
 
   public squish(collision: Collision) {
     this.onKilled.emit();
+  }
+
+  public spawn(position: PointLike, delay: number = 0.5) {
+    const { x, y } = resolvePointLike(position);
+    this.alpha = 0;
+    this.x = x;
+    this.y = y;
+
+    gsap.to(this, { alpha: 1, duration: 0.5, delay });
   }
 
   private _disableJump() {
