@@ -34,6 +34,7 @@ const app = await create(V8Application, {
   },
   defaultSceneLoadMethod: 'exitEnter',
   useSpine: true,
+  showStats: true,
 });
 
 // Core signals / functions testing
