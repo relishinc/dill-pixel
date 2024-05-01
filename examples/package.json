@@ -7,6 +7,8 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
+    "prepreview": "npm run build",
+    "preview": "vite preview",
     "lint": "eslint src --ext .ts",
     "lint-fix": "eslint src --ext .ts --fix",
     "audio:vo": "texttospeech",
