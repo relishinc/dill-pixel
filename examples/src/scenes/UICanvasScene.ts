@@ -1,4 +1,4 @@
-import { delay, UICanvas } from 'dill-pixel';
+import { UICanvas } from 'dill-pixel';
 import { TextStyle } from 'pixi.js';
 import { BaseScene } from './BaseScene';
 
@@ -13,16 +13,66 @@ const whiteTextStyle = (size: number) =>
 
 export class UICanvasScene extends BaseScene {
   protected readonly title = 'UI Canvas';
+  protected readonly subtitle =
+    "Demonstrates the UI Canvas's alignment options.\nInitially, size is bound to the size of the" +
+    ' application.\nModify the size / padding to see the UI Canvas resize.';
+  protected config = {
+    size: {
+      width: 200,
+      height: 200,
+    },
+    padding: {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    },
+  };
   protected ui: UICanvas;
+  protected _sizeChanged: boolean = false;
+  protected _isResizing: boolean = false;
 
   async initialize() {
     await super.initialize();
-
     this.ui = this.add.uiCanvas({
-      // padding: [125, 100, 50],
       useAppSize: true,
       debug: true,
     });
+  }
+
+  configureGUI() {
+    this.config.size.width = this.app.size.width;
+    this.config.size.height = this.app.size.height;
+
+    const size = this.gui.addFolder('Size');
+    size.add(this.config.size, 'width', 0, 2000, 1).onChange(() => {
+      if (!this._isResizing) {
+        this._sizeChanged = true;
+      }
+      this.setSize();
+    });
+    size.add(this.config.size, 'height', 0, 2000, 1).onChange(() => {
+      if (!this._isResizing) {
+        this._sizeChanged = true;
+      }
+      this.setSize();
+    });
+    size.open();
+
+    const padding = this.gui.addFolder('Padding');
+    padding.add(this.config.padding, 'top', 0, 200, 1).onChange(() => {
+      this.setPadding();
+    });
+    padding.add(this.config.padding, 'right', 0, 200, 1).onChange(() => {
+      this.setPadding();
+    });
+    padding.add(this.config.padding, 'bottom', 0, 200, 1).onChange(() => {
+      this.setPadding();
+    });
+    padding.add(this.config.padding, 'left', 0, 200, 1).onChange(() => {
+      this.setPadding();
+    });
+    // padding.open();
   }
 
   async start() {
@@ -61,14 +111,31 @@ export class UICanvasScene extends BaseScene {
       }),
       { align: 'center' },
     );
+  }
 
-    // set new padding
-    await delay(2);
-    this.ui.padding = [100, 50];
+  setSize() {
+    this.ui.size = [this.config.size.width, this.config.size.height];
+    this.ui.position.set(-this.config.size.width * 0.5, -this.config.size.height * 0.5);
+  }
 
-    // set size
-    // await delay(2);
-    // this.ui.size = [500, 500];
-    // this.ui.position.set(-250, -250);
+  resize() {
+    super.resize();
+    if (!this._sizeChanged) {
+      this._isResizing = true;
+      this.gui.__folders.Size.__controllers[0].setValue(this.app.renderer.screen.width);
+      this.gui.__folders.Size.__controllers[0].updateDisplay();
+      this.gui.__folders.Size.__controllers[1].setValue(this.app.renderer.screen.height);
+      this.gui.__folders.Size.__controllers[1].updateDisplay();
+      this._isResizing = false;
+    }
+  }
+
+  setPadding() {
+    this.ui.padding = [
+      this.config.padding.top,
+      this.config.padding.right,
+      this.config.padding.bottom,
+      this.config.padding.left,
+    ];
   }
 }

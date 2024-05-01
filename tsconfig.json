@@ -6,23 +6,20 @@
     "rootDir": "./src",
     "baseUrl": ".",
     "outDir": "./lib",
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
+    "useDefineForClassFields": true,
+    "lib": ["ESNext", "DOM"],
     "strict": true,
-    "esModuleInterop": true,
     "resolveJsonModule": true,
-    "lib": [
-      "dom",
-      "ESNext"
-    ],
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
     "skipLibCheck": true,
-    "useDefineForClassFields": false,
-    "strictPropertyInitialization": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "allowJs": true
+    "allowJs": true,
+    "composite": true
   },
   "ts-node": {
     "compilerOptions": {

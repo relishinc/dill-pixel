@@ -5,26 +5,22 @@
         "./src/*"
       ]
     },
-    "strict": true,
-    "strictNullChecks": false,
-    "module": "esnext",
     "outDir": "dist",
     "target": "ESNext",
-    "rootDir": ".",
-    "moduleResolution": "node",
-    "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "sourceMap": true,
-    "allowJs": true,
+    "useDefineForClassFields": true,
+    "strictPropertyInitialization": false,
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "bundler",
+    "strict": true,
     "resolveJsonModule": true,
-    "lib": [
-      "dom",
-      "es2015",
-      "es2016",
-      "es2017",
-      "esNext"
-    ]
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true
   },
   "include": [
     "src",

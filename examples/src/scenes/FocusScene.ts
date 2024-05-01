@@ -1,10 +1,14 @@
 import { Actor } from '@/entities/Actor';
 import { BaseScene } from '@/scenes/BaseScene';
 import { Button, FlexContainer, Logger, PIXIText } from 'dill-pixel';
-import { AppSize } from '../../../src/utils/types.ts';
 
 export class FocusScene extends BaseScene {
   protected title = 'Focus Management';
+  protected subtitle =
+    'Tab to changed focus. Enter or space to make the circles move.\nF to change focus layer.\nNotice only one item' +
+    ' is focusable' +
+    ' on layer' +
+    ' "two"?';
   private _focusLayerLabel: PIXIText;
   private actor1: Actor;
   private actor2: Actor;
@@ -24,7 +28,7 @@ export class FocusScene extends BaseScene {
       text: 'Focus layer:',
       style: { fill: 'white' },
       x: -this.app.center.x + 100,
-      y: -this.app.center.y + 100,
+      y: this.app.center.y - 100,
     });
 
     this.actorList = this.add.flexContainer({
@@ -57,16 +61,16 @@ export class FocusScene extends BaseScene {
       y: 100,
     });
 
-    const spr = this.list.add.sprite({
+    this.list.add.sprite({
       asset: 'required/jar.png',
       scale: 0.5,
     });
-    const sheetSpr = this.list.add.sprite({
+    this.list.add.sprite({
       asset: 'jar',
       sheet: 'sheet.json',
       scale: 0.5,
     });
-    const sheetSpr2 = this.list.add.sprite({
+    this.list.add.sprite({
       asset: 'jar2',
       sheet: 'sheet.json',
       scale: 0.5,
@@ -108,12 +112,12 @@ export class FocusScene extends BaseScene {
       }),
     );
     this.addSignalConnection(
-      this.app.keyboard.onKeyUp('f').connect((detail) => {
+      this.app.keyboard.onKeyUp('f').connect(() => {
         this.app.focus.setFocusLayer(this.app.focus.currentLayerId === 'one' ? 'two' : 'one');
       }),
     );
     this.addSignalConnection(
-      this.app.keyboard.onKeyUp('s').connect((detail) => {
+      this.app.keyboard.onKeyUp('s').connect(() => {
         void this.app.scenes.loadScene({ id: 'TestScene2' });
       }),
     );
@@ -140,9 +144,8 @@ export class FocusScene extends BaseScene {
     }
   }
 
-  resize(size: AppSize) {
-    super.resize(size);
-    console.log({ size });
+  resize() {
+    super.resize();
   }
 
   private _updateFocusLayerLabel() {

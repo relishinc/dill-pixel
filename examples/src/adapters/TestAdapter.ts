@@ -10,12 +10,4 @@ export default class TestAdapter extends StorageAdapter<V8Application> {
     console.log('TestAdapter this.app', this.app);
     return Promise.resolve();
   }
-
-  public load<T = any>(key: string): Promise<T> | T | null {
-    return null;
-  }
-
-  public save(key: string, data: any): Promise<void> | void {
-    return undefined;
-  }
 }

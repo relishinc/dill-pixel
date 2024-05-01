@@ -28,6 +28,7 @@ export async function create<T extends IApplication = Application>(
       'You passed in a DOM Element, but none was found. If you instead pass in a string, a container will be created for you, using the string for its id.',
     );
   }
+  Application.containerElement = el;
   if (config.resizeToContainer) {
     config.resizeTo = el;
   }
