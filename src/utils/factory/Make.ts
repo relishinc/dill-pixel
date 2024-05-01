@@ -22,14 +22,12 @@ import {
   Texture,
   TilingSprite
 } from 'pixi.js';
-import {Application} from '../../core';
-import {AnimatedSprite, Container, Sprite, SpriteAnimation} from '../../gameobjects';
-import {SpriteAnimationProps} from '../../gameobjects/animation';
+import {Application} from '../../core/Application';
+import {Container} from '../../gameobjects/Container';
 import {Spine} from '../../global';
 import {SpineSettings} from '../../spine/Make';
-import {FlexContainer, FlexContainerSettings, UICanvas, UICanvasProps} from '../../ui';
+import {FlexContainer} from '../../ui/FlexContainer';
 import {PointLike, SpritesheetLike} from '../Types';
-import {resolvePointLike, setObjectName} from './utils';
 
 /**
  * Gets a `PIXI.Texture` asset.

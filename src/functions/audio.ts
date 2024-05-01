@@ -1,6 +1,7 @@
 // convenience methods for all the audio manager signals
-import { AudioToken, RequiredAudioTrackConfig } from '../audio';
-import { Signals } from '../signals';
+import { AudioToken } from '../audio/AudioToken';
+import { RequiredAudioTrackConfig } from '../audio/HowlerTrack';
+import { Signals } from '../signals/Signals';
 
 export function playAudio(data: AudioToken): void;
 export function playAudio(data: AudioToken | RequiredAudioTrackConfig): void {

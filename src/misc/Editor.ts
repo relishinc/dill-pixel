@@ -7,8 +7,8 @@ import {
   HTMLText,
   HTMLTextStyle,
 } from 'pixi.js';
-import { Application } from '../core';
-import { Container } from '../gameobjects';
+import { Application } from '../core/Application';
+import { Container } from '../gameobjects/Container';
 import * as PointUtils from '../utils/PointUtils';
 
 export interface IEditableContainer extends PIXIContainer {
@@ -35,10 +35,6 @@ export class Editor {
 
   protected stage: PIXIContainer | null = null;
 
-  get app(): Application {
-    return <Application>this?.application || Application.instance;
-  }
-
   constructor(
     public container: IEditableContainer,
     public application?: PIXIApplication,
@@ -52,6 +48,10 @@ export class Editor {
     this.onStagePointerUp = this.onStagePointerUp.bind(this);
 
     this.init();
+  }
+
+  get app(): Application {
+    return <Application>this?.application || Application.instance;
   }
 
   init() {
@@ -263,11 +263,6 @@ export class Editor {
     this.outputJSON();
   }
 
-  protected clear() {
-    this._gfx.clear();
-    this._text.visible = false;
-  }
-
   findChildren(container: PIXIContainer) {
     container.children.forEach((child: DisplayObject) => {
       if (child instanceof Container) {
@@ -302,5 +297,10 @@ export class Editor {
 
   outputJSON() {
     console.table(this._data);
+  }
+
+  protected clear() {
+    this._gfx.clear();
+    this._text.visible = false;
   }
 }

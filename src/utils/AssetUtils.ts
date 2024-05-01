@@ -1,4 +1,4 @@
-import { AssetMapData } from '../load';
+import { AssetMapData } from '../load/AssetMapData';
 
 export enum AssetType {
   TEXTURE_ATLAS,
@@ -22,6 +22,8 @@ export enum AssetType {
  * Asset Utilities
  */
 export class AssetUtils {
+  // Initialized later, since we must wait for Application.instance to be instantiated
+  private static _resolutionSuffix: string;
   /** Filepath to static images */
   public static readonly FILEPATH_IMAGE: string = 'assets/images/static/';
   /** Filepath for spritesheets */
@@ -34,31 +36,12 @@ export class AssetUtils {
   public static readonly FILEPATH_SPINE: string = 'assets/spine/';
   /** Filepath for json */
   public static readonly FILEPATH_JSON: string = 'assets/json/';
-
   public static readonly FILE_EXTENSION_JSON: string = '.json';
   public static readonly FILE_EXTENSION_PNG: string = '.png';
   public static readonly FILE_EXTENSION_JPG: string = '.jpg';
   public static readonly FILE_EXTENSION_FONT: string = '.fnt';
   public static readonly FILE_EXTENSION_SPINE_ATLAS: string = '.atlas';
   public static readonly FILE_EXTENSION_SPINE_SKEL: string = '.skel';
-
-  // Initialized later, since we must wait for Application.instance to be instantiated
-  private static _resolutionSuffix: string;
-
-  /**
-   * Gets resolution suffix
-   */
-  public static get resolutionSuffix(): string {
-    return this._resolutionSuffix;
-  }
-
-  /**
-   * Sets resolution suffix
-   * @param pValue
-   */
-  public static set resolutionSuffix(pValue: string) {
-    this._resolutionSuffix = pValue;
-  }
 
   /**
    * Return an asset's path based on it's file extension.
@@ -67,7 +50,9 @@ export class AssetUtils {
    * @return The asset filepath, empty if no resolution
    */
   public static getPathToAsset(pAssetName: string, pAssetType: AssetType): string;
+
   public static getPathToAsset(pAssetData: AssetMapData): string;
+
   public static getPathToAsset(pAssetName: AssetMapData | string, pAssetType?: AssetType): string {
     if (pAssetName instanceof AssetMapData) {
       pAssetType = pAssetName.assetType;
@@ -102,5 +87,20 @@ export class AssetUtils {
 
   public static replaceResolutionToken(url: string, token: string | RegExp = '@x'): string {
     return url.replace(token, this._resolutionSuffix);
+  }
+
+  /**
+   * Gets resolution suffix
+   */
+  public static get resolutionSuffix(): string {
+    return this._resolutionSuffix;
+  }
+
+  /**
+   * Sets resolution suffix
+   * @param pValue
+   */
+  public static set resolutionSuffix(pValue: string) {
+    this._resolutionSuffix = pValue;
   }
 }

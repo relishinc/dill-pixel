@@ -1,7 +1,7 @@
-import { Application } from '../../core';
+import { Application } from '../../core/Application';
 import { PhysicsBase } from '../PhysicsBase';
 import { PointObjectLike } from '../rapier';
-import { Factory } from './factory';
+import { Factory } from './factory/Factory';
 import { IMatterPhysicsObject } from './interfaces';
 import { MatterBodyLike } from './types';
 
@@ -53,6 +53,44 @@ export class MatterPhysics extends PhysicsBase {
     }
   }
 
+  addToWorld(...objects: (IMatterPhysicsObject | MatterBodyLike)[]) {
+    objects.forEach((obj) => {
+      let body: MatterBodyLike;
+      // eslint-disable-next-line no-prototype-builtins
+      if (obj.hasOwnProperty('body')) {
+        body = (obj as IMatterPhysicsObject).body;
+        this._updateables.push(obj as IMatterPhysicsObject);
+      } else {
+        body = obj as MatterBodyLike;
+      }
+      Matter.World.add(this._engine.world, body);
+    });
+  }
+
+  removeFromWorld(...bodies: MatterBodyLike[]) {
+    bodies.forEach((body) => {
+      Matter.World.remove(this._engine.world, body);
+    });
+  }
+
+  public update(_deltaTime: number) {
+    if (!this._isRunning) {
+      return;
+    }
+    if (typeof Matter === 'undefined' || !this._engine) {
+      return;
+    }
+    if (this._engine) {
+      this._updateables.forEach((obj) => {
+        obj.update();
+      });
+      if (this._debug) {
+        this.drawDebug();
+      }
+      Matter.Engine.update(this._engine, 16.666666666666668, 1);
+    }
+  }
+
   public createWorldBounds(useStage: boolean = true) {
     const thickness = 50; // or however thick you want the boundaries to be
     const width = useStage ? this.app.size.x : this._bounds.x;
@@ -90,26 +128,6 @@ export class MatterPhysics extends PhysicsBase {
     this._isRunning = false;
   }
 
-  addToWorld(...objects: (IMatterPhysicsObject | MatterBodyLike)[]) {
-    objects.forEach((obj) => {
-      let body: MatterBodyLike;
-      // eslint-disable-next-line no-prototype-builtins
-      if (obj.hasOwnProperty('body')) {
-        body = (obj as IMatterPhysicsObject).body;
-        this._updateables.push(obj as IMatterPhysicsObject);
-      } else {
-        body = obj as MatterBodyLike;
-      }
-      Matter.World.add(this._engine.world, body);
-    });
-  }
-
-  removeFromWorld(...bodies: MatterBodyLike[]) {
-    bodies.forEach((body) => {
-      Matter.World.remove(this._engine.world, body);
-    });
-  }
-
   drawDebug() {
     this._debugGraphics.clear();
 
@@ -129,24 +147,6 @@ export class MatterPhysics extends PhysicsBase {
 
       this._debugGraphics.lineTo(vertices[0].x, vertices[0].y);
       this._debugGraphics.endFill();
-    }
-  }
-
-  public update(_deltaTime: number) {
-    if (!this._isRunning) {
-      return;
-    }
-    if (typeof Matter === 'undefined' || !this._engine) {
-      return;
-    }
-    if (this._engine) {
-      this._updateables.forEach((obj) => {
-        obj.update();
-      });
-      if (this._debug) {
-        this.drawDebug();
-      }
-      Matter.Engine.update(this._engine, 16.666666666666668, 1);
     }
   }
 }

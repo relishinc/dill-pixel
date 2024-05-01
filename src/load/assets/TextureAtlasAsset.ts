@@ -1,7 +1,7 @@
-import { AssetType } from '../../utils';
+import { Texture } from 'pixi.js';
+import { AssetType } from '../../utils/AssetUtils';
 import { AssetMapData } from '../AssetMapData';
 import { IAsset } from './IAsset';
-import { Texture } from 'pixi.js';
 
 export class TextureAtlasAsset extends AssetMapData implements IAsset<{ [name: string]: Texture }> {
   constructor(assetName: string, assetPath?: string) {

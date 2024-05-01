@@ -1,4 +1,4 @@
-import { LogUtils } from './utils';
+import * as LogUtils from './utils/LogUtils';
 import { pixiVersion, version } from './version';
 
 export function sayHello() {

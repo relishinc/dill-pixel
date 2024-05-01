@@ -1,7 +1,8 @@
-import { Application } from '../core/Application';
-import { HowlerTrack, HowlerUtils } from '../audio';
-import { AssetType } from '../utils';
-import { AssetMapData } from './AssetMapData';
+import {HowlerTrack} from '../audio/HowlerTrack';
+import * as HowlerUtils from '../audio/HowlerUtils';
+import {Application} from '../core/Application';
+import {AssetType} from '../utils/AssetUtils';
+import {AssetMapData} from './AssetMapData';
 
 /**
  * Stores audio specific data used to load and unload assets.

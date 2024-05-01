@@ -1,12 +1,14 @@
 import {Container as PIXIContainer, IDestroyOptions, IPoint, Point, Ticker} from 'pixi.js';
-import {SignalConnection, SignalConnections} from 'typed-signals';
-import {playVO} from '../audio';
-import {Application} from '../core';
-import {stopCaption} from '../functions';
-import {IFocusable} from '../input';
-import {Editor} from '../misc';
-import {Signals} from '../signals';
-import {Add, bindAllMethods, bindMethods, Make} from '../utils';
+import {playVO} from '../audio/VoiceOverManager';
+import {Application} from '../core/Application';
+import {stopCaption} from '../functions/audio';
+import {IFocusable} from '../input/IFocusable';
+import {Editor} from '../misc/Editor';
+import {SignalConnection, SignalConnections} from '../signals/Signal';
+import {Signals} from '../signals/Signals';
+import {Add} from '../utils/factory/Add';
+import {Make} from '../utils/factory/Make';
+import {bindAllMethods, bindMethods} from '../utils/FrameworkUtils';
 
 /**
  * Enhanced PIXI Container that has:

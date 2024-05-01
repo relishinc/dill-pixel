@@ -1,5 +1,6 @@
 import { Dictionary } from 'typescript-collections';
-import { LogUtils, PlatformUtils } from '../utils';
+import * as LogUtils from '../utils/LogUtils';
+import * as PlatformUtils from '../utils/PlatformUtils';
 
 export class CookieStorage {
   private static FUTURE_DATE: Date;

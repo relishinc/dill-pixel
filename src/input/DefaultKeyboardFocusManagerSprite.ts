@@ -1,6 +1,6 @@
 import { ILineStyleOptions } from '@pixi/graphics';
 import { Container, Graphics, Sprite } from 'pixi.js';
-import { Application } from '../core';
+import { Application } from '../core/Application';
 import { IFocusable } from './IFocusable';
 import { IKeyboardFocus } from './IKeyboardFocus';
 

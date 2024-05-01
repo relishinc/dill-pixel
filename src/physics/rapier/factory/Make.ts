@@ -1,8 +1,9 @@
 import { Texture } from 'pixi.js';
-import { PointLike, resolvePointLike, SpritesheetLike } from '../../../utils';
+import { resolvePointLike } from '../../../utils/factory/utils';
+import { PointLike, SpritesheetLike } from '../../../utils/Types';
 import { IPhysicsObject, PhysicsSpriteSettings } from '../../interfaces';
-import { PhysicsBodyType } from '../../types';
-import { RapierPhysicsSprite } from '../gameobjects';
+import { PhysicsBodyType } from '../../types/PhysicsBodyType';
+import { RapierPhysicsSprite } from '../gameobjects/RapierPhysicsSprite';
 
 export class Make {
   static physicsSprite(settings: PhysicsSpriteSettings): IPhysicsObject;

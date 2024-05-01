@@ -1,9 +1,9 @@
 import {Container, FederatedPointerEvent, IPoint, Point, Rectangle} from 'pixi.js';
 import {SignalConnections} from 'typed-signals';
-import {AudioToken} from '../audio';
 import * as AudioCategory from '../audio/AudioCategory';
-import {playAudio} from '../functions';
-import {Signals} from '../signals';
+import {AudioToken} from '../audio/AudioToken';
+import {playAudio} from '../functions/audio';
+import {Signals} from '../signals/Signals';
 import * as PixiUtils from '../utils/PixiUtils';
 import * as RectUtils from '../utils/RectUtils';
 import {Draggable} from './Draggable';

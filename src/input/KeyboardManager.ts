@@ -1,16 +1,15 @@
+import * as KeyCode from 'keycode';
 import { isMobile } from 'pixi.js';
 import { Dictionary } from 'typescript-collections';
-import { Application } from '../core';
-import { setKeyboardEnabled } from '../functions';
-import { Signals } from '../signals';
-import { bindMethods } from '../utils';
+import { Application } from '../core/Application';
+import { setKeyboardEnabled } from '../functions/keyboard';
+import { Signals } from '../signals/Signals';
+import { bindMethods } from '../utils/FrameworkUtils';
 import * as LogUtils from '../utils/LogUtils';
 import { IFocusable } from './IFocusable';
-import { KeyCode } from './index';
 import * as InputUtils from './InputUtils';
 import { Direction, KeyboardMap } from './KeyboardMap';
 import { KeyboardMapToken } from './KeyboardMapToken';
-import { KeyCodes } from './KeyCodes';
 
 export interface IKeyboardStatus {
   enabled: boolean;

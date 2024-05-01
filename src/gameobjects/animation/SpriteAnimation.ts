@@ -1,5 +1,5 @@
 import { Texture } from 'pixi.js';
-import { Make } from '../../utils';
+import { Make } from '../../utils/factory/Make';
 import * as NumberUtils from '../../utils/NumberUtils';
 
 export interface SpriteAnimationConfig {
@@ -29,13 +29,12 @@ export type SpriteAnimationProps = Partial<SpriteAnimationConfig> &
  * SpriteAnimation
  */
 export class SpriteAnimation {
+  protected config: SpriteAnimationConfig;
   private _frames: Texture[];
   private _frameRate: number;
   private _isLooping: boolean;
   private _onComplete: ((reversed?: boolean) => void) | undefined;
   private _onLoop: (() => void) | undefined;
-
-  protected config: SpriteAnimationConfig;
 
   /**
    * Creates an instance of sprite animation.

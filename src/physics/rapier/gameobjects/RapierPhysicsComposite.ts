@@ -8,9 +8,9 @@ import type {
   World,
 } from '@dimforge/rapier2d';
 import { Container, DisplayObject, Sprite } from 'pixi.js';
-import { Application } from '../../../core';
-import { resolvePointLike } from '../../../utils';
-import { IPhysicsObject, PhysicsBodyType } from '../../index';
+import { Application } from '../../../core/Application';
+import { resolvePointLike } from '../../../utils/factory/utils';
+import { PhysicsBodyType } from '../../types/PhysicsBodyType';
 import { RapierPhysics } from '../RapierPhysics';
 
 export class RapierPhysicsComposite extends Container implements IPhysicsObject {

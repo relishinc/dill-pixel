@@ -3,7 +3,6 @@ import {IFocusable} from "./IFocusable";
 import {Direction} from "./KeyboardMap";
 
 export class KeyboardMapToken {
-
     public readonly target: IFocusable;
     public readonly neighbours: Dictionary<Direction, IFocusable | undefined>;
 

@@ -1,5 +1,5 @@
 import { Texture } from 'pixi.js';
-import { AssetType } from '../../utils';
+import { AssetType } from '../../utils/AssetUtils';
 import { AssetMapData } from '../AssetMapData';
 import { IAsset } from './IAsset';
 

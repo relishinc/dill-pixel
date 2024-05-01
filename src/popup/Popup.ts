@@ -1,8 +1,8 @@
 import { Graphics, Point, Sprite } from 'pixi.js';
-import { Application } from '../core';
-import { hidePopupComplete } from '../functions';
-import { Container } from '../gameobjects';
-import { WithRequiredProps } from '../utils';
+import { Application } from '../core/Application';
+import { hidePopupComplete } from '../functions/popups';
+import { Container } from '../gameobjects/Container';
+import { WithRequiredProps } from '../utils/Types';
 import { IPopup } from './IPopup';
 import { IPopupToken } from './PopupToken';
 

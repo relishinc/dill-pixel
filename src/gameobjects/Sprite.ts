@@ -1,9 +1,11 @@
 import { Texture } from '@pixi/core';
 import { IPoint, Point, Sprite as PIXISprite } from 'pixi.js';
 import { SignalConnection, SignalConnections } from 'typed-signals';
-import { Application } from '../core';
-import { IFocusable } from '../input';
-import { Add, bindAllMethods, bindMethods, Make } from '../utils';
+import { Application } from '../core/Application';
+import { IFocusable } from '../input/IFocusable';
+import { Add } from '../utils/factory/Add';
+import { Make } from '../utils/factory/Make';
+import { bindAllMethods, bindMethods } from '../utils/FrameworkUtils';
 
 export class Sprite<T extends Application = Application> extends PIXISprite implements IFocusable {
   public static __dill_pixel_top_level_class = true;

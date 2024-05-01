@@ -1,5 +1,5 @@
 import { Draggable } from '../input';
-import { Signals } from '../signals';
+import { Signals } from '../signals/Signals';
 
 export function draggableSelected(draggable: Draggable): void {
   Signals.draggableSelected.emit(draggable);

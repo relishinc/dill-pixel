@@ -1,7 +1,7 @@
-import { Application } from '../core';
-import { playCaption, stopCaption, voiceoverEnded, voiceoverStarted } from '../functions';
-import { Signals } from '../signals';
-import { LogUtils } from '../utils';
+import { Application } from '../core/Application';
+import { playCaption, stopCaption, voiceoverEnded, voiceoverStarted } from '../functions/audio';
+import { Signals } from '../signals/Signals';
+import * as LogUtils from '../utils/LogUtils';
 import * as AudioCategory from './AudioCategory';
 import { HowlerTrack } from './HowlerTrack';
 import * as HowlerUtils from './HowlerUtils';

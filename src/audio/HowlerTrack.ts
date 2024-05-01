@@ -1,7 +1,7 @@
 import { Howl } from 'howler';
 import { Assets } from 'pixi.js';
-import { audioLoadError } from '../functions';
-import { AssetUtils, WithRequiredProps } from '../utils';
+import { audioLoadError } from '../functions/audio';
+import { WithRequiredProps } from '../utils/Types';
 import * as HowlerUtils from './HowlerUtils';
 import { IAudioManager } from './IAudioManager';
 import { IAudioTrack } from './IAudioTrack';

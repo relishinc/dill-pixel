@@ -1,5 +1,5 @@
-import { AssetType, AssetUtils } from '../utils';
-import { AssetMapData } from './AssetMapData';
+import {AssetType, AssetUtils} from '../utils/AssetUtils';
+import {AssetMapData} from './AssetMapData';
 
 /**
  *

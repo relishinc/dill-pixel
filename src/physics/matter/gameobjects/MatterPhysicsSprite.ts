@@ -1,14 +1,14 @@
 import { Container, Sprite, Texture } from 'pixi.js';
-import { Application } from '../../../core';
-import { resolvePointLike, SpritesheetLike } from '../../../utils';
+import { Application } from '../../../core/Application';
+import { resolvePointLike } from '../../../utils/factory/utils';
 import { IPhysicsObject } from '../../interfaces';
-import { PhysicsBodyType } from '../../types';
+import { PhysicsBodyType } from '../../types/PhysicsBodyType';
 import { MatterPhysics } from '../MatterPhysics';
 
 export class MatterPhysicsSprite extends Container implements IPhysicsObject {
-  public static readonly DEFAULT_DEBUG_COLOR: number = 0x29c5f6;
   visual: Sprite;
   body: Matter.Body;
+  public static readonly DEFAULT_DEBUG_COLOR: number = 0x29c5f6;
   _size: { x: number; y: number };
   _bodyType: PhysicsBodyType;
 

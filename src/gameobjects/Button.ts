@@ -1,7 +1,7 @@
 import { Point, Sprite } from 'pixi.js';
-import { IFocusable } from '../input';
-import { Signal } from '../signals';
-import { SpritesheetLike, TextureLike } from '../utils';
+import { IFocusable } from '../input/IFocusable';
+import { Signal } from '../signals/Signal';
+import { SpritesheetLike, TextureLike } from '../utils/Types';
 import { Container } from './Container';
 
 type ButtonConfig = {

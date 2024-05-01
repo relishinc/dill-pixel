@@ -1,6 +1,6 @@
 import { Container, IPoint } from 'pixi.js';
-import { keyboardFocusBegin, keyboardFocusEnd } from '../functions';
-import { LogUtils } from '../utils';
+import { keyboardFocusBegin, keyboardFocusEnd } from '../functions/keyboard';
+import * as LogUtils from '../utils/LogUtils';
 import { IFocusable } from './IFocusable';
 
 export enum Direction {

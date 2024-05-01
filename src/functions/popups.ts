@@ -1,5 +1,7 @@
-import { IPopup, IPopupToken, PopupConfig, PopupToken, RequiredPopupConfig } from '../popup';
-import { Signals } from '../signals';
+import { IPopup } from '../popup/IPopup';
+import { PopupConfig, RequiredPopupConfig } from '../popup/Popup';
+import { IPopupToken } from '../popup/PopupToken';
+import { Signals } from '../signals/Signals';
 
 export function showPopup(data: PopupConfig): void;
 export function showPopup(data: IPopupToken | RequiredPopupConfig): void {

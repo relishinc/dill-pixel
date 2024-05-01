@@ -1,11 +1,6 @@
 import {Point} from 'pixi.js';
 import {Dictionary} from 'typescript-collections';
-import {Application} from '../core';
-import {hideLoadScreen, initState, loadAssets, showLoadScreen, stateTransitionHalted, unloadAssets} from '../functions';
-import {Container} from '../gameobjects';
-import {AssetMap, AssetMapData, LoadToken} from '../load';
-import {Signals} from '../signals';
-import {delay} from '../utils';
+import {PIXI} from '../pixi';
 import * as LogUtils from '../utils/LogUtils';
 import {State} from './State';
 import {StateToken} from './StateToken';
@@ -31,7 +26,7 @@ export function transitionToState(
  * Manages all states.
  * @extends Container
  */
-export class StateManager<T extends Application = Application> extends Container<T> {
+export class StateManager<T extends Application = Application> extends PIXI.Container {
   /**
    * Cached size of the game.
    */

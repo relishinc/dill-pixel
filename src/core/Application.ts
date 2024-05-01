@@ -1,37 +1,30 @@
 // @ts-ignore
 // require the global.d.ts file
 import FontFaceObserver from 'fontfaceobserver';
-import {Application as PIXIApplication, Assets, IApplicationOptions, Point, Ticker} from 'pixi.js';
-import {HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverManager} from '../audio';
-import {CopyManager} from '../copy';
-import {isDev, updateFocus} from '../functions';
-import {
-  DefaultKeyboardFocusManagerSprite,
-  HitAreaRenderer,
-  KeyboardFocusManager,
-  KeyboardManager,
-  MouseManager
-} from '../input';
-import {AssetMap, AssetMapData, LoadManager, LoadScreen, LoadScreenProvider, SplashScreen} from '../load';
-import {PhysicsBase, PhysicsEngineType} from '../physics';
-import {PopupManager} from '../popup';
-import {SaveManager} from '../save';
-import {Signals} from '../signals';
-import {State, StateManager} from '../state';
-import {
-  Add,
-  AssetUtils,
-  bindMethods,
-  delay,
-  HTMLTextStyleManager,
-  Make,
-  OrientationManager,
-  ResizeManager,
-  WebEventsManager
-} from '../utils';
-import {IResizeManager} from '../utils/IResizeManager';
-import {ResizeManagerNew, ResizeManagerOptions} from '../utils/ResizeManagerNew';
-import {AppConfig} from './AppConfig';
+import { Application as PIXIApplication, Assets, IApplicationOptions, Point, Ticker } from 'pixi.js';
+import { isDev } from '../functions/pipeline';
+import { StateManager } from '../state/StateManager';
+import { AssetUtils } from '../utils/AssetUtils';
+import { Add } from '../utils/factory/Add';
+import { bindMethods } from '../utils/FrameworkUtils';
+import { ResizeManagerOptions } from '../utils/ResizeManagerNew';
+import { AppConfig } from './AppConfig';
+import { IAudioManager } from '../audio/IAudioManager';
+import { PopupManager } from '../popup/PopupManager';
+import { LoadManager } from '../load/LoadManager';
+import { KeyboardManager } from '../input/KeyboardManager';
+import { KeyboardFocusManager } from '../input/KeyboardFocusManager';
+import { DefaultKeyboardFocusManagerSprite } from '../input/DefaultKeyboardFocusManagerSprite';
+import { ResizeManager } from '../utils/ResizeManager';
+import { CopyManager } from '../copy/CopyManager';
+import { MouseManager } from '../input/MouseManager';
+import { WebEventsManager } from '../utils/WebEventsManager';
+import { HitAreaRenderer } from '../input/HitAreaRenderer';
+import { SaveManager } from '../save/SaveManager';
+import { OrientationManager } from '../utils/OrientationManager';
+import { IVoiceOverManager } from '../audio/VoiceOverManager';
+import { AssetMapData } from '../load/AssetMapData';
+import { PhysicsBase } from '../physics';
 
 export interface DillPixelApplicationOptions extends IApplicationOptions {
   physics?: boolean;

@@ -1,14 +1,17 @@
-import {IPoint, Point} from 'pixi.js';
-import {Application} from '../core';
-import {Container} from '../gameobjects';
-import {AssetMapData} from '../load';
-import {SignalConnections} from '../signals';
-import {Add, Make} from '../utils';
+import { IPoint, Point } from 'pixi.js';
+
+import { Add } from '../utils/factory/Add';
+import { Application } from '../core/Application';
+import { AssetMapData } from '../load/AssetMapData';
+import { Container } from '../gameobjects/Container';
+import { Make } from '../utils/factory/Make';
+import { PIXI } from '../pixi';
+import { SignalConnections } from '../signals/Signal';
 
 /**
  * State
  */
-export abstract class State<T extends Application = Application> extends Container<T> {
+export abstract class State<T extends Application = Application> extends PIXI.Container {
   private static _assets: AssetMapData[] = [];
   public static NAME: string = 'State';
   protected _size: Point;
@@ -16,7 +19,7 @@ export abstract class State<T extends Application = Application> extends Contain
   protected _data: any;
 
   protected constructor() {
-    super(false);
+    super()
     this._size = new Point();
   }
 

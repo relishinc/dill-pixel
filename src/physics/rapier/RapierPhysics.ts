@@ -1,5 +1,5 @@
 import type { Vector2, World } from '@dimforge/rapier2d';
-import { Application } from '../../core';
+import { Application } from '../../core/Application';
 import { PhysicsBase } from '../PhysicsBase';
 import { Factory } from './factory';
 import { IRapierPhysicsObject, IRapierWallDefinition } from './interfaces';
@@ -17,12 +17,8 @@ export class RapierPhysics extends PhysicsBase {
     this._factory = new Factory();
   }
 
-  public get SIFactor(): number {
-    return this._systemOfUnitsFactor;
-  }
-
-  public get world(): World {
-    return this._world;
+  get debug(): boolean {
+    return this._debug;
   }
 
   set debug(value: boolean) {
@@ -32,8 +28,12 @@ export class RapierPhysics extends PhysicsBase {
     }
   }
 
-  get debug(): boolean {
-    return this._debug;
+  public get SIFactor(): number {
+    return this._systemOfUnitsFactor;
+  }
+
+  public get world(): World {
+    return this._world;
   }
 
   async init(
@@ -81,6 +81,39 @@ export class RapierPhysics extends PhysicsBase {
     super.destroy();
   }
 
+  addToWorld(...objects: (IRapierPhysicsObject | RapierBodyLike)[]) {
+    objects.forEach((obj) => {
+      if (obj.hasOwnProperty('body')) {
+        this._updateables.push(obj as IRapierPhysicsObject);
+      }
+    });
+  }
+
+  removeFromWorld(...bodies: RapierBodyLike[]) {
+    bodies.forEach((body) => {
+      this.world.removeRigidBody(body);
+    });
+  }
+
+  public update(deltaTime: number) {
+    if (!this._isRunning) {
+      return;
+    }
+
+    if (this.world) {
+      if (deltaTime) {
+        this.world.timestep = deltaTime;
+      }
+      this._updateables.forEach((obj) => {
+        obj.update();
+      });
+      if (this._debug) {
+        this.drawDebug();
+      }
+      this.world.step();
+    }
+  }
+
   public makeWall(def: IRapierWallDefinition) {
     const bodyDesc = RAPIER.RigidBodyDesc.fixed()
       .setTranslation(def.position.x, def.position.y)
@@ -126,20 +159,6 @@ export class RapierPhysics extends PhysicsBase {
     this._isRunning = false;
   }
 
-  addToWorld(...objects: (IRapierPhysicsObject | RapierBodyLike)[]) {
-    objects.forEach((obj) => {
-      if (obj.hasOwnProperty('body')) {
-        this._updateables.push(obj as IRapierPhysicsObject);
-      }
-    });
-  }
-
-  removeFromWorld(...bodies: RapierBodyLike[]) {
-    bodies.forEach((body) => {
-      this.world.removeRigidBody(body);
-    });
-  }
-
   drawDebug() {
     if (!this._debugGraphics) {
       return;
@@ -153,25 +172,6 @@ export class RapierPhysics extends PhysicsBase {
       this._debugGraphics.lineStyle(1.0, color, cls[i * 8 + 3], 1, true);
       this._debugGraphics.moveTo(vtx[i * 4], -vtx[i * 4 + 1]);
       this._debugGraphics.lineTo(vtx[i * 4 + 2], -vtx[i * 4 + 3]);
-    }
-  }
-
-  public update(deltaTime: number) {
-    if (!this._isRunning) {
-      return;
-    }
-
-    if (this.world) {
-      if (deltaTime) {
-        this.world.timestep = deltaTime;
-      }
-      this._updateables.forEach((obj) => {
-        obj.update();
-      });
-      if (this._debug) {
-        this.drawDebug();
-      }
-      this.world.step();
     }
   }
 }

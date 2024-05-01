@@ -1,6 +1,6 @@
-import {Application} from '../core';
-import {Signals} from '../signals';
-import {LogUtils} from '../utils';
+import {Application} from '../core/Application';
+import {Signals} from '../signals/Signals';
+import * as LogUtils from '../utils/LogUtils';
 
 /**
  * Alias for the function signature of callbacks. Easier on the eyes than (() => void)[] :)

@@ -1,5 +1,5 @@
 import { Container, FederatedPointerEvent, Point } from 'pixi.js';
-import { dragBegin, dragEnd, draggableDeselected, draggableSelected } from '../functions';
+import { dragBegin, dragEnd, draggableDeselected, draggableSelected } from '../functions/draggable';
 import * as PixiUtils from '../utils/PixiUtils';
 import * as PointUtils from '../utils/PointUtils';
 import { Selectable } from './Selectable';

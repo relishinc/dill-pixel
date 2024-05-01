@@ -1,7 +1,8 @@
 import { Container as PIXIContainer, DisplayObject, IDestroyOptions, IPoint } from 'pixi.js';
-import { Signal } from 'typed-signals';
-import { Container } from '../gameobjects';
-import { ContainerLike, PointLike, resolvePointLike } from '../utils';
+import { PIXI } from '../pixi';
+import { Signal } from '../signals/Signal';
+import { resolvePointLike } from '../utils/factory/utils';
+import { ContainerLike, PointLike } from '../utils/Types';
 
 export interface FlexContainerSettings {
   width: number;
@@ -15,7 +16,7 @@ export interface FlexContainerSettings {
   justifyContent: 'center' | 'space-between' | 'space-around' | 'space-evenly' | 'flex-start' | 'flex-end';
 }
 
-export class FlexContainer extends Container {
+export class FlexContainer extends PIXI.Container {
   public onLayoutComplete: Signal<() => void> = new Signal<() => void>();
   public debug: boolean = false;
 
@@ -138,10 +139,6 @@ export class FlexContainer extends Container {
     super.destroy(_options);
   }
 
-  public onResize(_size: IPoint) {
-    this.layout();
-  }
-
   /**
    * Removes a child from the container at the specified index
    * Override because we need to remove from the inner container
@@ -234,6 +231,10 @@ export class FlexContainer extends Container {
    */
   public getChildAt(index: number): DisplayObject {
     return (super.getChildAt(index) as PIXIContainer)?.getChildAt(0);
+  }
+
+  public onResize(_size: IPoint) {
+    this.layout();
   }
 
   /**

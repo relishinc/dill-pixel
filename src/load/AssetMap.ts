@@ -1,5 +1,5 @@
 import { Dictionary } from 'typescript-collections';
-import { LogUtils } from '../utils';
+import * as LogUtils from '../utils/LogUtils';
 import { AssetMapData } from './AssetMapData';
 
 export abstract class AssetMap {

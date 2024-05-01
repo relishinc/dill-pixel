@@ -1,9 +1,16 @@
-import {State} from '../state';
+import {State} from '../state/State';
 
 /**
  * Load screen
  */
 export class LoadScreen extends State {
+  /**
+   * onLoadComplete
+   * @param pCallback
+   */
+  public onLoadComplete = (pCallback: () => void): void => {
+    pCallback();
+  };
   protected _autoProgress: boolean;
 
   constructor() {
@@ -25,14 +32,6 @@ export class LoadScreen extends State {
   public onLoadProgress(_progress: number): void {
     // do nothing
   }
-
-  /**
-   * onLoadComplete
-   * @param pCallback
-   */
-  public onLoadComplete = (pCallback: () => void): void => {
-    pCallback();
-  };
 }
 
 export type LoadScreenProvider = LoadScreen | (() => LoadScreen);

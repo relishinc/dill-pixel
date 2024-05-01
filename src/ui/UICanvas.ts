@@ -1,6 +1,6 @@
 import { Container as PIXIContainer, DisplayObject, Graphics, Rectangle } from 'pixi.js';
-import { Container } from '../gameobjects';
-import { PointLike, resolvePointLike } from '../utils';
+import { Container } from '../gameobjects/Container';
+import { PointLike } from '../utils/Types';
 import { FlexContainer } from './FlexContainer';
 
 export type UICanvasEdge =

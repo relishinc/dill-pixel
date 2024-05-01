@@ -1,8 +1,10 @@
-import { Application } from '../core';
+import { Application } from '../core/Application';
 
 // export convenience methods for all the keyboard signals
-import { IFocusable, IKeyboardStatus, KeyboardMapToken } from '../input';
-import { Signals } from '../signals';
+import { IFocusable } from '../input/IFocusable';
+import { IKeyboardStatus } from '../input/IKeyboardStatus';
+import { KeyboardMapToken } from '../input/KeyboardMapToken';
+import { Signals } from '../signals/Signals';
 
 export function registerFocusable(focusable: IFocusable): void {
   Signals.registerFocusable.emit(focusable);

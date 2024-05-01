@@ -1,9 +1,11 @@
 import { IDestroyOptions, IPoint, ParticleContainer as PIXIParticleContainer, Ticker } from 'pixi.js';
 import { SignalConnection, SignalConnections } from 'typed-signals';
-import { Application } from '../core';
-import { Editor } from '../misc';
-import { Signals } from '../signals';
-import { Add, bindMethods, Make } from '../utils';
+import { Application } from '../core/Application';
+import { Editor } from '../misc/Editor';
+import { Signals } from '../signals/Signals';
+import { Add } from '../utils/factory/Add';
+import { Make } from '../utils/factory/Make';
+import { bindMethods } from '../utils/FrameworkUtils';
 
 export interface ParticleContainerProps {
   maxSize: number;

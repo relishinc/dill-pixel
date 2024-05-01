@@ -1,9 +1,8 @@
 import { Howl } from 'howler';
 import { Dictionary } from 'typescript-collections';
-import { Application } from '../core';
-import { AssetMapAudioData } from '../load';
-import { Signals } from '../signals';
-import { LogUtils, MathUtils } from '../utils';
+import { Application } from '../core/Application';
+import { AssetMapAudioData } from '../load/AssetMapAudioData';
+import { Signals } from '../signals/Signals';
 import * as AudioCategory from './AudioCategory';
 import { AudioCollection } from './AudioCollection';
 import { AudioToken } from './AudioToken';

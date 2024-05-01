@@ -1,6 +1,6 @@
-import { IAudioTrack } from '../../audio';
+import { IAudioTrack } from '../../audio/IAudioTrack';
 import { Application } from '../../core/Application';
-import { AssetType } from '../../utils';
+import { AssetType } from '../../utils/AssetUtils';
 import { AssetMapAudioData } from '../AssetMapAudioData';
 import { IAsset } from './IAsset';
 

@@ -1,9 +1,9 @@
 import {OutlineFilter} from '@pixi/filter-outline';
 import {FederatedPointerEvent, IPoint, Point, Rectangle, settings as pixiSettings} from 'pixi.js';
-import {AudioToken} from '../audio';
 import * as AudioCategory from '../audio/AudioCategory';
-import {playAudio} from '../functions';
-import {Container} from '../gameobjects';
+import {AudioToken} from '../audio/AudioToken';
+import {playAudio} from '../functions/audio';
+import {Container} from '../gameobjects/Container';
 import * as PixiUtils from '../utils/PixiUtils';
 import * as RectUtils from '../utils/RectUtils';
 import {IFocusable} from './IFocusable';

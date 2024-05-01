@@ -1,6 +1,6 @@
 import { Container } from 'pixi.js';
 import { SignalConnections } from 'typed-signals';
-import { Signals } from '../signals';
+import { Signals } from '../signals/Signals';
 import { IFocusable } from './IFocusable';
 import { IKeyboardFocus } from './IKeyboardFocus';
 

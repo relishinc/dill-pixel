@@ -1,5 +1,5 @@
 import { Application } from '../core';
-import { orientationLandscape, orientationPortrait } from '../functions';
+import { orientationLandscape, orientationPortrait } from '../functions/orientation';
 import * as PixiUtils from './PixiUtils';
 
 export class OrientationManager {

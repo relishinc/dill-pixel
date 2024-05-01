@@ -1,17 +1,21 @@
-import { BLEND_MODES, DisplayObject, Graphics, Point } from 'pixi.js';
+import { BLEND_MODES, DisplayObject, Graphics, IDestroyOptions, Point } from 'pixi.js';
 import { Dictionary } from 'typescript-collections';
-import { Application } from '../core';
-import { popKeyboardLayer, pushKeyboardLayer } from '../functions';
-import { Container } from '../gameobjects';
-import * as Input from '../input';
+import { Application } from '../core/Application';
+import { popKeyboardLayer, pushKeyboardLayer } from '../functions/keyboard';
+import { Container } from '../gameobjects/Container';
+import { Events } from '../input/InputUtils';
 import { KeyValues } from '../input/KeyValues';
-import { Signal, Signals } from '../signals';
+import { Signal, SignalConnection, SignalConnections } from '../signals/Signal';
+import { Signals } from '../signals/Signals';
 import * as LogUtils from '../utils/LogUtils';
 import { IPopup } from './IPopup';
 import { Popup } from './Popup';
 import { IPopupToken } from './PopupToken';
+import { PIXI } from '../pixi';
+import { Add } from '../utils/factory/Add';
+import { Make } from '../utils/factory/Make';
 
-export class PopupManager<T extends Application = Application> extends Container<T> {
+export class PopupManager<T extends Application = Application> extends PIXI.Container {
   public onPopupShow = new Signal<(id: string) => void>();
   public onPopupHideComplete = new Signal<(id: string) => void>();
   public onPopupHide = new Signal<(id: string) => void>();
@@ -21,6 +25,38 @@ export class PopupManager<T extends Application = Application> extends Container
   private _debug: boolean = false;
   private _overlayColor: number;
   private _overlayAlpha: number;
+  protected _addFactory: Add;
+  // optionally add signals to a SignalConnections instance for easy removal
+  protected _signalConnections: SignalConnections = new SignalConnections();
+
+  /**
+     * @protected
+     * adds a signal connection
+     */
+  protected addSignalConnection(...signalConnection: SignalConnection[]) {
+    signalConnection.forEach((connection) => this._signalConnections.add(connection));
+  }
+
+  /**
+   * @protected
+   * removes all signal connections
+   */
+  protected disconnectAllSignals() {
+    this._signalConnections.disconnectAll();
+  }
+
+  destroy(_options?: IDestroyOptions | boolean) {
+    this.disconnectAllSignals();
+    super.destroy(_options);
+  }
+
+  get add(): Add {
+    return this._addFactory;
+  }
+
+  get make(): typeof Make {
+    return Make;
+  }
 
   constructor(
     protected _app: Application<T>,
@@ -40,7 +76,7 @@ export class PopupManager<T extends Application = Application> extends Container
     this.addSignalConnection(Signals.hidePopupComplete.connect(this.handleHidePopupComplete));
 
     // subscribe to global keyboard events
-    window.addEventListener(Input.Events.KEY_DOWN, this.handleKeyDown, false);
+    window.addEventListener(Events.KEY_DOWN, this.handleKeyDown, false);
   }
 
   get app(): T {
@@ -231,6 +267,8 @@ export class PopupManager<T extends Application = Application> extends Container
       }
     }
   }
+
+
 
   private onHidePopupComplete(popup: IPopup): void {
     if (popup !== undefined) {

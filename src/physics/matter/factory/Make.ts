@@ -1,7 +1,7 @@
 import { Texture } from 'pixi.js';
-import { PointLike, resolvePointLike, SpritesheetLike } from '../../../utils';
+import { resolvePointLike } from '../../../utils/factory/utils';
 import { IPhysicsObject, PhysicsSpriteSettings } from '../../interfaces';
-import { PhysicsBodyType } from '../../types';
+import { PhysicsBodyType } from '../../types/PhysicsBodyType';
 import { MatterPhysicsSprite } from '../gameobjects/MatterPhysicsSprite';
 
 export class Make {

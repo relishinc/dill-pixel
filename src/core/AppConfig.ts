@@ -1,5 +1,6 @@
 import { IApplicationOptions } from 'pixi.js';
-import { MathUtils, PlatformUtils } from '../utils';
+import * as MathUtils from '../utils/MathUtils';
+import * as PlatformUtils from '../utils/PlatformUtils';
 import { ResizeManagerOptions } from '../utils/ResizeManagerNew';
 
 export class AppConfig {

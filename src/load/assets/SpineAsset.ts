@@ -1,5 +1,5 @@
 import { ISkeletonData } from '../../global';
-import { AssetType, AssetUtils } from '../../utils';
+import { AssetType, AssetUtils } from '../../utils/AssetUtils';
 import { AssetMapData } from '../AssetMapData';
 import { IAsset } from './IAsset';
 

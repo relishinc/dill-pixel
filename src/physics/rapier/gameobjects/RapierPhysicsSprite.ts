@@ -9,15 +9,17 @@ import type {
   World,
 } from '@dimforge/rapier2d';
 import { Container, Sprite, Texture } from 'pixi.js';
-import { Application } from '../../../core';
-import { resolvePointLike, SpritesheetLike } from '../../../utils';
-import { IPhysicsObject, PhysicsBodyType } from '../../index';
+import { Application } from '../../../core/Application';
+import { resolvePointLike } from '../../../utils/factory/utils';
+import { SpritesheetLike } from '../../../utils/Types';
+import { IPhysicsObject } from '../../interfaces';
+import { PhysicsBodyType } from '../../types/PhysicsBodyType';
 import { RapierPhysics } from '../RapierPhysics';
 
 export class RapierPhysicsSprite extends Container implements IPhysicsObject {
-  public static readonly DEFAULT_DEBUG_COLOR: number = 0x29c5f6;
   visual: Sprite;
   body: RigidBody;
+  public static readonly DEFAULT_DEBUG_COLOR: number = 0x29c5f6;
   collider: Collider;
 
   _size: { x: number; y: number };
