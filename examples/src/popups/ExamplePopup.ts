@@ -1,5 +1,4 @@
 import { Container, Focusable, Interactive, IPopup, Popup } from 'dill-pixel';
-
 import { gsap } from 'gsap';
 import { Graphics, Text } from 'pixi.js';
 

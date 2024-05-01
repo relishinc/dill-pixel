@@ -111,6 +111,8 @@ export class AudioManager extends Plugin implements IAudioManager {
   private _paused: boolean = false;
   private _channels: Map<string, IAudioChannel> = new Map();
 
+  private _idMap: Map<string, string> = new Map();
+
   /**
    * Creates a new AudioManager instance.
    * @param {string} id - The ID of the AudioManager. Default is 'AudioManager'.
@@ -328,9 +330,13 @@ export class AudioManager extends Plugin implements IAudioManager {
    * @returns {Promise<IAudioInstance>}
    */
   public async play(soundId: string, channelName: ChannelName = 'sfx', options?: PlayOptions): Promise<IAudioInstance> {
+    if (this._idMap.has(soundId)) {
+      soundId = this._idMap.get(soundId) as string;
+    }
     const channel = this._channels.get(channelName);
     Logger.log('play', soundId, channelName, options, channel);
     if (channel) {
+      soundId = this._verifySoundId(soundId);
       const mediaInstance = await sound.play(soundId, options);
       const audioInstance = channel.add(soundId, new AudioInstance(soundId, mediaInstance, channel, this));
       if (options?.volume !== undefined) {
@@ -373,6 +379,9 @@ export class AudioManager extends Plugin implements IAudioManager {
     props: gsap.TweenVars,
   ): Promise<gsap.core.Tween | null> {
     const channel = this._channels.get(channelName);
+    if (channel) {
+      soundId = this._verifySoundId(soundId);
+    }
     if (!channel?.get(soundId)) {
       await this.play(soundId, channelName, { volume: 0 });
     }
@@ -442,6 +451,9 @@ export class AudioManager extends Plugin implements IAudioManager {
     stopOnComplete: boolean = false,
   ): Promise<gsap.core.Tween | null> {
     const channel = this._channels.get(channelName);
+    if (channel) {
+      soundId = this._verifySoundId(soundId);
+    }
     const soundInstance = channel?.get(soundId);
     if (soundInstance) {
       const tween = gsap.to(soundInstance, props);
@@ -473,6 +485,29 @@ export class AudioManager extends Plugin implements IAudioManager {
     this._storedVolume = this._masterVolume;
     this.masterVolume = 0;
     this.pause();
+  }
+
+  private _verifySoundId(soundId: string): string {
+    if (this._idMap.has(soundId)) {
+      return this._idMap.get(soundId) as string;
+    }
+    const originalId = soundId;
+    // try appending .mp3 or .ogg
+    if (!sound.exists(soundId)) {
+      Logger.log(`Sound with ID ${soundId} does not exist. Trying different extensions.`);
+      if (sound.exists(soundId + '.mp3')) {
+        soundId += '.mp3';
+      } else if (sound.exists(soundId + '.ogg')) {
+        soundId += '.ogg';
+      } else if (sound.exists(soundId + '.wav')) {
+        soundId += '.wav';
+      } else {
+        throw new Error(`Sound with ID ${soundId} does not exist.`);
+      }
+    }
+    Logger.log(`Sound with id:${originalId} is now mapped to id:${soundId}`);
+    this._idMap.set(soundId, soundId);
+    return soundId;
   }
 
   /**

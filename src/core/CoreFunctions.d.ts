@@ -9,15 +9,15 @@ export interface ICoreFunctions {
     setFocusLayer(layerId: string | number): void;
     clearFocus();
     removeAllFocusLayers(): void;
-    // i18nModule;
+    // i18nPlugin;
     setLocale(localeId: string);
     t(key: string, params?: i18nTParams, locale: string = this._locale): string;
     // InputManager;
     isControllerActive(controller: InputController): boolean;
     isGamepadActive(gamepad: Gamepad): boolean;
     actions(action: string): ActionSignal<T>;
-    sendAction(action: string, data?: T): void;
-    setActionContext(context: string | InputContext): void;
+    sendAction(actionId: string, data?: T): void;
+    setActionContext(context: string | ActionContext): void;
     // KeyboardManager;
     onKeyDown(key?: string): KeySignal;
     onKeyUp(key?: string): KeySignal;

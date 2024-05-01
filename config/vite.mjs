@@ -3,13 +3,11 @@ import process from 'node:process';
 import { mergeConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import topLevelAwait from 'vite-plugin-top-level-await';
-import wasm from 'vite-plugin-wasm';
 
 const env = process.env.NODE_ENV;
 const cwd = process.cwd();
 
 const defaultConfig = {
-  target: 'esnext',
   cacheDir: '.cache',
   logLevel: 'info',
   base: env === 'development' ? '/' : './',
@@ -23,7 +21,6 @@ const defaultConfig = {
     port: 8080,
   },
   plugins: [
-    wasm(),
     topLevelAwait(),
     createHtmlPlugin(),
   ],
@@ -31,6 +28,9 @@ const defaultConfig = {
     alias: {
       '@': path.resolve(cwd, './src'),
     },
+  },
+  define: {
+    APP_VERSION: JSON.stringify(process.env.npm_package_version),
   },
 };
 

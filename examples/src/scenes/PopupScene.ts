@@ -4,6 +4,9 @@ import { BaseScene } from './BaseScene';
 
 export class PopupScene extends BaseScene {
   protected readonly title = 'Popups';
+  protected readonly subtitle =
+    'Open a popup by clicking or tabbing to a button and pressing Enter or Space.\nThe' +
+    ' different popups have different behaviors.';
   protected buttons: Button[] = [];
   protected buttonContainer: Container;
 
@@ -67,7 +70,9 @@ export class PopupScene extends BaseScene {
       return;
     }
     this.app.func.setActionContext('popup');
-    this.showPopup(action.data.id, action.data);
+    if (action.data?.id) {
+      this.showPopup(action.data?.id, action.data);
+    }
   }
 
   addButton(label: string = 'Button', callback: () => void) {

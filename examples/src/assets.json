@@ -5,6 +5,15 @@
       "assets": [
         {
           "alias": [
+            "favicon.svg",
+            "favicon.svg"
+          ],
+          "src": [
+            "favicon.svg"
+          ]
+        },
+        {
+          "alias": [
             "locales/fr.json",
             "fr.json"
           ],
@@ -19,12 +28,12 @@
       "assets": [
         {
           "alias": [
-            "audio/music/bubble-land-sfx.wav",
-            "bubble-land-sfx.wav"
+            "audio/music/horizon.mp3",
+            "horizon.mp3"
           ],
           "src": [
-            "audio/music/bubble-land-sfx.mp3",
-            "audio/music/bubble-land-sfx.ogg"
+            "audio/music/horizon.mp3",
+            "audio/music/horizon.ogg"
           ],
           "data": {
             "tags": {
@@ -34,12 +43,12 @@
         },
         {
           "alias": [
-            "audio/music/horizon.mp3",
-            "horizon.mp3"
+            "audio/sfx/bubble-land-sfx.wav",
+            "bubble-land-sfx.wav"
           ],
           "src": [
-            "audio/music/horizon.mp3",
-            "audio/music/horizon.ogg"
+            "audio/sfx/bubble-land-sfx.mp3",
+            "audio/sfx/bubble-land-sfx.ogg"
           ],
           "data": {
             "tags": {

@@ -1,17 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link href="/favicon.svg" rel="icon" type="image/svg+xml">
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
   <meta content="yes" name="mobile-web-app-capable">
   <meta content="yes" name="apple-mobile-web-app-capable">
   <title>Dill Pixel - Examples</title>
   <style>
+      /* Imported CSS gets inlined */
+      /* Load our index.css file */
       @import url('./src/index.css');
+
+      /* Importing the loader.css file from dill-pixel. Uses a css overlay while Application is in bootstrap */
+      /* requires the game container element to be present in the html */
+      @import url('../src/css/html-loader.css');
   </style>
 </head>
 <body>
 <script async defer src="src/index.ts" type="module"></script>
-
+<div id="dill-pixel-game-container"></div>
 </body>
 </html>

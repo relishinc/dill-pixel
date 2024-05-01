@@ -37,7 +37,7 @@ export { i18nPlugin } from './plugins/i18nPlugin';
 export { KeyboardManager } from './plugins/KeyboardManager';
 export { Resizer } from './plugins/Resizer';
 export { SceneManager } from './plugins/SceneManager';
-export { SpinePlugin } from './plugins/SpinePlugin';
+export { SpinePlugin } from './plugins/spine/SpinePlugin';
 export { StatsPlugin } from './plugins/StatsPlugin';
 export { WebEventsManager } from './plugins/WebEventsManager';
 export { InputManager, ActionContext, Action } from './plugins/InputManager';

@@ -1,4 +1,4 @@
-import { isMobile as PIXIUtilsIsMobile } from '@pixi/utils';
+import { isMobile as PIXIUtilsIsMobile } from 'pixi.js';
 
 /**
  * Checks if the device has a retina display.

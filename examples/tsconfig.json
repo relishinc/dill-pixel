@@ -6,10 +6,12 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "dill-pixel/*": [
+        "../src/*"
       ]
     },
-    "module": "ESNext",
-    "moduleResolution": "bundler"
+    "composite": true
   },
   "references": [
     {
@@ -17,8 +19,6 @@
     }
   ],
   "include": [
-    "**/*.ts",
-    "./src/**/*.ts",
-    "../src/**/*.ts"
+    "src/**/*"
   ]
 }

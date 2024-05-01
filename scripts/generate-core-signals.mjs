@@ -84,7 +84,7 @@ function methodToSignature(method, sourceFile) {
 
 
 // Example usage
-const directoryPath = path.resolve(__dirname, '../src/modules');
+const directoryPath = path.resolve(__dirname, '../src/plugins');
 const tsFiles = readTypescriptFiles(directoryPath);
 let coreSignals = [];
 
@@ -94,7 +94,7 @@ tsFiles.forEach(fileName => {
   const checker = program.getTypeChecker();
 
   if (sourceFile) {
-    const coreModuleClass = findClassWithDecorator(sourceFile, 'CoreModule');
+    const coreModuleClass = findClassWithDecorator(sourceFile, 'CorePlugin');
     if (coreModuleClass) {
 
       const members = findSignalMembers(coreModuleClass, checker);

@@ -22,7 +22,7 @@ import { IPlugin } from '../plugins/Plugin';
 import { IPopupManager } from '../plugins/popups/PopupManager';
 import { IResizer, ResizerOptions } from '../plugins/Resizer';
 import { ISceneManager, LoadSceneMethod } from '../plugins/SceneManager';
-import { SpinePlugin } from '../plugins/SpinePlugin';
+import { SpinePlugin } from '../plugins/spine/SpinePlugin';
 import { IWebEventsManager } from '../plugins/WebEventsManager';
 import { Signal } from '../signals';
 import { IStorageAdapter } from '../store/adapters/StorageAdapter';
@@ -324,11 +324,12 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     this.config = Object.assign({ ...defaultApplicationOptions }, config);
 
     await this.preInitialize(this.config);
+    console.log('Application preInitialize complete. Initializing assets...');
     await this.initAssets();
-
     // initialize the pixi application
+    console.log('Application initilization started.', this.config);
     await this.init(this.config);
-
+    console.log('Application initilization complete.');
     // initialize the logger
     Logger.initialize(config.id);
 
@@ -374,6 +375,8 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
     // focus the canvas
     this.renderer.canvas.focus();
+
+    Application.containerElement.classList.add('loaded');
 
     // return the Application instance to the create method, if needed
     return Application.instance;
@@ -522,6 +525,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       opts.manifest = manifest;
     }
     this.manifest = opts.manifest;
+    console.log('Initializing assets with manifest:', this.manifest);
     await Assets.init(opts);
   }
 

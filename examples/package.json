@@ -4,12 +4,14 @@
   "description": "Examples of Dill Pixel Features (V8)",
   "main": "index.html",
   "scripts": {
-    "clean": "rimraf dist/* public/* .assetpack/*",
-    "predev": "run-s assets",
+    "clean": "rimraf dist .assetpack .cache",
     "assets": "assetpack -c .assetpack.mjs",
-    "start": "vite",
-    "dev": "vite",
+    "cache": "rimraf .cache",
+    "start": "run-s cache && vite",
+    "dev": "run-s cache && assets && vite",
+    "prebuild": "run-s clean format:check lint assets",
     "build": "vite build",
+    "types": "tsc",
     "prepreview": "run-s build",
     "preview": "vite preview --open",
     "lint": "eslint src --ext .ts",
@@ -19,12 +21,16 @@
     "audio:captions": "node ../cli.mjs audio captions assets/audio",
     "audio:compress": "node ../cli.mjs audio compress assets/audio",
     "vo:generate": "node ../cli.mjs vo generate",
-    "spritesheets": "node assets/images/export_spritesheets"
+    "spritesheets": "node assets/images/export_spritesheets",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write src",
+    "format:check": "prettier --check src"
   },
   "author": "Relish Digital<dev@reli.sh>",
   "license": "MIT",
   "devDependencies": {
-    "@types/dat.gui": "^0.7.11"
+    "@types/dat.gui": "^0.7.13",
+    "typescript": "^5.4.3"
   },
   "dependencies": {
     "dat.gui": "^0.7.9",

@@ -1,4 +1,4 @@
-import { Scene, Size } from 'dill-pixel';
+import { Scene } from 'dill-pixel';
 import { Graphics, Text } from 'pixi.js';
 import { COLOR_GREEN } from '../utils/Constants';
 import { V8Application } from '../V8Application';
@@ -29,8 +29,8 @@ export class BaseScene extends Scene<V8Application> {
     this._subtitle = this.add.text({
       text: this.subtitle,
       style: { fill: 'white', align: 'left', fontWeight: 'bold', fontFamily: 'Arial', fontSize: 14 },
-      x: -this.app.center.x + 105,
-      y: -this.app.center.y + 90,
+      x: this._title.x,
+      y: this._title.y + this._title.height + 10,
     });
 
     if (this.config) {
@@ -55,7 +55,7 @@ export class BaseScene extends Scene<V8Application> {
     super.destroy();
   }
 
-  resize(size?: Size) {
+  resize() {
     if (this._bg) {
       this._bg.clear();
       this._bg
@@ -66,6 +66,9 @@ export class BaseScene extends Scene<V8Application> {
     }
     if (this._title) {
       this._title.position.set(-this.app.center.x + 100, -this.app.center.y + 50);
+    }
+    if (this._subtitle) {
+      this._subtitle.position.set(this._title.x + 1, this._title.y + this._title.height + 10);
     }
   }
 

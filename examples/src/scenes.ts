@@ -3,19 +3,13 @@ export const scenes = [
     id: 'audio',
     debugLabel: 'Audio',
     namedExport: 'AudioScene',
-    module: () => import('@/scenes/AudioScene.ts'),
+    module: () => import('@/scenes/AudioScene'),
   },
   {
     id: 'focus',
     debugLabel: 'Focus Management',
     namedExport: 'FocusScene',
     module: () => import('@/scenes/FocusScene'),
-  },
-  {
-    id: 'cam',
-    debugLabel: 'Camera Testing',
-    namedExport: 'CameraScene',
-    module: () => import('@/scenes/CameraScene'),
   },
   {
     id: 'popups',

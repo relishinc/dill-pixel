@@ -3,7 +3,7 @@ import { FederatedEvent, PointerEvents } from 'pixi.js';
 import { PIXIContainer } from '../pixi';
 import { IFocusable } from '../plugins/focus/FocusManager';
 import { Signal } from '../signals';
-import { Constructor } from '../utils/types';
+import { Constructor, PointLike } from '../utils/types';
 
 export function Focusable<TBase extends Constructor<PIXIContainer>>(Base: TBase): TBase & Constructor<IFocusable> {
   return class extends Base implements IFocusable {
@@ -70,6 +70,10 @@ export function Focusable<TBase extends Constructor<PIXIContainer>>(Base: TBase)
 
     public getFocusArea() {
       return this.getBounds();
+    }
+
+    public getFocusSize(): PointLike | null {
+      return [this.getFocusArea().width, this.getFocusArea().height];
     }
 
     protected _onMouseOver(e: FederatedEvent) {

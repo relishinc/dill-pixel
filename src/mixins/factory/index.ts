@@ -128,7 +128,7 @@ export const defaultFactoryMethods = {
     resolveUnknownKeys(rest, entity);
     return entity;
   },
-  spine: (props?: Partial<SpineProps>): import('@pixi/spine-pixi').Spine => {
+  spine: (props?: Partial<SpineProps>): import('../../plugins/spine/pixi-spine').Spine => {
     let data = props?.data;
     if (typeof data === 'string') {
       // get the spine data from cache
@@ -137,7 +137,7 @@ export const defaultFactoryMethods = {
         data = { skeleton: data + '.json', atlas: data + '.atlas' };
       }
     }
-    const entity: import('@pixi/spine-pixi').Spine = (globalThis as any).Spine.from(data);
+    const entity: import('../../plugins/spine/pixi-spine').Spine = (window as any).Spine.from(data);
     if (!props) return entity;
     if (props.autoUpdate !== undefined) entity.autoUpdate = props.autoUpdate;
     if (props.animationName) entity.state.setAnimation(props.trackIndex ?? 0, props.animationName, props.loop);

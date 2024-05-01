@@ -12,8 +12,9 @@ const whiteTextStyle = (size: number) =>
 
 export class FlexContainerScene extends BaseScene {
   protected readonly title = 'Flex Container';
+  protected readonly subtitle = 'Demonstrates the FlexContainer layout.';
   protected config = {
-    useBacking: false,
+    useBacking: true,
     width: 800,
     height: 200,
     numItems: 4,

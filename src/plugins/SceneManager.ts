@@ -67,6 +67,7 @@ export class SceneManager extends Plugin implements ISceneManager {
   private _defaultLoadMethod: LoadSceneMethod = 'immediate';
   private _currentSceneId: string;
   // debug
+  private _debugVisible: boolean = false;
   private _debugMenu: HTMLDivElement;
 
   constructor() {
@@ -81,15 +82,18 @@ export class SceneManager extends Plugin implements ISceneManager {
   public destroy(): void {}
 
   public initialize(app: IApplication): Promise<void> {
+    this._debugVisible =
+      this.app.config?.showSceneDebugMenu === true || (isDev && this.app.config?.showSceneDebugMenu !== false);
     this.view.sortableChildren = true;
     this.scenes = app.config?.scenes || [];
-    if (isDev) {
+    if (this._debugVisible) {
       this.defaultScene = this._getSceneFromHash() || '';
     }
     this.defaultScene = this.defaultScene || app.config?.defaultScene || this.scenes?.[0]?.id;
     this._defaultLoadMethod = app.config.defaultSceneLoadMethod || 'immediate';
     Logger.log('SceneManager initialize::', this.scenes);
-    if (this.app.config?.showSceneDebugMenu === true || (isDev && this.app.config?.showSceneDebugMenu !== false)) {
+
+    if (this._debugVisible) {
       this._createDebugMenu();
     }
     return Promise.resolve(undefined);
@@ -319,6 +323,17 @@ export class SceneManager extends Plugin implements ISceneManager {
         this.loadScene(sceneId);
       }
     });
+
+    this.onSceneChangeStart.connect(this._disableDebugMenu);
+    this.onSceneChangeComplete.connect(this._enableDebugMenu);
+  }
+
+  private _enableDebugMenu() {
+    this._debugMenu?.querySelector('select')?.removeAttribute('disabled');
+  }
+
+  private _disableDebugMenu() {
+    this._debugMenu?.querySelector('select')?.setAttribute('disabled', 'disabled');
   }
 
   private _getSceneFromHash(): string | null {

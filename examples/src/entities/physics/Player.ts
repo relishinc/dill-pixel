@@ -37,17 +37,18 @@ export class Player extends TowerFallActor {
   public update(deltaTime: number) {
     if (this._isJumping) {
       this._jumpTimeElapsed += deltaTime;
-      this._jumpPower -= this._velocity.y >= 0 ? 20 : 3;
+      this._jumpPower /= this._velocity.y >= 0 ? 2 : 1.1;
       if (this._jumpPower <= 0) {
         this._jumpPower = 0;
         this._resetJump();
       }
     }
-    this._velocity.y = this.system.gravity * deltaTime - this._jumpPower;
+    this._velocity.y =
+      this.system.gravity * deltaTime - (this._velocity.y < 0 ? this._jumpPower : -this.system.gravity * 0.5);
     this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
   }
 
-  public squish(collision: Collision) {
+  public squish() {
     this.onKilled.emit();
   }
 
@@ -100,7 +101,8 @@ export class Player extends TowerFallActor {
     if (!this._isJumping && this._canJump) {
       this._canJump = false;
       this._isJumping = true;
-      this._jumpPower = this.system.gravity * 6;
+      this._jumpPower = this.system.gravity * 5;
+      this._velocity.y = this.system.gravity - this._jumpPower;
       this._spawnJumpFx();
     }
   }
