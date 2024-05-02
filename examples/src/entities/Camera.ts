@@ -1,5 +1,6 @@
-import { Application, bindAllMethods, ContainerLike, KeyboardEventDetail, Logger } from 'dill-pixel';
+import { Application, ContainerLike, KeyboardEventDetail, Logger, bindAllMethods } from '@relish-studios/dill-pixel';
 import { Container, Point } from 'pixi.js';
+
 import { V8Application } from '../V8Application';
 
 type CameraCOnfig = {

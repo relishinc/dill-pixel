@@ -77,11 +77,11 @@ export class IkConstraint implements Updatable {
 
     this.bones = new Array<Bone>();
     for (let i = 0; i < data.bones.length; i++) {
-      let bone = skeleton.findBone(data.bones[i].name);
+      const bone = skeleton.findBone(data.bones[i].name);
       if (!bone) throw new Error(`Couldn't find bone ${data.bones[i].name}`);
       this.bones.push(bone);
     }
-    let target = skeleton.findBone(data.target.name);
+    const target = skeleton.findBone(data.target.name);
     if (!target) throw new Error(`Couldn't find bone ${data.target.name}`);
     this.target = target;
   }
@@ -92,8 +92,8 @@ export class IkConstraint implements Updatable {
 
   update() {
     if (this.mix == 0) return;
-    let target = this.target;
-    let bones = this.bones;
+    const target = this.target;
+    const bones = this.bones;
     switch (bones.length) {
       case 1:
         this.apply1(bones[0], target.worldX, target.worldY, this.compress, this.stretch, this.data.uniform, this.mix);
@@ -124,7 +124,7 @@ export class IkConstraint implements Updatable {
     uniform: boolean,
     alpha: number,
   ) {
-    let p = bone.parent;
+    const p = bone.parent;
     if (!p) throw new Error('IK bone must have parent.');
     let pa = p.a,
       pb = p.b,
@@ -140,17 +140,17 @@ export class IkConstraint implements Updatable {
         ty = (targetY - bone.worldY) * MathUtils.signum(bone.skeleton.scaleY);
         break;
       case TransformMode.NoRotationOrReflection:
-        let s = Math.abs(pa * pd - pb * pc) / Math.max(0.0001, pa * pa + pc * pc);
-        let sa = pa / bone.skeleton.scaleX;
-        let sc = pc / bone.skeleton.scaleY;
+        const s = Math.abs(pa * pd - pb * pc) / Math.max(0.0001, pa * pa + pc * pc);
+        const sa = pa / bone.skeleton.scaleX;
+        const sc = pc / bone.skeleton.scaleY;
         pb = -sc * s * bone.skeleton.scaleX;
         pd = sa * s * bone.skeleton.scaleY;
         rotationIK += Math.atan2(sc, sa) * MathUtils.radDeg;
       // Fall through
       default:
-        let x = targetX - p.worldX,
+        const x = targetX - p.worldX,
           y = targetY - p.worldY;
-        let d = pa * pd - pb * pc;
+        const d = pa * pd - pb * pc;
         if (Math.abs(d) <= 0.0001) {
           tx = 0;
           ty = 0;
@@ -172,10 +172,10 @@ export class IkConstraint implements Updatable {
           tx = targetX - bone.worldX;
           ty = targetY - bone.worldY;
       }
-      let b = bone.data.length * sx,
+      const b = bone.data.length * sx,
         dd = Math.sqrt(tx * tx + ty * ty);
       if ((compress && dd < b) || (stretch && dd > b && b > 0.0001)) {
-        let s = (dd / b - 1) * alpha + 1;
+        const s = (dd / b - 1) * alpha + 1;
         sx *= s;
         if (uniform) sy *= s;
       }
@@ -238,7 +238,7 @@ export class IkConstraint implements Updatable {
       b = parent.b,
       c = parent.c,
       d = parent.d;
-    let u = Math.abs(psx - psy) <= 0.0001;
+    const u = Math.abs(psx - psy) <= 0.0001;
     if (!u || stretch) {
       cy = 0;
       cwx = a * cx + parent.worldX;
@@ -248,7 +248,7 @@ export class IkConstraint implements Updatable {
       cwx = a * cx + b * cy + parent.worldX;
       cwy = c * cx + d * cy + parent.worldY;
     }
-    let pp = parent.parent;
+    const pp = parent.parent;
     if (!pp) throw new Error('IK parent must itself have a parent.');
     a = pp.a;
     b = pp.b;
@@ -258,7 +258,7 @@ export class IkConstraint implements Updatable {
       x = cwx - pp.worldX,
       y = cwy - pp.worldY;
     id = Math.abs(id) <= 0.0001 ? 0 : 1 / id;
-    let dx = (x * d - y * b) * id - px,
+    const dx = (x * d - y * b) * id - px,
       dy = (y * a - x * c) * id - py;
     let l1 = Math.sqrt(dx * dx + dy * dy),
       l2 = child.data.length * csx,
@@ -276,7 +276,7 @@ export class IkConstraint implements Updatable {
     let dd = tx * tx + ty * ty;
     if (softness != 0) {
       softness *= psx * (csx + 1) * 0.5;
-      let td = Math.sqrt(dd),
+      const td = Math.sqrt(dd),
         sd = td - l1 - l2 * psx + softness;
       if (sd > 0) {
         let p = Math.min(1, sd / (softness * 2)) - 1;
@@ -307,20 +307,20 @@ export class IkConstraint implements Updatable {
     } else {
       a = psx * l2;
       b = psy * l2;
-      let aa = a * a,
+      const aa = a * a,
         bb = b * b,
         ta = Math.atan2(ty, tx);
       c = bb * l1 * l1 + aa * dd - aa * bb;
-      let c1 = -2 * bb * l1,
+      const c1 = -2 * bb * l1,
         c2 = bb - aa;
       d = c1 * c1 - 4 * c2 * c;
       if (d >= 0) {
         let q = Math.sqrt(d);
         if (c1 < 0) q = -q;
         q = -(c1 + q) * 0.5;
-        let r0 = q / c2,
+        const r0 = q / c2,
           r1 = c / q;
-        let r = Math.abs(r0) < Math.abs(r1) ? r0 : r1;
+        const r = Math.abs(r0) < Math.abs(r1) ? r0 : r1;
         if (r * r <= dd) {
           y = Math.sqrt(dd - r * r) * bendDir;
           a1 = ta - Math.atan2(y, r);
@@ -363,7 +363,7 @@ export class IkConstraint implements Updatable {
         a2 = maxAngle * bendDir;
       }
     }
-    let os = Math.atan2(cy, cx) * s2;
+    const os = Math.atan2(cy, cx) * s2;
     let rotation = parent.arotation;
     a1 = (a1 - os) * MathUtils.radDeg + os1 - rotation;
     if (a1 > 180) a1 -= 360;

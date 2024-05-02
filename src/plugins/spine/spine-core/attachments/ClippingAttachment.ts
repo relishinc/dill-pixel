@@ -47,7 +47,7 @@ export class ClippingAttachment extends VertexAttachment {
   }
 
   copy(): Attachment {
-    let copy = new ClippingAttachment(this.name);
+    const copy = new ClippingAttachment(this.name);
     this.copyTo(copy);
     copy.endSlot = this.endSlot;
     copy.color.setFromColor(this.color);

@@ -81,11 +81,11 @@ export class PathConstraint implements Updatable {
     this.data = data;
     this.bones = new Array<Bone>();
     for (let i = 0, n = data.bones.length; i < n; i++) {
-      let bone = skeleton.findBone(data.bones[i].name);
+      const bone = skeleton.findBone(data.bones[i].name);
       if (!bone) throw new Error(`Couldn't find bone ${data.bones[i].name}.`);
       this.bones.push(bone);
     }
-    let target = skeleton.findSlot(data.target.name);
+    const target = skeleton.findSlot(data.target.name);
     if (!target) throw new Error(`Couldn't find target bone ${data.target.name}`);
     this.target = target;
     this.position = data.position;
@@ -100,34 +100,34 @@ export class PathConstraint implements Updatable {
   }
 
   update() {
-    let attachment = this.target.getAttachment();
+    const attachment = this.target.getAttachment();
     if (!(attachment instanceof PathAttachment)) return;
 
-    let mixRotate = this.mixRotate,
+    const mixRotate = this.mixRotate,
       mixX = this.mixX,
       mixY = this.mixY;
     if (mixRotate == 0 && mixX == 0 && mixY == 0) return;
 
-    let data = this.data;
-    let tangents = data.rotateMode == RotateMode.Tangent,
+    const data = this.data;
+    const tangents = data.rotateMode == RotateMode.Tangent,
       scale = data.rotateMode == RotateMode.ChainScale;
 
-    let bones = this.bones;
-    let boneCount = bones.length,
+    const bones = this.bones;
+    const boneCount = bones.length,
       spacesCount = tangents ? boneCount : boneCount + 1;
-    let spaces = Utils.setArraySize(this.spaces, spacesCount),
+    const spaces = Utils.setArraySize(this.spaces, spacesCount),
       lengths: Array<number> = scale ? (this.lengths = Utils.setArraySize(this.lengths, boneCount)) : [];
-    let spacing = this.spacing;
+    const spacing = this.spacing;
 
     switch (data.spacingMode) {
       case SpacingMode.Percent:
         if (scale) {
           for (let i = 0, n = spacesCount - 1; i < n; i++) {
-            let bone = bones[i];
-            let setupLength = bone.data.length;
+            const bone = bones[i];
+            const setupLength = bone.data.length;
             if (setupLength < PathConstraint.epsilon) lengths[i] = 0;
             else {
-              let x = setupLength * bone.a,
+              const x = setupLength * bone.a,
                 y = setupLength * bone.c;
               lengths[i] = Math.sqrt(x * x + y * y);
             }
@@ -138,15 +138,15 @@ export class PathConstraint implements Updatable {
       case SpacingMode.Proportional:
         let sum = 0;
         for (let i = 0, n = spacesCount - 1; i < n; ) {
-          let bone = bones[i];
-          let setupLength = bone.data.length;
+          const bone = bones[i];
+          const setupLength = bone.data.length;
           if (setupLength < PathConstraint.epsilon) {
             if (scale) lengths[i] = 0;
             spaces[++i] = spacing;
           } else {
-            let x = setupLength * bone.a,
+            const x = setupLength * bone.a,
               y = setupLength * bone.c;
-            let length = Math.sqrt(x * x + y * y);
+            const length = Math.sqrt(x * x + y * y);
             if (scale) lengths[i] = length;
             spaces[++i] = length;
             sum += length;
@@ -158,24 +158,24 @@ export class PathConstraint implements Updatable {
         }
         break;
       default:
-        let lengthSpacing = data.spacingMode == SpacingMode.Length;
+        const lengthSpacing = data.spacingMode == SpacingMode.Length;
         for (let i = 0, n = spacesCount - 1; i < n; ) {
-          let bone = bones[i];
-          let setupLength = bone.data.length;
+          const bone = bones[i];
+          const setupLength = bone.data.length;
           if (setupLength < PathConstraint.epsilon) {
             if (scale) lengths[i] = 0;
             spaces[++i] = spacing;
           } else {
-            let x = setupLength * bone.a,
+            const x = setupLength * bone.a,
               y = setupLength * bone.c;
-            let length = Math.sqrt(x * x + y * y);
+            const length = Math.sqrt(x * x + y * y);
             if (scale) lengths[i] = length;
             spaces[++i] = ((lengthSpacing ? setupLength + spacing : spacing) * length) / setupLength;
           }
         }
     }
 
-    let positions = this.computeWorldPositions(<PathAttachment>attachment, spacesCount, tangents);
+    const positions = this.computeWorldPositions(<PathAttachment>attachment, spacesCount, tangents);
     let boneX = positions[0],
       boneY = positions[1],
       offsetRotation = data.offsetRotation;
@@ -183,21 +183,21 @@ export class PathConstraint implements Updatable {
     if (offsetRotation == 0) tip = data.rotateMode == RotateMode.Chain;
     else {
       tip = false;
-      let p = this.target.bone;
+      const p = this.target.bone;
       offsetRotation *= p.a * p.d - p.b * p.c > 0 ? MathUtils.degRad : -MathUtils.degRad;
     }
     for (let i = 0, p = 3; i < boneCount; i++, p += 3) {
-      let bone = bones[i];
+      const bone = bones[i];
       bone.worldX += (boneX - bone.worldX) * mixX;
       bone.worldY += (boneY - bone.worldY) * mixY;
-      let x = positions[p],
+      const x = positions[p],
         y = positions[p + 1],
         dx = x - boneX,
         dy = y - boneY;
       if (scale) {
-        let length = lengths[i];
+        const length = lengths[i];
         if (length != 0) {
-          let s = (Math.sqrt(dx * dx + dy * dy) / length - 1) * mixRotate + 1;
+          const s = (Math.sqrt(dx * dx + dy * dy) / length - 1) * mixRotate + 1;
           bone.a *= s;
           bone.c *= s;
         }
@@ -219,7 +219,7 @@ export class PathConstraint implements Updatable {
         if (tip) {
           cos = Math.cos(r);
           sin = Math.sin(r);
-          let length = bone.data.length;
+          const length = bone.data.length;
           boneX += (length * (cos * a - sin * c) - dx) * mixRotate;
           boneY += (length * (sin * a + cos * c) - dy) * mixRotate;
         } else {
@@ -242,20 +242,20 @@ export class PathConstraint implements Updatable {
   }
 
   computeWorldPositions(path: PathAttachment, spacesCount: number, tangents: boolean) {
-    let target = this.target;
+    const target = this.target;
     let position = this.position;
     let spaces = this.spaces,
       out = Utils.setArraySize(this.positions, spacesCount * 3 + 2),
       world: Array<number> = this.world;
-    let closed = path.closed;
+    const closed = path.closed;
     let verticesLength = path.worldVerticesLength,
       curveCount = verticesLength / 6,
       prevCurve = PathConstraint.NONE;
 
     if (!path.constantSpeed) {
-      let lengths = path.lengths;
+      const lengths = path.lengths;
       curveCount -= closed ? 1 : 2;
-      let pathLength = lengths[curveCount];
+      const pathLength = lengths[curveCount];
       if (this.data.positionMode == PositionMode.Percent) position *= pathLength;
 
       let multiplier;
@@ -271,7 +271,7 @@ export class PathConstraint implements Updatable {
       }
       world = Utils.setArraySize(this.world, 8);
       for (let i = 0, o = 0, curve = 0; i < spacesCount; i++, o += 3) {
-        let space = spaces[i] * multiplier;
+        const space = spaces[i] * multiplier;
         position += space;
         let p = position;
 
@@ -297,11 +297,11 @@ export class PathConstraint implements Updatable {
 
         // Determine curve containing position.
         for (; ; curve++) {
-          let length = lengths[curve];
+          const length = lengths[curve];
           if (p > length) continue;
           if (curve == 0) p /= length;
           else {
-            let prev = lengths[curve - 1];
+            const prev = lengths[curve - 1];
             p = (p - prev) / (length - prev);
           }
           break;
@@ -347,7 +347,7 @@ export class PathConstraint implements Updatable {
     }
 
     // Curve lengths.
-    let curves = Utils.setArraySize(this.curves, curveCount);
+    const curves = Utils.setArraySize(this.curves, curveCount);
     let pathLength = 0;
     let x1 = world[0],
       y1 = world[1],
@@ -411,10 +411,10 @@ export class PathConstraint implements Updatable {
         multiplier = 1;
     }
 
-    let segments = this.segments;
+    const segments = this.segments;
     let curveLength = 0;
     for (let i = 0, o = 0, curve = 0, segment = 0; i < spacesCount; i++, o += 3) {
-      let space = spaces[i] * multiplier;
+      const space = spaces[i] * multiplier;
       position += space;
       let p = position;
 
@@ -432,11 +432,11 @@ export class PathConstraint implements Updatable {
 
       // Determine curve containing position.
       for (; ; curve++) {
-        let length = curves[curve];
+        const length = curves[curve];
         if (p > length) continue;
         if (curve == 0) p /= length;
         else {
-          let prev = curves[curve - 1];
+          const prev = curves[curve - 1];
           p = (p - prev) / (length - prev);
         }
         break;
@@ -486,11 +486,11 @@ export class PathConstraint implements Updatable {
       // Weight by segment length.
       p *= curveLength;
       for (; ; segment++) {
-        let length = segments[segment];
+        const length = segments[segment];
         if (p > length) continue;
         if (segment == 0) p /= length;
         else {
-          let prev = segments[segment - 1];
+          const prev = segments[segment - 1];
           p = segment + (p - prev) / (length - prev);
         }
         break;
@@ -501,7 +501,7 @@ export class PathConstraint implements Updatable {
   }
 
   addBeforePosition(p: number, temp: Array<number>, i: number, out: Array<number>, o: number) {
-    let x1 = temp[i],
+    const x1 = temp[i],
       y1 = temp[i + 1],
       dx = temp[i + 2] - x1,
       dy = temp[i + 3] - y1,
@@ -512,7 +512,7 @@ export class PathConstraint implements Updatable {
   }
 
   addAfterPosition(p: number, temp: Array<number>, i: number, out: Array<number>, o: number) {
-    let x1 = temp[i + 2],
+    const x1 = temp[i + 2],
       y1 = temp[i + 3],
       dx = x1 - temp[i],
       dy = y1 - temp[i + 1],
@@ -542,16 +542,16 @@ export class PathConstraint implements Updatable {
       out[o + 2] = Math.atan2(cy1 - y1, cx1 - x1);
       return;
     }
-    let tt = p * p,
+    const tt = p * p,
       ttt = tt * p,
       u = 1 - p,
       uu = u * u,
       uuu = uu * u;
-    let ut = u * p,
+    const ut = u * p,
       ut3 = ut * 3,
       uut3 = u * ut3,
       utt3 = ut3 * p;
-    let x = x1 * uuu + cx1 * uut3 + cx2 * utt3 + x2 * ttt,
+    const x = x1 * uuu + cx1 * uut3 + cx2 * utt3 + x2 * ttt,
       y = y1 * uuu + cy1 * uut3 + cy2 * utt3 + y2 * ttt;
     out[o] = x;
     out[o + 1] = y;

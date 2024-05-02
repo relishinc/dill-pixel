@@ -1,6 +1,6 @@
-import { PointLike, resolvePointLike } from 'dill-pixel';
 import { Point, Texture } from 'pixi.js';
-import { Solid as TowerFallSolid, System } from '../../../../src/plugins/physics/towerfall';
+import { PointLike, resolvePointLike } from '@relish-studios/dill-pixel';
+import { System, Solid as TowerFallSolid } from '../../../../src/plugins/physics/towerfall';
 
 type Direction = -1 | 0 | 1;
 
@@ -51,10 +51,10 @@ export class Platform extends TowerFallSolid<PlatformConfig> {
       moving: config.moving ?? defaults.moving,
       movementConfig: config.movementConfig
         ? {
-            speed: resolvePointLike(config.movementConfig.speed, true),
-            startingDirection: config.movementConfig.startingDirection || { x: 1, y: 0 },
-            range: resolvePointLike(config.movementConfig.range, true),
-          }
+          speed: resolvePointLike(config.movementConfig.speed, true),
+          startingDirection: config.movementConfig.startingDirection || { x: 1, y: 0 },
+          range: resolvePointLike(config.movementConfig.range, true),
+        }
         : null,
     };
   }

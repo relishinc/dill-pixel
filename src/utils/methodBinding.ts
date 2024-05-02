@@ -44,7 +44,7 @@ function getInstanceMethodNames(
 
     methodNames.push(...filteredMethodNames);
 
-    if (prototype === Object.prototype || prototype.constructor.hasOwnProperty('__dill_pixel_method_binding_root')) {
+    if (prototype === Object.prototype || Object.prototype.hasOwnProperty.call(prototype.constructor, '__dill_pixel_method_binding_root')) {
       break;
     }
 

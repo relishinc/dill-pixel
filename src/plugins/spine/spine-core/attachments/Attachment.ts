@@ -92,21 +92,21 @@ export abstract class VertexAttachment extends Attachment {
     stride: number,
   ) {
     count = offset + (count >> 1) * stride;
-    let skeleton = slot.bone.skeleton;
-    let deformArray = slot.deform;
+    const skeleton = slot.bone.skeleton;
+    const deformArray = slot.deform;
     let vertices = this.vertices;
-    let bones = this.bones;
+    const bones = this.bones;
     if (!bones) {
       if (deformArray.length > 0) vertices = deformArray;
-      let bone = slot.bone;
-      let x = bone.worldX;
-      let y = bone.worldY;
-      let a = bone.a,
+      const bone = slot.bone;
+      const x = bone.worldX;
+      const y = bone.worldY;
+      const a = bone.a,
         b = bone.b,
         c = bone.c,
         d = bone.d;
       for (let v = start, w = offset; w < count; v += 2, w += stride) {
-        let vx = vertices[v],
+        const vx = vertices[v],
           vy = vertices[v + 1];
         worldVertices[w] = vx * a + vy * b + x;
         worldVertices[w + 1] = vx * c + vy * d + y;
@@ -116,11 +116,11 @@ export abstract class VertexAttachment extends Attachment {
     let v = 0,
       skip = 0;
     for (let i = 0; i < start; i += 2) {
-      let n = bones[v];
+      const n = bones[v];
       v += n + 1;
       skip += n;
     }
-    let skeletonBones = skeleton.bones;
+    const skeletonBones = skeleton.bones;
     if (deformArray.length == 0) {
       for (let w = offset, b = skip * 3; w < count; w += stride) {
         let wx = 0,
@@ -128,8 +128,8 @@ export abstract class VertexAttachment extends Attachment {
         let n = bones[v++];
         n += v;
         for (; v < n; v++, b += 3) {
-          let bone = skeletonBones[bones[v]];
-          let vx = vertices[b],
+          const bone = skeletonBones[bones[v]];
+          const vx = vertices[b],
             vy = vertices[b + 1],
             weight = vertices[b + 2];
           wx += (vx * bone.a + vy * bone.b + bone.worldX) * weight;
@@ -139,15 +139,15 @@ export abstract class VertexAttachment extends Attachment {
         worldVertices[w + 1] = wy;
       }
     } else {
-      let deform = deformArray;
+      const deform = deformArray;
       for (let w = offset, b = skip * 3, f = skip << 1; w < count; w += stride) {
         let wx = 0,
           wy = 0;
         let n = bones[v++];
         n += v;
         for (; v < n; v++, b += 3, f += 2) {
-          let bone = skeletonBones[bones[v]];
-          let vx = vertices[b] + deform[f],
+          const bone = skeletonBones[bones[v]];
+          const vx = vertices[b] + deform[f],
             vy = vertices[b + 1] + deform[f + 1],
             weight = vertices[b + 2];
           wx += (vx * bone.a + vy * bone.b + bone.worldX) * weight;

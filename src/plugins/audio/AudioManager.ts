@@ -23,6 +23,10 @@ export interface IAudioManager extends IPlugin {
   masterVolume: number;
   muted: boolean;
   channels: Map<string, IAudioChannel>;
+  music: IAudioChannel;
+  sfx: IAudioChannel;
+  voiceover: IAudioChannel;
+  vo: IAudioChannel;
 
   createChannel(name: string): void;
 
@@ -119,6 +123,7 @@ export class AudioManager extends Plugin implements IAudioManager {
    */
   public constructor(id: string = 'AudioManager') {
     super(id);
+
     this.createChannel('music');
     this.createChannel('sfx');
     this.createChannel('voiceover');
@@ -164,6 +169,22 @@ export class AudioManager extends Plugin implements IAudioManager {
   set muted(value: boolean) {
     this._muted = value;
     this._setMuted();
+  }
+
+  get music(): IAudioChannel {
+    return this._channels.get('music')!;
+  }
+
+  get sfx(): IAudioChannel {
+    return this._channels.get('sfx')!;
+  }
+
+  get voiceover(): IAudioChannel {
+    return this._channels.get('voiceover')!;
+  }
+
+  get vo(): IAudioChannel {
+    return this._channels.get('voiceover')!;
   }
 
   public destroy(): void {

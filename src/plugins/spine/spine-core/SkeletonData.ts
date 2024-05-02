@@ -105,9 +105,9 @@ export class SkeletonData {
    * @returns May be null. */
   findBone(boneName: string) {
     if (!boneName) throw new Error('boneName cannot be null.');
-    let bones = this.bones;
+    const bones = this.bones;
     for (let i = 0, n = bones.length; i < n; i++) {
-      let bone = bones[i];
+      const bone = bones[i];
       if (bone.name == boneName) return bone;
     }
     return null;
@@ -118,9 +118,9 @@ export class SkeletonData {
    * @returns May be null. */
   findSlot(slotName: string) {
     if (!slotName) throw new Error('slotName cannot be null.');
-    let slots = this.slots;
+    const slots = this.slots;
     for (let i = 0, n = slots.length; i < n; i++) {
-      let slot = slots[i];
+      const slot = slots[i];
       if (slot.name == slotName) return slot;
     }
     return null;
@@ -131,9 +131,9 @@ export class SkeletonData {
    * @returns May be null. */
   findSkin(skinName: string) {
     if (!skinName) throw new Error('skinName cannot be null.');
-    let skins = this.skins;
+    const skins = this.skins;
     for (let i = 0, n = skins.length; i < n; i++) {
-      let skin = skins[i];
+      const skin = skins[i];
       if (skin.name == skinName) return skin;
     }
     return null;
@@ -144,9 +144,9 @@ export class SkeletonData {
    * @returns May be null. */
   findEvent(eventDataName: string) {
     if (!eventDataName) throw new Error('eventDataName cannot be null.');
-    let events = this.events;
+    const events = this.events;
     for (let i = 0, n = events.length; i < n; i++) {
-      let event = events[i];
+      const event = events[i];
       if (event.name == eventDataName) return event;
     }
     return null;
@@ -157,9 +157,9 @@ export class SkeletonData {
    * @returns May be null. */
   findAnimation(animationName: string) {
     if (!animationName) throw new Error('animationName cannot be null.');
-    let animations = this.animations;
+    const animations = this.animations;
     for (let i = 0, n = animations.length; i < n; i++) {
-      let animation = animations[i];
+      const animation = animations[i];
       if (animation.name == animationName) return animation;
     }
     return null;
@@ -170,9 +170,9 @@ export class SkeletonData {
    * @return May be null. */
   findIkConstraint(constraintName: string) {
     if (!constraintName) throw new Error('constraintName cannot be null.');
-    let ikConstraints = this.ikConstraints;
+    const ikConstraints = this.ikConstraints;
     for (let i = 0, n = ikConstraints.length; i < n; i++) {
-      let constraint = ikConstraints[i];
+      const constraint = ikConstraints[i];
       if (constraint.name == constraintName) return constraint;
     }
     return null;
@@ -183,9 +183,9 @@ export class SkeletonData {
    * @return May be null. */
   findTransformConstraint(constraintName: string) {
     if (!constraintName) throw new Error('constraintName cannot be null.');
-    let transformConstraints = this.transformConstraints;
+    const transformConstraints = this.transformConstraints;
     for (let i = 0, n = transformConstraints.length; i < n; i++) {
-      let constraint = transformConstraints[i];
+      const constraint = transformConstraints[i];
       if (constraint.name == constraintName) return constraint;
     }
     return null;
@@ -196,9 +196,9 @@ export class SkeletonData {
    * @return May be null. */
   findPathConstraint(constraintName: string) {
     if (!constraintName) throw new Error('constraintName cannot be null.');
-    let pathConstraints = this.pathConstraints;
+    const pathConstraints = this.pathConstraints;
     for (let i = 0, n = pathConstraints.length; i < n; i++) {
-      let constraint = pathConstraints[i];
+      const constraint = pathConstraints[i];
       if (constraint.name == constraintName) return constraint;
     }
     return null;

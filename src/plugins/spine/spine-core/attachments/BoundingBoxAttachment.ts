@@ -43,7 +43,7 @@ export class BoundingBoxAttachment extends VertexAttachment {
   }
 
   copy(): Attachment {
-    let copy = new BoundingBoxAttachment(this.name);
+    const copy = new BoundingBoxAttachment(this.name);
     this.copyTo(copy);
     copy.color.setFromColor(this.color);
     return copy;

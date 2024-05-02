@@ -1,3 +1,4 @@
+import { Assets, RenderTexture, Sprite, Texture } from 'pixi.js';
 import Rive, {
   Artboard,
   File,
@@ -8,8 +9,8 @@ import Rive, {
   StateMachineInstance,
   WrappedRenderer,
 } from '@rive-app/canvas-advanced';
-import { Container } from 'dill-pixel';
-import { Assets, RenderTexture, Sprite, Texture } from 'pixi.js';
+
+import { Container } from '@relish-studios/dill-pixel';
 
 // Fit options for the canvas
 export enum Fit {

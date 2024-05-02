@@ -14,6 +14,467 @@
         },
         {
           "alias": [
+            "Jenkins.html",
+            "Jenkins.html"
+          ],
+          "src": [
+            "Jenkins.html"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/adjunct.js.download",
+            "adjunct.js.download"
+          ],
+          "src": [
+            "Jenkins_files/adjunct.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/animation-min.js.download",
+            "animation-min.js.download"
+          ],
+          "src": [
+            "Jenkins_files/animation-min.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/autocomplete-min.js.download",
+            "autocomplete-min.js.download"
+          ],
+          "src": [
+            "Jenkins_files/autocomplete-min.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/base-styles-v2.css",
+            "base-styles-v2.css"
+          ],
+          "src": [
+            "Jenkins_files/base-styles-v2.css"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/behavior.js.download",
+            "behavior.js.download"
+          ],
+          "src": [
+            "Jenkins_files/behavior.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/bind.js.download",
+            "bind.js.download"
+          ],
+          "src": [
+            "Jenkins_files/bind.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/blueocean.png",
+            "blueocean.png"
+          ],
+          "src": [
+            "Jenkins_files/blueocean@1x.png",
+            "Jenkins_files/blueocean@0.5x.png"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/breadcrumbs.css",
+            "breadcrumbs.css"
+          ],
+          "src": [
+            "Jenkins_files/breadcrumbs.css"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/breadcrumbs.js.download",
+            "breadcrumbs.js.download"
+          ],
+          "src": [
+            "Jenkins_files/breadcrumbs.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/button-min.js.download",
+            "button-min.js.download"
+          ],
+          "src": [
+            "Jenkins_files/button-min.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/clipboard.svg",
+            "clipboard.svg"
+          ],
+          "src": [
+            "Jenkins_files/clipboard.svg"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/clock.svg",
+            "clock.svg"
+          ],
+          "src": [
+            "Jenkins_files/clock.svg"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/color.css",
+            "color.css"
+          ],
+          "src": [
+            "Jenkins_files/color.css"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/confighistory.svg",
+            "confighistory.svg"
+          ],
+          "src": [
+            "Jenkins_files/confighistory.svg"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/connection-min.js.download",
+            "connection-min.js.download"
+          ],
+          "src": [
+            "Jenkins_files/connection-min.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/container(1).css",
+            "container(1).css"
+          ],
+          "src": [
+            "Jenkins_files/container(1).css"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/container-min.js.download",
+            "container-min.js.download"
+          ],
+          "src": [
+            "Jenkins_files/container-min.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/container.css",
+            "container.css"
+          ],
+          "src": [
+            "Jenkins_files/container.css"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/datasource-min.js.download",
+            "datasource-min.js.download"
+          ],
+          "src": [
+            "Jenkins_files/datasource-min.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/dom-min.js.download",
+            "dom-min.js.download"
+          ],
+          "src": [
+            "Jenkins_files/dom-min.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/dragdrop-min.js.download",
+            "dragdrop-min.js.download"
+          ],
+          "src": [
+            "Jenkins_files/dragdrop-min.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/edit-delete.svg",
+            "edit-delete.svg"
+          ],
+          "src": [
+            "Jenkins_files/edit-delete.svg"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/element-min.js.download",
+            "element-min.js.download"
+          ],
+          "src": [
+            "Jenkins_files/element-min.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/event-min.js.download",
+            "event-min.js.download"
+          ],
+          "src": [
+            "Jenkins_files/event-min.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/filter-build-history.js.download",
+            "filter-build-history.js.download"
+          ],
+          "src": [
+            "Jenkins_files/filter-build-history.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/gear.svg",
+            "gear.svg"
+          ],
+          "src": [
+            "Jenkins_files/gear.svg"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/hudson-behavior.js.download",
+            "hudson-behavior.js.download"
+          ],
+          "src": [
+            "Jenkins_files/hudson-behavior.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/logo.svg",
+            "logo.svg"
+          ],
+          "src": [
+            "Jenkins_files/logo.svg"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/material-light-green.css",
+            "material-light-green.css"
+          ],
+          "src": [
+            "Jenkins_files/material-light-green.css"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/menu-min.js.download",
+            "menu-min.js.download"
+          ],
+          "src": [
+            "Jenkins_files/menu-min.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/menu.css",
+            "menu.css"
+          ],
+          "src": [
+            "Jenkins_files/menu.css"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/notepad.svg",
+            "notepad.svg"
+          ],
+          "src": [
+            "Jenkins_files/notepad.svg"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/page-init.js.download",
+            "page-init.js.download"
+          ],
+          "src": [
+            "Jenkins_files/page-init.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/polyfills.js.download",
+            "polyfills.js.download"
+          ],
+          "src": [
+            "Jenkins_files/polyfills.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/prototype.js.download",
+            "prototype.js.download"
+          ],
+          "src": [
+            "Jenkins_files/prototype.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/resources.css",
+            "resources.css"
+          ],
+          "src": [
+            "Jenkins_files/resources.css"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/resources.js.download",
+            "resources.js.download"
+          ],
+          "src": [
+            "Jenkins_files/resources.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/responsive-grid.css",
+            "responsive-grid.css"
+          ],
+          "src": [
+            "Jenkins_files/responsive-grid.css"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/saved_resource.html",
+            "saved_resource.html"
+          ],
+          "src": [
+            "Jenkins_files/saved_resource.html"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/search.svg",
+            "search.svg"
+          ],
+          "src": [
+            "Jenkins_files/search.svg"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/shelve-project-icon.png",
+            "shelve-project-icon.png"
+          ],
+          "src": [
+            "Jenkins_files/shelve-project-icon@1x.png",
+            "Jenkins_files/shelve-project-icon@0.5x.png"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/sortable-drag-drop.js.download",
+            "sortable-drag-drop.js.download"
+          ],
+          "src": [
+            "Jenkins_files/sortable-drag-drop.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/sortable.js.download",
+            "sortable.js.download"
+          ],
+          "src": [
+            "Jenkins_files/sortable.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/storage-min.js.download",
+            "storage-min.js.download"
+          ],
+          "src": [
+            "Jenkins_files/storage-min.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/svgxuse.min.js.download",
+            "svgxuse.min.js.download"
+          ],
+          "src": [
+            "Jenkins_files/svgxuse.min.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/title.svg",
+            "title.svg"
+          ],
+          "src": [
+            "Jenkins_files/title.svg"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/ui-refresh-overrides.css",
+            "ui-refresh-overrides.css"
+          ],
+          "src": [
+            "Jenkins_files/ui-refresh-overrides.css"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/up.svg",
+            "up.svg"
+          ],
+          "src": [
+            "Jenkins_files/up.svg"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/vendors.js.download",
+            "vendors.js.download"
+          ],
+          "src": [
+            "Jenkins_files/vendors.js.download"
+          ]
+        },
+        {
+          "alias": [
+            "Jenkins_files/yahoo-min.js.download",
+            "yahoo-min.js.download"
+          ],
+          "src": [
+            "Jenkins_files/yahoo-min.js.download"
+          ]
+        },
+        {
+          "alias": [
             "locales/fr.json",
             "fr.json"
           ],

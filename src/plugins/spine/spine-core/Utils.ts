@@ -38,7 +38,7 @@ export class IntSet {
   array = new Array<number | undefined>();
 
   add(value: number): boolean {
-    let contains = this.contains(value);
+    const contains = this.contains(value);
     this.array[value | 0] = value | 0;
     return !contains;
   }
@@ -61,7 +61,7 @@ export class StringSet {
   size = 0;
 
   add(value: string): boolean {
-    let contains = this.entries[value];
+    const contains = this.entries[value];
     this.entries[value] = true;
     if (!contains) {
       this.size++;
@@ -71,8 +71,8 @@ export class StringSet {
   }
 
   addAll(values: string[]): boolean {
-    let oldSize = this.size;
-    for (var i = 0, n = values.length; i < n; i++) this.add(values[i]);
+    const oldSize = this.size;
+    for (let i = 0, n = values.length; i < n; i++) this.add(values[i]);
     return oldSize != this.size;
   }
 
@@ -223,7 +223,7 @@ export class MathUtils {
   }
 
   static cbrt(x: number) {
-    let y = Math.pow(Math.abs(x), 1 / 3);
+    const y = Math.pow(Math.abs(x), 1 / 3);
     return x < 0 ? -y : y;
   }
 
@@ -232,8 +232,8 @@ export class MathUtils {
   }
 
   static randomTriangularWith(min: number, max: number, mode: number): number {
-    let u = Math.random();
-    let d = max - min;
+    const u = Math.random();
+    const d = max - min;
     if (u <= (mode - min) / d) return min + Math.sqrt(u * d * (mode - min));
     return max - Math.sqrt((1 - u) * d * (max - mode));
   }
@@ -302,7 +302,7 @@ export class Utils {
   }
 
   static setArraySize<T>(array: Array<T>, size: number, value: any = 0): Array<T> {
-    let oldSize = array.length;
+    const oldSize = array.length;
     if (oldSize == size) return array;
     array.length = size;
     if (oldSize < size) {
@@ -317,7 +317,7 @@ export class Utils {
   }
 
   static newArray<T>(size: number, defaultValue: T): Array<T> {
-    let array = new Array<T>(size);
+    const array = new Array<T>(size);
     for (let i = 0; i < size; i++) array[i] = defaultValue;
     return array;
   }
@@ -325,7 +325,7 @@ export class Utils {
   static newFloatArray(size: number): NumberArrayLike {
     if (Utils.SUPPORTS_TYPED_ARRAYS) return new Float32Array(size);
     else {
-      let array = new Array<number>(size);
+      const array = new Array<number>(size);
       for (let i = 0; i < array.length; i++) array[i] = 0;
       return array;
     }
@@ -334,7 +334,7 @@ export class Utils {
   static newShortArray(size: number): NumberArrayLike {
     if (Utils.SUPPORTS_TYPED_ARRAYS) return new Int16Array(size);
     else {
-      let array = new Array<number>(size);
+      const array = new Array<number>(size);
       for (let i = 0; i < array.length; i++) array[i] = 0;
       return array;
     }
@@ -352,7 +352,7 @@ export class Utils {
   static webkit602BugfixHelper(alpha: number, blend: MixBlend) {}
 
   static contains<T>(array: Array<T>, element: T, identity = true) {
-    for (var i = 0; i < array.length; i++) if (array[i] == element) return true;
+    for (let i = 0; i < array.length; i++) if (array[i] == element) return true;
     return false;
   }
 
@@ -364,7 +364,7 @@ export class Utils {
 export class DebugUtils {
   static logBones(skeleton: Skeleton) {
     for (let i = 0; i < skeleton.bones.length; i++) {
-      let bone = skeleton.bones[i];
+      const bone = skeleton.bones[i];
       console.log(
         bone.data.name +
           ', ' +
@@ -423,13 +423,13 @@ export class Vector2 {
   }
 
   length() {
-    let x = this.x;
-    let y = this.y;
+    const x = this.x;
+    const y = this.y;
     return Math.sqrt(x * x + y * y);
   }
 
   normalize() {
-    let len = this.length();
+    const len = this.length();
     if (len != 0) {
       this.x /= len;
       this.y /= len;
@@ -449,7 +449,7 @@ export class TimeKeeper {
   private frameTime = 0;
 
   update() {
-    let now = Date.now() / 1000;
+    const now = Date.now() / 1000;
     this.delta = now - this.lastTime;
     this.frameTime += this.delta;
     this.totalTime += this.delta;

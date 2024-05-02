@@ -1,6 +1,7 @@
-import { Scene } from 'dill-pixel';
 import { Graphics, Text } from 'pixi.js';
+
 import { COLOR_GREEN } from '../utils/Constants';
+import { Scene } from '@relish-studios/dill-pixel';
 import { V8Application } from '../V8Application';
 
 export class BaseScene extends Scene<V8Application> {
@@ -84,5 +85,5 @@ export class BaseScene extends Scene<V8Application> {
     z-index: 0;`;
   }
 
-  protected configureGUI() {}
+  protected configureGUI() { }
 }

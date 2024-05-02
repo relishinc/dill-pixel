@@ -41,13 +41,5 @@ class Signal<THandler extends (...args: any[]) => any> extends TsSignal<THandler
 }
 
 // export anything useful from ts-signals, as well as the new Signal class
-export {
-  Signal,
-  SignalConnection,
-  SignalConnections,
-  Collector,
-  CollectorLast,
-  CollectorArray,
-  CollectorUntil0,
-  CollectorWhile0,
-};
+export { Signal, SignalConnections, Collector, CollectorLast, CollectorArray, CollectorUntil0, CollectorWhile0 };
+export type { SignalConnection };

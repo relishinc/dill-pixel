@@ -1,8 +1,9 @@
-import EN from '@/locales/en';
-import { scenes } from '@/scenes';
-import { Application, create, LocalStorageAdapter } from 'dill-pixel';
+import { Application, LocalStorageAdapter, create } from '@relish-studios/dill-pixel';
+
 import { Assets } from 'pixi.js';
+import EN from '@/locales/en';
 import manifest from './assets.json';
+import { scenes } from '@/scenes';
 
 export class V8Application extends Application {
   setup() {

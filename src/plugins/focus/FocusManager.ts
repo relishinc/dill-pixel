@@ -1,6 +1,7 @@
+import EventEmitter from 'eventemitter3';
 import { Bounds, Container, PointerEvents, PointLike } from 'pixi.js';
-import { IApplication } from '../../core/Application';
 
+import { IApplication } from '../../core/Application';
 import { CoreFunction, CorePlugin } from '../../core/decorators';
 import { PIXIContainer } from '../../pixi';
 import { Signal } from '../../signals';
@@ -14,9 +15,10 @@ import { FocusOutliner, FocusOutlinerConfig, IFocusOutliner } from './FocusOutli
 
 export type FocusManagerOptions = {
   outliner: IFocusOutliner | Partial<FocusOutlinerConfig>;
+  usePixiAccessibility: boolean;
 };
 
-export interface IFocusable {
+export interface IFocusable extends EventEmitter {
   isFocused: boolean;
   isKeyDown: boolean;
   focusEnabled: boolean;
@@ -73,6 +75,10 @@ export interface IFocusLayer {
   removeFocusable(focusable: IFocusable): void;
 
   sortFocusables(): void;
+
+  next(): IFocusable;
+
+  prev(): IFocusable;
 }
 
 class FocusLayer implements IFocusLayer {
@@ -170,6 +176,24 @@ class FocusLayer implements IFocusLayer {
     }
     return this.currentFocusable;
   }
+
+  public next() {
+    this._currentIndex = this._currentIndex + 1;
+    if (this._currentIndex >= this._focusables.length) {
+      this._currentIndex = 0;
+    }
+    this.currentFocusable = this._focusables[this._currentIndex];
+    return this.currentFocusable;
+  }
+
+  public prev() {
+    this._currentIndex = this._currentIndex - 1;
+    if (this._currentIndex < 0) {
+      this._currentIndex = this._focusables.length - 1;
+    }
+    this.currentFocusable = this._focusables[this._currentIndex];
+    return this.currentFocusable;
+  }
 }
 
 type FocusChangeDetail = { layer: string | number | null; focusable: IFocusable | null };
@@ -237,8 +261,11 @@ export class FocusManager extends Plugin implements IFocusManager {
   private _currentLayerId: string | number | null = null;
   private _focusTarget: IFocusable | null = null;
 
+  private _keyboardActive: boolean = false;
   private _active: boolean = false;
   private _enabled: boolean = true;
+
+  private _options: FocusManagerOptions;
 
   get enabled() {
     return this._enabled;
@@ -265,17 +292,20 @@ export class FocusManager extends Plugin implements IFocusManager {
   }
 
   public initialize(app: IApplication): void {
-    this._updateAccesibilityDivId();
-
     bindMethods(this, 'removeAllFocusLayers', '_handleGlobalMouseMove', '_handleGlobalPointerDown');
-
     const options: Partial<FocusManagerOptions> = app.config?.focusOptions || {};
+    options.usePixiAccessibility = options.usePixiAccessibility ?? false;
     this._focusOutliner =
-      typeof options === 'function'
-        ? new (options as Constructor<IFocusOutliner>)()
-        : new FocusOutliner(options as Partial<FocusOutlinerConfig>);
+      typeof options?.outliner === 'function'
+        ? new (options.outliner as Constructor<IFocusOutliner>)()
+        : new FocusOutliner(options.outliner as Partial<FocusOutlinerConfig>);
+
+    this._options = options as FocusManagerOptions;
 
     this.view.addChild(this._focusOutliner as unknown as PIXIContainer);
+
+    this._updatePixiAccessibility();
+
     this._setupKeyboardListeners();
     this._setupAppListeners();
   }
@@ -319,7 +349,7 @@ export class FocusManager extends Plugin implements IFocusManager {
       layer.addFocusable(f, idx === 0 && isDefault);
     });
 
-    if (this._active && this.app.renderer.accessibility.isActive && isDefault) {
+    if (this._active && isDefault) {
       this._setTarget(layer.currentFocusable || layer.defaultFocusable || null, !this._active);
     }
   }
@@ -397,7 +427,7 @@ export class FocusManager extends Plugin implements IFocusManager {
     this._setTarget(
       reverse
         ? layer?.availableFocusables?.[layer?.availableFocusables?.length - 1] || null
-        : layer?.defaultFocusable || null,
+        : layer?.availableFocusables?.[0] || null,
     );
   }
 
@@ -432,6 +462,8 @@ export class FocusManager extends Plugin implements IFocusManager {
     this.onFocusLayerChange.emit(this._currentLayerId);
   }
 
+  public postInitialize(_app: IApplication): Promise<void> | void {}
+
   @CoreFunction
   public clearFocus() {
     this._setTarget(null);
@@ -443,12 +475,80 @@ export class FocusManager extends Plugin implements IFocusManager {
     this._setTarget(null);
   }
 
-  private _updateAccesibilityDivId() {
-    // @ts-ignore
-    this.app.renderer.accessibility._div.setAttribute('id', 'pixi-accessibility');
+  _onKeyDown(e: KeyboardEvent) {
+    if (!this._enabled || (e.key !== 'Tab' && e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Space')) {
+      return;
+    }
+    if (!this._options.usePixiAccessibility) {
+      e.preventDefault();
+      if (e.key === 'Tab') {
+        const layer = this._getCurrentLayer();
+        const focusables = layer?.availableFocusables;
+        if (!focusables) {
+          return;
+        }
+        if (!this._keyboardActive) {
+          this._activate();
+          this._setTarget(layer.currentFocusable || layer.defaultFocusable || null);
+        } else {
+          // check if we're on the last focusable
+          if (e.shiftKey) {
+            this._prev();
+          } else {
+            this._next();
+          }
+        }
+      } else if (e.key === 'Enter' || e.key === ' ' || e.key === 'Space') {
+        if (this._focusTarget && this._focusTarget.isFocused) {
+          this._focusTarget.emit('click', { type: 'click' });
+        }
+      }
+    }
   }
 
-  private _getCurrentLayer() {
+  _onMouseMove(e: MouseEvent) {
+    if (e.movementX === 0 && e.movementY === 0) {
+      return;
+    }
+    this._deactivate();
+  }
+
+  private _next() {
+    const nextTarget = this._getCurrentLayer().next();
+    this._setTarget(nextTarget);
+  }
+
+  private _prev() {
+    const nextTarget = this._getCurrentLayer().prev();
+    this._setTarget(nextTarget);
+  }
+
+  private _deactivate() {
+    if (!this._keyboardActive) {
+      return;
+    }
+    this._keyboardActive = false;
+  }
+
+  private _activate() {
+    if (this._keyboardActive) {
+      return;
+    }
+    this._keyboardActive = true;
+    globalThis.document.addEventListener('mousemove', this._onMouseMove, true);
+  }
+
+  private _updatePixiAccessibility() {
+    // @ts-ignore
+    this.app.renderer.accessibility._div.setAttribute('id', 'pixi-accessibility');
+    if (!this._options.usePixiAccessibility) {
+      this.app.renderer.accessibility._div.setAttribute('disabled', 'disabled');
+      this.app.renderer.accessibility.destroy();
+      globalThis.addEventListener('keydown', this._onKeyDown, false);
+    }
+  }
+
+  private _getCurrentLayer(): IFocusLayer {
     return this._currentLayerId != null ? this._layers.get(this._currentLayerId) : null;
   }
 
@@ -478,18 +578,21 @@ export class FocusManager extends Plugin implements IFocusManager {
     if (oldFocusTarget && this._active) {
       this._clearFocusTarget(oldFocusTarget);
     }
-    if (this.app.renderer.accessibility.isActive) {
+    if (this.app.renderer.accessibility.isActive || this._keyboardActive) {
       if (this._focusTarget) {
         if (!this._active) {
           this._active = true;
         }
         //@ts-ignore
-        if (!this._focusTarget._accessibleDiv) {
+        if (this._options.usePixiAccessibility && !this._focusTarget._accessibleDiv) {
           this.app.renderer.accessibility.postrender();
         }
-        this.app.ticker.addOnce(() => {
-          this._focusTarget?._accessibleDiv?.focus();
-        });
+
+        if (this._options.usePixiAccessibility) {
+          this.app.ticker.addOnce(() => {
+            this._focusTarget?._accessibleDiv?.focus();
+          });
+        }
 
         if (layer?.hasFocusable(focusTarget)) {
           // call focusIn on the focusable
@@ -536,28 +639,7 @@ export class FocusManager extends Plugin implements IFocusManager {
   }
 
   private _setupKeyboardListeners(): void {
-    window.addEventListener('keydown', (e) => {
-      if (!this._enabled) {
-        return;
-      }
-      if (e.key === 'Tab') {
-        const layer = this._getCurrentLayer();
-        const focusables = layer?.availableFocusables;
-
-        if (!focusables) {
-          return;
-        }
-        // check if we're on the last focusable
-
-        if (
-          (e.shiftKey && this._focusTarget === focusables[0]) ||
-          (!e.shiftKey && this._focusTarget === focusables[focusables.length - 1])
-        ) {
-          e.preventDefault();
-          this.restart(e.shiftKey);
-        }
-      }
-    });
+    window.addEventListener('keydown', this._onKeyDown, false);
 
     this._addGlobalListeners();
   }
@@ -588,9 +670,10 @@ export class FocusManager extends Plugin implements IFocusManager {
     if (this._active) {
       this.deactivate();
     }
-    if (this.app.renderer.accessibility.isActive) {
+    if (this.app.renderer.accessibility.isActive || this._keyboardActive) {
       // @ts-ignore
       this.app.renderer.accessibility._deactivate();
+      this._deactivate();
     }
   }
 

@@ -425,7 +425,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     if (pluginInstance.id !== listItem.id) {
       pluginInstance.id = listItem.id;
     }
-    await this.registerPlugin(pluginInstance, listItem.options);
+    return await this.registerPlugin(pluginInstance, listItem.options);
   }
 
   public sendAction(action: string, data?: any) {

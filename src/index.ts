@@ -120,7 +120,6 @@ export type { IScene } from './display/Scene';
 
 export {
   Signal,
-  SignalConnection,
   SignalConnections,
   Collector,
   CollectorLast,
@@ -128,6 +127,7 @@ export {
   CollectorUntil0,
   CollectorWhile0,
 } from './signals/Signal';
+export type { SignalConnection } from './signals/Signal';
 
 /**
  * This function is used to create a new application instance.

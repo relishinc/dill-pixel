@@ -69,11 +69,11 @@ export class TransformConstraint implements Updatable {
     this.mixShearY = data.mixShearY;
     this.bones = new Array<Bone>();
     for (let i = 0; i < data.bones.length; i++) {
-      let bone = skeleton.findBone(data.bones[i].name);
+      const bone = skeleton.findBone(data.bones[i].name);
       if (!bone) throw new Error(`Couldn't find bone ${data.bones[i].name}.`);
       this.bones.push(bone);
     }
-    let target = skeleton.findBone(data.target.name);
+    const target = skeleton.findBone(data.target.name);
     if (!target) throw new Error(`Couldn't find target bone ${data.target.name}.`);
     this.target = target;
   }
@@ -103,29 +103,29 @@ export class TransformConstraint implements Updatable {
   }
 
   applyAbsoluteWorld() {
-    let mixRotate = this.mixRotate,
+    const mixRotate = this.mixRotate,
       mixX = this.mixX,
       mixY = this.mixY,
       mixScaleX = this.mixScaleX,
       mixScaleY = this.mixScaleY,
       mixShearY = this.mixShearY;
-    let translate = mixX != 0 || mixY != 0;
+    const translate = mixX != 0 || mixY != 0;
 
-    let target = this.target;
-    let ta = target.a,
+    const target = this.target;
+    const ta = target.a,
       tb = target.b,
       tc = target.c,
       td = target.d;
-    let degRadReflect = ta * td - tb * tc > 0 ? MathUtils.degRad : -MathUtils.degRad;
-    let offsetRotation = this.data.offsetRotation * degRadReflect;
-    let offsetShearY = this.data.offsetShearY * degRadReflect;
+    const degRadReflect = ta * td - tb * tc > 0 ? MathUtils.degRad : -MathUtils.degRad;
+    const offsetRotation = this.data.offsetRotation * degRadReflect;
+    const offsetShearY = this.data.offsetShearY * degRadReflect;
 
-    let bones = this.bones;
+    const bones = this.bones;
     for (let i = 0, n = bones.length; i < n; i++) {
-      let bone = bones[i];
+      const bone = bones[i];
 
       if (mixRotate != 0) {
-        let a = bone.a,
+        const a = bone.a,
           b = bone.b,
           c = bone.c,
           d = bone.d;
@@ -135,7 +135,7 @@ export class TransformConstraint implements Updatable {
           //
           r += MathUtils.PI2;
         r *= mixRotate;
-        let cos = Math.cos(r),
+        const cos = Math.cos(r),
           sin = Math.sin(r);
         bone.a = cos * a - sin * c;
         bone.b = cos * b - sin * d;
@@ -144,7 +144,7 @@ export class TransformConstraint implements Updatable {
       }
 
       if (translate) {
-        let temp = this.temp;
+        const temp = this.temp;
         target.localToWorld(temp.set(this.data.offsetX, this.data.offsetY));
         bone.worldX += (temp.x - bone.worldX) * mixX;
         bone.worldY += (temp.y - bone.worldY) * mixY;
@@ -164,16 +164,16 @@ export class TransformConstraint implements Updatable {
       }
 
       if (mixShearY > 0) {
-        let b = bone.b,
+        const b = bone.b,
           d = bone.d;
-        let by = Math.atan2(d, b);
+        const by = Math.atan2(d, b);
         let r = Math.atan2(td, tb) - Math.atan2(tc, ta) - (by - Math.atan2(bone.c, bone.a));
         if (r > MathUtils.PI) r -= MathUtils.PI2;
         else if (r < -MathUtils.PI)
           //
           r += MathUtils.PI2;
         r = by + (r + offsetShearY) * mixShearY;
-        let s = Math.sqrt(b * b + d * d);
+        const s = Math.sqrt(b * b + d * d);
         bone.b = Math.cos(r) * s;
         bone.d = Math.sin(r) * s;
       }
@@ -183,29 +183,29 @@ export class TransformConstraint implements Updatable {
   }
 
   applyRelativeWorld() {
-    let mixRotate = this.mixRotate,
+    const mixRotate = this.mixRotate,
       mixX = this.mixX,
       mixY = this.mixY,
       mixScaleX = this.mixScaleX,
       mixScaleY = this.mixScaleY,
       mixShearY = this.mixShearY;
-    let translate = mixX != 0 || mixY != 0;
+    const translate = mixX != 0 || mixY != 0;
 
-    let target = this.target;
-    let ta = target.a,
+    const target = this.target;
+    const ta = target.a,
       tb = target.b,
       tc = target.c,
       td = target.d;
-    let degRadReflect = ta * td - tb * tc > 0 ? MathUtils.degRad : -MathUtils.degRad;
-    let offsetRotation = this.data.offsetRotation * degRadReflect,
+    const degRadReflect = ta * td - tb * tc > 0 ? MathUtils.degRad : -MathUtils.degRad;
+    const offsetRotation = this.data.offsetRotation * degRadReflect,
       offsetShearY = this.data.offsetShearY * degRadReflect;
 
-    let bones = this.bones;
+    const bones = this.bones;
     for (let i = 0, n = bones.length; i < n; i++) {
-      let bone = bones[i];
+      const bone = bones[i];
 
       if (mixRotate != 0) {
-        let a = bone.a,
+        const a = bone.a,
           b = bone.b,
           c = bone.c,
           d = bone.d;
@@ -215,7 +215,7 @@ export class TransformConstraint implements Updatable {
           //
           r += MathUtils.PI2;
         r *= mixRotate;
-        let cos = Math.cos(r),
+        const cos = Math.cos(r),
           sin = Math.sin(r);
         bone.a = cos * a - sin * c;
         bone.b = cos * b - sin * d;
@@ -224,19 +224,19 @@ export class TransformConstraint implements Updatable {
       }
 
       if (translate) {
-        let temp = this.temp;
+        const temp = this.temp;
         target.localToWorld(temp.set(this.data.offsetX, this.data.offsetY));
         bone.worldX += temp.x * mixX;
         bone.worldY += temp.y * mixY;
       }
 
       if (mixScaleX != 0) {
-        let s = (Math.sqrt(ta * ta + tc * tc) - 1 + this.data.offsetScaleX) * mixScaleX + 1;
+        const s = (Math.sqrt(ta * ta + tc * tc) - 1 + this.data.offsetScaleX) * mixScaleX + 1;
         bone.a *= s;
         bone.c *= s;
       }
       if (mixScaleY != 0) {
-        let s = (Math.sqrt(tb * tb + td * td) - 1 + this.data.offsetScaleY) * mixScaleY + 1;
+        const s = (Math.sqrt(tb * tb + td * td) - 1 + this.data.offsetScaleY) * mixScaleY + 1;
         bone.b *= s;
         bone.d *= s;
       }
@@ -247,10 +247,10 @@ export class TransformConstraint implements Updatable {
         else if (r < -MathUtils.PI)
           //
           r += MathUtils.PI2;
-        let b = bone.b,
+        const b = bone.b,
           d = bone.d;
         r = Math.atan2(d, b) + (r - MathUtils.PI / 2 + offsetShearY) * mixShearY;
-        let s = Math.sqrt(b * b + d * d);
+        const s = Math.sqrt(b * b + d * d);
         bone.b = Math.cos(r) * s;
         bone.d = Math.sin(r) * s;
       }
@@ -260,18 +260,18 @@ export class TransformConstraint implements Updatable {
   }
 
   applyAbsoluteLocal() {
-    let mixRotate = this.mixRotate,
+    const mixRotate = this.mixRotate,
       mixX = this.mixX,
       mixY = this.mixY,
       mixScaleX = this.mixScaleX,
       mixScaleY = this.mixScaleY,
       mixShearY = this.mixShearY;
 
-    let target = this.target;
+    const target = this.target;
 
-    let bones = this.bones;
+    const bones = this.bones;
     for (let i = 0, n = bones.length; i < n; i++) {
-      let bone = bones[i];
+      const bone = bones[i];
 
       let rotation = bone.arotation;
       if (mixRotate != 0) {
@@ -304,25 +304,25 @@ export class TransformConstraint implements Updatable {
   }
 
   applyRelativeLocal() {
-    let mixRotate = this.mixRotate,
+    const mixRotate = this.mixRotate,
       mixX = this.mixX,
       mixY = this.mixY,
       mixScaleX = this.mixScaleX,
       mixScaleY = this.mixScaleY,
       mixShearY = this.mixShearY;
 
-    let target = this.target;
+    const target = this.target;
 
-    let bones = this.bones;
+    const bones = this.bones;
     for (let i = 0, n = bones.length; i < n; i++) {
-      let bone = bones[i];
+      const bone = bones[i];
 
-      let rotation = bone.arotation + (target.arotation + this.data.offsetRotation) * mixRotate;
-      let x = bone.ax + (target.ax + this.data.offsetX) * mixX;
-      let y = bone.ay + (target.ay + this.data.offsetY) * mixY;
-      let scaleX = bone.ascaleX * ((target.ascaleX - 1 + this.data.offsetScaleX) * mixScaleX + 1);
-      let scaleY = bone.ascaleY * ((target.ascaleY - 1 + this.data.offsetScaleY) * mixScaleY + 1);
-      let shearY = bone.ashearY + (target.ashearY + this.data.offsetShearY) * mixShearY;
+      const rotation = bone.arotation + (target.arotation + this.data.offsetRotation) * mixRotate;
+      const x = bone.ax + (target.ax + this.data.offsetX) * mixX;
+      const y = bone.ay + (target.ay + this.data.offsetY) * mixY;
+      const scaleX = bone.ascaleX * ((target.ascaleX - 1 + this.data.offsetScaleX) * mixScaleX + 1);
+      const scaleY = bone.ascaleY * ((target.ascaleY - 1 + this.data.offsetScaleY) * mixScaleY + 1);
+      const shearY = bone.ashearY + (target.ashearY + this.data.offsetShearY) * mixShearY;
 
       bone.updateWorldTransformWith(x, y, rotation, scaleX, scaleY, bone.ashearX, shearY);
     }

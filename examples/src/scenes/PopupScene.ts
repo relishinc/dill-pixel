@@ -1,5 +1,6 @@
-import { ActionDetail, Button, Container, PopupConfig } from 'dill-pixel';
+import { ActionDetail, Button, Container, PopupConfig } from '@relish-studios/dill-pixel';
 import { ExamplePopup } from '../popups/ExamplePopup';
+
 import { BaseScene } from './BaseScene';
 
 export class PopupScene extends BaseScene {
@@ -12,6 +13,7 @@ export class PopupScene extends BaseScene {
 
   public async initialize() {
     await super.initialize();
+    this.app.func.setActionContext('game');
     this.app.focus.addFocusLayer(this.id);
 
     this.app.popups.addPopup('one', ExamplePopup);
@@ -42,10 +44,12 @@ export class PopupScene extends BaseScene {
       }),
     );
 
-    this.app.actions('showPopup').connect(this._handleShowPopup);
-    this.app.signal.onHidePopup.connect(() => {
-      this.app.func.setActionContext('game');
-    });
+    this.addSignalConnection(
+      this.app.actions('showPopup').connect(this._handleShowPopup),
+      this.app.signal.onHidePopup.connect(() => {
+        this.app.func.setActionContext('game');
+      }),
+    );
   }
 
   public async start() {
