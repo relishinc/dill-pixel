@@ -55,9 +55,9 @@ export class AssetManagerBase implements Disposable {
   }
 
   loadAll() {
-    let promise = new Promise(
+    const promise = new Promise(
       (resolve: (assetManager: AssetManagerBase) => void, reject: (errors: StringMap<string>) => void) => {
-        let check = () => {
+        const check = () => {
           if (this.isLoadingComplete()) {
             if (this.hasErrors()) reject(this.errors);
             else resolve(this);
@@ -136,8 +136,8 @@ export class AssetManagerBase implements Disposable {
   ) {
     path = this.start(path);
 
-    let isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document);
-    let isWebWorker = !isBrowser; // && typeof importScripts !== 'undefined';
+    const isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document);
+    const isWebWorker = !isBrowser; // && typeof importScripts !== 'undefined';
     if (isWebWorker) {
       fetch(path, { mode: <RequestMode>'cors' })
         .then((response) => {
@@ -152,7 +152,7 @@ export class AssetManagerBase implements Disposable {
           if (bitmap) this.success(success, path, this.textureLoader(bitmap));
         });
     } else {
-      let image = new Image();
+      const image = new Image();
       image.crossOrigin = 'anonymous';
       image.onload = () => {
         this.success(success, path, this.textureLoader(image));
@@ -171,18 +171,18 @@ export class AssetManagerBase implements Disposable {
     error: (path: string, message: string) => void = () => {},
     fileAlias?: { [keyword: string]: string },
   ) {
-    let index = path.lastIndexOf('/');
-    let parent = index >= 0 ? path.substring(0, index + 1) : '';
+    const index = path.lastIndexOf('/');
+    const parent = index >= 0 ? path.substring(0, index + 1) : '';
     path = this.start(path);
 
     this.downloader.downloadText(
       path,
       (atlasText: string): void => {
         try {
-          let atlas = new TextureAtlas(atlasText);
+          const atlas = new TextureAtlas(atlasText);
           let toLoad = atlas.pages.length,
             abort = false;
-          for (let page of atlas.pages) {
+          for (const page of atlas.pages) {
             this.loadTexture(
               !fileAlias ? parent + page.name : fileAlias[page.name!],
               (imagePath: string, texture: Texture) => {
@@ -213,23 +213,23 @@ export class AssetManagerBase implements Disposable {
 
   require(path: string) {
     path = this.pathPrefix + path;
-    let asset = this.assets[path];
+    const asset = this.assets[path];
     if (asset) return asset;
-    let error = this.errors[path];
+    const error = this.errors[path];
     throw Error('Asset not found: ' + path + (error ? '\n' + error : ''));
   }
 
   remove(path: string) {
     path = this.pathPrefix + path;
-    let asset = this.assets[path];
+    const asset = this.assets[path];
     if ((<any>asset).dispose) (<any>asset).dispose();
     delete this.assets[path];
     return asset;
   }
 
   removeAll() {
-    for (let key in this.assets) {
-      let asset = this.assets[key];
+    for (const key in this.assets) {
+      const asset = this.assets[key];
       if ((<any>asset).dispose) (<any>asset).dispose();
     }
     this.assets = {};
@@ -294,10 +294,10 @@ export class Downloader {
   }
 
   base64ToUint8Array(base64: string) {
-    var binary_string = window.atob(base64);
-    var len = binary_string.length;
-    var bytes = new Uint8Array(len);
-    for (var i = 0; i < len; i++) {
+    const binary_string = window.atob(base64);
+    const len = binary_string.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
       bytes[i] = binary_string.charCodeAt(i);
     }
     return bytes;
@@ -318,17 +318,17 @@ export class Downloader {
     if (this.start(url, success, error)) return;
     if (this.rawDataUris[url]) {
       try {
-        let dataUri = this.rawDataUris[url];
+        const dataUri = this.rawDataUris[url];
         this.finish(url, 200, this.dataUriToString(dataUri));
       } catch (e) {
         this.finish(url, 400, JSON.stringify(e));
       }
       return;
     }
-    let request = new XMLHttpRequest();
+    const request = new XMLHttpRequest();
     request.overrideMimeType('text/html');
     request.open('GET', url, true);
-    let done = () => {
+    const done = () => {
       this.finish(url, request.status, request.responseText);
     };
     request.onload = done;
@@ -354,17 +354,17 @@ export class Downloader {
     if (this.start(url, success, error)) return;
     if (this.rawDataUris[url]) {
       try {
-        let dataUri = this.rawDataUris[url];
+        const dataUri = this.rawDataUris[url];
         this.finish(url, 200, this.dataUriToUint8Array(dataUri));
       } catch (e) {
         this.finish(url, 400, JSON.stringify(e));
       }
       return;
     }
-    let request = new XMLHttpRequest();
+    const request = new XMLHttpRequest();
     request.open('GET', url, true);
     request.responseType = 'arraybuffer';
-    let onerror = () => {
+    const onerror = () => {
       this.finish(url, request.status, request.response);
     };
     request.onload = () => {
@@ -387,9 +387,9 @@ export class Downloader {
   }
 
   private finish(url: string, status: number, data: any) {
-    let callbacks = this.callbacks[url];
+    const callbacks = this.callbacks[url];
     delete this.callbacks[url];
-    let args = status == 200 || status == 0 ? [data] : [status, data];
+    const args = status == 200 || status == 0 ? [data] : [status, data];
     for (let i = args.length - 1, n = callbacks.length; i < n; i += 2) callbacks[i].apply(null, args);
   }
 }

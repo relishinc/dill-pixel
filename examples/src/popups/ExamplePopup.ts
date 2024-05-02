@@ -1,4 +1,5 @@
-import { Container, Focusable, Interactive, IPopup, Popup } from 'dill-pixel';
+import { Container, Focusable, Interactive, IPopup, Popup } from '@relish-studios/dill-pixel';
+
 import { gsap } from 'gsap';
 import { Graphics, Text } from 'pixi.js';
 
@@ -14,6 +15,7 @@ export class SimpleButton extends _Button {
 
   init() {
     this.view = this.add.graphics().roundRect(0, 0, 60, 40).fill(0xff0000);
+    this.cursor = 'pointer';
   }
 }
 

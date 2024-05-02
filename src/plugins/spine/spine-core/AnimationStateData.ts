@@ -50,9 +50,9 @@ export class AnimationStateData {
    *
    * See {@link #setMixWith()}. */
   setMix(fromName: string, toName: string, duration: number) {
-    let from = this.skeletonData.findAnimation(fromName);
+    const from = this.skeletonData.findAnimation(fromName);
     if (!from) throw new Error('Animation not found: ' + fromName);
-    let to = this.skeletonData.findAnimation(toName);
+    const to = this.skeletonData.findAnimation(toName);
     if (!to) throw new Error('Animation not found: ' + toName);
     this.setMixWith(from, to, duration);
   }
@@ -63,15 +63,15 @@ export class AnimationStateData {
   setMixWith(from: Animation, to: Animation, duration: number) {
     if (!from) throw new Error('from cannot be null.');
     if (!to) throw new Error('to cannot be null.');
-    let key = from.name + '.' + to.name;
+    const key = from.name + '.' + to.name;
     this.animationToMixTime[key] = duration;
   }
 
   /** Returns the mix duration to use when changing from the specified animation to the other, or the {@link #defaultMix} if
    * no mix duration has been set. */
   getMix(from: Animation, to: Animation) {
-    let key = from.name + '.' + to.name;
-    let value = this.animationToMixTime[key];
+    const key = from.name + '.' + to.name;
+    const value = this.animationToMixTime[key];
     return value === undefined ? this.defaultMix : value;
   }
 }

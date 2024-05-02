@@ -1,4 +1,4 @@
-import { Container, Focusable, Interactive, PIXIGraphics } from 'dill-pixel';
+import { Container, Focusable, Interactive, PIXIGraphics } from '@relish-studios/dill-pixel';
 
 const _Actor = Focusable(Interactive(Container));
 

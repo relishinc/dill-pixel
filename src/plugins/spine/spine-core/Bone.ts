@@ -171,13 +171,13 @@ export class Bone implements Updatable {
     this.ashearX = shearX;
     this.ashearY = shearY;
 
-    let parent = this.parent;
+    const parent = this.parent;
     if (!parent) {
       // Root bone.
-      let skeleton = this.skeleton;
-      let rotationY = rotation + 90 + shearY;
-      let sx = skeleton.scaleX;
-      let sy = skeleton.scaleY;
+      const skeleton = this.skeleton;
+      const rotationY = rotation + 90 + shearY;
+      const sx = skeleton.scaleX;
+      const sy = skeleton.scaleY;
       this.a = MathUtils.cosDeg(rotation + shearX) * scaleX * sx;
       this.b = MathUtils.cosDeg(rotationY) * scaleY * sx;
       this.c = MathUtils.sinDeg(rotation + shearX) * scaleX * sy;
@@ -196,11 +196,11 @@ export class Bone implements Updatable {
 
     switch (this.data.transformMode) {
       case TransformMode.Normal: {
-        let rotationY = rotation + 90 + shearY;
-        let la = MathUtils.cosDeg(rotation + shearX) * scaleX;
-        let lb = MathUtils.cosDeg(rotationY) * scaleY;
-        let lc = MathUtils.sinDeg(rotation + shearX) * scaleX;
-        let ld = MathUtils.sinDeg(rotationY) * scaleY;
+        const rotationY = rotation + 90 + shearY;
+        const la = MathUtils.cosDeg(rotation + shearX) * scaleX;
+        const lb = MathUtils.cosDeg(rotationY) * scaleY;
+        const lc = MathUtils.sinDeg(rotation + shearX) * scaleX;
+        const ld = MathUtils.sinDeg(rotationY) * scaleY;
         this.a = pa * la + pb * lc;
         this.b = pa * lb + pb * ld;
         this.c = pc * la + pd * lc;
@@ -208,7 +208,7 @@ export class Bone implements Updatable {
         return;
       }
       case TransformMode.OnlyTranslation: {
-        let rotationY = rotation + 90 + shearY;
+        const rotationY = rotation + 90 + shearY;
         this.a = MathUtils.cosDeg(rotation + shearX) * scaleX;
         this.b = MathUtils.cosDeg(rotationY) * scaleY;
         this.c = MathUtils.sinDeg(rotation + shearX) * scaleX;
@@ -230,12 +230,12 @@ export class Bone implements Updatable {
           pc = 0;
           prx = 90 - Math.atan2(pd, pb) * MathUtils.radDeg;
         }
-        let rx = rotation + shearX - prx;
-        let ry = rotation + shearY - prx + 90;
-        let la = MathUtils.cosDeg(rx) * scaleX;
-        let lb = MathUtils.cosDeg(ry) * scaleY;
-        let lc = MathUtils.sinDeg(rx) * scaleX;
-        let ld = MathUtils.sinDeg(ry) * scaleY;
+        const rx = rotation + shearX - prx;
+        const ry = rotation + shearY - prx + 90;
+        const la = MathUtils.cosDeg(rx) * scaleX;
+        const lb = MathUtils.cosDeg(ry) * scaleY;
+        const lc = MathUtils.sinDeg(rx) * scaleX;
+        const ld = MathUtils.sinDeg(ry) * scaleY;
         this.a = pa * la - pb * lc;
         this.b = pa * lb - pb * ld;
         this.c = pc * la + pd * lc;
@@ -244,8 +244,8 @@ export class Bone implements Updatable {
       }
       case TransformMode.NoScale:
       case TransformMode.NoScaleOrReflection: {
-        let cos = MathUtils.cosDeg(rotation);
-        let sin = MathUtils.sinDeg(rotation);
+        const cos = MathUtils.cosDeg(rotation);
+        const sin = MathUtils.sinDeg(rotation);
         let za = (pa * cos + pb * sin) / this.skeleton.scaleX;
         let zc = (pc * cos + pd * sin) / this.skeleton.scaleY;
         let s = Math.sqrt(za * za + zc * zc);
@@ -258,13 +258,13 @@ export class Bone implements Updatable {
           pa * pd - pb * pc < 0 != (this.skeleton.scaleX < 0 != this.skeleton.scaleY < 0)
         )
           s = -s;
-        let r = Math.PI / 2 + Math.atan2(zc, za);
-        let zb = Math.cos(r) * s;
-        let zd = Math.sin(r) * s;
-        let la = MathUtils.cosDeg(shearX) * scaleX;
-        let lb = MathUtils.cosDeg(90 + shearY) * scaleY;
-        let lc = MathUtils.sinDeg(shearX) * scaleX;
-        let ld = MathUtils.sinDeg(90 + shearY) * scaleY;
+        const r = Math.PI / 2 + Math.atan2(zc, za);
+        const zb = Math.cos(r) * s;
+        const zd = Math.sin(r) * s;
+        const la = MathUtils.cosDeg(shearX) * scaleX;
+        const lb = MathUtils.cosDeg(90 + shearY) * scaleY;
+        const lc = MathUtils.sinDeg(shearX) * scaleX;
+        const ld = MathUtils.sinDeg(90 + shearY) * scaleY;
         this.a = za * la + zb * lc;
         this.b = za * lb + zb * ld;
         this.c = zc * la + zd * lc;
@@ -280,7 +280,7 @@ export class Bone implements Updatable {
 
   /** Sets this bone's local transform to the setup pose. */
   setToSetupPose() {
-    let data = this.data;
+    const data = this.data;
     this.x = data.x;
     this.y = data.y;
     this.rotation = data.rotation;
@@ -319,7 +319,7 @@ export class Bone implements Updatable {
    * Some information is ambiguous in the world transform, such as -1,-1 scale versus 180 rotation. The applied transform after
    * calling this method is equivalent to the local transform used to compute the world transform, but may not be identical. */
   updateAppliedTransform() {
-    let parent = this.parent;
+    const parent = this.parent;
     if (!parent) {
       this.ax = this.worldX - this.skeleton.x;
       this.ay = this.worldY - this.skeleton.y;
@@ -331,27 +331,27 @@ export class Bone implements Updatable {
         Math.atan2(this.a * this.b + this.c * this.d, this.a * this.d - this.b * this.c) * MathUtils.radDeg;
       return;
     }
-    let pa = parent.a,
+    const pa = parent.a,
       pb = parent.b,
       pc = parent.c,
       pd = parent.d;
-    let pid = 1 / (pa * pd - pb * pc);
-    let dx = this.worldX - parent.worldX,
+    const pid = 1 / (pa * pd - pb * pc);
+    const dx = this.worldX - parent.worldX,
       dy = this.worldY - parent.worldY;
     this.ax = dx * pd * pid - dy * pb * pid;
     this.ay = dy * pa * pid - dx * pc * pid;
-    let ia = pid * pd;
-    let id = pid * pa;
-    let ib = pid * pb;
-    let ic = pid * pc;
-    let ra = ia * this.a - ib * this.c;
-    let rb = ia * this.b - ib * this.d;
-    let rc = id * this.c - ic * this.a;
-    let rd = id * this.d - ic * this.b;
+    const ia = pid * pd;
+    const id = pid * pa;
+    const ib = pid * pb;
+    const ic = pid * pc;
+    const ra = ia * this.a - ib * this.c;
+    const rb = ia * this.b - ib * this.d;
+    const rc = id * this.c - ic * this.a;
+    const rd = id * this.d - ic * this.b;
     this.ashearX = 0;
     this.ascaleX = Math.sqrt(ra * ra + rc * rc);
     if (this.ascaleX > 0.0001) {
-      let det = ra * rd - rb * rc;
+      const det = ra * rd - rb * rc;
       this.ascaleY = det / this.ascaleX;
       this.ashearY = Math.atan2(ra * rb + rc * rd, det) * MathUtils.radDeg;
       this.arotation = Math.atan2(rc, ra) * MathUtils.radDeg;
@@ -365,8 +365,8 @@ export class Bone implements Updatable {
 
   /** Transforms a point from world coordinates to the bone's local coordinates. */
   worldToLocal(world: Vector2) {
-    let invDet = 1 / (this.a * this.d - this.b * this.c);
-    let x = world.x - this.worldX,
+    const invDet = 1 / (this.a * this.d - this.b * this.c);
+    const x = world.x - this.worldX,
       y = world.y - this.worldY;
     world.x = x * this.d * invDet - y * this.b * invDet;
     world.y = y * this.a * invDet - x * this.c * invDet;
@@ -375,7 +375,7 @@ export class Bone implements Updatable {
 
   /** Transforms a point from the bone's local coordinates to world coordinates. */
   localToWorld(local: Vector2) {
-    let x = local.x,
+    const x = local.x,
       y = local.y;
     local.x = x * this.a + y * this.b + this.worldX;
     local.y = x * this.c + y * this.d + this.worldY;
@@ -384,7 +384,7 @@ export class Bone implements Updatable {
 
   /** Transforms a world rotation to a local rotation. */
   worldToLocalRotation(worldRotation: number) {
-    let sin = MathUtils.sinDeg(worldRotation),
+    const sin = MathUtils.sinDeg(worldRotation),
       cos = MathUtils.cosDeg(worldRotation);
     return (
       Math.atan2(this.a * sin - this.c * cos, this.d * cos - this.b * sin) * MathUtils.radDeg +
@@ -396,7 +396,7 @@ export class Bone implements Updatable {
   /** Transforms a local rotation to a world rotation. */
   localToWorldRotation(localRotation: number) {
     localRotation -= this.rotation - this.shearX;
-    let sin = MathUtils.sinDeg(localRotation),
+    const sin = MathUtils.sinDeg(localRotation),
       cos = MathUtils.cosDeg(localRotation);
     return Math.atan2(cos * this.c + sin * this.d, cos * this.a + sin * this.b) * MathUtils.radDeg;
   }
@@ -406,11 +406,11 @@ export class Bone implements Updatable {
    * After changes are made to the world transform, {@link #updateAppliedTransform()} should be called and {@link #update()} will
    * need to be called on any child bones, recursively. */
   rotateWorld(degrees: number) {
-    let a = this.a,
+    const a = this.a,
       b = this.b,
       c = this.c,
       d = this.d;
-    let cos = MathUtils.cosDeg(degrees),
+    const cos = MathUtils.cosDeg(degrees),
       sin = MathUtils.sinDeg(degrees);
     this.a = cos * a - sin * c;
     this.b = cos * b - sin * d;

@@ -1,7 +1,8 @@
-import { ActionDetail, PointLike, resolvePointLike, Signal } from 'dill-pixel';
-import { gsap } from 'gsap';
+import { ActionDetail, PointLike, Signal, resolvePointLike } from '@relish-studios/dill-pixel';
+import { Collision, System, Actor as TowerFallActor } from '../../../../src/plugins/physics/towerfall';
 import { Point, Pool, Texture } from 'pixi.js';
-import { Actor as TowerFallActor, Collision, System } from '../../../../src/plugins/physics/towerfall';
+
+import { gsap } from 'gsap';
 
 export class Player extends TowerFallActor {
   type = 'Player';

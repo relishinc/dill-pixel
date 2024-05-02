@@ -107,8 +107,8 @@ export class RegionAttachment extends Attachment implements HasTextureRegion {
   /** Calculates the {@link #offset} using the region settings. Must be called after changing region settings. */
   updateRegion(): void {
     if (!this.region) throw new Error('Region not set.');
-    let region = this.region;
-    let uvs = this.uvs;
+    const region = this.region;
+    const uvs = this.uvs;
 
     if (region == null) {
       uvs[0] = 0;
@@ -122,26 +122,26 @@ export class RegionAttachment extends Attachment implements HasTextureRegion {
       return;
     }
 
-    let regionScaleX = (this.width / this.region.originalWidth) * this.scaleX;
-    let regionScaleY = (this.height / this.region.originalHeight) * this.scaleY;
-    let localX = (-this.width / 2) * this.scaleX + this.region.offsetX * regionScaleX;
-    let localY = (-this.height / 2) * this.scaleY + this.region.offsetY * regionScaleY;
-    let localX2 = localX + this.region.width * regionScaleX;
-    let localY2 = localY + this.region.height * regionScaleY;
-    let radians = (this.rotation * Math.PI) / 180;
-    let cos = Math.cos(radians);
-    let sin = Math.sin(radians);
-    let x = this.x,
+    const regionScaleX = (this.width / this.region.originalWidth) * this.scaleX;
+    const regionScaleY = (this.height / this.region.originalHeight) * this.scaleY;
+    const localX = (-this.width / 2) * this.scaleX + this.region.offsetX * regionScaleX;
+    const localY = (-this.height / 2) * this.scaleY + this.region.offsetY * regionScaleY;
+    const localX2 = localX + this.region.width * regionScaleX;
+    const localY2 = localY + this.region.height * regionScaleY;
+    const radians = (this.rotation * Math.PI) / 180;
+    const cos = Math.cos(radians);
+    const sin = Math.sin(radians);
+    const x = this.x,
       y = this.y;
-    let localXCos = localX * cos + x;
-    let localXSin = localX * sin;
-    let localYCos = localY * cos + y;
-    let localYSin = localY * sin;
-    let localX2Cos = localX2 * cos + x;
-    let localX2Sin = localX2 * sin;
-    let localY2Cos = localY2 * cos + y;
-    let localY2Sin = localY2 * sin;
-    let offset = this.offset;
+    const localXCos = localX * cos + x;
+    const localXSin = localX * sin;
+    const localYCos = localY * cos + y;
+    const localYSin = localY * sin;
+    const localX2Cos = localX2 * cos + x;
+    const localX2Sin = localX2 * sin;
+    const localY2Cos = localY2 * cos + y;
+    const localY2Sin = localY2 * sin;
+    const offset = this.offset;
     offset[0] = localXCos - localYSin;
     offset[1] = localYCos + localXSin;
     offset[2] = localXCos - localY2Sin;
@@ -173,7 +173,7 @@ export class RegionAttachment extends Attachment implements HasTextureRegion {
   }
 
   copy(): Attachment {
-    let copy = new RegionAttachment(this.name, this.path);
+    const copy = new RegionAttachment(this.name, this.path);
     copy.region = this.region;
     copy.x = this.x;
     copy.y = this.y;
@@ -200,11 +200,11 @@ export class RegionAttachment extends Attachment implements HasTextureRegion {
   computeWorldVertices(slot: Slot, worldVertices: NumberArrayLike, offset: number, stride: number) {
     if (this.sequence != null) this.sequence.apply(slot, this);
 
-    let bone = slot.bone;
-    let vertexOffset = this.offset;
-    let x = bone.worldX,
+    const bone = slot.bone;
+    const vertexOffset = this.offset;
+    const x = bone.worldX,
       y = bone.worldY;
-    let a = bone.a,
+    const a = bone.a,
       b = bone.b,
       c = bone.c,
       d = bone.d;

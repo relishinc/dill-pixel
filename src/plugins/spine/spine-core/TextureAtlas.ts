@@ -36,10 +36,10 @@ export class TextureAtlas implements Disposable {
   regions = new Array<TextureAtlasRegion>();
 
   constructor(atlasText: string) {
-    let reader = new TextureAtlasReader(atlasText);
-    let entry = new Array<string>(4);
+    const reader = new TextureAtlasReader(atlasText);
+    const entry = new Array<string>(4);
 
-    let pageFields: StringMap<(page: TextureAtlasPage) => void> = {};
+    const pageFields: StringMap<(page: TextureAtlasPage) => void> = {};
     pageFields['size'] = (page: TextureAtlasPage) => {
       page!.width = parseInt(entry[1]);
       page!.height = parseInt(entry[2]);
@@ -59,7 +59,7 @@ export class TextureAtlas implements Disposable {
       page!.pma = entry[1] == 'true';
     };
 
-    var regionFields: StringMap<(region: TextureAtlasRegion) => void> = {};
+    const regionFields: StringMap<(region: TextureAtlasRegion) => void> = {};
     regionFields['xy'] = (region: TextureAtlasRegion) => {
       // Deprecated, use bounds.
       region.x = parseInt(entry[1]);
@@ -93,7 +93,7 @@ export class TextureAtlas implements Disposable {
       region.originalHeight = parseInt(entry[4]);
     };
     regionFields['rotate'] = (region: TextureAtlasRegion) => {
-      let value = entry[1];
+      const value = entry[1];
       if (value == 'true') region.degrees = 90;
       else if (value != 'false') region.degrees = parseInt(value);
     };
@@ -124,23 +124,23 @@ export class TextureAtlas implements Disposable {
         page = new TextureAtlasPage(line.trim());
         while (true) {
           if (reader.readEntry(entry, (line = reader.readLine())) == 0) break;
-          let field = pageFields[entry[0]];
+          const field = pageFields[entry[0]];
           if (field) field(page);
         }
         this.pages.push(page);
       } else {
-        let region = new TextureAtlasRegion(page, line);
+        const region = new TextureAtlasRegion(page, line);
 
         while (true) {
-          let count = reader.readEntry(entry, (line = reader.readLine()));
+          const count = reader.readEntry(entry, (line = reader.readLine()));
           if (count == 0) break;
-          let field = regionFields[entry[0]];
+          const field = regionFields[entry[0]];
           if (field) field(region);
           else {
             if (!names) names = [];
             if (!values) values = [];
             names.push(entry[0]);
-            let entryValues: number[] = [];
+            const entryValues: number[] = [];
             for (let i = 0; i < count; i++) entryValues.push(parseInt(entry[i + 1]));
             values.push(entryValues);
           }
@@ -185,7 +185,7 @@ export class TextureAtlas implements Disposable {
   }
 
   setTextures(assetManager: AssetManagerBase, pathPrefix: string = '') {
-    for (let page of this.pages) page.setTexture(assetManager.get(pathPrefix + page.name));
+    for (const page of this.pages) page.setTexture(assetManager.get(pathPrefix + page.name));
   }
 }
 
@@ -207,11 +207,11 @@ class TextureAtlasReader {
     line = line.trim();
     if (line.length == 0) return 0;
 
-    let colon = line.indexOf(':');
+    const colon = line.indexOf(':');
     if (colon == -1) return 0;
     entry[0] = line.substr(0, colon).trim();
     for (let i = 1, lastMatch = colon + 1; ; i++) {
-      let comma = line.indexOf(',', lastMatch);
+      const comma = line.indexOf(',', lastMatch);
       if (comma == -1) {
         entry[i] = line.substr(lastMatch).trim();
         return i;
@@ -243,7 +243,7 @@ export class TextureAtlasPage {
     this.texture = texture;
     texture.setFilters(this.minFilter, this.magFilter);
     texture.setWraps(this.uWrap, this.vWrap);
-    for (let region of this.regions) region.texture = texture;
+    for (const region of this.regions) region.texture = texture;
   }
 }
 

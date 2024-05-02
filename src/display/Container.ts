@@ -77,11 +77,11 @@ export class Container<A extends Application = Application> extends _Container i
    */
   public added() {}
 
-  destroy() {
+  destroy(options?: DestroyOptions): void {
     if (this.__config.autoUpdate) {
       this.app.ticker.remove(this.update, this);
     }
-    super.destroy();
+    super.destroy(options);
   }
 
   public removed() {}

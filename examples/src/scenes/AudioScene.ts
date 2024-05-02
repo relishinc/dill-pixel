@@ -26,8 +26,9 @@ export class AudioScene extends BaseScene {
     await super.initialize();
     this.app.audio.masterVolume = this.config.master;
     this.app.audio.muted = this.config.muted;
-    this.app.audio.channels.get('music').volume = this.config.music;
-    this.app.audio.channels.get('sfx').volume = this.config.sfx;
+
+    this.app.audio.music.volume = this.config.music;
+    this.app.audio.sfx.volume = this.config.sfx;
 
     this.buttonContainer = this.add.container();
     this.app.focus.addFocusLayer(this.id);

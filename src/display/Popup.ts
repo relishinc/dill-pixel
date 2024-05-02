@@ -1,4 +1,4 @@
-import { ColorSource, Graphics, Sprite, Texture } from 'pixi.js';
+import { ColorSource, Graphics, IDestroyOptions, Sprite, Texture } from 'pixi.js';
 import { Application } from '../core/Application';
 import { IFocusable } from '../plugins/focus/FocusManager';
 import { Size } from '../utils/types';
@@ -123,6 +123,11 @@ export class Popup<T = any> extends Container implements IPopup<T> {
 
   public beforeHide() {
     this.app.focus.removeFocusLayer(this.id);
+  }
+
+  destroy(options?: boolean | IDestroyOptions): void {
+    this.app.focus.removeFocusLayer(this.id);
+    super.destroy(options);
   }
 
   /**

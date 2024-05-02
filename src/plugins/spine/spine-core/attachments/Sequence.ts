@@ -51,7 +51,7 @@ export class Sequence {
   }
 
   copy(): Sequence {
-    let copy = new Sequence(this.regions.length);
+    const copy = new Sequence(this.regions.length);
     Utils.arrayCopy(this.regions, 0, copy.regions, 0, this.regions.length);
     copy.start = this.start;
     copy.digits = this.digits;
@@ -63,7 +63,7 @@ export class Sequence {
     let index = slot.sequenceIndex;
     if (index == -1) index = this.setupIndex;
     if (index >= this.regions.length) index = this.regions.length - 1;
-    let region = this.regions[index];
+    const region = this.regions[index];
     if (attachment.region != region) {
       attachment.region = region;
       attachment.updateRegion();
@@ -72,7 +72,7 @@ export class Sequence {
 
   getPath(basePath: string, index: number): string {
     let result = basePath;
-    let frame = (this.start + index).toString();
+    const frame = (this.start + index).toString();
     for (let i = this.digits - frame.length; i > 0; i--) result += '0';
     result += frame;
     return result;

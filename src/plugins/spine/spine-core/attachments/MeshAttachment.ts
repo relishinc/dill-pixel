@@ -76,18 +76,18 @@ export class MeshAttachment extends VertexAttachment implements HasTextureRegion
    * the {@link #regionUVs} are changed. */
   updateRegion() {
     if (!this.region) throw new Error('Region not set.');
-    let regionUVs = this.regionUVs;
+    const regionUVs = this.regionUVs;
     if (!this.uvs || this.uvs.length != regionUVs.length) this.uvs = Utils.newFloatArray(regionUVs.length);
-    let uvs = this.uvs;
-    let n = this.uvs.length;
+    const uvs = this.uvs;
+    const n = this.uvs.length;
     let u = this.region.u,
       v = this.region.v,
       width = 0,
       height = 0;
     if (this.region instanceof TextureAtlasRegion) {
-      let region = this.region,
+      const region = this.region,
         image = region.page!.texture!.getImage();
-      let textureWidth = image.width,
+      const textureWidth = image.width,
         textureHeight = image.height;
       switch (region.degrees) {
         case 90:
@@ -142,7 +142,7 @@ export class MeshAttachment extends VertexAttachment implements HasTextureRegion
   copy(): Attachment {
     if (this.parentMesh) return this.newLinkedMesh();
 
-    let copy = new MeshAttachment(this.name, this.path);
+    const copy = new MeshAttachment(this.name, this.path);
     copy.region = this.region;
     copy.color.setFromColor(this.color);
 
@@ -203,7 +203,7 @@ export class MeshAttachment extends VertexAttachment implements HasTextureRegion
 
   /** Returns a new mesh with the {@link #parentMesh} set to this mesh's parent mesh, if any, else to this mesh. **/
   newLinkedMesh(): MeshAttachment {
-    let copy = new MeshAttachment(this.name, this.path);
+    const copy = new MeshAttachment(this.name, this.path);
     copy.region = this.region;
     copy.color.setFromColor(this.color);
     copy.timelineAttachment = this.timelineAttachment;

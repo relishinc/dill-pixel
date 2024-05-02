@@ -1,12 +1,13 @@
-import { Container, delay } from 'dill-pixel';
-import { Ticker } from 'pixi.js';
-import { Collision, TowerFallPhysicsPlugin } from '../../../src/plugins/physics/towerfall';
 import { Camera, CameraController } from '../entities/Camera.ts';
-import { Door } from '../entities/physics/Door.ts';
+import { Collision, TowerFallPhysicsPlugin } from '../../../src/plugins/physics/towerfall';
+import { Container, delay } from '@relish-studios/dill-pixel';
 import { Platform, PlatformMovementConfigOpts } from '../entities/physics/Platform.ts';
+
+import { BaseScene } from './BaseScene';
+import { Door } from '../entities/physics/Door.ts';
 import { Player } from '../entities/physics/Player.ts';
 import { Portal } from '../entities/physics/Portal.ts';
-import { BaseScene } from './BaseScene';
+import { Ticker } from 'pixi.js';
 
 export class TowerFallPhysicsScene extends BaseScene {
   protected readonly title = 'TowerFall Physics';

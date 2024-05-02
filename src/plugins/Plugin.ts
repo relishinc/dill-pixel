@@ -1,6 +1,6 @@
 import { Application, IApplication } from '../core/Application';
 import { MethodBindingRoot } from '../core/decorators';
-import { SignalConnection, SignalConnections } from '../signals/Signal';
+import { SignalConnection, SignalConnections } from '../signals';
 import { bindAllMethods } from '../utils/methodBinding';
 
 export interface IPlugin {
@@ -8,9 +8,9 @@ export interface IPlugin {
 
   app: IApplication;
 
-  initialize(app: IApplication, options?: any): Promise<void> | void;
+  initialize(_app: IApplication, options?: any): Promise<void> | void;
 
-  postInitialize(app: IApplication): Promise<void> | void;
+  postInitialize(_app: IApplication): Promise<void> | void;
 
   destroy(): void;
 
@@ -34,13 +34,15 @@ export class Plugin<T extends Application = Application> implements IPlugin {
     this._signalConnections.disconnectAll();
   }
 
-  public initialize(app: IApplication, options?: any): Promise<void> | void;
-  public async initialize(app: IApplication, options?: any): Promise<void> {
+  public initialize(_app: IApplication, options?: any): Promise<void> | void;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public async initialize(_app: IApplication, _options?: any): Promise<void> {
     return Promise.resolve(undefined);
   }
 
-  public postInitialize(app: IApplication): Promise<void> | void;
-  public async postInitialize(app: IApplication): Promise<void> {
+  public postInitialize(_app: IApplication): Promise<void> | void;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public async postInitialize(_app: IApplication): Promise<void> {
     return Promise.resolve(undefined);
   }
 

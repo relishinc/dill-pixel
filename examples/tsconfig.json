@@ -4,12 +4,8 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "dill-pixel/*": [
-        "../src/*"
-      ]
+      "@/*": ["src/*"],
+      "@relish-studios/dill-pixel/*": ["../src/*"]
     },
     "composite": true
   },
@@ -18,7 +14,5 @@
       "path": ".."
     }
   ],
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }

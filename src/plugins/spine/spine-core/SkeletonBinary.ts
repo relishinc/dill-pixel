@@ -95,15 +95,15 @@ export class SkeletonBinary {
   }
 
   readSkeletonData(binary: Uint8Array): SkeletonData {
-    let scale = this.scale;
+    const scale = this.scale;
 
-    let skeletonData = new SkeletonData();
+    const skeletonData = new SkeletonData();
     skeletonData.name = ''; // BOZO
 
-    let input = new BinaryInput(binary);
+    const input = new BinaryInput(binary);
 
-    let lowHash = input.readInt32();
-    let highHash = input.readInt32();
+    const lowHash = input.readInt32();
+    const highHash = input.readInt32();
     skeletonData.hash = highHash == 0 && lowHash == 0 ? null : highHash.toString(16) + lowHash.toString(16);
     skeletonData.version = input.readString();
     skeletonData.x = input.readFloat();
@@ -111,7 +111,7 @@ export class SkeletonBinary {
     skeletonData.width = input.readFloat();
     skeletonData.height = input.readFloat();
 
-    let nonessential = input.readBoolean();
+    const nonessential = input.readBoolean();
     if (nonessential) {
       skeletonData.fps = input.readFloat();
 
@@ -123,7 +123,7 @@ export class SkeletonBinary {
     // Strings.
     n = input.readInt(true);
     for (let i = 0; i < n; i++) {
-      let str = input.readString();
+      const str = input.readString();
       if (!str) throw new Error('String in string table must not be null.');
       input.strings.push(str);
     }
@@ -131,10 +131,10 @@ export class SkeletonBinary {
     // Bones.
     n = input.readInt(true);
     for (let i = 0; i < n; i++) {
-      let name = input.readString();
+      const name = input.readString();
       if (!name) throw new Error('Bone name must not be null.');
-      let parent = i == 0 ? null : skeletonData.bones[input.readInt(true)];
-      let data = new BoneData(i, name, parent);
+      const parent = i == 0 ? null : skeletonData.bones[input.readInt(true)];
+      const data = new BoneData(i, name, parent);
       data.rotation = input.readFloat();
       data.x = input.readFloat() * scale;
       data.y = input.readFloat() * scale;
@@ -152,13 +152,13 @@ export class SkeletonBinary {
     // Slots.
     n = input.readInt(true);
     for (let i = 0; i < n; i++) {
-      let slotName = input.readString();
+      const slotName = input.readString();
       if (!slotName) throw new Error('Slot name must not be null.');
-      let boneData = skeletonData.bones[input.readInt(true)];
-      let data = new SlotData(i, slotName, boneData);
+      const boneData = skeletonData.bones[input.readInt(true)];
+      const data = new SlotData(i, slotName, boneData);
       Color.rgba8888ToColor(data.color, input.readInt32());
 
-      let darkColor = input.readInt32();
+      const darkColor = input.readInt32();
       if (darkColor != -1) Color.rgb888ToColor((data.darkColor = new Color()), darkColor);
 
       data.attachmentName = input.readStringRef();
@@ -169,9 +169,9 @@ export class SkeletonBinary {
     // IK constraints.
     n = input.readInt(true);
     for (let i = 0, nn; i < n; i++) {
-      let name = input.readString();
+      const name = input.readString();
       if (!name) throw new Error('IK constraint data name must not be null.');
-      let data = new IkConstraintData(name);
+      const data = new IkConstraintData(name);
       data.order = input.readInt(true);
       data.skinRequired = input.readBoolean();
       nn = input.readInt(true);
@@ -189,9 +189,9 @@ export class SkeletonBinary {
     // Transform constraints.
     n = input.readInt(true);
     for (let i = 0, nn; i < n; i++) {
-      let name = input.readString();
+      const name = input.readString();
       if (!name) throw new Error('Transform constraint data name must not be null.');
-      let data = new TransformConstraintData(name);
+      const data = new TransformConstraintData(name);
       data.order = input.readInt(true);
       data.skinRequired = input.readBoolean();
       nn = input.readInt(true);
@@ -217,9 +217,9 @@ export class SkeletonBinary {
     // Path constraints.
     n = input.readInt(true);
     for (let i = 0, nn; i < n; i++) {
-      let name = input.readString();
+      const name = input.readString();
       if (!name) throw new Error('Path constraint data name must not be null.');
-      let data = new PathConstraintData(name);
+      const data = new PathConstraintData(name);
       data.order = input.readInt(true);
       data.skinRequired = input.readBoolean();
       nn = input.readInt(true);
@@ -240,7 +240,7 @@ export class SkeletonBinary {
     }
 
     // Default skin.
-    let defaultSkin = this.readSkin(input, skeletonData, true, nonessential);
+    const defaultSkin = this.readSkin(input, skeletonData, true, nonessential);
     if (defaultSkin) {
       skeletonData.defaultSkin = defaultSkin;
       skeletonData.skins.push(defaultSkin);
@@ -251,7 +251,7 @@ export class SkeletonBinary {
       let i = skeletonData.skins.length;
       Utils.setArraySize(skeletonData.skins, (n = i + input.readInt(true)));
       for (; i < n; i++) {
-        let skin = this.readSkin(input, skeletonData, false, nonessential);
+        const skin = this.readSkin(input, skeletonData, false, nonessential);
         if (!skin) throw new Error('readSkin() should not have returned null.');
         skeletonData.skins[i] = skin;
       }
@@ -260,11 +260,11 @@ export class SkeletonBinary {
     // Linked meshes.
     n = this.linkedMeshes.length;
     for (let i = 0; i < n; i++) {
-      let linkedMesh = this.linkedMeshes[i];
-      let skin = !linkedMesh.skin ? skeletonData.defaultSkin : skeletonData.findSkin(linkedMesh.skin);
+      const linkedMesh = this.linkedMeshes[i];
+      const skin = !linkedMesh.skin ? skeletonData.defaultSkin : skeletonData.findSkin(linkedMesh.skin);
       if (!skin) throw new Error('Not skin found for linked mesh.');
       if (!linkedMesh.parent) throw new Error('Linked mesh parent must not be null');
-      let parent = skin.getAttachment(linkedMesh.slotIndex, linkedMesh.parent);
+      const parent = skin.getAttachment(linkedMesh.slotIndex, linkedMesh.parent);
       if (!parent) throw new Error(`Parent mesh not found: ${linkedMesh.parent}`);
       linkedMesh.mesh.timelineAttachment = linkedMesh.inheritTimeline ? (parent as VertexAttachment) : linkedMesh.mesh;
       linkedMesh.mesh.setParentMesh(parent as MeshAttachment);
@@ -275,9 +275,9 @@ export class SkeletonBinary {
     // Events.
     n = input.readInt(true);
     for (let i = 0; i < n; i++) {
-      let eventName = input.readStringRef();
+      const eventName = input.readStringRef();
       if (!eventName) throw new Error();
-      let data = new EventData(eventName);
+      const data = new EventData(eventName);
       data.intValue = input.readInt(false);
       data.floatValue = input.readFloat();
       data.stringValue = input.readString();
@@ -292,7 +292,7 @@ export class SkeletonBinary {
     // Animations.
     n = input.readInt(true);
     for (let i = 0; i < n; i++) {
-      let animationName = input.readString();
+      const animationName = input.readString();
       if (!animationName) throw new Error('Animatio name must not be null.');
       skeletonData.animations.push(this.readAnimation(input, animationName, skeletonData));
     }
@@ -313,7 +313,7 @@ export class SkeletonBinary {
       if (slotCount == 0) return null;
       skin = new Skin('default');
     } else {
-      let skinName = input.readStringRef();
+      const skinName = input.readStringRef();
       if (!skinName) throw new Error('Skin name must not be null.');
       skin = new Skin(skinName);
       skin.bones.length = input.readInt(true);
@@ -330,11 +330,11 @@ export class SkeletonBinary {
     }
 
     for (let i = 0; i < slotCount; i++) {
-      let slotIndex = input.readInt(true);
+      const slotIndex = input.readInt(true);
       for (let ii = 0, nn = input.readInt(true); ii < nn; ii++) {
-        let name = input.readStringRef();
+        const name = input.readStringRef();
         if (!name) throw new Error('Attachment name must not be null');
-        let attachment = this.readAttachment(input, skeletonData, skin, slotIndex, name, nonessential);
+        const attachment = this.readAttachment(input, skeletonData, skin, slotIndex, name, nonessential);
         if (attachment) skin.setAttachment(slotIndex, name, attachment);
       }
     }
@@ -349,7 +349,7 @@ export class SkeletonBinary {
     attachmentName: string,
     nonessential: boolean,
   ): Attachment | null {
-    let scale = this.scale;
+    const scale = this.scale;
 
     let name = input.readStringRef();
     if (!name) name = attachmentName;
@@ -357,18 +357,18 @@ export class SkeletonBinary {
     switch (input.readByte()) {
       case AttachmentType.Region: {
         let path = input.readStringRef();
-        let rotation = input.readFloat();
-        let x = input.readFloat();
-        let y = input.readFloat();
-        let scaleX = input.readFloat();
-        let scaleY = input.readFloat();
-        let width = input.readFloat();
-        let height = input.readFloat();
-        let color = input.readInt32();
-        let sequence = this.readSequence(input);
+        const rotation = input.readFloat();
+        const x = input.readFloat();
+        const y = input.readFloat();
+        const scaleX = input.readFloat();
+        const scaleY = input.readFloat();
+        const width = input.readFloat();
+        const height = input.readFloat();
+        const color = input.readInt32();
+        const sequence = this.readSequence(input);
 
         if (!path) path = name;
-        let region = this.attachmentLoader.newRegionAttachment(skin, name, path, sequence);
+        const region = this.attachmentLoader.newRegionAttachment(skin, name, path, sequence);
         if (!region) return null;
         region.path = path;
         region.x = x * scale;
@@ -384,11 +384,11 @@ export class SkeletonBinary {
         return region;
       }
       case AttachmentType.BoundingBox: {
-        let vertexCount = input.readInt(true);
-        let vertices = this.readVertices(input, vertexCount);
-        let color = nonessential ? input.readInt32() : 0;
+        const vertexCount = input.readInt(true);
+        const vertices = this.readVertices(input, vertexCount);
+        const color = nonessential ? input.readInt32() : 0;
 
-        let box = this.attachmentLoader.newBoundingBoxAttachment(skin, name);
+        const box = this.attachmentLoader.newBoundingBoxAttachment(skin, name);
         if (!box) return null;
         box.worldVerticesLength = vertexCount << 1;
         box.vertices = vertices.vertices!;
@@ -398,13 +398,13 @@ export class SkeletonBinary {
       }
       case AttachmentType.Mesh: {
         let path = input.readStringRef();
-        let color = input.readInt32();
-        let vertexCount = input.readInt(true);
-        let uvs = this.readFloatArray(input, vertexCount << 1, 1);
-        let triangles = this.readShortArray(input);
-        let vertices = this.readVertices(input, vertexCount);
-        let hullLength = input.readInt(true);
-        let sequence = this.readSequence(input);
+        const color = input.readInt32();
+        const vertexCount = input.readInt(true);
+        const uvs = this.readFloatArray(input, vertexCount << 1, 1);
+        const triangles = this.readShortArray(input);
+        const vertices = this.readVertices(input, vertexCount);
+        const hullLength = input.readInt(true);
+        const sequence = this.readSequence(input);
         let edges: number[] = [];
         let width = 0,
           height = 0;
@@ -415,7 +415,7 @@ export class SkeletonBinary {
         }
 
         if (!path) path = name;
-        let mesh = this.attachmentLoader.newMeshAttachment(skin, name, path, sequence);
+        const mesh = this.attachmentLoader.newMeshAttachment(skin, name, path, sequence);
         if (!mesh) return null;
         mesh.path = path;
         Color.rgba8888ToColor(mesh.color, color);
@@ -436,11 +436,11 @@ export class SkeletonBinary {
       }
       case AttachmentType.LinkedMesh: {
         let path = input.readStringRef();
-        let color = input.readInt32();
-        let skinName = input.readStringRef();
-        let parent = input.readStringRef();
-        let inheritTimelines = input.readBoolean();
-        let sequence = this.readSequence(input);
+        const color = input.readInt32();
+        const skinName = input.readStringRef();
+        const parent = input.readStringRef();
+        const inheritTimelines = input.readBoolean();
+        const sequence = this.readSequence(input);
         let width = 0,
           height = 0;
         if (nonessential) {
@@ -449,7 +449,7 @@ export class SkeletonBinary {
         }
 
         if (!path) path = name;
-        let mesh = this.attachmentLoader.newMeshAttachment(skin, name, path, sequence);
+        const mesh = this.attachmentLoader.newMeshAttachment(skin, name, path, sequence);
         if (!mesh) return null;
         mesh.path = path;
         Color.rgba8888ToColor(mesh.color, color);
@@ -462,15 +462,15 @@ export class SkeletonBinary {
         return mesh;
       }
       case AttachmentType.Path: {
-        let closed = input.readBoolean();
-        let constantSpeed = input.readBoolean();
-        let vertexCount = input.readInt(true);
-        let vertices = this.readVertices(input, vertexCount);
-        let lengths = Utils.newArray(vertexCount / 3, 0);
+        const closed = input.readBoolean();
+        const constantSpeed = input.readBoolean();
+        const vertexCount = input.readInt(true);
+        const vertices = this.readVertices(input, vertexCount);
+        const lengths = Utils.newArray(vertexCount / 3, 0);
         for (let i = 0, n = lengths.length; i < n; i++) lengths[i] = input.readFloat() * scale;
-        let color = nonessential ? input.readInt32() : 0;
+        const color = nonessential ? input.readInt32() : 0;
 
-        let path = this.attachmentLoader.newPathAttachment(skin, name);
+        const path = this.attachmentLoader.newPathAttachment(skin, name);
         if (!path) return null;
         path.closed = closed;
         path.constantSpeed = constantSpeed;
@@ -482,12 +482,12 @@ export class SkeletonBinary {
         return path;
       }
       case AttachmentType.Point: {
-        let rotation = input.readFloat();
-        let x = input.readFloat();
-        let y = input.readFloat();
-        let color = nonessential ? input.readInt32() : 0;
+        const rotation = input.readFloat();
+        const x = input.readFloat();
+        const y = input.readFloat();
+        const color = nonessential ? input.readInt32() : 0;
 
-        let point = this.attachmentLoader.newPointAttachment(skin, name);
+        const point = this.attachmentLoader.newPointAttachment(skin, name);
         if (!point) return null;
         point.x = x * scale;
         point.y = y * scale;
@@ -496,12 +496,12 @@ export class SkeletonBinary {
         return point;
       }
       case AttachmentType.Clipping: {
-        let endSlotIndex = input.readInt(true);
-        let vertexCount = input.readInt(true);
-        let vertices = this.readVertices(input, vertexCount);
-        let color = nonessential ? input.readInt32() : 0;
+        const endSlotIndex = input.readInt(true);
+        const vertexCount = input.readInt(true);
+        const vertices = this.readVertices(input, vertexCount);
+        const color = nonessential ? input.readInt32() : 0;
 
-        let clip = this.attachmentLoader.newClippingAttachment(skin, name);
+        const clip = this.attachmentLoader.newClippingAttachment(skin, name);
         if (!clip) return null;
         clip.endSlot = skeletonData.slots[endSlotIndex];
         clip.worldVerticesLength = vertexCount << 1;
@@ -516,7 +516,7 @@ export class SkeletonBinary {
 
   private readSequence(input: BinaryInput) {
     if (!input.readBoolean()) return null;
-    let sequence = new Sequence(input.readInt(true));
+    const sequence = new Sequence(input.readInt(true));
     sequence.start = input.readInt(true);
     sequence.digits = input.readInt(true);
     sequence.setupIndex = input.readInt(true);
@@ -524,17 +524,17 @@ export class SkeletonBinary {
   }
 
   private readVertices(input: BinaryInput, vertexCount: number): Vertices {
-    let scale = this.scale;
-    let verticesLength = vertexCount << 1;
-    let vertices = new Vertices();
+    const scale = this.scale;
+    const verticesLength = vertexCount << 1;
+    const vertices = new Vertices();
     if (!input.readBoolean()) {
       vertices.vertices = this.readFloatArray(input, verticesLength, scale);
       return vertices;
     }
-    let weights = new Array<number>();
-    let bonesArray = new Array<number>();
+    const weights = new Array<number>();
+    const bonesArray = new Array<number>();
     for (let i = 0; i < vertexCount; i++) {
-      let boneCount = input.readInt(true);
+      const boneCount = input.readInt(true);
       bonesArray.push(boneCount);
       for (let ii = 0; ii < boneCount; ii++) {
         bonesArray.push(input.readInt(true));
@@ -549,7 +549,7 @@ export class SkeletonBinary {
   }
 
   private readFloatArray(input: BinaryInput, n: number, scale: number): number[] {
-    let array = new Array<number>(n);
+    const array = new Array<number>(n);
     if (scale == 1) {
       for (let i = 0; i < n; i++) array[i] = input.readFloat();
     } else {
@@ -559,37 +559,37 @@ export class SkeletonBinary {
   }
 
   private readShortArray(input: BinaryInput): number[] {
-    let n = input.readInt(true);
-    let array = new Array<number>(n);
+    const n = input.readInt(true);
+    const array = new Array<number>(n);
     for (let i = 0; i < n; i++) array[i] = input.readShort();
     return array;
   }
 
   private readAnimation(input: BinaryInput, name: string, skeletonData: SkeletonData): Animation {
     input.readInt(true); // Number of timelines.
-    let timelines = new Array<Timeline>();
-    let scale = this.scale;
-    let tempColor1 = new Color();
-    let tempColor2 = new Color();
+    const timelines = new Array<Timeline>();
+    const scale = this.scale;
+    const tempColor1 = new Color();
+    const tempColor2 = new Color();
 
     // Slot timelines.
     for (let i = 0, n = input.readInt(true); i < n; i++) {
-      let slotIndex = input.readInt(true);
+      const slotIndex = input.readInt(true);
       for (let ii = 0, nn = input.readInt(true); ii < nn; ii++) {
-        let timelineType = input.readByte();
-        let frameCount = input.readInt(true);
-        let frameLast = frameCount - 1;
+        const timelineType = input.readByte();
+        const frameCount = input.readInt(true);
+        const frameLast = frameCount - 1;
         switch (timelineType) {
           case SLOT_ATTACHMENT: {
-            let timeline = new AttachmentTimeline(frameCount, slotIndex);
+            const timeline = new AttachmentTimeline(frameCount, slotIndex);
             for (let frame = 0; frame < frameCount; frame++)
               timeline.setFrame(frame, input.readFloat(), input.readStringRef());
             timelines.push(timeline);
             break;
           }
           case SLOT_RGBA: {
-            let bezierCount = input.readInt(true);
-            let timeline = new RGBATimeline(frameCount, bezierCount, slotIndex);
+            const bezierCount = input.readInt(true);
+            const timeline = new RGBATimeline(frameCount, bezierCount, slotIndex);
 
             let time = input.readFloat();
             let r = input.readUnsignedByte() / 255.0;
@@ -601,11 +601,11 @@ export class SkeletonBinary {
               timeline.setFrame(frame, time, r, g, b, a);
               if (frame == frameLast) break;
 
-              let time2 = input.readFloat();
-              let r2 = input.readUnsignedByte() / 255.0;
-              let g2 = input.readUnsignedByte() / 255.0;
-              let b2 = input.readUnsignedByte() / 255.0;
-              let a2 = input.readUnsignedByte() / 255.0;
+              const time2 = input.readFloat();
+              const r2 = input.readUnsignedByte() / 255.0;
+              const g2 = input.readUnsignedByte() / 255.0;
+              const b2 = input.readUnsignedByte() / 255.0;
+              const a2 = input.readUnsignedByte() / 255.0;
 
               switch (input.readByte()) {
                 case CURVE_STEPPED:
@@ -627,8 +627,8 @@ export class SkeletonBinary {
             break;
           }
           case SLOT_RGB: {
-            let bezierCount = input.readInt(true);
-            let timeline = new RGBTimeline(frameCount, bezierCount, slotIndex);
+            const bezierCount = input.readInt(true);
+            const timeline = new RGBTimeline(frameCount, bezierCount, slotIndex);
 
             let time = input.readFloat();
             let r = input.readUnsignedByte() / 255.0;
@@ -639,10 +639,10 @@ export class SkeletonBinary {
               timeline.setFrame(frame, time, r, g, b);
               if (frame == frameLast) break;
 
-              let time2 = input.readFloat();
-              let r2 = input.readUnsignedByte() / 255.0;
-              let g2 = input.readUnsignedByte() / 255.0;
-              let b2 = input.readUnsignedByte() / 255.0;
+              const time2 = input.readFloat();
+              const r2 = input.readUnsignedByte() / 255.0;
+              const g2 = input.readUnsignedByte() / 255.0;
+              const b2 = input.readUnsignedByte() / 255.0;
 
               switch (input.readByte()) {
                 case CURVE_STEPPED:
@@ -662,8 +662,8 @@ export class SkeletonBinary {
             break;
           }
           case SLOT_RGBA2: {
-            let bezierCount = input.readInt(true);
-            let timeline = new RGBA2Timeline(frameCount, bezierCount, slotIndex);
+            const bezierCount = input.readInt(true);
+            const timeline = new RGBA2Timeline(frameCount, bezierCount, slotIndex);
 
             let time = input.readFloat();
             let r = input.readUnsignedByte() / 255.0;
@@ -677,14 +677,14 @@ export class SkeletonBinary {
             for (let frame = 0, bezier = 0; ; frame++) {
               timeline.setFrame(frame, time, r, g, b, a, r2, g2, b2);
               if (frame == frameLast) break;
-              let time2 = input.readFloat();
-              let nr = input.readUnsignedByte() / 255.0;
-              let ng = input.readUnsignedByte() / 255.0;
-              let nb = input.readUnsignedByte() / 255.0;
-              let na = input.readUnsignedByte() / 255.0;
-              let nr2 = input.readUnsignedByte() / 255.0;
-              let ng2 = input.readUnsignedByte() / 255.0;
-              let nb2 = input.readUnsignedByte() / 255.0;
+              const time2 = input.readFloat();
+              const nr = input.readUnsignedByte() / 255.0;
+              const ng = input.readUnsignedByte() / 255.0;
+              const nb = input.readUnsignedByte() / 255.0;
+              const na = input.readUnsignedByte() / 255.0;
+              const nr2 = input.readUnsignedByte() / 255.0;
+              const ng2 = input.readUnsignedByte() / 255.0;
+              const nb2 = input.readUnsignedByte() / 255.0;
 
               switch (input.readByte()) {
                 case CURVE_STEPPED:
@@ -712,8 +712,8 @@ export class SkeletonBinary {
             break;
           }
           case SLOT_RGB2: {
-            let bezierCount = input.readInt(true);
-            let timeline = new RGB2Timeline(frameCount, bezierCount, slotIndex);
+            const bezierCount = input.readInt(true);
+            const timeline = new RGB2Timeline(frameCount, bezierCount, slotIndex);
 
             let time = input.readFloat();
             let r = input.readUnsignedByte() / 255.0;
@@ -726,13 +726,13 @@ export class SkeletonBinary {
             for (let frame = 0, bezier = 0; ; frame++) {
               timeline.setFrame(frame, time, r, g, b, r2, g2, b2);
               if (frame == frameLast) break;
-              let time2 = input.readFloat();
-              let nr = input.readUnsignedByte() / 255.0;
-              let ng = input.readUnsignedByte() / 255.0;
-              let nb = input.readUnsignedByte() / 255.0;
-              let nr2 = input.readUnsignedByte() / 255.0;
-              let ng2 = input.readUnsignedByte() / 255.0;
-              let nb2 = input.readUnsignedByte() / 255.0;
+              const time2 = input.readFloat();
+              const nr = input.readUnsignedByte() / 255.0;
+              const ng = input.readUnsignedByte() / 255.0;
+              const nb = input.readUnsignedByte() / 255.0;
+              const nr2 = input.readUnsignedByte() / 255.0;
+              const ng2 = input.readUnsignedByte() / 255.0;
+              const nb2 = input.readUnsignedByte() / 255.0;
 
               switch (input.readByte()) {
                 case CURVE_STEPPED:
@@ -758,14 +758,14 @@ export class SkeletonBinary {
             break;
           }
           case SLOT_ALPHA: {
-            let timeline = new AlphaTimeline(frameCount, input.readInt(true), slotIndex);
+            const timeline = new AlphaTimeline(frameCount, input.readInt(true), slotIndex);
             let time = input.readFloat(),
               a = input.readUnsignedByte() / 255;
             for (let frame = 0, bezier = 0; ; frame++) {
               timeline.setFrame(frame, time, a);
               if (frame == frameLast) break;
-              let time2 = input.readFloat();
-              let a2 = input.readUnsignedByte() / 255;
+              const time2 = input.readFloat();
+              const a2 = input.readUnsignedByte() / 255;
               switch (input.readByte()) {
                 case CURVE_STEPPED:
                   timeline.setStepped(frame);
@@ -784,9 +784,9 @@ export class SkeletonBinary {
 
     // Bone timelines.
     for (let i = 0, n = input.readInt(true); i < n; i++) {
-      let boneIndex = input.readInt(true);
+      const boneIndex = input.readInt(true);
       for (let ii = 0, nn = input.readInt(true); ii < nn; ii++) {
-        let type = input.readByte(),
+        const type = input.readByte(),
           frameCount = input.readInt(true),
           bezierCount = input.readInt(true);
         switch (type) {
@@ -825,17 +825,17 @@ export class SkeletonBinary {
 
     // IK constraint timelines.
     for (let i = 0, n = input.readInt(true); i < n; i++) {
-      let index = input.readInt(true),
+      const index = input.readInt(true),
         frameCount = input.readInt(true),
         frameLast = frameCount - 1;
-      let timeline = new IkConstraintTimeline(frameCount, input.readInt(true), index);
+      const timeline = new IkConstraintTimeline(frameCount, input.readInt(true), index);
       let time = input.readFloat(),
         mix = input.readFloat(),
         softness = input.readFloat() * scale;
       for (let frame = 0, bezier = 0; ; frame++) {
         timeline.setFrame(frame, time, mix, softness, input.readByte(), input.readBoolean(), input.readBoolean());
         if (frame == frameLast) break;
-        let time2 = input.readFloat(),
+        const time2 = input.readFloat(),
           mix2 = input.readFloat(),
           softness2 = input.readFloat() * scale;
         switch (input.readByte()) {
@@ -855,10 +855,10 @@ export class SkeletonBinary {
 
     // Transform constraint timelines.
     for (let i = 0, n = input.readInt(true); i < n; i++) {
-      let index = input.readInt(true),
+      const index = input.readInt(true),
         frameCount = input.readInt(true),
         frameLast = frameCount - 1;
-      let timeline = new TransformConstraintTimeline(frameCount, input.readInt(true), index);
+      const timeline = new TransformConstraintTimeline(frameCount, input.readInt(true), index);
       let time = input.readFloat(),
         mixRotate = input.readFloat(),
         mixX = input.readFloat(),
@@ -869,7 +869,7 @@ export class SkeletonBinary {
       for (let frame = 0, bezier = 0; ; frame++) {
         timeline.setFrame(frame, time, mixRotate, mixX, mixY, mixScaleX, mixScaleY, mixShearY);
         if (frame == frameLast) break;
-        let time2 = input.readFloat(),
+        const time2 = input.readFloat(),
           mixRotate2 = input.readFloat(),
           mixX2 = input.readFloat(),
           mixY2 = input.readFloat(),
@@ -901,8 +901,8 @@ export class SkeletonBinary {
 
     // Path constraint timelines.
     for (let i = 0, n = input.readInt(true); i < n; i++) {
-      let index = input.readInt(true);
-      let data = skeletonData.pathConstraints[index];
+      const index = input.readInt(true);
+      const data = skeletonData.pathConstraints[index];
       for (let ii = 0, nn = input.readInt(true); ii < nn; ii++) {
         switch (input.readByte()) {
           case PATH_POSITION:
@@ -924,7 +924,7 @@ export class SkeletonBinary {
             );
             break;
           case PATH_MIX:
-            let timeline = new PathConstraintMixTimeline(input.readInt(true), input.readInt(true), index);
+            const timeline = new PathConstraintMixTimeline(input.readInt(true), input.readInt(true), index);
             let time = input.readFloat(),
               mixRotate = input.readFloat(),
               mixX = input.readFloat(),
@@ -932,7 +932,7 @@ export class SkeletonBinary {
             for (let frame = 0, bezier = 0, frameLast = timeline.getFrameCount() - 1; ; frame++) {
               timeline.setFrame(frame, time, mixRotate, mixX, mixY);
               if (frame == frameLast) break;
-              let time2 = input.readFloat(),
+              const time2 = input.readFloat(),
                 mixRotate2 = input.readFloat(),
                 mixX2 = input.readFloat(),
                 mixY2 = input.readFloat();
@@ -957,26 +957,26 @@ export class SkeletonBinary {
 
     // Deform timelines.
     for (let i = 0, n = input.readInt(true); i < n; i++) {
-      let skin = skeletonData.skins[input.readInt(true)];
+      const skin = skeletonData.skins[input.readInt(true)];
       for (let ii = 0, nn = input.readInt(true); ii < nn; ii++) {
-        let slotIndex = input.readInt(true);
+        const slotIndex = input.readInt(true);
         for (let iii = 0, nnn = input.readInt(true); iii < nnn; iii++) {
-          let attachmentName = input.readStringRef();
+          const attachmentName = input.readStringRef();
           if (!attachmentName) throw new Error('attachmentName must not be null.');
-          let attachment = skin.getAttachment(slotIndex, attachmentName);
-          let timelineType = input.readByte();
-          let frameCount = input.readInt(true);
-          let frameLast = frameCount - 1;
+          const attachment = skin.getAttachment(slotIndex, attachmentName);
+          const timelineType = input.readByte();
+          const frameCount = input.readInt(true);
+          const frameLast = frameCount - 1;
 
           switch (timelineType) {
             case ATTACHMENT_DEFORM: {
-              let vertexAttachment = attachment as VertexAttachment;
-              let weighted = vertexAttachment.bones;
-              let vertices = vertexAttachment.vertices;
-              let deformLength = weighted ? (vertices.length / 3) * 2 : vertices.length;
+              const vertexAttachment = attachment as VertexAttachment;
+              const weighted = vertexAttachment.bones;
+              const vertices = vertexAttachment.vertices;
+              const deformLength = weighted ? (vertices.length / 3) * 2 : vertices.length;
 
-              let bezierCount = input.readInt(true);
-              let timeline = new DeformTimeline(frameCount, bezierCount, slotIndex, vertexAttachment);
+              const bezierCount = input.readInt(true);
+              const timeline = new DeformTimeline(frameCount, bezierCount, slotIndex, vertexAttachment);
 
               let time = input.readFloat();
               for (let frame = 0, bezier = 0; ; frame++) {
@@ -985,7 +985,7 @@ export class SkeletonBinary {
                 if (end == 0) deform = weighted ? Utils.newFloatArray(deformLength) : vertices;
                 else {
                   deform = Utils.newFloatArray(deformLength);
-                  let start = input.readInt(true);
+                  const start = input.readInt(true);
                   end += start;
                   if (scale == 1) {
                     for (let v = start; v < end; v++) deform[v] = input.readFloat();
@@ -999,7 +999,7 @@ export class SkeletonBinary {
 
                 timeline.setFrame(frame, time, deform);
                 if (frame == frameLast) break;
-                let time2 = input.readFloat();
+                const time2 = input.readFloat();
                 switch (input.readByte()) {
                   case CURVE_STEPPED:
                     timeline.setStepped(frame);
@@ -1013,10 +1013,10 @@ export class SkeletonBinary {
               break;
             }
             case ATTACHMENT_SEQUENCE: {
-              let timeline = new SequenceTimeline(frameCount, slotIndex, attachment as unknown as HasTextureRegion);
+              const timeline = new SequenceTimeline(frameCount, slotIndex, attachment as unknown as HasTextureRegion);
               for (let frame = 0; frame < frameCount; frame++) {
-                let time = input.readFloat();
-                let modeAndIndex = input.readInt32();
+                const time = input.readFloat();
+                const modeAndIndex = input.readInt32();
                 timeline.setFrame(
                   frame,
                   time,
@@ -1034,20 +1034,20 @@ export class SkeletonBinary {
     }
 
     // Draw order timeline.
-    let drawOrderCount = input.readInt(true);
+    const drawOrderCount = input.readInt(true);
     if (drawOrderCount > 0) {
-      let timeline = new DrawOrderTimeline(drawOrderCount);
-      let slotCount = skeletonData.slots.length;
+      const timeline = new DrawOrderTimeline(drawOrderCount);
+      const slotCount = skeletonData.slots.length;
       for (let i = 0; i < drawOrderCount; i++) {
-        let time = input.readFloat();
-        let offsetCount = input.readInt(true);
-        let drawOrder = Utils.newArray(slotCount, 0);
+        const time = input.readFloat();
+        const offsetCount = input.readInt(true);
+        const drawOrder = Utils.newArray(slotCount, 0);
         for (let ii = slotCount - 1; ii >= 0; ii--) drawOrder[ii] = -1;
-        let unchanged = Utils.newArray(slotCount - offsetCount, 0);
+        const unchanged = Utils.newArray(slotCount - offsetCount, 0);
         let originalIndex = 0,
           unchangedIndex = 0;
         for (let ii = 0; ii < offsetCount; ii++) {
-          let slotIndex = input.readInt(true);
+          const slotIndex = input.readInt(true);
           // Collect unchanged items.
           while (originalIndex != slotIndex) unchanged[unchangedIndex++] = originalIndex++;
           // Set changed items.
@@ -1064,13 +1064,13 @@ export class SkeletonBinary {
     }
 
     // Event timeline.
-    let eventCount = input.readInt(true);
+    const eventCount = input.readInt(true);
     if (eventCount > 0) {
-      let timeline = new EventTimeline(eventCount);
+      const timeline = new EventTimeline(eventCount);
       for (let i = 0; i < eventCount; i++) {
-        let time = input.readFloat();
-        let eventData = skeletonData.events[input.readInt(true)];
-        let event = new Event(time, eventData);
+        const time = input.readFloat();
+        const eventData = skeletonData.events[input.readInt(true)];
+        const event = new Event(time, eventData);
         event.intValue = input.readInt(false);
         event.floatValue = input.readFloat();
         event.stringValue = input.readBoolean() ? input.readString() : eventData.stringValue;
@@ -1106,13 +1106,13 @@ export class BinaryInput {
   }
 
   readShort(): number {
-    let value = this.buffer.getInt16(this.index);
+    const value = this.buffer.getInt16(this.index);
     this.index += 2;
     return value;
   }
 
   readInt32(): number {
-    let value = this.buffer.getInt32(this.index);
+    const value = this.buffer.getInt32(this.index);
     this.index += 4;
     return value;
   }
@@ -1140,7 +1140,7 @@ export class BinaryInput {
   }
 
   readStringRef(): string | null {
-    let index = this.readInt(true);
+    const index = this.readInt(true);
     return index == 0 ? null : this.strings[index - 1];
   }
 
@@ -1154,9 +1154,9 @@ export class BinaryInput {
     }
     byteCount--;
     let chars = '';
-    let charCount = 0;
+    const charCount = 0;
     for (let i = 0; i < byteCount; ) {
-      let b = this.readUnsignedByte();
+      const b = this.readUnsignedByte();
       switch (b >> 4) {
         case 12:
         case 13:
@@ -1176,7 +1176,7 @@ export class BinaryInput {
   }
 
   readFloat(): number {
-    let value = this.buffer.getFloat32(this.index);
+    const value = this.buffer.getFloat32(this.index);
     this.index += 4;
     return value;
   }
@@ -1231,7 +1231,7 @@ function readTimeline1(input: BinaryInput, timeline: CurveTimeline1, scale: numb
   for (let frame = 0, bezier = 0, frameLast = timeline.getFrameCount() - 1; ; frame++) {
     timeline.setFrame(frame, time, value);
     if (frame == frameLast) break;
-    let time2 = input.readFloat(),
+    const time2 = input.readFloat(),
       value2 = input.readFloat() * scale;
     switch (input.readByte()) {
       case CURVE_STEPPED:
@@ -1253,7 +1253,7 @@ function readTimeline2(input: BinaryInput, timeline: CurveTimeline2, scale: numb
   for (let frame = 0, bezier = 0, frameLast = timeline.getFrameCount() - 1; ; frame++) {
     timeline.setFrame(frame, time, value1, value2);
     if (frame == frameLast) break;
-    let time2 = input.readFloat(),
+    const time2 = input.readFloat(),
       nvalue1 = input.readFloat() * scale,
       nvalue2 = input.readFloat() * scale;
     switch (input.readByte()) {

@@ -1,6 +1,7 @@
+import { Button, FlexContainer, Logger, PIXIText } from '@relish-studios/dill-pixel';
+
 import { Actor } from '@/entities/Actor';
 import { BaseScene } from '@/scenes/BaseScene';
-import { Button, FlexContainer, Logger, PIXIText } from 'dill-pixel';
 
 export class FocusScene extends BaseScene {
   protected title = 'Focus Management';
@@ -128,13 +129,13 @@ export class FocusScene extends BaseScene {
   async enter() {
     return this.app.scenes.isFirstScene
       ? this.animateFromTo(
-          { alpha: 0 },
-          {
-            alpha: 1,
-            duration: 1,
-            ease: 'sine.out',
-          },
-        )
+        { alpha: 0 },
+        {
+          alpha: 1,
+          duration: 1,
+          ease: 'sine.out',
+        },
+      )
       : this.animateFrom({ y: -1000, duration: 2, ease: 'bounce.out' });
   }
 

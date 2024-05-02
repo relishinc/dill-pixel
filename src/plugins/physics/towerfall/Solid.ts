@@ -1,5 +1,5 @@
-import { Application } from '../../../core/Application';
 import { Actor } from './Actor';
+import { Application } from '../../../core/Application';
 import { Entity } from './Entity';
 import { System } from './System';
 
@@ -67,7 +67,7 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
     return this.getBoundingBox().intersects(entity.getBoundingBox());
   }
 
-  protected handleCollisionChange(isColliding: boolean) {}
+  protected handleCollisionChange(isColliding?: boolean) { }
 
   private handleActorInteractions(deltaX: number, deltaY: number): void {
     // Check for collisions with non-riding actors
@@ -96,8 +96,8 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
           actor.moveY(overlapY, actor.squish);
         }
       } else if (actor.isRiding(this)) {
-        actor.moveX(deltaX, () => {});
-        actor.moveY(deltaY, () => {});
+        actor.moveX(deltaX, () => { });
+        actor.moveY(deltaY, () => { });
       }
     });
   }

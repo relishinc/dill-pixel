@@ -1,9 +1,10 @@
-import { IApplication, IPlugin, Plugin } from 'dill-pixel';
-import { checkExtension, DOMAdapter, extensions, ExtensionType, LoaderParserPriority } from 'pixi.js';
+import { DOMAdapter, ExtensionType, LoaderParserPriority, checkExtension, extensions } from 'pixi.js';
+import { IApplication, IPlugin, Plugin } from '@relish-studios/dill-pixel';
+
 import type { V8Application } from '../V8Application';
 
 export default class TestModule extends Plugin<V8Application> implements IPlugin {
-  public destroy(): void {}
+  public destroy(): void { }
 
   public async initialize(app: IApplication, options?: any): Promise<void> {
     console.log('RiveModule initialized', this.id, app, options);

@@ -1,5 +1,5 @@
 {
-  "name": "dill-pixel",
+  "name": "@relish-studios/dill-pixel",
   "version": "8.0.0",
   "title": "Dill Pixel",
   "description": "Relish framework for HTML games",
@@ -28,6 +28,7 @@
     "visualize:examples": "cd ./examples && npx vite-bundle-visualizer",
     "build:watch": "tsc --watch",
     "lint": "eslint --ext .ts ./src/**/*",
+    "lint:fix": "eslint --ext .ts ./src/**/* --fix",
     "docs": "npm run build:docs",
     "build:docs": "cd ./docs && npm run build",
     "dev:docs": "cd ./docs && npm run dev",
@@ -57,6 +58,7 @@
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
     "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.29.1",
     "husky": "^8.0.3",
     "prettier": "^3.2.5",
     "relishinc-prettier": "github:relishinc/prettier",

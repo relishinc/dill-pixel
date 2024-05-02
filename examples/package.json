@@ -8,7 +8,7 @@
     "assets": "assetpack -c .assetpack.mjs",
     "cache": "rimraf .cache",
     "start": "run-s cache && vite",
-    "dev": "run-s cache && assets && vite",
+    "dev": "run-s cache assets && vite",
     "prebuild": "run-s clean format:check lint assets",
     "build": "vite build",
     "types": "tsc",
@@ -22,18 +22,16 @@
     "audio:compress": "node ../cli.mjs audio compress assets/audio",
     "vo:generate": "node ../cli.mjs vo generate",
     "spritesheets": "node assets/images/export_spritesheets",
-    "lint:fix": "eslint src --fix",
     "format": "prettier --write src",
     "format:check": "prettier --check src"
   },
   "author": "Relish Digital<dev@reli.sh>",
   "license": "MIT",
   "devDependencies": {
-    "@types/dat.gui": "^0.7.13",
-    "typescript": "^5.4.3"
+    "@types/dat.gui": "^0.7.13"
   },
   "dependencies": {
     "dat.gui": "^0.7.9",
-    "dill-pixel": "file:.."
+    "@relish-studios/dill-pixel": "file:.."
   }
 }

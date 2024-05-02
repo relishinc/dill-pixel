@@ -36,10 +36,10 @@ export class LocalStorageAdapter extends StorageAdapter {
 
   /**
    * Initializes the adapter.
-   * @param {IApplication} app The application that the adapter belongs to.
+   * @param {IApplication} _app The application that the adapter belongs to.
    * @param {Partial<ILocalStorageAdapterOptions>} options The options to initialize the adapter with.
    */
-  public initialize(app: IApplication, options?: Partial<ILocalStorageAdapterOptions>): void {
+  public initialize(_app: IApplication, options?: Partial<ILocalStorageAdapterOptions>): void {
     Logger.log('LocalStorageAdapter initialized');
     this.namespace = options?.namespace || '';
   }
@@ -65,7 +65,7 @@ export class LocalStorageAdapter extends StorageAdapter {
     const data = localStorage.getItem(`${this.prefix}${key}`);
     return (data ? JSON.parse(data) : null) as T;
   }
-  
+
   /**
    * Deletes data from a specified key in the local storage.
    * @param {string} key The key from which to delete the data.
