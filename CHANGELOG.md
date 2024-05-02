@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.39.12](https://github.com/relishinc/dill-pixel/compare/v2.39.11...v2.39.12) (2024-05-02)
+
+
+### Bug Fixes
+
+* reverted changes to popupmanager ([943c03c](https://github.com/relishinc/dill-pixel/commit/943c03c7c5dcef3bf52506d46c51a1f1397fd4d9))
+
 ## [2.39.11](https://github.com/relishinc/dill-pixel/compare/v2.39.10...v2.39.11) (2024-05-01)
 
 
