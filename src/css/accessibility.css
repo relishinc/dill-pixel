@@ -1,3 +1,9 @@
-#pixi-accessibility[disabled] {
-    transform: translate3d(-1000vw, 0, 0);
+#pixi-accessibility {
+    top: 0 !important;
+    left: 0 !important;
+    overflow: hidden;
+}
+
+#pixi-accessibility *:focus {
+    outline: none;
 }
