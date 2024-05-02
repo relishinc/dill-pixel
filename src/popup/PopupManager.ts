@@ -2,17 +2,16 @@ import { BLEND_MODES, DisplayObject, Graphics, Point } from 'pixi.js';
 import { Dictionary } from 'typescript-collections';
 import { Application } from '../core';
 import { popKeyboardLayer, pushKeyboardLayer } from '../functions';
+import { Container } from '../gameobjects';
 import * as Input from '../input';
 import { KeyValues } from '../input/KeyValues';
-import { Signal, SignalConnection, SignalConnections, Signals } from '../signals';
+import { Signal, Signals } from '../signals';
 import * as LogUtils from '../utils/LogUtils';
 import { IPopup } from './IPopup';
 import { Popup } from './Popup';
 import { IPopupToken } from './PopupToken';
-import { PIXI } from '../pixi';
-import { Add, bindAllMethods, Make } from '../utils';
 
-export class PopupManager<T extends Application = Application> extends PIXI.Container {
+export class PopupManager<T extends Application = Application> extends Container<T> {
   public onPopupShow = new Signal<(id: string) => void>();
   public onPopupHideComplete = new Signal<(id: string) => void>();
   public onPopupHide = new Signal<(id: string) => void>();
@@ -22,9 +21,6 @@ export class PopupManager<T extends Application = Application> extends PIXI.Cont
   private _debug: boolean = false;
   private _overlayColor: number;
   private _overlayAlpha: number;
-  protected _addFactory: Add;
-  // optionally add signals to a SignalConnections instance for easy removal
-  protected _signalConnections: SignalConnections = new SignalConnections();
 
   constructor(
     protected _app: Application<T>,
@@ -32,8 +28,6 @@ export class PopupManager<T extends Application = Application> extends PIXI.Cont
     overlayAlpha: number = 0.75,
   ) {
     super();
-    bindAllMethods(this);
-    this._addFactory = new Add(this);
     this._popups = new Dictionary<string, typeof Popup<T>>();
     this._activePopups = new Array<IPopup>();
     this._overlayColor = overlayColor;
@@ -365,32 +359,6 @@ export class PopupManager<T extends Application = Application> extends PIXI.Cont
   private logE(text: string, ...rest: any[]): void {
     LogUtils.logError(text, { className: 'PopupManager', color: 'blue' }, ...rest);
   }
-
-  /**
-   * @protected
-   * adds a signal connection
-   */
-  protected addSignalConnection(...signalConnection: SignalConnection[]) {
-    signalConnection.forEach((connection) => this._signalConnections.add(connection));
-  }
-
-  /**
-   * @protected
-   * removes all signal connections
-   */
-  protected disconnectAllSignals() {
-    this._signalConnections.disconnectAll();
-  }
-
-  get add(): Add {
-    return this._addFactory;
-  }
-
-  get make(): typeof Make {
-    return Make;
-  }
-
-
 
   // #endregion
 }
