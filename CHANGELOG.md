@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.39.11](https://github.com/relishinc/dill-pixel/compare/v2.39.10...v2.39.11) (2024-05-01)
+
+
+### Bug Fixes
+
+* avoid circular dep in popupManager ([6068c43](https://github.com/relishinc/dill-pixel/commit/6068c43ebac0a104889fb6c0a9b36d7e41b02a09))
+
 ## [2.39.10](https://github.com/relishinc/dill-pixel/compare/v2.39.9...v2.39.10) (2024-04-16)
 
 

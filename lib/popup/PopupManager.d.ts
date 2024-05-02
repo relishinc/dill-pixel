@@ -1,9 +1,10 @@
 import { Point } from 'pixi.js';
 import { Application } from '../core';
-import { Container } from '../gameobjects';
-import { Signal } from '../signals';
+import { Signal, SignalConnection, SignalConnections } from '../signals';
 import { Popup } from './Popup';
-export declare class PopupManager<T extends Application = Application> extends Container<T> {
+import { PIXI } from '../pixi';
+import { Add, Make } from '../utils';
+export declare class PopupManager<T extends Application = Application> extends PIXI.Container {
     protected _app: Application<T>;
     onPopupShow: Signal<(id: string) => void>;
     onPopupHideComplete: Signal<(id: string) => void>;
@@ -14,6 +15,8 @@ export declare class PopupManager<T extends Application = Application> extends C
     private _debug;
     private _overlayColor;
     private _overlayAlpha;
+    protected _addFactory: Add;
+    protected _signalConnections: SignalConnections;
     constructor(_app: Application<T>, overlayColor?: number, overlayAlpha?: number);
     get app(): T;
     /** Enabling this will print all debug logs. */
@@ -132,5 +135,17 @@ export declare class PopupManager<T extends Application = Application> extends C
      * @todo Decide if this should live in its own class, be in an interface or within each manager.
      */
     private logE;
+    /**
+     * @protected
+     * adds a signal connection
+     */
+    protected addSignalConnection(...signalConnection: SignalConnection[]): void;
+    /**
+     * @protected
+     * removes all signal connections
+     */
+    protected disconnectAllSignals(): void;
+    get add(): Add;
+    get make(): typeof Make;
 }
 //# sourceMappingURL=PopupManager.d.ts.map
