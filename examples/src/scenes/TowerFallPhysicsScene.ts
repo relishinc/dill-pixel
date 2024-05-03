@@ -1,13 +1,13 @@
-import { Camera, CameraController } from '../entities/Camera.ts';
+import { Container, delay, FlexContainer } from '@relish-studios/dill-pixel';
+import { Ticker } from 'pixi.js';
 import { Collision, TowerFallPhysicsPlugin } from '../../../src/plugins/physics/towerfall';
-import { Container, delay } from '@relish-studios/dill-pixel';
-import { Platform, PlatformMovementConfigOpts } from '../entities/physics/Platform.ts';
-
-import { BaseScene } from './BaseScene';
+import { Camera, CameraController } from '../entities/Camera.ts';
 import { Door } from '../entities/physics/Door.ts';
+import { Platform, PlatformMovementConfigOpts } from '../entities/physics/Platform.ts';
 import { Player } from '../entities/physics/Player.ts';
 import { Portal } from '../entities/physics/Portal.ts';
-import { Ticker } from 'pixi.js';
+
+import { BaseScene } from './BaseScene';
 
 export class TowerFallPhysicsScene extends BaseScene {
   protected readonly title = 'TowerFall Physics';
@@ -16,7 +16,7 @@ export class TowerFallPhysicsScene extends BaseScene {
     useCamera: false,
     debug: false,
   };
-
+  controls: FlexContainer;
   level: Container;
   player: Player;
   platforms: Platform[] = [];
@@ -49,6 +49,7 @@ export class TowerFallPhysicsScene extends BaseScene {
 
   async initialize() {
     await super.initialize();
+    this.app.focus.addFocusLayer(this.id);
     this.level = this.add.container();
 
     this.physics.system.initialize({
@@ -56,7 +57,7 @@ export class TowerFallPhysicsScene extends BaseScene {
       container: this.level,
       debug: false,
       boundary: {
-        width: this.app.size.width,
+        width: Math.max(2000, this.app.size.width),
         height: this.app.size.height,
         thickness: 10,
         padding: 5,
@@ -69,6 +70,7 @@ export class TowerFallPhysicsScene extends BaseScene {
     this.addDoors();
     this.addPortals();
     this.addPlayer();
+    this.addControls();
     this.physics.system.onCollision.connect(this._handleCollision);
 
     this.app.func.onKeyDown('D').connect(() => {
@@ -84,13 +86,13 @@ export class TowerFallPhysicsScene extends BaseScene {
     if (this._isPaused) return;
 
     if (this.app.keyboard.isKeyDown('ArrowLeft')) {
-      this.app.func.sendAction('move_left');
+      this.app.sendAction('move_left');
     }
     if (this.app.keyboard.isKeyDown('ArrowRight')) {
-      this.app.func.sendAction('move_right');
+      this.app.sendAction('move_right');
     }
     if (this.app.keyboard.isKeyDown('ArrowUp')) {
-      this.app.func.sendAction('jump');
+      this.app.sendAction('jump');
     }
 
     this.physics.system.update(ticker.deltaTime);
@@ -99,11 +101,18 @@ export class TowerFallPhysicsScene extends BaseScene {
     }
   }
 
+  resize() {
+    super.resize();
+    this.controls.x = -this.app.size.width * 0.5 + 20;
+    this.controls.y = this.app.size.height * 0.5 - (window.innerHeight > window.innerWidth ? 400 : 100);
+    this.controls.containerWidth = this.app.size.width - 40;
+  }
+
   _handleCollision(collision: Collision) {
     switch (collision.type) {
       case 'Portal|Player':
       case 'Portal|FX':
-        if ((collision.entity1 as Portal).connectedPortal && (collision.entity1 as Portal).connectedPortal.enabled) {
+        if ((collision.entity1 as Portal).connectedPortal && (collision.entity1 as Portal)?.connectedPortal?.enabled) {
           (collision.entity1 as Portal).passThrough(collision.entity2);
         }
         break;
@@ -111,7 +120,7 @@ export class TowerFallPhysicsScene extends BaseScene {
   }
 
   addPlatforms() {
-    this.addPlatForm(0, 300, this.app.size.width);
+    this.addPlatForm(0, 300, Math.max(2000, this.app.size.width));
     this.addPlatForm(-300, 213, 30, 160);
     this.addPlatForm(-300, 123, 150, 20);
     this.addPlatForm(300, 118, 30, 350);
@@ -189,6 +198,56 @@ export class TowerFallPhysicsScene extends BaseScene {
     this.player.spawn({ x: this.doors[0].x, y: this.doors[0].y }, delay);
   }
 
+  addControls() {
+    this.controls = this.add.flexContainer({
+      justifyContent: 'space-between',
+      width: this.app.size.width - 40,
+      height: 100,
+      x: -this.app.size.width * 0.5 + 20,
+      y: this.app.size.height * 0.5 - (window.innerHeight > window.innerWidth ? 400 : 100),
+    });
+
+    const leftSide = this.controls.add.flexContainer({ gap: 10 });
+    const rightSide = this.controls.add.flexContainer({ gap: 10 });
+
+    const leftButton = this.makeControl('←', () => {
+      this.app.sendAction('move_left');
+    });
+    const rightButton = this.makeControl('→', () => {
+      this.app.sendAction('move_right');
+    });
+    const jumpButton = this.makeControl('JUMP', () => {
+      this.app.sendAction('jump');
+    });
+
+    leftSide.add.existing(leftButton);
+    leftSide.add.existing(rightButton);
+    rightSide.add.existing(jumpButton);
+  }
+
+  makeControl(label: string = 'Button', callback: () => void) {
+    const btn = this.make.button({
+      scale: 0.5,
+      cursor: 'pointer',
+      textures: { default: 'btn/blue', hover: 'btn/yellow', disabled: 'btn/grey', active: 'btn/red' },
+      sheet: 'ui.json',
+      accessibleTitle: label,
+      accessibleHint: `Press me to play a sound`,
+    });
+
+    btn.add.text({
+      text: label,
+      anchor: 0.5,
+      style: { fill: 0xffffff, fontWeight: 'bold', fontSize: 48, align: 'center' },
+    });
+
+    btn.addIsDownCallback(label, callback);
+
+    btn.label = label;
+    this.app.focus.add(btn, this.id, false);
+    return btn;
+  }
+
   _handlePlayerKilled() {
     this.removeChild(this.player);
     this.addPlayer();
@@ -212,6 +271,7 @@ export class TowerFallPhysicsScene extends BaseScene {
         lerp: 0.05,
       });
     } else {
+      // @ts-expect-error camera can't be null error
       this.camera = null;
       this.level.position.set(0, 0);
       this.level.pivot.set(0, 0);

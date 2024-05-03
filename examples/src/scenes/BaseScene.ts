@@ -1,7 +1,7 @@
+import { Scene } from '@relish-studios/dill-pixel';
 import { Graphics, Text } from 'pixi.js';
 
 import { COLOR_GREEN } from '../utils/Constants';
-import { Scene } from '@relish-studios/dill-pixel';
 import { V8Application } from '../V8Application';
 
 export class BaseScene extends Scene<V8Application> {
@@ -75,7 +75,14 @@ export class BaseScene extends Scene<V8Application> {
 
   protected async addGUI() {
     const dat = await import('dat.gui');
-    this.gui = new dat.GUI({ name: 'Controls', closeOnTop: true });
+    this.gui = new dat.GUI({
+      name: 'Controls',
+      closeOnTop: true,
+      closed: true,
+      width: 200,
+    });
+    this.gui.domElement.id = 'gui';
+    this.gui.domElement.style.marginRight = `0px`;
     this.app.canvas.parentNode?.appendChild(this.gui.domElement.parentNode);
     (this.gui.domElement.parentNode as HTMLElement).style.cssText = `position: absolute;
     top: 0;
@@ -85,5 +92,5 @@ export class BaseScene extends Scene<V8Application> {
     z-index: 0;`;
   }
 
-  protected configureGUI() { }
+  protected configureGUI() {}
 }

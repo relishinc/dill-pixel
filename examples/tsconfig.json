@@ -14,5 +14,5 @@
       "path": ".."
     }
   ],
-  "include": ["src/**/*"]
+  "include": ["src/**/*.{ts|json|js|mjs}"]
 }

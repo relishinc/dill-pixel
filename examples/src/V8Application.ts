@@ -1,9 +1,9 @@
-import { Application, LocalStorageAdapter, create } from '@relish-studios/dill-pixel';
+import EN from '@/locales/en';
+import { scenes } from '@/scenes';
+import { Application, create, LoadSceneMethod, LocalStorageAdapter } from '@relish-studios/dill-pixel';
 
 import { Assets } from 'pixi.js';
-import EN from '@/locales/en';
 import manifest from './assets.json';
-import { scenes } from '@/scenes';
 
 export class V8Application extends Application {
   setup() {
@@ -39,10 +39,10 @@ const appConfig = {
   resizer: {
     minSize: { width: 960, height: 600 },
   },
-  defaultSceneLoadMethod: 'exitEnter',
+  defaultSceneLoadMethod: 'exitEnter' as LoadSceneMethod,
   useSpine: true,
   showStats: true,
-  preference: 'webgl',
+  preference: 'webgl' as 'webgl' | 'webgpu' | 'canvas',
   showSceneDebugMenu: true,
 };
 

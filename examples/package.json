@@ -9,7 +9,7 @@
     "cache": "rimraf .cache",
     "start": "run-s cache && vite",
     "dev": "run-s cache assets && vite",
-    "prebuild": "run-s clean format:check lint assets",
+    "prebuild": "run-s clean format lint assets",
     "build": "vite build",
     "types": "tsc",
     "prepreview": "run-s build",

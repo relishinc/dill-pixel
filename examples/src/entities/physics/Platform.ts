@@ -51,10 +51,10 @@ export class Platform extends TowerFallSolid<PlatformConfig> {
       moving: config.moving ?? defaults.moving,
       movementConfig: config.movementConfig
         ? {
-          speed: resolvePointLike(config.movementConfig.speed, true),
-          startingDirection: config.movementConfig.startingDirection || { x: 1, y: 0 },
-          range: resolvePointLike(config.movementConfig.range, true),
-        }
+            speed: resolvePointLike(config.movementConfig.speed, true),
+            startingDirection: config.movementConfig.startingDirection || { x: 1, y: 0 },
+            range: resolvePointLike(config.movementConfig.range, true),
+          }
         : null,
     };
   }

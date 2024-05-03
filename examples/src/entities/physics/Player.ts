@@ -1,14 +1,14 @@
-import { ActionDetail, PointLike, Signal, resolvePointLike } from '@relish-studios/dill-pixel';
-import { Collision, System, Actor as TowerFallActor } from '../../../../src/plugins/physics/towerfall';
-import { Point, Pool, Texture } from 'pixi.js';
+import { ActionDetail, PointLike, resolvePointLike, Signal } from '@relish-studios/dill-pixel';
 
 import { gsap } from 'gsap';
+import { Point, Pool, Texture } from 'pixi.js';
+import { Actor as TowerFallActor, Collision, System } from '../../../../src/plugins/physics/towerfall';
 
 export class Player extends TowerFallActor {
   type = 'Player';
   passThroughTypes = ['FX'];
   onKilled = new Signal();
-  speed: number = 3;
+  speed: number = 6;
   private _velocity: Point = new Point(0, 0);
   private _canJump: boolean = false;
   private _isJumping: boolean = false;
@@ -38,7 +38,7 @@ export class Player extends TowerFallActor {
   public update(deltaTime: number) {
     if (this._isJumping) {
       this._jumpTimeElapsed += deltaTime;
-      this._jumpPower /= this._velocity.y >= 0 ? 2 : 1.1;
+      this._jumpPower -= this._velocity.y < 0 ? this.speed / 2 : this.speed * 2.5;
       if (this._jumpPower <= 0) {
         this._jumpPower = 0;
         this._resetJump();
@@ -102,7 +102,7 @@ export class Player extends TowerFallActor {
     if (!this._isJumping && this._canJump) {
       this._canJump = false;
       this._isJumping = true;
-      this._jumpPower = this.system.gravity * 5;
+      this._jumpPower = this.system.gravity * 6;
       this._velocity.y = this.system.gravity - this._jumpPower;
       this._spawnJumpFx();
     }
