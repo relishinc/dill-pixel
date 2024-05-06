@@ -78,7 +78,7 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   resizeTo: undefined,
   sharedTicker: true,
   view: undefined,
-  autoDensity: true,
+  autoDensity: false,
   resolution: window.devicePixelRatio > 1.5 ? 2 : 1,
   // dill pixel options
   useStore: true,
