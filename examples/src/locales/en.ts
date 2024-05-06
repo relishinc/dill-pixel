@@ -4,5 +4,6 @@ export default {
   obj: {
     foo: 'bar',
   },
-  replace: 'This is a test of {test}.',
+  replace: { replace: 'This is a test of {test}.', replaceOpts: '[bar|baz|bal]' },
+  html: '<span>Some <strong>strong</strong> and <em>emphasized</em> HTML</span>',
 };
