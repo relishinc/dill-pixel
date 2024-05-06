@@ -7,10 +7,12 @@ import { checkCollision } from './utils';
 
 export class Actor<T = any, A extends Application = Application> extends Entity<T, A> {
   type = 'Actor';
+  isActor = true;
   passThroughTypes: EntityType[] = [];
+  passingThrough: Set<Entity> = new Set();
 
   get collideables(): Entity[] {
-    return System.solids;
+    return System.getNearbyEntities(this, (e) => e.isSolid);
   }
 
   added() {
@@ -21,37 +23,56 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
     System.removeActor(this);
   }
 
-  squish(collision?: Collision) {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  squish(_collision?: Collision, _pushingEntity?: Entity) {}
 
-  moveX(amount: number, onCollide?: (collision: Collision) => void): void {
+  moveX(
+    amount: number,
+    onCollide?: (collision: Collision, pushingEntity?: Entity) => void,
+    onNoCollisions?: (() => void) | null,
+    pushingEntity?: Entity,
+  ): void {
     this.xRemainder += amount;
     let move = Math.round(this.xRemainder);
     const sign = Math.sign(move);
 
     while (move !== 0) {
       const nextX = this.x + (move ? sign : 0); // Predict the next X position
-      const collision: Collision | false = this.collideAt(nextX - this.x, 0, this.getBoundingBox());
-      if (collision) {
-        if (onCollide) onCollide(collision);
+      const collisions: Collision[] | false = this.collideAt(nextX - this.x, 0, this.getBoundingBox());
+      if (collisions) {
+        if (onCollide) {
+          collisions.forEach((collision) => onCollide(collision, pushingEntity));
+        }
         this.xRemainder = 0; // Reset the remainder to prevent sliding
         break;
       } else {
         this.x = nextX;
         move -= sign;
         this.xRemainder -= sign;
+        if (onNoCollisions) {
+          onNoCollisions();
+        }
       }
     }
+    System.updateEntity(this);
   }
 
-  moveY(amount: number, onCollide?: (collision: Collision) => void, onNoCollisions?: () => void): void {
+  moveY(
+    amount: number,
+    onCollide?: ((collision: Collision, pushingEntity?: Entity) => void) | null,
+    onNoCollisions?: (() => void) | null,
+    pushingEntity?: Entity,
+  ): void {
     this.yRemainder += amount;
     let move = Math.round(this.yRemainder);
     const sign = Math.sign(move);
     while (move !== 0) {
       const nextY = this.y + (move ? sign : 0); // Predict the next Y position
-      const collision: Collision | false = this.collideAt(0, nextY - this.y, this.getBoundingBox());
-      if (collision) {
-        if (onCollide) onCollide(collision);
+      const collisions: Collision[] | false = this.collideAt(0, nextY - this.y, this.getBoundingBox());
+      if (collisions) {
+        if (onCollide) {
+          collisions.forEach((collision) => onCollide(collision, pushingEntity));
+        }
         this.yRemainder = 0;
         break;
       } else {
@@ -63,11 +84,13 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
         }
       }
     }
+    System.updateEntity(this);
   }
 
   // Simple bounding box collision check
-  collideAt(x: number, y: number, box: Rectangle): Collision | false {
+  collideAt(x: number, y: number, box: Rectangle): Collision[] | false {
     const nextPosition = new Rectangle(box.x + x, box.y + y, box.width, box.height);
+    const collisions = [];
     // Iterate through all solids in the level to check for collisions
     for (const entity of this.collideables) {
       if (!entity.isCollideable || this.passThroughTypes.includes(entity.type)) {
@@ -81,11 +104,11 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
         // we should stop and return this collision
         // this will stop actor movement if returned
         if (System.resolveCollision(collisionResult)) {
-          return collisionResult;
+          collisions.push(collisionResult);
         }
       }
     }
-    return false;
+    return collisions.length ? collisions : false;
   }
 
   isRiding(solid: Entity): boolean {
@@ -99,5 +122,17 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
       actorBounds.left < solidBounds.right &&
       actorBounds.right > solidBounds.left
     );
+  }
+
+  setPassingThrough(entity: Entity) {
+    this.passingThrough.add(entity);
+  }
+
+  removePassingThrough(entity: Entity) {
+    this.passingThrough.delete(entity);
+  }
+
+  isPassingThrough(entity: Entity) {
+    return this.passingThrough.has(entity);
   }
 }

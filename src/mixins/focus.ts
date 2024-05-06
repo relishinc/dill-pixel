@@ -33,6 +33,7 @@ export function Focusable<TBase extends Constructor<PIXIContainer>>(Base: TBase)
       this.on('mouseover', this._onMouseOver);
       this.on('mousedown', this._onMouseDown);
       this.on('click', this._handleClick);
+      this.on('tap', this._handleClick);
     }
 
     get app() {
@@ -41,7 +42,7 @@ export function Focusable<TBase extends Constructor<PIXIContainer>>(Base: TBase)
 
     public focusIn() {
       if (this.app.focus.active) {
-        // @ts-ignore
+        // @ts-expect-error Argument of type { type: string; } is not assignable to parameter of type FederatedPointerEvent
         this.emit('pointerover', { type: 'pointerover' });
       }
     }
@@ -57,7 +58,7 @@ export function Focusable<TBase extends Constructor<PIXIContainer>>(Base: TBase)
         window.removeEventListener('keyup', this._handleKeyUp.bind(this));
       }
       if (this.app.focus.active) {
-        //@ts-ignore
+        // @ts-expect-error Argument of type { type: string; } is not assignable to parameter of type FederatedPointerEvent
         this.emit('pointerout', { type: 'pointerout' });
       }
     }
@@ -76,12 +77,12 @@ export function Focusable<TBase extends Constructor<PIXIContainer>>(Base: TBase)
       return [this.getFocusArea().width, this.getFocusArea().height];
     }
 
-    protected _onMouseOver(e: FederatedEvent) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected _onMouseOver(_e: MouseEvent) {
       this.app.focus.setFocus(this);
     }
 
     protected _onMouseDown(e: FederatedEvent) {
-      // @ts-ignore
       this._maybeEmit('pointerdown', e);
     }
 
@@ -90,7 +91,8 @@ export function Focusable<TBase extends Constructor<PIXIContainer>>(Base: TBase)
       this.click();
     }
 
-    protected _handleKeyUp(e: KeyboardEvent) {}
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected _handleKeyUp(_e: KeyboardEvent) {}
 
     private _maybeEmit(type: string, e: FederatedEvent) {
       if (this._eventsDisabled || e.type) {

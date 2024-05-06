@@ -53,6 +53,7 @@ export enum Action {
   Next = 'next',
   Back = 'back',
   Pause = 'pause',
+  Unpause = 'unpause',
   Start = 'start',
   Menu = 'menu',
 }
@@ -64,6 +65,7 @@ const defaultActions = [
   Action.Right,
   Action.Action,
   Action.Pause,
+  Action.Unpause,
   Action.Start,
   Action.Menu,
   Action.Back,
@@ -205,6 +207,7 @@ export class InputManager extends Plugin implements IInputManager {
     this._activateController(InputController.Gamepad);
     // add the gamepad id just in case we need it (?)
     this._activateController(event.gamepad.id);
+    this._activateGamepad(event.gamepad);
     // emit the gamepad connected signal
     this.onGamepadConnected.emit(event.gamepad);
   }

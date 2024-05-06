@@ -53,6 +53,9 @@ export class Button extends _Button {
   protected config: ButtonConfig;
   // enabled state
   protected _enabled: boolean;
+  // a set of unique callbacks for when the button is down
+  protected _isDownCallbacks: Map<string, () => void> = new Map();
+  private _isDownListenerAdded: boolean = false;
 
   /**
    * @constructor
@@ -142,6 +145,15 @@ export class Button extends _Button {
     return [-this.width * 0.5, -this.height * 0.5];
   }
 
+  addIsDownCallback(callbackId: string, callback: () => void) {
+    this._isDownCallbacks.set(callbackId, callback);
+    this._checkIsDownCallbacks();
+  }
+
+  removeIsDownCallback(callbackId: string) {
+    this._isDownCallbacks.delete(callbackId);
+  }
+
   /**
    * @description Handles the pointer over event.
    * Sets the texture of the button to the hover texture and emits the onOver event.
@@ -184,7 +196,7 @@ export class Button extends _Button {
    * Sets the isDown property to true and changes the texture of the button.
    */
   protected handlePointerDown() {
-    if ((!this._enabled || !this.isOver) && !this.isKeyDown) {
+    if (!this._enabled && !this.isKeyDown) {
       return;
     }
     if (!this.isDown) {
@@ -230,5 +242,24 @@ export class Button extends _Button {
     this.isDown = false;
     this.isOver = false;
     this.onUpOutside.emit();
+  }
+
+  private _checkIsDownCallbacks() {
+    // check if there are any callbacks, if there are, add the ticker listener
+    if (!this._isDownListenerAdded && this._isDownCallbacks.size > 0) {
+      this._isDownListenerAdded = true;
+      this.app.ticker.add(this._handleIsDownCallbacks);
+    } else {
+      this.app.ticker.remove(this._handleIsDownCallbacks);
+      this._isDownListenerAdded = false;
+    }
+  }
+
+  private _handleIsDownCallbacks() {
+    if (this.isDown) {
+      this._isDownCallbacks.forEach((callback) => {
+        callback();
+      });
+    }
   }
 }

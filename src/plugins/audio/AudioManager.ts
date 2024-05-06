@@ -32,6 +32,8 @@ export interface IAudioManager extends IPlugin {
 
   play(soundId: string, channelName: ChannelName, options?: PlayOptions): Promise<IAudioInstance>;
 
+  load(soundId: string | string[], channelName: ChannelName, options?: PlayOptions): void;
+
   stop(soundId: string, channelName: ChannelName): IAudioInstance | undefined;
 
   setChannelVolume(channelName: ChannelName | ChannelName[], volume: number): void;
@@ -68,6 +70,8 @@ export interface IAudioManager extends IPlugin {
   suspend(): void;
 
   restore(): void;
+
+  getAudioInstance(soundId: string, channelName: string): IAudioInstance | undefined;
 }
 
 /**
@@ -336,7 +340,7 @@ export class AudioManager extends Plugin implements IAudioManager {
         if (a === undefined) {
           return;
         }
-        // @ts-ignore
+        // @ts-expect-error soundAsset is not a string error
         obj[a] = soundAsset.src;
       });
       sound.add(obj);
@@ -358,13 +362,14 @@ export class AudioManager extends Plugin implements IAudioManager {
     Logger.log('play', soundId, channelName, options, channel);
     if (channel) {
       soundId = this._verifySoundId(soundId);
+      const audioInstance = channel.add(soundId, new AudioInstance(soundId, channel, this));
       const mediaInstance = await sound.play(soundId, options);
-      const audioInstance = channel.add(soundId, new AudioInstance(soundId, mediaInstance, channel, this));
+      audioInstance.media = mediaInstance;
       if (options?.volume !== undefined) {
-        audioInstance.volume = options.volume;
+        mediaInstance.volume = options.volume;
+        mediaInstance.on('start', () => this._soundStarted(soundId, audioInstance, channelName));
+        mediaInstance.on('end', () => this._soundEnded(soundId, audioInstance, channelName));
       }
-      mediaInstance.on('start', () => this._soundStarted(soundId, audioInstance, channelName));
-      mediaInstance.on('end', () => this._soundEnded(soundId, audioInstance, channelName));
       return audioInstance;
     } else {
       throw new Error(`Channel ${channelName} does not exist.`);
@@ -506,6 +511,33 @@ export class AudioManager extends Plugin implements IAudioManager {
     this._storedVolume = this._masterVolume;
     this.masterVolume = 0;
     this.pause();
+  }
+
+  public getAudioInstance(soundId: string, channelName: string = 'sfx'): IAudioInstance | undefined {
+    const channel = this._channels.get(channelName);
+    if (channel) {
+      return channel.get(soundId);
+    } else {
+      throw new Error(`Channel ${channelName} does not exist.`);
+    }
+  }
+
+  public load(soundId: string | string[], channelName: ChannelName = 'sfx', options?: PlayOptions): void {
+    if (!Array.isArray(soundId)) {
+      soundId = [soundId];
+    }
+    for (let id of soundId) {
+      if (this._idMap.has(id)) {
+        soundId = this._idMap.get(id) as string;
+      }
+      const channel = this._channels.get(channelName);
+      if (channel) {
+        id = this._verifySoundId(id);
+        sound.add(id, { ...options, preload: true });
+      } else {
+        throw new Error(`Channel ${channelName} does not exist.`);
+      }
+    }
   }
 
   private _verifySoundId(soundId: string): string {

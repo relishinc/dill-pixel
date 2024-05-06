@@ -14,7 +14,7 @@ export { Application } from './core/Application';
  * Export the IApplication and RequiredApplicationConfig types from the 'core' module.
  * These types are used for type checking the application instance and its configuration.
  */
-export type { IApplication, RequiredApplicationConfig } from './core/Application';
+export type { IApplication, AppConfig } from './core/Application';
 
 /**
  * Export various types from the 'modules' module.
@@ -25,6 +25,8 @@ export type { ISceneManager, LoadSceneMethod } from './plugins/SceneManager';
 export type { IWebEventsManager } from './plugins/WebEventsManager';
 export type { IKeyboardManager, KeyboardEventDetail } from './plugins/KeyboardManager';
 export type { IFocusable, IFocusManager, FocusManagerOptions } from './plugins/focus/FocusManager';
+export type { IFocusOutliner, FocusOutlinerConfig } from './plugins/focus/FocusOutliner';
+export { FocusOutliner } from './plugins/focus/FocusOutliner';
 export type { IAudioManager } from './plugins/audio/AudioManager';
 export type { Ii18nPlugin, i18nOptions } from './plugins/i18nPlugin';
 export type { IResizer } from './plugins/Resizer';
@@ -88,7 +90,7 @@ export { getDynamicModuleFromImportListItem } from './utils/framework';
  * Export various mixin classes from the 'mixins' module.
  * These mixins are used to add additional functionality to the application's classes.
  */
-export { FactoryContainer } from './mixins/factory';
+export { FactoryContainer, Factory } from './mixins/factory';
 export { Animated } from './mixins/animated';
 export { Interactive } from './mixins/interaction';
 export { Focusable } from './mixins/focus';
@@ -105,6 +107,8 @@ export { Button } from './display/Button';
 export { Scene } from './display/Scene';
 export { FlexContainer } from './display/FlexContainer';
 export { UICanvas } from './display/UICanvas';
+export { SpineAnimation } from './display/SpineAnimation';
+export type { ISpineAnimation } from './display/SpineAnimation';
 export type {
   IFlexContainer,
   FlexWrap,

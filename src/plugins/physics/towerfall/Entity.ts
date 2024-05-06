@@ -7,6 +7,9 @@ import { System } from './System';
 import { EntityType } from './types';
 
 export class Entity<T = any, A extends Application = Application> extends Container<A> implements ICollider {
+  isActor: boolean = false;
+  isSolid: boolean = false;
+  isSensor: boolean = false;
   debug: boolean = false;
   debugColors = {
     bounds: 0xff0000,
@@ -48,7 +51,7 @@ export class Entity<T = any, A extends Application = Application> extends Contai
     return [];
   }
 
-  getWorldBounds(): Bounds {
+  getWorldBounds(): Bounds | Rectangle {
     const pos = this.system.container.toLocal(this.view.getGlobalPosition());
     const bounds = this.view.getBounds();
     bounds.x = pos.x;
@@ -62,7 +65,8 @@ export class Entity<T = any, A extends Application = Application> extends Contai
   }
 
   getBoundingBox(): Rectangle {
-    return this.getWorldBounds().rectangle;
+    const bounds = this.getWorldBounds();
+    return bounds instanceof Bounds ? bounds.rectangle : bounds;
   }
 
   getOuterBoundingBox(): Rectangle | null {

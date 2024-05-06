@@ -1,10 +1,10 @@
 import { sayHello } from '../hello';
 import { delay } from '../utils/async';
-import { Application, IApplication, RequiredApplicationConfig } from './Application';
+import { AppConfig, Application, IApplication } from './Application';
 
 export async function create<T extends IApplication = Application>(
   ApplicationClass: new () => T,
-  config: RequiredApplicationConfig = { id: 'DillPixelApplication' },
+  config: AppConfig = { id: 'DillPixelApplication' },
   domElement: string | Window | HTMLElement = Application.containerId,
   speak: boolean = true,
 ): Promise<T> {
@@ -39,7 +39,12 @@ export async function create<T extends IApplication = Application>(
   } else {
     throw new Error('No element found to append the view to.');
   }
+  // ensure all plugins are initialized
   await delay(0.01);
+
+  // call postInitialize on the instance
   await instance.postInitialize();
+
+  // return th app instance
   return instance as unknown as T;
 }

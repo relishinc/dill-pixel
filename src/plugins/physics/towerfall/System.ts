@@ -6,13 +6,16 @@ import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { Sensor } from './Sensor';
 import { Solid } from './Solid';
-import { Collision, EntityType, Side } from './types';
+import { SpatialHashGrid } from './SpatialHashGrid';
+import { Collision, EntityType, Side, SpatialHashGridFilter } from './types';
 import { Wall } from './Wall';
 
 export class System {
   private static gfx: Graphics;
   private static _collisionResolver: ((collision: Collision) => boolean) | null = null;
   public static container: Container<any>;
+  public static grid: SpatialHashGrid;
+  public static fps: number;
   //
   static debug: boolean = true;
   static typeMap: Map<EntityType, Entity[]> = new Map();
@@ -24,6 +27,10 @@ export class System {
   static onCollision: Signal<(collision: Collision) => void> = new Signal<(collision: Collision) => void>();
   static worldBounds: Wall[] = [];
 
+  static useSpatialHashGrid(cellSize: number) {
+    System.grid = new SpatialHashGrid(cellSize);
+  }
+
   static resolveCollision(collision: Collision) {
     // Implement collision resolution logic
     return System._collisionResolver ? System._collisionResolver(collision) : true;
@@ -34,9 +41,15 @@ export class System {
       System.typeMap.set(entity.type, []);
     }
     System.typeMap.get(entity.type)!.push(entity);
+    if (System.grid) {
+      System.grid.insert(entity);
+    }
   }
 
   static removeEntity(entity: Entity) {
+    if (System.grid) {
+      System.grid.remove(entity);
+    }
     if (System.typeMap.has(entity.type)) {
       const entities = System.typeMap.get(entity.type)!;
       const index = entities.indexOf(entity);
@@ -96,6 +109,24 @@ export class System {
     if (index !== -1) {
       System.sensors.splice(index, 1);
     }
+  }
+
+  static getNearbyEntities(entity: Entity, onlyTypes?: string[]): Entity[];
+  static getNearbyEntities(entity: Entity, filter?: SpatialHashGridFilter): Entity[];
+  static getNearbyEntities(entity: Entity, filter?: SpatialHashGridFilter | string[]): Entity[] {
+    if (System.grid) {
+      return System.grid.query(entity.getBoundingBox(), filter);
+    }
+    return System.all.filter((e: Entity) => {
+      if (filter) {
+        if (Array.isArray(filter)) {
+          return filter.includes(e.type);
+        } else {
+          return filter(e);
+        }
+      }
+      return true;
+    });
   }
 
   static update(deltaTime: number) {
@@ -200,6 +231,10 @@ export class System {
           .stroke({ width: 1, color: entity.debugColors.outerBounds, alignment: 0.5 });
       }
     });
+
+    if (System.grid) {
+      System.grid.draw(System.gfx);
+    }
   }
 
   static setContainer(container: PIXIContainer) {
@@ -233,6 +268,16 @@ export class System {
         Logger.error('TowerFallPhysicsPlugin System.initialize: Boundary width and height required.');
       }
     }
+  }
+
+  static updateEntity(entity: Entity) {
+    if (System.grid) {
+      System.grid.updateEntity(entity);
+    }
+  }
+
+  static get all(): Entity[] {
+    return [...System.actors, ...System.solids];
   }
 
   static get totalEntities(): number {

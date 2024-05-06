@@ -14,7 +14,7 @@ import { Plugin } from '../Plugin';
 import { FocusOutliner, FocusOutlinerConfig, IFocusOutliner } from './FocusOutliner';
 
 export type FocusManagerOptions = {
-  outliner: IFocusOutliner | Partial<FocusOutlinerConfig>;
+  outliner: IFocusOutliner | Partial<FocusOutlinerConfig> | typeof FocusOutliner;
   usePixiAccessibility: boolean;
 };
 
@@ -76,9 +76,9 @@ export interface IFocusLayer {
 
   sortFocusables(): void;
 
-  next(): IFocusable;
+  next(): IFocusable | null;
 
-  prev(): IFocusable;
+  prev(): IFocusable | null;
 }
 
 class FocusLayer implements IFocusLayer {
@@ -462,6 +462,7 @@ export class FocusManager extends Plugin implements IFocusManager {
     this.onFocusLayerChange.emit(this._currentLayerId);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public postInitialize(_app: IApplication): Promise<void> | void {}
 
   @CoreFunction
@@ -500,8 +501,21 @@ export class FocusManager extends Plugin implements IFocusManager {
         }
       } else if (e.key === 'Enter' || e.key === ' ' || e.key === 'Space') {
         if (this._focusTarget && this._focusTarget.isFocused) {
-          this._focusTarget.emit('click', { type: 'click' });
+          this._focusTarget.emit('pointerdown', { type: 'pointerdown' });
         }
+      }
+    }
+  }
+
+  _onKeyUp(e: KeyboardEvent) {
+    if (!this._enabled || (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Space')) {
+      return;
+    }
+    if (!this._options.usePixiAccessibility) {
+      e.preventDefault();
+      if (this._focusTarget && this._focusTarget.isFocused) {
+        this._focusTarget.emit('click', { type: 'click' });
+        this._focusTarget.emit('pointerup', { type: 'pointerup' });
       }
     }
   }
@@ -514,12 +528,20 @@ export class FocusManager extends Plugin implements IFocusManager {
   }
 
   private _next() {
-    const nextTarget = this._getCurrentLayer().next();
+    const nextTarget = this._getCurrentLayer()?.next();
+    if (!nextTarget) {
+      Logger.error('FocusManager:: _next():: No focusable found in the current layer.');
+      return;
+    }
     this._setTarget(nextTarget);
   }
 
   private _prev() {
-    const nextTarget = this._getCurrentLayer().prev();
+    const nextTarget = this._getCurrentLayer()?.prev();
+    if (!nextTarget) {
+      Logger.error('FocusManager:: _prev():: No focusable found in the current layer.');
+      return;
+    }
     this._setTarget(nextTarget);
   }
 
@@ -539,17 +561,19 @@ export class FocusManager extends Plugin implements IFocusManager {
   }
 
   private _updatePixiAccessibility() {
-    // @ts-ignore
+    // @ts-expect-error _div is protected
     this.app.renderer.accessibility._div.setAttribute('id', 'pixi-accessibility');
     if (!this._options.usePixiAccessibility) {
+      // @ts-expect-error _div is protected
       this.app.renderer.accessibility._div.setAttribute('disabled', 'disabled');
       this.app.renderer.accessibility.destroy();
       globalThis.addEventListener('keydown', this._onKeyDown, false);
+      globalThis.addEventListener('keyup', this._onKeyUp, false);
     }
   }
 
-  private _getCurrentLayer(): IFocusLayer {
-    return this._currentLayerId != null ? this._layers.get(this._currentLayerId) : null;
+  private _getCurrentLayer(): IFocusLayer | null {
+    return this._currentLayerId != null ? this._layers.get(this._currentLayerId) || null : null;
   }
 
   private _removeTopLayer() {
@@ -583,7 +607,6 @@ export class FocusManager extends Plugin implements IFocusManager {
         if (!this._active) {
           this._active = true;
         }
-        //@ts-ignore
         if (this._options.usePixiAccessibility && !this._focusTarget._accessibleDiv) {
           this.app.renderer.accessibility.postrender();
         }
@@ -654,7 +677,7 @@ export class FocusManager extends Plugin implements IFocusManager {
     globalThis.document.removeEventListener('pointerdown', this._handleGlobalPointerDown);
   }
 
-  private _handleGlobalMouseMove(e: MouseEvent) {
+  private _handleGlobalMouseMove() {
     if (!this._enabled) {
       return;
     }
@@ -663,7 +686,7 @@ export class FocusManager extends Plugin implements IFocusManager {
     }
   }
 
-  private _handleGlobalPointerDown(e: PointerEvent) {
+  private _handleGlobalPointerDown() {
     if (!this._enabled) {
       return;
     }
@@ -671,7 +694,7 @@ export class FocusManager extends Plugin implements IFocusManager {
       this.deactivate();
     }
     if (this.app.renderer.accessibility.isActive || this._keyboardActive) {
-      // @ts-ignore
+      // @ts-expect-error _deactivate is protected
       this.app.renderer.accessibility._deactivate();
       this._deactivate();
     }

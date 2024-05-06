@@ -14,3 +14,5 @@ export type Collision = {
   entity2: Entity;
   type: `${EntityType}|${EntityType}`;
 };
+
+export type SpatialHashGridFilter = (entity: Entity) => boolean;

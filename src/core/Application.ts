@@ -16,7 +16,7 @@ import { IAudioManager } from '../plugins/audio/AudioManager';
 import defaultPlugins from '../plugins/defaultPlugins';
 import { FocusManagerOptions, IFocusManager } from '../plugins/focus/FocusManager';
 import { i18nOptions, Ii18nPlugin } from '../plugins/i18nPlugin';
-import { ActionContext, ActionSignal, IInputManager } from '../plugins/InputManager';
+import { Action, ActionContext, ActionSignal, IInputManager } from '../plugins/InputManager';
 import { IKeyboardManager } from '../plugins/KeyboardManager';
 import { IPlugin } from '../plugins/Plugin';
 import { IPopupManager } from '../plugins/popups/PopupManager';
@@ -51,7 +51,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   storageAdapters: ImportList<IStorageAdapter>;
   plugins: ImportList<IPlugin>;
   scenes: SceneImportList<IScene>;
-  focusOptions: FocusManagerOptions;
+  focusOptions: Partial<FocusManagerOptions>;
   defaultScene: string;
   defaultSceneLoadMethod: LoadSceneMethod;
   showSceneDebugMenu: boolean;
@@ -71,7 +71,6 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   context: null,
   eventFeatures: undefined,
   eventMode: undefined,
-  height: 0,
   hello: false,
   powerPreference: 'high-performance',
   premultipliedAlpha: false,
@@ -79,9 +78,8 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   resizeTo: undefined,
   sharedTicker: true,
   view: undefined,
-  width: 0,
-  autoDensity: false,
-  resolution: Math.max(window.devicePixelRatio, 2),
+  autoDensity: true,
+  resolution: window.devicePixelRatio > 1.5 ? 2 : 1,
   // dill pixel options
   useStore: true,
   useDefaults: true,
@@ -93,7 +91,7 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   manifest: './assets.json',
 };
 
-export type RequiredApplicationConfig = WithRequiredProps<IApplicationOptions, 'id'>;
+export type AppConfig = WithRequiredProps<IApplicationOptions, 'id'>;
 
 export interface IApplication extends PIXIPApplication {
   config: Partial<IApplicationOptions>;
@@ -113,10 +111,12 @@ export interface IApplication extends PIXIPApplication {
   store: IStore;
 
   actionContext: string | ActionContext;
+  onPause: Signal<() => void>;
+  onResume: Signal<() => void>;
 
   actions(action: string): ActionSignal;
 
-  initialize(config: RequiredApplicationConfig): Promise<IApplication>;
+  initialize(config: AppConfig): Promise<IApplication>;
 
   postInitialize(): Promise<void>;
 
@@ -130,6 +130,8 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   public manifest: string | AssetsManifest | undefined;
   // plugins
   protected _plugins: Map<string, IPlugin> = new Map();
+  public onPause = new Signal<() => void>();
+  public onResume = new Signal<() => void>();
   protected static instance: Application;
   //
   public static containerId = 'dill-pixel-game-container';
@@ -315,13 +317,14 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     super.destroy(rendererDestroyOptions, options);
   }
 
-  public async initialize(config: RequiredApplicationConfig): Promise<IApplication> {
+  public async initialize(config: AppConfig): Promise<IApplication> {
     if (Application.instance) {
       throw new Error('Application is already initialized');
     }
 
     Application.instance = this;
     this.config = Object.assign({ ...defaultApplicationOptions }, config);
+    console.log(this.config);
 
     await this.preInitialize(this.config);
     console.log('Application preInitialize complete. Initializing assets...');
@@ -407,7 +410,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     void this._resize();
   }
 
-  public actions<T = any>(action: string): ActionSignal<T> {
+  public actions<T = any>(action: Action | string): ActionSignal<T> {
     return this.input.actions(action);
   }
 

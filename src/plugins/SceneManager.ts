@@ -70,6 +70,9 @@ export class SceneManager extends Plugin implements ISceneManager {
   private _debugVisible: boolean = false;
   private _debugMenu: HTMLDivElement;
 
+  // debug
+  private _sceneSelect: HTMLSelectElement;
+
   constructor() {
     super();
     bindAllMethods(this);
@@ -279,19 +282,29 @@ export class SceneManager extends Plugin implements ISceneManager {
   private _createDebugMenu() {
     this._debugMenu = document.createElement('div');
     this._debugMenu.style.cssText =
-      'position: absolute; bottom: 0; left: 0; z-index: 1000; background-color: rgba(0,0,0,0.8); color: white; padding: 10px; border-top-right-radius:8px';
+      'position: absolute; bottom: 0; left:0; width:48px; height:48px; z-index: 1000; background-color:' +
+      ' rgba(0,0,0,0.8);' +
+      ' color:' +
+      ' white;' +
+      ' border-top-right-radius:8px';
+    const icon = document.createElement('i');
+    icon.style.cssText =
+      'cursor:pointer; position:absolute;width:100%; font-style:normal; font-size:20px; top:50%;' +
+      ' left:50%; transform:translate(-50%, -50%); text-align:center; pointer-events:none';
+    icon.innerHTML = '🎬';
+    this._debugMenu.appendChild(icon);
 
     (Application.containerElement || document.body).appendChild(this._debugMenu);
 
-    const sceneSelect = document.createElement('select');
-    sceneSelect.style.cssText = 'width: 100%; padding:4px; border-radius:5px;';
-    sceneSelect.value = this.defaultScene || '';
+    this._sceneSelect = document.createElement('select');
+    this._sceneSelect.style.cssText = 'padding:0; border-radius:5px; opacity:0; width:48px; height:48px;';
+    this._sceneSelect.value = this.defaultScene || '';
 
     const defaultOption = document.createElement('option');
     defaultOption.value = '';
     defaultOption.innerHTML = 'Select a scene';
 
-    sceneSelect.appendChild(defaultOption);
+    this._sceneSelect.appendChild(defaultOption);
 
     this.scenes.forEach((value) => {
       const option = document.createElement('option');
@@ -300,10 +313,10 @@ export class SceneManager extends Plugin implements ISceneManager {
       if (value.id === this.defaultScene) {
         option.selected = true;
       }
-      sceneSelect.appendChild(option);
+      this._sceneSelect.appendChild(option);
     });
 
-    this._debugMenu.appendChild(sceneSelect);
+    this._debugMenu.appendChild(this._sceneSelect);
 
     this._debugMenu.addEventListener('change', (e: Event) => {
       if (this._queue) {

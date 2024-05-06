@@ -5,6 +5,7 @@ import { System } from './System';
 
 export class Sensor<T = any, A extends Application = Application> extends Actor<T, A> {
   type = 'Sensor';
+  isSensor = true;
 
   get collideables(): Entity[] {
     return System.actors;

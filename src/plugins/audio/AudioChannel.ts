@@ -49,6 +49,7 @@ export class AudioChannel {
 
   add(id: string, instance: IAudioInstance): IAudioInstance {
     this._sounds.set(id, instance);
+
     return instance;
   }
 
@@ -59,7 +60,7 @@ export class AudioChannel {
   remove(id: string): IAudioInstance | undefined {
     const instance = this._sounds.get(id);
     if (instance) {
-      instance.media.stop();
+      instance.destroy();
       this._sounds.delete(id);
     }
     return instance;

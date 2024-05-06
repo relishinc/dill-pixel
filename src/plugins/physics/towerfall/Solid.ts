@@ -1,14 +1,15 @@
-import { Actor } from './Actor';
 import { Application } from '../../../core/Application';
+import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { System } from './System';
 
 export class Solid<T = any, A extends Application = Application> extends Entity<T, A> {
   type = 'Solid';
+  isSolid = true;
   protected _isColliding: boolean = false;
 
-  get collideables(): Actor[] {
-    return System.actors;
+  get collideables(): Entity[] {
+    return System.getNearbyEntities(this, (entity) => entity.isActor);
   }
 
   get isColliding(): boolean {
@@ -53,6 +54,7 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
       // Re-enable collisions
       this.isCollideable = true;
     }
+    System.updateEntity(this);
   }
 
   getAllRidingActors(): Actor[] {
@@ -67,12 +69,13 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
     return this.getBoundingBox().intersects(entity.getBoundingBox());
   }
 
-  protected handleCollisionChange(isColliding?: boolean) { }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected handleCollisionChange(_isColliding?: boolean) {}
 
   private handleActorInteractions(deltaX: number, deltaY: number): void {
     // Check for collisions with non-riding actors
-    this.collideables.forEach((actor) => {
-      if (!actor.passThroughTypes.includes(this.type) && this.collidesWith(actor)) {
+    (this.collideables as Actor[]).forEach((actor) => {
+      if (!actor.passThroughTypes.includes(this.type) && !actor.isPassingThrough(this) && this.collidesWith(actor)) {
         // Push actors only the minimum amount necessary to avoid overlap
         const overlapX =
           deltaX !== 0
@@ -89,15 +92,15 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
             : 0;
 
         if (overlapX !== 0) {
-          actor.moveX(overlapX, actor.squish);
+          actor.moveX(overlapX, actor.squish, null, this);
         }
 
         if (overlapY !== 0) {
-          actor.moveY(overlapY, actor.squish);
+          actor.moveY(overlapY, actor.squish, null, this);
         }
       } else if (actor.isRiding(this)) {
-        actor.moveX(deltaX, () => { });
-        actor.moveY(deltaY, () => { });
+        actor.moveX(deltaX, () => {});
+        actor.moveY(deltaY, () => {});
       }
     });
   }

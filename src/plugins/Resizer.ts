@@ -53,16 +53,15 @@ export class Resizer extends Plugin {
   /**
    * Initializes the Resizer module.
    */
-  async initialize(app: IApplication, options: Partial<ResizerOptions> = {}) {
+  async initialize(_app: IApplication, options: Partial<ResizerOptions> = {}) {
     this._options = { ...defaultOptions, ...options };
   }
 
   /**
    * Post-initialization of the Resizer module.
    * when this is called, the renderer is already created, and the dom element has been appended
-   * @param app - The application instance.
    */
-  async postInitialize(app: IApplication) {
+  async postInitialize() {
     this.resize();
   }
 
@@ -75,9 +74,10 @@ export class Resizer extends Plugin {
     let screenHeight = window.innerHeight;
 
     const el = this.app.renderer.canvas?.parentElement;
-    if (el && el?.getBoundingClientRect()) {
-      screenWidth = el.offsetWidth;
-      screenHeight = el.offsetHeight;
+    const bounds = el?.getBoundingClientRect();
+    if (bounds) {
+      screenWidth = bounds.width;
+      screenHeight = bounds.height;
     }
 
     const minWidth = this._options.minSize.width;
@@ -86,10 +86,10 @@ export class Resizer extends Plugin {
     // Calculate renderer and canvas sizes based on current dimensions
     const scaleX = screenWidth < minWidth ? minWidth / screenWidth : 1;
     const scaleY = screenHeight < minHeight ? minHeight / screenHeight : 1;
-    const scale = scaleX > scaleY ? scaleX : scaleY;
+    let scale = scaleX > scaleY ? scaleX : scaleY;
+
     const width = screenWidth * scale;
     const height = screenHeight * scale;
-
     // Update canvas style dimensions and scroll window up to avoid issues on mobile resize
     this.app.renderer.canvas.style.width = `${screenWidth}px`;
     this.app.renderer.canvas.style.height = `${screenHeight}px`;

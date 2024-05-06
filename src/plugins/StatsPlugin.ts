@@ -24,8 +24,8 @@ export class StatsPlugin extends Plugin {
 
     this.stats.dom.style.position = 'absolute';
     this.stats.dom.style.top = 'auto';
-    this.stats.dom.style.bottom = '24px';
-    this.stats.dom.style.right = '40px';
+    this.stats.dom.style.bottom = '0';
+    this.stats.dom.style.right = '0';
     this.stats.dom.style.left = 'auto';
 
     Ticker.shared.add(this.stats.update, this.stats, UPDATE_PRIORITY.UTILITY);

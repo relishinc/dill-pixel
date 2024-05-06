@@ -3,6 +3,7 @@ import { Container as PIXIContainer, Graphics, Sprite, Text } from 'pixi.js';
 import { Button, ButtonConfig, ButtonConfigKeys } from '../../display/Button';
 import { Container } from '../../display/Container';
 import { FlexContainer, FlexContainerConfig, FlexContainerConfigKeys } from '../../display/FlexContainer';
+import { ISpineAnimation, SpineAnimation } from '../../display/SpineAnimation';
 import { UICanvas, UICanvasConfig, UICanvasConfigKeys } from '../../display/UICanvas';
 import { resolvePointLike } from '../../utils/functions';
 import { omitKeys, pluck } from '../../utils/object';
@@ -137,10 +138,21 @@ export const defaultFactoryMethods = {
         data = { skeleton: data + '.json', atlas: data + '.atlas' };
       }
     }
-    const entity: import('../../plugins/spine/pixi-spine').Spine = (window as any).Spine.from(data);
+    const entity: import('../../plugins/spine/pixi-spine/Spine').Spine = (window as any).Spine.from(data);
     if (!props) return entity;
     if (props.autoUpdate !== undefined) entity.autoUpdate = props.autoUpdate;
     if (props.animationName) entity.state.setAnimation(props.trackIndex ?? 0, props.animationName, props.loop);
+    const { position, x, y, anchor, pivot, scale, scaleX, scaleY, ...rest } = props;
+    resolvePosition({ position, x, y }, entity);
+    resolveScale({ scale, scaleX, scaleY }, entity);
+    resolveAnchor(anchor, entity);
+    resolvePivot(pivot, entity);
+    resolveUnknownKeys(rest, entity);
+    return entity;
+  },
+  spineAnimation: (props?: Partial<SpineProps>): ISpineAnimation => {
+    const entity = new SpineAnimation(props);
+    if (!props) return entity;
     const { position, x, y, anchor, pivot, scale, scaleX, scaleY, ...rest } = props;
     resolvePosition({ position, x, y }, entity);
     resolveScale({ scale, scaleX, scaleY }, entity);
@@ -191,4 +203,8 @@ export function FactoryContainer<T extends typeof defaultFactoryMethods = typeof
       this.add = createFactoryMethods(extensions, this, true);
     }
   };
+}
+
+export class Factory {
+  static get = Object.assign(defaultFactoryMethods, {});
 }

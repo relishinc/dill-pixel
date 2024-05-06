@@ -1,7 +1,7 @@
-import { Container, DestroyOptions, Graphics, PointLike } from 'pixi.js';
+import { Bounds, Container, DestroyOptions, Graphics, PointLike } from 'pixi.js';
 import { Application } from '../../core/Application';
 import { resolvePointLike } from '../../utils/functions';
-import { bindMethods } from '../../utils/methodBinding';
+import { bindAllMethods } from '../../utils/methodBinding';
 import { IFocusable } from './FocusManager';
 
 export type FocusOutlinerConfig = {
@@ -13,28 +13,36 @@ export type FocusOutlinerConfig = {
 
 export interface IFocusOutliner {
   position: PointLike;
+  focusBounds: Bounds;
 
   draw(focusTarget: IFocusable): void;
 
   clear(): void;
 
   destroy(args?: DestroyOptions): void;
+
+  setFocusTarget(focusTarget: IFocusable): void;
+
+  clearFocusTarget(): void;
+
+  updatePosition(): void;
 }
 
 export class FocusOutliner extends Container implements IFocusOutliner {
-  private _config: FocusOutlinerConfig;
-  private _graphics: Graphics;
-  private _focusTarget: IFocusable;
+  focusBounds: Bounds;
+  focusTarget: IFocusable | null;
+  protected _config: FocusOutlinerConfig;
+  protected _graphics: Graphics;
 
-  constructor(conig?: Partial<FocusOutlinerConfig>) {
+  constructor(config?: Partial<FocusOutlinerConfig>) {
     super();
-    bindMethods(this, '_updatePosition');
+    bindAllMethods(this);
     this._config = {
       color: 0x00ffff,
       shape: 'rounded rectangle',
       radius: 8,
       lineWidth: 2,
-      ...conig,
+      ...config,
     };
     this._graphics = new Graphics();
     this.addChild(this._graphics);
@@ -42,25 +50,21 @@ export class FocusOutliner extends Container implements IFocusOutliner {
 
   public draw(focusTarget: IFocusable): void {
     this.clear();
-    const bounds = focusTarget.getFocusArea().clone();
-
+    this.setFocusTarget(focusTarget);
+    if (!this.focusTarget) {
+      return;
+    }
     this._graphics.strokeStyle = { width: this._config.lineWidth, color: this._config.color, alpha: 1 };
     if (this._config.shape === 'rectangle') {
-      this._graphics.rect(0, 0, bounds.width, bounds.height);
+      this._graphics.rect(0, 0, this.focusBounds.width, this.focusBounds.height);
     } else {
-      this._graphics.roundRect(0, 0, bounds.width, bounds.height, this._config.radius);
+      this._graphics.roundRect(0, 0, this.focusBounds.width, this.focusBounds.height, this._config.radius);
     }
-
     this._graphics.stroke();
-    if (focusTarget) {
-      this._focusTarget = focusTarget;
-      Application.getInstance().ticker.add(this._updatePosition);
-    }
   }
 
   public clear(): void {
-    this._graphics.clear();
-    Application.getInstance().ticker.remove(this._updatePosition);
+    this.clearFocusTarget();
   }
 
   public destroy(options?: DestroyOptions) {
@@ -69,12 +73,25 @@ export class FocusOutliner extends Container implements IFocusOutliner {
     super.destroy(options);
   }
 
-  private _updatePosition() {
-    if (!this._focusTarget) {
+  public setFocusTarget(focusTarget: IFocusable) {
+    if (focusTarget) {
+      this.focusTarget = focusTarget;
+      this.focusBounds = this.focusTarget.getFocusArea().clone();
+      Application.getInstance().ticker.add(this.updatePosition);
+    }
+  }
+
+  public clearFocusTarget() {
+    this.focusTarget = null;
+    Application.getInstance().ticker.remove(this.updatePosition);
+  }
+
+  public updatePosition() {
+    if (!this.focusTarget) {
       return;
     }
-    const pos = this._focusTarget.getGlobalPosition();
-    const focusPos = this._focusTarget.getFocusPosition();
+    const pos = this.focusTarget.getGlobalPosition();
+    const focusPos = this.focusTarget.getFocusPosition();
     if (focusPos) {
       const fp = resolvePointLike(focusPos);
       pos.x += fp.x;
