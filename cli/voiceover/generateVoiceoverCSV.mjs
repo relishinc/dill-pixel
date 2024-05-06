@@ -24,6 +24,8 @@ function loadExistingCsv(filePath) {
 }
 
 function updateOrAddLine(filename, lineText, csvMap) {
+  lineText = stripHtmlTags(lineText);
+
   if (csvMap.has(filename)) {
     const parts = csvMap.get(filename);
     parts[1] = lineText; // Update the line text
@@ -39,6 +41,20 @@ function updateOrAddLine(filename, lineText, csvMap) {
     ];
     csvMap.set(filename, newLine);
   }
+}
+
+function stripHtmlTags(str) {
+  // Replace <strong> tag with asterisks for emphasis
+  str = str.replace(/<strong>/g, '*');
+  str = str.replace(/<\/strong>/g, '*');
+
+  // Replace <em> tag with underscores for emphasis
+  str = str.replace(/<em>/g, '_');
+  str = str.replace(/<\/em>/g, '_');
+
+  // Remove other HTML tags
+  str = str.replace(/<[^>]*>/g, '');
+  return str;
 }
 
 // Function to parse the object and create CSV content

@@ -74,7 +74,6 @@ export class i18nPlugin extends Plugin implements Ii18nPlugin {
   public onLocaleChanged: Signal<(locale: string) => void> = new Signal<(locale: string) => void>();
 
   private _dicts: Record<string, i18nDict> = {};
-  private _dict: i18nDict = {};
   private _locale: string;
   private _options: i18nOptions;
 
@@ -104,7 +103,6 @@ export class i18nPlugin extends Plugin implements Ii18nPlugin {
     } else if (this._options.files.length > 0) {
       await this.loadLocale(this._locale);
     }
-    this._dict = this._dicts[this._locale];
   }
 
   /**
@@ -226,7 +224,6 @@ export class i18nPlugin extends Plugin implements Ii18nPlugin {
     if (!this._dicts[localeId]) {
       await this.loadLocale(localeId);
     }
-    this._dict = this._dicts[localeId];
     this.onLocaleChanged.emit(localeId);
   }
 }
