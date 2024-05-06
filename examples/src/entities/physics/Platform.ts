@@ -1,6 +1,6 @@
-import { Point, Texture } from 'pixi.js';
 import { PointLike, resolvePointLike } from '@relish-studios/dill-pixel';
-import { System, Solid as TowerFallSolid } from '../../../../src/plugins/physics/towerfall';
+import { Point, Texture } from 'pixi.js';
+import { Solid as TowerFallSolid, System } from '../../../../src/plugins/physics/towerfall';
 
 type Direction = -1 | 0 | 1;
 
@@ -21,22 +21,24 @@ export type PlatformConfig = {
   height: number;
   color: number;
   moving: boolean;
-  movementConfig: PlatformMovementConfig;
+  canJumpThroughBottom?: boolean;
+  movementConfig?: PlatformMovementConfig;
 };
 export type PlatformConfigOpts = {
   width: number;
   height: number;
   color: number;
   moving: boolean;
-  movementConfig: PlatformMovementConfigOpts;
+  canJumpThroughBottom?: boolean;
+  movementConfig?: PlatformMovementConfigOpts;
 };
 
 const defaults: PlatformConfig = {
   width: 100,
   height: 10,
   color: 0x00ff00,
+  canJumpThroughBottom: false,
   moving: false,
-  movementConfig: null,
 };
 
 export class Platform extends TowerFallSolid<PlatformConfig> {
@@ -49,13 +51,14 @@ export class Platform extends TowerFallSolid<PlatformConfig> {
       height: config.height ?? defaults.height,
       color: config.color ?? defaults.color,
       moving: config.moving ?? defaults.moving,
+      canJumpThroughBottom: config?.canJumpThroughBottom === true,
       movementConfig: config.movementConfig
         ? {
             speed: resolvePointLike(config.movementConfig.speed, true),
             startingDirection: config.movementConfig.startingDirection || { x: 1, y: 0 },
             range: resolvePointLike(config.movementConfig.range, true),
           }
-        : null,
+        : undefined,
     };
   }
 
@@ -66,6 +69,10 @@ export class Platform extends TowerFallSolid<PlatformConfig> {
 
   get collideables() {
     return [...System.actors, ...System.sensors];
+  }
+
+  get canJumpThroughBottom() {
+    return this.config.canJumpThroughBottom;
   }
 
   get moving() {
@@ -96,11 +103,11 @@ export class Platform extends TowerFallSolid<PlatformConfig> {
   }
 
   update(deltaTime: number) {
-    if (!this.config.moving) return;
-    if (Math.abs(this.x - this._startPos.x) > this.config.movementConfig.range.x) {
+    if (!this.config.moving || !this.config.movementConfig) return;
+    if (Math.abs(this.x - this._startPos.x) >= this.config.movementConfig.range.x) {
       this.config.movementConfig.startingDirection.x *= -1;
     }
-    if (Math.abs(this.y - this._startPos.y) > this.config.movementConfig.range.y) {
+    if (Math.abs(this.y - this._startPos.y) >= this.config.movementConfig.range.y) {
       this.config.movementConfig.startingDirection.y *= -1;
     }
     this.move(

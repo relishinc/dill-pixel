@@ -1,19 +1,19 @@
-import { Container, delay, FlexContainer } from '@relish-studios/dill-pixel';
-import { Ticker } from 'pixi.js';
-import { Collision, TowerFallPhysicsPlugin } from '../../../src/plugins/physics/towerfall';
-import { Camera, CameraController } from '../entities/Camera.ts';
-import { Door } from '../entities/physics/Door.ts';
-import { Platform, PlatformMovementConfigOpts } from '../entities/physics/Platform.ts';
-import { Player } from '../entities/physics/Player.ts';
-import { Portal } from '../entities/physics/Portal.ts';
+import { Camera, CameraController } from '@/entities/Camera';
+import { Door } from '@/entities/physics/Door';
+import { Platform, PlatformMovementConfigOpts } from '@/entities/physics/Platform';
+import { Player } from '@/entities/physics/Player';
+import { Portal } from '@/entities/physics/Portal';
 
-import { BaseScene } from './BaseScene';
+import { BaseScene } from '@/scenes/BaseScene';
+import { Container, delay, FlexContainer } from '@relish-studios/dill-pixel';
+import { Assets, Ticker } from 'pixi.js';
+import { Collision, TowerFallPhysicsPlugin } from '../../../src/plugins/physics/towerfall';
 
 export class TowerFallPhysicsScene extends BaseScene {
   protected readonly title = 'TowerFall Physics';
   protected readonly subtitle = 'Arrows to move, up to jump';
   protected config = {
-    useCamera: false,
+    useCamera: true,
     debug: false,
   };
   controls: FlexContainer;
@@ -49,6 +49,7 @@ export class TowerFallPhysicsScene extends BaseScene {
 
   async initialize() {
     await super.initialize();
+    await Assets.loadBundle('spine');
     this.app.focus.addFocusLayer(this.id);
     this.level = this.add.container();
 
@@ -71,11 +72,8 @@ export class TowerFallPhysicsScene extends BaseScene {
     this.addPortals();
     this.addPlayer();
     this.addControls();
-    this.physics.system.onCollision.connect(this._handleCollision);
 
-    this.app.func.onKeyDown('D').connect(() => {
-      this.physics.system.debug = !this.physics.system.debug;
-    });
+    this._handleUseCameraChanged();
   }
 
   async start() {
@@ -85,14 +83,25 @@ export class TowerFallPhysicsScene extends BaseScene {
   update(ticker: Ticker) {
     if (this._isPaused) return;
 
+    if (
+      this.app.keyboard.isKeyDown('ArrowUp') ||
+      this.app.keyboard.isKeyDown(' ') ||
+      this.app.keyboard.isKeyDown('w')
+    ) {
+      this.app.sendAction('jump');
+    }
+
     if (this.app.keyboard.isKeyDown('ArrowLeft')) {
+      this.app.sendAction('move_left');
+    }
+    if (this.app.keyboard.isKeyDown('a')) {
       this.app.sendAction('move_left');
     }
     if (this.app.keyboard.isKeyDown('ArrowRight')) {
       this.app.sendAction('move_right');
     }
-    if (this.app.keyboard.isKeyDown('ArrowUp')) {
-      this.app.sendAction('jump');
+    if (this.app.keyboard.isKeyDown('d')) {
+      this.app.sendAction('move_right');
     }
 
     this.physics.system.update(ticker.deltaTime);
@@ -108,33 +117,30 @@ export class TowerFallPhysicsScene extends BaseScene {
     this.controls.containerWidth = this.app.size.width - 40;
   }
 
-  _handleCollision(collision: Collision) {
-    switch (collision.type) {
-      case 'Portal|Player':
-      case 'Portal|FX':
-        if ((collision.entity1 as Portal).connectedPortal && (collision.entity1 as Portal)?.connectedPortal?.enabled) {
-          (collision.entity1 as Portal).passThrough(collision.entity2);
-        }
-        break;
-    }
-  }
-
   addPlatforms() {
     this.addPlatForm(0, 300, Math.max(2000, this.app.size.width));
     this.addPlatForm(-300, 213, 30, 160);
-    this.addPlatForm(-300, 123, 150, 20);
+    this.addPlatForm(-300, 123, 150, 20, false);
     this.addPlatForm(300, 118, 30, 350);
-    this.addPlatForm(365, 100, 100, 20);
-    this.addPlatForm(this.app.size.width * 0.5 - 100, -120, 200, 20, true, {
+    this.addPlatForm(365, 100, 100, 20, false);
+    this.addPlatForm(this.app.size.width * 0.5 - 100, -120, 200, 20, false, true, {
       speed: [0, 1],
       startingDirection: { x: 0, y: 1 },
       range: [200, 300],
     });
     // vert
-    this.addPlatForm(210, 100, 150, 20, true, { speed: [0, 1], startingDirection: { x: 0, y: 1 }, range: [200, 300] });
+    this.addPlatForm(210, 100, 150, 20, false, true, {
+      speed: [0, 1],
+      startingDirection: { x: 0, y: 1 },
+      range: [200, 300],
+    });
 
     // hor
-    this.addPlatForm(-50, 0, 200, 20, true, { speed: [1, 0], startingDirection: { x: 1, y: 0 }, range: [180, 0] });
+    this.addPlatForm(-50, 0, 200, 20, false, true, {
+      speed: [1, 0],
+      startingDirection: { x: 1, y: 0 },
+      range: [180, 0],
+    });
 
     // both hor and vert
     // this.addPlatForm(0, 150, 300, 15, true, { speed: [1, 1], startingDirection: { x: 1, y: 1 }, range: [200, 200] });
@@ -145,6 +151,7 @@ export class TowerFallPhysicsScene extends BaseScene {
     y: number,
     width: number,
     height = 15,
+    canJumpThroughBottom: boolean = false,
     moving: boolean = false,
     movementConfig?: PlatformMovementConfigOpts,
     color: number = 0x00fff0,
@@ -154,6 +161,7 @@ export class TowerFallPhysicsScene extends BaseScene {
         width,
         height,
         color,
+        canJumpThroughBottom,
         moving,
         movementConfig,
       }),
@@ -282,7 +290,23 @@ export class TowerFallPhysicsScene extends BaseScene {
     switch (collision.type) {
       case 'Portal|Player':
       case 'Portal|FX':
+      case 'Player|FX':
+      case 'FX|Player':
         return false;
+      case 'Player|Platform':
+        // eslint-disable-next-line no-case-declarations
+        const platform = collision.entity2 as Platform;
+        // eslint-disable-next-line no-case-declarations
+        const player = collision.entity1 as Player;
+        if (platform.canJumpThroughBottom) {
+          if (collision.top) {
+            player.setPassingThrough(platform);
+          } else if (player.bottom <= platform.top) {
+            player.removePassingThrough(platform);
+          }
+          return !player.isPassingThrough(platform);
+        }
+        return true;
       default:
         return true;
     }

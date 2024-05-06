@@ -23,7 +23,7 @@ export class Door extends Sensor<DoorConfig> {
   }
 
   get collideables(): Entity[] {
-    return [...System.actors, ...System.solids];
+    return System.getNearbyEntities(this, (entity) => !entity.isSensor);
   }
 
   protected initialize() {

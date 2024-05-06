@@ -1,35 +1,43 @@
-import { ActionDetail, PointLike, resolvePointLike, Signal } from '@relish-studios/dill-pixel';
+import { ActionDetail, ISpineAnimation, PointLike, resolvePointLike, Signal } from '@relish-studios/dill-pixel';
 
 import { gsap } from 'gsap';
-import { Point, Pool, Texture } from 'pixi.js';
-import { Actor as TowerFallActor, Collision, System } from '../../../../src/plugins/physics/towerfall';
+import { Bounds, Point, Pool, Rectangle, Texture } from 'pixi.js';
+import { Actor as TowerFallActor, Collision, Entity, System } from '../../../../src/plugins/physics/towerfall';
+import { Platform } from './Platform';
 
 export class Player extends TowerFallActor {
+  declare view: ISpineAnimation;
   type = 'Player';
   passThroughTypes = ['FX'];
   onKilled = new Signal();
   speed: number = 6;
+
   private _velocity: Point = new Point(0, 0);
   private _canJump: boolean = false;
   private _isJumping: boolean = false;
   private _jumpPower: number = 0;
   private _jumpTimeElapsed: number = 0;
   private _hitHead: boolean = false;
+  private _isMoving: boolean = false;
 
   constructor() {
     super();
     this.initialize();
   }
 
+  get velocity() {
+    return this._velocity;
+  }
+
   protected initialize() {
-    this.view = this.add.sprite({
-      asset: Texture.WHITE,
-      width: 40,
-      height: 80,
-      tint: 0xff0000,
-      anchor: 0.5,
+    this.view = this.add.spineAnimation({
+      data: 'spine/xavier',
+      animationName: 'idle',
+      loop: true,
     });
 
+    console.log(this.view.animationNames);
+    this.view.scale.set(0.15);
     this.app.actions('move_left').connect(this._handleAction);
     this.app.actions('move_right').connect(this._handleAction);
     this.app.actions('jump').connect(this._handleAction);
@@ -38,19 +46,46 @@ export class Player extends TowerFallActor {
   public update(deltaTime: number) {
     if (this._isJumping) {
       this._jumpTimeElapsed += deltaTime;
-      this._jumpPower -= this._velocity.y < 0 ? this.speed / 2 : this.speed * 2.5;
+
+      this._jumpPower -= this._velocity.y < 0 ? this.speed * 0.3 : this.speed * this._jumpPower * 2;
       if (this._jumpPower <= 0) {
         this._jumpPower = 0;
         this._resetJump();
       }
     }
+
     this._velocity.y =
       this.system.gravity * deltaTime - (this._velocity.y < 0 ? this._jumpPower : -this.system.gravity * 0.5);
+
     this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
+
+    if (!this._isJumping && !this._isMoving) {
+      if (this.view.getCurrentAnimation() !== 'idle') {
+        this.view.setAnimation('idle', true);
+      }
+    }
+    if (this._hitHead && this._velocity.y < 0) {
+      this._jumpPower *= 0.25;
+      this._hitHead = false;
+    }
+    this._isMoving = false;
   }
 
-  public squish() {
+  public squish(collision: Collision, pushingEntity: Entity) {
+    console.log('squish', collision, pushingEntity);
+    if (collision.bottom && pushingEntity.type === 'Platform' && (pushingEntity as Platform).canJumpThroughBottom) {
+      return;
+    }
     this.onKilled.emit();
+  }
+
+  getWorldBounds(): Bounds | Rectangle {
+    const pos = this.system.container.toLocal(this.getGlobalPosition());
+    const bounds = new Rectangle(pos.x, pos.y, 44, 90);
+    // Adjust bounds based on the view's anchor if it's a sprite
+    bounds.x -= 22;
+    bounds.y -= 85;
+    return bounds;
   }
 
   public spawn(position: PointLike, delay: number = 0.5) {
@@ -87,12 +122,23 @@ export class Player extends TowerFallActor {
   private _handleAction(actionDetail: ActionDetail) {
     switch (actionDetail.id) {
       case 'move_left':
+        this.view.spine.scale.x = -1;
         this.moveX(-this.speed, this._handleCollision);
+        if (this.view.getCurrentAnimation() !== 'run') {
+          this.view.setAnimation('run', true);
+        }
+        this._isMoving = true;
         break;
       case 'move_right':
+        this.view.spine.scale.x = 1;
         this.moveX(this.speed, this._handleCollision);
+        if (this.view.getCurrentAnimation() !== 'run') {
+          this.view.setAnimation('run', true);
+        }
+        this._isMoving = true;
         break;
       case 'jump':
+        this.view.setAnimation('Jump');
         this._jump();
         break;
     }
@@ -102,14 +148,14 @@ export class Player extends TowerFallActor {
     if (!this._isJumping && this._canJump) {
       this._canJump = false;
       this._isJumping = true;
-      this._jumpPower = this.system.gravity * 6;
+      this._jumpPower = this.system.gravity * 4;
       this._velocity.y = this.system.gravity - this._jumpPower;
       this._spawnJumpFx();
     }
   }
 
   private _spawnJumpFx() {
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
       const jumpFx = FX.pool.get({
         speed: Math.random() * 4 + 1,
         color: Math.random() * 0xffffff,
@@ -183,6 +229,6 @@ class FX extends TowerFallActor {
   private _reduceSpeedAndBounce() {
     this._reduceSpeed();
     this.numBounces++;
-    this.vertVector = 20 / this.numBounces + this.system.gravity * 0.95;
+    this.vertVector = this.system.gravity / this.numBounces + this.system.gravity * 0.95;
   }
 }

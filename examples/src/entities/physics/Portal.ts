@@ -1,4 +1,5 @@
-import { checkCollision, Entity, EntityType, System } from '../../../../src/plugins/physics/towerfall';
+import { Bounds } from 'pixi.js';
+import { checkCollision, Collision, Entity, EntityType, System } from '../../../../src/plugins/physics/towerfall';
 import { Door, DoorConfig } from './Door';
 
 const defaults: DoorConfig = {
@@ -21,7 +22,7 @@ export class Portal extends Door {
   }
 
   get collideables(): Entity[] {
-    return System.getEntitiesByType('Player', 'FX', 'Platform');
+    return System.getNearbyEntities(this, ['Player', 'FX', 'Platform']);
   }
 
   getBoundingBox() {
@@ -38,6 +39,8 @@ export class Portal extends Door {
       .graphics()
       .ellipse(0, 0, this.config.width * 0.5, this.config.height * 0.5)
       .fill({ color: this.config.color });
+
+    System.onCollision.connect(this._handleCollision);
   }
 
   update(deltaTime: number) {
@@ -62,7 +65,7 @@ export class Portal extends Door {
   }
 
   getOuterBoundingBox() {
-    const bb = this.getWorldBounds();
+    const bb = this.getWorldBounds() as Bounds;
     bb.x -= this.config.width * 0.5;
     bb.y -= this.config.height * 0.5;
     return bb.rectangle;
@@ -87,6 +90,17 @@ export class Portal extends Door {
   passThrough(entity: Entity) {
     if (!this.has(entity) && this.connectedPortal) {
       this.connectedPortal.addEntity(entity);
+    }
+  }
+
+  private _handleCollision(collision: Collision) {
+    switch (collision.type) {
+      case 'Portal|Player':
+      case 'Portal|FX':
+        if ((collision.entity1 as Portal).connectedPortal && (collision.entity1 as Portal)?.connectedPortal?.enabled) {
+          (collision.entity1 as Portal).passThrough(collision.entity2);
+        }
+        break;
     }
   }
 }

@@ -1,9 +1,10 @@
 import EN from '@/locales/en';
 import { scenes } from '@/scenes';
-import { Application, create, LoadSceneMethod, LocalStorageAdapter } from '@relish-studios/dill-pixel';
+import { AppConfig, Application, create, LoadSceneMethod, LocalStorageAdapter } from '@relish-studios/dill-pixel';
 
 import { Assets } from 'pixi.js';
 import manifest from './assets.json';
+import { ExampleOutliner } from './ui/ExampleOutliner';
 
 export class V8Application extends Application {
   setup() {
@@ -11,7 +12,7 @@ export class V8Application extends Application {
   }
 }
 
-const appConfig = {
+const appConfig: AppConfig = {
   id: 'V8Application',
   manifest: manifest,
   plugins: [
@@ -19,6 +20,10 @@ const appConfig = {
       id: 'physics',
       namedExport: 'TowerFallPhysicsPlugin',
       module: () => import('../../src/plugins/physics/towerfall'),
+      options: {
+        gridCellSize: 100,
+        fps: 60,
+      },
       autoLoad: false,
     },
   ],
@@ -42,12 +47,10 @@ const appConfig = {
   defaultSceneLoadMethod: 'exitEnter' as LoadSceneMethod,
   useSpine: true,
   showStats: true,
-  preference: 'webgl' as 'webgl' | 'webgpu' | 'canvas',
   showSceneDebugMenu: true,
+  focusOptions: {
+    outliner: ExampleOutliner,
+  },
 };
 
-export function bootstrap() {
-  return create(V8Application, appConfig);
-}
-
-bootstrap();
+void create(V8Application, appConfig);
