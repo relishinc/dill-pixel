@@ -347,12 +347,9 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     this.config = Object.assign({ ...defaultApplicationOptions }, config);
 
     await this.preInitialize(this.config);
-    console.log('Application preInitialize complete. Initializing assets...');
     await this.initAssets();
     // initialize the pixi application
-    console.log('Application initilization started.', this.config);
     await this.init(this.config);
-    console.log('Application initilization complete.');
     // initialize the logger
     Logger.initialize(config.id);
 
@@ -550,7 +547,6 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       opts.manifest = manifest;
     }
     this.manifest = opts.manifest;
-    console.log('Initializing assets with manifest:', this.manifest);
     await Assets.init(opts);
   }
 
