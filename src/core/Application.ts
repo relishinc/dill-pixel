@@ -377,6 +377,8 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     // add the store if it's enabled
     if (this.config.useStore) {
       this._store = new Store();
+      this._store.initialize(this);
+
       // register any storage adapters passed through the config
       if (this.config.storageAdapters && this.config.storageAdapters.length > 0) {
         for (let i = 0; i < this.config.storageAdapters.length; i++) {

@@ -1,3 +1,4 @@
+import { IApplication } from '../core/Application';
 import { Logger } from '../utils/console/Logger';
 import { IStorageAdapter } from './adapters/StorageAdapter';
 
@@ -13,6 +14,8 @@ type AdapterSaveConfig = {
  * Interface for the Store class.
  */
 export interface IStore {
+  initialize(app: IApplication): IStore;
+
   destroy(): void;
 
   registerAdapter(adapter: IStorageAdapter, adapterOptions: any): void;
@@ -35,6 +38,7 @@ export interface IStore {
  * A class representing a store of data, with multiple storage adapters.
  */
 export class Store implements IStore {
+  private _app: IApplication;
   private _adapters: Map<string, IStorageAdapter> = new Map<string, IStorageAdapter>();
 
   /**
@@ -49,7 +53,7 @@ export class Store implements IStore {
       return Promise.resolve();
     }
     this._adapters.set(adapter.id, adapter);
-    await adapter.initialize(adapterOptions);
+    await adapter.initialize(this._app, adapterOptions);
   }
 
   /**
@@ -138,7 +142,7 @@ export class Store implements IStore {
     }
     return result;
   }
-  
+
   /**
    * Loads data from a storage adapter.
    * @param {string} adapterId The ID of the adapter.
@@ -151,5 +155,10 @@ export class Store implements IStore {
       throw new Error(`Adapter ${adapterId} not found`);
     }
     return await adapter.load(key);
+  }
+
+  public initialize(app: IApplication): IStore {
+    this._app = app;
+    return this;
   }
 }
