@@ -55,6 +55,122 @@
               "m": true
             }
           }
+        },
+        {
+          "alias": [
+            "audio/vo/en/cc.json"
+          ],
+          "src": [
+            "audio/vo/en/cc.json"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "audio/vo/en/vo_intro_0_en.mp3",
+            "vo_intro_0_en.mp3"
+          ],
+          "src": [
+            "audio/vo/en/vo_intro_0_en.mp3",
+            "audio/vo/en/vo_intro_0_en.ogg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "audio/vo/en/vo_intro_1_en.mp3",
+            "vo_intro_1_en.mp3"
+          ],
+          "src": [
+            "audio/vo/en/vo_intro_1_en.mp3",
+            "audio/vo/en/vo_intro_1_en.ogg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "audio/vo/en/vo_intro_2_en.mp3",
+            "vo_intro_2_en.mp3"
+          ],
+          "src": [
+            "audio/vo/en/vo_intro_2_en.mp3",
+            "audio/vo/en/vo_intro_2_en.ogg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "audio/vo/fr/cc.json"
+          ],
+          "src": [
+            "audio/vo/fr/cc.json"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "audio/vo/fr/vo_intro_0_fr.mp3",
+            "vo_intro_0_fr.mp3"
+          ],
+          "src": [
+            "audio/vo/fr/vo_intro_0_fr.mp3",
+            "audio/vo/fr/vo_intro_0_fr.ogg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "audio/vo/fr/vo_intro_1_fr.mp3",
+            "vo_intro_1_fr.mp3"
+          ],
+          "src": [
+            "audio/vo/fr/vo_intro_1_fr.mp3",
+            "audio/vo/fr/vo_intro_1_fr.ogg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "audio/vo/fr/vo_intro_2_fr.mp3",
+            "vo_intro_2_fr.mp3"
+          ],
+          "src": [
+            "audio/vo/fr/vo_intro_2_fr.mp3",
+            "audio/vo/fr/vo_intro_2_fr.ogg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
         }
       ]
     },
@@ -78,7 +194,8 @@
         },
         {
           "alias": [
-            "game/wordmark.svg"
+            "game/wordmark.svg",
+            "wordmark.svg"
           ],
           "src": [
             "game/wordmark.svg"
@@ -141,19 +258,6 @@
           "data": {
             "tags": {
               "tps": true,
-              "m": true
-            }
-          }
-        },
-        {
-          "alias": [
-            "required/wordmark.svg"
-          ],
-          "src": [
-            "required/wordmark.svg"
-          ],
-          "data": {
-            "tags": {
               "m": true
             }
           }

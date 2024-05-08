@@ -1,6 +1,4 @@
-import { Button } from 'dill-pixel/display/Button';
-import { Container } from 'dill-pixel/display/Container';
-import { ActionDetail } from 'dill-pixel/plugins/InputManager';
+import { ActionDetail, FlexContainer } from '@relish-studios/dill-pixel';
 import { BaseScene } from './BaseScene';
 
 export class AudioScene extends BaseScene {
@@ -8,14 +6,15 @@ export class AudioScene extends BaseScene {
   protected readonly subtitle = 'Demonstrates audio channels and volume control.';
 
   protected config = {
-    master: 1,
-    music: 0.5,
+    master: 0.5,
+    music: 0.25,
     sfx: 2,
+    vo: 2,
     muted: false,
   };
 
-  protected buttonContainer: Container;
-  protected buttons: Button[] = [];
+  protected buttonContainer: FlexContainer;
+  protected sfxButtons: FlexContainer;
 
   constructor() {
     super();
@@ -24,15 +23,24 @@ export class AudioScene extends BaseScene {
 
   public async initialize() {
     await super.initialize();
+    this.app.focus.addFocusLayer(this.id);
+
     this.app.audio.masterVolume = this.config.master;
     this.app.audio.muted = this.config.muted;
 
     this.app.audio.music.volume = this.config.music;
     this.app.audio.sfx.volume = this.config.sfx;
 
-    this.buttonContainer = this.add.container();
-    this.app.focus.addFocusLayer(this.id);
-    this.addButton('Bubble', () => {
+    this.buttonContainer = this.add.flexContainer({ gap: 20, justifyContent: 'center' });
+    this.sfxButtons = this.buttonContainer.add.flexContainer({
+      gap: 10,
+      flexDirection: 'column',
+      alignItems: 'center',
+    });
+
+    this.sfxButtons.add.text({ text: 'SFX', style: { fill: 0xffffff, fontSize: 36, fontWeight: 'bold' } });
+
+    this.addButton(this.sfxButtons, 'Bubble', () => {
       this.app.sendAction('sfx', {
         id: 'bubble-land-sfx',
       });
@@ -57,8 +65,13 @@ export class AudioScene extends BaseScene {
     this.gui.add(this.config, 'muted').name('Mute').onChange(this._handleMuteChanged);
   }
 
-  addButton(label: string = 'Button', callback: () => void) {
-    const btn = this.buttonContainer.add.button({
+  resize() {
+    super.resize();
+    this.buttonContainer.position.set(0, -this.buttonContainer.height / 2);
+  }
+
+  addButton(container: FlexContainer, label: string = 'Button', callback: () => void) {
+    const btn = container.add.button({
       scale: 0.5,
       cursor: 'pointer',
       textures: { default: 'btn/blue', hover: 'btn/yellow', disabled: 'btn/grey', active: 'btn/red' },
@@ -74,8 +87,6 @@ export class AudioScene extends BaseScene {
     });
 
     this.addSignalConnection(btn.onClick.connect(callback));
-
-    this.buttons.push(btn);
 
     btn.label = label;
     this.app.focus.add(btn, this.id, false);
@@ -94,12 +105,15 @@ export class AudioScene extends BaseScene {
     this.app.audio.setChannelVolume('sfx', value);
   }
 
+  _handleVOVolumeChanged(value: number) {
+    this.app.audio.setChannelVolume('voiceover', value);
+  }
+
   _handleMuteChanged(value: boolean) {
     this.app.audio.muted = value;
   }
 
   private _handleSfx(action: ActionDetail) {
-    console.log(action.data.id);
     this.app.audio.play(action.data.id, 'sfx');
   }
 }

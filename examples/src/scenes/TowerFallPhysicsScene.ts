@@ -276,7 +276,7 @@ export class TowerFallPhysicsScene extends BaseScene {
         worldWidth: 4000,
         worldHeight: 4000,
         target: this.player,
-        lerp: 0.05,
+        lerp: 0.1,
       });
     } else {
       // @ts-expect-error camera can't be null error

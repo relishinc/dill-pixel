@@ -17,9 +17,10 @@
     "lint": "eslint src --ext .ts",
     "lint-fix": "eslint src --ext .ts --fix",
     "visualize": "npx vite-bundle-visualizer -c vite.config.mjs",
-    "audio:vo": "texttospeech",
-    "audio:captions": "node ../cli.mjs audio captions assets/audio",
-    "audio:compress": "node ../cli.mjs audio compress assets/audio",
+    "audio:vo:en": "texttospeech assets/audio{m}/vo/en --sheet-name=\"Intro EN\"",
+    "audio:vo:fr": "texttospeech assets/audio{m}/vo/fr --sheet-name=\"Intro FR\"",
+    "audio:captions:en": "node ../cli.mjs audio captions src/assets/audio/en assets/audio{m}/vo/en",
+    "audio:captions:fr": "node ../cli.mjs audio captions src/assets/audio/fr assets/audio{m}/vo/fr",
     "vo:generate": "node ../cli.mjs vo generate",
     "spritesheets": "node assets/images/export_spritesheets",
     "format": "prettier --write src",
@@ -28,10 +29,11 @@
   "author": "Relish Digital<dev@reli.sh>",
   "license": "MIT",
   "devDependencies": {
+    "@relishinc/text-to-speech": "^1.4.0",
     "@types/dat.gui": "^0.7.13"
   },
   "dependencies": {
-    "dat.gui": "^0.7.9",
-    "@relish-studios/dill-pixel": "file:.."
+    "@relish-studios/dill-pixel": "file:..",
+    "dat.gui": "^0.7.9"
   }
 }

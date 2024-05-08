@@ -51,6 +51,16 @@ const appConfig: AppConfig = {
   focusOptions: {
     outliner: ExampleOutliner,
   },
+  captions: {
+    files: [
+      { id: 'en', json: 'audio/vo/en/cc.json' },
+      { id: 'fr', json: 'audio/vo/fr/cc.json' },
+    ],
+    backgroundAlpha: 0.5,
+    backgroundColor: 0x0,
+    textColor: 0xffffff,
+    maxWidth: 0.4,
+  },
 };
 
 void create(V8Application, appConfig);

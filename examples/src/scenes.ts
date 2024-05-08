@@ -6,6 +6,12 @@ export const scenes = [
     module: () => import('@/scenes/AudioScene'),
   },
   {
+    id: 'voiceover',
+    debugLabel: 'Voiceover / Captions',
+    namedExport: 'VoiceoverScene',
+    module: () => import('@/scenes/VoiceoverScene'),
+  },
+  {
     id: 'focus',
     debugLabel: 'Focus Management',
     namedExport: 'FocusScene',

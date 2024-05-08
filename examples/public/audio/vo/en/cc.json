@@ -1,0 +1,18 @@
+{
+  "vo_intro_0_en": [
+    {
+      "content": "<p>Welcome to the cutting edge of creativity and code. Unleash your imagination with Dill Pixel, the premier Pixi.js game engine.</p>",
+      "start": 0, "end": 8088
+    }
+  ], "vo_intro_1_en": [
+  {
+    "content": "<p>Designed for developers who dream big—whether you're a beginner or a pro, Dill Pixel provides the tools you need to bring your games to life.</p>",
+    "start": 0, "end": 7608
+  }
+], "vo_intro_2_en": [
+  {
+    "content": "<p>Step into a world of endless possibilities. Start creating, start innovating, start now with Dill Pixel!</p>",
+    "start": 0, "end": 6528
+  }
+]
+}

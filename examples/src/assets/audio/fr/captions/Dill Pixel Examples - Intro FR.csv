@@ -1,0 +1,4 @@
+FILENAME,TYPE,ACTION,LINE,SCRATCH_VOICE,SCRATCH_GENDER,SCRATCH_LANGUAGE,CAPTION
+vo_intro_0_fr,VO,,"Bienvenue à la pointe de la créativité et de la programmation. Libérez votre imagination avec Dill Pixel, le moteur de jeu de premier plan basé sur Pixi.js.",fr-CA-Neural2-A,female,fr-CA,Y
+vo_intro_1_fr,VO,,"Conçu pour les développeurs qui voient grand—que vous soyez débutant ou professionnel, Dill Pixel vous offre les outils nécessaires pour donner vie à vos jeux.",fr-CA-Neural2-A,female,fr-CA,Y
+vo_intro_2_fr,VO,,"Entrez dans un monde de possibilités infinies. Commencez à créer, à innover, commencez maintenant avec Dill Pixel!",fr-CA-Neural2-A,female,fr-CA,Y

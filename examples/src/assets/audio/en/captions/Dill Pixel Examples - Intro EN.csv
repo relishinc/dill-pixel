@@ -1,0 +1,4 @@
+FILENAME,TYPE,ACTION,LINE,SCRATCH_VOICE,SCRATCH_GENDER,SCRATCH_LANGUAGE,CAPTION
+vo_intro_0_en,VO,,"Welcome to the cutting edge of creativity and code. Unleash your imagination with Dill Pixel, the premier Pixi.js game engine.",,female,en-US,Y
+vo_intro_1_en,VO,,"Designed for developers who dream big—whether you're a beginner or a pro, Dill Pixel provides the tools you need to bring your games to life.",,female,en-US,Y
+vo_intro_2_en,VO,,"Step into a world of endless possibilities. Start creating, start innovating, start now with Dill Pixel!",,female,en-US,Y
