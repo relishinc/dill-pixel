@@ -49,7 +49,6 @@ export class AudioChannel {
 
   add(id: string, instance: IAudioInstance): IAudioInstance {
     this._sounds.set(id, instance);
-
     return instance;
   }
 

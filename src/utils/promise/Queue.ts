@@ -24,7 +24,7 @@ export class Queue<T = any | void> {
    * Creates a new Queue.
    * @param {(Promise<any> | (() => Promise<T>))[]} promises The promises to add to the queue.
    */
-  constructor(promises: (Promise<any> | (() => Promise<T>))[]) {
+  constructor(promises: (Promise<any> | (() => Promise<T>))[] = []) {
     this._promises = promises;
   }
 

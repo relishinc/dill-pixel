@@ -15,6 +15,8 @@ export interface IPlugin {
   destroy(): void;
 
   addSignalConnection(...args: SignalConnection[]): void;
+
+  clearSignalConnections(): void;
 }
 
 @MethodBindingRoot
@@ -54,5 +56,9 @@ export class Plugin<T extends Application = Application> implements IPlugin {
     for (const connection of args) {
       this._signalConnections.add(connection);
     }
+  }
+
+  public clearSignalConnections() {
+    this._signalConnections.disconnectAll();
   }
 }

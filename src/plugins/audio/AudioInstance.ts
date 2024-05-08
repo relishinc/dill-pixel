@@ -1,6 +1,7 @@
 import { IMediaInstance } from '@pixi/sound';
 import { gsap } from 'gsap';
 import { Signal } from '../../signals';
+import { bindAllMethods } from '../../utils/methodBinding';
 import { IAudioChannel } from './AudioChannel';
 import { IAudioManager } from './AudioManager';
 
@@ -35,6 +36,8 @@ export interface IAudioInstance {
   pause(): void;
 
   play(): void;
+
+  resume(): void;
 }
 
 export class AudioInstance implements IAudioInstance {
@@ -43,6 +46,7 @@ export class AudioInstance implements IAudioInstance {
   public onEnd: Signal<(instance: IAudioInstance) => void> = new Signal<(instance: IAudioInstance) => void>();
   public onPaused: Signal<(instance: IAudioInstance) => void> = new Signal<(instance: IAudioInstance) => void>();
   public onResumed: Signal<(instance: IAudioInstance) => void> = new Signal<(instance: IAudioInstance) => void>();
+  public onProgress: Signal<(instance: IAudioInstance) => void> = new Signal<(instance: IAudioInstance) => void>();
   private _media: IMediaInstance;
   private _volume: number = 1;
   private _muted: boolean = false;
@@ -53,6 +57,7 @@ export class AudioInstance implements IAudioInstance {
     public channel: IAudioChannel,
     public manager: IAudioManager,
   ) {
+    bindAllMethods(this);
     this.muted = this.channel.muted;
   }
 
@@ -63,7 +68,10 @@ export class AudioInstance implements IAudioInstance {
   set media(value: IMediaInstance) {
     this._media = value;
     if (value) {
-      this.volume = this.media.volume;
+      this._media.volume = this._volume * this.channel.volume * this.manager.masterVolume;
+      if (this.muted) {
+        this._media.muted = this.muted;
+      }
       this.addListeners();
     }
   }
@@ -74,7 +82,9 @@ export class AudioInstance implements IAudioInstance {
 
   set muted(value: boolean) {
     this._muted = value;
-    this.media.muted = this._muted;
+    if (this._media) {
+      this._media.muted = this._muted;
+    }
   }
 
   public get volume(): number {
@@ -83,7 +93,9 @@ export class AudioInstance implements IAudioInstance {
 
   public set volume(value: number) {
     this._volume = value;
-    this.media.volume = this._volume * this.channel.volume * this.manager.masterVolume;
+    if (this._media) {
+      this._media.volume = this._volume * this.channel.volume * this.manager.masterVolume;
+    }
   }
 
   get isPlaying() {
@@ -92,7 +104,16 @@ export class AudioInstance implements IAudioInstance {
 
   pause(): void {
     this._isPlaying = false;
-    this.media.paused = true;
+    if (this._media) {
+      this._media.paused = true;
+    }
+  }
+
+  resume(): void {
+    this._isPlaying = true;
+    if (this._media) {
+      this._media.paused = false;
+    }
   }
 
   remove(): void {
@@ -100,9 +121,10 @@ export class AudioInstance implements IAudioInstance {
   }
 
   stop() {
-    if (this.media) {
-      this.media.stop();
+    if (this._media) {
+      this._media.stop();
     }
+    this.onEnd.emit(this);
   }
 
   updateVolume(): void {
@@ -111,22 +133,25 @@ export class AudioInstance implements IAudioInstance {
 
   addListeners() {
     this.removeListeners();
-    this.media.on('start', this._handleStart);
-    this.media.on('stop', this._handleStop);
-    this.media.on('end', this._handleOnEnd);
-    this.media.on('paused', this._handleOnPaused);
-    this.media.on('resumed', this._handleOnResumed);
+    this._media.on('end', this._handleMediaEnded);
+    this._media.on('start', this._handleMediaStarted);
+    this._media.on('stop', this._handleMediaStopped);
+    this._media.on('pause', this._handleMediaPaused);
+    this._media.on('progress', this._handleMediaProgress);
+    this._media.on('resumed', this._handleMediaResumed);
   }
 
   removeListeners() {
     if (!this.media) {
       return;
     }
-    this.media.off('start', this._handleStart);
-    this.media.off('stop', this._handleStop);
-    this.media.off('end', this._handleOnEnd);
-    this.media.off('paused', this._handleOnPaused);
-    this.media.off('resumed', this._handleOnResumed);
+
+    this._media.off('end', this._handleMediaEnded);
+    this._media.off('start', this._handleMediaStarted);
+    this._media.off('stop', this._handleMediaStopped);
+    this._media.off('pause', this._handleMediaPaused);
+    this._media.off('progress', this._handleMediaProgress);
+    this._media.off('resumed', this._handleMediaResumed);
   }
 
   destroy() {
@@ -140,35 +165,34 @@ export class AudioInstance implements IAudioInstance {
 
   public play(time?: number): void {
     this._isPlaying = true;
-    if (time === undefined) {
-      this.media.play({});
-    } else {
+    if (time) {
       this.media.play({ start: time });
+    } else {
+      this.media.play({});
     }
   }
 
-  private _handleStart() {
-    this._isPlaying = true;
-    this.onStart.emit(this);
-  }
-
-  private _handleStop() {
-    this._isPlaying = false;
-    this.onStop.emit(this);
-  }
-
-  private _handleOnEnd() {
-    this._isPlaying = false;
+  private _handleMediaEnded() {
     this.onEnd.emit(this);
   }
 
-  private _handleOnPaused() {
-    this._isPlaying = false;
+  private _handleMediaStarted() {
+    this.onStart.emit(this);
+  }
+
+  private _handleMediaStopped() {
+    this.onStop.emit(this);
+  }
+
+  private _handleMediaPaused() {
     this.onPaused.emit(this);
   }
 
-  private _handleOnResumed() {
-    this._isPlaying = true;
+  private _handleMediaProgress() {
+    this.onProgress.emit(this);
+  }
+
+  private _handleMediaResumed() {
     this.onResumed.emit(this);
   }
 }

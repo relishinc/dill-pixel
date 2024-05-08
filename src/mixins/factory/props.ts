@@ -50,6 +50,10 @@ export interface TextProps extends AbstractProps, PositionProps, ScaleProps, Vis
   style: Partial<TextStyleOptions>;
 }
 
+export interface OmittedTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {}
+
+export const TextPropsKeys: (keyof TextProps)[] = ['text', 'anchor', 'resolution', 'roundPixels', 'style'];
+
 export interface ContainerProps extends AbstractProps, PositionProps, ScaleProps, PivotProps, VisibilityProps {}
 
 export interface FlexContainerProps extends ContainerProps, FlexContainerConfig {}

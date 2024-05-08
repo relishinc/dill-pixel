@@ -211,7 +211,6 @@ export class AudioManager extends Plugin implements IAudioManager {
    * @returns {Promise<void>}
    */
   public initialize(app: IApplication): Promise<void> {
-    Logger.log('AudioManager initialized', app);
     if (typeof app?.manifest === 'object') {
       this.addAllFromManifest(app.manifest);
     }
@@ -359,7 +358,6 @@ export class AudioManager extends Plugin implements IAudioManager {
       soundId = this._idMap.get(soundId) as string;
     }
     const channel = this._channels.get(channelName);
-    Logger.log('play', soundId, channelName, options, channel);
     if (channel) {
       soundId = this._verifySoundId(soundId);
       const audioInstance = channel.add(soundId, new AudioInstance(soundId, channel, this));
@@ -367,8 +365,12 @@ export class AudioManager extends Plugin implements IAudioManager {
       audioInstance.media = mediaInstance;
       if (options?.volume !== undefined) {
         mediaInstance.volume = options.volume;
-        mediaInstance.on('start', () => this._soundStarted(soundId, audioInstance, channelName));
-        mediaInstance.on('end', () => this._soundEnded(soundId, audioInstance, channelName));
+        audioInstance.onStart.connect(() => {
+          () => this._soundStarted(soundId, audioInstance, channelName);
+        });
+        audioInstance.onEnd.connect(() => {
+          () => this._soundEnded(soundId, audioInstance, channelName);
+        });
       }
       return audioInstance;
     } else {
@@ -383,7 +385,6 @@ export class AudioManager extends Plugin implements IAudioManager {
    * @returns {IAudioInstance | undefined}
    */
   public stop(soundId: string, channelName: ChannelName = 'sfx'): IAudioInstance | undefined {
-    Logger.log('stop', soundId, channelName);
     const channel = this._channels.get(channelName);
     if (channel) {
       return channel.remove(soundId);
@@ -515,6 +516,7 @@ export class AudioManager extends Plugin implements IAudioManager {
 
   public getAudioInstance(soundId: string, channelName: string = 'sfx'): IAudioInstance | undefined {
     const channel = this._channels.get(channelName);
+    soundId = this._verifySoundId(soundId);
     if (channel) {
       return channel.get(soundId);
     } else {
@@ -533,7 +535,12 @@ export class AudioManager extends Plugin implements IAudioManager {
       const channel = this._channels.get(channelName);
       if (channel) {
         id = this._verifySoundId(id);
-        sound.add(id, { ...options, preload: true });
+        // const audioInstance = new AudioInstance(id, channel, this);
+        const soundInstance = sound.find(id);
+        soundInstance.options = { ...options, autoPlay: false };
+        const audioInstance = channel.add(id, new AudioInstance(id, channel, this));
+        audioInstance.media = soundInstance.instances[0];
+        audioInstance.pause();
       } else {
         throw new Error(`Channel ${channelName} does not exist.`);
       }
@@ -544,10 +551,9 @@ export class AudioManager extends Plugin implements IAudioManager {
     if (this._idMap.has(soundId)) {
       return this._idMap.get(soundId) as string;
     }
-    const originalId = soundId;
     // try appending .mp3 or .ogg
     if (!sound.exists(soundId)) {
-      Logger.log(`Sound with ID ${soundId} does not exist. Trying different extensions.`);
+      // Logger.log(`Sound with ID ${soundId} does not exist. Trying different extensions.`);
       if (sound.exists(soundId + '.mp3')) {
         soundId += '.mp3';
       } else if (sound.exists(soundId + '.ogg')) {
@@ -558,7 +564,7 @@ export class AudioManager extends Plugin implements IAudioManager {
         throw new Error(`Sound with ID ${soundId} does not exist.`);
       }
     }
-    Logger.log(`Sound with id:${originalId} is now mapped to id:${soundId}`);
+    // Logger.log(`Sound with id:${originalId} is now mapped to id:${soundId}`);
     this._idMap.set(soundId, soundId);
     return soundId;
   }

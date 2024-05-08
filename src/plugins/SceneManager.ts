@@ -255,7 +255,12 @@ export class SceneManager extends Plugin implements ISceneManager {
 
   private async _initializeCurrentScene(): Promise<void> {
     await this.currentScene.initialize();
-    this.currentScene.resize(this.app.size);
+    
+    // wait one tick so everything in the scene has had a chance to render before triggering the resize
+    this.app.ticker.addOnce(() => {
+      this.currentScene.resize(this.app.size);
+    });
+
     return Promise.resolve();
   }
 

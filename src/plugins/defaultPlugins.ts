@@ -1,5 +1,7 @@
 import { AssetManager } from './AssetManager';
 import { AudioManager } from './audio/AudioManager';
+import { VoiceOverPlugin } from './audio/VoiceOverPlugin';
+import { CaptionsPlugin } from './captions/CaptionsPlugin';
 import { FocusManager } from './focus/FocusManager';
 import { i18nPlugin } from './i18nPlugin';
 import { InputManager } from './InputManager';
@@ -24,6 +26,8 @@ const defaultPlugins: (new () => IPlugin)[] = [
   StatsPlugin,
   i18nPlugin,
   Resizer,
+  VoiceOverPlugin,
+  CaptionsPlugin,
 ];
 
 export default defaultPlugins;

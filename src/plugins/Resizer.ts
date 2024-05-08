@@ -86,7 +86,7 @@ export class Resizer extends Plugin {
     // Calculate renderer and canvas sizes based on current dimensions
     const scaleX = screenWidth < minWidth ? minWidth / screenWidth : 1;
     const scaleY = screenHeight < minHeight ? minHeight / screenHeight : 1;
-    let scale = scaleX > scaleY ? scaleX : scaleY;
+    const scale = scaleX > scaleY ? scaleX : scaleY;
 
     const width = screenWidth * scale;
     const height = screenHeight * scale;

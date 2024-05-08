@@ -1,5 +1,5 @@
 /// <reference types="@pixi/spine-pixi" />
-import { Container as PIXIContainer, Graphics, Sprite, Text } from 'pixi.js';
+import { BitmapText, Container as PIXIContainer, Graphics, Sprite, Text } from 'pixi.js';
 import { Button, ButtonConfig, ButtonConfigKeys } from '../../display/Button';
 import { Container } from '../../display/Container';
 import { FlexContainer, FlexContainerConfig, FlexContainerConfigKeys } from '../../display/FlexContainer';
@@ -16,6 +16,7 @@ import {
   SpineProps,
   SpriteProps,
   TextProps,
+  TextPropsKeys,
   UICanvasFactoryProps,
 } from './props';
 import {
@@ -88,6 +89,25 @@ export const defaultFactoryMethods = {
     const unknowns = omitKeys(
       ['x', 'y', 'position', 'text', 'roundPixels', 'resolution', 'style', 'anchor', 'pivot'],
       props,
+    );
+    resolveUnknownKeys(unknowns, entity);
+    return entity;
+  },
+  bitmapText: (props?: Partial<TextProps>) => {
+    const options = pluck(props ?? {}, TextPropsKeys);
+    const entity = new BitmapText(options);
+    if (props?.position) {
+      resolvePosition({ position: props.position, x: props.x, y: props.y }, entity);
+    }
+    if (props?.scale) {
+      resolveScale({ scale: props.scale ?? 1, scaleX: props.scaleX, scaleY: props.scaleY }, entity);
+    }
+    if (props?.pivot) {
+      resolvePivot(props.pivot, entity);
+    }
+    const unknowns = omitKeys(
+      ['x', 'y', 'position', 'text', 'roundPixels', 'resolution', 'style', 'anchor', 'pivot'],
+      props ?? {},
     );
     resolveUnknownKeys(unknowns, entity);
     return entity;

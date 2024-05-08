@@ -14,11 +14,10 @@ export type Caption = {
 };
 
 export interface IPlayVoiceOverOptions {
-  skipClosedCaptioning?: boolean;
-  caption?: Caption;
   mode?: PlayMode;
   priority?: number;
   callback?: VoCallback;
+  localized?: boolean;
 }
 
 interface IQueueItem extends IPlayVoiceOverOptions {
@@ -27,25 +26,52 @@ interface IQueueItem extends IPlayVoiceOverOptions {
   timeout?: gsap.core.Tween;
 }
 
-export interface IVoiceOverManager extends IPlugin {
+export interface IVoiceOverPlugin extends IPlugin {
   fadeOutDuration: number;
   debug: boolean;
+  onVoiceOverStart: Signal<(instance: IAudioInstance) => void>;
+  onVoiceOverPaused: Signal<(instance: IAudioInstance) => void>;
+  onVoiceOverResumed: Signal<(instance: IAudioInstance) => void>;
+  onVoiceOverComplete: Signal<(instance: IAudioInstance) => void>;
+  paused: boolean;
+
+  playVO(key: VoKey | VoKey[], mode?: PlayMode, callback?: VoCallback): Promise<IAudioInstance>;
+
+  playVO(key: VoKey | VoKey[], callback?: VoCallback): Promise<IAudioInstance>;
+
+  playVO(key: VoKey | VoKey[], options?: IPlayVoiceOverOptions): Promise<IAudioInstance>;
+
+  stopVO(): Promise<void>;
+
+  pauseVO(): void;
+
+  resumeVO(): void;
 }
 
 @CorePlugin
-export class VoiceOverManager extends Plugin implements IVoiceOverManager {
-  public readonly id = 'VoiceOverManager';
+export class VoiceOverPlugin extends Plugin implements IVoiceOverPlugin {
+  public readonly id = 'voiceover';
   public fadeOutDuration = 0.15;
   public debug = false;
   public onVoiceOverStart: Signal<(instance: IAudioInstance) => void> = new Signal<
     (instance: IAudioInstance) => void
   >();
+  public onVoiceOverPaused: Signal<(instance: IAudioInstance) => void> = new Signal<
+    (instance: IAudioInstance) => void
+  >();
   public onVoiceOverComplete: Signal<(instance: IAudioInstance) => void> = new Signal<
+    (instance: IAudioInstance) => void
+  >();
+  public onVoiceOverResumed: Signal<(instance: IAudioInstance) => void> = new Signal<
     (instance: IAudioInstance) => void
   >();
   private readonly _queue: IQueueItem[] = [];
   private readonly _pausedQueue: IQueueItem[] = [];
   private _paused: boolean = false;
+
+  get paused() {
+    return this._paused;
+  }
 
   get activeTimeout(): gsap.core.Tween | undefined {
     return this._queue[0]?.timeout;
@@ -56,10 +82,6 @@ export class VoiceOverManager extends Plugin implements IVoiceOverManager {
       return this.app.audio.getAudioInstance(this._queue[0].key, 'voiceover') as IAudioInstance | undefined;
     }
     return undefined;
-  }
-
-  get paused() {
-    return this._paused;
   }
 
   async initialize() {
@@ -81,20 +103,24 @@ export class VoiceOverManager extends Plugin implements IVoiceOverManager {
     if (!Array.isArray(key)) {
       key = [key];
     }
-    let skipClosedCaptioning = false;
+
     let priority = 0;
-    let caption;
     let mode: string | undefined = 'override';
+    let locale: string = '';
+
     if (typeof modeOrCallbackOrOptions === 'function') {
       callback = modeOrCallbackOrOptions;
     } else if (typeof modeOrCallbackOrOptions === 'object') {
       const modeAsOptions = modeOrCallbackOrOptions as IPlayVoiceOverOptions;
-      skipClosedCaptioning = modeAsOptions.skipClosedCaptioning === true;
-      priority = modeAsOptions.priority || 0;
+      priority = modeAsOptions.priority ?? 0;
       callback = modeAsOptions.callback;
-      caption = modeAsOptions.caption;
-      mode = modeAsOptions.mode;
+      mode = modeAsOptions.mode ?? 'override';
+      if (modeAsOptions.localized) {
+        locale = this.app.i18n.locale;
+        key = key.map((k) => `${k}_${locale}`);
+      }
     }
+
     if (typeof modeOrCallbackOrOptions === 'string') {
       mode = modeOrCallbackOrOptions;
     }
@@ -110,10 +136,10 @@ export class VoiceOverManager extends Plugin implements IVoiceOverManager {
       (mode === 'new' && priority > this._queue[0].priority!)
     ) {
       void this.stopVO();
-      this.addToQueue(key, callback, skipClosedCaptioning, priority, caption);
+      this.addToQueue(key, callback, priority);
       return this.playNext();
     } else if (mode === 'append') {
-      this.addToQueue(key, callback, skipClosedCaptioning, priority, caption);
+      this.addToQueue(key, callback, priority);
     } else if (callback) {
       Logger.warn(`🎟🔇 Firing callback without playing VO(s) ${key.join(', ')}`);
       callback(false);
@@ -125,9 +151,6 @@ export class VoiceOverManager extends Plugin implements IVoiceOverManager {
   public async stopVO(): Promise<void> {
     const activeVO: IAudioInstance | undefined = this.activeVO;
     const activeItem: IQueueItem | undefined = this._queue[0];
-    if (this._queue.length > 1) {
-      Logger.log(`🗑 Clearing VO queue. Length was: ${this._queue.length}`);
-    }
     this._queue.splice(0, this._queue.length);
     activeItem?.timeout?.kill();
     if (activeVO) {
@@ -142,6 +165,7 @@ export class VoiceOverManager extends Plugin implements IVoiceOverManager {
         activeVO.stop();
       }
     }
+    this.clearSignalConnections();
   }
 
   pauseVO() {
@@ -154,22 +178,18 @@ export class VoiceOverManager extends Plugin implements IVoiceOverManager {
       activeVO?.pause();
       activeTimeout?.pause();
       this._queue.splice(0, this._queue.length);
-      if (activeVO) {
-        this.onVoiceOverComplete.emit(activeVO);
-      }
     }
   }
 
   resumeVO() {
     if (!this._paused) return;
     this._paused = false;
-    this.stopVO();
     if (this._pausedQueue.length > 0) {
       this._queue.push(...this._pausedQueue);
       this._pausedQueue.splice(0, this._pausedQueue.length);
       const activeVO = this.activeVO;
       const activeTimeout = this.activeTimeout;
-      activeVO?.play();
+      activeVO?.resume();
       activeTimeout?.resume();
       if (activeVO) {
         this.onVoiceOverStart.emit(activeVO);
@@ -177,13 +197,7 @@ export class VoiceOverManager extends Plugin implements IVoiceOverManager {
     }
   }
 
-  private addToQueue(
-    keys: VoKey[],
-    cb?: VoCallback,
-    skipClosedCaptioning?: boolean,
-    priority?: number,
-    caption?: Caption,
-  ) {
+  private addToQueue(keys: VoKey[], cb?: VoCallback, priority?: number) {
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
       if (typeof key === 'number') {
@@ -192,29 +206,21 @@ export class VoiceOverManager extends Plugin implements IVoiceOverManager {
         Logger.log(`➕ Queueing VO ${key}`);
       }
 
-      // if calling playVO with captions param set, set skipCC to true for all but the first item in the array
-      if (caption !== undefined && i !== 0) {
-        skipClosedCaptioning = true;
-      }
-
       this._queue.push({
         key: typeof key === 'string' ? key : '',
         delay: typeof key === 'number' ? key : undefined,
         callback: i === keys.length - 1 ? cb : undefined,
-        skipClosedCaptioning,
         priority,
-        caption,
       });
     }
     const toLoad = keys.filter((it) => typeof it === 'string') as string[];
     Logger.log(`📂 Loading VO(s) ${toLoad.join(', ')}`);
-    this.app.audio.load(toLoad, 'vo');
+    this.app.audio.load(toLoad, 'voiceover');
   }
 
   private async playNext(): Promise<IAudioInstance | void> {
     if (this._queue.length > 0) {
       const item = this._queue[0];
-
       if (item.delay !== undefined) {
         this.activeTimeout?.kill();
         if (this._queue.length === 1) {
@@ -246,32 +252,26 @@ export class VoiceOverManager extends Plugin implements IVoiceOverManager {
         } else {
           Logger.log('📂 Loading VO %c%s%c', item.key);
         }
-        const instance = this.app.audio.play(item.key, 'voiceover');
+        const instance = await this.app.audio.play(item.key, 'voiceover');
+        if (this.activeVO) {
+          this.onVoiceOverStart.emit(this.activeVO);
+        }
         if (this._queue[0] !== item) {
           return;
         }
         Logger.log(`▶️▶️ Playing VO ${item.key}`);
         Logger.log('ℹ️ Queue length:', this._queue.length);
 
-        const onEnd = (pDidPlay: boolean) => {
-          Logger.log(`🏁 Completed VO ${item.key}`);
-          this.onVoiceOverComplete.emit(this.activeVO!);
-          this.activeTimeout?.kill();
-          this._queue.shift();
-          this.playNext();
-          if (item.callback) {
-            Logger.log(`'🎟 Firing callback for`, item.key);
-            item.callback(pDidPlay);
-          }
-        };
         if (this.activeVO) {
-          this.activeVO.onEnd.connectOnce(() => onEnd(true));
-          this.activeVO.onStart.connectOnce(() => {
-            this.onVoiceOverStart.emit(this.activeVO!);
-          });
+          this.addSignalConnection(
+            this.activeVO.onEnd.connectOnce(this._handleActiveVOEnded),
+            this.activeVO.onPaused.connectOnce(this._handleActiveVOPaused),
+            this.activeVO.onResumed.connectOnce(this._handleActiveVOResumed),
+            this.activeVO.onStart.connectOnce(this._handleActiveVOStarted),
+          );
         } else {
           Logger.error('⚠️ Vo %c%s%c completed early (did not play?)', item.key);
-          onEnd(false);
+          this._handleActiveVOEndedWithoutPlaying(instance);
         }
         return instance;
       }
@@ -280,8 +280,48 @@ export class VoiceOverManager extends Plugin implements IVoiceOverManager {
     }
   }
 
+  private _handleActiveVOStarted(instance: IAudioInstance) {
+    this.onVoiceOverStart.emit(this.activeVO || instance);
+  }
+
+  private _handleActiveVOPaused(instance: IAudioInstance) {
+    this.onVoiceOverPaused.emit(this.activeVO || instance);
+  }
+
+  private _handleActiveVOResumed(instance: IAudioInstance) {
+    this.onVoiceOverResumed.emit(this.activeVO || instance);
+  }
+
+  private _handleActiveVOEndedWithoutPlaying(instance: IAudioInstance) {
+    this.onVoiceOverComplete.emit(this.activeVO || instance);
+    this.activeTimeout?.kill();
+    this._currentItemCallback(false);
+    this._queue.shift();
+    this.playNext();
+  }
+
+  private _handleActiveVOEnded(instance: IAudioInstance) {
+    this.onVoiceOverComplete.emit(this.activeVO || instance);
+    this.activeTimeout?.kill();
+    this._currentItemCallback();
+    this._queue.shift();
+    this.playNext();
+  }
+
+  private _currentItemCallback(didPlay: boolean = true) {
+    const item = this._queue[0];
+    if (!item) {
+      return;
+    }
+    Logger.log(`🏁 Completed VO ${item.key}`);
+    if (item.callback) {
+      Logger.log(`'🎟 Firing callback for`, item.key);
+      item.callback(didPlay);
+    }
+  }
+
   private onPause() {
-    if (this.activeVO !== undefined && this.activeVO.media.progress > 0 && this.activeVO.isPlaying) {
+    if (this.activeVO !== undefined && this.activeVO.isPlaying) {
       Logger.log('⏸ Pausing VO', this.activeVO.id);
       this.activeVO.pause();
       this.onVoiceOverComplete.emit(this.activeVO);
@@ -290,9 +330,9 @@ export class VoiceOverManager extends Plugin implements IVoiceOverManager {
   }
 
   private onResume() {
-    if (this.activeVO !== undefined && this.activeVO.media.progress > 0 && !this.activeVO.isPlaying) {
+    if (this.activeVO !== undefined && !this.activeVO.isPlaying) {
       Logger.log('⏯ Resuming VO', this.activeVO.id);
-      this.activeVO.play();
+      this.activeVO.resume();
       this.onVoiceOverStart.emit(this.activeVO);
     }
     this.activeTimeout?.resume();

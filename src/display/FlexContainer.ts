@@ -269,6 +269,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
         if (actualChild) {
           return super.removeChild(actualChild);
         }
+        return;
       });
     } else {
       return super.removeChild(...children);
@@ -473,8 +474,8 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
       lineEnd: number,
       direction: 'row' | 'column',
     ) => {
-      const extraSpace = (direction === 'row' ? width! : height!) - (lineEnd - lineStart);
       lineItems.forEach(({ index, width, height }, i) => {
+        const extraSpace = (direction === 'row' ? width! : height!) - (lineEnd - lineStart);
         let offset = 0;
         switch (justifyContent) {
           case 'flex-start':

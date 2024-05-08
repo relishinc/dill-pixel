@@ -5,7 +5,8 @@ import { WithSignals } from '../mixins/signals';
 import { Logger } from '../utils/console/Logger';
 import { resolveSizeLike } from '../utils/functions';
 import { bindAllMethods } from '../utils/methodBinding';
-import { PointLike, Size, SizeLike } from '../utils/types';
+import { ensurePadding, resolvePadding } from '../utils/padding';
+import { Padding, PointLike, Size, SizeLike } from '../utils/types';
 import { Container } from './Container';
 import { FlexContainer } from './FlexContainer';
 
@@ -30,17 +31,17 @@ export type UICanvasEdge =
 
 export interface UICanvasChildSettings {
   align: UICanvasEdge;
-  padding: UICanvasPadding;
+  padding: Padding;
 }
 
 export interface UICanvasChildProps {
   align: UICanvasEdge;
-  padding: Partial<UICanvasPadding> | PointLike;
+  padding: Partial<Padding> | PointLike;
 }
 
 export type UICanvasConfig = {
   debug: boolean;
-  padding: UICanvasPadding;
+  padding: Padding;
   size: Size;
   useAppSize: boolean;
 };
@@ -49,54 +50,10 @@ export const UICanvasConfigKeys: (keyof UICanvasConfig)[] = ['debug', 'padding',
 
 export type UICanvasProps = {
   debug: boolean;
-  padding: Partial<UICanvasPadding> | PointLike;
+  padding: Partial<Padding> | PointLike;
   size?: SizeLike;
   useAppSize?: boolean;
 };
-
-export type UICanvasPadding = { top: number; right: number; bottom: number; left: number };
-
-function resolvePadding(paddingNum: number, size: number) {
-  // check of the paddingNum is a decimal between 0 and 1
-  // if it is, return a number that is the percentage of the size
-  if (paddingNum >= 0 && paddingNum <= 1) {
-    return paddingNum * size;
-  }
-  return paddingNum;
-}
-
-function ensurePadding(padding: Partial<UICanvasPadding> | PointLike): UICanvasPadding {
-  if (Array.isArray(padding)) {
-    return {
-      top: padding[0],
-      right: padding?.[1] ?? padding[0],
-      bottom: padding?.[2] ?? padding[0],
-      left: padding?.[3] ?? padding?.[1] ?? padding[0] ?? 0,
-    };
-  }
-  if (typeof padding === 'number') {
-    return { top: padding, right: padding, bottom: padding, left: padding };
-  } else if (typeof padding === 'object') {
-    const paddingAsPointLike = padding as { x?: number; y?: number };
-    if (paddingAsPointLike.x !== undefined && paddingAsPointLike.y !== undefined) {
-      return {
-        top: paddingAsPointLike.y,
-        right: paddingAsPointLike.x,
-        bottom: paddingAsPointLike.y,
-        left: paddingAsPointLike.x,
-      };
-    } else {
-      return {
-        top: (padding as UICanvasPadding).top ?? 0,
-        right: (padding as UICanvasPadding).right ?? 0,
-        bottom: (padding as UICanvasPadding).bottom ?? 0,
-        left: (padding as UICanvasPadding).left ?? 0,
-      };
-    }
-  } else {
-    return { top: 0, right: 0, bottom: 0, left: 0 };
-  }
-}
 
 const _UICanvas = WithSignals(FactoryContainer());
 
@@ -202,7 +159,7 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
     this.resize();
   }
 
-  set padding(value: Partial<UICanvasPadding> | PointLike) {
+  set padding(value: Partial<Padding> | PointLike) {
     this.config.padding = ensurePadding(value);
     this._inner.position.set(this.config.padding.left, this.config.padding.top);
     this.resize();
@@ -231,6 +188,7 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
         if (actualChild) {
           return this._inner.removeChild(actualChild);
         }
+        return undefined;
       });
     } else {
       return this._inner.removeChild(...children);

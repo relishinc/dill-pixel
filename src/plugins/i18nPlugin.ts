@@ -54,6 +54,7 @@ const defaultOptions: i18nOptions = {
  */
 export interface Ii18nPlugin extends IPlugin {
   readonly locale: string;
+  readonly locales: string[];
   onLocaleChanged: Signal<(locale: string) => void>;
 
   setLocale(localeId: string): Promise<string>;
@@ -82,6 +83,10 @@ export class i18nPlugin extends Plugin implements Ii18nPlugin {
    */
   get locale(): string {
     return this._locale;
+  }
+
+  get locales(): string[] {
+    return this._options.locales;
   }
 
   /**

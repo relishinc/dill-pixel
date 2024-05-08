@@ -13,6 +13,8 @@ import {
 import { IScene } from '../display/Scene';
 import { IAssetManager } from '../plugins/AssetManager';
 import { IAudioManager } from '../plugins/audio/AudioManager';
+import { IVoiceOverPlugin } from '../plugins/audio/VoiceOverPlugin';
+import { CaptionsOptions, ICaptionsPlugin } from '../plugins/captions/CaptionsPlugin';
 import defaultPlugins from '../plugins/defaultPlugins';
 import { FocusManagerOptions, IFocusManager } from '../plugins/focus/FocusManager';
 import { i18nOptions, Ii18nPlugin } from '../plugins/i18nPlugin';
@@ -48,6 +50,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   useStore: boolean;
   useDefaults: boolean;
   useSpine: boolean;
+  useVoiceover: boolean;
   storageAdapters: ImportList<IStorageAdapter>;
   plugins: ImportList<IPlugin>;
   scenes: SceneImportList<IScene>;
@@ -58,6 +61,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   manifest: AssetsManifest | Promise<AssetsManifest> | string;
   i18n: Partial<i18nOptions>;
   resizer: Partial<ResizerOptions>;
+  captions: Partial<CaptionsOptions>;
   showStats: boolean;
 }
 
@@ -84,6 +88,7 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   useStore: true,
   useDefaults: true,
   useSpine: false,
+  useVoiceover: true,
   storageAdapters: [],
   plugins: [],
   scenes: [],
@@ -146,6 +151,8 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   protected _focusManager: IFocusManager;
   protected _popupManager: IPopupManager;
   protected _audioManager: IAudioManager;
+  protected _voiceoverPlugin: IVoiceOverPlugin;
+  protected _captionsPlugin: ICaptionsPlugin;
   protected _i18n: Ii18nPlugin;
   protected _resizer: IResizer;
 
@@ -264,6 +271,20 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     this.input.context = context;
   }
 
+  public get voiceover(): IVoiceOverPlugin {
+    if (!this._voiceoverPlugin) {
+      this._voiceoverPlugin = this.getPlugin<IVoiceOverPlugin>('voiceover');
+    }
+    return this._voiceoverPlugin;
+  }
+
+  public get captions(): ICaptionsPlugin {
+    if (!this._captionsPlugin) {
+      this._captionsPlugin = this.getPlugin<ICaptionsPlugin>('captions');
+    }
+    return this._captionsPlugin;
+  }
+
   /**
    * Returns the global signals
    */
@@ -300,7 +321,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   }
 
   private get views(): any[] {
-    return [this.scenes.view, this.popups.view];
+    return [this.scenes.view, this.popups.view, this.captions.view];
   }
 
   /**
