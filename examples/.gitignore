@@ -1,1 +1,4 @@
 /dist
+/creds
+/creds/*
+.voiceover
