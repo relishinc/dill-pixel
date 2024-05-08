@@ -345,7 +345,6 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
     Application.instance = this;
     this.config = Object.assign({ ...defaultApplicationOptions }, config);
-    console.log(this.config);
 
     await this.preInitialize(this.config);
     console.log('Application preInitialize complete. Initializing assets...');
