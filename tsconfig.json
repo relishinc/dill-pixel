@@ -8,7 +8,10 @@
     "outDir": "./lib",
     "useDefineForClassFields": true,
     "strictPropertyInitialization": false,
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "strict": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -39,6 +42,6 @@
     "./src/**/*.ts"
   ],
   "exclude": [
-    "./lib/**/*"
+    "./lib"
   ]
 }

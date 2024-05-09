@@ -7,6 +7,7 @@ import { Signal } from '../signals';
 import { resolvePointLike } from '../utils/functions';
 import { bindAllMethods } from '../utils/methodBinding';
 import { ContainerLike, PointLike } from '../utils/types';
+import { Logger } from '../utils/console/Logger';
 
 const _FlexContainer = WithSignals(FactoryContainer());
 
@@ -326,7 +327,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
         try {
           child.onLayoutComplete.disconnect(this.layout);
         } catch (e) {
-          console.warn(`FlexContainer:: Error disconnecting signal from removed child`);
+          Logger.warn(`FlexContainer:: Error disconnecting signal from removed child`);
           console.warn(e);
         }
       }
@@ -508,8 +509,6 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
         } else {
           newLayoutProps[index].y += offset;
         }
-
-        console.log({ offset });
       });
     };
 
