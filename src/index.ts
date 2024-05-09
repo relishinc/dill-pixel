@@ -31,6 +31,9 @@ export type { IAudioManager } from './plugins/audio/AudioManager';
 export type { Ii18nPlugin, i18nOptions } from './plugins/i18nPlugin';
 export type { IResizer } from './plugins/Resizer';
 export type { IInputManager, ActionDetail } from './plugins/InputManager';
+export type { ICaptionsPlugin, CaptionsOptions } from './plugins/captions/CaptionsPlugin';
+export type { ICaptionRenderer } from './plugins/captions/CaptionsRenderer';
+export type { IVoiceOverPlugin } from './plugins/audio/VoiceOverPlugin';
 export type { IPlugin } from './plugins/Plugin';
 
 export { Plugin } from './plugins/Plugin';
@@ -43,6 +46,8 @@ export { SpinePlugin } from './plugins/spine/SpinePlugin';
 export { StatsPlugin } from './plugins/StatsPlugin';
 export { WebEventsManager } from './plugins/WebEventsManager';
 export { InputManager, ActionContext, Action } from './plugins/InputManager';
+export { CaptionsPlugin } from './plugins/captions/CaptionsPlugin';
+export { VoiceOverPlugin } from './plugins/audio/VoiceOverPlugin';
 
 export { default as defaultModules } from './plugins/defaultPlugins';
 

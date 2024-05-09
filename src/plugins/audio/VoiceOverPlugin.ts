@@ -33,6 +33,7 @@ export interface IVoiceOverPlugin extends IPlugin {
   onVoiceOverPaused: Signal<(instance: IAudioInstance) => void>;
   onVoiceOverResumed: Signal<(instance: IAudioInstance) => void>;
   onVoiceOverComplete: Signal<(instance: IAudioInstance) => void>;
+  onVoiceOverStopped: Signal<(instance?: IAudioInstance) => void>;
   paused: boolean;
 
   playVO(key: VoKey | VoKey[], mode?: PlayMode, callback?: VoCallback): Promise<IAudioInstance>;
@@ -63,6 +64,9 @@ export class VoiceOverPlugin extends Plugin implements IVoiceOverPlugin {
     (instance: IAudioInstance) => void
   >();
   public onVoiceOverResumed: Signal<(instance: IAudioInstance) => void> = new Signal<
+    (instance: IAudioInstance) => void
+  >();
+  public onVoiceOverStopped: Signal<(instance?: IAudioInstance) => void> = new Signal<
     (instance: IAudioInstance) => void
   >();
   private readonly _queue: IQueueItem[] = [];
@@ -125,7 +129,7 @@ export class VoiceOverPlugin extends Plugin implements IVoiceOverPlugin {
     if (typeof modeOrCallbackOrOptions === 'string') {
       mode = modeOrCallbackOrOptions;
     }
-
+    this._paused = false;
     if (key.length === 1 && this._queue.length === 1 && this._queue[0].key === key[0]) {
       Logger.warn(`🔇 Skipped VO ${key[0]} because it is already playing`);
       if (callback) {
@@ -153,6 +157,7 @@ export class VoiceOverPlugin extends Plugin implements IVoiceOverPlugin {
     const activeVO: IAudioInstance | undefined = this.activeVO;
     const activeItem: IQueueItem | undefined = this._queue[0];
     this._queue.splice(0, this._queue.length);
+    this._pausedQueue.splice(0, this._pausedQueue.length);
     activeItem?.timeout?.kill();
     if (activeVO) {
       if (!activeVO.media) {
@@ -165,8 +170,13 @@ export class VoiceOverPlugin extends Plugin implements IVoiceOverPlugin {
       } else {
         activeVO.stop();
       }
+    } else {
+      Logger.warn('🛑 No active VO to stop');
+      this.activeTimeout?.kill();
     }
     this.clearSignalConnections();
+    this._paused = false;
+    this.onVoiceOverStopped.emit(activeVO);
   }
 
   pauseVO() {

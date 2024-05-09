@@ -8,7 +8,7 @@ import { ensurePadding } from '../../utils/padding';
 import { ImportListItem, ImportListItemModule, Padding, PointLike } from '../../utils/types';
 import { IAudioInstance } from '../audio/AudioInstance';
 import { IPlugin, Plugin } from '../Plugin';
-import { CaptionsRenderer } from './CaptionsRenderer';
+import { CaptionsRenderer, ICaptionRenderer } from './CaptionsRenderer';
 
 const isDebug = isDev;
 
@@ -28,17 +28,14 @@ type CaptionsImportListItem<T> = {
 } & {
   json?: string;
 };
-export type CaptionsFloatingSettings = {};
 
-export type CaptionsFloatingProps = {
-  distance: number;
-  padding: Partial<Padding> | PointLike;
-};
+type CaptionRendererConstructor = new (owner: CaptionsPlugin) => ICaptionRenderer;
 
 /**
  * Type definition for i18n options.
  */
 export type CaptionsOptions = {
+  renderer: CaptionRendererConstructor;
   defaultLocale: string;
   files: CaptionsImportListItem<CaptionsDict>[];
   fontFile: string;
@@ -59,6 +56,7 @@ export type CaptionsOptions = {
  * Default options for i18n module.
  */
 const defaultOptions: Partial<CaptionsOptions> = {
+  renderer: CaptionsRenderer,
   defaultLocale: 'en',
   fontFile: './font/Arial.fnt',
   fontName: 'Arial',
@@ -116,7 +114,7 @@ export interface ICaptionsPlugin extends IPlugin {
 export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
   public readonly id = 'captions';
   public view: Container = new Container();
-  public renderer: CaptionsRenderer;
+  public renderer: ICaptionRenderer;
   private _dicts: Record<string, CaptionsDict> = {};
   private _locales: string[];
   private _activeCaptionLine = -1;
@@ -286,10 +284,12 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
     this.app.voiceover.onVoiceOverPaused.connect(this._handleVoiceOverPaused);
     this.app.voiceover.onVoiceOverResumed.connect(this._handleVoiceOverResumed);
     this.app.voiceover.onVoiceOverComplete.connect(this._handleVoiceoverComplete);
+    this.app.voiceover.onVoiceOverStopped.connect(this._handleVoiceoverStopped);
 
     this.app.stage.addChild(this.view);
     this._options.maxWidth = resolveMaxWidth(this.options.maxWidth, this.app.size.width);
-    this.renderer = this.view.addChild(new CaptionsRenderer(this)) as CaptionsRenderer;
+    const RendererClass: CaptionRendererConstructor = this.options.renderer;
+    this.renderer = this.view.addChild(new RendererClass(this)) as CaptionsRenderer;
 
     this.app.ticker.add(this.update);
     this.app.scenes.onSceneChangeStart.connect(this.stopAllCaptions);
@@ -414,6 +414,10 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
     if (this._activeCaptionId === id) {
       this.stopCaption(id);
     }
+  }
+
+  private _handleVoiceoverStopped() {
+    this.stopAllCaptions();
   }
 
   /**

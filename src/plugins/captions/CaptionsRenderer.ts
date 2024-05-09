@@ -4,7 +4,33 @@ import { Container } from '../../display/Container';
 import { Logger } from '../../utils/console/Logger';
 import { Size } from '../../utils/types';
 import { CaptionsPlugin } from './CaptionsPlugin';
-import { CaptionLine, ICaptionRenderer } from './types';
+import { PIXIContainer } from '../../pixi';
+
+export type CaptionLine = {
+  id: string;
+  start: number;
+  end: number;
+  content: string;
+  speaker?: string;
+};
+
+export interface ICaptionRenderer extends PIXIContainer {
+  visible: boolean;
+
+  start(): void;
+
+  stop(): void;
+
+  lineBegin(line: CaptionLine): void;
+
+  lineEnd(line: CaptionLine): void;
+
+  resize(size?: Size): void;
+
+  updateSettings(): void;
+
+  destroy(): void;
+}
 
 export class CaptionsRenderer extends Container implements ICaptionRenderer {
   private readonly _bg: Sprite;

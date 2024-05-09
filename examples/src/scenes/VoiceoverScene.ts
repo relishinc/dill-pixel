@@ -1,4 +1,4 @@
-import { ActionDetail, FlexContainer } from '@relish-studios/dill-pixel';
+import { ActionDetail, Button, FlexContainer } from '@relish-studios/dill-pixel';
 import { Text } from 'pixi.js';
 import { BaseScene } from './BaseScene';
 
@@ -40,6 +40,8 @@ export class VoiceoverScene extends BaseScene {
   protected buttonContainer: FlexContainer;
   protected voButtons: FlexContainer;
   protected captionsButtons: FlexContainer;
+
+  private _voPauseButton: Button;
 
   constructor() {
     super();
@@ -86,13 +88,9 @@ export class VoiceoverScene extends BaseScene {
       });
     });
 
-    const voPauseButton = this.addButton(this.voButtons, 'Pause', () => {
+    this._voPauseButton = this.addButton(this.voButtons, 'Pause', () => {
       this.app.sendAction('pause_vo');
-      if (this.app.voiceover.paused) {
-        (voPauseButton.getChildAt(1) as Text).text = 'Resume';
-      } else {
-        (voPauseButton.getChildAt(1) as Text).text = 'Pause';
-      }
+      this._updatePauseButton();
     });
 
     this.addButton(this.voButtons, 'Stop', () => {
@@ -268,8 +266,17 @@ export class VoiceoverScene extends BaseScene {
     this._floatingSettingsFolder = floatingSettingsFolder;
   }
 
+  private _updatePauseButton() {
+    if (this.app.voiceover.paused) {
+      (this._voPauseButton.getChildAt(1) as Text).text = 'Resume';
+    } else {
+      (this._voPauseButton.getChildAt(1) as Text).text = 'Pause';
+    }
+  }
+
   private _handleVo(action: ActionDetail) {
     void this.app.voiceover.playVO(action.data.ids, { localized: true });
+    this._updatePauseButton();
   }
 
   private _handlePauseVo() {
@@ -278,10 +285,12 @@ export class VoiceoverScene extends BaseScene {
     } else {
       this.app.voiceover.pauseVO();
     }
+    this._updatePauseButton();
   }
 
   private _handleStopVo() {
     void this.app.voiceover.stopVO();
+    this._updatePauseButton();
   }
 
   private _handlCaptionThemeChanged(action: ActionDetail) {
