@@ -1,7 +1,6 @@
-import { Button, FlexContainer, Logger, PIXIText } from '@relish-studios/dill-pixel';
-
 import { Actor } from '@/entities/Actor';
 import { BaseScene } from '@/scenes/BaseScene';
+import { Button, FlexContainer, Logger, PIXIText } from '@relish-studios/dill-pixel';
 
 export class FocusScene extends BaseScene {
   protected title = 'Focus Management';
@@ -68,19 +67,19 @@ export class FocusScene extends BaseScene {
     });
     this.list.add.sprite({
       asset: 'jar',
-      sheet: 'sheet.json',
+      sheet: 'game/sheet/sheet.json',
       scale: 0.5,
     });
     this.list.add.sprite({
       asset: 'jar2',
-      sheet: 'sheet.json',
+      sheet: 'game/sheet/sheet.json',
       scale: 0.5,
     });
 
     this.button = this.list.add.button({
       scale: 0.5,
       textures: { default: 'jar', hover: 'jar2' },
-      sheet: 'sheet.json',
+      sheet: 'game/sheet/sheet.json',
       cursor: 'pointer',
       accessible: true,
       accessibleTitle: 'Button',
