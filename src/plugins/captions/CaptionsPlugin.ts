@@ -28,10 +28,7 @@ type CaptionsImportListItem<T> = {
 } & {
   json?: string;
 };
-export type CaptionsFloatingSettings = {
-  distance: number;
-  padding: Padding;
-};
+export type CaptionsFloatingSettings = {};
 
 export type CaptionsFloatingProps = {
   distance: number;
@@ -53,7 +50,8 @@ export type CaptionsOptions = {
   backgroundAlpha: number;
   enabled: boolean;
   floating: boolean;
-  floatingSettings: CaptionsFloatingSettings;
+  distance: number;
+  padding: Padding;
   position: 'top' | 'bottom';
 };
 
@@ -71,10 +69,8 @@ const defaultOptions: Partial<CaptionsOptions> = {
   backgroundAlpha: 0.4,
   enabled: true,
   floating: false,
-  floatingSettings: {
-    distance: 0,
-    padding: { top: 0, left: 0, bottom: 0, right: 0 },
-  },
+  distance: 0,
+  padding: { top: 20, left: 0, bottom: 20, right: 0 },
   position: 'top',
 };
 
@@ -96,17 +92,21 @@ export interface ICaptionsPlugin extends IPlugin {
   view: Container;
   enabled: boolean;
   floating: boolean;
-  floatingSettings: CaptionsFloatingSettings;
+  distance: number;
+  padding: Padding;
   position: 'top' | 'bottom';
   backgroundColor: number;
   textColor: number;
   backgroundAlpha: number;
   fontSizeMultiplier: number;
   maxWidth: number;
+  options: Partial<CaptionsOptions>;
 
   setLocale(localeId: string): Promise<string>;
 
   loadLocale(localeId: string): Promise<void>;
+
+  render(): void;
 }
 
 /**
@@ -118,19 +118,47 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
   public view: Container = new Container();
   public renderer: CaptionsRenderer;
   private _dicts: Record<string, CaptionsDict> = {};
-  private _locale: string;
   private _locales: string[];
-  private _options: CaptionsOptions;
-  private _activeCaptionId?: string;
   private _activeCaptionLine = -1;
   private _activeCaptionTime = 0;
-  private _paused: boolean = false;
+
+  private _locale: string;
 
   /**
    * Getter for locale.
    */
   get locale(): string {
     return this._locale;
+  }
+
+  private _options: CaptionsOptions;
+
+  get options(): CaptionsOptions {
+    return this._options;
+  }
+
+  set options(value: Partial<CaptionsOptions>) {
+    this._options = { ...this._options, ...value };
+
+    if (value.padding) {
+      this._options.padding = ensurePadding(value.padding);
+    }
+  }
+
+  private _activeCaptionId?: string;
+
+  get activeCaptionId() {
+    return this._activeCaptionId;
+  }
+
+  private _paused: boolean = false;
+
+  get paused(): boolean {
+    return this._paused;
+  }
+
+  set paused(value: boolean) {
+    this._paused = value;
   }
 
   get floating(): boolean {
@@ -179,15 +207,21 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
     this.updateRenderer();
   }
 
-  get floatingSettings(): CaptionsFloatingSettings {
-    return this.options.floatingSettings;
+  get padding(): Padding {
+    return this.options.padding;
   }
 
-  set floatingSettings(value: Partial<CaptionsFloatingProps>) {
-    this.options.floatingSettings = {
-      distance: value?.distance || this.options.floatingSettings.distance || 0,
-      padding: value.padding ? ensurePadding(value.padding) : this.options.floatingSettings.padding,
-    };
+  set padding(value: Partial<Padding> | PointLike) {
+    this.options.padding = ensurePadding(value);
+    this.updateRenderer();
+  }
+
+  get distance(): number {
+    return this.options.distance;
+  }
+
+  set distance(value: number) {
+    this.options.distance = value;
     this.updateRenderer();
   }
 
@@ -209,28 +243,12 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
     this.renderer.resize();
   }
 
-  get paused(): boolean {
-    return this._paused;
-  }
-
-  set paused(value: boolean) {
-    this._paused = value;
-  }
-
-  get options(): CaptionsOptions {
-    return this._options;
-  }
-
   get list(): CaptionsDict {
     return this._dicts[this._locale];
   }
 
   get debug(): boolean {
     return isDebug;
-  }
-
-  get activeCaptionId() {
-    return this._activeCaptionId;
   }
 
   /**
@@ -241,7 +259,14 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
    * @returns Promise<void>
    */
   public async initialize(_app: IApplication, options: Partial<CaptionsOptions>): Promise<void> {
-    this._options = { ...defaultOptions, ...options } as CaptionsOptions;
+    this._options = {
+      ...defaultOptions,
+      ...options,
+    } as CaptionsOptions;
+
+    if (options.padding) {
+      this._options.padding = ensurePadding(options.padding);
+    }
 
     this._locale = this.app.i18n.locale;
     this._locales = this.app.i18n.locales;
@@ -305,6 +330,10 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
     this._dicts[localeId] = file.json
       ? await Assets.load(file.json)
       : await getDynamicModuleFromImportListItem(file as ImportListItem<CaptionsDict>);
+  }
+
+  render() {
+    this.renderer.resize();
   }
 
   update(ticker: Ticker): void {

@@ -41,9 +41,6 @@ import { coreSignalRegistry } from './coreSignalRegistry';
 import { ICoreSignals } from './CoreSignals';
 import { MethodBindingRoot } from './decorators';
 
-// for now, to detect multiple spritesheet sizes
-// import '../assets/resolveParser';
-
 export interface IApplicationOptions extends ApplicationOptions {
   id: string;
   resizeToContainer: boolean;
@@ -130,19 +127,19 @@ export interface IApplication extends PIXIPApplication {
 
 @MethodBindingRoot
 export class Application<R extends Renderer = Renderer> extends PIXIPApplication<R> implements IApplication {
-  // config
-  public config: Partial<IApplicationOptions>;
-  public manifest: string | AssetsManifest | undefined;
-  // plugins
-  protected _plugins: Map<string, IPlugin> = new Map();
-  public onPause = new Signal<() => void>();
-  public onResume = new Signal<() => void>();
-  protected static instance: Application;
   //
   public static containerId = 'dill-pixel-game-container';
   public static containerElement: HTMLElement;
+  protected static instance: Application;
+  // config
+  public config: Partial<IApplicationOptions>;
+  public manifest: string | AssetsManifest | undefined;
+  public onPause = new Signal<() => void>();
+  public onResume = new Signal<() => void>();
   // signals
   public onResize = new Signal<(size: Size) => void>();
+  // plugins
+  protected _plugins: Map<string, IPlugin> = new Map();
   // default plugins
   protected _assetManager: IAssetManager;
   protected _sceneManager: ISceneManager;
@@ -153,32 +150,53 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   protected _audioManager: IAudioManager;
   protected _voiceoverPlugin: IVoiceOverPlugin;
   protected _captionsPlugin: ICaptionsPlugin;
-  protected _i18n: Ii18nPlugin;
-  protected _resizer: IResizer;
-
-  // input
-  protected _input: IInputManager;
   protected _actions: ActionSignal;
-  // store
-  protected _store: IStore;
-  // size
-  protected _center = new Point(0, 0);
-
-  public static getInstance<T extends Application = Application>(): T {
-    return Application.instance as T;
-  }
-
-  public static createContainer(pId: string) {
-    const container = document.createElement('div');
-    Application.containerElement = container;
-    container.setAttribute('id', pId);
-    document.body.appendChild(container);
-    return container;
-  }
 
   constructor() {
     super();
     bindAllMethods(this);
+  }
+
+  protected _i18n: Ii18nPlugin;
+
+  public get i18n(): Ii18nPlugin {
+    if (!this._i18n) {
+      this._i18n = this.getPlugin<Ii18nPlugin>('i18n');
+    }
+    return this._i18n;
+  }
+
+  protected _resizer: IResizer;
+
+  public get resizer(): IResizer {
+    if (!this._resizer) {
+      this._resizer = this.getPlugin<IResizer>('resizer');
+    }
+    return this._resizer;
+  }
+
+  // input
+  protected _input: IInputManager;
+
+  public get input(): IInputManager {
+    if (!this._input) {
+      this._input = this.getPlugin<IInputManager>('InputManager');
+    }
+    return this._input;
+  }
+
+  // store
+  protected _store: IStore;
+
+  public get store(): IStore {
+    return this._store;
+  }
+
+  // size
+  protected _center = new Point(0, 0);
+
+  public get center(): Point {
+    return this._center;
   }
 
   public get assets(): IAssetManager {
@@ -216,19 +234,8 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this._focusManager;
   }
 
-  public get center(): Point {
-    return this._center;
-  }
-
   get size() {
     return this.resizer.size;
-  }
-
-  public get i18n(): Ii18nPlugin {
-    if (!this._i18n) {
-      this._i18n = this.getPlugin<Ii18nPlugin>('i18n');
-    }
-    return this._i18n;
   }
 
   public get popups(): IPopupManager {
@@ -243,24 +250,6 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       this._audioManager = this.getPlugin<IAudioManager>('AudioManager');
     }
     return this._audioManager;
-  }
-
-  public get resizer(): IResizer {
-    if (!this._resizer) {
-      this._resizer = this.getPlugin<IResizer>('resizer');
-    }
-    return this._resizer;
-  }
-
-  public get input(): IInputManager {
-    if (!this._input) {
-      this._input = this.getPlugin<IInputManager>('InputManager');
-    }
-    return this._input;
-  }
-
-  public get store(): IStore {
-    return this._store;
   }
 
   public get actionContext(): string | ActionContext {
@@ -322,6 +311,18 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
   private get views(): any[] {
     return [this.scenes.view, this.popups.view, this.captions.view];
+  }
+
+  public static getInstance<T extends Application = Application>(): T {
+    return Application.instance as T;
+  }
+
+  public static createContainer(pId: string) {
+    const container = document.createElement('div');
+    Application.containerElement = container;
+    container.setAttribute('id', pId);
+    document.body.appendChild(container);
+    return container;
   }
 
   /**

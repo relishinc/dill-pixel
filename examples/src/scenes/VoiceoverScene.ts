@@ -2,6 +2,10 @@ import { ActionDetail, FlexContainer } from '@relish-studios/dill-pixel';
 import { Text } from 'pixi.js';
 import { BaseScene } from './BaseScene';
 
+function outputColor(value: number[]) {
+  return (value[0] << 16) + (value[1] << 8) + value[2];
+}
+
 export class VoiceoverScene extends BaseScene {
   protected readonly title = 'Voiceovers / Captions';
   protected readonly subtitle = 'Demonstrates VO / Captioning.';
@@ -12,19 +16,17 @@ export class VoiceoverScene extends BaseScene {
     captions: {
       enabled: true,
       fontSizeMultiplier: 1,
-      maxWidth: 0.4,
+      maxWidth: 0.6,
       floating: false,
-      floatingSettings: {
-        distance: 10,
-        padding: {
-          top: 20,
-          right: 20,
-          bottom: 20,
-          left: 20,
-        },
+      distance: 10,
+      padding: {
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20,
       },
       position: 'top',
-      backgroundColor: [255, 255, 255],
+      backgroundColor: [0, 0, 0],
       textColor: [255, 255, 255],
       backgroundAlpha: 0.5,
     },
@@ -51,7 +53,11 @@ export class VoiceoverScene extends BaseScene {
     this.app.audio.muted = this.config.muted;
 
     this.buttonContainer = this.add.flexContainer({ gap: 20, justifyContent: 'center' });
-    this.voButtons = this.buttonContainer.add.flexContainer({ gap: 10, flexDirection: 'column', alignItems: 'center' });
+    this.voButtons = this.buttonContainer.add.flexContainer({
+      gap: 10,
+      flexDirection: 'column',
+      alignItems: 'center',
+    });
     this.captionsButtons = this.buttonContainer.add.flexContainer({
       gap: 10,
       flexDirection: 'column',
@@ -107,74 +113,20 @@ export class VoiceoverScene extends BaseScene {
     this.app.actions('pause_vo').connect(this._handlePauseVo);
     this.app.actions('stop_vo').connect(this._handleStopVo);
     this.app.actions('caption_theme').connect(this._handlCaptionThemeChanged);
+
+    this.app.captions.options = {
+      ...this.config.captions,
+      maxWidth: this.config.captions.maxWidth * this.app.size.width,
+      position: this.config.captions.position as 'top' | 'bottom',
+      textColor: outputColor(this.config.captions.textColor),
+      backgroundColor: outputColor(this.config.captions.backgroundColor),
+    };
   }
 
   public async start() {}
 
   public destroy() {
     super.destroy();
-  }
-
-  protected configureGUI() {
-    this.gui.open();
-    const voFolder = this.gui.addFolder('Voiceover');
-    voFolder.open();
-    voFolder.add(this.config, 'volume', 0, 5, 0.001).name('Volume').onChange(this._handleVOVolumeChanged);
-    voFolder.add(this.config, 'muted').name('Mute').onChange(this._handleMuteChanged);
-
-    const captionsFolder = this.gui.addFolder('Captions');
-    captionsFolder.open();
-    captionsFolder.add(this.config.captions, 'enabled').name('Enabled').onChange(this._handleCaptionsEnabledChanged);
-    captionsFolder
-      .add(this.config.captions, 'fontSizeMultiplier', 1, 3, 0.25)
-      .name('Size')
-      .onChange(this._handleCaptionsSizeChanged);
-    captionsFolder
-      .add(this.config.captions, 'maxWidth', 0.25, 1, 0.05)
-      .name('Text Width')
-      .onChange(this._handleMaxWidthChanged);
-
-    this._captionsBgAlphaController = captionsFolder
-      .add(this.config.captions, 'backgroundAlpha', 0.1, 1, 0.1)
-      .name('BG Alpha')
-      .onChange(this._handleBgAlphaChanged);
-
-    this._captionsBgColorController = captionsFolder
-      .addColor(this.config.captions, 'backgroundColor')
-      .name('BG Color')
-      .onChange(this._handleBgColorChanged);
-
-    this._captionsTextColorController = captionsFolder
-      .addColor(this.config.captions, 'textColor')
-      .name('Text Color')
-      .onChange(this._handleTextColorChanged);
-
-    captionsFolder
-      .add(this.config.captions, 'position', ['top', 'bottom'])
-      .name('Position')
-      .onChange(this._handleCaptionsPositionChanged);
-
-    captionsFolder.add(this.config.captions, 'floating').name('Floating').onChange(this._handleCaptionsFloatingChanged);
-    const floatingSettingsFolder = captionsFolder.addFolder('Float Settings');
-    floatingSettingsFolder
-      .add(this.config.captions.floatingSettings, 'distance', 0, 100, 1)
-      .onChange(this._handleFloatingSettingsChanged);
-
-    this._floatingSettingsFolder = floatingSettingsFolder;
-
-    const padding = floatingSettingsFolder.addFolder('Padding');
-    padding
-      .add(this.config.captions.floatingSettings.padding, 'top', 0, 50, 1)
-      .onChange(this._handleFloatingSettingsChanged);
-    padding
-      .add(this.config.captions.floatingSettings.padding, 'right', 0, 50, 1)
-      .onChange(this._handleFloatingSettingsChanged);
-    padding
-      .add(this.config.captions.floatingSettings.padding, 'bottom', 0, 50, 1)
-      .onChange(this._handleFloatingSettingsChanged);
-    padding
-      .add(this.config.captions.floatingSettings.padding, 'left', 0, 50, 1)
-      .onChange(this._handleFloatingSettingsChanged);
   }
 
   resize() {
@@ -219,7 +171,6 @@ export class VoiceoverScene extends BaseScene {
 
   _handleCaptionsFloatingChanged(value: boolean) {
     this.app.captions.floating = value;
-    this.app.captions.floatingSettings = this.config.captions.floatingSettings;
     if (value) {
       this._floatingSettingsFolder.open();
     } else {
@@ -227,8 +178,12 @@ export class VoiceoverScene extends BaseScene {
     }
   }
 
-  _handleFloatingSettingsChanged() {
-    this.app.captions.floatingSettings = this.config.captions.floatingSettings;
+  _handlePaddingChanged() {
+    this.app.captions.padding = this.config.captions.padding;
+  }
+
+  _handleDistanceChanged() {
+    this.app.captions.distance = this.config.captions.distance;
   }
 
   _handleCaptionsPositionChanged(value: 'top' | 'bottom') {
@@ -236,9 +191,7 @@ export class VoiceoverScene extends BaseScene {
   }
 
   _handleBgColorChanged(value: number[]) {
-    // convert color array to number
-    const color = (value[0] << 16) + (value[1] << 8) + value[2];
-    this.app.captions.backgroundColor = color;
+    this.app.captions.backgroundColor = outputColor(value);
   }
 
   _handleCaptionsSizeChanged(value: number) {
@@ -254,8 +207,60 @@ export class VoiceoverScene extends BaseScene {
   }
 
   _handleTextColorChanged(value: number[]) {
-    const color = (value[0] << 16) + (value[1] << 8) + value[2];
-    this.app.captions.textColor = color;
+    this.app.captions.textColor = outputColor(value);
+  }
+
+  protected configureGUI() {
+    this.gui.open();
+    const voFolder = this.gui.addFolder('Voiceover');
+    voFolder.open();
+    voFolder.add(this.config, 'volume', 0, 5, 0.001).name('Volume').onChange(this._handleVOVolumeChanged);
+    voFolder.add(this.config, 'muted').name('Mute').onChange(this._handleMuteChanged);
+
+    const captionsFolder = this.gui.addFolder('Captions');
+    captionsFolder.open();
+    captionsFolder.add(this.config.captions, 'enabled').name('Enabled').onChange(this._handleCaptionsEnabledChanged);
+    captionsFolder
+      .add(this.config.captions, 'fontSizeMultiplier', 1, 3, 0.25)
+      .name('Size')
+      .onChange(this._handleCaptionsSizeChanged);
+    captionsFolder
+      .add(this.config.captions, 'maxWidth', 0.25, 1, 0.05)
+      .name('Text Width')
+      .onChange(this._handleMaxWidthChanged);
+
+    this._captionsBgAlphaController = captionsFolder
+      .add(this.config.captions, 'backgroundAlpha', 0.1, 1, 0.1)
+      .name('BG Alpha')
+      .onChange(this._handleBgAlphaChanged);
+
+    this._captionsBgColorController = captionsFolder
+      .addColor(this.config.captions, 'backgroundColor')
+      .name('BG Color')
+      .onChange(this._handleBgColorChanged);
+
+    this._captionsTextColorController = captionsFolder
+      .addColor(this.config.captions, 'textColor')
+      .name('Text Color')
+      .onChange(this._handleTextColorChanged);
+
+    captionsFolder
+      .add(this.config.captions, 'position', ['top', 'bottom'])
+      .name('Position')
+      .onChange(this._handleCaptionsPositionChanged);
+
+    const padding = captionsFolder.addFolder('Padding');
+    padding.open();
+    padding.add(this.config.captions.padding, 'top', 0, 50, 1).onChange(this._handlePaddingChanged);
+    padding.add(this.config.captions.padding, 'right', 0, 50, 1).onChange(this._handlePaddingChanged);
+    padding.add(this.config.captions.padding, 'bottom', 0, 50, 1).onChange(this._handlePaddingChanged);
+    padding.add(this.config.captions.padding, 'left', 0, 50, 1).onChange(this._handlePaddingChanged);
+
+    captionsFolder.add(this.config.captions, 'floating').name('Floating').onChange(this._handleCaptionsFloatingChanged);
+    const floatingSettingsFolder = captionsFolder.addFolder('Float Settings');
+    floatingSettingsFolder.add(this.config.captions, 'distance', 0, 100, 1).onChange(this._handleDistanceChanged);
+
+    this._floatingSettingsFolder = floatingSettingsFolder;
   }
 
   private _handleVo(action: ActionDetail) {

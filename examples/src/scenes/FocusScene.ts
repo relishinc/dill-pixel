@@ -5,10 +5,7 @@ import { Button, FlexContainer, Logger, PIXIText } from '@relish-studios/dill-pi
 export class FocusScene extends BaseScene {
   protected title = 'Focus Management';
   protected subtitle =
-    'Tab to changed focus. Enter or space to make the circles move.\nF to change focus layer.\nNotice only one item' +
-    ' is focusable' +
-    ' on layer' +
-    ' "two"?';
+    'Tab to changed focus. Enter or space to make the circles move.\nF to change focus layer.\nNotice only one item is focusable on layer  two"?';
   private _focusLayerLabel: PIXIText;
   private actor1: Actor;
   private actor2: Actor;

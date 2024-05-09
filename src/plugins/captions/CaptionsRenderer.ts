@@ -86,55 +86,54 @@ export class CaptionsRenderer extends Container implements ICaptionRenderer {
 
   public resize(): void {
     const size = this.app.size;
+    const opts = this.plugin.options;
+
     this._size.width = size.width;
     this._size.height = size.height;
 
     this._text.style.fontSize = this.fontSize * this.getSizeMultiplier();
-    this._text.style.wordWrapWidth = this.plugin.options.maxWidth * 2;
+    this._text.style.wordWrapWidth = opts.maxWidth * 2;
     this._text.scale.set(0.5);
-    this._text.position.set(this._size.width * 0.5, this._text.style.fontSize * 0.2);
+    this._text.position.set(this._size.width * 0.5, 0);
 
     this._bg.position.set(this._size.width * 0.5, 0);
 
-    if (this.plugin.options.floating) {
+    let h = this._text.height;
+    if (opts.padding.top) {
+      h += opts.padding.top;
+    }
+    if (opts.padding.bottom) {
+      h += opts.padding.bottom;
+    }
+    this._bg.height = h;
+
+    this._text.y += opts.padding.top;
+
+    if (opts.floating) {
       let w = this._text.width;
-      let h = Math.max(this._text.height);
-      this._bg.y = this._text.y;
-      if (this.plugin.options.floatingSettings.padding.left) {
-        w += this.plugin.options.floatingSettings.padding.left;
+
+      if (opts.padding.left) {
+        w += opts.padding.left;
       }
-      if (this.plugin.options.floatingSettings.padding.right) {
-        w += this.plugin.options.floatingSettings.padding.right;
+      if (opts.padding.right) {
+        w += opts.padding.right;
       }
 
-      this._bg.x +=
-        this.plugin.options.floatingSettings.padding.right * 0.5 -
-        this.plugin.options.floatingSettings.padding.left * 0.5;
-
-      if (this.plugin.options.floatingSettings.padding.top) {
-        h += this.plugin.options.floatingSettings.padding.top;
-      }
-      if (this.plugin.options.floatingSettings.padding.bottom) {
-        h += this.plugin.options.floatingSettings.padding.bottom;
-      }
-      this._text.y += this.plugin.options.floatingSettings.padding.top;
-
+      this._bg.x += opts.padding.right * 0.5 - opts.padding.left * 0.5;
       this._bg.width = w;
-      this._bg.height = h;
     } else {
-      this._bg.height = Math.max(this._text.height + this._text.y * 2, this.fontSize);
       this._bg.width = size.width;
     }
 
-    if (this.plugin.options.position === 'top') {
+    if (opts.position === 'top') {
       this.position.set(-size.width * 0.5, Math.round(-size.height * 0.5));
-      if (this.plugin.options.floating) {
-        this.position.y += Math.round(this.plugin.options.floatingSettings.distance - this._bg.y);
+      if (opts.floating) {
+        this.position.y += Math.round(opts.distance - this._bg.y);
       }
     } else {
       this.position.set(-size.width * 0.5, Math.round(size.height * 0.5 - this._bg.height));
-      if (this.plugin.options.floating) {
-        this.position.y -= Math.round(this.plugin.options.floatingSettings.distance + this._bg.y);
+      if (opts.floating) {
+        this.position.y -= Math.round(opts.distance + this._bg.y);
       }
     }
   }
