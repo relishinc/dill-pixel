@@ -5,6 +5,11 @@ export interface ICoreSignals {
     onMuted: Signal<(muted: boolean) => void>;
     onMasterVolumeChanged: Signal<(volume: number) => void>;
     onChannelVolumeChanged: Signal<(detail: ChannelVolumeDetail) => void>;
+    // VoiceOverPlugin;
+    onVoiceOverStart: Signal<(instance: IAudioInstance) => void>;
+    onVoiceOverPaused: Signal<(instance: IAudioInstance) => void>;
+    onVoiceOverComplete: Signal<(instance: IAudioInstance) => void>;
+    onVoiceOverResumed: Signal<(instance: IAudioInstance) => void>;
     // FocusManager;
     onFocusManagerActivated: Signal<() => void>;
     onFocusManagerDeactivated: Signal<() => void>;

@@ -1,21 +1,14 @@
 import { Ticker, UPDATE_PRIORITY } from 'pixi.js';
-import { Application, IApplication } from '../core/Application';
+import { Application } from '../core/Application';
 import { CorePlugin } from '../core/decorators';
-import { isDev } from '../utils/env';
 import { Plugin } from './Plugin';
 
 @CorePlugin
 export class StatsPlugin extends Plugin {
-  public readonly id = 'StatsModule';
+  public readonly id = 'StatsPlugin';
   public stats: any;
 
-  public async initialize(app: IApplication) {
-    const showStats = app.config.showStats === true || (isDev && app.config.showStats !== false);
-
-    if (!showStats) {
-      return;
-    }
-
+  public async initialize() {
     const Stats = await import('stats.js').then((m) => m.default);
     this.stats = new Stats();
     this.stats.dom.id = 'stats';

@@ -87,6 +87,7 @@ export class VoiceOverPlugin extends Plugin implements IVoiceOverPlugin {
   async initialize() {
     this.app.actions('pause').connect(this.onPause);
     this.app.actions('unpause').connect(this.onResume);
+    this.app.scenes.onSceneChangeStart.connect(this.stopVO);
   }
 
   playVO(key: VoKey | VoKey[], mode?: PlayMode, callback?: VoCallback): Promise<IAudioInstance>;

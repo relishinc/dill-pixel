@@ -494,6 +494,28 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       const plugin = new defaultPlugins[i]();
       await this.registerPlugin(plugin, this.config[plugin.id as keyof IApplicationOptions] || undefined);
     }
+    const showStats = this.config.showStats === true || (isDev && this.config.showStats !== false);
+    if (showStats) {
+      await this.loadPlugin({
+        id: 'stats',
+        module: () => import('../plugins/StatsPlugin'),
+        namedExport: 'StatsPlugin',
+      });
+    }
+    if (this.config.useVoiceover) {
+      await this.loadPlugin({
+        id: 'voiceover',
+        module: () => import('../plugins/audio/VoiceOverPlugin'),
+        namedExport: 'VoiceOverPlugin',
+        options: this.config['voiceover' as keyof IApplicationOptions] || undefined,
+      });
+      await this.loadPlugin({
+        id: 'captions',
+        module: () => import('../plugins/captions/CaptionsPlugin'),
+        namedExport: 'CaptionsPlugin',
+        options: this.config['captions' as keyof IApplicationOptions] || undefined,
+      });
+    }
   }
 
   protected async registerPlugins() {

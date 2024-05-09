@@ -292,6 +292,7 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
     this.renderer = this.view.addChild(new CaptionsRenderer(this)) as CaptionsRenderer;
 
     this.app.ticker.add(this.update);
+    this.app.scenes.onSceneChangeStart.connect(this.stopAllCaptions);
   }
 
   /**
@@ -373,6 +374,12 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
     if (this._activeCaptionId === id) {
       this.playLine(id, -1);
     }
+  }
+
+  public stopAllCaptions(): void {
+    this.renderer?.stop();
+    this._activeCaptionId = undefined;
+    this._activeCaptionLine = -1;
   }
 
   private _getId(id: string) {

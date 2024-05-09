@@ -85,69 +85,11 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
   public onLayoutComplete: Signal<() => void> = new Signal<() => void>();
   public debug: boolean = false;
   public config: FlexContainerConfig;
-  /**
-   * Removes all the children from the container
-   * Override because we need to ensure it returns the proper re-parented children
-   */
-  public removeChildren = <U extends PIXIContainer>() => {
-    const children = this.flexChildren;
-    this.removeChild(...children);
-    return children as U[];
-  };
-  /**
-   * Removes a child from the container at the specified index
-   * Override because we need to remove from the inner container
-   */
-  public removeChildAt = <U extends PIXIContainer>(index: number): U => {
-    return this.removeChild(this.flexChildren[index]) as U;
-  };
-  /**
-   * Adds a child to the container at the specified index
-   * Override because we need to ensure it sets the child index properly
-   */
-  public addChildAt = <U extends PIXIContainer>(child: U, index: number) => {
-    const newChild = this.add.existing(child);
-    this.setChildIndex(newChild, index);
-    return newChild;
-  };
-  /**
-   * Sets the index of the child in the container
-   * Override because we need to ensure it targets the parent container that we added
-   */
-  public setChildIndex = <U extends PIXIContainer>(child: U, index: number) => {
-    const actualChild = this._childMap.get(child as PIXIContainer);
-    if (actualChild) {
-      super.setChildIndex(actualChild, index);
-      this.setFlexChildren();
-      this.layout();
-    }
-  };
-  /**
-   * Gets the index of a child in the container
-   * Override because we need to ensure it targets the parent container that we added
-   * @param {DisplayObject} child
-   * @param {number} index
-   * @returns {U}
-   */
-  public getChildIndex = <U extends PIXIContainer>(child: U) => {
-    if (this._childMap.has(child as PIXIContainer)) {
-      return super.getChildIndex(child.parent);
-    }
-    return super.getChildIndex(child);
-  };
-  /**
-   * Gets the child at the specified index
-   * Override due to re-parenting
-   */
-  public getChildAt = <U extends PIXIContainer>(index: number) => {
-    return super.getChildAt(index)?.getChildAt(0) as U;
-  };
   protected paddingLeft: number = 0;
   protected paddingRight: number = 0;
   protected paddingTop: number = 0;
   protected paddingBottom: number = 0;
   protected _childMap = new Map<PIXIContainer, PIXIContainer>();
-  protected _flexChildren: PIXIContainer[] = [];
   private _reparentAddedChild: boolean = true;
 
   constructor(config: Partial<FlexContainerConfig> = {}) {
@@ -163,6 +105,12 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
     this.on('childRemoved', this.handleChildRemoved);
 
     this.layout();
+  }
+
+  protected _flexChildren: PIXIContainer[] = [];
+
+  get flexChildren() {
+    return this._flexChildren;
   }
 
   get gap(): number {
@@ -239,16 +187,75 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
     this.layout();
   }
 
-  get flexChildren() {
-    return this._flexChildren;
-  }
-
   /**
    * Get the application instance.
    */
   public get app(): T {
     return Application.getInstance() as T;
   }
+
+  /**
+   * Removes all the children from the container
+   * Override because we need to ensure it returns the proper re-parented children
+   */
+  public removeChildren = <U extends PIXIContainer>() => {
+    const children = this.flexChildren;
+    this.removeChild(...children);
+    return children as U[];
+  };
+
+  /**
+   * Removes a child from the container at the specified index
+   * Override because we need to remove from the inner container
+   */
+  public removeChildAt = <U extends PIXIContainer>(index: number): U => {
+    return this.removeChild(this.flexChildren[index]) as U;
+  };
+
+  /**
+   * Adds a child to the container at the specified index
+   * Override because we need to ensure it sets the child index properly
+   */
+  public addChildAt = <U extends PIXIContainer>(child: U, index: number) => {
+    const newChild = this.add.existing(child);
+    this.setChildIndex(newChild, index);
+    return newChild;
+  };
+
+  /**
+   * Sets the index of the child in the container
+   * Override because we need to ensure it targets the parent container that we added
+   */
+  public setChildIndex = <U extends PIXIContainer>(child: U, index: number) => {
+    const actualChild = this._childMap.get(child as PIXIContainer);
+    if (actualChild) {
+      super.setChildIndex(actualChild, index);
+      this.setFlexChildren();
+      this.layout();
+    }
+  };
+
+  /**
+   * Gets the index of a child in the container
+   * Override because we need to ensure it targets the parent container that we added
+   * @param {DisplayObject} child
+   * @param {number} index
+   * @returns {U}
+   */
+  public getChildIndex = <U extends PIXIContainer>(child: U) => {
+    if (this._childMap.has(child as PIXIContainer)) {
+      return super.getChildIndex(child.parent);
+    }
+    return super.getChildIndex(child);
+  };
+
+  /**
+   * Gets the child at the specified index
+   * Override due to re-parenting
+   */
+  public getChildAt = <U extends PIXIContainer>(index: number) => {
+    return super.getChildAt(index)?.getChildAt(0) as U;
+  };
 
   destroy(_options?: DestroyOptions | boolean) {
     this.off('childAdded', this.handleChildAdded);
@@ -474,8 +481,8 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
       lineEnd: number,
       direction: 'row' | 'column',
     ) => {
-      lineItems.forEach(({ index, width, height }, i) => {
-        const extraSpace = (direction === 'row' ? width! : height!) - (lineEnd - lineStart);
+      const extraSpace = (direction === 'row' ? width! : height!) - (lineEnd - lineStart);
+      lineItems.forEach(({ index }, i) => {
         let offset = 0;
         switch (justifyContent) {
           case 'flex-start':
@@ -501,6 +508,8 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
         } else {
           newLayoutProps[index].y += offset;
         }
+
+        console.log({ offset });
       });
     };
 

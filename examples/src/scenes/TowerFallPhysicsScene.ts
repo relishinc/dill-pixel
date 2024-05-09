@@ -10,12 +10,6 @@ import { Assets, Ticker } from 'pixi.js';
 import { Collision, TowerFallPhysicsPlugin } from '../../../src/plugins/physics/towerfall';
 
 export class TowerFallPhysicsScene extends BaseScene {
-  protected readonly title = 'TowerFall Physics';
-  protected readonly subtitle = 'Arrows to move, up to jump';
-  protected config = {
-    useCamera: true,
-    debug: false,
-  };
   controls: FlexContainer;
   level: Container;
   player: Player;
@@ -23,9 +17,14 @@ export class TowerFallPhysicsScene extends BaseScene {
   doors: Door[] = [];
   portals: Portal[] = [];
   _isPaused: boolean = false;
-
   camera: Camera;
   cameraController: CameraController;
+  protected readonly title = 'TowerFall Physics';
+  protected readonly subtitle = 'Arrows to move, up to jump';
+  protected config = {
+    useCamera: true,
+    debug: false,
+  };
 
   protected get physics(): TowerFallPhysicsPlugin {
     return this.app.getPlugin('physics') as TowerFallPhysicsPlugin;
@@ -207,6 +206,7 @@ export class TowerFallPhysicsScene extends BaseScene {
   }
 
   addControls() {
+    console.log('W', this.app.size.width);
     this.controls = this.add.flexContainer({
       justifyContent: 'space-between',
       width: this.app.size.width - 40,
@@ -231,6 +231,8 @@ export class TowerFallPhysicsScene extends BaseScene {
     leftSide.add.existing(leftButton);
     leftSide.add.existing(rightButton);
     rightSide.add.existing(jumpButton);
+
+    this.controls.layout();
   }
 
   makeControl(label: string = 'Button', callback: () => void) {

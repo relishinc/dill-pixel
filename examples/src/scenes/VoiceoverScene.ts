@@ -53,15 +53,20 @@ export class VoiceoverScene extends BaseScene {
     this.app.audio.muted = this.config.muted;
 
     this.buttonContainer = this.add.flexContainer({ gap: 20, justifyContent: 'center' });
+    this.buttonContainer.debug = true;
+    this.buttonContainer.label = 'ButtonContainer';
+
     this.voButtons = this.buttonContainer.add.flexContainer({
       gap: 10,
       flexDirection: 'column',
       alignItems: 'center',
+      width: 256,
     });
     this.captionsButtons = this.buttonContainer.add.flexContainer({
       gap: 10,
       flexDirection: 'column',
       alignItems: 'center',
+      width: 256,
     });
 
     this.voButtons.add.text({ text: 'VO', style: { fill: 0xffffff, fontSize: 36, fontWeight: 'bold' } });
