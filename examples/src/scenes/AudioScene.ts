@@ -34,6 +34,7 @@ export class AudioScene extends BaseScene {
     this.buttonContainer = this.add.flexContainer({ gap: 20, justifyContent: 'center' });
     this.sfxButtons = this.buttonContainer.add.flexContainer({
       gap: 10,
+      width: 256,
       flexDirection: 'column',
       alignItems: 'center',
     });
@@ -56,13 +57,6 @@ export class AudioScene extends BaseScene {
   public destroy() {
     void this.app.audio.fadeOut('horizon', 'music');
     super.destroy();
-  }
-
-  protected configureGUI() {
-    this.gui.add(this.config, 'master', 0, 5, 0.001).name('Master Volume').onChange(this._handleMasterVolumeChanged);
-    this.gui.add(this.config, 'music', 0, 5, 0.001).name('Music Volume').onChange(this._handleMusicVolumeChanged);
-    this.gui.add(this.config, 'sfx', 0, 5, 0.001).name('SFX Volume').onChange(this._handleSFXVolumeChanged);
-    this.gui.add(this.config, 'muted').name('Mute').onChange(this._handleMuteChanged);
   }
 
   resize() {
@@ -111,6 +105,13 @@ export class AudioScene extends BaseScene {
 
   _handleMuteChanged(value: boolean) {
     this.app.audio.muted = value;
+  }
+
+  protected configureGUI() {
+    this.gui.add(this.config, 'master', 0, 5, 0.001).name('Master Volume').onChange(this._handleMasterVolumeChanged);
+    this.gui.add(this.config, 'music', 0, 5, 0.001).name('Music Volume').onChange(this._handleMusicVolumeChanged);
+    this.gui.add(this.config, 'sfx', 0, 5, 0.001).name('SFX Volume').onChange(this._handleSFXVolumeChanged);
+    this.gui.add(this.config, 'muted').name('Mute').onChange(this._handleMuteChanged);
   }
 
   private _handleSfx(action: ActionDetail) {

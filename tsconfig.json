@@ -34,8 +34,7 @@
     }
   },
   "typeRoots": [
-    "./node_modules/@types",
-    "./node_modules/@dimforge/rapier2d"
+    "./node_modules/@types"
   ],
   "include": [
     "./config/**/*.ts",
