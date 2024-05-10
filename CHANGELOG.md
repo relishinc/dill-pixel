@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.39.14](https://github.com/relishinc/dill-pixel/compare/v2.39.13...v2.39.14) (2024-05-10)
+
+
+### Bug Fixes
+
+* resizer tweak ([ae98920](https://github.com/relishinc/dill-pixel/commit/ae9892027d25999fd83599cc0419caac5a8a4c10))
+
 ## [2.39.13](https://github.com/relishinc/dill-pixel/compare/v2.39.12...v2.39.13) (2024-05-10)
 
 
