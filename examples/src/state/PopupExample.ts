@@ -43,8 +43,9 @@ export class PopupExample extends BaseState {
 
     this.button = this.add.container({
       alpha: 1,
-      position: [this.app.size.x * 0.5 - 130, -this.app.size.y * 0.5 + 200],
+      position: [this.app.size.x * 0.5 - 110, -this.app.size.y * 0.5 + 200],
     });
+
     this.button.add.coloredSprite({ color: 0x00ff00, size: [200, 100], shape: 'rounded_rectangle', radius: 10 });
     this.button.add.text({ value: 'Click me', anchor: 0.5 });
     this.button.eventMode = 'static';

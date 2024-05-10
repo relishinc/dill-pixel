@@ -1,5 +1,5 @@
 import { Application } from '@/Application';
-import { create } from '@relish-studios/dill-pixel';
+import { create } from '@relish-studios/dill-pixel'; // no auto scaling
 
 // no auto scaling
 // create(Application, {
@@ -17,7 +17,7 @@ create(
     antialias: false,
     useNewResizeManager: true,
     resizeOptions: {
-      minSize: { width: 960, height: 600 },
+      minSize: { width: 375, height: 700 },
     },
     autoDensity: false,
   },
