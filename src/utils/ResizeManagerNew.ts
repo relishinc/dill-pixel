@@ -63,13 +63,13 @@ export class ResizeManagerNew extends ResizeManager {
   resize() {
     let screenWidth = window.innerWidth;
     let screenHeight = window.innerHeight;
-
-    const el = (this.app.renderer.view as HTMLCanvasElement)?.parentElement;
-    if (el && el?.getBoundingClientRect()) {
-      screenWidth = el.offsetWidth;
-      screenHeight = el.offsetHeight;
+    const canvas = this.app.renderer.view as HTMLCanvasElement;
+    const el = canvas?.parentElement;
+    const bounds = el?.getBoundingClientRect();
+    if (bounds) {
+      screenWidth = Math.min(window.innerWidth, bounds.width);
+      screenHeight = Math.min(window.innerHeight, bounds.height);
     }
-
     const minWidth = this._options.minSize.width;
     const minHeight = this._options.minSize.height;
 
@@ -77,13 +77,14 @@ export class ResizeManagerNew extends ResizeManager {
     const scaleX = screenWidth < minWidth ? minWidth / screenWidth : 1;
     const scaleY = screenHeight < minHeight ? minHeight / screenHeight : 1;
     const scale = scaleX > scaleY ? scaleX : scaleY;
+
     this._scale = scale;
     const width = screenWidth * scale;
     const height = screenHeight * scale;
 
     // Update canvas style dimensions and scroll window up to avoid issues on mobile resize
-    (this.app.renderer.view as HTMLCanvasElement).style.width = `${screenWidth}px`;
-    (this.app.renderer.view as HTMLCanvasElement).style.height = `${screenHeight}px`;
+    canvas.style.width = `${screenWidth}px`;
+    canvas.style.height = `${screenHeight}px`;
 
     if (this._options.autoScroll) {
       window?.scrollTo(0, 0);
@@ -94,6 +95,7 @@ export class ResizeManagerNew extends ResizeManager {
 
     // Update renderer and navigation screens dimensions
     this.app.renderer.resize(width, height);
+
     this._size.x = width;
     this._size.y = height;
   }
