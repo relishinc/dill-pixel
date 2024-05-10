@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.39.15](https://github.com/relishinc/dill-pixel/compare/v2.39.14...v2.39.15) (2024-05-10)
+
+
+### Bug Fixes
+
+* removed ensureCtx from AudioManager ([04b93b7](https://github.com/relishinc/dill-pixel/commit/04b93b7041e6a6c1931a0f33cee9757eabd5abc7))
+
 ## [2.39.14](https://github.com/relishinc/dill-pixel/compare/v2.39.13...v2.39.14) (2024-05-10)
 
 
