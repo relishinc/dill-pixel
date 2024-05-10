@@ -87,7 +87,6 @@ export declare class HowlerManager implements IAudioManager {
      * The internal flag for print log statements.
      */
     private _debug;
-    private _ctx;
     constructor(app: Application);
     /**
      * Enabling this will print all debug logs.
