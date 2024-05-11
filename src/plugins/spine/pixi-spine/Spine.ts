@@ -71,7 +71,6 @@ export class Spine extends Container implements View {
   // Pixi properties
   public batched = true;
   public override readonly renderPipeId = 'spine';
-  public _roundPixels: 0 | 1;
   public buildId = 0;
   public _didSpineUpdate = false;
   public _boundsDirty = true;
@@ -79,10 +78,76 @@ export class Spine extends Container implements View {
   public skeleton: Skeleton;
   public state: AnimationState;
   public skeletonBounds: SkeletonBounds;
-  private _bounds: Bounds = new Bounds();
-  private _debug?: ISpineDebugRenderer | undefined = undefined;
   private autoUpdateWarned = false;
+
+  constructor(options: SpineOptions | SkeletonData) {
+    if (options instanceof SkeletonData) {
+      options = {
+        skeletonData: options,
+      };
+    }
+
+    super();
+
+    const skeletonData = options instanceof SkeletonData ? options : options.skeletonData;
+
+    this.skeleton = new Skeleton(skeletonData);
+    this.state = new AnimationState(new AnimationStateData(skeletonData));
+    this.autoUpdate = options?.autoUpdate ?? true;
+  }
+
+  public _roundPixels: 0 | 1;
+
+  /** Whether or not to round the x/y position of the sprite. */
+  get roundPixels() {
+    return !!this._roundPixels;
+  }
+
+  set roundPixels(value: boolean) {
+    this._roundPixels = value ? 1 : 0;
+  }
+
+  private _bounds: Bounds = new Bounds();
+
+  get bounds() {
+    if (this._boundsDirty) {
+      this.updateBounds();
+    }
+
+    return this._bounds;
+  }
+
+  private _debug?: ISpineDebugRenderer | undefined = undefined;
+
+  public get debug(): ISpineDebugRenderer | undefined {
+    return this._debug;
+  }
+
+  public set debug(value: ISpineDebugRenderer | undefined) {
+    if (this._debug) {
+      this._debug.unregisterSpine(this);
+    }
+    if (value) {
+      value.registerSpine(this);
+    }
+    this._debug = value;
+  }
+
   private _autoUpdate = true;
+
+  public get autoUpdate(): boolean {
+    return this._autoUpdate;
+  }
+
+  public set autoUpdate(value: boolean) {
+    if (value) {
+      Ticker.shared.add(this.internalUpdate, this);
+      this.autoUpdateWarned = false;
+    } else {
+      Ticker.shared.remove(this.internalUpdate, this);
+    }
+    this._autoUpdate = value;
+  }
 
   static from({ skeleton, atlas, scale = 1 }: SpineFromOptions) {
     const cacheKey = `${skeleton}-${atlas}`;
@@ -101,7 +166,6 @@ export class Spine extends Container implements View {
 
     // TODO scale?
     parser.scale = scale;
-    console.log({ skeletonAsset });
     const skeletonData = parser.readSkeletonData(skeletonAsset);
 
     Cache.set(cacheKey, skeletonData);
@@ -109,67 +173,6 @@ export class Spine extends Container implements View {
     return new Spine({
       skeletonData,
     });
-  }
-
-  constructor(options: SpineOptions | SkeletonData) {
-    if (options instanceof SkeletonData) {
-      options = {
-        skeletonData: options,
-      };
-    }
-
-    super();
-
-    const skeletonData = options instanceof SkeletonData ? options : options.skeletonData;
-
-    this.skeleton = new Skeleton(skeletonData);
-    this.state = new AnimationState(new AnimationStateData(skeletonData));
-    this.autoUpdate = options?.autoUpdate ?? true;
-  }
-
-  get bounds() {
-    if (this._boundsDirty) {
-      this.updateBounds();
-    }
-
-    return this._bounds;
-  }
-
-  /** Whether or not to round the x/y position of the sprite. */
-  get roundPixels() {
-    return !!this._roundPixels;
-  }
-
-  set roundPixels(value: boolean) {
-    this._roundPixels = value ? 1 : 0;
-  }
-
-  public get debug(): ISpineDebugRenderer | undefined {
-    return this._debug;
-  }
-
-  public set debug(value: ISpineDebugRenderer | undefined) {
-    if (this._debug) {
-      this._debug.unregisterSpine(this);
-    }
-    if (value) {
-      value.registerSpine(this);
-    }
-    this._debug = value;
-  }
-
-  public get autoUpdate(): boolean {
-    return this._autoUpdate;
-  }
-
-  public set autoUpdate(value: boolean) {
-    if (value) {
-      Ticker.shared.add(this.internalUpdate, this);
-      this.autoUpdateWarned = false;
-    } else {
-      Ticker.shared.remove(this.internalUpdate, this);
-    }
-    this._autoUpdate = value;
   }
 
   addBounds(bounds: Bounds) {

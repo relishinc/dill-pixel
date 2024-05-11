@@ -78,6 +78,7 @@ export type {
   ImportList,
   SceneImportList,
   SceneImportListItem,
+  EaseString,
 } from './utils/types';
 export { clamp, lerp } from './utils/math';
 export { resolvePointLike, getSheetLikeString, setObjectName } from './utils/functions';

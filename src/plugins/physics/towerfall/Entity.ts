@@ -54,6 +54,7 @@ export class Entity<T = any, A extends Application = Application> extends Contai
   getWorldBounds(): Bounds | Rectangle {
     const pos = this.system.container.toLocal(this.view.getGlobalPosition());
     const bounds = this.view.getBounds();
+    bounds.scale(1 / this.system.container.worldTransform.d);
     bounds.x = pos.x;
     bounds.y = pos.y;
     // Adjust bounds based on the view's anchor if it's a sprite
@@ -61,6 +62,7 @@ export class Entity<T = any, A extends Application = Application> extends Contai
       bounds.x -= this.view.width * this.view.anchor.x;
       bounds.y -= this.view.height * this.view.anchor.y;
     }
+
     return bounds;
   }
 

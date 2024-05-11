@@ -1,7 +1,16 @@
-import { Application, ContainerLike, KeyboardEventDetail, Logger, bindAllMethods } from '@relish-studios/dill-pixel';
+import {
+  Application,
+  bindAllMethods,
+  ContainerLike,
+  KeyboardEventDetail,
+  Logger,
+  PointLike,
+  resolvePointLike,
+  Signal,
+} from '@relish-studios/dill-pixel';
 import { Container, Point } from 'pixi.js';
 
-import { V8Application } from '../V8Application';
+import { V8Application } from '@/V8Application';
 
 type CameraCOnfig = {
   container: Container;
@@ -23,25 +32,28 @@ type OptionalCameraConfig = Partial<CameraCOnfig>;
 type RequiredCameraConfig = Required<Pick<CameraCOnfig, 'container'>>;
 type CustomCameraConfig = OptionalCameraConfig & RequiredCameraConfig;
 
-export class Camera {
+export class Camera extends Container {
+  public onZoom = new Signal();
   container: Container;
   minX: number = 0;
   minY: number = 0;
   maxX: number;
   maxY: number;
-  _lerp: number = 0;
   viewportWidth: number;
   viewportHeight: number;
   worldWidth: number;
   worldHeight: number;
-  //
-  protected _target: ContainerLike | null = null;
   protected targetPivot: Point = new Point(0, 0);
+  protected targetScale: Point = new Point(1, 1);
+  protected _zooming: boolean = false;
+  private _zoomLerp: number = 0.1;
 
-  constructor(config: CustomCameraConfig) {
+  constructor(public config: CustomCameraConfig) {
+    super({ isRenderGroup: true });
     bindAllMethods(this);
     if (config) {
       this.container = config.container;
+      this.addChild(this.container);
       if (config.minX) {
         this.minX = config.minX;
       }
@@ -71,6 +83,8 @@ export class Camera {
     return this;
   }
 
+  private _lerp: number = 0;
+
   get lerp(): number {
     return this._lerp;
   }
@@ -83,9 +97,7 @@ export class Camera {
     this._lerp = Math.max(0, Math.min(value, 1));
   }
 
-  get app(): Application {
-    return Application.getInstance();
-  }
+  protected _target: ContainerLike | null = null;
 
   get target(): ContainerLike | null {
     return this._target;
@@ -98,13 +110,27 @@ export class Camera {
     }
   }
 
-  follow(target: ContainerLike) {
+  protected _followOffset: Point = new Point(0, 0);
+  get followOffset(): Point {
+    return this._followOffset;
+  }
+
+  set followOffset(value: PointLike) {
+    this._followOffset = resolvePointLike(value, true);
+  }
+
+  get app(): Application {
+    return Application.getInstance();
+  }
+
+  follow(target: ContainerLike, offset: PointLike) {
+    this.followOffset = offset;
     this.target = target;
   }
 
   pan(deltaX: number, deltaY: number) {
-    let newPivotX = this.container.pivot.x + deltaX;
-    let newPivotY = this.container.pivot.y + deltaY;
+    let newPivotX = this.pivot.x + deltaX;
+    let newPivotY = this.pivot.y + deltaY;
 
     // Clamp pivot to min and max values
     newPivotX = Math.max(this.minX, Math.min(newPivotX, this.maxX));
@@ -113,52 +139,92 @@ export class Camera {
     this.targetPivot.set(newPivotX, newPivotY);
   }
 
-  zoom(scaleFactor: number) {
-    const newScale = Math.max(
-      0.1,
-      Math.min(
-        this.container.scale.x * scaleFactor,
-        Math.max(this.worldWidth / this.viewportWidth, this.worldHeight / this.viewportHeight),
-      ),
-    );
-    this.container.scale.set(newScale, newScale);
-    this.updatePosition();
+  zoom(scale: number, lerp: number = 0.1) {
+    this._zoomLerp = lerp;
+    this._zooming = true;
+    this.targetScale.set(scale, scale);
   }
 
   update() {
+    this.updateZoom();
     if (this._target) {
       this.focusOn(this._target);
     }
-    this.updatePosition();
+    this.updatePosition(this._zooming);
+    if (
+      this._zooming &&
+      Math.abs(this.scale.x - this.targetScale.x) < 0.001 &&
+      Math.abs(this.scale.y - this.targetScale.y) < 0.001
+    ) {
+      this._zooming = false;
+      this.scale.set(this.targetScale.x, this.targetScale.y);
+      this.onZoom.emit();
+    } else if (this._zooming) {
+      this.onZoom.emit();
+    }
   }
 
   private focusOn(entity: ContainerLike) {
     // Get the global position of the entity and convert it to the local position within the container.
     const globalPosition = entity.getGlobalPosition();
-    const spritePosition = this.container.toLocal(globalPosition, null, null, false);
-    // Calculate the pivot necessary to center the sprite in the viewport.
-    // Adjusting calculations to consider the container's current position
-    // Assume for now that the container should be centered at the target's position
-    this.targetPivot.x = spritePosition.x + this.viewportWidth / 2;
-    this.targetPivot.y = spritePosition.y + this.viewportHeight / 2;
+    const spritePosition = this.toLocal(globalPosition);
+
+    const posXModifier = this.position.x / this.scale.x - this.viewportWidth / 2;
+    const posYModifier = this.position.y / this.scale.y - this.viewportHeight / 2;
+
+    const offsetX = this.followOffset.x / this.scale.x;
+    const offsetY = this.followOffset.y / this.scale.y;
+
+    this.targetPivot.x = (spritePosition.x * this.scale.x + this.viewportWidth / 2) * (1 / this.scale.x) + offsetX;
+
+    const tMinX = this.viewportWidth / this.scale.x / 2 + posXModifier + this.minX;
+    const tMaxX = this.worldWidth - this.viewportWidth / this.scale.x / 2 + posXModifier + this.maxX;
+
+    if (this.targetPivot.x < tMinX) {
+      this.targetPivot.x = tMinX;
+    } else if (this.targetPivot.x > tMaxX) {
+      this.targetPivot.x = tMaxX;
+    }
+
+    this.targetPivot.y = (spritePosition.y * this.scale.y + this.viewportHeight / 2) * (1 / this.scale.y) + offsetY;
+
+    const tMinY = this.viewportHeight / this.scale.y / 2 + posYModifier + this.minY;
+    const tMaxY = this.worldHeight - this.viewportHeight / this.scale.y / 2 + posYModifier + this.maxY - offsetY;
+
+    if (this.targetPivot.y < tMinY) {
+      this.targetPivot.y = tMinY;
+    } else if (this.targetPivot.y > tMaxY) {
+      this.targetPivot.y = tMaxY;
+    }
   }
 
-  private updatePosition() {
-    if (this.lerp > 0) {
+  private updateZoom() {
+    const currentScaleX = this.scale.x;
+    const currentScaleY = this.scale.y;
+
+    const interpolatedScaleX = currentScaleX + this._zoomLerp * (this.targetScale.x - currentScaleX);
+    const interpolatedScaleY = currentScaleY + this._zoomLerp * (this.targetScale.y - currentScaleY);
+
+    this.scale.set(Math.max(0, interpolatedScaleX), Math.max(0, interpolatedScaleY));
+  }
+
+  private updatePosition(skipLerp: boolean = false) {
+    if (this.lerp > 0 && !skipLerp) {
       // Current pivot positions
-      const currentPivotX = this.container.pivot.x;
-      const currentPivotY = this.container.pivot.y;
+      const currentPivotX = this.pivot.x;
+      const currentPivotY = this.pivot.y;
 
       // Calculate interpolated pivot positions
       const interpolatedPivotX = currentPivotX + this.lerp * (this.targetPivot.x - currentPivotX);
       const interpolatedPivotY = currentPivotY + this.lerp * (this.targetPivot.y - currentPivotY);
 
       // Set the pivot to the interpolated position to smooth out the camera movement
-      this.container.pivot.set(interpolatedPivotX, interpolatedPivotY);
+      this.pivot.set(interpolatedPivotX, interpolatedPivotY);
     } else {
-      this.container.pivot.set(this.targetPivot.x, this.targetPivot.y);
+      this.pivot.set(this.targetPivot.x, this.targetPivot.y);
     }
-    this.container.position.set(this.viewportWidth / 2, this.viewportHeight / 2);
+
+    this.position.set(this.viewportWidth / 2, this.viewportHeight / 2);
   }
 }
 

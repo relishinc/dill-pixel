@@ -21,7 +21,8 @@ const appConfig: AppConfig = {
       namedExport: 'TowerFallPhysicsPlugin',
       module: () => import('../../src/plugins/physics/towerfall'),
       options: {
-        gridCellSize: 100,
+        useSpatialHash: true,
+        gridCellSize: 400,
         fps: 60,
       },
       autoLoad: false,

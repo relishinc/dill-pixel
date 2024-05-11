@@ -89,7 +89,12 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
 
   // Simple bounding box collision check
   collideAt(x: number, y: number, box: Rectangle): Collision[] | false {
-    const nextPosition = new Rectangle(box.x + x, box.y + y, box.width, box.height);
+    const nextPosition = new Rectangle(
+      box.x + x * this.system.container.worldTransform.d,
+      box.y + y * this.system.container.worldTransform.d,
+      box.width,
+      box.height,
+    );
     const collisions = [];
     // Iterate through all solids in the level to check for collisions
     for (const entity of this.collideables) {

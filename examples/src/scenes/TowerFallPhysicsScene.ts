@@ -1,4 +1,4 @@
-import { Camera, CameraController } from '@/entities/Camera';
+import { Camera } from '@/entities/Camera';
 import { Door } from '@/entities/physics/Door';
 import { Platform, PlatformMovementConfigOpts } from '@/entities/physics/Platform';
 import { Player } from '@/entities/physics/Player';
@@ -18,13 +18,18 @@ export class TowerFallPhysicsScene extends BaseScene {
   portals: Portal[] = [];
   _isPaused: boolean = false;
   camera: Camera;
-  cameraController: CameraController;
   protected readonly title = 'TowerFall Physics';
   protected readonly subtitle = 'Arrows to move, up to jump';
   protected config = {
     useCamera: true,
-    debug: false,
+    zoom: 1,
+    useSpatialHash: true,
+    gridCellSize: 400,
+    debug: true,
   };
+  private _zoomed: boolean = false;
+
+  // private _debugGfx = new Graphics();
 
   protected get physics(): TowerFallPhysicsPlugin {
     return this.app.getPlugin('physics') as TowerFallPhysicsPlugin;
@@ -39,6 +44,30 @@ export class TowerFallPhysicsScene extends BaseScene {
       .name('Use Camera');
 
     this.gui
+      .add(this.config, 'zoom', 1, 4, 0.1)
+      .onChange(() => {
+        this._handleCameraZoomChanged();
+      })
+      .name('Camera Zoom');
+
+    const spatialHashFolder = this.gui.addFolder('Spatial Hash Collisions');
+    spatialHashFolder.open();
+
+    spatialHashFolder
+      .add(this.config, 'useSpatialHash')
+      .onChange(() => {
+        this._handleSpatialHashChanged();
+      })
+      .name('Active');
+
+    spatialHashFolder
+      .add(this.config, 'gridCellSize', 50, 800, 50)
+      .onChange(() => {
+        this._handleGridCellSizeChange();
+      })
+      .name('Cell Size');
+
+    this.gui
       .add(this.config, 'debug')
       .onChange(() => {
         this._handleDebugChanged();
@@ -50,14 +79,18 @@ export class TowerFallPhysicsScene extends BaseScene {
     await super.initialize();
     await Assets.loadBundle('spine');
     this.app.focus.addFocusLayer(this.id);
-    this.level = this.add.container();
+
+    this.level = this.add.container({
+      label: 'Level',
+      position: [-this.app.size.width * 0.5, -this.app.size.height * 0.5],
+    });
 
     this.physics.system.initialize({
       gravity: 9.8,
       container: this.level,
       debug: false,
       boundary: {
-        width: Math.max(2000, this.app.size.width),
+        width: 2000,
         height: this.app.size.height,
         thickness: 10,
         padding: 5,
@@ -65,14 +98,17 @@ export class TowerFallPhysicsScene extends BaseScene {
       },
       collisionResolver: this._resolveCollision,
     });
-
-    this.addPlatforms();
-    this.addDoors();
-    this.addPortals();
+    const bottom = this.app.size.height - 150;
+    this.addPlatforms(bottom);
+    this.addDoors(bottom);
+    this.addPortals(bottom);
     this.addPlayer();
     this.addControls();
 
+    this._handleDebugChanged();
     this._handleUseCameraChanged();
+
+    this.app.keyboard.onKeyDown('z').connect(this._toggleZoom);
   }
 
   async start() {
@@ -111,38 +147,49 @@ export class TowerFallPhysicsScene extends BaseScene {
 
   resize() {
     super.resize();
+    this.camera.viewportWidth = this.app.size.width;
+    this.camera.viewportHeight = this.app.size.height;
+
     this.controls.x = -this.app.size.width * 0.5 + 20;
     this.controls.y = this.app.size.height * 0.5 - (window.innerHeight > window.innerWidth ? 400 : 100);
     this.controls.containerWidth = this.app.size.width - 40;
+
+    // if (this._debugGfx) {
+    // this._drawDebug();
+    // }
   }
 
-  addPlatforms() {
-    this.addPlatForm(0, 300, Math.max(2000, this.app.size.width));
-    this.addPlatForm(-300, 213, 30, 160);
-    this.addPlatForm(-300, 123, 150, 20, false);
-    this.addPlatForm(300, 118, 30, 350);
-    this.addPlatForm(365, 100, 100, 20, false);
-    this.addPlatForm(this.app.size.width * 0.5 - 100, -120, 200, 20, false, true, {
-      speed: [0, 1],
-      startingDirection: { x: 0, y: 1 },
-      range: [200, 300],
-    });
-    // vert
-    this.addPlatForm(210, 100, 150, 20, false, true, {
-      speed: [0, 1],
-      startingDirection: { x: 0, y: 1 },
-      range: [200, 300],
-    });
+  addPlatforms(bottom: number) {
+    // floor
+    this.addPlatForm(1000, bottom, 2000);
+
+    // first junction
+    this.addPlatForm(500, bottom - 88, 30, 160);
+    this.addPlatForm(500, bottom - 178, 150, 20, false);
 
     // hor
-    this.addPlatForm(-50, 0, 200, 20, false, true, {
+    this.addPlatForm(750, bottom - 300, 200, 20, false, true, {
       speed: [1, 0],
       startingDirection: { x: 1, y: 0 },
       range: [180, 0],
     });
 
-    // both hor and vert
-    // this.addPlatForm(0, 150, 300, 15, true, { speed: [1, 1], startingDirection: { x: 1, y: 1 }, range: [200, 200] });
+    // second junction
+    this.addPlatForm(1200, bottom - 183, 30, 350);
+    this.addPlatForm(1265, bottom - 200, 100, 20, false);
+    // vert
+    this.addPlatForm(1110, bottom - 200, 150, 20, false, true, {
+      speed: [0, 1],
+      startingDirection: { x: 0, y: 1 },
+      range: [200, 300],
+    });
+
+    // holds portal
+    this.addPlatForm(1700, bottom - 500, 200, 20, false, true, {
+      speed: [0, 1],
+      startingDirection: { x: 0, y: 1 },
+      range: [0, 300],
+    });
   }
 
   addPlatForm(
@@ -169,8 +216,8 @@ export class TowerFallPhysicsScene extends BaseScene {
     this.platforms.push(platform);
   }
 
-  addDoors() {
-    this.addDoor(-750, 0);
+  addDoors(bottom: number) {
+    this.addDoor(150, bottom - 80);
   }
 
   addDoor(x: number, y: number) {
@@ -178,10 +225,12 @@ export class TowerFallPhysicsScene extends BaseScene {
     this.doors.push(door);
   }
 
-  addPortals() {
-    const portal1 = this.addPortal(this.app.size.width * 0.5 - 100, -200);
-    const portal2 = this.addPortal(-500, 0);
-    const portal3 = this.addPortal(-230, 200);
+  addPortals(bottom: number) {
+    const portal2 = this.addPortal(400, bottom - 80);
+    const portal3 = this.addPortal(600, bottom - 80);
+
+    const portal1 = this.addPortal(1700, bottom - 580);
+
     portal1.debug = true;
     portal1.connect(portal3);
     portal2.connect(portal1);
@@ -206,7 +255,6 @@ export class TowerFallPhysicsScene extends BaseScene {
   }
 
   addControls() {
-    console.log('W', this.app.size.width);
     this.controls = this.add.flexContainer({
       justifyContent: 'space-between',
       width: this.app.size.width - 40,
@@ -268,6 +316,13 @@ export class TowerFallPhysicsScene extends BaseScene {
     this.physics.system.debug = debug;
   }
 
+  protected _handleCameraZoomChanged() {
+    const { zoom } = this.config;
+    if (this.camera) {
+      this.camera.zoom(zoom);
+    }
+  }
+
   protected _handleUseCameraChanged() {
     const { useCamera } = this.config;
     if (useCamera) {
@@ -275,17 +330,54 @@ export class TowerFallPhysicsScene extends BaseScene {
         container: this.level,
         viewportWidth: this.app.size.width,
         viewportHeight: this.app.size.height,
-        worldWidth: 4000,
-        worldHeight: 4000,
-        target: this.player,
+        worldWidth: this.physics.system.worldWidth,
+        worldHeight: this.physics.system.worldHeight,
+        minX: -50,
+        minY: -1000,
+        maxX: 50,
+        maxY: 200,
         lerp: 0.1,
       });
+      this.add.existing(this.camera);
+      this.camera.follow(this.player, [this.app.screen.width * 0.25, -100]);
+      this._handleCameraZoomChanged();
     } else {
+      this.removeChild(this.camera);
       // @ts-expect-error camera can't be null error
       this.camera = null;
-      this.level.position.set(0, 0);
+      this.addChild(this.level);
+      this.level.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
       this.level.pivot.set(0, 0);
     }
+  }
+
+  // private _drawDebug() {
+  //   this._debugGfx.clear();
+  //   this._debugGfx.strokeStyle = { width: 1, color: 0xff0000 };
+  //   this._debugGfx
+  //     .moveTo(0, -this.app.size.height * 0.25)
+  //     .lineTo(0, this.app.size.height * 0.25)
+  //     .moveTo(-this.app.size.width * 0.25, 0)
+  //     .lineTo(this.app.size.width * 0.25, 0)
+  //     .stroke();
+  // }
+
+  private _toggleZoom() {
+    if (this._zoomed) {
+      this._zoomed = false;
+      this.camera.zoom(1);
+    } else {
+      this._zoomed = true;
+      this.camera.zoom(2);
+    }
+  }
+
+  private _handleSpatialHashChanged() {
+    this.physics.useSpatialHash = this.config.useSpatialHash;
+  }
+
+  private _handleGridCellSizeChange() {
+    this.physics.gridCellSize = this.config.gridCellSize;
   }
 
   private _resolveCollision(collision: Collision) {

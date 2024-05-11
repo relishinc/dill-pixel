@@ -1,9 +1,9 @@
-import { Graphics } from 'pixi.js';
-import { IApplication } from '../core/Application';
-import { CorePlugin } from '../core/decorators';
-import { Container } from '../display/Container';
-import { Size } from '../utils/types';
-import { IPlugin, Plugin } from './Plugin';
+import {Graphics} from 'pixi.js';
+import {IApplication} from '../core/Application';
+import {CorePlugin} from '../core/decorators';
+import {Container} from '../display/Container';
+import {Size} from '../utils/types';
+import {IPlugin, Plugin} from './Plugin';
 
 /**
  * Interface for Resizer module.
@@ -42,9 +42,10 @@ const defaultOptions: ResizerOptions = {
 export class Resizer extends Plugin {
   public readonly id = 'resizer';
   private _options: ResizerOptions;
-  private _size: Size;
   private _debugContainer: Container;
   private _gfx: Graphics;
+
+  private _size: Size;
 
   get size() {
     return this._size;
@@ -75,6 +76,7 @@ export class Resizer extends Plugin {
 
     const el = this.app.renderer.canvas?.parentElement;
     const bounds = el?.getBoundingClientRect();
+
     if (bounds) {
       screenWidth = bounds.width;
       screenHeight = bounds.height;

@@ -1,30 +1,51 @@
 import { Graphics, Rectangle } from 'pixi.js';
 import { Entity } from './Entity';
 import { SpatialHashGridFilter } from './types';
+import { System } from './System';
 
 type GridKey = string;
 
 export class SpatialHashGrid {
   private cells: Map<GridKey, Set<Entity>> = new Map();
-  private cellSize: number;
 
-  constructor(cellSize: number) {
-    this.cellSize = cellSize;
+  constructor(cellSize: number, insertEntities: boolean = false) {
+    this._cellSize = cellSize;
+    if (insertEntities) {
+      System.all.forEach((entity) => this.insert(entity));
+    }
+  }
+
+  private _cellSize: number;
+
+  get cellSize(): number {
+    return this._cellSize;
+  }
+
+  set cellSize(size: number) {
+    this._cellSize = size;
+    this.cells.clear();
+    System.all.forEach((entity) => this.insert(entity));
+  }
+
+  destroy() {
+    this.cells.clear();
   }
 
   insert(entity: Entity): void {
     const bounds = entity.getBoundingBox();
-    const startX = Math.floor(bounds.x / this.cellSize);
-    const startY = Math.floor(bounds.y / this.cellSize);
-    const endX = Math.floor((bounds.x + bounds.width) / this.cellSize);
-    const endY = Math.floor((bounds.y + bounds.height) / this.cellSize);
+
+    const startX = Math.floor(bounds.x / this._cellSize);
+    const startY = Math.floor(bounds.y / this._cellSize);
+    const endX = Math.floor((bounds.x + bounds.width) / this._cellSize);
+    const endY = Math.floor((bounds.y + bounds.height) / this._cellSize);
 
     for (let x = startX; x <= endX; x++) {
       for (let y = startY; y <= endY; y++) {
-        const key = this.getGridKey(x, y);
+        const key = this.getGridKey(x * this._cellSize, y * this._cellSize); // Use actual world coordinates
         if (!this.cells.has(key)) {
           this.cells.set(key, new Set());
         }
+
         this.cells.get(key)?.add(entity);
       }
     }
@@ -38,29 +59,33 @@ export class SpatialHashGrid {
 
   query(range: Rectangle, filter?: SpatialHashGridFilter | string[]): Entity[] {
     const foundEntities = new Set<Entity>();
-    const startX = Math.floor(range.x / this.cellSize);
-    const startY = Math.floor(range.y / this.cellSize);
-    const endX = Math.floor((range.x + range.width) / this.cellSize);
-    const endY = Math.floor((range.y + range.height) / this.cellSize);
+
+    // Ensure we handle negative or reverse ranges appropriately
+    const startX = Math.floor(Math.min(range.x, range.x + range.width) / this._cellSize);
+    const startY = Math.floor(Math.min(range.y, range.y + range.height) / this._cellSize);
+    const endX = Math.floor(Math.max(range.x, range.x + range.width) / this._cellSize);
+    const endY = Math.floor(Math.max(range.y, range.y + range.height) / this._cellSize);
 
     for (let x = startX; x <= endX; x++) {
       for (let y = startY; y <= endY; y++) {
-        const key = this.getGridKey(x, y);
+        const key = this.getGridKey(x * this._cellSize, y * this._cellSize);
+
         const cellEntities = this.cells.get(key);
         if (cellEntities) {
           cellEntities.forEach((entity) => {
             if (filter !== undefined) {
               if (Array.isArray(filter)) {
-                if (!filter.includes(entity.type)) {
-                  return;
+                if (filter.includes(entity.type)) {
+                  foundEntities.add(entity);
                 }
               } else {
-                if (!filter(entity)) {
-                  return;
+                if (filter(entity)) {
+                  foundEntities.add(entity);
                 }
               }
+            } else {
+              foundEntities.add(entity);
             }
-            foundEntities.add(entity);
           });
         }
       }
@@ -77,26 +102,27 @@ export class SpatialHashGrid {
   }
 
   draw(gfx: Graphics) {
-    console.log(this.cells);
     const rects = this._getDebugRects();
     rects.forEach((rect) => {
-      gfx.rect(rect.x, rect.y, rect.width, rect.height);
+      gfx.rect(rect.left, rect.top, rect.width, rect.height);
       gfx.stroke();
     });
   }
 
   private _getDebugRects() {
     const rects: Rectangle[] = [];
-    this.cells.forEach((_, key) => {
+    this.cells.forEach((_cell, key) => {
       const [x, y] = key.split(':').map(Number);
-      rects.push(new Rectangle(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize));
+      if (_cell.size) {
+        rects.push(new Rectangle(x * this._cellSize, y * this._cellSize, this._cellSize, this._cellSize));
+      }
     });
     return rects;
   }
 
   private getGridKey(x: number, y: number): GridKey {
-    const cellX = Math.floor(x / this.cellSize);
-    const cellY = Math.floor(y / this.cellSize);
+    const cellX = Math.floor(x / this._cellSize);
+    const cellY = Math.floor(y / this._cellSize);
     return `${cellX}:${cellY}`;
   }
 }

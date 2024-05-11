@@ -10,11 +10,34 @@ import { SpatialHashGrid } from './SpatialHashGrid';
 import { Collision, EntityType, Side, SpatialHashGridFilter } from './types';
 import { Wall } from './Wall';
 
+type SystemBoundary = {
+  width: number;
+  height: number;
+  padding: number;
+};
+
+type TowerFallPhysicsBoundaryOptions = {
+  width: number;
+  height: number;
+  thickness: number;
+  padding: number;
+  sides: Side[];
+};
+type OptionalTowerFallPhysicsBoundaryOptions = Partial<TowerFallPhysicsBoundaryOptions>;
+type RequiredWidthAndHeight = Required<Pick<TowerFallPhysicsBoundaryOptions, 'width' | 'height'>>;
+type CustomTowerFallPhysicsBoundaryOptions = OptionalTowerFallPhysicsBoundaryOptions & RequiredWidthAndHeight;
+
+type TowerFallPhysicsSystemOptions = {
+  gravity: number;
+  container: PIXIContainer;
+  debug: boolean;
+  boundary: CustomTowerFallPhysicsBoundaryOptions;
+  collisionResolver: (collision: Collision) => boolean;
+};
+
 export class System {
-  private static gfx: Graphics;
-  private static _collisionResolver: ((collision: Collision) => boolean) | null = null;
   public static container: Container<any>;
-  public static grid: SpatialHashGrid;
+  public static grid: SpatialHashGrid | null;
   public static fps: number;
   //
   static debug: boolean = true;
@@ -26,9 +49,44 @@ export class System {
   static gravity: number = 10;
   static onCollision: Signal<(collision: Collision) => void> = new Signal<(collision: Collision) => void>();
   static worldBounds: Wall[] = [];
+  static boundary: SystemBoundary;
+  private static gfx: Graphics;
+
+  private static _collisionResolver: ((collision: Collision) => boolean) | null = null;
+
+  static set collisionResolver(collisionResolverMethod: (collision: Collision) => boolean) {
+    System._collisionResolver = collisionResolverMethod;
+  }
+
+  static get worldWidth() {
+    return System.boundary?.width ? System.boundary.width + (System.boundary.padding ?? 0) : System.container.width;
+  }
+
+  static get worldHeight() {
+    return System.boundary?.height ? System.boundary.height + (System.boundary.padding ?? 0) : System.container.height;
+  }
+
+  static get all(): Entity[] {
+    return [...System.actors, ...System.solids];
+  }
+
+  static get totalEntities(): number {
+    return System.actors.length + System.solids.length + System.sensors.length;
+  }
 
   static useSpatialHashGrid(cellSize: number) {
-    System.grid = new SpatialHashGrid(cellSize);
+    if (System.grid) {
+      System.grid.cellSize = cellSize;
+    } else {
+      System.grid = new SpatialHashGrid(cellSize, true);
+    }
+  }
+
+  static removeSpatialHashGrid() {
+    if (System.grid) {
+      System.grid.destroy();
+      System.grid = null;
+    }
   }
 
   static resolveCollision(collision: Collision) {
@@ -41,6 +99,7 @@ export class System {
       System.typeMap.set(entity.type, []);
     }
     System.typeMap.get(entity.type)!.push(entity);
+
     if (System.grid) {
       System.grid.insert(entity);
     }
@@ -112,10 +171,13 @@ export class System {
   }
 
   static getNearbyEntities(entity: Entity, onlyTypes?: string[]): Entity[];
+
   static getNearbyEntities(entity: Entity, filter?: SpatialHashGridFilter): Entity[];
+
   static getNearbyEntities(entity: Entity, filter?: SpatialHashGridFilter | string[]): Entity[] {
     if (System.grid) {
-      return System.grid.query(entity.getBoundingBox(), filter);
+      const bounds = entity.getBoundingBox();
+      return System.grid.query(bounds, filter);
     }
     return System.all.filter((e: Entity) => {
       if (filter) {
@@ -181,26 +243,32 @@ export class System {
     let wall: Wall;
     if (sides.includes('bottom')) {
       wall = container.addChild(new Wall({ width, height: size }));
-      wall.position.set(pos.x, pos.y + height * 0.5 + padding);
+      wall.position.set(pos.x + width * 0.5, pos.y + height + padding);
       System.worldBounds.push(wall);
     }
-
     if (sides.includes('top')) {
       wall = container.addChild(new Wall({ width, height: size }));
-      wall.position.set(pos.x, pos.y - height * 0.5 - padding);
+      wall.position.set(pos.x + width * 0.5, pos.y + size * 0.5);
       System.worldBounds.push(wall);
     }
 
     if (sides.includes('left')) {
       wall = container.addChild(new Wall({ width: size, height }));
-      wall.position.set(pos.x - width * 0.5 - padding, pos.y);
+      wall.position.set(pos.x - size * 0.5 - padding, pos.y + height * 0.5 + size * 0.5);
       System.worldBounds.push(wall);
     }
 
     if (sides.includes('right')) {
       wall = container.addChild(new Wall({ width: size, height }));
-      wall.position.set(pos.x + width * 0.5 + padding, pos.y);
+      wall.position.set(pos.x + width + padding + size * 0.5, pos.y + height * 0.5);
       System.worldBounds.push(wall);
+    }
+
+    if (System.grid) {
+      System.worldBounds.forEach((wall: Wall) => {
+        System.grid?.remove(wall);
+        System.grid?.insert(wall);
+      });
     }
   }
 
@@ -256,6 +324,11 @@ export class System {
       System.collisionResolver = opts.collisionResolver;
     }
     if (opts.boundary) {
+      System.boundary = {
+        width: opts.boundary.width,
+        height: opts.boundary.height,
+        padding: opts.boundary.padding ?? 0,
+      };
       if (opts.boundary.width && opts.boundary.height) {
         System.addBoundary(
           opts.boundary.width,
@@ -275,35 +348,4 @@ export class System {
       System.grid.updateEntity(entity);
     }
   }
-
-  static get all(): Entity[] {
-    return [...System.actors, ...System.solids];
-  }
-
-  static get totalEntities(): number {
-    return System.actors.length + System.solids.length + System.sensors.length;
-  }
-
-  static set collisionResolver(collisionResolverMethod: (collision: Collision) => boolean) {
-    System._collisionResolver = collisionResolverMethod;
-  }
 }
-
-type TowerFallPhysicsBoundaryOptions = {
-  width: number;
-  height: number;
-  thickness: number;
-  padding: number;
-  sides: Side[];
-};
-type OptionalTowerFallPhysicsBoundaryOptions = Partial<TowerFallPhysicsBoundaryOptions>;
-type RequiredWidthAndHeight = Required<Pick<TowerFallPhysicsBoundaryOptions, 'width' | 'height'>>;
-type CustomTowerFallPhysicsBoundaryOptions = OptionalTowerFallPhysicsBoundaryOptions & RequiredWidthAndHeight;
-
-type TowerFallPhysicsSystemOptions = {
-  gravity: number;
-  container: PIXIContainer;
-  debug: boolean;
-  boundary: CustomTowerFallPhysicsBoundaryOptions;
-  collisionResolver: (collision: Collision) => boolean;
-};

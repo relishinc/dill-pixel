@@ -11,8 +11,6 @@ export class Player extends TowerFallActor {
   passThroughTypes = ['FX'];
   onKilled = new Signal();
   speed: number = 6;
-
-  private _velocity: Point = new Point(0, 0);
   private _canJump: boolean = false;
   private _isJumping: boolean = false;
   private _jumpPower: number = 0;
@@ -25,22 +23,10 @@ export class Player extends TowerFallActor {
     this.initialize();
   }
 
+  private _velocity: Point = new Point(0, 0);
+
   get velocity() {
     return this._velocity;
-  }
-
-  protected initialize() {
-    this.view = this.add.spineAnimation({
-      data: 'spine/xavier',
-      animationName: 'idle',
-      loop: true,
-    });
-
-    console.log(this.view.animationNames);
-    this.view.scale.set(0.15);
-    this.app.actions('move_left').connect(this._handleAction);
-    this.app.actions('move_right').connect(this._handleAction);
-    this.app.actions('jump').connect(this._handleAction);
   }
 
   public update(deltaTime: number) {
@@ -72,7 +58,6 @@ export class Player extends TowerFallActor {
   }
 
   public squish(collision: Collision, pushingEntity: Entity) {
-    console.log('squish', collision, pushingEntity);
     if (collision.bottom && pushingEntity.type === 'Platform' && (pushingEntity as Platform).canJumpThroughBottom) {
       return;
     }
@@ -95,6 +80,20 @@ export class Player extends TowerFallActor {
     this.y = y;
 
     gsap.to(this, { alpha: 1, duration: 0.5, delay });
+  }
+
+  protected initialize() {
+    this.view = this.add.spineAnimation({
+      data: 'spine/xavier',
+      animationName: 'idle',
+      loop: true,
+    });
+
+    // console.log(this.view.animationNames);
+    this.view.scale.set(0.15);
+    this.app.actions('move_left').connect(this._handleAction);
+    this.app.actions('move_right').connect(this._handleAction);
+    this.app.actions('jump').connect(this._handleAction);
   }
 
   private _disableJump() {
@@ -166,9 +165,9 @@ export class Player extends TowerFallActor {
 }
 
 class FX extends TowerFallActor {
+  static pool = new Pool<FX>(FX, 200);
   type = 'FX';
   passThroughTypes = ['FX', 'Player'];
-  static pool = new Pool<FX>(FX, 200);
   vertVector: number = 0;
   enabled = false;
   speed = 2;
