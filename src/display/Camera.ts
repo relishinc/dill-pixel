@@ -32,21 +32,44 @@ type OptionalCameraConfig = Partial<CameraCOnfig>;
 type RequiredCameraConfig = Required<Pick<CameraCOnfig, 'container'>>;
 type CustomCameraConfig = OptionalCameraConfig & RequiredCameraConfig;
 
-export class Camera extends Container {
-  public onZoom = new Signal();
+export interface ICamera {
+  onZoom: Signal<(camera: ICamera) => void>;
   container: Container;
-  minX: number = 0;
-  minY: number = 0;
+  minX: number;
+  minY: number;
   maxX: number;
   maxY: number;
   viewportWidth: number;
   viewportHeight: number;
   worldWidth: number;
   worldHeight: number;
-  protected targetPivot: Point = new Point(0, 0);
-  protected targetScale: Point = new Point(1, 1);
-  protected _zooming: boolean = false;
-  private _zoomLerp: number = 0.1;
+  readonly targetPivot: Point;
+  readonly targetScale: Point;
+  readonly zooming: boolean;
+  readonly zoomLerp: number;
+  readonly lerp: number;
+  readonly target: ContainerLike | null;
+  readonly followOffset: Point;
+  app: Application;
+
+  follow(target: ContainerLike, offset: PointLike): void;
+
+  pan(deltaX: number, deltaY: number): void;
+
+  zoom(scale: number, lerp?: number): void;
+}
+
+export class Camera extends Container implements ICamera {
+  public onZoom = new Signal<(camera: ICamera) => void>();
+  public container: Container;
+  public minX: number = 0;
+  public minY: number = 0;
+  public maxX: number;
+  public maxY: number;
+  public viewportWidth: number;
+  public viewportHeight: number;
+  public worldWidth: number;
+  public worldHeight: number;
 
   constructor(public config: CustomCameraConfig) {
     super({ isRenderGroup: true });
@@ -71,7 +94,7 @@ export class Camera extends Container {
       this.maxY = config.maxY ?? this.worldHeight - this.viewportHeight;
     }
 
-    this.targetPivot.set(this.viewportWidth * 0.5, this.viewportHeight * 0.5);
+    this._targetPivot.set(this.viewportWidth * 0.5, this.viewportHeight * 0.5);
     if (config.target) {
       this.target = config.target;
     }
@@ -81,6 +104,30 @@ export class Camera extends Container {
       this.lerp = config.lerp;
     }
     return this;
+  }
+
+  protected _zooming: boolean = false;
+
+  get zooming(): boolean {
+    return this._zooming;
+  }
+
+  protected _zoomLerp: number = 0.1;
+
+  get zoomLerp(): number {
+    return this._zoomLerp;
+  }
+
+  protected _targetPivot: Point = new Point(0, 0);
+
+  get targetPivot(): Point {
+    return this._targetPivot;
+  }
+
+  protected _targetScale: Point = new Point(1, 1);
+
+  get targetScale(): Point {
+    return this._targetPivot;
   }
 
   private _lerp: number = 0;
@@ -136,13 +183,13 @@ export class Camera extends Container {
     newPivotX = Math.max(this.minX, Math.min(newPivotX, this.maxX));
     newPivotY = Math.max(this.minY, Math.min(newPivotY, this.maxY));
 
-    this.targetPivot.set(newPivotX, newPivotY);
+    this._targetPivot.set(newPivotX, newPivotY);
   }
 
   zoom(scale: number, lerp: number = 0.1) {
     this._zoomLerp = lerp;
     this._zooming = true;
-    this.targetScale.set(scale, scale);
+    this._targetScale.set(scale, scale);
   }
 
   update() {
@@ -153,14 +200,14 @@ export class Camera extends Container {
     this.updatePosition(this._zooming);
     if (
       this._zooming &&
-      Math.abs(this.scale.x - this.targetScale.x) < 0.001 &&
-      Math.abs(this.scale.y - this.targetScale.y) < 0.001
+      Math.abs(this.scale.x - this._targetScale.x) < 0.001 &&
+      Math.abs(this.scale.y - this._targetScale.y) < 0.001
     ) {
       this._zooming = false;
-      this.scale.set(this.targetScale.x, this.targetScale.y);
-      this.onZoom.emit();
+      this.scale.set(this._targetScale.x, this._targetScale.y);
+      this.onZoom.emit(this);
     } else if (this._zooming) {
-      this.onZoom.emit();
+      this.onZoom.emit(this);
     }
   }
 
@@ -175,26 +222,26 @@ export class Camera extends Container {
     const offsetX = this.followOffset.x / this.scale.x;
     const offsetY = this.followOffset.y / this.scale.y;
 
-    this.targetPivot.x = (spritePosition.x * this.scale.x + this.viewportWidth / 2) * (1 / this.scale.x) + offsetX;
+    this._targetPivot.x = (spritePosition.x * this.scale.x + this.viewportWidth / 2) * (1 / this.scale.x) + offsetX;
 
     const tMinX = this.viewportWidth / this.scale.x / 2 + posXModifier + this.minX;
     const tMaxX = this.worldWidth - this.viewportWidth / this.scale.x / 2 + posXModifier + this.maxX;
 
-    if (this.targetPivot.x < tMinX) {
-      this.targetPivot.x = tMinX;
-    } else if (this.targetPivot.x > tMaxX) {
-      this.targetPivot.x = tMaxX;
+    if (this._targetPivot.x < tMinX) {
+      this._targetPivot.x = tMinX;
+    } else if (this._targetPivot.x > tMaxX) {
+      this._targetPivot.x = tMaxX;
     }
 
-    this.targetPivot.y = (spritePosition.y * this.scale.y + this.viewportHeight / 2) * (1 / this.scale.y) + offsetY;
+    this._targetPivot.y = (spritePosition.y * this.scale.y + this.viewportHeight / 2) * (1 / this.scale.y) + offsetY;
 
     const tMinY = this.viewportHeight / this.scale.y / 2 + posYModifier + this.minY;
     const tMaxY = this.worldHeight - this.viewportHeight / this.scale.y / 2 + posYModifier + this.maxY - offsetY;
 
-    if (this.targetPivot.y < tMinY) {
-      this.targetPivot.y = tMinY;
-    } else if (this.targetPivot.y > tMaxY) {
-      this.targetPivot.y = tMaxY;
+    if (this._targetPivot.y < tMinY) {
+      this._targetPivot.y = tMinY;
+    } else if (this._targetPivot.y > tMaxY) {
+      this._targetPivot.y = tMaxY;
     }
   }
 
@@ -202,8 +249,8 @@ export class Camera extends Container {
     const currentScaleX = this.scale.x;
     const currentScaleY = this.scale.y;
 
-    const interpolatedScaleX = currentScaleX + this._zoomLerp * (this.targetScale.x - currentScaleX);
-    const interpolatedScaleY = currentScaleY + this._zoomLerp * (this.targetScale.y - currentScaleY);
+    const interpolatedScaleX = currentScaleX + this._zoomLerp * (this._targetScale.x - currentScaleX);
+    const interpolatedScaleY = currentScaleY + this._zoomLerp * (this._targetScale.y - currentScaleY);
 
     this.scale.set(Math.max(0, interpolatedScaleX), Math.max(0, interpolatedScaleY));
   }
@@ -215,13 +262,13 @@ export class Camera extends Container {
       const currentPivotY = this.pivot.y;
 
       // Calculate interpolated pivot positions
-      const interpolatedPivotX = currentPivotX + this.lerp * (this.targetPivot.x - currentPivotX);
-      const interpolatedPivotY = currentPivotY + this.lerp * (this.targetPivot.y - currentPivotY);
+      const interpolatedPivotX = currentPivotX + this.lerp * (this._targetPivot.x - currentPivotX);
+      const interpolatedPivotY = currentPivotY + this.lerp * (this._targetPivot.y - currentPivotY);
 
       // Set the pivot to the interpolated position to smooth out the camera movement
       this.pivot.set(interpolatedPivotX, interpolatedPivotY);
     } else {
-      this.pivot.set(this.targetPivot.x, this.targetPivot.y);
+      this.pivot.set(this._targetPivot.x, this._targetPivot.y);
     }
 
     this.position.set(this.viewportWidth / 2, this.viewportHeight / 2);

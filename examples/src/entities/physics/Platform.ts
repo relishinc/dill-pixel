@@ -45,6 +45,23 @@ export class Platform extends TowerFallSolid<PlatformConfig> {
   type = 'Platform';
   private _startPos: Point;
 
+  constructor(config: Partial<PlatformConfigOpts> = {}) {
+    super(Platform.resolveConfig(config));
+    this.initialize();
+  }
+
+  get collideables() {
+    return [...System.actors, ...System.sensors];
+  }
+
+  get canJumpThroughBottom() {
+    return this.config.canJumpThroughBottom;
+  }
+
+  get moving() {
+    return this.config.moving;
+  }
+
   static resolveConfig(config: Partial<PlatformConfigOpts>): PlatformConfig {
     return {
       width: config.width ?? defaults.width,
@@ -62,21 +79,25 @@ export class Platform extends TowerFallSolid<PlatformConfig> {
     };
   }
 
-  constructor(config: Partial<PlatformConfigOpts> = {}) {
-    super(Platform.resolveConfig(config));
-    this.initialize();
+  added() {
+    this._startPos = this.position.clone();
+    super.added();
   }
 
-  get collideables() {
-    return [...System.actors, ...System.sensors];
-  }
+  update(deltaTime: number) {
+    if (!this.config.moving || !this.config.movementConfig) return;
 
-  get canJumpThroughBottom() {
-    return this.config.canJumpThroughBottom;
-  }
+    this.move(
+      this.config.movementConfig.speed.x * deltaTime * this.config.movementConfig.startingDirection.x,
+      this.config.movementConfig.speed.y * deltaTime * this.config.movementConfig.startingDirection.y,
+    );
 
-  get moving() {
-    return this.config.moving;
+    if (Math.abs(this.x - this._startPos.x) >= this.config.movementConfig.range.x) {
+      this.config.movementConfig.startingDirection.x *= -1;
+    }
+    if (Math.abs(this.y - this._startPos.y) >= this.config.movementConfig.range.y) {
+      this.config.movementConfig.startingDirection.y *= -1;
+    }
   }
 
   protected handleCollisionChange(isColliding: boolean) {
@@ -95,24 +116,5 @@ export class Platform extends TowerFallSolid<PlatformConfig> {
       tint: this.config.color,
       anchor: 0.5,
     });
-  }
-
-  added() {
-    this._startPos = this.position.clone();
-    super.added();
-  }
-
-  update(deltaTime: number) {
-    if (!this.config.moving || !this.config.movementConfig) return;
-    if (Math.abs(this.x - this._startPos.x) >= this.config.movementConfig.range.x) {
-      this.config.movementConfig.startingDirection.x *= -1;
-    }
-    if (Math.abs(this.y - this._startPos.y) >= this.config.movementConfig.range.y) {
-      this.config.movementConfig.startingDirection.y *= -1;
-    }
-    this.move(
-      this.config.movementConfig.speed.x * deltaTime * this.config.movementConfig.startingDirection.x,
-      this.config.movementConfig.speed.y * deltaTime * this.config.movementConfig.startingDirection.y,
-    );
   }
 }

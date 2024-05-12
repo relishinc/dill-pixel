@@ -1,4 +1,4 @@
-import { Camera } from '@/entities/Camera';
+import { Camera } from '@relish-studios/dill-pixel/display/Camera';
 import { Door } from '@/entities/physics/Door';
 import { Platform, PlatformMovementConfigOpts } from '@/entities/physics/Platform';
 import { Player } from '@/entities/physics/Player';
@@ -140,9 +140,6 @@ export class TowerFallPhysicsScene extends BaseScene {
     }
 
     this.physics.system.update(ticker.deltaTime);
-    if (this.camera) {
-      this.camera.update();
-    }
   }
 
   resize() {
@@ -338,6 +335,7 @@ export class TowerFallPhysicsScene extends BaseScene {
         maxY: 200,
         lerp: 0.1,
       });
+      this.physics.system.camera = this.camera;
       this.add.existing(this.camera);
       this.camera.follow(this.player, [this.app.screen.width * 0.25, -100]);
       this._handleCameraZoomChanged();
