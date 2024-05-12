@@ -9,6 +9,7 @@ import { Solid } from './Solid';
 import { SpatialHashGrid } from './SpatialHashGrid';
 import { Collision, EntityType, Side, SpatialHashGridFilter } from './types';
 import { Wall } from './Wall';
+import { ICamera } from '../../../display/Camera';
 
 type SystemBoundary = {
   width: number;
@@ -50,6 +51,7 @@ export class System {
   static onCollision: Signal<(collision: Collision) => void> = new Signal<(collision: Collision) => void>();
   static worldBounds: Wall[] = [];
   static boundary: SystemBoundary;
+  static camera?: ICamera;
   private static gfx: Graphics;
 
   private static _collisionResolver: ((collision: Collision) => boolean) | null = null;
@@ -198,7 +200,6 @@ export class System {
     if (!System.container) {
       Logger.error('TowerFallPhysicsPlugin: World container not set!');
     }
-    // Implement world step logic
 
     System.solids.forEach((solid: Solid) => {
       solid.update(deltaTime);
@@ -215,6 +216,14 @@ export class System {
     } else {
       if (System.gfx) {
         System.gfx.clear();
+      }
+    }
+
+    // Implement world step logic
+    if (System.camera) {
+      System.camera.update();
+      if (System.camera.zooming) {
+        this.forceUpdate();
       }
     }
   }
@@ -270,6 +279,17 @@ export class System {
         System.grid?.insert(wall);
       });
     }
+  }
+
+  static forceUpdate() {
+    if (System.grid) {
+      System.all.forEach((entity: Entity) => {
+        System.grid?.updateEntity(entity);
+      });
+    }
+    System.solids.forEach((solid: Solid) => {
+      solid.checkActorCollisions();
+    });
   }
 
   static collide(collision: Collision) {

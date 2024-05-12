@@ -80,6 +80,7 @@ export type {
   SceneImportListItem,
   EaseString,
 } from './utils/types';
+
 export { clamp, lerp } from './utils/math';
 export { resolvePointLike, getSheetLikeString, setObjectName } from './utils/functions';
 export { getPreviousMapEntry, getLastMapEntry } from './utils/map';
@@ -112,6 +113,8 @@ export type { PopupConfig } from './display/Popup';
 export { Button } from './display/Button';
 export { Scene } from './display/Scene';
 export { FlexContainer } from './display/FlexContainer';
+export { Camera } from './display/Camera';
+export type { ICamera } from './display/Camera';
 export { UICanvas } from './display/UICanvas';
 export { SpineAnimation } from './display/SpineAnimation';
 export type { ISpineAnimation } from './display/SpineAnimation';

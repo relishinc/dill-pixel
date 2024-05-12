@@ -123,7 +123,7 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
     // Basic check if actor is directly on top of the solid
     return (
       actorBounds.bottom >= solidBounds.top - 2 &&
-      actorBounds.bottom <= solidBounds.top &&
+      actorBounds.bottom <= solidBounds.top + solidBounds.height - 1 &&
       actorBounds.left < solidBounds.right &&
       actorBounds.right > solidBounds.left
     );

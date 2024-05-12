@@ -1,16 +1,11 @@
-import {
-  Application,
-  bindAllMethods,
-  ContainerLike,
-  KeyboardEventDetail,
-  Logger,
-  PointLike,
-  resolvePointLike,
-  Signal,
-} from '@relish-studios/dill-pixel';
 import { Container, Point } from 'pixi.js';
-
-import { V8Application } from '@/V8Application';
+import { ContainerLike, PointLike } from '../utils/types';
+import { Signal } from '../signals';
+import { Application, IApplication } from '../core/Application';
+import { bindAllMethods } from '../utils/methodBinding';
+import { Logger } from '../utils/console/Logger';
+import { resolvePointLike } from '../utils/functions';
+import { KeyboardEventDetail } from '../plugins/KeyboardManager';
 
 type CameraCOnfig = {
   container: Container;
@@ -57,6 +52,8 @@ export interface ICamera {
   pan(deltaX: number, deltaY: number): void;
 
   zoom(scale: number, lerp?: number): void;
+
+  update(): void;
 }
 
 export class Camera extends Container implements ICamera {
@@ -301,7 +298,7 @@ export class CameraController {
     this.interactiveArea.on('touchend', this.onPointerUp.bind(this));
   }
 
-  get app(): V8Application {
+  get app(): IApplication {
     return Application.getInstance();
   }
 

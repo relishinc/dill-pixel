@@ -8,10 +8,6 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
   isSolid = true;
   protected _isColliding: boolean = false;
 
-  get collideables(): Entity[] {
-    return System.getNearbyEntities(this, (entity) => entity.isActor);
-  }
-
   get isColliding(): boolean {
     return this._isColliding;
   }
@@ -21,6 +17,10 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
       this._isColliding = value;
       this.handleCollisionChange(value);
     }
+  }
+
+  get collideables(): Entity[] {
+    return System.getNearbyEntities(this, (entity) => entity.isActor);
   }
 
   added() {
@@ -67,6 +67,10 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
   // Simple collision detection between this solid and an actor
   collidesWith(entity: Entity): boolean {
     return this.getBoundingBox().intersects(entity.getBoundingBox());
+  }
+
+  public checkActorCollisions() {
+    this.handleActorInteractions(0, 0);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
