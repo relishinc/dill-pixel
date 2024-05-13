@@ -350,17 +350,6 @@ export class TowerFallPhysicsScene extends BaseScene {
     }
   }
 
-  // private _drawDebug() {
-  //   this._debugGfx.clear();
-  //   this._debugGfx.strokeStyle = { width: 1, color: 0xff0000 };
-  //   this._debugGfx
-  //     .moveTo(0, -this.app.size.height * 0.25)
-  //     .lineTo(0, this.app.size.height * 0.25)
-  //     .moveTo(-this.app.size.width * 0.25, 0)
-  //     .lineTo(this.app.size.width * 0.25, 0)
-  //     .stroke();
-  // }
-
   private _toggleZoom() {
     if (this._zoomController.getValue() > 1) {
       this._zoomController.setValue(1);
