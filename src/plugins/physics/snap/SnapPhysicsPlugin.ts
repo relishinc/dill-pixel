@@ -2,7 +2,7 @@ import { IApplication } from '../../../core/Application';
 import { Plugin } from '../../Plugin';
 import { System } from './System';
 
-type TowerFallPhysicsPluginOptions = {
+type SnapPhysicsPluginOptions = {
   useSpatialHash: boolean;
   gridCellSize: number;
   fps: number;
@@ -14,9 +14,9 @@ const defaultOptions = {
   fps: -1,
 };
 
-export class TowerFallPhysicsPlugin extends Plugin {
-  public readonly id = 'TowerFallPhysicsPlugin';
-  public options: TowerFallPhysicsPluginOptions;
+export class SnapPhysicsPlugin extends Plugin {
+  public readonly id = 'SnapPhysicsPlugin';
+  public options: SnapPhysicsPluginOptions;
 
   get gridCellSize(): number {
     return this.options.gridCellSize;
@@ -48,7 +48,7 @@ export class TowerFallPhysicsPlugin extends Plugin {
     return System;
   }
 
-  public async initialize(app: IApplication, options?: Partial<TowerFallPhysicsPluginOptions>) {
+  public async initialize(app: IApplication, options?: Partial<SnapPhysicsPluginOptions>) {
     this.options = { ...defaultOptions, ...options };
     if (this.options.useSpatialHash && this.options.gridCellSize > 0) {
       System.useSpatialHashGrid(this.options.gridCellSize);

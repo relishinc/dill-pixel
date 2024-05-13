@@ -1,5 +1,5 @@
 import { Texture } from 'pixi.js';
-import { Entity, Sensor, System } from '../../../../src/plugins/physics/towerfall';
+import { Entity, Sensor, System } from '../../../../src/plugins/physics/snap';
 
 export type DoorConfig = {
   width: number;
@@ -26,6 +26,10 @@ export class Door extends Sensor<DoorConfig> {
     return System.getNearbyEntities(this, (entity) => !entity.isSensor);
   }
 
+  update(deltaTime: number) {
+    this.moveY(System.gravity * deltaTime, null);
+  }
+
   protected initialize() {
     this.view = this.add.sprite({
       asset: Texture.WHITE,
@@ -34,10 +38,6 @@ export class Door extends Sensor<DoorConfig> {
       tint: this.config.color,
       anchor: 0.5,
     });
-  }
-
-  update(deltaTime: number) {
-    this.moveY(System.gravity * deltaTime, null);
   }
 
   protected handleCollisionChange(isColliding: boolean) {

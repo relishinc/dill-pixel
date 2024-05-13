@@ -2,10 +2,10 @@ import { ActionDetail, ISpineAnimation, PointLike, resolvePointLike, Signal } fr
 
 import { gsap } from 'gsap';
 import { Bounds, Point, Pool, Rectangle, Texture } from 'pixi.js';
-import { Actor as TowerFallActor, Collision, Entity, System } from '../../../../src/plugins/physics/towerfall';
+import { Actor as SnapActor, Collision, Entity, System } from '../../../../src/plugins/physics/snap';
 import { Platform } from './Platform';
 
-export class Player extends TowerFallActor {
+export class Player extends SnapActor {
   declare view: ISpineAnimation;
   type = 'Player';
   passThroughTypes = ['FX'];
@@ -171,7 +171,7 @@ export class Player extends TowerFallActor {
   }
 }
 
-class FX extends TowerFallActor {
+class FX extends SnapActor {
   static pool = new Pool<FX>(FX, 200);
   type = 'FX';
   passThroughTypes = ['FX', 'Player'];

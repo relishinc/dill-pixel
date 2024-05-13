@@ -7,10 +7,10 @@ import { Portal } from '@/entities/physics/Portal';
 import { BaseScene } from '@/scenes/BaseScene';
 import { Container, delay, FlexContainer } from '@relish-studios/dill-pixel';
 import { Assets, Ticker } from 'pixi.js';
-import { Collision, TowerFallPhysicsPlugin } from '../../../src/plugins/physics/towerfall';
+import { Collision, SnapPhysicsPlugin } from '../../../src/plugins/physics/snap';
 import { GUIController } from 'dat.gui';
 
-export class TowerFallPhysicsScene extends BaseScene {
+export class SnapPhysicsScene extends BaseScene {
   controls: FlexContainer;
   level: Container;
   player: Player;
@@ -19,7 +19,7 @@ export class TowerFallPhysicsScene extends BaseScene {
   portals: Portal[] = [];
   _isPaused: boolean = false;
   camera: Camera;
-  protected readonly title = 'TowerFall Physics';
+  protected readonly title = 'Snap Physics';
   protected readonly subtitle = 'Arrows to move, up to jump';
   protected config = {
     useCamera: true,
@@ -32,8 +32,8 @@ export class TowerFallPhysicsScene extends BaseScene {
 
   // private _debugGfx = new Graphics();
 
-  protected get physics(): TowerFallPhysicsPlugin {
-    return this.app.getPlugin('physics') as TowerFallPhysicsPlugin;
+  protected get physics(): SnapPhysicsPlugin {
+    return this.app.getPlugin('physics') as SnapPhysicsPlugin;
   }
 
   configureGUI() {

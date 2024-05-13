@@ -50,8 +50,8 @@ export class CaptionsRenderer extends Container implements ICaptionRenderer {
       roundPixels: true,
       style: {
         fill: this.plugin.options.textColor,
-        fontWeight: 'bold',
         fontSize: this.fontSize * this.getSizeMultiplier(),
+        fontWeight: 'bold',
         align: 'center',
         wordWrapWidth: this.plugin.maxWidth,
         wordWrap: true,

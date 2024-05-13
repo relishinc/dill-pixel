@@ -18,22 +18,22 @@ type SystemBoundary = {
   padding: number;
 };
 
-type TowerFallPhysicsBoundaryOptions = {
+type SnapPhysicsBoundaryOptions = {
   width: number;
   height: number;
   thickness: number;
   padding: number;
   sides: Side[];
 };
-type OptionalTowerFallPhysicsBoundaryOptions = Partial<TowerFallPhysicsBoundaryOptions>;
-type RequiredWidthAndHeight = Required<Pick<TowerFallPhysicsBoundaryOptions, 'width' | 'height'>>;
-type CustomTowerFallPhysicsBoundaryOptions = OptionalTowerFallPhysicsBoundaryOptions & RequiredWidthAndHeight;
+type OptionalSnapPhysicsBoundaryOptions = Partial<SnapPhysicsBoundaryOptions>;
+type RequiredWidthAndHeight = Required<Pick<SnapPhysicsBoundaryOptions, 'width' | 'height'>>;
+type CustomSnapPhysicsBoundaryOptions = OptionalSnapPhysicsBoundaryOptions & RequiredWidthAndHeight;
 
-type TowerFallPhysicsSystemOptions = {
+type SnapPhysicsSystemOptions = {
   gravity: number;
   container: PIXIContainer;
   debug: boolean;
-  boundary: CustomTowerFallPhysicsBoundaryOptions;
+  boundary: CustomSnapPhysicsBoundaryOptions;
   collisionResolver: (collision: Collision) => boolean;
 };
 
@@ -216,7 +216,7 @@ export class System {
       return;
     }
     if (!System.container) {
-      Logger.error('TowerFallPhysicsPlugin: World container not set!');
+      Logger.error('SnapPhysicsPlugin: World container not set!');
     }
 
     // Implement world step logic
@@ -345,7 +345,7 @@ export class System {
     System.container = container;
   }
 
-  static initialize(opts: Partial<TowerFallPhysicsSystemOptions>) {
+  static initialize(opts: Partial<SnapPhysicsSystemOptions>) {
     if (opts.gravity) {
       System.gravity = opts.gravity;
     }
@@ -374,7 +374,7 @@ export class System {
           opts.boundary.sides,
         );
       } else {
-        Logger.error('TowerFallPhysicsPlugin System.initialize: Boundary width and height required.');
+        Logger.error('SnapPhysicsPlugin System.initialize: Boundary width and height required.');
       }
     }
   }

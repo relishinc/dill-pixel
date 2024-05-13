@@ -1,6 +1,6 @@
 import { PointLike, resolvePointLike } from '@relish-studios/dill-pixel';
 import { Point, Texture } from 'pixi.js';
-import { Solid as TowerFallSolid, System } from '../../../../src/plugins/physics/towerfall';
+import { Solid as SnapSolid, System } from '../../../../src/plugins/physics/snap';
 
 type Direction = -1 | 0 | 1;
 
@@ -41,7 +41,7 @@ const defaults: PlatformConfig = {
   moving: false,
 };
 
-export class Platform extends TowerFallSolid<PlatformConfig> {
+export class Platform extends SnapSolid<PlatformConfig> {
   type = 'Platform';
   private _startPos: Point;
 

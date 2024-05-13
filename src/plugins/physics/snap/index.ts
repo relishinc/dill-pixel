@@ -1,4 +1,4 @@
-export { TowerFallPhysicsPlugin } from './TowerFallPhysicsPlugin';
+export { SnapPhysicsPlugin } from './SnapPhysicsPlugin';
 export { Entity } from './Entity';
 export { Actor } from './Actor';
 export { Solid } from './Solid';

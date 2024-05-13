@@ -18,8 +18,8 @@ const appConfig: AppConfig = {
   plugins: [
     {
       id: 'physics',
-      namedExport: 'TowerFallPhysicsPlugin',
-      module: () => import('../../src/plugins/physics/towerfall'),
+      namedExport: 'SnapPhysicsPlugin',
+      module: () => import('../../src/plugins/physics/snap'),
       options: {
         useSpatialHash: true,
         gridCellSize: 400,

@@ -1,5 +1,5 @@
 import { Texture } from 'pixi.js';
-import { Solid as TowerFallSolid } from './Solid';
+import { Solid as SnapSolid } from './Solid';
 
 export type WallConfig = {
   width: number;
@@ -14,7 +14,7 @@ const defaults: WallConfig = {
   debugColor: 0x00ffff,
 };
 
-export class Wall extends TowerFallSolid<WallConfig> {
+export class Wall extends SnapSolid<WallConfig> {
   type = 'Wall';
 
   constructor(config: Partial<WallConfig> = {}) {

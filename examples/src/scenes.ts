@@ -43,9 +43,9 @@ export const scenes = [
   },
   {
     id: 'physics',
-    debugLabel: 'TowerFall Physics',
-    namedExport: 'TowerFallPhysicsScene',
-    module: () => import('@/scenes/TowerFallPhysicsScene'),
+    debugLabel: 'Snap Physics',
+    namedExport: 'SnapPhysicsScene',
+    module: () => import('@/scenes/SnapPhysicsScene'),
     plugins: ['physics'],
   },
 ];

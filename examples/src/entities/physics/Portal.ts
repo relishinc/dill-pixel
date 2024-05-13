@@ -1,5 +1,5 @@
 import { Bounds } from 'pixi.js';
-import { checkCollision, Collision, Entity, EntityType, System } from '../../../../src/plugins/physics/towerfall';
+import { checkCollision, Collision, Entity, EntityType, System } from '../../../../src/plugins/physics/snap';
 import { Door, DoorConfig } from './Door';
 
 const defaults: DoorConfig = {
@@ -34,15 +34,6 @@ export class Portal extends Door {
     return rect;
   }
 
-  protected initialize() {
-    this.view = this.add
-      .graphics()
-      .ellipse(0, 0, this.config.width * 0.5, this.config.height * 0.5)
-      .fill({ color: this.config.color });
-
-    System.onCollision.connect(this._handleCollision);
-  }
-
   update(deltaTime: number) {
     // Implement update logic
     this.moveY(System.gravity * deltaTime, null);
@@ -53,14 +44,6 @@ export class Portal extends Door {
           this.entities.delete(entity);
         }
       }
-    }
-  }
-
-  protected handleCollisionChange(isColliding: boolean) {
-    if (isColliding) {
-      this.view.tint = 0x0;
-    } else {
-      this.view.tint = this.config.color;
     }
   }
 
@@ -90,6 +73,23 @@ export class Portal extends Door {
   passThrough(entity: Entity) {
     if (!this.has(entity) && this.connectedPortal) {
       this.connectedPortal.addEntity(entity);
+    }
+  }
+
+  protected initialize() {
+    this.view = this.add
+      .graphics()
+      .ellipse(0, 0, this.config.width * 0.5, this.config.height * 0.5)
+      .fill({ color: this.config.color });
+
+    System.onCollision.connect(this._handleCollision);
+  }
+
+  protected handleCollisionChange(isColliding: boolean) {
+    if (isColliding) {
+      this.view.tint = 0x0;
+    } else {
+      this.view.tint = this.config.color;
     }
   }
 

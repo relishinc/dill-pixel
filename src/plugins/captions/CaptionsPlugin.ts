@@ -58,8 +58,8 @@ export type CaptionsOptions = {
 const defaultOptions: Partial<CaptionsOptions> = {
   renderer: CaptionsRenderer,
   defaultLocale: 'en',
-  fontFile: './font/Arial.fnt',
-  fontName: 'Arial',
+  fontFile: './dill-pixel/font/Sans.fnt',
+  fontName: 'Sans',
   fontSizeMultiplier: 1,
   maxWidth: 0.8,
   textColor: 0xffffff,
