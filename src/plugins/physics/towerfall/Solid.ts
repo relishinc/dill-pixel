@@ -6,18 +6,6 @@ import { System } from './System';
 export class Solid<T = any, A extends Application = Application> extends Entity<T, A> {
   type = 'Solid';
   isSolid = true;
-  protected _isColliding: boolean = false;
-
-  get isColliding(): boolean {
-    return this._isColliding;
-  }
-
-  set isColliding(value: boolean) {
-    if (this._isColliding !== value) {
-      this._isColliding = value;
-      this.handleCollisionChange(value);
-    }
-  }
 
   get collideables(): Entity[] {
     return System.getNearbyEntities(this, (entity) => entity.isActor);
@@ -46,7 +34,6 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
       this.xRemainder -= moveX;
       this.handleActorInteractions(moveX, 0);
 
-      // Move on the Y axis
       this.y += moveY;
       this.yRemainder -= moveY;
       this.handleActorInteractions(0, moveY);
@@ -65,8 +52,8 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
   }
 
   // Simple collision detection between this solid and an actor
-  collidesWith(entity: Entity): boolean {
-    return this.getBoundingBox().intersects(entity.getBoundingBox());
+  collidesWith(entity: Entity, dx: number, dy: number): boolean {
+    return System.getRectangleIntersection(entity, this, dx, dy);
   }
 
   public checkActorCollisions() {
@@ -79,7 +66,11 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
   private handleActorInteractions(deltaX: number, deltaY: number): void {
     // Check for collisions with non-riding actors
     (this.collideables as Actor[]).forEach((actor) => {
-      if (!actor.passThroughTypes.includes(this.type) && !actor.isPassingThrough(this) && this.collidesWith(actor)) {
+      if (
+        !actor.passThroughTypes.includes(this.type) &&
+        !actor.isPassingThrough(this) &&
+        this.collidesWith(actor, deltaX, deltaY)
+      ) {
         // Push actors only the minimum amount necessary to avoid overlap
         const overlapX =
           deltaX !== 0
@@ -102,7 +93,7 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
         if (overlapY !== 0) {
           actor.moveY(overlapY, actor.squish, null, this);
         }
-      } else if (actor.isRiding(this)) {
+      } else if (actor.isRiding(this) && deltaX !== 0) {
         actor.moveX(deltaX, () => {});
         actor.moveY(deltaY, () => {});
       }

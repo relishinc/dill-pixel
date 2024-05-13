@@ -8,6 +8,7 @@ import { BaseScene } from '@/scenes/BaseScene';
 import { Container, delay, FlexContainer } from '@relish-studios/dill-pixel';
 import { Assets, Ticker } from 'pixi.js';
 import { Collision, TowerFallPhysicsPlugin } from '../../../src/plugins/physics/towerfall';
+import { GUIController } from 'dat.gui';
 
 export class TowerFallPhysicsScene extends BaseScene {
   controls: FlexContainer;
@@ -27,7 +28,7 @@ export class TowerFallPhysicsScene extends BaseScene {
     gridCellSize: 400,
     debug: true,
   };
-  private _zoomed: boolean = false;
+  private _zoomController: GUIController;
 
   // private _debugGfx = new Graphics();
 
@@ -43,8 +44,8 @@ export class TowerFallPhysicsScene extends BaseScene {
       })
       .name('Use Camera');
 
-    this.gui
-      .add(this.config, 'zoom', 1, 4, 0.1)
+    this._zoomController = this.gui
+      .add(this.config, 'zoom', 0.75, 2, 0.05)
       .onChange(() => {
         this._handleCameraZoomChanged();
       })
@@ -166,7 +167,7 @@ export class TowerFallPhysicsScene extends BaseScene {
 
     // hor
     this.addPlatForm(750, bottom - 300, 200, 20, false, true, {
-      speed: [1, 0],
+      duration: 6,
       startingDirection: { x: 1, y: 0 },
       range: [180, 0],
     });
@@ -176,14 +177,14 @@ export class TowerFallPhysicsScene extends BaseScene {
     this.addPlatForm(1265, bottom - 200, 100, 20, false);
     // vert
     this.addPlatForm(1110, bottom - 200, 150, 20, false, true, {
-      speed: [0, 1],
+      duration: 4,
       startingDirection: { x: 0, y: 1 },
-      range: [200, 300],
+      range: [0, 300],
     });
 
     // holds portal
     this.addPlatForm(1700, bottom - 500, 200, 20, false, true, {
-      speed: [0, 1],
+      duration: 10,
       startingDirection: { x: 0, y: 1 },
       range: [0, 300],
     });
@@ -329,9 +330,9 @@ export class TowerFallPhysicsScene extends BaseScene {
         viewportHeight: this.app.size.height,
         worldWidth: this.physics.system.worldWidth,
         worldHeight: this.physics.system.worldHeight,
-        minX: -50,
+        minX: -300,
         minY: -1000,
-        maxX: 50,
+        maxX: 300,
         maxY: 200,
         lerp: 0.1,
       });
@@ -361,12 +362,10 @@ export class TowerFallPhysicsScene extends BaseScene {
   // }
 
   private _toggleZoom() {
-    if (this._zoomed) {
-      this._zoomed = false;
-      this.camera.zoom(1);
+    if (this._zoomController.getValue() > 1) {
+      this._zoomController.setValue(1);
     } else {
-      this._zoomed = true;
-      this.camera.zoom(2);
+      this._zoomController.setValue(2);
     }
   }
 

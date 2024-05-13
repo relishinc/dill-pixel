@@ -7,6 +7,21 @@ export function checkPointIntersection(point: Point, collider: ICollider): boole
   return point.x > collider.left && point.x < collider.right && point.y > collider.top && point.y < collider.bottom;
 }
 
+type Overlap = {
+  x: number;
+  y: number;
+  area: number;
+};
+
+export function getntersectionArea(rectA: Rectangle, rectB: Rectangle): Overlap {
+  // Calculate the coordinates of the intersection rectangle
+  const xOverlap = Math.max(0, Math.min(rectA.x + rectA.width, rectB.x + rectB.width) - Math.max(rectA.x, rectB.x));
+  const yOverlap = Math.max(0, Math.min(rectA.y + rectA.height, rectB.y + rectB.height) - Math.max(rectA.y, rectB.y));
+
+  // The area of the intersection is the product of overlapping width and height
+  return { x: xOverlap, y: yOverlap, area: xOverlap * yOverlap };
+}
+
 export function checkCollision(
   rectA: Rectangle,
   rectB: Rectangle,

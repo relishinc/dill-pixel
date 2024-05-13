@@ -27,6 +27,31 @@ export class Entity<T = any, A extends Application = Application> extends Contai
     this.config = config as T;
   }
 
+  protected _cachedBounds: Bounds | Rectangle | null = null;
+
+  get cachedBounds(): Bounds | Rectangle {
+    if (!this._cachedBounds || this._dirtyBounds) {
+      const bounds = this.view.getBounds();
+      bounds.scale(1 / this.system.container.worldTransform.d);
+      this._cachedBounds = bounds;
+    }
+    return this._cachedBounds;
+  }
+
+  set cachedBounds(value: Bounds) {
+    this._cachedBounds = value;
+  }
+
+  protected _dirtyBounds: boolean = true;
+
+  get dirtyBounds() {
+    return this._dirtyBounds;
+  }
+
+  set dirtyBounds(value: boolean) {
+    this._dirtyBounds = value;
+  }
+
   get top(): number {
     return this.getBoundingBox().top;
   }
@@ -53,8 +78,7 @@ export class Entity<T = any, A extends Application = Application> extends Contai
 
   getWorldBounds(): Bounds | Rectangle {
     const pos = this.system.container.toLocal(this.view.getGlobalPosition());
-    const bounds = this.view.getBounds();
-    bounds.scale(1 / this.system.container.worldTransform.d);
+    const bounds = this.cachedBounds;
     bounds.x = pos.x;
     bounds.y = pos.y;
     // Adjust bounds based on the view's anchor if it's a sprite

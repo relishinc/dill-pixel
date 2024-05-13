@@ -29,6 +29,14 @@ export class Player extends TowerFallActor {
     return this._velocity;
   }
 
+  get cachedBounds() {
+    if (!this._cachedBounds || this._dirtyBounds) {
+      const bounds = new Rectangle(0, 0, 44, 90);
+      this._cachedBounds = bounds;
+    }
+    return this._cachedBounds;
+  }
+
   public update(deltaTime: number) {
     if (this._isJumping) {
       this._jumpTimeElapsed += deltaTime;
@@ -66,10 +74,9 @@ export class Player extends TowerFallActor {
 
   getWorldBounds(): Bounds | Rectangle {
     const pos = this.system.container.toLocal(this.getGlobalPosition());
-    const bounds = new Rectangle(pos.x, pos.y, 44, 90);
-    // Adjust bounds based on the view's anchor if it's a sprite
-    bounds.x -= 22;
-    bounds.y -= 85;
+    const bounds = this.cachedBounds;
+    bounds.x = pos.x - 22;
+    bounds.y = pos.y - 85;
     return bounds;
   }
 

@@ -10,6 +10,7 @@ import { SpatialHashGrid } from './SpatialHashGrid';
 import { Collision, EntityType, Side, SpatialHashGridFilter } from './types';
 import { Wall } from './Wall';
 import { ICamera } from '../../../display/Camera';
+import { getntersectionArea } from './utils';
 
 type SystemBoundary = {
   width: number;
@@ -52,6 +53,7 @@ export class System {
   static worldBounds: Wall[] = [];
   static boundary: SystemBoundary;
   static camera?: ICamera;
+  static intersectionThreshold = 2;
   private static gfx: Graphics;
 
   private static _collisionResolver: ((collision: Collision) => boolean) | null = null;
@@ -193,6 +195,21 @@ export class System {
     });
   }
 
+  /**
+   * @param entity1
+   * @param entity2
+   * @param dx
+   * @param dy
+   */
+  static getRectangleIntersection(entity1: Entity, entity2: Entity, dx: number, dy: number): boolean {
+    const bounds1 = entity1.getBoundingBox();
+    const bounds2 = entity2.getBoundingBox().clone();
+    bounds2.x += dx;
+    bounds2.y += dy;
+    const intersection = getntersectionArea(bounds1, bounds2);
+    return intersection.area > System.intersectionThreshold;
+  }
+
   static update(deltaTime: number) {
     if (!System.enabled) {
       return;
@@ -200,6 +217,8 @@ export class System {
     if (!System.container) {
       Logger.error('TowerFallPhysicsPlugin: World container not set!');
     }
+
+    // Implement world step logic
 
     System.solids.forEach((solid: Solid) => {
       solid.update(deltaTime);
@@ -219,12 +238,8 @@ export class System {
       }
     }
 
-    // Implement world step logic
     if (System.camera) {
       System.camera.update();
-      if (System.camera.zooming) {
-        this.forceUpdate();
-      }
     }
   }
 
