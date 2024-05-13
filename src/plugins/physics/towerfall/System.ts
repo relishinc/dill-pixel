@@ -38,6 +38,7 @@ type TowerFallPhysicsSystemOptions = {
 };
 
 export class System {
+  public static DEFAULT_COLLISION_THRESHOLD: number = 2;
   public static container: Container<any>;
   public static grid: SpatialHashGrid | null;
   public static fps: number;
@@ -53,7 +54,7 @@ export class System {
   static worldBounds: Wall[] = [];
   static boundary: SystemBoundary;
   static camera?: ICamera;
-  static intersectionThreshold = 2;
+  static collisionThreshold = 2;
   private static gfx: Graphics;
 
   private static _collisionResolver: ((collision: Collision) => boolean) | null = null;
@@ -207,7 +208,7 @@ export class System {
     bounds2.x += dx;
     bounds2.y += dy;
     const intersection = getntersectionArea(bounds1, bounds2);
-    return intersection.area > System.intersectionThreshold;
+    return intersection.area > Math.max(System.collisionThreshold);
   }
 
   static update(deltaTime: number) {

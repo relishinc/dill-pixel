@@ -58,6 +58,7 @@ export interface ICamera {
 
 export class Camera extends Container implements ICamera {
   public onZoom = new Signal<(camera: ICamera) => void>();
+  public onZoomComplete = new Signal<(camera: ICamera) => void>();
   public container: Container;
   public minX: number = 0;
   public minY: number = 0;
@@ -200,9 +201,10 @@ export class Camera extends Container implements ICamera {
       Math.abs(this.scale.x - this._targetScale.x) < 0.001 &&
       Math.abs(this.scale.y - this._targetScale.y) < 0.001
     ) {
+      this.onZoom.emit(this);
       this._zooming = false;
       this.scale.set(this._targetScale.x, this._targetScale.y);
-      this.onZoom.emit(this);
+      this.onZoomComplete.emit(this);
     } else if (this._zooming) {
       this.onZoom.emit(this);
     }

@@ -139,7 +139,6 @@ export class TowerFallPhysicsScene extends BaseScene {
     if (this.app.keyboard.isKeyDown('d')) {
       this.app.sendAction('move_right');
     }
-
     this.physics.system.update(ticker.deltaTime);
   }
 
@@ -167,7 +166,7 @@ export class TowerFallPhysicsScene extends BaseScene {
 
     // hor
     this.addPlatForm(750, bottom - 300, 200, 20, false, true, {
-      duration: 6,
+      speed: 0.5,
       startingDirection: { x: 1, y: 0 },
       range: [180, 0],
     });
@@ -177,14 +176,14 @@ export class TowerFallPhysicsScene extends BaseScene {
     this.addPlatForm(1265, bottom - 200, 100, 20, false);
     // vert
     this.addPlatForm(1110, bottom - 200, 150, 20, false, true, {
-      duration: 4,
+      speed: 1,
       startingDirection: { x: 0, y: 1 },
       range: [0, 300],
     });
 
     // holds portal
     this.addPlatForm(1700, bottom - 500, 200, 20, false, true, {
-      duration: 10,
+      speed: 1.2,
       startingDirection: { x: 0, y: 1 },
       range: [0, 300],
     });
@@ -339,6 +338,8 @@ export class TowerFallPhysicsScene extends BaseScene {
       this.physics.system.camera = this.camera;
       this.add.existing(this.camera);
       this.camera.follow(this.player, [this.app.screen.width * 0.25, -100]);
+      this.camera.onZoom.connect(this._adjustCollisionThreshold);
+      this.camera.onZoomComplete.connect(this._resetCollisionThreshold);
       this._handleCameraZoomChanged();
     } else {
       this.removeChild(this.camera);
@@ -348,6 +349,17 @@ export class TowerFallPhysicsScene extends BaseScene {
       this.level.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
       this.level.pivot.set(0, 0);
     }
+  }
+
+  private _adjustCollisionThreshold() {
+    if (!this.camera) {
+      return;
+    }
+    this.physics.system.collisionThreshold = Math.round(this.camera.scale.x + 2);
+  }
+
+  private _resetCollisionThreshold() {
+    this.physics.system.collisionThreshold = this.physics.system.DEFAULT_COLLISION_THRESHOLD;
   }
 
   private _toggleZoom() {

@@ -1,20 +1,19 @@
 import { PointLike, resolvePointLike } from '@relish-studios/dill-pixel';
 import { Point, Texture } from 'pixi.js';
 import { Solid as TowerFallSolid, System } from '../../../../src/plugins/physics/towerfall';
-import { gsap } from 'gsap';
 
 type Direction = -1 | 0 | 1;
 
 export type PlatformMovementConfigOpts = {
-  duration: number;
+  speed: PointLike;
   startingDirection: { x: Direction; y: Direction };
   range: PointLike;
 };
 
 export type PlatformMovementConfig = {
+  speed: Point;
   startingDirection: { x: Direction; y: Direction };
   range: Point;
-  duration: number;
 };
 
 export type PlatformConfig = {
@@ -72,7 +71,7 @@ export class Platform extends TowerFallSolid<PlatformConfig> {
       canJumpThroughBottom: config?.canJumpThroughBottom === true,
       movementConfig: config.movementConfig
         ? {
-            duration: config.movementConfig.duration || 3,
+            speed: resolvePointLike(config.movementConfig.speed, true),
             startingDirection: config.movementConfig.startingDirection || { x: 1, y: 0 },
             range: resolvePointLike(config.movementConfig.range, true),
           }
@@ -83,19 +82,22 @@ export class Platform extends TowerFallSolid<PlatformConfig> {
   added() {
     this._startPos = this.position.clone();
     super.added();
+  }
+
+  update(deltaTime: number) {
     if (!this.config.moving || !this.config.movementConfig) return;
-    const move: { x: number; y: number } = { x: this._startPos.x, y: this._startPos.y };
-    gsap.to(move, {
-      x: move.x + this.config.movementConfig.range.x,
-      y: move.y + this.config.movementConfig.range.y,
-      duration: this.config.movementConfig.duration || 3,
-      repeat: -1,
-      yoyo: true,
-      ease: 'none',
-      onUpdate: () => {
-        this.move(move.x - this.position.x, move.y - this.position.y);
-      },
-    });
+
+    this.move(
+      this.config.movementConfig.speed.x * deltaTime * this.config.movementConfig.startingDirection.x,
+      this.config.movementConfig.speed.y * deltaTime * this.config.movementConfig.startingDirection.y,
+    );
+
+    if (Math.abs(this.x - this._startPos.x) >= this.config.movementConfig.range.x) {
+      this.config.movementConfig.startingDirection.x *= -1;
+    }
+    if (Math.abs(this.y - this._startPos.y) >= this.config.movementConfig.range.y) {
+      this.config.movementConfig.startingDirection.y *= -1;
+    }
   }
 
   protected handleCollisionChange(isColliding: boolean) {

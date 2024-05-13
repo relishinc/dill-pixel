@@ -4,8 +4,12 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@relish-studios/dill-pixel/*": ["../src/*"]
+      "@/*": [
+        "src/*"
+      ],
+      "@relish-studios/dill-pixel/*": [
+        "../src/*"
+      ]
     },
     "composite": true
   },
@@ -14,6 +18,12 @@
       "path": ".."
     }
   ],
-  "include": ["src/**/*.ts", "src/**/*.json"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.json"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
