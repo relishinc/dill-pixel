@@ -4,11 +4,7 @@ import { AssetMapData, Container, playAudioTrack, Signals } from '@relish-studio
 import { Point } from 'pixi.js';
 
 export class AudioExample extends BaseState {
-  count: number = 0;
-  button: Container;
-  onClose = () => {
-    this.count--;
-  };
+  _button: Container;
 
   public static get NAME(): string {
     return 'AudioExample';
@@ -28,24 +24,22 @@ export class AudioExample extends BaseState {
 
     //
     this.setHeaderText('Audio example');
-    this.setMainText('Click the button to play a sound');
+    this.setMainText('Click the button to play a short sound');
 
     // register the popup
     this.app.popups.register(ExamplePopup);
     this.eventMode = 'static';
 
-    this.button = this.add.container({
+    this._button = this.add.container({
       alpha: 1,
       position: [0,0],
     });
-    this.button.add.coloredSprite({ color: 0x00ff00, size: [200, 100], shape: 'rounded_rectangle', radius: 10 });
-    this.button.add.text({ value: 'Click me', anchor: 0.5 });
-    this.button.eventMode = 'static';
-    this.button.cursor = 'pointer';
+    this._button.add.coloredSprite({ color: 0xffffff, size: [200, 60], shape: 'rounded_rectangle', radius: 10 });
+    this._button.add.text({ value: 'Play sound', anchor: 0.5 });
+    this._button.eventMode = 'static';
+    this._button.cursor = 'pointer';
 
-    const track = playAudioTrack('sample-3s', 1, false, 'sfx');
-
-    this.button.on('pointerdown', (e) => {
+    this._button.on('pointerdown', (e) => {
       playAudioTrack('sample-3s', 1, false, 'sfx');
     });
   }

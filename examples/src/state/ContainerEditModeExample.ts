@@ -25,8 +25,8 @@ export class ContainerEditModeExample extends BaseState {
 
     this.eventMode = 'static';
 
-    this.add.sprite('pickle', undefined, 1, [-150, 250], 0.5);
-    this.add.sprite('lab', 'buildings', 1, [150, 250]);
+    this.add.sprite({ asset: 'pickle', position: [-150, 50] });
+    this.add.sprite({ asset: 'lab', sheet: 'buildings', position: [150, 50] });
 
     this.editMode = true;
     this.editor.remove(this._bg);

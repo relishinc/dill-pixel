@@ -37,7 +37,7 @@ export class ButtonExample extends BaseState {
 
     // create a button with some basic textures
     const flex = this.add.flexContainer({ gap: 20, justifyContent: 'center', alignItems: 'center' });
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 4; i++) {
       flex.add.existing(this.makeButton(`Button ${i + 1}`));
     }
 
@@ -59,33 +59,30 @@ export class ButtonExample extends BaseState {
         textures: {
           default: this.make.coloredSprite({
             color: 0x00ff00,
-            size: [200, 100],
+            size: [200, 60],
             shape: 'rounded_rectangle',
             radius: 10,
           }).texture,
           hover: this.make.coloredSprite({
-            color: 0xff0000,
-            size: [200, 100],
+            color: 0x99ff99,
+            size: [200, 60],
             shape: 'rounded_rectangle',
             radius: 10,
           }).texture,
           active: this.make.coloredSprite({
-            color: 0x0000ff,
-            size: [200, 100],
+            color: 0x009900,
+            size: [200, 60],
             shape: 'rounded_rectangle',
             radius: 10,
           }).texture,
           disabled: this.make.coloredSprite({
-            color: 0x666666,
-            size: [200, 100],
+            color: 0xcccccc,
+            size: [200, 60],
             shape: 'rounded_rectangle',
             radius: 10,
           }).texture,
         },
       }),
-      {
-        position: [0, 0],
-      },
     );
     button.name = name;
     const label = button.add.text({ value: name, anchor: 0.5 });

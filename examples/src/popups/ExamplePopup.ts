@@ -1,11 +1,12 @@
 import { GREEN } from '@/utils/Constants';
-import { Popup } from '@relish-studios/dill-pixel';
+import { Popup, Container } from '@relish-studios/dill-pixel';
 import { gsap } from 'gsap';
 import { Point, Sprite, Text } from 'pixi.js';
 
 export default class ExamplePopup extends Popup {
   _bg: Sprite;
   _text: Text;
+  _button: Container;
 
   public static get NAME(): string {
     return 'ExamplePopup';
@@ -32,9 +33,24 @@ export default class ExamplePopup extends Popup {
   show(token: any): void {
     super.show(token);
     this._text = this.add.text({
-      value: `This is a popup ${this._popupData}`,
+      value: `This is popup ${this._popupData}`,
       style: { align: 'center', fill: 'white', fontSize: 24, fontFamily: 'Kumbh Sans' },
       anchor: 0.5,
+      position: [0, -40]
+    });
+
+    this._button = this.add.container({
+      alpha: 1,
+      position: [0,40],
+    });
+
+    this._button.add.coloredSprite({ color: 0xffffff, size: [200, 60], shape: 'rounded_rectangle', radius: 10 });
+    this._button.add.text({ value: 'Close me', anchor: 0.5 });
+    this._button.eventMode = 'static';
+    this._button.cursor = 'pointer';
+
+    this._button.on('pointerdown', (e) => {
+      this.hide();
     });
   }
 
@@ -52,7 +68,6 @@ export default class ExamplePopup extends Popup {
     if (this.blackout) {
       await gsap.to(this.blackout, { alpha: 0, duration: 0.2, delay: 0.1 });
     }
-
     callback();
   }
 }

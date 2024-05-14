@@ -35,7 +35,7 @@ export class BaseState extends State<Application> {
     // add the layout
     this.createLayout();
     this._layout.alpha = 0;
-    this._headerBg = this._header.add.coloredSprite(0x0, [this.app.size.x, 90], 'rectangle', {}, 0.1, 0, 0);
+    this._headerBg = this._header.add.coloredSprite({ color: 0x0, size: [this.app.size.x, 90], shape: 'rectangle', alpha: 0.1, anchor: 0 });
     this._title = this._header.add.text(
       '',
       {
@@ -138,7 +138,7 @@ export class BaseState extends State<Application> {
    */
   public createLayout() {
     this._layout = this.add.container({ position: [0, 0] });
-    this._header = this._layout.add.container(1, [-this.app.size.x * 0.5, -this.app.size.y * 0.5]);
+    this._header = this._layout.add.container({ position: [-this.app.size.x * 0.5, -this.app.size.y * 0.5] });
     this._main = this._layout.add.container({ alpha: 0.25 });
     this._footer = this._layout.add.container({ position: [this.app.size.x * 0.5, this.app.size.y * 0.5] });
 

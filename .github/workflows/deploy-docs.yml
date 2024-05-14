@@ -25,13 +25,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm ci && cd ./docs && npm ci
 
-      - name: Build Docs
+      - name: Build docs
         run: npm run docs
 
-      - name: Deploy to Remote Host via SFTP
+      - name: Deploy to remote host via SFTP
         uses: ticoraap/sftp-mirror@v1.6
         with:
           server: ${{ secrets.DOCS_SFTP_HOST }}

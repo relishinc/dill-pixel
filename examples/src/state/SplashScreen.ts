@@ -18,7 +18,7 @@ export class SplashScreen extends LoadScreen {
   }
 
   public async animateIn(pOnComplete: () => void): Promise<void> {
-    this._bg = this.add.coloredSprite(GREEN, 0);
+    this._bg = this.add.coloredSprite({ color: GREEN, size: 0 });
 
     this.onResize(this.app.size);
 

@@ -29,35 +29,30 @@ export class BitmapFontsExample extends BaseState {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: 20,
+      gap: 50,
     });
 
-    const openSans = list.add.bitmapText('Open Sans', { fontName: FONT_OPEN_SANS, fontSize: 128 }, 1, [0, 0]);
+    // Open Sans
+    list.add.bitmapText('Open Sans', { fontName: FONT_OPEN_SANS, fontSize: 128 });
 
-    const openSansBold = list.add.bitmapText(
-      'Open Sans Bold',
-      { fontName: FONT_OPEN_SANS_BOLD, fontSize: 128 },
-      1,
-      [0, 0],
-    );
+    // Open Sans Bold
+    list.add.bitmapText('Open Sans Bold', { fontName: FONT_OPEN_SANS_BOLD, fontSize: 128, letterSpacing: -3.5 });
 
-    const padaloma = list.add.bitmapText(
-      'Padaloma',
-      { fontName: FONT_PADALOMA, fontSize: 128, tint: 0xff0000 },
-      1,
-      [0, 0],
-    );
-
+    // Padaloma
+    const padaloma = list.add.bitmapText('Padaloma', { fontName: FONT_PADALOMA, fontSize: 128, tint: 0xff0000 });
     padaloma.filters = [shadow];
-    // cache as bitmap to improve performance(?)
+
+    // Enable cacheAsBitmap to improve performance
     padaloma.cacheAsBitmap = true;
     padaloma.roundPixels = true;
 
     await delay(2);
-    // To update you update the text you need to remove cacheAsBitmap
+
+    // To update the text you need to remove cacheAsBitmap, then turn it back on
     padaloma.cacheAsBitmap = false;
-    padaloma.text = 'Some other text!!!';
+    padaloma.text = 'With filters!!!';
     padaloma.cacheAsBitmap = true;
+    
     list.layout();
   }
 }

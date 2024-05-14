@@ -6,10 +6,6 @@
   --sidebar-width: 250px;
 }
 
-:root {
-  --app-height: 100%;
-}
-
 body,
 html {
   position: fixed;
@@ -78,12 +74,13 @@ body {
 
   }
 
-  :is(nav) {
+  nav {
     display: flex;
     flex-direction: column;
     gap: 0.2em;
     font-size: 0.85rem;
     color: #aaa;
+    transition: 0.35s;
 
     a {
       color: currentColor;
@@ -98,6 +95,11 @@ body {
     a.active {
       color: #fff;
     }
+  }
+
+  nav.disabled {
+    opacity: 0.25;
+    pointer-events: none;
   }
 }
 

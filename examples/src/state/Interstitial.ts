@@ -10,17 +10,16 @@ export class Interstitial extends HLF.LoadScreen {
 
   public init(pSize: PIXI.Point, pData?: any) {
     super.init(pSize, pData);
-    this._bg = this.add.sprite('black2x2', undefined, 0, 0, 0.5, [this._size.x, this._size.y]);
+    this._bg = this.add.sprite({ asset: 'black2x2', alpha: 0, scale: [this._size.x, this._size.y] });
   }
 
   public onLoadProgress(progress: number) {
-    console.log('interstitial progress', progress);
   }
 
   public async animateIn(pOnComplete: () => void): Promise<void> {
     const timeline = gsap.timeline();
     await timeline.to(this._bg, {
-      duration: 1,
+      duration: 0.5,
       alpha: 1,
       ease: Sine.easeOut,
     });
@@ -34,7 +33,7 @@ export class Interstitial extends HLF.LoadScreen {
       alpha: 0,
       ease: Sine.easeInOut,
     });
-    console.log('got to oncomplete');
+    document.body.dispatchEvent(new Event('loadComplete'));
     pOnComplete();
   }
 

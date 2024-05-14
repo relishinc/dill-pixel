@@ -28,7 +28,7 @@ export class SpriteExample extends BaseState {
     this.add.sprite({ asset: Texture.WHITE, position: [-300, 150] });
 
     // settings array
-    this.add.sprite('lab', 'buildings', 1, [150, 150]);
-    this.add.sprite(Texture.WHITE, undefined, 0.5, [350, 150]);
+    this.add.sprite({ asset: 'lab', sheet: 'buildings', position: [150, 150] });
+    this.add.sprite({ asset: Texture.WHITE, position: [350, 150] });
   }
 }

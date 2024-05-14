@@ -13,7 +13,8 @@ import { Point } from 'pixi.js';
 
 export class PopupExample extends BaseState {
   count: number = 0;
-  button: Container;
+  _button: Container;
+
   onClose = () => {
     this.count--;
   };
@@ -41,17 +42,17 @@ export class PopupExample extends BaseState {
     this.app.popups.register(ExamplePopup);
     this.eventMode = 'static';
 
-    this.button = this.add.container({
+    this._button = this.add.container({
       alpha: 1,
       position: [0,250],
     });
 
-    this.button.add.coloredSprite({ color: 0x00ff00, size: [200, 100], shape: 'rounded_rectangle', radius: 10 });
-    this.button.add.text({ value: 'Click me', anchor: 0.5 });
-    this.button.eventMode = 'static';
-    this.button.cursor = 'pointer';
+    this._button.add.coloredSprite({ color: 0xffffff, size: [200, 60], shape: 'rounded_rectangle', radius: 10 });
+    this._button.add.text({ value: 'Click me', anchor: 0.5 });
+    this._button.eventMode = 'static';
+    this._button.cursor = 'pointer';
 
-    this.button.on('pointerdown', (e) => {
+    this._button.on('pointerdown', (e) => {
       this.count++;
       showPopup(new PopupToken(ExamplePopup.NAME, this.onClose, true, false, this.count));
     });
@@ -63,8 +64,11 @@ export class PopupExample extends BaseState {
     });
 
     this.addSignalConnection(
-      Signals.hidePopupComplete.connect((p) => {
-        console.log('hide popup complete', p);
+      Signals.hidePopupComplete.connect((popup) => {
+        console.log('hide popup complete', popup);
+      }),
+      Signals.showPopup.connect((token) => {
+        console.log('show popup', token);
       }),
     );
   }

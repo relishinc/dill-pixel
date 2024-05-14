@@ -12,6 +12,7 @@ import { BaseState } from './BaseState';
 
 export class UICanvasExample extends BaseState {
   protected ui: UICanvas;
+  protected extraElement: FlexContainer;
 
   public static get NAME(): string {
     return 'UICanvasExample';
@@ -25,6 +26,7 @@ export class UICanvasExample extends BaseState {
     super.init(pSize);
 
     this.setHeaderText('UICanvas example');
+    this.setMainText('Items are aligned within the UI.\nThe screen size is adjusted and items are removed\nand added to show how the UI behaves.');
 
     this.ui = this.add.uiCanvas({ padding: { x: 100, y: 50 }, debug: true });
 
@@ -39,25 +41,28 @@ export class UICanvasExample extends BaseState {
     // this.ui.addElement(Make.sprite({ asset: 'pickle' }), { align: 'center' });
 
     // add prefab
-    const fc = Make.flexContainer({ flexDirection: 'row', gap: -20, alignItems: 'center', justifyContent: 'center' });
+    const fc = Make.flexContainer({ flexDirection: 'row', gap: -50, alignItems: 'center', justifyContent: 'center' });
     fc.add.text({ value: 'Hello World' });
     fc.add.sprite({ asset: 'pickle', anchor: 0 });
+
+
     this.ui.addElement(fc, { align: 'center' });
+
+    this.cycleThroughAlignments();
+  }
+
+  async cycleThroughAlignments() {
 
     const fc2 = Make.flexContainer({
       flexDirection: 'row',
-      gap: 10,
-      alignItems: 'flex-start',
-      width: 600,
-      height: 100,
-      justifyContent: 'space-between',
+      gap: 30,
     });
     fc2.add.text({ value: 'Item 1' });
     fc2.add.text({ value: 'Item 2' });
     fc2.add.text({ value: 'Item 3' });
 
-    const element = this.ui.addElement<FlexContainer>(fc2, { align: 'bottom left' });
-
+    this.extraElement = this.ui.addElement<FlexContainer>(fc2, { align: 'bottom left' });    
+    
     await delay(2);
 
     this.ui.size = [1000, 500];
@@ -67,7 +72,14 @@ export class UICanvasExample extends BaseState {
     this.ui.size = 0;
     this.ui.padding = { x: 0, y: 0 };
 
-    await delay(1);
-    this.ui.removeChild(element);
+    await delay(2);
+    this.ui.removeChild(this.extraElement);
+
+    await delay(2);
+
+    this.ui.padding = { x: 100, y: 50 };
+
+    // do it again
+    this.cycleThroughAlignments();
   }
 }

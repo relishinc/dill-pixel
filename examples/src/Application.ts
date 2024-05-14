@@ -31,7 +31,7 @@ export class Application extends DillPixelApplication {
   }
 
   public get defaultState() {
-    return this.state.getStateFromHash() || PopupExample.NAME;
+    return this.state.getStateFromHash() || this.state.getRegisteredStateIds().sort((a, b) => a.localeCompare(b))[0]; // first one
   }
 
   protected getFontsList(): {
@@ -70,7 +70,6 @@ export class Application extends DillPixelApplication {
     this.state.register(SignalsExample);
     this.state.register(ButtonExample);
     this.state.register(BitmapFontsExample);
-    //this.state.getRegisteredStateIds()
   }
 
   protected createAssetMap(): void {
