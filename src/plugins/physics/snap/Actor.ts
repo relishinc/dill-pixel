@@ -1,4 +1,4 @@
-import { Rectangle } from 'pixi.js';
+import { Point, Rectangle } from 'pixi.js';
 import { Application } from '../../../core/Application';
 import { Entity } from './Entity';
 import { System } from './System';
@@ -24,24 +24,26 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  squish(_collision?: Collision, _pushingEntity?: Entity) {}
+  squish(_collision?: Collision, _pushingEntity?: Entity, _direction?: Point) {}
 
   moveX(
     amount: number,
-    onCollide?: (collision: Collision, pushingEntity?: Entity) => void,
+    onCollide?: (collision: Collision, pushingEntity?: Entity, direction?: Point) => void,
     onNoCollisions?: (() => void) | null,
     pushingEntity?: Entity,
   ): void {
     this.xRemainder += amount;
     let move = Math.round(this.xRemainder);
     const sign = Math.sign(move);
-
+    if (pushingEntity) {
+      pushingEntity.isCollideable = false;
+    }
     while (move !== 0) {
       const nextX = this.x + (move ? sign : 0); // Predict the next X position
       const collisions: Collision[] | false = this.collideAt(nextX - this.x, 0, this.getBoundingBox());
       if (collisions) {
         if (onCollide) {
-          collisions.forEach((collision) => onCollide(collision, pushingEntity));
+          collisions.forEach((collision) => onCollide(collision, pushingEntity, new Point(nextX - this.x, 0)));
         }
         this.xRemainder = 0; // Reset the remainder to prevent sliding
         break;
@@ -55,23 +57,30 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
       }
     }
     System.updateEntity(this);
+    if (pushingEntity) {
+      pushingEntity.isCollideable = true;
+    }
   }
 
   moveY(
     amount: number,
-    onCollide?: ((collision: Collision, pushingEntity?: Entity) => void) | null,
+    onCollide?: ((collision: Collision, pushingEntity?: Entity, direction?: Point) => void) | null,
     onNoCollisions?: (() => void) | null,
     pushingEntity?: Entity,
   ): void {
     this.yRemainder += amount;
     let move = Math.round(this.yRemainder);
     const sign = Math.sign(move);
+    if (pushingEntity) {
+      pushingEntity.isCollideable = false;
+    }
+
     while (move !== 0) {
       const nextY = this.y + (move ? sign : 0); // Predict the next Y position
       const collisions: Collision[] | false = this.collideAt(0, nextY - this.y, this.getBoundingBox());
       if (collisions) {
         if (onCollide) {
-          collisions.forEach((collision) => onCollide(collision, pushingEntity));
+          collisions.forEach((collision) => onCollide(collision, pushingEntity, new Point(0, nextY - this.y)));
         }
         this.yRemainder = 0;
         break;
@@ -85,6 +94,9 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
       }
     }
     System.updateEntity(this);
+    if (pushingEntity) {
+      pushingEntity.isCollideable = true;
+    }
   }
 
   // Simple bounding box collision check
@@ -103,6 +115,9 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
       }
       const solidBounds = entity.getBoundingBox();
       const collisionResult = checkCollision(nextPosition, solidBounds, this, entity);
+      // if (entity.type === 'Platform') {
+      //   console.log(entity, collisionResult);
+      // }
       if (collisionResult) {
         System.collide(collisionResult);
         // if the collision resolver returns true,
@@ -123,7 +138,7 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
     // Basic check if actor is directly on top of the solid
     return (
       actorBounds.bottom >= solidBounds.top - 2 &&
-      actorBounds.bottom <= solidBounds.top + solidBounds.height - 1 &&
+      actorBounds.bottom <= solidBounds.top + 1 &&
       actorBounds.left < solidBounds.right &&
       actorBounds.right > solidBounds.left
     );

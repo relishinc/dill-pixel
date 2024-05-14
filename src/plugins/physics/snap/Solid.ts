@@ -60,10 +60,7 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
     this.handleActorInteractions(0, 0);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected handleCollisionChange(_isColliding?: boolean) {}
-
-  private handleActorInteractions(deltaX: number, deltaY: number): void {
+  public handleActorInteractions(deltaX: number, deltaY: number): void {
     // Check for collisions with non-riding actors
     (this.collideables as Actor[]).forEach((actor) => {
       if (
@@ -89,7 +86,6 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
         if (overlapX !== 0) {
           actor.moveX(overlapX, actor.squish, null, this);
         }
-
         if (overlapY !== 0) {
           actor.moveY(overlapY, actor.squish, null, this);
         }
@@ -99,4 +95,7 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
       }
     });
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected handleCollisionChange(_isColliding?: boolean) {}
 }

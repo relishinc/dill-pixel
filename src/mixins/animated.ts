@@ -1,7 +1,6 @@
-import { gsap } from 'gsap';
-import { PIXIContainer } from '../pixi';
-import { Signal } from '../signals';
-import { Constructor } from '../utils/types';
+import {gsap} from 'gsap';
+import {Signal} from '../signals';
+import {Constructor} from '../utils/types';
 
 /**
  * Extended GSAP animation configuration interface.
@@ -56,7 +55,7 @@ export interface IAnimated {
  * @param Base - Base class to extend.
  * @returns Class that extends the base class and implements IAnimated.
  */
-export function Animated<TBase extends Constructor<PIXIContainer>>(Base: TBase): TBase & Constructor<IAnimated> {
+export function Animated<TBase extends Constructor>(Base: TBase): TBase & Constructor<IAnimated> {
   return class extends Base implements IAnimated {
     // signals for animation events
     onAnimationStart = new Signal<(entity: GSAPEntity) => void>();

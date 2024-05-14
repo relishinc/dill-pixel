@@ -4,7 +4,7 @@ import {Point, Texture} from 'pixi.js';
  * A generic constructor type.
  * @template T The type of the instance that the constructor creates.
  */
-export type Constructor<T> = new (...args: any[]) => T;
+export type Constructor<T = NonNullable<unknown>> = new (...args: any[]) => T;
 
 /**
  * A type that requires certain properties of another type.
@@ -58,18 +58,18 @@ export type ImportListItemModule<T> = (() => Promise<any>) | Promise<any> | Cons
  * @template T The type of the instance that the constructor creates.
  */
 export type ImportListItem<T = any> = {
-  id: string;
-  module: ImportListItemModule<T>;
-  namedExport?: string;
-  options?: any;
-  autoLoad?: boolean;
+	id: string;
+	module: ImportListItemModule<T>;
+	namedExport?: string;
+	options?: any;
+	autoLoad?: boolean;
 };
 
 type SceneItemOptions = {
-  debugLabel?: string;
-  plugins?: string[];
-  assets?: string | string[];
-  autoUnloadAssets?: boolean;
+	debugLabel?: string;
+	plugins?: string[];
+	assets?: string | string[];
+	autoUnloadAssets?: boolean;
 };
 
 export type SceneImportListItem<T> = ImportListItem<T> & SceneItemOptions;
@@ -82,53 +82,53 @@ export type ImportList<T> = ImportListItem<T>[];
 export type SceneImportList<T> = SceneImportListItem<T>[];
 
 export type AppSize = {
-  width: number;
-  height: number;
-  screenWidth: number;
-  screenHeight: number;
+	width: number;
+	height: number;
+	screenWidth: number;
+	screenHeight: number;
 };
 
 // from gsap
 export type EaseString =
-  | 'none'
-  | 'power1'
-  | 'power1.in'
-  | 'power1.out'
-  | 'power1.inOut'
-  | 'power2'
-  | 'power2.in'
-  | 'power2.out'
-  | 'power2.inOut'
-  | 'power3'
-  | 'power3.in'
-  | 'power3.out'
-  | 'power3.inOut'
-  | 'power4'
-  | 'power4.in'
-  | 'power4.out'
-  | 'power4.inOut'
-  | 'back'
-  | 'back.in'
-  | 'back.out'
-  | 'back.inOut'
-  | 'bounce'
-  | 'bounce.in'
-  | 'bounce.out'
-  | 'bounce.inOut'
-  | 'circ'
-  | 'circ.in'
-  | 'circ.out'
-  | 'circ.inOut'
-  | 'elastic'
-  | 'elastic.in'
-  | 'elastic.out'
-  | 'elastic.inOut'
-  | 'expo'
-  | 'expo.in'
-  | 'expo.out'
-  | 'expo.inOut'
-  | 'sine'
-  | 'sine.in'
-  | 'sine.out'
-  | 'sine.inOut'
-  | ({} & string);
+	| 'none'
+	| 'power1'
+	| 'power1.in'
+	| 'power1.out'
+	| 'power1.inOut'
+	| 'power2'
+	| 'power2.in'
+	| 'power2.out'
+	| 'power2.inOut'
+	| 'power3'
+	| 'power3.in'
+	| 'power3.out'
+	| 'power3.inOut'
+	| 'power4'
+	| 'power4.in'
+	| 'power4.out'
+	| 'power4.inOut'
+	| 'back'
+	| 'back.in'
+	| 'back.out'
+	| 'back.inOut'
+	| 'bounce'
+	| 'bounce.in'
+	| 'bounce.out'
+	| 'bounce.inOut'
+	| 'circ'
+	| 'circ.in'
+	| 'circ.out'
+	| 'circ.inOut'
+	| 'elastic'
+	| 'elastic.in'
+	| 'elastic.out'
+	| 'elastic.inOut'
+	| 'expo'
+	| 'expo.in'
+	| 'expo.out'
+	| 'expo.inOut'
+	| 'sine'
+	| 'sine.in'
+	| 'sine.out'
+	| 'sine.inOut'
+	| ({} & string);

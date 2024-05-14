@@ -65,10 +65,12 @@ export class Player extends SnapActor {
     this._isMoving = false;
   }
 
-  public squish(collision: Collision, pushingEntity: Entity) {
+  public squish(collision: Collision, pushingEntity: Entity, direction?: Point) {
     if (collision.bottom && pushingEntity.type === 'Platform' && (pushingEntity as Platform).canJumpThroughBottom) {
       return;
     }
+
+    console.log({ collision, colliding: collision.entity2, pushingEntity, direction });
     this.onKilled.emit();
   }
 
@@ -126,18 +128,27 @@ export class Player extends SnapActor {
   }
 
   private _handleAction(actionDetail: ActionDetail) {
+    let amount;
     switch (actionDetail.id) {
       case 'move_left':
+        amount = -this.speed;
+        if (this.x <= 50) {
+          amount = 0;
+        }
         this.view.spine.scale.x = -1;
-        this.moveX(-this.speed, this._handleCollision);
+        this.moveX(amount, this._handleCollision);
         if (this.view.getCurrentAnimation() !== 'run') {
           this.view.setAnimation('run', true);
         }
         this._isMoving = true;
         break;
       case 'move_right':
+        amount = this.speed;
+        if (this.x >= this.app.size.width * 0.75) {
+          amount = 0;
+        }
         this.view.spine.scale.x = 1;
-        this.moveX(this.speed, this._handleCollision);
+        this.moveX(amount, this._handleCollision);
         if (this.view.getCurrentAnimation() !== 'run') {
           this.view.setAnimation('run', true);
         }

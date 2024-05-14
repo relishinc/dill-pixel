@@ -24,7 +24,7 @@ export class SpatialHashGrid {
   set cellSize(size: number) {
     this._cellSize = size;
     this.cells.clear();
-    System.all.forEach((entity) => this.insert(entity));
+    this.updateAll();
   }
 
   destroy() {
@@ -93,6 +93,10 @@ export class SpatialHashGrid {
     return [...foundEntities];
   }
 
+  updateAll() {
+    System.all.forEach((entity) => this.updateEntity(entity));
+  }
+
   updateEntity(entity: Entity): void {
     // Remove the entity from its current cell
     this.remove(entity);
@@ -105,7 +109,7 @@ export class SpatialHashGrid {
     const rects = this._getDebugRects();
     rects.forEach((rect) => {
       gfx.rect(rect.left, rect.top, rect.width, rect.height);
-      gfx.stroke();
+      gfx.stroke({ color: 0x00ff00 });
     });
   }
 

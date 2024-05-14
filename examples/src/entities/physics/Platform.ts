@@ -17,6 +17,8 @@ export type PlatformMovementConfig = {
 };
 
 export type PlatformConfig = {
+  x: number;
+  y: number;
   width: number;
   height: number;
   color: number;
@@ -31,9 +33,13 @@ export type PlatformConfigOpts = {
   moving: boolean;
   canJumpThroughBottom?: boolean;
   movementConfig?: PlatformMovementConfigOpts;
+  x: number;
+  y: number;
 };
 
 const defaults: PlatformConfig = {
+  x: 0,
+  y: 0,
   width: 100,
   height: 10,
   color: 0x00ff00,
@@ -64,6 +70,8 @@ export class Platform extends SnapSolid<PlatformConfig> {
 
   static resolveConfig(config: Partial<PlatformConfigOpts>): PlatformConfig {
     return {
+      x: config.x ?? 0,
+      y: config.y ?? 0,
       width: config.width ?? defaults.width,
       height: config.height ?? defaults.height,
       color: config.color ?? defaults.color,
@@ -77,6 +85,11 @@ export class Platform extends SnapSolid<PlatformConfig> {
           }
         : undefined,
     };
+  }
+
+  init(config: Partial<PlatformConfigOpts> = {}) {
+    this.config = Platform.resolveConfig(config);
+    this.initialize();
   }
 
   added() {
@@ -100,6 +113,10 @@ export class Platform extends SnapSolid<PlatformConfig> {
     }
   }
 
+  reset() {
+    this.removeChild(this.view);
+  }
+
   protected handleCollisionChange(isColliding: boolean) {
     if (isColliding) {
       this.view.tint = 0x0;
@@ -116,5 +133,7 @@ export class Platform extends SnapSolid<PlatformConfig> {
       tint: this.config.color,
       anchor: 0.5,
     });
+
+    this.position.set(this.config.x, this.config.y);
   }
 }

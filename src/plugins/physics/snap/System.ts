@@ -10,7 +10,7 @@ import { SpatialHashGrid } from './SpatialHashGrid';
 import { Collision, EntityType, Side, SpatialHashGridFilter } from './types';
 import { Wall } from './Wall';
 import { ICamera } from '../../../display/Camera';
-import { getntersectionArea } from './utils';
+import { getIntersectionArea } from './utils';
 
 type SystemBoundary = {
   width: number;
@@ -35,6 +35,8 @@ type SnapPhysicsSystemOptions = {
   debug: boolean;
   boundary: CustomSnapPhysicsBoundaryOptions;
   collisionResolver: (collision: Collision) => boolean;
+  useSpatialHashGrid: boolean;
+  cellSize: number;
 };
 
 export class System {
@@ -207,8 +209,8 @@ export class System {
     const bounds2 = entity2.getBoundingBox().clone();
     bounds2.x += dx;
     bounds2.y += dy;
-    const intersection = getntersectionArea(bounds1, bounds2);
-    return intersection.area > Math.max(System.collisionThreshold);
+    const intersection = getIntersectionArea(bounds1, bounds2);
+    return intersection.area > 0 && intersection.area > System.collisionThreshold;
   }
 
   static update(deltaTime: number) {
@@ -218,7 +220,6 @@ export class System {
     if (!System.container) {
       Logger.error('SnapPhysicsPlugin: World container not set!');
     }
-
     // Implement world step logic
 
     System.solids.forEach((solid: Solid) => {
@@ -316,6 +317,9 @@ export class System {
   }
 
   static drawDebug() {
+    if (!System.container) {
+      return;
+    }
     if (!System.gfx) {
       System.gfx = new Graphics();
       System.container.addChild(System.gfx);
@@ -377,11 +381,40 @@ export class System {
         Logger.error('SnapPhysicsPlugin System.initialize: Boundary width and height required.');
       }
     }
+
+    if (opts.useSpatialHashGrid) {
+      System.useSpatialHashGrid(opts.cellSize ?? 100);
+    }
   }
 
   static updateEntity(entity: Entity) {
     if (System.grid) {
       System.grid.updateEntity(entity);
+    }
+  }
+
+  static cleanup() {
+    if (System.worldBounds) {
+      System.worldBounds.forEach((wall: Wall) => {
+        wall.parent.removeChild(wall);
+        wall.destroy();
+      });
+      System.worldBounds = [];
+    }
+
+    if (System.container) {
+      System.container.removeChildren();
+      // @ts-expect-error container can't be null
+      System.container = null;
+    }
+    if (System.gfx) {
+      // @ts-expect-error GFX can't be null
+      System.gfx = null;
+    }
+
+    if (System.grid) {
+      System.grid.destroy();
+      System.grid = null;
     }
   }
 }

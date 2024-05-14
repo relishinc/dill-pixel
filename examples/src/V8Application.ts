@@ -21,8 +21,8 @@ const appConfig: AppConfig = {
       namedExport: 'SnapPhysicsPlugin',
       module: () => import('../../src/plugins/physics/snap'),
       options: {
-        useSpatialHash: true,
-        gridCellSize: 400,
+        useSpatialHash: false,
+        gridCellSize: 100,
         fps: 60,
       },
       autoLoad: false,

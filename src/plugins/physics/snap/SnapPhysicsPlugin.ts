@@ -3,13 +3,13 @@ import { Plugin } from '../../Plugin';
 import { System } from './System';
 
 type SnapPhysicsPluginOptions = {
-  useSpatialHash: boolean;
+  useSpatialHashGrid: boolean;
   gridCellSize: number;
   fps: number;
 };
 
 const defaultOptions = {
-  useSpatialHash: false,
+  useSpatialHashGrid: false,
   gridCellSize: -1,
   fps: -1,
 };
@@ -25,19 +25,19 @@ export class SnapPhysicsPlugin extends Plugin {
   set gridCellSize(value: number) {
     this.options.gridCellSize = value;
 
-    if (this.options.useSpatialHash && this.options.gridCellSize > 0) {
+    if (this.options.useSpatialHashGrid && this.options.gridCellSize > 0) {
       System.useSpatialHashGrid(this.options.gridCellSize);
     }
   }
 
-  get useSpatialHash(): boolean {
-    return this.options.useSpatialHash;
+  get useSpatialHashGrid(): boolean {
+    return this.options.useSpatialHashGrid;
   }
 
-  set useSpatialHash(value: boolean) {
-    this.options.useSpatialHash = value;
+  set useSpatialHashGrid(value: boolean) {
+    this.options.useSpatialHashGrid = value;
 
-    if (this.options.useSpatialHash && this.options.gridCellSize > 0) {
+    if (this.options.useSpatialHashGrid && this.options.gridCellSize > 0) {
       System.useSpatialHashGrid(this.options.gridCellSize);
     } else {
       System.removeSpatialHashGrid();
@@ -48,9 +48,14 @@ export class SnapPhysicsPlugin extends Plugin {
     return System;
   }
 
+  destroy() {
+    System.cleanup();
+    super.destroy();
+  }
+
   public async initialize(app: IApplication, options?: Partial<SnapPhysicsPluginOptions>) {
     this.options = { ...defaultOptions, ...options };
-    if (this.options.useSpatialHash && this.options.gridCellSize > 0) {
+    if (this.options.useSpatialHashGrid && this.options.gridCellSize > 0) {
       System.useSpatialHashGrid(this.options.gridCellSize);
     }
     if (this.options.fps > 0) {

@@ -1,6 +1,6 @@
 import { Camera } from '@relish-studios/dill-pixel/display/Camera';
 import { Door } from '@/entities/physics/Door';
-import { Platform, PlatformMovementConfigOpts } from '@/entities/physics/Platform';
+import { Platform, PlatformConfig, PlatformMovementConfigOpts } from '@/entities/physics/Platform';
 import { Player } from '@/entities/physics/Player';
 import { Portal } from '@/entities/physics/Portal';
 
@@ -9,8 +9,10 @@ import { Container, delay, FlexContainer } from '@relish-studios/dill-pixel';
 import { Assets, Ticker } from 'pixi.js';
 import { Collision, SnapPhysicsPlugin } from '../../../src/plugins/physics/snap';
 import { GUIController } from 'dat.gui';
+import { SegmentConfig } from '@/entities/physics/Segment';
+import { EndlessRunner } from '@/entities/physics/EndlessRunner';
 
-export class SnapPhysicsScene extends BaseScene {
+export class EndlessRunnerScene extends BaseScene {
   controls: FlexContainer;
   level: Container;
   player: Player;
@@ -19,16 +21,17 @@ export class SnapPhysicsScene extends BaseScene {
   portals: Portal[] = [];
   _isPaused: boolean = false;
   camera: Camera;
-  protected readonly title = 'Snap Physics';
+  protected readonly title = 'Snap Physics - Endless Runner';
   protected readonly subtitle = 'Arrows to move, up to jump';
   protected config = {
-    useCamera: true,
+    useCamera: false,
     zoom: 1,
-    useSpatialHash: true,
-    gridCellSize: 400,
+    useSpatialHash: false,
+    gridCellSize: 150,
     debug: true,
   };
   private _zoomController: GUIController;
+  private _segments: SegmentConfig[];
 
   // private _debugGfx = new Graphics();
 
@@ -76,14 +79,11 @@ export class SnapPhysicsScene extends BaseScene {
       .name('Debug Physics');
   }
 
-  destroy() {
-    this.physics.destroy();
-    super.destroy();
-  }
-
   async initialize() {
     await super.initialize();
+
     await Assets.loadBundle('spine');
+
     this.app.focus.addFocusLayer(this.id);
 
     this.level = this.add.container({
@@ -96,18 +96,25 @@ export class SnapPhysicsScene extends BaseScene {
       container: this.level,
       debug: false,
       boundary: {
-        width: 2000,
-        height: this.app.size.height,
-        thickness: 10,
-        padding: 5,
-        sides: ['bottom', 'left', 'right'],
+        width: 2400,
+        height: this.app.size.height - 200,
+        thickness: 20,
+        padding: 0,
+        sides: ['bottom'],
       },
+      useSpatialHashGrid: this.config.useSpatialHash,
+      cellSize: this.config.gridCellSize,
       collisionResolver: this._resolveCollision,
     });
-    const bottom = this.app.size.height - 150;
-    this.addPlatforms(bottom);
-    this.addDoors(bottom);
-    this.addPortals(bottom);
+    const bottom = this.app.size.height - 200;
+    this._segments = this.createSegments(bottom);
+    EndlessRunner.initialize(2400, [0, 0]);
+
+    while (!EndlessRunner.hasEnoughSegments) {
+      const segment = EndlessRunner.createSegment(this._segments[0]);
+      this.level.add.existing(segment);
+    }
+
     this.addPlayer();
     this.addControls();
 
@@ -145,13 +152,21 @@ export class SnapPhysicsScene extends BaseScene {
       this.app.sendAction('move_right');
     }
     this.physics.system.update(ticker.deltaTime);
+    EndlessRunner.update(ticker.deltaTime);
+    if (!EndlessRunner.hasEnoughSegments) {
+      while (!EndlessRunner.hasEnoughSegments) {
+        const segment = EndlessRunner.createSegment(this._segments[0]);
+        this.level.add.existing(segment);
+      }
+    }
   }
 
   resize() {
     super.resize();
-    this.camera.viewportWidth = this.app.size.width;
-    this.camera.viewportHeight = this.app.size.height;
-
+    if (this.camera) {
+      this.camera.viewportWidth = this.app.size.width;
+      this.camera.viewportHeight = this.app.size.height;
+    }
     this.controls.x = -this.app.size.width * 0.5 + 20;
     this.controls.y = this.app.size.height * 0.5 - (window.innerHeight > window.innerWidth ? 400 : 100);
     this.controls.containerWidth = this.app.size.width - 40;
@@ -161,40 +176,35 @@ export class SnapPhysicsScene extends BaseScene {
     // }
   }
 
-  addPlatforms(bottom: number) {
-    // floor
-    this.addPlatForm(1000, bottom, 2000);
+  createSegments(bottom: number): SegmentConfig[] {
+    const segment1Config = {
+      platforms: [
+        this.getPlatFormConfig(500, bottom - 88, 30, 160),
+        this.getPlatFormConfig(500, bottom - 178, 150, 20, false),
+        this.getPlatFormConfig(750, bottom - 300, 200, 20, false, true, {
+          speed: 0.5,
+          startingDirection: { x: 1, y: 0 },
+          range: [180, 0],
+        }),
+        this.getPlatFormConfig(1200, bottom - 175, 30, 350),
+        this.getPlatFormConfig(1265, bottom - 200, 100, 20, false),
+        this.getPlatFormConfig(1110, bottom - 200, 150, 20, false, true, {
+          speed: 1,
+          startingDirection: { x: 0, y: 1 },
+          range: [0, 300],
+        }),
+        this.getPlatFormConfig(1700, bottom - 500, 200, 20, false, true, {
+          speed: 1.2,
+          startingDirection: { x: 0, y: 1 },
+          range: [0, 300],
+        }),
+      ],
+    };
 
-    // first junction
-    this.addPlatForm(500, bottom - 88, 30, 160);
-    this.addPlatForm(500, bottom - 178, 150, 20, false);
-
-    // hor
-    this.addPlatForm(750, bottom - 300, 200, 20, false, true, {
-      speed: 0.5,
-      startingDirection: { x: 1, y: 0 },
-      range: [180, 0],
-    });
-
-    // second junction
-    this.addPlatForm(1200, bottom - 183, 30, 350);
-    this.addPlatForm(1265, bottom - 200, 100, 20, false);
-    // vert
-    this.addPlatForm(1110, bottom - 200, 150, 20, false, true, {
-      speed: 1,
-      startingDirection: { x: 0, y: 1 },
-      range: [0, 300],
-    });
-
-    // holds portal
-    this.addPlatForm(1700, bottom - 500, 200, 20, false, true, {
-      speed: 1.2,
-      startingDirection: { x: 0, y: 1 },
-      range: [0, 300],
-    });
+    return [segment1Config];
   }
 
-  addPlatForm(
+  getPlatFormConfig(
     x: number,
     y: number,
     width: number,
@@ -203,46 +213,17 @@ export class SnapPhysicsScene extends BaseScene {
     moving: boolean = false,
     movementConfig?: PlatformMovementConfigOpts,
     color: number = 0x00fff0,
-  ) {
-    const platform = this.level.add.existing(
-      new Platform({
-        width,
-        height,
-        color,
-        canJumpThroughBottom,
-        moving,
-        movementConfig,
-      }),
-      { x, y },
-    );
-    this.platforms.push(platform);
-  }
-
-  addDoors(bottom: number) {
-    this.addDoor(150, bottom - 80);
-  }
-
-  addDoor(x: number, y: number) {
-    const door = this.level.add.existing(new Door(), { x, y });
-    this.doors.push(door);
-  }
-
-  addPortals(bottom: number) {
-    const portal2 = this.addPortal(400, bottom - 80);
-    const portal3 = this.addPortal(600, bottom - 80);
-
-    const portal1 = this.addPortal(1700, bottom - 580);
-
-    portal1.debug = true;
-    portal1.connect(portal3);
-    portal2.connect(portal1);
-    portal3.connect(portal2);
-  }
-
-  addPortal(x: number, y: number) {
-    const portal = this.level.add.existing(new Portal(), { x, y });
-    this.portals.push(portal);
-    return portal;
+  ): PlatformConfig {
+    return Platform.resolveConfig({
+      width,
+      height,
+      color,
+      canJumpThroughBottom,
+      moving,
+      movementConfig,
+      x,
+      y,
+    });
   }
 
   addPlayer() {
@@ -253,7 +234,7 @@ export class SnapPhysicsScene extends BaseScene {
       this.player.onKilled.connect(this._handlePlayerKilled);
     }
     this.level.add.existing(this.player);
-    this.player.spawn({ x: this.doors[0].x, y: this.doors[0].y }, delay);
+    this.player.spawn({ x: 100, y: -100 }, delay);
   }
 
   addControls() {
@@ -313,6 +294,11 @@ export class SnapPhysicsScene extends BaseScene {
     this.addPlayer();
   }
 
+  destroy() {
+    this.physics.destroy();
+    super.destroy();
+  }
+
   protected _handleDebugChanged() {
     const { debug } = this.config;
     this.physics.system.debug = debug;
@@ -335,7 +321,7 @@ export class SnapPhysicsScene extends BaseScene {
         worldWidth: this.physics.system.worldWidth,
         worldHeight: this.physics.system.worldHeight,
         minX: -300,
-        minY: -1000,
+        minY: 0,
         maxX: 300,
         maxY: 200,
         lerp: 0.1,

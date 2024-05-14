@@ -8,7 +8,6 @@ import topLevelAwait from 'vite-plugin-top-level-await';
 const env = process.env.NODE_ENV;
 const cwd = process.cwd();
 
-console.log(path.resolve(cwd, './node_modules/@relish-studios/dill-pixel/src/plugins/captions/font/Arial@2x.fnt'))
 
 const defaultConfig = {
 	cacheDir: '.cache',
@@ -40,9 +39,7 @@ const defaultConfig = {
 			'@': path.resolve(cwd, './src'),
 		},
 	},
-	define: {
-		__APP_VERSION__: JSON.stringify(process.env.npm_package_version),
-	},
+	
 };
 
 function extendConfig(userConfig = {}) {

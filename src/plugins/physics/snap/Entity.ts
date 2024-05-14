@@ -81,7 +81,7 @@ export class Entity<T = any, A extends Application = Application> extends Contai
     const bounds = this.cachedBounds;
     bounds.x = pos.x;
     bounds.y = pos.y;
-    // Adjust bounds based on the view's anchor if it's a sprite
+
     if (this.view instanceof Sprite && this.view.anchor) {
       bounds.x -= this.view.width * this.view.anchor.x;
       bounds.y -= this.view.height * this.view.anchor.y;

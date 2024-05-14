@@ -48,4 +48,11 @@ export const scenes = [
     module: () => import('@/scenes/SnapPhysicsScene'),
     plugins: ['physics'],
   },
+  {
+    id: 'runner',
+    debugLabel: 'Endless Runner',
+    namedExport: 'EndlessRunnerScene',
+    module: () => import('@/scenes/EndlessRunnerScene'),
+    plugins: ['physics'],
+  },
 ];
