@@ -26,8 +26,8 @@ export class EndlessRunnerScene extends BaseScene {
   protected config = {
     useCamera: false,
     zoom: 1,
-    useSpatialHash: false,
-    gridCellSize: 150,
+    useSpatialHash: true,
+    gridCellSize: 200,
     debug: true,
   };
   private _zoomController: GUIController;
@@ -108,10 +108,10 @@ export class EndlessRunnerScene extends BaseScene {
     });
     const bottom = this.app.size.height - 200;
     this._segments = this.createSegments(bottom);
-    EndlessRunner.initialize(2400, [0, 0]);
+    EndlessRunner.initialize(2400, [0.5, 0]);
 
     while (!EndlessRunner.hasEnoughSegments) {
-      const segment = EndlessRunner.createSegment(this._segments[0]);
+      const segment = this.createRandomSegment();
       this.level.add.existing(segment);
     }
 
@@ -155,10 +155,14 @@ export class EndlessRunnerScene extends BaseScene {
     EndlessRunner.update(ticker.deltaTime);
     if (!EndlessRunner.hasEnoughSegments) {
       while (!EndlessRunner.hasEnoughSegments) {
-        const segment = EndlessRunner.createSegment(this._segments[0]);
+        const segment = this.createRandomSegment();
         this.level.add.existing(segment);
       }
     }
+  }
+
+  createRandomSegment() {
+    return EndlessRunner.createSegment(this._segments[Math.floor(Math.random() * this._segments.length)]);
   }
 
   resize() {
@@ -177,31 +181,66 @@ export class EndlessRunnerScene extends BaseScene {
   }
 
   createSegments(bottom: number): SegmentConfig[] {
+    // const segment1Config = {
+    //   platforms: [
+    //     this.getPlatFormConfig(500, bottom - 88, 30, 160),
+    //     this.getPlatFormConfig(500, bottom - 178, 150, 20, false),
+    //     this.getPlatFormConfig(750, bottom - 300, 200, 20, false, true, {
+    //       speed: 0.5,
+    //       startingDirection: { x: 1, y: 0 },
+    //       range: [180, 0],
+    //     }),
+    //     this.getPlatFormConfig(1200, bottom - 175, 30, 350),
+    //     this.getPlatFormConfig(1265, bottom - 200, 100, 20, false),
+    //     this.getPlatFormConfig(1110, bottom - 200, 150, 20, false, true, {
+    //       speed: 1,
+    //       startingDirection: { x: 0, y: 1 },
+    //       range: [0, 300],
+    //     }),
+    //     this.getPlatFormConfig(1700, bottom - 500, 200, 20, false, true, {
+    //       speed: 1.2,
+    //       startingDirection: { x: 0, y: 1 },
+    //       range: [0, 300],
+    //     }),
+    //   ],
+    // };
+
     const segment1Config = {
+      width: 500,
       platforms: [
-        this.getPlatFormConfig(500, bottom - 88, 30, 160),
-        this.getPlatFormConfig(500, bottom - 178, 150, 20, false),
-        this.getPlatFormConfig(750, bottom - 300, 200, 20, false, true, {
+        this.getPlatFormConfig(250, bottom - 88, 30, 160),
+        this.getPlatFormConfig(250, bottom - 120, 150, 20, false),
+      ],
+    };
+
+    const segment2Config = {
+      width: 300,
+      platforms: [this.getPlatFormConfig(150, bottom - 70, 30, 140)],
+    };
+
+    const segment3Config = {
+      width: 500,
+      platforms: [
+        this.getPlatFormConfig(250, bottom - 150, 200, 20, false, true, {
           speed: 0.5,
-          startingDirection: { x: 1, y: 0 },
+          startingDirection: { x: 2, y: 0 },
           range: [180, 0],
-        }),
-        this.getPlatFormConfig(1200, bottom - 175, 30, 350),
-        this.getPlatFormConfig(1265, bottom - 200, 100, 20, false),
-        this.getPlatFormConfig(1110, bottom - 200, 150, 20, false, true, {
-          speed: 1,
-          startingDirection: { x: 0, y: 1 },
-          range: [0, 300],
-        }),
-        this.getPlatFormConfig(1700, bottom - 500, 200, 20, false, true, {
-          speed: 1.2,
-          startingDirection: { x: 0, y: 1 },
-          range: [0, 300],
         }),
       ],
     };
 
-    return [segment1Config];
+    const segment4Config = {
+      width: 300,
+      platforms: [
+        this.getPlatFormConfig(150, bottom - 120, 200, 20, false, true, {
+          speed: 0.5,
+          startingDirection: { x: 0, y: 1 },
+          range: [0, 100],
+        }),
+      ],
+    };
+
+    return [segment1Config, segment2Config, segment3Config, segment4Config];
   }
 
   getPlatFormConfig(

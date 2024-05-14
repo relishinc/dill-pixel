@@ -1,5 +1,5 @@
 import { StorageAdapter } from '@relish-studios/dill-pixel';
-import type { V8Application } from '../V8Application';
+import type { V8Application } from '@/V8Application';
 
 export default class TestAdapter extends StorageAdapter<V8Application> {
   public destroy(): void {}

@@ -51,9 +51,12 @@ export class Platform extends SnapSolid<PlatformConfig> {
   type = 'Platform';
   private _startPos: Point;
 
-  constructor(config: Partial<PlatformConfigOpts> = {}) {
-    super(Platform.resolveConfig(config));
-    this.initialize();
+  constructor(config?: Partial<PlatformConfigOpts>) {
+    const hasConfig = config !== undefined;
+    super(hasConfig ? Platform.resolveConfig(config) : {});
+    if (hasConfig) {
+      this.initialize();
+    }
   }
 
   get collideables() {
@@ -114,7 +117,7 @@ export class Platform extends SnapSolid<PlatformConfig> {
   }
 
   reset() {
-    this.removeChild(this.view);
+    this.removeChildren();
   }
 
   protected handleCollisionChange(isColliding: boolean) {

@@ -1,9 +1,10 @@
 import { ActionDetail, ISpineAnimation, PointLike, resolvePointLike, Signal } from '@relish-studios/dill-pixel';
 
 import { gsap } from 'gsap';
-import { Bounds, Point, Pool, Rectangle, Texture } from 'pixi.js';
-import { Actor as SnapActor, Collision, Entity, System } from '../../../../src/plugins/physics/snap';
+import { Bounds, Point, Rectangle } from 'pixi.js';
+import { Actor as SnapActor, Collision, Entity } from '../../../../src/plugins/physics/snap';
 import { Platform } from './Platform';
+import { FX } from '@/entities/physics/FX';
 
 export class Player extends SnapActor {
   declare view: ISpineAnimation;
@@ -38,18 +39,13 @@ export class Player extends SnapActor {
   }
 
   public update(deltaTime: number) {
+    this._velocity.y =
+      this.system.gravity * deltaTime - (this._velocity.y < 0 ? this._jumpPower : -this.system.gravity * 0.25);
+
     if (this._isJumping) {
       this._jumpTimeElapsed += deltaTime;
-
-      this._jumpPower -= this._velocity.y < 0 ? this.speed * 0.3 : this.speed * this._jumpPower * 2;
-      if (this._jumpPower <= 0) {
-        this._jumpPower = 0;
-        this._resetJump();
-      }
+      this._jumpPower -= this._velocity.y < 0 ? 1 : 3;
     }
-
-    this._velocity.y =
-      this.system.gravity * deltaTime - (this._velocity.y < 0 ? this._jumpPower : -this.system.gravity * 0.5);
 
     this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
 
@@ -58,10 +54,12 @@ export class Player extends SnapActor {
         this.view.setAnimation('idle', true);
       }
     }
+
     if (this._hitHead && this._velocity.y < 0) {
-      this._jumpPower *= 0.25;
+      this._jumpPower = 0;
       this._hitHead = false;
     }
+
     this._isMoving = false;
   }
 
@@ -69,9 +67,21 @@ export class Player extends SnapActor {
     if (collision.bottom && pushingEntity.type === 'Platform' && (pushingEntity as Platform).canJumpThroughBottom) {
       return;
     }
-
-    console.log({ collision, colliding: collision.entity2, pushingEntity, direction });
-    this.onKilled.emit();
+    let shouldKill = false;
+    if (direction) {
+      if (direction.x < 0 && collision.left && collision.entity2.right <= this.left + 1) {
+        shouldKill = true;
+      } else if (direction.x > 0 && collision.right && collision.entity2.left >= this.right - 1) {
+        shouldKill = true;
+      } else if (direction.y < 0 && collision.top && collision.entity2.bottom <= this.top + 1) {
+        shouldKill = true;
+      } else if (direction.y > 0 && collision.bottom && collision.entity2.top >= this.bottom - 1) {
+        shouldKill = true;
+      }
+    }
+    if (shouldKill) {
+      this.onKilled.emit();
+    }
   }
 
   getWorldBounds(): Bounds | Rectangle {
@@ -110,11 +120,14 @@ export class Player extends SnapActor {
   }
 
   private _handleCollision(collision: Collision) {
-    if (collision.bottom) {
-      if (this.isRiding(collision.entity2)) {
-        this._resetJump();
-      }
-    } else if (collision.top) {
+    if (
+      (this._isJumping || !this._canJump) &&
+      this.velocity.y >= 0 &&
+      collision.bottom &&
+      this.isRiding(collision.entity2)
+    ) {
+      this._resetJump();
+    } else if (collision.top && collision.entity2.bottom <= this.top + 1) {
       this._hitHead = true;
     }
   }
@@ -132,9 +145,6 @@ export class Player extends SnapActor {
     switch (actionDetail.id) {
       case 'move_left':
         amount = -this.speed;
-        if (this.x <= 50) {
-          amount = 0;
-        }
         this.view.spine.scale.x = -1;
         this.moveX(amount, this._handleCollision);
         if (this.view.getCurrentAnimation() !== 'run') {
@@ -144,9 +154,6 @@ export class Player extends SnapActor {
         break;
       case 'move_right':
         amount = this.speed;
-        if (this.x >= this.app.size.width * 0.75) {
-          amount = 0;
-        }
         this.view.spine.scale.x = 1;
         this.moveX(amount, this._handleCollision);
         if (this.view.getCurrentAnimation() !== 'run') {
@@ -165,7 +172,7 @@ export class Player extends SnapActor {
     if (!this._isJumping && this._canJump) {
       this._canJump = false;
       this._isJumping = true;
-      this._jumpPower = this.system.gravity * 4;
+      this._jumpPower = this.system.gravity * 3;
       this._velocity.y = this.system.gravity - this._jumpPower;
       this._spawnJumpFx();
     }
@@ -177,75 +184,10 @@ export class Player extends SnapActor {
         speed: Math.random() * 4 + 1,
         color: Math.random() * 0xffffff,
       });
-      jumpFx.position.set(this.x, this.y - this.height * 0.5 - 50);
+      jumpFx.position.set(
+        this.x,
+        this.y - this.height * 0.5 - 50 + Math.random() * 50 * (Math.random() < 0.5 ? 1 : -1),
+      );
     }
-  }
-}
-
-class FX extends SnapActor {
-  static pool = new Pool<FX>(FX, 200);
-  type = 'FX';
-  passThroughTypes = ['FX', 'Player'];
-  vertVector: number = 0;
-  enabled = false;
-  speed = 2;
-  dir = Math.random() > 0.5 ? 1 : -1;
-  elapsed = 0;
-  numBounces = 0;
-
-  constructor() {
-    super();
-
-    this.view = this.add.sprite({
-      asset: Texture.WHITE,
-      width: 5,
-      height: 5,
-    });
-  }
-
-  update(deltaTime: number) {
-    if (!this.enabled) {
-      return;
-    }
-    this.moveX(this.dir * this.speed * deltaTime, this._reduceSpeed);
-    this.moveY((System.gravity - this.vertVector) * deltaTime, this._reduceSpeedAndBounce);
-    if (this.vertVector > 0) {
-      this.vertVector -= 1;
-    }
-    this.alpha -= 0.005;
-    this.elapsed += deltaTime;
-    if (this.elapsed > 100) {
-      this.die();
-    }
-  }
-
-  init(config: { speed: number; color: number }) {
-    this.alpha = 1;
-    this.speed = config.speed;
-    this.elapsed = 0;
-    this.view.tint = config.color;
-    this.system.container.addChild(this);
-    this.enabled = true;
-  }
-
-  reset() {
-    this.enabled = false;
-    this.elapsed = 0;
-    this.numBounces = 0;
-  }
-
-  die() {
-    this.system.container.removeChild(this);
-    FX.pool.return(this);
-  }
-
-  private _reduceSpeed() {
-    this.speed *= 0.5;
-  }
-
-  private _reduceSpeedAndBounce() {
-    this._reduceSpeed();
-    this.numBounces++;
-    this.vertVector = this.system.gravity / this.numBounces + this.system.gravity * 0.95;
   }
 }
