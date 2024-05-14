@@ -40,7 +40,7 @@ export class Application extends DillPixelApplication {
       weight?: number | string;
     };
   }[] {
-    return [{ family: 'arboria', data: { weight: 400 } }];
+    return [{ family: 'Kumbh Sans', data: { weight: 400 } }];
   }
 
   protected createSplashScreen(): DillPixelSplashScreen {
@@ -70,6 +70,7 @@ export class Application extends DillPixelApplication {
     this.state.register(SignalsExample);
     this.state.register(ButtonExample);
     this.state.register(BitmapFontsExample);
+    //this.state.getRegisteredStateIds()
   }
 
   protected createAssetMap(): void {
@@ -77,16 +78,6 @@ export class Application extends DillPixelApplication {
   }
 
   async loadHTMLTextStyles(): Promise<void> {
-    // load a style for use later:
-    // await loadAndAddHTMLTextStyle(
-    //   'arboria',
-    //   FONT_ARBORIA,
-    //   { fontFamily: FONT_ARBORIA, fontSize: 24, fill: 'white', fontWeight: 'normal', align: 'center' },
-    //   {
-    //     url: 'assets/fonts/arboria.woff2',
-    //     weight: 'normal',
-    //   },
-    // );
     return Promise.resolve();
   }
 

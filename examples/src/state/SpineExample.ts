@@ -23,9 +23,8 @@ export class SpineExample extends BaseState {
   init(pSize: Point) {
     super.init(pSize);
 
-    this.setHeaderText('Spine Example');
-
-    this._mainTitle.y = -150;
+    this.setHeaderText('Spine example');
+    this.setMainText('Click anywhere to change the animation');
 
     this._spine = this.add.spine({
       name: 'spineboy-pro',
@@ -44,7 +43,7 @@ export class SpineExample extends BaseState {
   setAnimation() {
     this._spine.state.setAnimation(0, this._animations[this._currentAnimation], true);
     this.setMainText(
-      `Current Animation: "${this._animations[this._currentAnimation]}"\nClick anywhere to change the animation.`,
+      `Current animation: "${this._animations[this._currentAnimation]}"\nClick anywhere to change the animation`,
     );
   }
 

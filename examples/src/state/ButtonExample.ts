@@ -32,7 +32,7 @@ export class ButtonExample extends BaseState {
     addKeyboardLayer();
     super.init(pSize);
     //
-    this.setHeaderText('Button Example');
+    this.setHeaderText('Button example');
     this.setMainText('');
 
     // create a button with some basic textures

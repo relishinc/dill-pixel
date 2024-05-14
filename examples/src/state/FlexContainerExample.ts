@@ -41,7 +41,9 @@ export class FlexContainerExample extends BaseState {
     this.addGUI();
     this.configureGUI();
 
-    this.setHeaderText('Flex Container Example');
+    this.setHeaderText('Flex container example');
+    this.setMainText('Use the controls to adjust the flex container properties');
+
     this.backing = this.add.coloredSprite(0x000000, [size.x, size.y], 'rectangle', {}, 0.25, [0, 0], 0);
 
     this.flexContainer = this.add.flexContainer({

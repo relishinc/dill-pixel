@@ -11,7 +11,7 @@ export class MatterPhysicsExample extends BaseState {
   }
 
   public static get Assets(): AssetMapData[] {
-    return [new TextureAsset('relish-logo-circle', AssetType.PNG)];
+    return [new TextureAsset('jar', AssetType.PNG)];
   }
 
   public get physics(): MatterPhysics {
@@ -27,8 +27,8 @@ export class MatterPhysicsExample extends BaseState {
   public async init(pSize: Point) {
     super.init(pSize);
     this.onKeyup = this.onKeyup.bind(this);
-    this.setHeaderText('Matter Physics Example');
-    this.setMainText("Click anywhere to add a physics enabled sprite.\nPress the 'D' key to toggle debug mode.");
+    this.setHeaderText('Matter physics example');
+    this.setMainText("Click anywhere to add a physics-enabled sprite.\nPress the 'D' key to toggle debug mode.");
 
     await this.startPhysics();
   }
@@ -69,11 +69,11 @@ export class MatterPhysicsExample extends BaseState {
       if (type === PhysicsBodyType.CIRCLE) {
         gfx.drawCircle(0, 0, (size as number) * 0.5);
         gfx.endFill();
-        const useLogo = Math.random() > 0.5;
+        const useJar = Math.random() > 0.5;
 
         // test with a sprite that extends the base MatterPhysicsSprite
         const spr: MatterPhysicsSpriteExample = new MatterPhysicsSpriteExample(
-          useLogo ? 'relish-logo-circle' : this.app.renderer.generateTexture(gfx),
+          useJar ? 'jar' : this.app.renderer.generateTexture(gfx),
           undefined,
           size,
           type,

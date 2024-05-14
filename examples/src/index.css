@@ -1,34 +1,114 @@
-:root {
-    --app-width: 100dvw;
-    --app-height: 100dvh
-}
+@import url('https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;600;700;800&display=swap');
 
-@font-face {
-    font-family: 'arboria';
-    src: url(./assets/fonts/arboria.woff2) format('woff2');
+:root {
+  --app-width: 100dvw;
+  --app-height: 100dvh;
+  --sidebar-width: 250px;
 }
 
 :root {
-    --app-height: 100%;
+  --app-height: 100%;
 }
 
-body, html {
-    position: fixed;
-    margin: 0;
-    padding: 0;
-    width: var(--app-width, 100%);
-    height: var(--app-height, 100%);
-    background-color: #000;
-    overflow: hidden;
+body,
+html {
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  width: var(--app-width, 100%);
+  height: var(--app-height, 100%);
+  background-color: #1f2937;
+  overflow: hidden;
+  font-family: 'Kumbh Sans', 'sans-serif';
+  color: #fff;
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+body {
+  display: flex;
+  padding: 1rem;
+  height: 100vh;
+  gap: 1rem;
+  align-items: stretch;
 }
 
 #game-container {
-    position: relative;
-    display: block;
-    width: 100%;
-    height: 100%;
+  position: relative;
+  display: block;
+  flex: auto;
+  overflow: hidden;
+  border-radius: 1rem;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.5);
 }
 
+/* sidebar styles */
 
+#sidebar {
+  flex: 0 0 var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  overflow: auto;
+  border-radius: 1rem;
+  padding: 1rem;
+  background: #374151;
 
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: 90px;
+    margin-top: -1rem;
+    text-decoration: none;
 
+    .logo {
+      width: 50px;
+      display: block;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0;
+      color: #fff;
+    }
+
+  }
+
+  :is(nav) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+    font-size: 0.85rem;
+    color: #aaa;
+
+    a {
+      color: currentColor;
+      text-decoration: none;
+      padding: 0.2em 0;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    a.active {
+      color: #fff;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --sidebar-width: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  #sidebar {
+    display: none;
+  }
+}

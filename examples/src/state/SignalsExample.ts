@@ -14,7 +14,7 @@ export class SignalsExample extends BaseState {
   async init(pSize: IPoint) {
     super.init(pSize);
 
-    this.setHeaderText('Signals Example');
+    this.setHeaderText('Signals example');
     this.setMainText('Check the console');
 
     // register the popup

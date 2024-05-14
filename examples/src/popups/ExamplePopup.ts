@@ -33,7 +33,7 @@ export default class ExamplePopup extends Popup {
     super.show(token);
     this._text = this.add.text({
       value: `This is a popup ${this._popupData}`,
-      style: { align: 'center', fill: 'white', fontSize: 24, fontFamily: 'arboria' },
+      style: { align: 'center', fill: 'white', fontSize: 24, fontFamily: 'Kumbh Sans' },
       anchor: 0.5,
     });
   }

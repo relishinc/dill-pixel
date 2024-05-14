@@ -33,8 +33,8 @@ export class FocusablesExample extends BaseState {
     super.init(pSize);
     addKeyboardLayer();
 
-    this.setHeaderText('Sprite Example');
-    this.setMainText('Static and Texture Atlas Sprites');
+    this.setHeaderText('Focusables example');
+    this.setMainText('Use the tab key to cycle through the focusable objects');
 
     const pickle: Sprite = this.add.sprite({ asset: 'pickle' });
     pickle.focusable = true;

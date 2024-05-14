@@ -34,8 +34,8 @@ export class PopupExample extends BaseState {
   init(pSize: Point) {
     super.init(pSize);
     //
-    this.setHeaderText('Popup Example');
-    this.setMainText('Click anywhere to open a popup.');
+    this.setHeaderText('Popup example');
+    this.setMainText('Click the button to open a popup');
 
     // register the popup
     this.app.popups.register(ExamplePopup);
@@ -43,7 +43,7 @@ export class PopupExample extends BaseState {
 
     this.button = this.add.container({
       alpha: 1,
-      position: [this.app.size.x * 0.5 - 110, -this.app.size.y * 0.5 + 200],
+      position: [0,250],
     });
 
     this.button.add.coloredSprite({ color: 0x00ff00, size: [200, 100], shape: 'rounded_rectangle', radius: 10 });

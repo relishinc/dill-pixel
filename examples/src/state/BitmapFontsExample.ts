@@ -23,7 +23,7 @@ export class BitmapFontsExample extends BaseState {
   async init(pSize: Point) {
     super.init(pSize);
 
-    this.setHeaderText('Bitmap Fonts Example');
+    this.setHeaderText('Bitmap fonts example');
 
     const list = this.add.flexContainer({
       flexDirection: 'column',

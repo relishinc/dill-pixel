@@ -15,7 +15,7 @@ export class ContainerEditModeExample extends BaseState {
   init(pSize: Point) {
     super.init(pSize);
 
-    this.setHeaderText('Container Edit Mode Example');
+    this.setHeaderText('Container edit mode example');
     this.setMainText(
       'The state is in edit mode.\nHover over a sprite to see its bounds and coordinates.\nClick and drag it to move it.\nWhen moved, the editor will log the positions\nof all moved sprites to the developer console.',
     );

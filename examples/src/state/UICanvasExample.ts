@@ -24,7 +24,7 @@ export class UICanvasExample extends BaseState {
   async init(pSize: Point) {
     super.init(pSize);
 
-    this.setHeaderText('UICanvas Example');
+    this.setHeaderText('UICanvas example');
 
     this.ui = this.add.uiCanvas({ padding: { x: 100, y: 50 }, debug: true });
 

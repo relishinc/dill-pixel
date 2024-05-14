@@ -15,8 +15,8 @@ export class SpriteExample extends BaseState {
   init(pSize: Point) {
     super.init(pSize);
 
-    this.setHeaderText('Sprite Example');
-    this.setMainText('Static and Texture Atlas Sprites');
+    this.setHeaderText('Sprite example');
+    this.setMainText('Static and texture atlas sprites');
 
     // register the popup
     this.app.popups.register(ExamplePopup);

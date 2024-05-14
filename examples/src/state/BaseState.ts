@@ -35,36 +35,35 @@ export class BaseState extends State<Application> {
     // add the layout
     this.createLayout();
     this._layout.alpha = 0;
-    this._headerBg = this._header.add.coloredSprite(0x0, [this.app.size.x, 80], 'rectangle', {}, 0.2, 0, 0);
+    this._headerBg = this._header.add.coloredSprite(0x0, [this.app.size.x, 90], 'rectangle', {}, 0.1, 0, 0);
     this._title = this._header.add.text(
       '',
       {
-        fontFamily: 'arboria',
-        fontSize: 54,
+        fontFamily: 'Kumbh Sans',
+        fontSize: 36,
         fill: 'white',
       },
       0,
-      [15, 10],
+      [30, 22],
       0,
     );
 
-    this._mainTitle = this._main.add.text(
+    this._mainTitle = this._header.add.text(
       '',
       {
-        fontFamily: 'arboria',
-        fill: 0xffffff,
-        fontSize: 20,
-        align: 'center',
+        fontFamily: 'Kumbh Sans',
+        fill: 0x222222,
+        fontSize: 22,
       },
-      0.5,
       0,
-      0.5,
+      [30, 120],
+      0,
     );
 
     this._footerTitle = this._footer.add.text(
-      `Ⓒ ${new Date().getFullYear()} Relish Digital`,
+      `Ⓒ ${new Date().getFullYear()} Relish Studios`,
       {
-        fontFamily: 'arboria',
+        fontFamily: 'Kumbh Sans',
         fill: 0xffffff,
         fontSize: 14,
       },
@@ -85,11 +84,11 @@ export class BaseState extends State<Application> {
       })
       .fromTo(
         this._header,
-        { y: '-=200' },
+        { y: '-=120' },
         {
           y: -this.app.size.y * 0.5,
-          duration: 0.4,
-          ease: 'sine.out',
+          duration: 0.65,
+          ease: 'circ.inOut',
         },
       )
       .fromTo(
@@ -150,7 +149,7 @@ export class BaseState extends State<Application> {
     this.gui = new dat.GUI({ name: 'Controls', closeOnTop: true });
     this.app.view.parentNode?.appendChild(this.gui.domElement.parentNode);
     (this.gui.domElement.parentNode as HTMLElement).style.cssText = `position: absolute;
-    top: 0;
+    top: 20px;
     left: 0;
     right: 86px;
     height: 0;

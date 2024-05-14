@@ -1,7 +1,7 @@
 import { BaseState } from '@/state/BaseState';
 import { AssetMapData, getHTMLTextStyle, loadAndAddHTMLTextStyle } from '@relish-studios/dill-pixel';
 import { Point } from 'pixi.js';
-import { FONT_ARBORIA } from '../utils/Constants';
+import { FONT_ARBORIA, FONT_TIMES } from '../utils/Constants';
 
 export class HTMLTextStyleExample extends BaseState {
   public static get NAME(): string {
@@ -15,10 +15,11 @@ export class HTMLTextStyleExample extends BaseState {
   async init(pSize: Point) {
     super.init(pSize);
 
-    this.setHeaderText('HTML Text Example');
-    this.setMainText('See how to load HTML Text styles to use later on');
+    this.setHeaderText('HTML text example');
+    this.setMainText('Load HTML text styles and apply them to text elements');
 
-    const text = this.add.htmlText('This will render in times', { fontFamily: FONT_ARBORIA, fontSize: 24 }, 1, [0, 75]);
+    // built-in web fonts
+    const text = this.add.htmlText('This will render in Times', { fontFamily: FONT_TIMES, fontSize: 24 }, 1, [0, -30], 0.5);
 
     // load and add the test style using the helper
     await loadAndAddHTMLTextStyle(
@@ -31,23 +32,10 @@ export class HTMLTextStyleExample extends BaseState {
       },
     );
 
-    // manually load and add it
-    /* const loadedStyle =await loadHTMLTextStyle(
-			FONT_ARBORIA,
-			{ fontFamily: FONT_ARBORIA, fontSize: 24, fill: 'white', fontWeight: 'normal' },
-			{
-				url: 'assets/fonts/arboria.woff2',
-				weight: 'normal',
-			},
-		);
-
-		addHTMLTextStyle('arboria', loadedStyle);
-		*/
-
     // retrieve the style
     const style = getHTMLTextStyle('arboria');
 
     // and use it
-    this.add.htmlText('This will render in arboria', style, 1, [0, 110]);
+    this.add.htmlText('This will render in Arboria', style, 1, [0, 30], 0.5);
   }
 }

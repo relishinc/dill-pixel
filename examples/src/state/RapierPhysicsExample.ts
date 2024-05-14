@@ -19,7 +19,7 @@ export class RapierPhysicsExample extends BaseState {
   }
 
   public static get Assets(): AssetMapData[] {
-    return [new TextureAsset('relish-logo-circle', AssetType.PNG)];
+    return [new TextureAsset('jar', AssetType.PNG)];
   }
 
   public get physics(): RapierPhysics {
@@ -35,8 +35,8 @@ export class RapierPhysicsExample extends BaseState {
   public init(pSize: Point) {
     super.init(pSize);
     this.onKeyup = this.onKeyup.bind(this);
-    this.setHeaderText('Rapier Physics Example');
-    this.setMainText("Click anywhere to add a physics enabled sprite.\nPress the 'D' key to toggle debug mode.");
+    this.setHeaderText('Rapier physics example');
+    this.setMainText("Click anywhere to add a physics-enabled sprite.\nPress the 'D' key to toggle debug mode.");
 
     this.startPhysics();
   }
@@ -80,9 +80,9 @@ export class RapierPhysicsExample extends BaseState {
           if (type === PhysicsBodyType.CIRCLE) {
             gfx.drawCircle(0, 0, (size as number) * 0.5);
             gfx.endFill();
-            const useLogo = Math.random() > 0.5;
+            const useJar = Math.random() > 0.5;
             this.physics.add.physicsSprite({
-              asset: useLogo ? 'relish-logo-circle' : this.app.renderer.generateTexture(gfx),
+              asset: useJar ? 'jar' : this.app.renderer.generateTexture(gfx),
               size,
               bodyType: type,
               mass: 1,
