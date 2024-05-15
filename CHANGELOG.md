@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.40.0](https://github.com/relishinc/dill-pixel/compare/v2.39.15...v2.40.0) (2024-05-15)
+
+
+### Features
+
+* overhauling examples site ([5434384](https://github.com/relishinc/dill-pixel/commit/543438455c9a47928084300159416186c2aa1095))
+
+
+### Bug Fixes
+
+* added resizeDebounce as config param ([7a082a2](https://github.com/relishinc/dill-pixel/commit/7a082a2894fe161978b10dfbbc28949ceae7e2b3))
+* css tweaks, eventMode in example ([ae7c5df](https://github.com/relishinc/dill-pixel/commit/ae7c5dfe828b5b9cb0f897e732064a3bcd7747aa))
+* default state ([5906226](https://github.com/relishinc/dill-pixel/commit/5906226481be9c5d375cea431b15c74fb744f9c6))
+* default state ([bd35ec6](https://github.com/relishinc/dill-pixel/commit/bd35ec6901f653fa06238e4803f0aebf33423807))
+
 ## [2.39.15](https://github.com/relishinc/dill-pixel/compare/v2.39.14...v2.39.15) (2024-05-10)
 
 
