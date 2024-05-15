@@ -5,8 +5,8 @@ import { Application } from '../Application';
 export class MyScreen extends State<Application> {
   public static NAME: string = 'MyScreen';
 
-  protected _bg: Sprite;
-  protected _title: Text;
+  protected _bg!: Sprite;
+  protected _title!: Text;
 
   public init(pSize: IPoint) {
     super.init(pSize);
