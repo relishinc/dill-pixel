@@ -1,5 +1,5 @@
-import { Application } from './Application';
 import { create } from '@relish-studios/dill-pixel';
+import { Application } from './Application';
 import './index.css';
 
 create(
@@ -7,10 +7,12 @@ create(
   {
     antialias: false,
     useNewResizeManager: true,
+    autoDensity: false,
     resizeOptions: {
       minSize: { width: 375, height: 700 },
     },
-    autoDensity: false,
+    resolution: Math.max(window.devicePixelRatio, 2),
+    backgroundColor: 0x000000,
   },
   Application.containerID,
 );

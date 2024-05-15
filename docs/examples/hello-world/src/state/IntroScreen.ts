@@ -27,6 +27,7 @@ export class IntroScreen extends State<Application> {
       anchor: 0.5,
     });
 
+    this._title.eventMode = 'static';
     this._title.on('pointerdown', () => {
       this.app.state.transitionTo('GameScreen');
     });
