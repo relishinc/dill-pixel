@@ -1,15 +1,15 @@
-import * as HLF from '@relish-studios/dill-pixel';
+import { LoadScreen } from '@relish-studios/dill-pixel';
 import { gsap, Sine } from 'gsap';
-import * as PIXI from 'pixi.js';
+import { Sprite, Point } from 'pixi.js';
 
-export class Interstitial extends HLF.LoadScreen {
+export class Interstitial extends LoadScreen {
   public static NAME: string = 'Interstitial';
 
-  private _bg!: PIXI.Sprite;
+  private _bg!: Sprite;
   private _loaded: boolean = false;
 
-  public init(pSize: PIXI.Point, pData?: any) {
-    super.init(pSize, pData);
+  public init(pSize: Point) {
+    super.init(pSize);
     this._bg = this.add.sprite({ asset: 'black2x2', alpha: 0, scale: [this._size.x, this._size.y] });
   }
 
@@ -37,7 +37,7 @@ export class Interstitial extends HLF.LoadScreen {
     pOnComplete();
   }
 
-  public onResize(pSize: PIXI.Point) {
+  public onResize(pSize: Point) {
     super.onResize(pSize);
 
     if (this._bg !== undefined) {

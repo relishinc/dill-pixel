@@ -27,7 +27,6 @@
     "docs": "npm run build:docs",
     "build:docs": "cd ./docs && npm run build",
     "dev:docs": "cd ./docs && npm run dev",
-    "typedoc": "npm run version && typedoc --out typedoc src",
     "version": "node ./scripts/generate-version.js"
   },
   "repository": {
@@ -55,7 +54,6 @@
     "relishinc-prettier": "github:relishinc/prettier",
     "standard-version": "^9.5.0",
     "tslint": "^6.1.3",
-    "typedoc": "^0.25.1",
     "typescript": "^5.2.2"
   },
   "dependencies": {

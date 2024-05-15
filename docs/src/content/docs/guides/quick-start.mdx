@@ -46,7 +46,7 @@ We recommend setting up your project directory as follows:
 	- index.ts
 	- Application.ts
 	- assets
-		- *audio, fonts, images…*
+		- *audio, fonts, images, spritesheets…*
 	- states
 		- …		
 	- …
@@ -66,29 +66,19 @@ Use the following templates to populate the above files:
 		"scripts": {
 			"start": "vite",
 			"dev": "vite",
-			"build": "vite build",
-			"lint": "eslint src --ext .ts",
-			"lint-fix": "eslint src --ext .ts --fix",
-			"audio": "node src/audio/compress_audio.js",
-			"spritesheets": "node src/assets/images/export_spritesheets"
+			"build": "vite build"
 		},
 		"author": "Me<me@myname.com>",
 		"devDependencies": {
-			"@typescript-eslint/eslint-plugin": "latest",
-			"@typescript-eslint/parser": "latest",
-			"prettier": "^3.0.3",
-			"relishinc-prettier": "github:relishinc/prettier",
 			"typescript": "^5.2.2",
 			"vite": "^4.2.1",
 			"vite-plugin-html": "^3.2.0",
 			"vite-plugin-singlefile": "^0.13.5",
-			"vite-plugin-static-copy": "^0.13.1",
 			"vite-plugin-top-level-await": "^1.3.1",
 			"vite-plugin-wasm": "^3.2.2"
 		},
 		"dependencies": {
-			"@pixi/ui": "^0.9.0",
-			"dill-pixel": "latest",
+			"dill-pixel": "latest"
 		}
 	}
 	```
@@ -156,27 +146,6 @@ Use the following templates to populate the above files:
 	}));
 	```
 	</TabItem>
-	<TabItem label="tsconfig.json">
-	```json
-	{
-		"compilerOptions": {
-			"rootDir": ".",
-			"baseUrl": ".",
-			"paths": {
-				"@/*": [
-					"src/*"
-				]
-			},
-			"module": "ESNext",
-			"moduleResolution": "bundler"
-		},
-		"include": [
-			"**/*.ts"
-		]
-	}
-
-	```
-	</TabItem>
 	<TabItem label="index.html">
 	```html
 	<!DOCTYPE html>
@@ -233,7 +202,7 @@ Use the following templates to populate the above files:
 			autoDensity: false,
 		},
 		Application.containerID,
-)
+	)
 	```
 	</TabItem>
 	<TabItem label="src/Application.ts">
