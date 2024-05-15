@@ -19,6 +19,7 @@ export class Player extends SnapActor {
   private _jumpTimeElapsed: number = 0;
   private _hitHead: boolean = false;
   private _isMoving: boolean = false;
+  private _inPlay: boolean = false;
 
   constructor() {
     super();
@@ -55,6 +56,9 @@ export class Player extends SnapActor {
   }
 
   public update(deltaTime: number) {
+    if (!this._inPlay) {
+      return;
+    }
     this._velocity.y =
       this.system.gravity * deltaTime - (this._velocity.y < 0 ? this._jumpPower : -this.system.gravity * 0.25);
 
@@ -72,7 +76,6 @@ export class Player extends SnapActor {
     }
 
     if (this._hitHead && this._velocity.y < 0) {
-      console.log('hit head');
       this._jumpPower = 0;
       this._hitHead = false;
     }
@@ -97,7 +100,7 @@ export class Player extends SnapActor {
       }
     }
     if (shouldKill) {
-      this.onKilled.emit();
+      this.kill();
     }
   }
 
@@ -114,11 +117,24 @@ export class Player extends SnapActor {
     this.alpha = 0;
     this.x = x;
     this.y = y;
-
-    gsap.to(this, { alpha: 1, duration: 0.5, delay });
+    gsap.to(this, {
+      alpha: 1,
+      yoyo: true,
+      repeat: 4,
+      duration: 0.5,
+      delay,
+      onComplete: () => {
+        this._inPlay = true;
+      },
+    });
   }
 
   public kill() {
+    if (!this._inPlay) {
+      return;
+    }
+    this._inPlay = false;
+    this._spawnFX();
     this.onKilled.emit();
   }
 
@@ -162,6 +178,9 @@ export class Player extends SnapActor {
   }
 
   private _handleAction(actionDetail: ActionDetail) {
+    if (!this._inPlay) {
+      return;
+    }
     let amount;
     switch (actionDetail.id) {
       case 'move_left':
@@ -201,20 +220,16 @@ export class Player extends SnapActor {
       this._isJumping = true;
       this._jumpPower = this.system.gravity * 3;
       this._velocity.y = this.system.gravity - this._jumpPower;
-      this._spawnJumpFx();
     }
   }
 
-  private _spawnJumpFx() {
-    for (let i = 0; i < 5; i++) {
-      const jumpFx = FX.pool.get({
+  private _spawnFX() {
+    for (let i = 0; i < 20; i++) {
+      const fx = FX.pool.get({
         speed: Math.random() * 4 + 1,
         color: Math.random() * 0xffffff,
       });
-      jumpFx.position.set(
-        this.x,
-        this.y - this.height * 0.5 - 50 + Math.random() * 50 * (Math.random() < 0.5 ? 1 : -1),
-      );
+      fx.position.set(this.x, this.y - this.height * 0.5 + Math.random() * 50 * (Math.random() < 0.5 ? 1 : -1));
     }
   }
 }

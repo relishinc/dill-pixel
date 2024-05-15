@@ -177,8 +177,8 @@ export class SnapPhysicsScene extends BaseScene {
     });
 
     // second junction
-    this.addPlatForm(1200, bottom - 183, 30, 350);
-    this.addPlatForm(1265, bottom - 200, 100, 20, false);
+    this.addPlatForm(1200, bottom - 150, 30, 300);
+    this.addPlatForm(1265, bottom - 140, 100, 20, false);
     // vert
     this.addPlatForm(1110, bottom - 200, 150, 20, false, true, {
       speed: 1,
@@ -253,7 +253,7 @@ export class SnapPhysicsScene extends BaseScene {
       this.player.onKilled.connect(this._handlePlayerKilled);
     }
     this.level.add.existing(this.player);
-    this.player.spawn({ x: this.doors[0].x, y: this.doors[0].y }, delay);
+    this.player.spawn({ x: this.doors[0].x, y: this.doors[0].y + this.doors[0].height * 0.5 + 2 }, delay);
   }
 
   addControls() {
@@ -309,7 +309,6 @@ export class SnapPhysicsScene extends BaseScene {
   }
 
   _handlePlayerKilled() {
-    this.removeChild(this.player);
     this.addPlayer();
   }
 

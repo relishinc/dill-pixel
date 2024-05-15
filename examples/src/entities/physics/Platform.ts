@@ -108,10 +108,10 @@ export class Platform extends SnapSolid<PlatformConfig> {
       this.config.movementConfig.speed.y * deltaTime * this.config.movementConfig.startingDirection.y,
     );
 
-    if (Math.abs(this.x - this._startPos.x) >= this.config.movementConfig.range.x) {
+    if (Math.round(Math.abs(this.x - this._startPos.x)) >= this.config.movementConfig.range.x) {
       this.config.movementConfig.startingDirection.x *= -1;
     }
-    if (Math.abs(this.y - this._startPos.y) >= this.config.movementConfig.range.y) {
+    if (Math.round(Math.abs(this.y - this._startPos.y)) >= this.config.movementConfig.range.y) {
       this.config.movementConfig.startingDirection.y *= -1;
     }
   }

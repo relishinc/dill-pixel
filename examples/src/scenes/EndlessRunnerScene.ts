@@ -27,7 +27,7 @@ export class EndlessRunnerScene extends BaseScene {
     useCamera: false,
     zoom: 1,
     useSpatialHash: true,
-    gridCellSize: 200,
+    gridCellSize: 300,
     debug: true,
   };
   private _zoomController: GUIController;
@@ -40,20 +40,6 @@ export class EndlessRunnerScene extends BaseScene {
   }
 
   configureGUI() {
-    this.gui
-      .add(this.config, 'useCamera')
-      .onChange(() => {
-        this._handleUseCameraChanged();
-      })
-      .name('Use Camera');
-
-    this._zoomController = this.gui
-      .add(this.config, 'zoom', 0.75, 2, 0.05)
-      .onChange(() => {
-        this._handleCameraZoomChanged();
-      })
-      .name('Camera Zoom');
-
     const spatialHashFolder = this.gui.addFolder('Spatial Hash Collisions');
     spatialHashFolder.open();
 
@@ -97,9 +83,9 @@ export class EndlessRunnerScene extends BaseScene {
       debug: false,
       boundary: {
         width: 2400,
-        height: this.app.size.height - 200,
+        height: this.app.size.height - 300,
         thickness: 20,
-        padding: 0,
+        padding: 100,
         sides: ['bottom'],
       },
       useSpatialHashGrid: this.config.useSpatialHash,
@@ -233,6 +219,7 @@ export class EndlessRunnerScene extends BaseScene {
     };
 
     return [
+      segment4Config,
       segment2Config,
       segment0Config,
       segment1Config,
@@ -275,7 +262,7 @@ export class EndlessRunnerScene extends BaseScene {
       this.player.onKilled.connect(this._handlePlayerKilled);
     }
     this.level.add.existing(this.player);
-    this.player.spawn({ x: 100, y: -100 }, delay);
+    this.player.spawn({ x: 100, y: 200 }, delay);
   }
 
   addControls() {
@@ -330,8 +317,7 @@ export class EndlessRunnerScene extends BaseScene {
     return btn;
   }
 
-  _handlePlayerKilled() {
-    this.removeChild(this.player);
+  async _handlePlayerKilled() {
     this.addPlayer();
   }
 
