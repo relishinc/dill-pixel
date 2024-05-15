@@ -13,7 +13,7 @@ title: "IBitmapFontCharData"
 
 #### Source
 
-[src/load/assets/FontAsset.ts:17](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/FontAsset.ts#L17)
+[src/load/assets/FontAsset.ts:17](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/assets/FontAsset.ts#L17)
 
 ***
 
@@ -23,7 +23,7 @@ title: "IBitmapFontCharData"
 
 #### Source
 
-[src/load/assets/FontAsset.ts:19](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/FontAsset.ts#L19)
+[src/load/assets/FontAsset.ts:19](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/assets/FontAsset.ts#L19)
 
 ***
 
@@ -33,7 +33,7 @@ title: "IBitmapFontCharData"
 
 #### Source
 
-[src/load/assets/FontAsset.ts:18](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/FontAsset.ts#L18)
+[src/load/assets/FontAsset.ts:18](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/assets/FontAsset.ts#L18)
 
 ***
 
@@ -43,7 +43,7 @@ title: "IBitmapFontCharData"
 
 #### Source
 
-[src/load/assets/FontAsset.ts:16](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/FontAsset.ts#L16)
+[src/load/assets/FontAsset.ts:16](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/assets/FontAsset.ts#L16)
 
 ***
 
@@ -53,7 +53,7 @@ title: "IBitmapFontCharData"
 
 #### Source
 
-[src/load/assets/FontAsset.ts:14](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/FontAsset.ts#L14)
+[src/load/assets/FontAsset.ts:14](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/assets/FontAsset.ts#L14)
 
 ***
 
@@ -63,4 +63,4 @@ title: "IBitmapFontCharData"
 
 #### Source
 
-[src/load/assets/FontAsset.ts:15](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/FontAsset.ts#L15)
+[src/load/assets/FontAsset.ts:15](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/assets/FontAsset.ts#L15)

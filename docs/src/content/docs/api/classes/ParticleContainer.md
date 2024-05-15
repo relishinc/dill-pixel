@@ -40,7 +40,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/ParticleContainer.ts:40](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ParticleContainer.ts#L40)
+[src/gameobjects/ParticleContainer.ts:40](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ParticleContainer.ts#L40)
 
 ## Properties
 
@@ -50,7 +50,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/ParticleContainer.ts:33](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ParticleContainer.ts#L33)
+[src/gameobjects/ParticleContainer.ts:33](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ParticleContainer.ts#L33)
 
 ***
 
@@ -60,7 +60,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/ParticleContainer.ts:32](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ParticleContainer.ts#L32)
+[src/gameobjects/ParticleContainer.ts:32](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ParticleContainer.ts#L32)
 
 ***
 
@@ -70,7 +70,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/ParticleContainer.ts:31](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ParticleContainer.ts#L31)
+[src/gameobjects/ParticleContainer.ts:31](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ParticleContainer.ts#L31)
 
 ## Accessors
 
@@ -84,7 +84,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/ParticleContainer.ts:81](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ParticleContainer.ts#L81)
+[src/gameobjects/ParticleContainer.ts:81](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ParticleContainer.ts#L81)
 
 ***
 
@@ -98,7 +98,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/ParticleContainer.ts:89](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ParticleContainer.ts#L89)
+[src/gameobjects/ParticleContainer.ts:89](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ParticleContainer.ts#L89)
 
 ***
 
@@ -118,7 +118,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/ParticleContainer.ts:68](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ParticleContainer.ts#L68)
+[src/gameobjects/ParticleContainer.ts:68](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ParticleContainer.ts#L68)
 
 ***
 
@@ -132,7 +132,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/ParticleContainer.ts:85](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ParticleContainer.ts#L85)
+[src/gameobjects/ParticleContainer.ts:85](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ParticleContainer.ts#L85)
 
 ## Methods
 
@@ -154,7 +154,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/ParticleContainer.ts:93](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ParticleContainer.ts#L93)
+[src/gameobjects/ParticleContainer.ts:93](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ParticleContainer.ts#L93)
 
 ***
 
@@ -168,7 +168,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/ParticleContainer.ts:102](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ParticleContainer.ts#L102)
+[src/gameobjects/ParticleContainer.ts:102](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ParticleContainer.ts#L102)
 
 ***
 
@@ -182,7 +182,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/ParticleContainer.ts:98](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ParticleContainer.ts#L98)
+[src/gameobjects/ParticleContainer.ts:98](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ParticleContainer.ts#L98)
 
 ***
 
@@ -200,7 +200,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/ParticleContainer.ts:108](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ParticleContainer.ts#L108)
+[src/gameobjects/ParticleContainer.ts:108](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ParticleContainer.ts#L108)
 
 ***
 
@@ -218,4 +218,4 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/ParticleContainer.ts:112](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ParticleContainer.ts#L112)
+[src/gameobjects/ParticleContainer.ts:112](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ParticleContainer.ts#L112)

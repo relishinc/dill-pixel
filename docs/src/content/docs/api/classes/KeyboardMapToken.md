@@ -29,7 +29,7 @@ title: "KeyboardMapToken"
 
 #### Source
 
-[src/input/KeyboardMapToken.ts:10](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardMapToken.ts#L10)
+[src/input/KeyboardMapToken.ts:10](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/KeyboardMapToken.ts#L10)
 
 ## Properties
 
@@ -39,7 +39,7 @@ title: "KeyboardMapToken"
 
 #### Source
 
-[src/input/KeyboardMapToken.ts:8](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardMapToken.ts#L8)
+[src/input/KeyboardMapToken.ts:8](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/KeyboardMapToken.ts#L8)
 
 ***
 
@@ -49,7 +49,7 @@ title: "KeyboardMapToken"
 
 #### Source
 
-[src/input/KeyboardMapToken.ts:7](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardMapToken.ts#L7)
+[src/input/KeyboardMapToken.ts:7](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/KeyboardMapToken.ts#L7)
 
 ## Methods
 
@@ -87,7 +87,7 @@ a set of KeyboardMapToken that makes a column in keyboard navigation
 
 #### Source
 
-[src/input/KeyboardMapToken.ts:49](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardMapToken.ts#L49)
+[src/input/KeyboardMapToken.ts:49](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/KeyboardMapToken.ts#L49)
 
 ***
 
@@ -125,7 +125,7 @@ a set of KeyboardMapToken that makes a row in keyboard navigation
 
 #### Source
 
-[src/input/KeyboardMapToken.ts:28](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardMapToken.ts#L28)
+[src/input/KeyboardMapToken.ts:28](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/KeyboardMapToken.ts#L28)
 
 ***
 
@@ -167,4 +167,4 @@ a set of KeyboardMapToken that makes a table in keyboard navigation
 
 #### Source
 
-[src/input/KeyboardMapToken.ts:74](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardMapToken.ts#L74)
+[src/input/KeyboardMapToken.ts:74](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/KeyboardMapToken.ts#L74)

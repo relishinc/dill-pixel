@@ -51,7 +51,7 @@ resolution: utils.isMobile.any === false ? 2 : (window.devicePixelRatio > 1 ? 2 
 
 #### Source
 
-[src/core/Application.ts:148](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L148)
+[src/core/Application.ts:150](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L150)
 
 ## Accessors
 
@@ -65,7 +65,7 @@ resolution: utils.isMobile.any === false ? 2 : (window.devicePixelRatio > 1 ? 2 
 
 #### Source
 
-[src/core/Application.ts:242](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L242)
+[src/core/Application.ts:245](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L245)
 
 ***
 
@@ -99,7 +99,7 @@ The DisplayObject(s) to add to the container
 
 #### Source
 
-[src/core/Application.ts:250](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L250)
+[src/core/Application.ts:253](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L253)
 
 ***
 
@@ -113,7 +113,7 @@ The DisplayObject(s) to add to the container
 
 #### Source
 
-[src/core/Application.ts:277](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L277)
+[src/core/Application.ts:280](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L280)
 
 ***
 
@@ -127,7 +127,7 @@ The DisplayObject(s) to add to the container
 
 #### Source
 
-[src/core/Application.ts:301](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L301)
+[src/core/Application.ts:304](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L304)
 
 ***
 
@@ -141,7 +141,7 @@ The DisplayObject(s) to add to the container
 
 #### Source
 
-[src/core/Application.ts:321](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L321)
+[src/core/Application.ts:324](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L324)
 
 ***
 
@@ -155,7 +155,7 @@ The DisplayObject(s) to add to the container
 
 #### Source
 
-[src/core/Application.ts:293](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L293)
+[src/core/Application.ts:296](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L296)
 
 ***
 
@@ -169,7 +169,7 @@ The DisplayObject(s) to add to the container
 
 #### Source
 
-[src/core/Application.ts:329](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L329)
+[src/core/Application.ts:332](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L332)
 
 ***
 
@@ -183,7 +183,7 @@ The DisplayObject(s) to add to the container
 
 #### Source
 
-[src/core/Application.ts:269](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L269)
+[src/core/Application.ts:272](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L272)
 
 ***
 
@@ -197,7 +197,7 @@ The DisplayObject(s) to add to the container
 
 #### Source
 
-[src/core/Application.ts:317](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L317)
+[src/core/Application.ts:320](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L320)
 
 ***
 
@@ -211,7 +211,7 @@ The DisplayObject(s) to add to the container
 
 #### Source
 
-[src/core/Application.ts:246](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L246)
+[src/core/Application.ts:249](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L249)
 
 ***
 
@@ -225,7 +225,7 @@ The DisplayObject(s) to add to the container
 
 #### Source
 
-[src/core/Application.ts:313](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L313)
+[src/core/Application.ts:316](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L316)
 
 ***
 
@@ -239,7 +239,7 @@ The DisplayObject(s) to add to the container
 
 #### Source
 
-[src/core/Application.ts:325](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L325)
+[src/core/Application.ts:328](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L328)
 
 ***
 
@@ -253,7 +253,7 @@ The DisplayObject(s) to add to the container
 
 #### Source
 
-[src/core/Application.ts:273](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L273)
+[src/core/Application.ts:276](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L276)
 
 ***
 
@@ -271,7 +271,7 @@ Note: Splash screen assets are loaded before requiredAssets
 
 #### Source
 
-[src/core/Application.ts:260](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L260)
+[src/core/Application.ts:263](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L263)
 
 ***
 
@@ -285,7 +285,7 @@ Note: Splash screen assets are loaded before requiredAssets
 
 #### Source
 
-[src/core/Application.ts:232](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L232)
+[src/core/Application.ts:235](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L235)
 
 ***
 
@@ -299,7 +299,7 @@ Note: Splash screen assets are loaded before requiredAssets
 
 #### Source
 
-[src/core/Application.ts:297](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L297)
+[src/core/Application.ts:300](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L300)
 
 ***
 
@@ -313,7 +313,7 @@ Note: Splash screen assets are loaded before requiredAssets
 
 #### Source
 
-[src/core/Application.ts:238](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L238)
+[src/core/Application.ts:241](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L241)
 
 ***
 
@@ -327,7 +327,7 @@ Note: Splash screen assets are loaded before requiredAssets
 
 #### Source
 
-[src/core/Application.ts:309](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L309)
+[src/core/Application.ts:312](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L312)
 
 ***
 
@@ -341,7 +341,7 @@ Note: Splash screen assets are loaded before requiredAssets
 
 #### Source
 
-[src/core/Application.ts:289](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L289)
+[src/core/Application.ts:292](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L292)
 
 ***
 
@@ -355,7 +355,7 @@ Note: Splash screen assets are loaded before requiredAssets
 
 #### Source
 
-[src/core/Application.ts:285](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L285)
+[src/core/Application.ts:288](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L288)
 
 ***
 
@@ -369,7 +369,7 @@ Note: Splash screen assets are loaded before requiredAssets
 
 #### Source
 
-[src/core/Application.ts:265](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L265)
+[src/core/Application.ts:268](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L268)
 
 ***
 
@@ -383,7 +383,7 @@ Note: Splash screen assets are loaded before requiredAssets
 
 #### Source
 
-[src/core/Application.ts:281](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L281)
+[src/core/Application.ts:284](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L284)
 
 ***
 
@@ -397,7 +397,7 @@ Note: Splash screen assets are loaded before requiredAssets
 
 #### Source
 
-[src/core/Application.ts:305](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L305)
+[src/core/Application.ts:308](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L308)
 
 ***
 
@@ -411,7 +411,7 @@ Note: Splash screen assets are loaded before requiredAssets
 
 #### Source
 
-[src/core/Application.ts:213](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L213)
+[src/core/Application.ts:216](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L216)
 
 ***
 
@@ -425,7 +425,7 @@ Note: Splash screen assets are loaded before requiredAssets
 
 #### Source
 
-[src/core/Application.ts:217](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L217)
+[src/core/Application.ts:220](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L220)
 
 ***
 
@@ -441,7 +441,7 @@ gets the current singleton instance
 
 #### Source
 
-[src/core/Application.ts:224](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L224)
+[src/core/Application.ts:227](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L227)
 
 ## Methods
 
@@ -465,7 +465,7 @@ proxy function for
 
 #### Source
 
-[src/core/Application.ts:365](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L365)
+[src/core/Application.ts:368](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L368)
 
 ***
 
@@ -483,7 +483,7 @@ proxy function for
 
 #### Source
 
-[src/core/Application.ts:344](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L344)
+[src/core/Application.ts:347](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L347)
 
 ***
 
@@ -497,7 +497,7 @@ proxy function for
 
 #### Source
 
-[src/core/Application.ts:333](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L333)
+[src/core/Application.ts:336](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L336)
 
 ***
 
@@ -515,7 +515,7 @@ proxy function for
 
 #### Source
 
-[src/core/Application.ts:380](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L380)
+[src/core/Application.ts:383](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L383)
 
 ***
 
@@ -531,7 +531,7 @@ Initializes all managers and starts the splash screen process.
 
 #### Source
 
-[src/core/Application.ts:398](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L398)
+[src/core/Application.ts:401](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L401)
 
 ***
 
@@ -545,7 +545,7 @@ Initializes all managers and starts the splash screen process.
 
 #### Source
 
-[src/core/Application.ts:384](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L384)
+[src/core/Application.ts:387](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L387)
 
 ***
 
@@ -559,7 +559,7 @@ Initializes all managers and starts the splash screen process.
 
 #### Source
 
-[src/core/Application.ts:439](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L439)
+[src/core/Application.ts:452](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L452)
 
 ***
 
@@ -573,7 +573,7 @@ Initializes all managers and starts the splash screen process.
 
 #### Source
 
-[src/core/Application.ts:431](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L431)
+[src/core/Application.ts:444](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L444)
 
 ***
 
@@ -611,7 +611,7 @@ this.add.htmlText( 'This is some text', getHTMLTextStyle('style1'), ...);
 
 #### Source
 
-[src/core/Application.ts:465](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L465)
+[src/core/Application.ts:478](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L478)
 
 ***
 
@@ -631,7 +631,7 @@ Creates a container element with the given id and appends it to the DOM.
 
 #### Source
 
-[src/core/Application.ts:124](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L124)
+[src/core/Application.ts:126](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L126)
 
 ***
 
@@ -651,4 +651,4 @@ Creates a new instance of the Application class and returns it.
 
 #### Source
 
-[src/core/Application.ts:134](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L134)
+[src/core/Application.ts:136](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L136)

@@ -17,7 +17,7 @@ title: "AudioCollection"
 
 #### Source
 
-[src/audio/AudioCollection.ts:9](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/AudioCollection.ts#L9)
+[src/audio/AudioCollection.ts:9](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/AudioCollection.ts#L9)
 
 ## Accessors
 
@@ -31,7 +31,7 @@ title: "AudioCollection"
 
 #### Source
 
-[src/audio/AudioCollection.ts:22](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/AudioCollection.ts#L22)
+[src/audio/AudioCollection.ts:22](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/AudioCollection.ts#L22)
 
 ***
 
@@ -51,4 +51,4 @@ title: "AudioCollection"
 
 #### Source
 
-[src/audio/AudioCollection.ts:14](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/AudioCollection.ts#L14)
+[src/audio/AudioCollection.ts:14](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/AudioCollection.ts#L14)

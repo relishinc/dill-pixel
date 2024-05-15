@@ -27,7 +27,7 @@ Load screen
 
 #### Source
 
-[src/load/LoadScreen.ts:9](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/LoadScreen.ts#L9)
+[src/load/LoadScreen.ts:9](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/LoadScreen.ts#L9)
 
 ## Properties
 
@@ -41,7 +41,7 @@ Load screen
 
 #### Source
 
-[src/gameobjects/Container.ts:23](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L23)
+[src/gameobjects/Container.ts:23](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L23)
 
 ***
 
@@ -55,7 +55,7 @@ Load screen
 
 #### Source
 
-[src/gameobjects/Container.ts:22](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L22)
+[src/gameobjects/Container.ts:22](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L22)
 
 ***
 
@@ -69,7 +69,7 @@ Load screen
 
 #### Source
 
-[src/state/State.ts:13](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/State.ts#L13)
+[src/state/State.ts:13](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/State.ts#L13)
 
 ***
 
@@ -83,7 +83,7 @@ Load screen
 
 #### Source
 
-[src/gameobjects/Container.ts:21](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L21)
+[src/gameobjects/Container.ts:21](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L21)
 
 ## Accessors
 
@@ -99,7 +99,7 @@ gets the Add factory
 
 #### Source
 
-[src/state/State.ts:38](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/State.ts#L38)
+[src/state/State.ts:38](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/State.ts#L38)
 
 ***
 
@@ -113,7 +113,7 @@ gets the Add factory
 
 #### Source
 
-[src/gameobjects/Container.ts:129](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L129)
+[src/gameobjects/Container.ts:129](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L129)
 
 ***
 
@@ -129,7 +129,7 @@ autoProgress
 
 #### Source
 
-[src/load/LoadScreen.ts:17](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/LoadScreen.ts#L17)
+[src/load/LoadScreen.ts:17](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/LoadScreen.ts#L17)
 
 ***
 
@@ -149,7 +149,7 @@ autoProgress
 
 #### Source
 
-[src/state/State.ts:57](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/State.ts#L57)
+[src/state/State.ts:57](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/State.ts#L57)
 
 ***
 
@@ -169,7 +169,7 @@ autoProgress
 
 #### Source
 
-[src/gameobjects/Container.ts:108](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L108)
+[src/gameobjects/Container.ts:108](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L108)
 
 ***
 
@@ -189,7 +189,7 @@ autoProgress
 
 #### Source
 
-[src/gameobjects/Container.ts:84](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L84)
+[src/gameobjects/Container.ts:84](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L84)
 
 ***
 
@@ -209,7 +209,7 @@ autoProgress
 
 #### Source
 
-[src/gameobjects/Container.ts:92](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L92)
+[src/gameobjects/Container.ts:92](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L92)
 
 ***
 
@@ -229,7 +229,7 @@ autoProgress
 
 #### Source
 
-[src/gameobjects/Container.ts:100](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L100)
+[src/gameobjects/Container.ts:100](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L100)
 
 ***
 
@@ -245,7 +245,7 @@ gets the Make factory
 
 #### Source
 
-[src/state/State.ts:45](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/State.ts#L45)
+[src/state/State.ts:45](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/State.ts#L45)
 
 ***
 
@@ -265,7 +265,7 @@ gets the Make factory
 
 #### Source
 
-[src/state/State.ts:49](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/State.ts#L49)
+[src/state/State.ts:49](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/State.ts#L49)
 
 ***
 
@@ -285,7 +285,7 @@ gets the Make factory
 
 #### Source
 
-[src/gameobjects/Container.ts:62](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L62)
+[src/gameobjects/Container.ts:62](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L62)
 
 ***
 
@@ -305,7 +305,7 @@ gets the Make factory
 
 #### Source
 
-[src/gameobjects/Container.ts:70](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L70)
+[src/gameobjects/Container.ts:70](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L70)
 
 ***
 
@@ -325,7 +325,7 @@ gets the Make factory
 
 #### Source
 
-[src/state/State.ts:27](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/State.ts#L27)
+[src/state/State.ts:27](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/State.ts#L27)
 
 ***
 
@@ -339,7 +339,7 @@ gets the Make factory
 
 #### Source
 
-[src/state/State.ts:23](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/State.ts#L23)
+[src/state/State.ts:23](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/State.ts#L23)
 
 ## Methods
 
@@ -363,7 +363,7 @@ Animates in
 
 #### Source
 
-[src/state/State.ts:110](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/State.ts#L110)
+[src/state/State.ts:110](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/State.ts#L110)
 
 ***
 
@@ -387,7 +387,7 @@ Animates out
 
 #### Source
 
-[src/state/State.ts:119](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/State.ts#L119)
+[src/state/State.ts:119](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/State.ts#L119)
 
 ***
 
@@ -411,7 +411,7 @@ Destroys state.
 
 #### Source
 
-[src/state/State.ts:85](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/State.ts#L85)
+[src/state/State.ts:85](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/State.ts#L85)
 
 ***
 
@@ -429,7 +429,7 @@ Destroys state.
 
 #### Source
 
-[src/gameobjects/Container.ts:174](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L174)
+[src/gameobjects/Container.ts:174](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L174)
 
 ***
 
@@ -447,7 +447,7 @@ Destroys state.
 
 #### Source
 
-[src/gameobjects/Container.ts:170](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L170)
+[src/gameobjects/Container.ts:170](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L170)
 
 ***
 
@@ -469,7 +469,7 @@ The position that the focus should be centred around.
 
 #### Source
 
-[src/gameobjects/Container.ts:158](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L158)
+[src/gameobjects/Container.ts:158](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L158)
 
 ***
 
@@ -491,7 +491,7 @@ The size of the area that the focus should surround.
 
 #### Source
 
-[src/gameobjects/Container.ts:162](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L162)
+[src/gameobjects/Container.ts:162](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L162)
 
 ***
 
@@ -515,7 +515,7 @@ Inits state
 
 #### Source
 
-[src/state/State.ts:97](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/State.ts#L97)
+[src/state/State.ts:97](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/State.ts#L97)
 
 ***
 
@@ -536,7 +536,7 @@ Defaults to this.interactive && this.worldVisible
 
 #### Source
 
-[src/gameobjects/Container.ts:166](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L166)
+[src/gameobjects/Container.ts:166](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L166)
 
 ***
 
@@ -556,7 +556,7 @@ Called when this Focusable is focussed and then activated.
 
 #### Source
 
-[src/gameobjects/Container.ts:156](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L156)
+[src/gameobjects/Container.ts:156](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L156)
 
 ***
 
@@ -576,7 +576,7 @@ Called when this Focusable is focussed.
 
 #### Source
 
-[src/gameobjects/Container.ts:144](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L144)
+[src/gameobjects/Container.ts:144](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L144)
 
 ***
 
@@ -596,7 +596,7 @@ Called when this Focusable is no longer focussed.
 
 #### Source
 
-[src/gameobjects/Container.ts:150](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L150)
+[src/gameobjects/Container.ts:150](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L150)
 
 ***
 
@@ -616,7 +616,7 @@ onLoadComplete
 
 #### Source
 
-[src/load/LoadScreen.ts:33](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/LoadScreen.ts#L33)
+[src/load/LoadScreen.ts:33](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/LoadScreen.ts#L33)
 
 ***
 
@@ -636,7 +636,7 @@ onLoadProgress
 
 #### Source
 
-[src/load/LoadScreen.ts:25](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/LoadScreen.ts#L25)
+[src/load/LoadScreen.ts:25](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/LoadScreen.ts#L25)
 
 ***
 
@@ -660,7 +660,7 @@ Determines whether resize on
 
 #### Source
 
-[src/state/State.ts:77](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/State.ts#L77)
+[src/state/State.ts:77](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/State.ts#L77)
 
 ***
 
@@ -682,7 +682,7 @@ Determines whether resize on
 
 #### Source
 
-[src/state/State.ts:102](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/State.ts#L102)
+[src/state/State.ts:102](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/State.ts#L102)
 
 ***
 
@@ -706,4 +706,4 @@ Updates state
 
 #### Source
 
-[src/state/State.ts:69](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/State.ts#L69)
+[src/state/State.ts:69](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/State.ts#L69)

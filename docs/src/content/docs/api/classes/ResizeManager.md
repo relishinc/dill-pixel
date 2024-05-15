@@ -29,7 +29,7 @@ title: "ResizeManager"
 
 #### Source
 
-[src/utils/ResizeManager.ts:24](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/ResizeManager.ts#L24)
+[src/utils/ResizeManager.ts:24](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/ResizeManager.ts#L24)
 
 ## Accessors
 
@@ -49,7 +49,7 @@ title: "ResizeManager"
 
 #### Source
 
-[src/utils/ResizeManager.ts:46](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/ResizeManager.ts#L46)
+[src/utils/ResizeManager.ts:46](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/ResizeManager.ts#L46)
 
 ***
 
@@ -63,7 +63,7 @@ title: "ResizeManager"
 
 #### Source
 
-[src/utils/ResizeManager.ts:68](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/ResizeManager.ts#L68)
+[src/utils/ResizeManager.ts:68](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/ResizeManager.ts#L68)
 
 ***
 
@@ -77,7 +77,7 @@ title: "ResizeManager"
 
 #### Source
 
-[src/utils/ResizeManager.ts:64](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/ResizeManager.ts#L64)
+[src/utils/ResizeManager.ts:64](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/ResizeManager.ts#L64)
 
 ***
 
@@ -91,7 +91,7 @@ title: "ResizeManager"
 
 #### Source
 
-[src/utils/ResizeManager.ts:60](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/ResizeManager.ts#L60)
+[src/utils/ResizeManager.ts:60](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/ResizeManager.ts#L60)
 
 ***
 
@@ -105,7 +105,7 @@ title: "ResizeManager"
 
 #### Source
 
-[src/utils/ResizeManager.ts:84](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/ResizeManager.ts#L84)
+[src/utils/ResizeManager.ts:84](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/ResizeManager.ts#L84)
 
 ***
 
@@ -119,7 +119,7 @@ title: "ResizeManager"
 
 #### Source
 
-[src/utils/ResizeManager.ts:79](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/ResizeManager.ts#L79)
+[src/utils/ResizeManager.ts:79](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/ResizeManager.ts#L79)
 
 ***
 
@@ -133,7 +133,7 @@ title: "ResizeManager"
 
 #### Source
 
-[src/utils/ResizeManager.ts:75](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/ResizeManager.ts#L75)
+[src/utils/ResizeManager.ts:75](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/ResizeManager.ts#L75)
 
 ## Methods
 
@@ -151,7 +151,7 @@ title: "ResizeManager"
 
 #### Source
 
-[src/utils/ResizeManager.ts:121](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/ResizeManager.ts#L121)
+[src/utils/ResizeManager.ts:121](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/ResizeManager.ts#L121)
 
 ***
 
@@ -169,7 +169,7 @@ title: "ResizeManager"
 
 #### Source
 
-[src/utils/ResizeManager.ts:101](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/ResizeManager.ts#L101)
+[src/utils/ResizeManager.ts:101](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/ResizeManager.ts#L101)
 
 ***
 
@@ -183,7 +183,7 @@ title: "ResizeManager"
 
 #### Source
 
-[src/utils/ResizeManager.ts:141](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/ResizeManager.ts#L141)
+[src/utils/ResizeManager.ts:141](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/ResizeManager.ts#L141)
 
 ***
 
@@ -201,7 +201,7 @@ title: "ResizeManager"
 
 #### Source
 
-[src/utils/ResizeManager.ts:97](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/ResizeManager.ts#L97)
+[src/utils/ResizeManager.ts:97](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/ResizeManager.ts#L97)
 
 ***
 
@@ -219,7 +219,7 @@ title: "ResizeManager"
 
 #### Source
 
-[src/utils/ResizeManager.ts:99](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/ResizeManager.ts#L99)
+[src/utils/ResizeManager.ts:99](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/ResizeManager.ts#L99)
 
 ***
 
@@ -239,4 +239,4 @@ title: "ResizeManager"
 
 #### Source
 
-[src/utils/ResizeManager.ts:108](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/ResizeManager.ts#L108)
+[src/utils/ResizeManager.ts:108](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/ResizeManager.ts#L108)

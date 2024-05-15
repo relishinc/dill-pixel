@@ -39,7 +39,7 @@ The interface extends AssetMapData for compatibility
 
 #### Source
 
-[src/load/assets/WebFontAsset.ts:7](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/WebFontAsset.ts#L7)
+[src/load/assets/WebFontAsset.ts:7](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/assets/WebFontAsset.ts#L7)
 
 ## Properties
 
@@ -59,7 +59,7 @@ The name of the asset file.
 
 #### Source
 
-[src/load/AssetMapData.ts:12](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/AssetMapData.ts#L12)
+[src/load/AssetMapData.ts:12](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/AssetMapData.ts#L12)
 
 ***
 
@@ -79,7 +79,7 @@ Path to the asset
 
 #### Source
 
-[src/load/AssetMapData.ts:20](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/AssetMapData.ts#L20)
+[src/load/AssetMapData.ts:20](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/AssetMapData.ts#L20)
 
 ***
 
@@ -99,7 +99,7 @@ The type of the asset file.
 
 #### Source
 
-[src/load/AssetMapData.ts:16](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/AssetMapData.ts#L16)
+[src/load/AssetMapData.ts:16](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/AssetMapData.ts#L16)
 
 ***
 
@@ -117,7 +117,7 @@ The type of the asset file.
 
 #### Source
 
-[src/load/AssetMapData.ts:26](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/AssetMapData.ts#L26)
+[src/load/AssetMapData.ts:26](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/AssetMapData.ts#L26)
 
 ***
 
@@ -137,7 +137,7 @@ If resolution suffix is set the asset is loaded only on devices with the matched
 
 #### Source
 
-[src/load/AssetMapData.ts:24](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/AssetMapData.ts#L24)
+[src/load/AssetMapData.ts:24](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/AssetMapData.ts#L24)
 
 ## Methods
 
@@ -159,7 +159,7 @@ If resolution suffix is set the asset is loaded only on devices with the matched
 
 #### Source
 
-[src/load/AssetMapData.ts:57](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/AssetMapData.ts#L57)
+[src/load/AssetMapData.ts:57](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/AssetMapData.ts#L57)
 
 ***
 
@@ -177,7 +177,7 @@ If resolution suffix is set the asset is loaded only on devices with the matched
 
 #### Source
 
-[src/load/assets/WebFontAsset.ts:15](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/WebFontAsset.ts#L15)
+[src/load/assets/WebFontAsset.ts:15](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/assets/WebFontAsset.ts#L15)
 
 ***
 
@@ -199,7 +199,7 @@ If resolution suffix is set the asset is loaded only on devices with the matched
 
 #### Source
 
-[src/load/AssetMapData.ts:46](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/AssetMapData.ts#L46)
+[src/load/AssetMapData.ts:46](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/AssetMapData.ts#L46)
 
 ***
 
@@ -221,7 +221,7 @@ If resolution suffix is set the asset is loaded only on devices with the matched
 
 #### Source
 
-[src/load/AssetMapData.ts:38](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/AssetMapData.ts#L38)
+[src/load/AssetMapData.ts:38](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/AssetMapData.ts#L38)
 
 ***
 
@@ -243,4 +243,4 @@ If resolution suffix is set the asset is loaded only on devices with the matched
 
 #### Source
 
-[src/load/assets/WebFontAsset.ts:23](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/WebFontAsset.ts#L23)
+[src/load/assets/WebFontAsset.ts:23](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/load/assets/WebFontAsset.ts#L23)

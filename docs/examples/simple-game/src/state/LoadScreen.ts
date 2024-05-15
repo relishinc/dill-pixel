@@ -1,4 +1,4 @@
-import { LoadScreen as DillPixelLoadScreen } from '@relish-studios/dill-pixel';
+import { LoadScreen as DillPixelLoadScreen } from 'dill-pixel';
 import { Sprite, Point } from 'pixi.js';
 
 export class LoadScreen extends DillPixelLoadScreen {

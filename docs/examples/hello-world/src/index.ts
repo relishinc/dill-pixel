@@ -1,16 +1,14 @@
+import { create } from 'dill-pixel';
 import { Application } from './Application';
-import { create } from '@relish-studios/dill-pixel';
 import './index.css';
 
-create(
-  Application,
-  {
-    antialias: false,
-    useNewResizeManager: true,
-    resizeOptions: {
-      minSize: { width: 375, height: 700 },
-    },
-    autoDensity: false,
+// Create the application
+
+create(Application, {
+  antialias: false,
+  resizeOptions: {
+    minSize: { width: 375, height: 700 },
   },
-  Application.containerID,
-);
+  resolution: Math.max(window.devicePixelRatio, 2),
+  backgroundColor: 0x0,
+});

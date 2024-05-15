@@ -25,6 +25,7 @@ export declare class StateManager<T extends Application = Application> extends C
      * Dictionary of all registered states.
      */
     private _stateData;
+    private _firstStateId;
     /**
      * The current active state.
      */

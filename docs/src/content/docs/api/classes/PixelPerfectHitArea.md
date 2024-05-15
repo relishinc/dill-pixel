@@ -31,7 +31,7 @@ Pixel perfect hit area
 
 #### Source
 
-[src/input/PixelPerfectHitArea.ts:13](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/PixelPerfectHitArea.ts#L13)
+[src/input/PixelPerfectHitArea.ts:13](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/PixelPerfectHitArea.ts#L13)
 
 ## Accessors
 
@@ -47,7 +47,7 @@ Gets height
 
 #### Source
 
-[src/input/PixelPerfectHitArea.ts:54](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/PixelPerfectHitArea.ts#L54)
+[src/input/PixelPerfectHitArea.ts:54](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/PixelPerfectHitArea.ts#L54)
 
 ***
 
@@ -63,7 +63,7 @@ Gets scaled height
 
 #### Source
 
-[src/input/PixelPerfectHitArea.ts:61](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/PixelPerfectHitArea.ts#L61)
+[src/input/PixelPerfectHitArea.ts:61](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/PixelPerfectHitArea.ts#L61)
 
 ***
 
@@ -79,7 +79,7 @@ Gets scaled width
 
 #### Source
 
-[src/input/PixelPerfectHitArea.ts:47](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/PixelPerfectHitArea.ts#L47)
+[src/input/PixelPerfectHitArea.ts:47](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/PixelPerfectHitArea.ts#L47)
 
 ***
 
@@ -95,7 +95,7 @@ Gets width
 
 #### Source
 
-[src/input/PixelPerfectHitArea.ts:40](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/PixelPerfectHitArea.ts#L40)
+[src/input/PixelPerfectHitArea.ts:40](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/PixelPerfectHitArea.ts#L40)
 
 ## Methods
 
@@ -123,7 +123,7 @@ boolean
 
 #### Source
 
-[src/input/PixelPerfectHitArea.ts:81](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/PixelPerfectHitArea.ts#L81)
+[src/input/PixelPerfectHitArea.ts:81](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/PixelPerfectHitArea.ts#L81)
 
 ***
 
@@ -147,4 +147,4 @@ boolean
 
 #### Source
 
-[src/input/PixelPerfectHitArea.ts:71](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/PixelPerfectHitArea.ts#L71)
+[src/input/PixelPerfectHitArea.ts:71](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/PixelPerfectHitArea.ts#L71)

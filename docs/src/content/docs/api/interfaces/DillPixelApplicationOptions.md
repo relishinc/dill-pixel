@@ -17,7 +17,17 @@ title: "DillPixelApplicationOptions"
 
 #### Source
 
-[src/core/Application.ts:37](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L37)
+[src/core/Application.ts:38](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L38)
+
+***
+
+### resizeDebounce?
+
+> `optional` **resizeDebounce**: `number`
+
+#### Source
+
+[src/core/Application.ts:37](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L37)
 
 ***
 
@@ -27,7 +37,7 @@ title: "DillPixelApplicationOptions"
 
 #### Source
 
-[src/core/Application.ts:42](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L42)
+[src/core/Application.ts:43](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L43)
 
 ***
 
@@ -37,7 +47,7 @@ title: "DillPixelApplicationOptions"
 
 #### Source
 
-[src/core/Application.ts:40](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L40)
+[src/core/Application.ts:41](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L41)
 
 ***
 
@@ -47,7 +57,7 @@ title: "DillPixelApplicationOptions"
 
 #### Source
 
-[src/core/Application.ts:39](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L39)
+[src/core/Application.ts:40](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L40)
 
 ***
 
@@ -57,7 +67,7 @@ title: "DillPixelApplicationOptions"
 
 #### Source
 
-[src/core/Application.ts:41](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L41)
+[src/core/Application.ts:42](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L42)
 
 ***
 
@@ -67,4 +77,4 @@ title: "DillPixelApplicationOptions"
 
 #### Source
 
-[src/core/Application.ts:38](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/core/Application.ts#L38)
+[src/core/Application.ts:39](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/core/Application.ts#L39)

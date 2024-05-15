@@ -1,14 +1,17 @@
-import { IPoint, State } from '@relish-studios/dill-pixel';
-import { Sprite, Text } from 'pixi.js';
+import { State } from 'dill-pixel';
+import { Point, Sprite, Text } from 'pixi.js';
 import { Application } from '../Application';
 
-export class MyScreen extends State<Application> {
-  public static NAME: string = 'MyScreen';
+// This screen displays a green background with a white title
 
+export class MyScreen extends State<Application> {
+  static NAME: string = 'MyScreen';
   protected _bg!: Sprite;
   protected _title!: Text;
 
-  public init(pSize: IPoint) {
+  // Create the background and add the title
+
+  public init(pSize: Point) {
     super.init(pSize);
 
     this._bg = this.add.coloredSprite(0x33aa66);
@@ -26,6 +29,8 @@ export class MyScreen extends State<Application> {
 
     this.onResize(pSize);
   }
+
+  // When the screen resizes, resize the background
 
   public onResize(pSize: IPoint) {
     super.onResize(pSize);

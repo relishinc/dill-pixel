@@ -1,0 +1,29 @@
+---
+title: Project Setup
+---
+
+import {FileTree} from '@astrojs/starlight/components';
+
+## Organizing Files and Directories
+
+We recommend setting up your project directory as follows:
+
+<FileTree>
+- package.json
+- README.md
+- vite.config.js
+- tsconfig.json
+- index.html
+- **src**
+		- index.css	  
+	- index.ts
+	- Application.ts
+	- assets static assets like fonts, images, and audio
+		- …		
+	- states where your game states are stored
+      - SplashScreen.ts
+      - IntroScreen.ts
+      - GameScreen.ts
+      - HighScoresScreen.ts
+	- …		
+</FileTree>

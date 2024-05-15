@@ -20,7 +20,7 @@ Note that this will not be a child of the Popup
 
 #### Source
 
-[src/popup/IPopup.ts:15](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/IPopup.ts#L15)
+[src/popup/IPopup.ts:15](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/IPopup.ts#L15)
 
 ***
 
@@ -33,7 +33,7 @@ Typescript quirk: a `readonly` Field can be implemented as a read-only Property 
 
 #### Source
 
-[src/popup/IPopup.ts:9](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/IPopup.ts#L9)
+[src/popup/IPopup.ts:9](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/IPopup.ts#L9)
 
 ***
 
@@ -45,7 +45,7 @@ Whether or not to close the popup when the escape key (or Android back button) i
 
 #### Source
 
-[src/popup/IPopup.ts:17](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/IPopup.ts#L17)
+[src/popup/IPopup.ts:17](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/IPopup.ts#L17)
 
 ## Methods
 
@@ -62,7 +62,7 @@ When implementing, make sure to call `hidePopupComplete(this)` afterwards
 
 #### Source
 
-[src/popup/IPopup.ts:46](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/IPopup.ts#L46)
+[src/popup/IPopup.ts:46](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/IPopup.ts#L46)
 
 ***
 
@@ -84,7 +84,7 @@ Screen size, in pixels(?)
 
 #### Source
 
-[src/popup/IPopup.ts:52](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/IPopup.ts#L52)
+[src/popup/IPopup.ts:52](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/IPopup.ts#L52)
 
 ***
 
@@ -110,7 +110,7 @@ This should be called by [PopupManager.onResize](../../../../../../api/classes/p
 
 #### Source
 
-[src/popup/IPopup.ts:31](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/IPopup.ts#L31)
+[src/popup/IPopup.ts:31](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/IPopup.ts#L31)
 
 ***
 
@@ -130,7 +130,7 @@ Show the popup, and set the close callback
 
 #### Source
 
-[src/popup/IPopup.ts:40](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/IPopup.ts#L40)
+[src/popup/IPopup.ts:40](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/IPopup.ts#L40)
 
 ***
 
@@ -156,4 +156,4 @@ This should be called by [PopupManager.update](../../../../../../api/classes/pop
 
 #### Source
 
-[src/popup/IPopup.ts:24](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/IPopup.ts#L24)
+[src/popup/IPopup.ts:24](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/IPopup.ts#L24)

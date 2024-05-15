@@ -35,7 +35,7 @@ Manages all states.
 
 #### Source
 
-[src/state/StateManager.ts:108](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateManager.ts#L108)
+[src/state/StateManager.ts:110](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateManager.ts#L110)
 
 ## Properties
 
@@ -49,7 +49,7 @@ Manages all states.
 
 #### Source
 
-[src/gameobjects/Container.ts:23](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L23)
+[src/gameobjects/Container.ts:23](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L23)
 
 ***
 
@@ -63,7 +63,7 @@ Manages all states.
 
 #### Source
 
-[src/gameobjects/Container.ts:22](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L22)
+[src/gameobjects/Container.ts:22](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L22)
 
 ***
 
@@ -77,7 +77,7 @@ Manages all states.
 
 #### Source
 
-[src/gameobjects/Container.ts:21](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L21)
+[src/gameobjects/Container.ts:21](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L21)
 
 ## Accessors
 
@@ -91,7 +91,7 @@ Manages all states.
 
 #### Source
 
-[src/gameobjects/Container.ts:121](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L121)
+[src/gameobjects/Container.ts:121](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L121)
 
 ***
 
@@ -105,7 +105,7 @@ Manages all states.
 
 #### Source
 
-[src/gameobjects/Container.ts:129](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L129)
+[src/gameobjects/Container.ts:129](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L129)
 
 ***
 
@@ -119,7 +119,7 @@ Manages all states.
 
 #### Source
 
-[src/state/StateManager.ts:146](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateManager.ts#L146)
+[src/state/StateManager.ts:148](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateManager.ts#L148)
 
 ***
 
@@ -133,7 +133,7 @@ Manages all states.
 
 #### Source
 
-[src/state/StateManager.ts:150](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateManager.ts#L150)
+[src/state/StateManager.ts:152](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateManager.ts#L152)
 
 ***
 
@@ -149,7 +149,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/state/StateManager.ts:141](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateManager.ts#L141)
+[src/state/StateManager.ts:143](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateManager.ts#L143)
 
 ***
 
@@ -163,7 +163,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/state/StateManager.ts:134](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateManager.ts#L134)
+[src/state/StateManager.ts:136](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateManager.ts#L136)
 
 ***
 
@@ -177,7 +177,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/state/StateManager.ts:130](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateManager.ts#L130)
+[src/state/StateManager.ts:132](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateManager.ts#L132)
 
 ***
 
@@ -197,7 +197,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/gameobjects/Container.ts:108](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L108)
+[src/gameobjects/Container.ts:108](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L108)
 
 ***
 
@@ -217,7 +217,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/gameobjects/Container.ts:84](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L84)
+[src/gameobjects/Container.ts:84](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L84)
 
 ***
 
@@ -237,7 +237,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/gameobjects/Container.ts:92](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L92)
+[src/gameobjects/Container.ts:92](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L92)
 
 ***
 
@@ -257,7 +257,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/gameobjects/Container.ts:100](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L100)
+[src/gameobjects/Container.ts:100](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L100)
 
 ***
 
@@ -271,7 +271,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/gameobjects/Container.ts:125](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L125)
+[src/gameobjects/Container.ts:125](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L125)
 
 ***
 
@@ -291,7 +291,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/gameobjects/Container.ts:62](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L62)
+[src/gameobjects/Container.ts:62](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L62)
 
 ***
 
@@ -305,7 +305,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/state/StateManager.ts:122](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateManager.ts#L122)
+[src/state/StateManager.ts:124](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateManager.ts#L124)
 
 ***
 
@@ -325,7 +325,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/gameobjects/Container.ts:70](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L70)
+[src/gameobjects/Container.ts:70](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L70)
 
 ## Methods
 
@@ -347,7 +347,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/gameobjects/Container.ts:133](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L133)
+[src/gameobjects/Container.ts:133](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L133)
 
 ***
 
@@ -365,7 +365,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/gameobjects/Container.ts:174](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L174)
+[src/gameobjects/Container.ts:174](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L174)
 
 ***
 
@@ -383,7 +383,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/gameobjects/Container.ts:170](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L170)
+[src/gameobjects/Container.ts:170](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L170)
 
 ***
 
@@ -401,7 +401,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/state/StateManager.ts:320](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateManager.ts#L320)
+[src/state/StateManager.ts:326](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateManager.ts#L326)
 
 ***
 
@@ -423,7 +423,7 @@ The position that the focus should be centred around.
 
 #### Source
 
-[src/gameobjects/Container.ts:158](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L158)
+[src/gameobjects/Container.ts:158](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L158)
 
 ***
 
@@ -445,7 +445,7 @@ The size of the area that the focus should surround.
 
 #### Source
 
-[src/gameobjects/Container.ts:162](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L162)
+[src/gameobjects/Container.ts:162](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L162)
 
 ***
 
@@ -459,7 +459,7 @@ The size of the area that the focus should surround.
 
 #### Source
 
-[src/state/StateManager.ts:300](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateManager.ts#L300)
+[src/state/StateManager.ts:306](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateManager.ts#L306)
 
 ***
 
@@ -473,7 +473,7 @@ The size of the area that the focus should surround.
 
 #### Source
 
-[src/state/StateManager.ts:304](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateManager.ts#L304)
+[src/state/StateManager.ts:310](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateManager.ts#L310)
 
 ***
 
@@ -494,7 +494,7 @@ Defaults to this.interactive && this.worldVisible
 
 #### Source
 
-[src/gameobjects/Container.ts:166](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L166)
+[src/gameobjects/Container.ts:166](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L166)
 
 ***
 
@@ -514,7 +514,7 @@ Called when this Focusable is focussed and then activated.
 
 #### Source
 
-[src/gameobjects/Container.ts:156](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L156)
+[src/gameobjects/Container.ts:156](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L156)
 
 ***
 
@@ -534,7 +534,7 @@ Called when this Focusable is focussed.
 
 #### Source
 
-[src/gameobjects/Container.ts:144](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L144)
+[src/gameobjects/Container.ts:144](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L144)
 
 ***
 
@@ -554,7 +554,7 @@ Called when this Focusable is no longer focussed.
 
 #### Source
 
-[src/gameobjects/Container.ts:150](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L150)
+[src/gameobjects/Container.ts:150](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L150)
 
 ***
 
@@ -580,7 +580,7 @@ The new size.
 
 #### Source
 
-[src/state/StateManager.ts:168](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateManager.ts#L168)
+[src/state/StateManager.ts:170](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateManager.ts#L170)
 
 ***
 
@@ -610,7 +610,7 @@ whether to automatically register the asset group for this state - only works if
 
 #### Source
 
-[src/state/StateManager.ts:184](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateManager.ts#L184)
+[src/state/StateManager.ts:186](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateManager.ts#L186)
 
 ***
 
@@ -624,7 +624,7 @@ whether to automatically register the asset group for this state - only works if
 
 #### Source
 
-[src/state/StateManager.ts:211](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateManager.ts#L211)
+[src/state/StateManager.ts:217](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateManager.ts#L217)
 
 ***
 
@@ -638,7 +638,7 @@ whether to automatically register the asset group for this state - only works if
 
 #### Source
 
-[src/state/StateManager.ts:201](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateManager.ts#L201)
+[src/state/StateManager.ts:207](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateManager.ts#L207)
 
 ***
 
@@ -663,7 +663,7 @@ instead call this.app.state.transitionTo(stateId, loadScreenId)
 
 #### Source
 
-[src/state/StateManager.ts:264](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateManager.ts#L264)
+[src/state/StateManager.ts:270](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateManager.ts#L270)
 
 ***
 
@@ -689,4 +689,4 @@ ticker.shared.elapsedMS / 1000.
 
 #### Source
 
-[src/state/StateManager.ts:158](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateManager.ts#L158)
+[src/state/StateManager.ts:160](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateManager.ts#L160)

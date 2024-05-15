@@ -21,7 +21,7 @@ title: "OrientationManager"
 
 #### Source
 
-[src/utils/OrientationManager.ts:11](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/OrientationManager.ts#L11)
+[src/utils/OrientationManager.ts:11](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/OrientationManager.ts#L11)
 
 ## Methods
 
@@ -51,7 +51,7 @@ Normally, this should be called in Application.onLoadRequiredAssetsComplete
 
 #### Source
 
-[src/utils/OrientationManager.ts:19](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/OrientationManager.ts#L19)
+[src/utils/OrientationManager.ts:19](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/OrientationManager.ts#L19)
 
 ***
 
@@ -67,4 +67,4 @@ Called when the screen resizes
 
 #### Source
 
-[src/utils/OrientationManager.ts:35](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/OrientationManager.ts#L35)
+[src/utils/OrientationManager.ts:35](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/OrientationManager.ts#L35)

@@ -36,7 +36,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/ui/UICanvas.ts:75](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L75)
+[src/ui/UICanvas.ts:75](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L75)
 
 ## Properties
 
@@ -50,7 +50,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/Container.ts:23](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L23)
+[src/gameobjects/Container.ts:23](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L23)
 
 ***
 
@@ -64,7 +64,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/Container.ts:22](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L22)
+[src/gameobjects/Container.ts:22](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L22)
 
 ***
 
@@ -78,7 +78,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/Container.ts:21](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L21)
+[src/gameobjects/Container.ts:21](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L21)
 
 ## Accessors
 
@@ -92,7 +92,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/Container.ts:121](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L121)
+[src/gameobjects/Container.ts:121](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L121)
 
 ***
 
@@ -106,7 +106,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/Container.ts:129](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L129)
+[src/gameobjects/Container.ts:129](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L129)
 
 ***
 
@@ -120,7 +120,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/ui/UICanvas.ts:90](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L90)
+[src/ui/UICanvas.ts:90](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L90)
 
 ***
 
@@ -134,7 +134,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/ui/UICanvas.ts:86](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L86)
+[src/ui/UICanvas.ts:86](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L86)
 
 ***
 
@@ -154,7 +154,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/Container.ts:108](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L108)
+[src/gameobjects/Container.ts:108](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L108)
 
 ***
 
@@ -174,7 +174,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/Container.ts:84](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L84)
+[src/gameobjects/Container.ts:84](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L84)
 
 ***
 
@@ -194,7 +194,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/Container.ts:92](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L92)
+[src/gameobjects/Container.ts:92](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L92)
 
 ***
 
@@ -214,7 +214,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/Container.ts:100](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L100)
+[src/gameobjects/Container.ts:100](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L100)
 
 ***
 
@@ -228,7 +228,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/Container.ts:125](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L125)
+[src/gameobjects/Container.ts:125](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L125)
 
 ***
 
@@ -242,7 +242,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/ui/UICanvas.ts:100](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L100)
+[src/ui/UICanvas.ts:100](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L100)
 
 ***
 
@@ -256,7 +256,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/ui/UICanvas.ts:94](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L94)
+[src/ui/UICanvas.ts:94](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L94)
 
 ***
 
@@ -276,7 +276,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/Container.ts:62](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L62)
+[src/gameobjects/Container.ts:62](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L62)
 
 ***
 
@@ -296,7 +296,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/gameobjects/Container.ts:70](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L70)
+[src/gameobjects/Container.ts:70](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L70)
 
 ## Methods
 
@@ -322,7 +322,7 @@ and auto update / resize capabilities
 
 #### Source
 
-[src/ui/UICanvas.ts:119](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L119)
+[src/ui/UICanvas.ts:119](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L119)
 
 ***
 
@@ -353,7 +353,7 @@ Override because we need to ensure it sets the child index properly
 
 #### Source
 
-[src/ui/UICanvas.ts:174](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L174)
+[src/ui/UICanvas.ts:174](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L174)
 
 ***
 
@@ -377,7 +377,7 @@ Override because we need to ensure it sets the child index properly
 
 #### Source
 
-[src/ui/UICanvas.ts:233](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L233)
+[src/ui/UICanvas.ts:233](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L233)
 
 ***
 
@@ -399,7 +399,7 @@ Override because we need to ensure it sets the child index properly
 
 #### Source
 
-[src/gameobjects/Container.ts:133](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L133)
+[src/gameobjects/Container.ts:133](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L133)
 
 ***
 
@@ -417,7 +417,7 @@ Override because we need to ensure it sets the child index properly
 
 #### Source
 
-[src/gameobjects/Container.ts:174](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L174)
+[src/gameobjects/Container.ts:174](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L174)
 
 ***
 
@@ -435,7 +435,7 @@ Override because we need to ensure it sets the child index properly
 
 #### Source
 
-[src/gameobjects/Container.ts:170](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L170)
+[src/gameobjects/Container.ts:170](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L170)
 
 ***
 
@@ -460,7 +460,7 @@ Override due to re-parenting
 
 #### Source
 
-[src/ui/UICanvas.ts:219](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L219)
+[src/ui/UICanvas.ts:219](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L219)
 
 ***
 
@@ -485,7 +485,7 @@ Override because we need to ensure it targets the parent container that we added
 
 #### Source
 
-[src/ui/UICanvas.ts:206](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L206)
+[src/ui/UICanvas.ts:206](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L206)
 
 ***
 
@@ -507,7 +507,7 @@ The position that the focus should be centred around.
 
 #### Source
 
-[src/gameobjects/Container.ts:158](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L158)
+[src/gameobjects/Container.ts:158](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L158)
 
 ***
 
@@ -529,7 +529,7 @@ The size of the area that the focus should surround.
 
 #### Source
 
-[src/gameobjects/Container.ts:162](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L162)
+[src/gameobjects/Container.ts:162](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L162)
 
 ***
 
@@ -550,7 +550,7 @@ Defaults to this.interactive && this.worldVisible
 
 #### Source
 
-[src/gameobjects/Container.ts:166](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L166)
+[src/gameobjects/Container.ts:166](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L166)
 
 ***
 
@@ -564,7 +564,7 @@ Defaults to this.interactive && this.worldVisible
 
 #### Source
 
-[src/ui/UICanvas.ts:223](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L223)
+[src/ui/UICanvas.ts:223](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L223)
 
 ***
 
@@ -584,7 +584,7 @@ Called when this Focusable is focussed and then activated.
 
 #### Source
 
-[src/gameobjects/Container.ts:156](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L156)
+[src/gameobjects/Container.ts:156](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L156)
 
 ***
 
@@ -604,7 +604,7 @@ Called when this Focusable is focussed.
 
 #### Source
 
-[src/gameobjects/Container.ts:144](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L144)
+[src/gameobjects/Container.ts:144](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L144)
 
 ***
 
@@ -624,7 +624,7 @@ Called when this Focusable is no longer focussed.
 
 #### Source
 
-[src/gameobjects/Container.ts:150](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L150)
+[src/gameobjects/Container.ts:150](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L150)
 
 ***
 
@@ -642,7 +642,7 @@ Called when this Focusable is no longer focussed.
 
 #### Source
 
-[src/ui/UICanvas.ts:105](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L105)
+[src/ui/UICanvas.ts:105](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L105)
 
 ***
 
@@ -662,7 +662,7 @@ Called when this Focusable is no longer focussed.
 
 #### Source
 
-[src/ui/UICanvas.ts:263](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L263)
+[src/ui/UICanvas.ts:263](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L263)
 
 ***
 
@@ -687,7 +687,7 @@ Override because we need to ensure it returns the proper re-parented children
 
 #### Source
 
-[src/ui/UICanvas.ts:153](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L153)
+[src/ui/UICanvas.ts:153](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L153)
 
 ***
 
@@ -712,7 +712,7 @@ Override because we need to remove from the inner container
 
 #### Source
 
-[src/ui/UICanvas.ts:132](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L132)
+[src/ui/UICanvas.ts:132](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L132)
 
 ***
 
@@ -733,7 +733,7 @@ Override because we need to ensure it returns the proper re-parented children
 
 #### Source
 
-[src/ui/UICanvas.ts:141](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L141)
+[src/ui/UICanvas.ts:141](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L141)
 
 ***
 
@@ -760,7 +760,7 @@ Override because we need to ensure it targets the parent container that we added
 
 #### Source
 
-[src/ui/UICanvas.ts:190](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L190)
+[src/ui/UICanvas.ts:190](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L190)
 
 ***
 
@@ -778,4 +778,4 @@ Override because we need to ensure it targets the parent container that we added
 
 #### Source
 
-[src/ui/UICanvas.ts:113](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/ui/UICanvas.ts#L113)
+[src/ui/UICanvas.ts:113](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/ui/UICanvas.ts#L113)

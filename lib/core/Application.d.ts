@@ -11,6 +11,7 @@ import { Add, HTMLTextStyleManager, Make, OrientationManager, ResizeManager, Web
 import { IResizeManager } from '../utils/IResizeManager';
 import { ResizeManagerOptions } from '../utils/ResizeManagerNew';
 export interface DillPixelApplicationOptions extends IApplicationOptions {
+    resizeDebounce?: number;
     physics?: boolean;
     useSpine?: boolean;
     showStatsInProduction?: boolean;
@@ -52,6 +53,7 @@ export declare class Application<T extends Application = any> extends PIXIApplic
     protected _useNewResizeManager: boolean;
     protected _resizeOptions: Partial<ResizeManagerOptions>;
     protected _initialized: boolean;
+    protected _resizeDebounce: number;
     /**
      * Creates a container element with the given id and appends it to the DOM.
      * @param pId{string} - The id of the element to create.

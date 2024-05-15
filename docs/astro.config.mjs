@@ -41,6 +41,7 @@ export default defineConfig({
           label: 'Guides',
           items: [
             { label: 'Creating a Game', link: '/guides/creating-game' },
+            { label: 'Project Setup', link: '/guides/project-setup' },
             { label: 'State Management', link: '/guides/state-management' },
           ],
         },

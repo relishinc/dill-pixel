@@ -2,7 +2,15 @@
 title: Quick Start
 ---
 
-import {TabItem, Tabs, Aside, FileTree} from '@astrojs/starlight/components';
+import {TabItem, Tabs, Aside, FileTree, Code} from '@astrojs/starlight/components';
+
+import packageJson from '../../../../examples/hello-world/package.json?raw';
+import indexHtml from '../../../../examples/hello-world/index.html?raw';
+import indexCss from '../../../../examples/hello-world/src/index.css?raw';
+import indexTs from '../../../../examples/hello-world/src/index.ts?raw';
+import applicationTs from '../../../../examples/hello-world/src/Application.ts?raw';
+import loadScreenTs from '../../../../examples/hello-world/src/state/LoadScreen.ts?raw';
+import myScreenTs from '../../../../examples/hello-world/src/state/MyScreen.ts?raw';
 
 <Aside type="tip">
 	We recommend using [Vite](https://vitejs.dev) to bundle your application
@@ -30,194 +38,84 @@ Make sure you have an up-to-date version of [Node.js](https://nodejs.org/) insta
 	</TabItem>
 </Tabs>
 
-## Project Setup
+## "Hello World" Example
 
-We recommend setting up your project directory as follows:
+The most basic example of a dill pixel game is a simple "Hello World" message. Let's get started...
+
+### Create the Files
+
+First, create a `package.json` in your project's root directory:
+
+<Code code={packageJson} lang="json" title="package.json" />
+
+Next, create an `index.html` file in the root directory:
+
+<Code code={indexHtml} lang="html" title="index.html" />
+
+Create an `index.css` file in the `src` directory:
+
+<Code code={indexCss} lang="css" title="src/index.css" />
+
+Create the remaining files in the `src` directory:
+
+<Tabs>
+	<TabItem label="src/index.ts">
+		<Code code={indexTs} lang="ts" />
+	</TabItem>
+	<TabItem label="src/Application.ts">
+		<Code code={applicationTs} lang="ts" />
+	</TabItem>
+	<TabItem label="src/state/LoadScreen.ts">
+		<Code code={loadScreenTs} lang="ts" />
+	</TabItem>	
+	<TabItem label="src/state/MyScreen.ts">
+		<Code code={myScreenTs} lang="ts" />
+	</TabItem>		
+</Tabs>
+
+Your project directory should look like this:
 
 <FileTree>
 
 - package.json
-- README.md
-- vite.config.js
-- tsconfig.json
 - index.html
 - **src**
 		- index.css	  
 	- index.ts
 	- Application.ts
-	- assets
-		- *audio, fonts, images, spritesheets…*
-	- states
-		- …		
-	- …
+	- state
+		- LoadScreen.ts
+		- MyScreen.ts		
 
 </FileTree>
 
-Use the following templates to populate the above files:
+<Aside type="tip">
+	The entire source code for this example can be found in the [GitHub repository](https://github.com/relishinc/dill-pixel/tree/main/docs/examples/hello-world)
+</Aside>
+
+### Install the Dependencies
+
+Once you have created the files, install the dependencies:
 
 <Tabs>
-	<TabItem label="package.json">
-	```json
-	{
-		"name": "my-dill-pixel-game",
-		"version": "0.0.0",
-		"description": "My First Game with Dill Pixel",
-		"main": "index.html",
-		"scripts": {
-			"start": "vite",
-			"dev": "vite",
-			"build": "vite build"
-		},
-		"author": "Me<me@myname.com>",
-		"devDependencies": {
-			"typescript": "^5.2.2",
-			"vite": "^4.2.1",
-			"vite-plugin-html": "^3.2.0",
-			"vite-plugin-singlefile": "^0.13.5",
-			"vite-plugin-top-level-await": "^1.3.1",
-			"vite-plugin-wasm": "^3.2.2"
-		},
-		"dependencies": {
-			"dill-pixel": "latest"
-		}
-	}
-	```
+	<TabItem label={"npm"}>
+		```bash
+		npm install
+		```
 	</TabItem>
-	<TabItem label="vite.config.js">
-	```js
-	import path from 'path';
-	import { fileURLToPath } from 'url';
-	import { defineConfig, normalizePath } from 'vite';
-	import { createHtmlPlugin } from 'vite-plugin-html';
-	import { viteStaticCopy } from 'vite-plugin-static-copy';
-	import topLevelAwait from 'vite-plugin-top-level-await';
-	import wasm from 'vite-plugin-wasm';
-
-	const __dirname = fileURLToPath(new URL('.', import.meta.url));
-
-	/** @type {import("vite").UserConfig} */
-	export default defineConfig((config) => ({
-		...config,
-		target: 'esnext',
-		cacheDir: '.cache',
-		logLevel: 'info',
-		base: process.env.NODE_ENV === 'development' ? '/' : './',
-		server: {
-			port: 3000,
-			host: true,
-			open: true,
-		},
-		preview: {
-			host: true,
-			port: 8080,
-		},
-		plugins: [
-			wasm(),
-			topLevelAwait(),
-			createHtmlPlugin(),
-			viteStaticCopy({
-				watch: { reloadPageOnChange: true },
-				targets: [
-					{
-						src: normalizePath(path.resolve(__dirname, './src/assets/images/spritesheets/_output/*')),
-						dest: './assets/images/spritesheets',
-					},
-					{
-						src: normalizePath(path.resolve(__dirname, './src/assets/images/static/**/*')),
-						dest: './assets/images/static',
-					},
-					{
-						src: normalizePath(path.resolve(__dirname, './src/assets/json/*')),
-						dest: './assets/json',
-					},
-					{
-						src: normalizePath(path.resolve(__dirname, './src/assets/fonts/*')),
-						dest: './assets/fonts',
-					},
-				],
-			}),
-		],
-		resolve: {
-			alias: {
-				'@': path.resolve(__dirname, './src'),
-				'dill-pixel': path.resolve(__dirname, '../src'),
-			},
-		},
-	}));
-	```
+	<TabItem label={"yarn"}>
+		```bash
+		yarn install
+		```
 	</TabItem>
-	<TabItem label="index.html">
-	```html
-	<!DOCTYPE html>
-	<html lang="en">
-	<head>
-			<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-			<meta name="mobile-web-app-capable" content="yes">
-			<meta name="apple-mobile-web-app-capable" content="yes">
-			<title>My Dill Pixel Game</title>
-	</head>
-	<body>
-	<script type="module" src="src/index.ts" async defer></script>
-	</body>
-	</html>
-	```
-	</TabItem>
-	<TabItem label="src/index.css">
-	```css
-	:root {
-		--app-width: 100dvw;
-		--app-height: 100dvh;
-	}
-
-	body, html {
-		position: fixed;
-		margin: 0;
-		padding: 0;
-		width: var(--app-width, 100%);
-		height: var(--app-height, 100%);
-	}
-
-	#game-container {
-		width: 100%;
-		height: 100%;
-		overflow: hidden;
-	}
-	```
-	</TabItem>
-	<TabItem label="src/index.ts">
-	```ts
-	import { Application } from './Application';
-	import { create } from 'dill-pixel';
-	import './index.css';
-
-	create(
-		Application,
-		{
-			antialias: false,
-			useNewResizeManager: true,
-			resizeOptions: {
-				minSize: { width: 375, height: 700 },
-			},
-			autoDensity: false,
-		},
-		Application.containerID,
-	)
-	```
-	</TabItem>
-	<TabItem label="src/Application.ts">
-	```ts
-	import { Application as DillPixelApplication } from 'dill-pixel';
-
-	export class Application extends DillPixelApplication {
-		...
-	}
-
-	```
+	<TabItem label={"pnpm"}>
+		```bash
+		pnpm install
+		```
 	</TabItem>
 </Tabs>
 
-## Start the Dev Server
+### Start the Dev Server
 
 <Tabs>
 	<TabItem label={"npm"}>
@@ -237,7 +135,7 @@ Use the following templates to populate the above files:
 	</TabItem>
 </Tabs>
 
-## Build for Production
+### Build for Production
 
 <Tabs>
 	<TabItem label={"npm"}>

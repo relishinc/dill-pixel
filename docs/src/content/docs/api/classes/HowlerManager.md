@@ -27,7 +27,7 @@ All audio manager implementations need to implement this interface to function w
 
 #### Source
 
-[src/audio/HowlerManager.ts:144](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerManager.ts#L144)
+[src/audio/HowlerManager.ts:144](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/HowlerManager.ts#L144)
 
 ## Properties
 
@@ -41,7 +41,7 @@ All audio manager implementations need to implement this interface to function w
 
 #### Source
 
-[src/audio/HowlerManager.ts:116](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerManager.ts#L116)
+[src/audio/HowlerManager.ts:116](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/HowlerManager.ts#L116)
 
 ## Accessors
 
@@ -57,7 +57,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/audio/HowlerManager.ts:161](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerManager.ts#L161)
+[src/audio/HowlerManager.ts:161](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/HowlerManager.ts#L161)
 
 ***
 
@@ -81,7 +81,7 @@ The master value that affects all audio.
 
 #### Source
 
-[src/audio/HowlerManager.ts:165](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerManager.ts#L165)
+[src/audio/HowlerManager.ts:165](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/HowlerManager.ts#L165)
 
 ## Methods
 
@@ -117,7 +117,7 @@ The created IAudioTrack.
 
 #### Source
 
-[src/audio/HowlerManager.ts:320](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerManager.ts#L320)
+[src/audio/HowlerManager.ts:320](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/HowlerManager.ts#L320)
 
 ***
 
@@ -155,7 +155,7 @@ The time in milliseconds it should take to fade.
 
 #### Source
 
-[src/audio/HowlerManager.ts:304](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerManager.ts#L304)
+[src/audio/HowlerManager.ts:304](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/HowlerManager.ts#L304)
 
 ***
 
@@ -188,7 +188,7 @@ This could happen if the source file could not be found.
 
 #### Source
 
-[src/audio/HowlerManager.ts:312](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerManager.ts#L312)
+[src/audio/HowlerManager.ts:312](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/HowlerManager.ts#L312)
 
 ***
 
@@ -216,7 +216,7 @@ The volume of the category.
 
 #### Source
 
-[src/audio/HowlerManager.ts:183](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerManager.ts#L183)
+[src/audio/HowlerManager.ts:183](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/HowlerManager.ts#L183)
 
 ***
 
@@ -248,7 +248,7 @@ The length of the track or `undefined` if the track doesn't exist.
 
 #### Source
 
-[src/audio/HowlerManager.ts:192](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerManager.ts#L192)
+[src/audio/HowlerManager.ts:192](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/HowlerManager.ts#L192)
 
 ***
 
@@ -268,7 +268,7 @@ Sets up any listeners that need the entire Application construction to be comple
 
 #### Source
 
-[src/audio/HowlerManager.ts:174](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerManager.ts#L174)
+[src/audio/HowlerManager.ts:174](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/HowlerManager.ts#L174)
 
 ***
 
@@ -302,7 +302,7 @@ The callback to be called when loading is finished.
 
 #### Source
 
-[src/audio/HowlerManager.ts:248](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerManager.ts#L248)
+[src/audio/HowlerManager.ts:248](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/HowlerManager.ts#L248)
 
 ***
 
@@ -332,7 +332,7 @@ The category that the track belongs to.
 
 #### Source
 
-[src/audio/HowlerManager.ts:232](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerManager.ts#L232)
+[src/audio/HowlerManager.ts:232](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/HowlerManager.ts#L232)
 
 ***
 
@@ -376,7 +376,7 @@ The track playing.
 
 #### Source
 
-[src/audio/HowlerManager.ts:202](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerManager.ts#L202)
+[src/audio/HowlerManager.ts:202](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/HowlerManager.ts#L202)
 
 ***
 
@@ -406,7 +406,7 @@ The volume to set.
 
 #### Source
 
-[src/audio/HowlerManager.ts:187](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerManager.ts#L187)
+[src/audio/HowlerManager.ts:187](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/HowlerManager.ts#L187)
 
 ***
 
@@ -436,7 +436,7 @@ The category that the track belongs to.
 
 #### Source
 
-[src/audio/HowlerManager.ts:240](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerManager.ts#L240)
+[src/audio/HowlerManager.ts:240](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/HowlerManager.ts#L240)
 
 ***
 
@@ -470,4 +470,4 @@ Whether the IAudioTrack should be removed and destroyed too.
 
 #### Source
 
-[src/audio/HowlerManager.ts:292](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerManager.ts#L292)
+[src/audio/HowlerManager.ts:292](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/audio/HowlerManager.ts#L292)

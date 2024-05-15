@@ -44,6 +44,8 @@ export class StateManager<T extends Application = Application> extends Container
    * Dictionary of all registered states.
    */
   private _stateData: Dictionary<string, IStateData>;
+
+  private _firstStateId: string;
   /**
    * The current active state.
    */
@@ -196,10 +198,14 @@ export class StateManager<T extends Application = Application> extends Container
         this.app.addAssetGroup(stateIdOrClass);
       }
     }
+
+    if (!this._firstStateId) {
+      this._firstStateId = this._stateData.keys()[0];
+    }
   }
 
   public statesRegistered() {
-    const defaultState = this.app.defaultState;
+    const defaultState = this.app.defaultState || this._firstStateId;
     if (typeof defaultState === 'string') {
       this._defaultStateId = defaultState;
     } else {

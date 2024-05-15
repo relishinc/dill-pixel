@@ -13,7 +13,7 @@ title: "IKeyboardStatus"
 
 #### Source
 
-[src/input/KeyboardManager.ts:17](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L17)
+[src/input/KeyboardManager.ts:17](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/KeyboardManager.ts#L17)
 
 ***
 
@@ -23,7 +23,7 @@ title: "IKeyboardStatus"
 
 #### Source
 
-[src/input/KeyboardManager.ts:19](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L19)
+[src/input/KeyboardManager.ts:19](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/KeyboardManager.ts#L19)
 
 ***
 
@@ -33,7 +33,7 @@ title: "IKeyboardStatus"
 
 #### Source
 
-[src/input/KeyboardManager.ts:16](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L16)
+[src/input/KeyboardManager.ts:16](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/KeyboardManager.ts#L16)
 
 ***
 
@@ -43,4 +43,4 @@ title: "IKeyboardStatus"
 
 #### Source
 
-[src/input/KeyboardManager.ts:18](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L18)
+[src/input/KeyboardManager.ts:18](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/KeyboardManager.ts#L18)

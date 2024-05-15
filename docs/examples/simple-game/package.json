@@ -9,12 +9,10 @@
     "build": "vite build"
   },
   "author": "Me<me@myname.com>",
-  "devDependencies": {
-    "typescript": "^5.2.2",
-    "vite": "^4.2.1",
-    "vite-plugin-html": "^3.2.0"
-  },
   "dependencies": {
-    "@relish-studios/dill-pixel": "latest"
+    "dill-pixel": "^3.0.1",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "vite-plugin-html": "^3.2.2"
   }
 }

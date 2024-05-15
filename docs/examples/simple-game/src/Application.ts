@@ -1,7 +1,7 @@
 import { LoadScreen } from './state/LoadScreen';
 import { IntroScreen } from './state/IntroScreen';
 import { GameScreen } from './state/GameScreen';
-import { Application as DillPixelApplication, TransitionType } from '@relish-studios/dill-pixel';
+import { Application as DillPixelApplication, TransitionType } from 'dill-pixel';
 
 export class Application extends DillPixelApplication {
   public get defaultState() {

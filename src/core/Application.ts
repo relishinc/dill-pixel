@@ -34,6 +34,7 @@ import {ResizeManagerNew, ResizeManagerOptions} from '../utils/ResizeManagerNew'
 import {AppConfig} from './AppConfig';
 
 export interface DillPixelApplicationOptions extends IApplicationOptions {
+  resizeDebounce?: number;
   physics?: boolean;
   useSpine?: boolean;
   showStatsInProduction?: boolean;
@@ -53,8 +54,8 @@ export function create<T extends Application = Application>(
 export async function create<T extends Application = Application>(
   ApplicationClass: typeof Application,
   config: Partial<DillPixelApplicationOptions> = {},
-  domElement: string | HTMLElement = ApplicationClass.containerID || Application.containerID,
-  resizeToDOMElement = true,
+  domElement: string | HTMLElement = ApplicationClass.containerID,
+  resizeToDOMElement = false,
 ): Promise<T> {
   let el: HTMLElement | null = null;
   if (typeof domElement === 'string') {
@@ -116,6 +117,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
   protected _useNewResizeManager: boolean;
   protected _resizeOptions: Partial<ResizeManagerOptions>;
   protected _initialized: boolean = false;
+  protected _resizeDebounce: number = 0;
 
   /**
    * Creates a container element with the given id and appends it to the DOM.
@@ -151,8 +153,9 @@ export class Application<T extends Application = any> extends PIXIApplication {
     }
     super(new AppConfig(appConfig));
     Application._instance = this;
+    this._resizeDebounce = appConfig?.resizeDebounce ?? 0;
     this._useSpine = appConfig?.useSpine || false;
-    this._useNewResizeManager = appConfig?.useNewResizeManager || false;
+    this._useNewResizeManager = appConfig?.useNewResizeManager ?? true;
     this._resizeOptions = appConfig?.resizeOptions || {};
     if (isDev() || appConfig?.showStatsInProduction) {
       this.addStats().then(() => {
@@ -422,10 +425,20 @@ export class Application<T extends Application = any> extends PIXIApplication {
 
     this.startSplashProcess(this.requiredAssets, this.onRequiredAssetsLoaded);
 
-    this.onResize(0);
     // Delayed to fix incorrect iOS resizing in WKWebView. See: https://bugs.webkit.org/show_bug.cgi?id=170595
-    this.onResize(0.5);
-    this._webEventsManager.registerResizeCallback(() => this.onResize(0.5));
+    this.onResize(this._resizeDebounce ?? 0);
+    this._webEventsManager.registerResizeCallback(() => this.onResize(this._resizeDebounce ?? 0));
+
+    this._webEventsManager.registerVisibilityChangedCallback((visible: boolean) => {
+      if (visible) {
+        this.onResize(0);
+        this.ticker.start();
+        this.ticker.speed = 1;
+      } else {
+        this.ticker.stop();
+        this.ticker.speed = 0;
+      }
+    });
   }
 
   public async loadDocumentFonts(): Promise<void> {

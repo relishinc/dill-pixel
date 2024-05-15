@@ -1,10 +1,9 @@
-import { IPoint, State, FlexContainer } from '@relish-studios/dill-pixel';
-import { Sprite, Text } from 'pixi.js';
+import { State, FlexContainer } from 'dill-pixel';
+import { Point, Sprite, Text } from 'pixi.js';
 import { Application } from '../Application';
 
 export class IntroScreen extends State<Application> {
-  public static NAME: string = 'IntroScreen';
-
+  static NAME: string = 'IntroScreen';
   protected _bg: Sprite;
   protected _layout: FlexContainer;
   protected _title: Text;
@@ -13,7 +12,7 @@ export class IntroScreen extends State<Application> {
     super();
   }
 
-  public init(pSize: IPoint) {
+  public init(pSize: Point) {
     super.init(pSize);
 
     this._bg = this.add.coloredSprite(0x33aa66);
@@ -53,7 +52,7 @@ export class IntroScreen extends State<Application> {
     pOnComplete();
   }
 
-  public onResize(pSize: IPoint) {
+  public onResize(pSize: Point) {
     super.onResize(pSize);
     if (this._bg) {
       this._bg.width = this._size.x;

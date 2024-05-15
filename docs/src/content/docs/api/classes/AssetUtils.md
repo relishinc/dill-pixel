@@ -27,7 +27,7 @@ Filepath for audio files
 
 #### Source
 
-[src/utils/AssetUtils.ts:30](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L30)
+[src/utils/AssetUtils.ts:30](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L30)
 
 ***
 
@@ -39,7 +39,7 @@ Filepath for fonts
 
 #### Source
 
-[src/utils/AssetUtils.ts:32](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L32)
+[src/utils/AssetUtils.ts:32](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L32)
 
 ***
 
@@ -51,7 +51,7 @@ Filepath to static images
 
 #### Source
 
-[src/utils/AssetUtils.ts:26](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L26)
+[src/utils/AssetUtils.ts:26](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L26)
 
 ***
 
@@ -63,7 +63,7 @@ Filepath for json
 
 #### Source
 
-[src/utils/AssetUtils.ts:36](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L36)
+[src/utils/AssetUtils.ts:36](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L36)
 
 ***
 
@@ -75,7 +75,7 @@ Filepath for spine
 
 #### Source
 
-[src/utils/AssetUtils.ts:34](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L34)
+[src/utils/AssetUtils.ts:34](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L34)
 
 ***
 
@@ -87,7 +87,7 @@ Filepath for spritesheets
 
 #### Source
 
-[src/utils/AssetUtils.ts:28](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L28)
+[src/utils/AssetUtils.ts:28](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L28)
 
 ***
 
@@ -97,7 +97,7 @@ Filepath for spritesheets
 
 #### Source
 
-[src/utils/AssetUtils.ts:41](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L41)
+[src/utils/AssetUtils.ts:41](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L41)
 
 ***
 
@@ -107,7 +107,7 @@ Filepath for spritesheets
 
 #### Source
 
-[src/utils/AssetUtils.ts:40](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L40)
+[src/utils/AssetUtils.ts:40](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L40)
 
 ***
 
@@ -117,7 +117,7 @@ Filepath for spritesheets
 
 #### Source
 
-[src/utils/AssetUtils.ts:38](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L38)
+[src/utils/AssetUtils.ts:38](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L38)
 
 ***
 
@@ -127,7 +127,7 @@ Filepath for spritesheets
 
 #### Source
 
-[src/utils/AssetUtils.ts:39](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L39)
+[src/utils/AssetUtils.ts:39](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L39)
 
 ***
 
@@ -137,7 +137,7 @@ Filepath for spritesheets
 
 #### Source
 
-[src/utils/AssetUtils.ts:42](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L42)
+[src/utils/AssetUtils.ts:42](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L42)
 
 ***
 
@@ -147,7 +147,7 @@ Filepath for spritesheets
 
 #### Source
 
-[src/utils/AssetUtils.ts:43](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L43)
+[src/utils/AssetUtils.ts:43](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L43)
 
 ## Accessors
 
@@ -171,7 +171,7 @@ Sets resolution suffix
 
 #### Source
 
-[src/utils/AssetUtils.ts:51](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L51)
+[src/utils/AssetUtils.ts:51](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L51)
 
 ## Methods
 
@@ -197,7 +197,7 @@ The asset filepath, empty if no resolution
 
 ##### Source
 
-[src/utils/AssetUtils.ts:69](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L69)
+[src/utils/AssetUtils.ts:69](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L69)
 
 #### getPathToAsset(pAssetData)
 
@@ -213,7 +213,7 @@ The asset filepath, empty if no resolution
 
 ##### Source
 
-[src/utils/AssetUtils.ts:70](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L70)
+[src/utils/AssetUtils.ts:70](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L70)
 
 ***
 
@@ -233,4 +233,4 @@ The asset filepath, empty if no resolution
 
 #### Source
 
-[src/utils/AssetUtils.ts:103](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L103)
+[src/utils/AssetUtils.ts:103](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L103)

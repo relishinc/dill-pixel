@@ -13,7 +13,7 @@ title: "AssetType"
 
 #### Source
 
-[src/utils/AssetUtils.ts:14](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L14)
+[src/utils/AssetUtils.ts:14](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L14)
 
 ***
 
@@ -23,7 +23,7 @@ title: "AssetType"
 
 #### Source
 
-[src/utils/AssetUtils.ts:7](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L7)
+[src/utils/AssetUtils.ts:7](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L7)
 
 ***
 
@@ -33,7 +33,7 @@ title: "AssetType"
 
 #### Source
 
-[src/utils/AssetUtils.ts:6](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L6)
+[src/utils/AssetUtils.ts:6](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L6)
 
 ***
 
@@ -43,7 +43,7 @@ title: "AssetType"
 
 #### Source
 
-[src/utils/AssetUtils.ts:15](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L15)
+[src/utils/AssetUtils.ts:15](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L15)
 
 ***
 
@@ -53,7 +53,7 @@ title: "AssetType"
 
 #### Source
 
-[src/utils/AssetUtils.ts:17](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L17)
+[src/utils/AssetUtils.ts:17](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L17)
 
 ***
 
@@ -63,7 +63,7 @@ title: "AssetType"
 
 #### Source
 
-[src/utils/AssetUtils.ts:18](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L18)
+[src/utils/AssetUtils.ts:18](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L18)
 
 ***
 
@@ -73,7 +73,7 @@ title: "AssetType"
 
 #### Source
 
-[src/utils/AssetUtils.ts:5](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L5)
+[src/utils/AssetUtils.ts:5](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L5)
 
 ***
 
@@ -87,7 +87,7 @@ please use SPINE_JSON or AssetMapSpineData instead
 
 #### Source
 
-[src/utils/AssetUtils.ts:10](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L10)
+[src/utils/AssetUtils.ts:10](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L10)
 
 ***
 
@@ -97,7 +97,7 @@ please use SPINE_JSON or AssetMapSpineData instead
 
 #### Source
 
-[src/utils/AssetUtils.ts:13](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L13)
+[src/utils/AssetUtils.ts:13](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L13)
 
 ***
 
@@ -107,7 +107,7 @@ please use SPINE_JSON or AssetMapSpineData instead
 
 #### Source
 
-[src/utils/AssetUtils.ts:11](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L11)
+[src/utils/AssetUtils.ts:11](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L11)
 
 ***
 
@@ -117,7 +117,7 @@ please use SPINE_JSON or AssetMapSpineData instead
 
 #### Source
 
-[src/utils/AssetUtils.ts:12](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L12)
+[src/utils/AssetUtils.ts:12](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L12)
 
 ***
 
@@ -127,7 +127,7 @@ please use SPINE_JSON or AssetMapSpineData instead
 
 #### Source
 
-[src/utils/AssetUtils.ts:4](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L4)
+[src/utils/AssetUtils.ts:4](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L4)
 
 ***
 
@@ -137,4 +137,4 @@ please use SPINE_JSON or AssetMapSpineData instead
 
 #### Source
 
-[src/utils/AssetUtils.ts:8](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/AssetUtils.ts#L8)
+[src/utils/AssetUtils.ts:8](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/AssetUtils.ts#L8)

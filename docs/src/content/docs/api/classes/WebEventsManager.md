@@ -25,7 +25,7 @@ Creates callback arrays and registers to web events.
 
 #### Source
 
-[src/utils/WebEventsManager.ts:28](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/WebEventsManager.ts#L28)
+[src/utils/WebEventsManager.ts:28](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/WebEventsManager.ts#L28)
 
 ## Methods
 
@@ -49,7 +49,7 @@ False if the callback was previously added.
 
 #### Source
 
-[src/utils/WebEventsManager.ts:70](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/WebEventsManager.ts#L70)
+[src/utils/WebEventsManager.ts:70](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/WebEventsManager.ts#L70)
 
 ***
 
@@ -73,7 +73,7 @@ False if the callback was previously added.
 
 #### Source
 
-[src/utils/WebEventsManager.ts:42](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/WebEventsManager.ts#L42)
+[src/utils/WebEventsManager.ts:42](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/WebEventsManager.ts#L42)
 
 ***
 
@@ -95,7 +95,7 @@ The callback to unregister.
 
 #### Source
 
-[src/utils/WebEventsManager.ts:85](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/WebEventsManager.ts#L85)
+[src/utils/WebEventsManager.ts:85](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/WebEventsManager.ts#L85)
 
 ***
 
@@ -117,4 +117,4 @@ The callback to unregister.
 
 #### Source
 
-[src/utils/WebEventsManager.ts:57](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/WebEventsManager.ts#L57)
+[src/utils/WebEventsManager.ts:57](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/WebEventsManager.ts#L57)

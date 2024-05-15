@@ -29,7 +29,7 @@ title: "ObjectPool"
 
 #### Source
 
-[src/gameobjects/ObjectPool.ts:9](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ObjectPool.ts#L9)
+[src/gameobjects/ObjectPool.ts:9](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ObjectPool.ts#L9)
 
 ## Properties
 
@@ -47,7 +47,7 @@ title: "ObjectPool"
 
 #### Source
 
-[src/gameobjects/ObjectPool.ts:10](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ObjectPool.ts#L10)
+[src/gameobjects/ObjectPool.ts:10](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ObjectPool.ts#L10)
 
 ***
 
@@ -57,7 +57,7 @@ title: "ObjectPool"
 
 #### Source
 
-[src/gameobjects/ObjectPool.ts:11](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ObjectPool.ts#L11)
+[src/gameobjects/ObjectPool.ts:11](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ObjectPool.ts#L11)
 
 ***
 
@@ -67,7 +67,7 @@ title: "ObjectPool"
 
 #### Source
 
-[src/gameobjects/ObjectPool.ts:12](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ObjectPool.ts#L12)
+[src/gameobjects/ObjectPool.ts:12](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ObjectPool.ts#L12)
 
 ## Methods
 
@@ -85,7 +85,7 @@ title: "ObjectPool"
 
 #### Source
 
-[src/gameobjects/ObjectPool.ts:42](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ObjectPool.ts#L42)
+[src/gameobjects/ObjectPool.ts:42](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ObjectPool.ts#L42)
 
 ***
 
@@ -105,7 +105,7 @@ title: "ObjectPool"
 
 #### Source
 
-[src/gameobjects/ObjectPool.ts:35](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ObjectPool.ts#L35)
+[src/gameobjects/ObjectPool.ts:35](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ObjectPool.ts#L35)
 
 ***
 
@@ -119,7 +119,7 @@ title: "ObjectPool"
 
 #### Source
 
-[src/gameobjects/ObjectPool.ts:19](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ObjectPool.ts#L19)
+[src/gameobjects/ObjectPool.ts:19](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ObjectPool.ts#L19)
 
 ***
 
@@ -137,4 +137,4 @@ title: "ObjectPool"
 
 #### Source
 
-[src/gameobjects/ObjectPool.ts:27](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ObjectPool.ts#L27)
+[src/gameobjects/ObjectPool.ts:27](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/ObjectPool.ts#L27)

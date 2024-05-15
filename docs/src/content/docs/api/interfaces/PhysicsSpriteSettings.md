@@ -21,7 +21,7 @@ title: "PhysicsSpriteSettings"
 
 #### Source
 
-[src/utils/factory/Make.ts:55](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L55)
+[src/utils/factory/Make.ts:55](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Make.ts#L55)
 
 ***
 
@@ -35,7 +35,7 @@ title: "PhysicsSpriteSettings"
 
 #### Source
 
-[src/utils/factory/Make.ts:60](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L60)
+[src/utils/factory/Make.ts:60](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Make.ts#L60)
 
 ***
 
@@ -49,7 +49,7 @@ title: "PhysicsSpriteSettings"
 
 #### Source
 
-[src/utils/factory/Make.ts:46](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L46)
+[src/utils/factory/Make.ts:46](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Make.ts#L46)
 
 ***
 
@@ -63,7 +63,7 @@ title: "PhysicsSpriteSettings"
 
 #### Source
 
-[src/physics/interfaces/IPhysicsBodySettings.ts:6](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/physics/interfaces/IPhysicsBodySettings.ts#L6)
+[src/physics/interfaces/IPhysicsBodySettings.ts:6](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/physics/interfaces/IPhysicsBodySettings.ts#L6)
 
 ***
 
@@ -77,7 +77,7 @@ title: "PhysicsSpriteSettings"
 
 #### Source
 
-[src/utils/factory/Make.ts:51](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L51)
+[src/utils/factory/Make.ts:51](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Make.ts#L51)
 
 ***
 
@@ -91,7 +91,7 @@ title: "PhysicsSpriteSettings"
 
 #### Source
 
-[src/utils/factory/Make.ts:64](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L64)
+[src/utils/factory/Make.ts:64](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Make.ts#L64)
 
 ***
 
@@ -105,7 +105,7 @@ title: "PhysicsSpriteSettings"
 
 #### Source
 
-[src/utils/factory/Make.ts:47](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L47)
+[src/utils/factory/Make.ts:47](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Make.ts#L47)
 
 ***
 
@@ -119,7 +119,7 @@ title: "PhysicsSpriteSettings"
 
 #### Source
 
-[src/physics/interfaces/IPhysicsBodySettings.ts:5](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/physics/interfaces/IPhysicsBodySettings.ts#L5)
+[src/physics/interfaces/IPhysicsBodySettings.ts:5](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/physics/interfaces/IPhysicsBodySettings.ts#L5)
 
 ***
 
@@ -133,4 +133,4 @@ title: "PhysicsSpriteSettings"
 
 #### Source
 
-[src/utils/factory/Make.ts:56](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L56)
+[src/utils/factory/Make.ts:56](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Make.ts#L56)

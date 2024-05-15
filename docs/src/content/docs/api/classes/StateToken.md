@@ -27,7 +27,7 @@ State token
 
 #### Source
 
-[src/state/StateToken.ts:22](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateToken.ts#L22)
+[src/state/StateToken.ts:22](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateToken.ts#L22)
 
 ## Properties
 
@@ -37,7 +37,7 @@ State token
 
 #### Source
 
-[src/state/StateToken.ts:20](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateToken.ts#L20)
+[src/state/StateToken.ts:20](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateToken.ts#L20)
 
 ***
 
@@ -49,7 +49,7 @@ The load screen to use to transition to this state. Only needed for transitions 
 
 #### Source
 
-[src/state/StateToken.ts:14](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateToken.ts#L14)
+[src/state/StateToken.ts:14](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateToken.ts#L14)
 
 ***
 
@@ -61,7 +61,7 @@ The id of the state.
 
 #### Source
 
-[src/state/StateToken.ts:10](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateToken.ts#L10)
+[src/state/StateToken.ts:10](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateToken.ts#L10)
 
 ***
 
@@ -73,4 +73,4 @@ The list of transition steps to perform.
 
 #### Source
 
-[src/state/StateToken.ts:18](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/StateToken.ts#L18)
+[src/state/StateToken.ts:18](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/StateToken.ts#L18)

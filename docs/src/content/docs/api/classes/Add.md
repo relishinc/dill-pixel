@@ -21,7 +21,7 @@ title: "Add"
 
 #### Source
 
-[src/utils/factory/Add.ts:54](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L54)
+[src/utils/factory/Add.ts:54](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L54)
 
 ## Methods
 
@@ -39,7 +39,7 @@ title: "Add"
 
 #### Source
 
-[src/utils/factory/Add.ts:406](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L406)
+[src/utils/factory/Add.ts:406](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L406)
 
 ***
 
@@ -59,7 +59,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:232](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L232)
+[src/utils/factory/Add.ts:232](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L232)
 
 #### bitmapText(value, style, alpha, position, anchor, scale)
 
@@ -85,7 +85,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:233](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L233)
+[src/utils/factory/Add.ts:233](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L233)
 
 ***
 
@@ -105,7 +105,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:89](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L89)
+[src/utils/factory/Add.ts:89](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L89)
 
 #### coloredSprite(color, size, shape, opts, alpha, position, anchor, scale)
 
@@ -135,7 +135,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:90](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L90)
+[src/utils/factory/Add.ts:90](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L90)
 
 ***
 
@@ -155,7 +155,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:257](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L257)
+[src/utils/factory/Add.ts:257](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L257)
 
 #### container(alpha, position, scale)
 
@@ -175,7 +175,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:258](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L258)
+[src/utils/factory/Add.ts:258](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L258)
 
 ***
 
@@ -201,7 +201,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:56](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L56)
+[src/utils/factory/Add.ts:56](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L56)
 
 #### existing(pObject, position, anchor, scale)
 
@@ -227,7 +227,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:57](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L57)
+[src/utils/factory/Add.ts:57](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L57)
 
 ***
 
@@ -247,7 +247,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:270](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L270)
+[src/utils/factory/Add.ts:270](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L270)
 
 #### flexContainer(alpha, position, settings, scale)
 
@@ -269,7 +269,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:271](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L271)
+[src/utils/factory/Add.ts:271](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L271)
 
 ***
 
@@ -289,7 +289,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:292](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L292)
+[src/utils/factory/Add.ts:292](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L292)
 
 #### graphics(alpha, position, scale)
 
@@ -309,7 +309,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:293](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L293)
+[src/utils/factory/Add.ts:293](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L293)
 
 ***
 
@@ -329,7 +329,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:207](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L207)
+[src/utils/factory/Add.ts:207](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L207)
 
 #### htmlText(value, style, alpha, position, anchor, scale)
 
@@ -355,7 +355,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:208](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L208)
+[src/utils/factory/Add.ts:208](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L208)
 
 ***
 
@@ -375,7 +375,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:334](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L334)
+[src/utils/factory/Add.ts:334](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L334)
 
 #### mesh(geometry, shader, state, drawMode)
 
@@ -397,7 +397,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:335](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L335)
+[src/utils/factory/Add.ts:335](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L335)
 
 ***
 
@@ -417,7 +417,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:303](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L303)
+[src/utils/factory/Add.ts:303](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L303)
 
 #### nineSlice(asset, sheet, leftWidth, topHeight, rightWidth, bottomHeight, alpha, position, scale)
 
@@ -449,7 +449,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:304](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L304)
+[src/utils/factory/Add.ts:304](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L304)
 
 ***
 
@@ -469,7 +469,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:378](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L378)
+[src/utils/factory/Add.ts:378](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L378)
 
 #### simplePlane(asset, sheet, vertsWidth, vertsHeight, alpha, position, scale)
 
@@ -497,7 +497,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:379](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L379)
+[src/utils/factory/Add.ts:379](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L379)
 
 ***
 
@@ -525,7 +525,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:349](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L349)
+[src/utils/factory/Add.ts:349](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L349)
 
 #### simpleRope(asset, sheet, numPoints, segmentLength, autoUpdate, alpha, position, scale)
 
@@ -563,7 +563,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:350](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L350)
+[src/utils/factory/Add.ts:350](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L350)
 
 ***
 
@@ -581,7 +581,7 @@ title: "Add"
 
 #### Source
 
-[src/utils/factory/Add.ts:412](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L412)
+[src/utils/factory/Add.ts:412](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L412)
 
 ***
 
@@ -601,7 +601,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:127](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L127)
+[src/utils/factory/Add.ts:127](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L127)
 
 #### sprite(pTexture, pSheet, alpha, position, anchor, scale)
 
@@ -627,7 +627,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:128](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L128)
+[src/utils/factory/Add.ts:128](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L128)
 
 ***
 
@@ -657,7 +657,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:183](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L183)
+[src/utils/factory/Add.ts:183](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L183)
 
 #### text(settings)
 
@@ -673,7 +673,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:191](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L191)
+[src/utils/factory/Add.ts:191](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L191)
 
 ***
 
@@ -693,7 +693,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:152](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L152)
+[src/utils/factory/Add.ts:152](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L152)
 
 #### tilingSprite(asset, sheet, width, height, tilePosition, alpha, position, anchor, scale)
 
@@ -725,7 +725,7 @@ title: "Add"
 
 ##### Source
 
-[src/utils/factory/Add.ts:153](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L153)
+[src/utils/factory/Add.ts:153](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L153)
 
 ***
 
@@ -743,4 +743,4 @@ title: "Add"
 
 #### Source
 
-[src/utils/factory/Add.ts:418](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Add.ts#L418)
+[src/utils/factory/Add.ts:418](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/factory/Add.ts#L418)

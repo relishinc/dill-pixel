@@ -35,7 +35,7 @@ Hit area renderer
 
 #### Source
 
-[src/input/HitAreaRenderer.ts:28](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/HitAreaRenderer.ts#L28)
+[src/input/HitAreaRenderer.ts:28](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/HitAreaRenderer.ts#L28)
 
 ## Accessors
 
@@ -59,7 +59,7 @@ Sets active
 
 #### Source
 
-[src/input/HitAreaRenderer.ts:42](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/HitAreaRenderer.ts#L42)
+[src/input/HitAreaRenderer.ts:42](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/HitAreaRenderer.ts#L42)
 
 ***
 
@@ -75,7 +75,7 @@ Sets interval
 
 #### Source
 
-[src/input/HitAreaRenderer.ts:61](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/HitAreaRenderer.ts#L61)
+[src/input/HitAreaRenderer.ts:61](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/HitAreaRenderer.ts#L61)
 
 ## Methods
 
@@ -91,7 +91,7 @@ Clears hit area renderer
 
 #### Source
 
-[src/input/HitAreaRenderer.ts:101](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/HitAreaRenderer.ts#L101)
+[src/input/HitAreaRenderer.ts:101](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/HitAreaRenderer.ts#L101)
 
 ***
 
@@ -107,7 +107,7 @@ Renders hit area renderer
 
 #### Source
 
-[src/input/HitAreaRenderer.ts:84](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/HitAreaRenderer.ts#L84)
+[src/input/HitAreaRenderer.ts:84](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/HitAreaRenderer.ts#L84)
 
 ***
 
@@ -125,7 +125,7 @@ Renders hit area renderer
 
 #### Source
 
-[src/input/HitAreaRenderer.ts:91](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/HitAreaRenderer.ts#L91)
+[src/input/HitAreaRenderer.ts:91](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/HitAreaRenderer.ts#L91)
 
 ***
 
@@ -143,4 +143,4 @@ Renders hit area renderer
 
 #### Source
 
-[src/input/HitAreaRenderer.ts:69](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/HitAreaRenderer.ts#L69)
+[src/input/HitAreaRenderer.ts:69](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/HitAreaRenderer.ts#L69)

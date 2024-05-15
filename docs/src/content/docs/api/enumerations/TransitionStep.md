@@ -17,7 +17,7 @@ Animates the current state out.
 
 #### Source
 
-[src/state/TransitionStep.ts:12](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/TransitionStep.ts#L12)
+[src/state/TransitionStep.ts:12](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/TransitionStep.ts#L12)
 
 ***
 
@@ -29,7 +29,7 @@ Animates the new state in.
 
 #### Source
 
-[src/state/TransitionStep.ts:8](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/TransitionStep.ts#L8)
+[src/state/TransitionStep.ts:8](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/TransitionStep.ts#L8)
 
 ***
 
@@ -41,7 +41,7 @@ Animate in the new state and animate out the old state simultaneously.
 
 #### Source
 
-[src/state/TransitionStep.ts:16](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/TransitionStep.ts#L16)
+[src/state/TransitionStep.ts:16](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/TransitionStep.ts#L16)
 
 ***
 
@@ -53,7 +53,7 @@ Attach the new state behind all other states.
 
 #### Source
 
-[src/state/TransitionStep.ts:24](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/TransitionStep.ts#L24)
+[src/state/TransitionStep.ts:24](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/TransitionStep.ts#L24)
 
 ***
 
@@ -65,7 +65,7 @@ Attach the new state in front of all other states.
 
 #### Source
 
-[src/state/TransitionStep.ts:20](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/TransitionStep.ts#L20)
+[src/state/TransitionStep.ts:20](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/TransitionStep.ts#L20)
 
 ***
 
@@ -77,7 +77,7 @@ Halts the transition until further notice.
 
 #### Source
 
-[src/state/TransitionStep.ts:53](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/TransitionStep.ts#L53)
+[src/state/TransitionStep.ts:53](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/TransitionStep.ts#L53)
 
 ***
 
@@ -89,7 +89,7 @@ Hides the current active load screen.
 
 #### Source
 
-[src/state/TransitionStep.ts:48](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/TransitionStep.ts#L48)
+[src/state/TransitionStep.ts:48](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/TransitionStep.ts#L48)
 
 ***
 
@@ -99,7 +99,7 @@ Hides the current active load screen.
 
 #### Source
 
-[src/state/TransitionStep.ts:49](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/TransitionStep.ts#L49)
+[src/state/TransitionStep.ts:49](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/TransitionStep.ts#L49)
 
 ***
 
@@ -111,7 +111,7 @@ Loads assets required by the new state.
 
 #### Source
 
-[src/state/TransitionStep.ts:32](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/TransitionStep.ts#L32)
+[src/state/TransitionStep.ts:32](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/TransitionStep.ts#L32)
 
 ***
 
@@ -123,7 +123,7 @@ Pauses transition for 1 second and continues afterward.
 
 #### Source
 
-[src/state/TransitionStep.ts:62](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/TransitionStep.ts#L62)
+[src/state/TransitionStep.ts:62](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/TransitionStep.ts#L62)
 
 ***
 
@@ -135,7 +135,7 @@ Pauses transition for 5 seconds and continues afterward.
 
 #### Source
 
-[src/state/TransitionStep.ts:66](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/TransitionStep.ts#L66)
+[src/state/TransitionStep.ts:66](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/TransitionStep.ts#L66)
 
 ***
 
@@ -151,7 +151,7 @@ Relish GM => Figure out how to actually skip only one frame.
 
 #### Source
 
-[src/state/TransitionStep.ts:58](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/TransitionStep.ts#L58)
+[src/state/TransitionStep.ts:58](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/TransitionStep.ts#L58)
 
 ***
 
@@ -163,7 +163,7 @@ Removes and destroys the current state.
 
 #### Source
 
-[src/state/TransitionStep.ts:28](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/TransitionStep.ts#L28)
+[src/state/TransitionStep.ts:28](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/TransitionStep.ts#L28)
 
 ***
 
@@ -175,7 +175,7 @@ Show the current active load screen.
 
 #### Source
 
-[src/state/TransitionStep.ts:44](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/TransitionStep.ts#L44)
+[src/state/TransitionStep.ts:44](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/TransitionStep.ts#L44)
 
 ***
 
@@ -187,7 +187,7 @@ Unloads assets required by the old state and not required by the new state.
 
 #### Source
 
-[src/state/TransitionStep.ts:36](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/TransitionStep.ts#L36)
+[src/state/TransitionStep.ts:36](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/TransitionStep.ts#L36)
 
 ***
 
@@ -199,4 +199,4 @@ Copied from ULF and isn't currently used.
 
 #### Source
 
-[src/state/TransitionStep.ts:40](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/state/TransitionStep.ts#L40)
+[src/state/TransitionStep.ts:40](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/state/TransitionStep.ts#L40)

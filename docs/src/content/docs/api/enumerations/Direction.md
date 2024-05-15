@@ -13,7 +13,7 @@ title: "Direction"
 
 #### Source
 
-[src/input/KeyboardMap.ts:12](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardMap.ts#L12)
+[src/input/KeyboardMap.ts:12](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/KeyboardMap.ts#L12)
 
 ***
 
@@ -23,7 +23,7 @@ title: "Direction"
 
 #### Source
 
-[src/input/KeyboardMap.ts:9](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardMap.ts#L9)
+[src/input/KeyboardMap.ts:9](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/KeyboardMap.ts#L9)
 
 ***
 
@@ -33,7 +33,7 @@ title: "Direction"
 
 #### Source
 
-[src/input/KeyboardMap.ts:11](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardMap.ts#L11)
+[src/input/KeyboardMap.ts:11](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/KeyboardMap.ts#L11)
 
 ***
 
@@ -43,7 +43,7 @@ title: "Direction"
 
 #### Source
 
-[src/input/KeyboardMap.ts:10](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardMap.ts#L10)
+[src/input/KeyboardMap.ts:10](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/KeyboardMap.ts#L10)
 
 ***
 
@@ -53,7 +53,7 @@ title: "Direction"
 
 #### Source
 
-[src/input/KeyboardMap.ts:8](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardMap.ts#L8)
+[src/input/KeyboardMap.ts:8](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/KeyboardMap.ts#L8)
 
 ***
 
@@ -63,4 +63,4 @@ title: "Direction"
 
 #### Source
 
-[src/input/KeyboardMap.ts:7](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardMap.ts#L7)
+[src/input/KeyboardMap.ts:7](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/input/KeyboardMap.ts#L7)

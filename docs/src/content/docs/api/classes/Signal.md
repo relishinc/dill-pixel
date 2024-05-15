@@ -47,7 +47,7 @@ title: "Signal"
 
 #### Source
 
-[src/signals/Signal.ts:27](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/signals/Signal.ts#L27)
+[src/signals/Signal.ts:27](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/signals/Signal.ts#L27)
 
 ***
 
@@ -67,4 +67,4 @@ title: "Signal"
 
 #### Source
 
-[src/signals/Signal.ts:14](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/signals/Signal.ts#L14)
+[src/signals/Signal.ts:14](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/signals/Signal.ts#L14)

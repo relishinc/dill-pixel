@@ -23,4 +23,4 @@ Point
 
 ## Source
 
-[src/utils/PointUtils.ts:10](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/PointUtils.ts#L10)
+[src/utils/PointUtils.ts:10](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/utils/PointUtils.ts#L10)

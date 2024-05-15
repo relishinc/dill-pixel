@@ -25,7 +25,7 @@ Creates an instance of sprite animation.
 
 #### Source
 
-[src/gameobjects/animation/SpriteAnimation.ts:44](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/animation/SpriteAnimation.ts#L44)
+[src/gameobjects/animation/SpriteAnimation.ts:44](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/animation/SpriteAnimation.ts#L44)
 
 ## Accessors
 
@@ -41,7 +41,7 @@ Gets duration (automatically calculated based on framerate)
 
 #### Source
 
-[src/gameobjects/animation/SpriteAnimation.ts:91](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/animation/SpriteAnimation.ts#L91)
+[src/gameobjects/animation/SpriteAnimation.ts:91](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/animation/SpriteAnimation.ts#L91)
 
 ***
 
@@ -65,7 +65,7 @@ Sets framerate
 
 #### Source
 
-[src/gameobjects/animation/SpriteAnimation.ts:77](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/animation/SpriteAnimation.ts#L77)
+[src/gameobjects/animation/SpriteAnimation.ts:77](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/animation/SpriteAnimation.ts#L77)
 
 ***
 
@@ -81,7 +81,7 @@ Gets number of frames
 
 #### Source
 
-[src/gameobjects/animation/SpriteAnimation.ts:70](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/animation/SpriteAnimation.ts#L70)
+[src/gameobjects/animation/SpriteAnimation.ts:70](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/animation/SpriteAnimation.ts#L70)
 
 ***
 
@@ -97,7 +97,7 @@ Gets whether is looping
 
 #### Source
 
-[src/gameobjects/animation/SpriteAnimation.ts:98](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/animation/SpriteAnimation.ts#L98)
+[src/gameobjects/animation/SpriteAnimation.ts:98](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/animation/SpriteAnimation.ts#L98)
 
 ## Methods
 
@@ -117,7 +117,7 @@ Fires on complete
 
 #### Source
 
-[src/gameobjects/animation/SpriteAnimation.ts:133](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/animation/SpriteAnimation.ts#L133)
+[src/gameobjects/animation/SpriteAnimation.ts:133](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/animation/SpriteAnimation.ts#L133)
 
 ***
 
@@ -133,7 +133,7 @@ Fires on loop
 
 #### Source
 
-[src/gameobjects/animation/SpriteAnimation.ts:142](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/animation/SpriteAnimation.ts#L142)
+[src/gameobjects/animation/SpriteAnimation.ts:142](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/animation/SpriteAnimation.ts#L142)
 
 ***
 
@@ -155,7 +155,7 @@ frame
 
 #### Source
 
-[src/gameobjects/animation/SpriteAnimation.ts:107](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/animation/SpriteAnimation.ts#L107)
+[src/gameobjects/animation/SpriteAnimation.ts:107](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/animation/SpriteAnimation.ts#L107)
 
 ***
 
@@ -179,7 +179,7 @@ SH: Optimize the adding of onComplete callbacks (constructor?)
 
 #### Source
 
-[src/gameobjects/animation/SpriteAnimation.ts:117](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/animation/SpriteAnimation.ts#L117)
+[src/gameobjects/animation/SpriteAnimation.ts:117](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/animation/SpriteAnimation.ts#L117)
 
 ***
 
@@ -199,4 +199,4 @@ onLoop
 
 #### Source
 
-[src/gameobjects/animation/SpriteAnimation.ts:125](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/animation/SpriteAnimation.ts#L125)
+[src/gameobjects/animation/SpriteAnimation.ts:125](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/animation/SpriteAnimation.ts#L125)

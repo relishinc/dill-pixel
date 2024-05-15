@@ -40,7 +40,7 @@ However, you can also make your own implementation of [IPopup](../../../../../..
 
 #### Source
 
-[src/popup/Popup.ts:48](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/Popup.ts#L48)
+[src/popup/Popup.ts:48](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/Popup.ts#L48)
 
 ## Properties
 
@@ -57,7 +57,7 @@ Note that this will not be a child of the Popup
 
 #### Source
 
-[src/popup/Popup.ts:32](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/Popup.ts#L32)
+[src/popup/Popup.ts:32](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/Popup.ts#L32)
 
 ***
 
@@ -71,7 +71,7 @@ Note that this will not be a child of the Popup
 
 #### Source
 
-[src/gameobjects/Container.ts:23](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L23)
+[src/gameobjects/Container.ts:23](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L23)
 
 ***
 
@@ -85,7 +85,7 @@ Note that this will not be a child of the Popup
 
 #### Source
 
-[src/gameobjects/Container.ts:22](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L22)
+[src/gameobjects/Container.ts:22](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L22)
 
 ***
 
@@ -95,7 +95,7 @@ Note that this will not be a child of the Popup
 
 #### Source
 
-[src/popup/Popup.ts:33](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/Popup.ts#L33)
+[src/popup/Popup.ts:33](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/Popup.ts#L33)
 
 ***
 
@@ -109,7 +109,7 @@ Note that this will not be a child of the Popup
 
 #### Source
 
-[src/gameobjects/Container.ts:21](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L21)
+[src/gameobjects/Container.ts:21](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L21)
 
 ## Accessors
 
@@ -123,7 +123,7 @@ Note that this will not be a child of the Popup
 
 #### Source
 
-[src/gameobjects/Container.ts:121](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L121)
+[src/gameobjects/Container.ts:121](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L121)
 
 ***
 
@@ -137,7 +137,7 @@ Note that this will not be a child of the Popup
 
 #### Source
 
-[src/gameobjects/Container.ts:129](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L129)
+[src/gameobjects/Container.ts:129](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L129)
 
 ***
 
@@ -157,7 +157,7 @@ Note that this will not be a child of the Popup
 
 #### Source
 
-[src/gameobjects/Container.ts:108](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L108)
+[src/gameobjects/Container.ts:108](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L108)
 
 ***
 
@@ -177,7 +177,7 @@ Note that this will not be a child of the Popup
 
 #### Source
 
-[src/gameobjects/Container.ts:84](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L84)
+[src/gameobjects/Container.ts:84](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L84)
 
 ***
 
@@ -197,7 +197,7 @@ Note that this will not be a child of the Popup
 
 #### Source
 
-[src/gameobjects/Container.ts:92](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L92)
+[src/gameobjects/Container.ts:92](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L92)
 
 ***
 
@@ -217,7 +217,7 @@ Note that this will not be a child of the Popup
 
 #### Source
 
-[src/gameobjects/Container.ts:100](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L100)
+[src/gameobjects/Container.ts:100](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L100)
 
 ***
 
@@ -234,7 +234,7 @@ Typescript quirk: a `readonly` Field can be implemented as a read-only Property 
 
 #### Source
 
-[src/popup/Popup.ts:54](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/Popup.ts#L54)
+[src/popup/Popup.ts:54](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/Popup.ts#L54)
 
 ***
 
@@ -250,7 +250,7 @@ Whether or not to close the popup when the escape key (or Android back button) i
 
 #### Source
 
-[src/popup/Popup.ts:59](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/Popup.ts#L59)
+[src/popup/Popup.ts:59](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/Popup.ts#L59)
 
 ***
 
@@ -264,7 +264,7 @@ Whether or not to close the popup when the escape key (or Android back button) i
 
 #### Source
 
-[src/gameobjects/Container.ts:125](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L125)
+[src/gameobjects/Container.ts:125](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L125)
 
 ***
 
@@ -278,7 +278,7 @@ Whether or not to close the popup when the escape key (or Android back button) i
 
 #### Source
 
-[src/popup/Popup.ts:68](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/Popup.ts#L68)
+[src/popup/Popup.ts:68](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/Popup.ts#L68)
 
 ***
 
@@ -294,7 +294,7 @@ This is used to prevent duplicate calls to e.g. [hide](../../../../../../api/cla
 
 #### Source
 
-[src/popup/Popup.ts:64](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/Popup.ts#L64)
+[src/popup/Popup.ts:64](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/Popup.ts#L64)
 
 ***
 
@@ -314,7 +314,7 @@ This is used to prevent duplicate calls to e.g. [hide](../../../../../../api/cla
 
 #### Source
 
-[src/gameobjects/Container.ts:62](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L62)
+[src/gameobjects/Container.ts:62](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L62)
 
 ***
 
@@ -334,7 +334,7 @@ This is used to prevent duplicate calls to e.g. [hide](../../../../../../api/cla
 
 #### Source
 
-[src/gameobjects/Container.ts:70](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L70)
+[src/gameobjects/Container.ts:70](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L70)
 
 ## Methods
 
@@ -360,7 +360,7 @@ This is used to prevent duplicate calls to e.g. [hide](../../../../../../api/cla
 
 #### Source
 
-[src/popup/Popup.ts:124](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/Popup.ts#L124)
+[src/popup/Popup.ts:124](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/Popup.ts#L124)
 
 ***
 
@@ -378,7 +378,7 @@ This is used to prevent duplicate calls to e.g. [hide](../../../../../../api/cla
 
 #### Source
 
-[src/gameobjects/Container.ts:174](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L174)
+[src/gameobjects/Container.ts:174](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L174)
 
 ***
 
@@ -396,7 +396,7 @@ This is used to prevent duplicate calls to e.g. [hide](../../../../../../api/cla
 
 #### Source
 
-[src/gameobjects/Container.ts:170](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L170)
+[src/gameobjects/Container.ts:170](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L170)
 
 ***
 
@@ -418,7 +418,7 @@ The position that the focus should be centred around.
 
 #### Source
 
-[src/gameobjects/Container.ts:158](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L158)
+[src/gameobjects/Container.ts:158](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L158)
 
 ***
 
@@ -440,7 +440,7 @@ The size of the area that the focus should surround.
 
 #### Source
 
-[src/gameobjects/Container.ts:162](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L162)
+[src/gameobjects/Container.ts:162](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L162)
 
 ***
 
@@ -460,7 +460,7 @@ Hide the popup, but only if it's open
 
 #### Source
 
-[src/popup/Popup.ts:73](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/Popup.ts#L73)
+[src/popup/Popup.ts:73](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/Popup.ts#L73)
 
 ***
 
@@ -486,7 +486,7 @@ Screen size, in pixels(?)
 
 #### Source
 
-[src/popup/Popup.ts:80](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/Popup.ts#L80)
+[src/popup/Popup.ts:80](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/Popup.ts#L80)
 
 ***
 
@@ -507,7 +507,7 @@ Defaults to this.interactive && this.worldVisible
 
 #### Source
 
-[src/gameobjects/Container.ts:166](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L166)
+[src/gameobjects/Container.ts:166](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L166)
 
 ***
 
@@ -527,7 +527,7 @@ Called when this Focusable is focussed and then activated.
 
 #### Source
 
-[src/gameobjects/Container.ts:156](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L156)
+[src/gameobjects/Container.ts:156](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L156)
 
 ***
 
@@ -547,7 +547,7 @@ Called when this Focusable is focussed.
 
 #### Source
 
-[src/gameobjects/Container.ts:144](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L144)
+[src/gameobjects/Container.ts:144](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L144)
 
 ***
 
@@ -567,7 +567,7 @@ Called when this Focusable is no longer focussed.
 
 #### Source
 
-[src/gameobjects/Container.ts:150](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Container.ts#L150)
+[src/gameobjects/Container.ts:150](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/gameobjects/Container.ts#L150)
 
 ***
 
@@ -601,7 +601,7 @@ This should be called by [PopupManager.onResize](../../../../../../api/classes/p
 
 #### Source
 
-[src/popup/Popup.ts:89](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/Popup.ts#L89)
+[src/popup/Popup.ts:89](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/Popup.ts#L89)
 
 ***
 
@@ -626,7 +626,7 @@ You probably want to override animateIn, not [show](../../../../../../api/classe
 
 #### Source
 
-[src/popup/Popup.ts:113](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/Popup.ts#L113)
+[src/popup/Popup.ts:113](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/Popup.ts#L113)
 
 ***
 
@@ -657,4 +657,4 @@ Seconds elapsed since last call to [update](../../../../../../api/classes/popup/
 
 #### Source
 
-[src/popup/Popup.ts:104](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/popup/Popup.ts#L104)
+[src/popup/Popup.ts:104](https://github.com/relishinc/dill-pixel/blob/c79d8e8552aaa0f13a29535c819ae67d025b4669/src/popup/Popup.ts#L104)

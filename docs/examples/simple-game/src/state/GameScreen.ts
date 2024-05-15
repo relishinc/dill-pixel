@@ -1,4 +1,4 @@
-import { IPoint, State, Container, FlexContainer } from '@relish-studios/dill-pixel';
+import { IPoint, State, Container, FlexContainer } from 'dill-pixel';
 import { Sprite, Text } from 'pixi.js';
 import { Application } from '../Application';
 

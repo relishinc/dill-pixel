@@ -2,7 +2,7 @@
 editUrl: false
 next: false
 prev: false
-title: "@relish-studios/dill-pixel"
+title: "dill-pixel"
 ---
 
 ## Namespaces
