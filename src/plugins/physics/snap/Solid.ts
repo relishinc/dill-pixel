@@ -62,7 +62,6 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
 
   public handleActorInteractions(deltaX: number, deltaY: number): void {
     // Check for collisions with non-riding actors
-
     (this.collideables as Actor[]).forEach((actor) => {
       if (
         !actor.passThroughTypes.includes(this.type) &&

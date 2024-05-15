@@ -10,7 +10,6 @@ export type WallConfig = {
 const defaults: WallConfig = {
   width: 10,
   height: 10,
-  // debug neon blue
   debugColor: 0x00ffff,
 };
 

@@ -108,10 +108,12 @@ export class EndlessRunnerScene extends BaseScene {
     });
     const bottom = this.app.size.height - 200;
     this._segments = this.createSegments(bottom);
-    EndlessRunner.initialize(2400, [0.5, 0]);
+
+    EndlessRunner.initialize(2400, [1, 0]);
 
     while (!EndlessRunner.hasEnoughSegments) {
       const segment = this.createRandomSegment();
+      segment.x += Math.max(this.app.size.width * 0.6, 500);
       this.level.add.existing(segment);
     }
 
@@ -151,13 +153,19 @@ export class EndlessRunnerScene extends BaseScene {
     if (this.app.keyboard.isKeyDown('d')) {
       this.app.sendAction('move_right');
     }
+
     this.physics.system.update(ticker.deltaTime);
     EndlessRunner.update(ticker.deltaTime);
+
     if (!EndlessRunner.hasEnoughSegments) {
       while (!EndlessRunner.hasEnoughSegments) {
         const segment = this.createRandomSegment();
         this.level.add.existing(segment);
       }
+    }
+
+    if (this.player.x < -50 || this.player.y > this.app.size.height + 50) {
+      this.player.kill();
     }
   }
 
@@ -175,35 +183,14 @@ export class EndlessRunnerScene extends BaseScene {
     this.controls.y = this.app.size.height * 0.5 - (window.innerHeight > window.innerWidth ? 400 : 100);
     this.controls.containerWidth = this.app.size.width - 40;
 
-    // if (this._debugGfx) {
-    // this._drawDebug();
-    // }
+    this.player.constrainX(50, this.app.size.width - 50);
   }
 
   createSegments(bottom: number): SegmentConfig[] {
-    // const segment1Config = {
-    //   platforms: [
-    //     this.getPlatFormConfig(500, bottom - 88, 30, 160),
-    //     this.getPlatFormConfig(500, bottom - 178, 150, 20, false),
-    //     this.getPlatFormConfig(750, bottom - 300, 200, 20, false, true, {
-    //       speed: 0.5,
-    //       startingDirection: { x: 1, y: 0 },
-    //       range: [180, 0],
-    //     }),
-    //     this.getPlatFormConfig(1200, bottom - 175, 30, 350),
-    //     this.getPlatFormConfig(1265, bottom - 200, 100, 20, false),
-    //     this.getPlatFormConfig(1110, bottom - 200, 150, 20, false, true, {
-    //       speed: 1,
-    //       startingDirection: { x: 0, y: 1 },
-    //       range: [0, 300],
-    //     }),
-    //     this.getPlatFormConfig(1700, bottom - 500, 200, 20, false, true, {
-    //       speed: 1.2,
-    //       startingDirection: { x: 0, y: 1 },
-    //       range: [0, 300],
-    //     }),
-    //   ],
-    // };
+    const segment0Config = {
+      width: 800,
+      platforms: [this.getPlatFormConfig(400, bottom - 88, 30, 160)],
+    };
 
     const segment1Config = {
       width: 500,
@@ -223,7 +210,7 @@ export class EndlessRunnerScene extends BaseScene {
       platforms: [
         this.getPlatFormConfig(250, bottom - 150, 200, 20, false, true, {
           speed: 0.5,
-          startingDirection: { x: 2, y: 0 },
+          startingDirection: { x: 1, y: 0 },
           range: [180, 0],
         }),
       ],
@@ -240,7 +227,21 @@ export class EndlessRunnerScene extends BaseScene {
       ],
     };
 
-    return [segment1Config, segment2Config, segment3Config, segment4Config];
+    const segment5Config = {
+      width: 300,
+      platforms: [this.getPlatFormConfig(150, bottom - 220, 30, 200)],
+    };
+
+    return [
+      segment2Config,
+      segment0Config,
+      segment1Config,
+      segment2Config,
+      segment5Config,
+      segment3Config,
+      segment4Config,
+    ];
+    // return [segment0Config];
   }
 
   getPlatFormConfig(
@@ -270,6 +271,7 @@ export class EndlessRunnerScene extends BaseScene {
     if (!this.player) {
       delay = 1;
       this.player = new Player();
+      this.player.constrainX(50, this.app.size.width - 50);
       this.player.onKilled.connect(this._handlePlayerKilled);
     }
     this.level.add.existing(this.player);

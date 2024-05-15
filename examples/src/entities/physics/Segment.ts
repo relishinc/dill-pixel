@@ -33,11 +33,14 @@ export class Segment extends Container {
   }
 
   update(deltaTime: number) {
-    this.position.x -= EndlessRunner.movement.x * deltaTime;
-    this.position.y -= EndlessRunner.movement.y * deltaTime;
+    this.position.x -= Math.ceil(EndlessRunner.movement.x * deltaTime);
+    this.position.y -= Math.ceil(EndlessRunner.movement.y * deltaTime);
     if (EndlessRunner.movement.x !== 0 || EndlessRunner.movement.y !== 0) {
       this._platforms.forEach((platform) => {
-        platform.handleActorInteractions(-EndlessRunner.movement.x * deltaTime, -EndlessRunner.movement.y * deltaTime);
+        platform.handleActorInteractions(
+          -Math.ceil(EndlessRunner.movement.x * deltaTime),
+          -Math.ceil(EndlessRunner.movement.y * deltaTime),
+        );
       });
     }
 

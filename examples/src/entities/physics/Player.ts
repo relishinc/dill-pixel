@@ -12,6 +12,7 @@ export class Player extends SnapActor {
   passThroughTypes = ['FX'];
   onKilled = new Signal();
   speed: number = 6;
+  constraints?: { x?: { min?: number; max?: number } };
   private _canJump: boolean = false;
   private _isJumping: boolean = false;
   private _jumpPower: number = 0;
@@ -38,6 +39,21 @@ export class Player extends SnapActor {
     return this._cachedBounds;
   }
 
+  public constrainX(min?: number, max?: number) {
+    if (!this.constraints) {
+      this.constraints = {};
+    }
+    if (!this.constraints.x) {
+      this.constraints.x = {};
+    }
+    if (min !== undefined) {
+      this.constraints.x.min = min;
+    }
+    if (max !== undefined) {
+      this.constraints.x.max = max;
+    }
+  }
+
   public update(deltaTime: number) {
     this._velocity.y =
       this.system.gravity * deltaTime - (this._velocity.y < 0 ? this._jumpPower : -this.system.gravity * 0.25);
@@ -56,6 +72,7 @@ export class Player extends SnapActor {
     }
 
     if (this._hitHead && this._velocity.y < 0) {
+      console.log('hit head');
       this._jumpPower = 0;
       this._hitHead = false;
     }
@@ -99,6 +116,10 @@ export class Player extends SnapActor {
     this.y = y;
 
     gsap.to(this, { alpha: 1, duration: 0.5, delay });
+  }
+
+  public kill() {
+    this.onKilled.emit();
   }
 
   protected initialize() {
@@ -146,6 +167,9 @@ export class Player extends SnapActor {
       case 'move_left':
         amount = -this.speed;
         this.view.spine.scale.x = -1;
+        if (this.constraints?.x?.min !== undefined && this.x - amount < this.constraints.x.min) {
+          amount = 0;
+        }
         this.moveX(amount, this._handleCollision);
         if (this.view.getCurrentAnimation() !== 'run') {
           this.view.setAnimation('run', true);
@@ -155,6 +179,9 @@ export class Player extends SnapActor {
       case 'move_right':
         amount = this.speed;
         this.view.spine.scale.x = 1;
+        if (this.constraints?.x?.max !== undefined && this.x + amount > this.constraints.x.max) {
+          amount = 0;
+        }
         this.moveX(amount, this._handleCollision);
         if (this.view.getCurrentAnimation() !== 'run') {
           this.view.setAnimation('run', true);

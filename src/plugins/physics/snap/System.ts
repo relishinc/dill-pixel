@@ -298,17 +298,6 @@ export class System {
     }
   }
 
-  static forceUpdate() {
-    if (System.grid) {
-      System.all.forEach((entity: Entity) => {
-        System.grid?.updateEntity(entity);
-      });
-    }
-    System.solids.forEach((solid: Solid) => {
-      solid.checkActorCollisions();
-    });
-  }
-
   static collide(collision: Collision) {
     if (!collision.type && collision.entity1 && collision.entity2) {
       collision.type = `${collision.entity1.type}|${collision.entity2.type}`;
