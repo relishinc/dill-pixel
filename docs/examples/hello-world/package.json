@@ -18,6 +18,6 @@
     "vite-plugin-wasm": "^3.2.2"
   },
   "dependencies": {
-    "@relish-studios/dill-pixel": "latest"
+    "@relish-studios/dill-pixel": "^2.40.0"
   }
 }
