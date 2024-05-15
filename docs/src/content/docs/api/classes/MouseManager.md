@@ -23,7 +23,7 @@ Holds mouse state data.
 
 #### Source
 
-[src/input/MouseManager.ts:11](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/MouseManager.ts#L11)
+[src/input/MouseManager.ts:11](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/MouseManager.ts#L11)
 
 ## Accessors
 
@@ -39,4 +39,4 @@ Is the mouse currently down?
 
 #### Source
 
-[src/input/MouseManager.ts:24](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/MouseManager.ts#L24)
+[src/input/MouseManager.ts:24](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/MouseManager.ts#L24)

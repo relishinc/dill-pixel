@@ -17,7 +17,7 @@ title: "CookieStorage"
 
 #### Source
 
-[src/save/CookieStorage.ts:10](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/CookieStorage.ts#L10)
+[src/save/CookieStorage.ts:10](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/CookieStorage.ts#L10)
 
 ## Accessors
 
@@ -31,7 +31,7 @@ title: "CookieStorage"
 
 #### Source
 
-[src/save/CookieStorage.ts:26](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/CookieStorage.ts#L26)
+[src/save/CookieStorage.ts:26](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/CookieStorage.ts#L26)
 
 ***
 
@@ -45,7 +45,7 @@ title: "CookieStorage"
 
 #### Source
 
-[src/save/CookieStorage.ts:21](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/CookieStorage.ts#L21)
+[src/save/CookieStorage.ts:21](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/CookieStorage.ts#L21)
 
 ***
 
@@ -59,7 +59,7 @@ title: "CookieStorage"
 
 #### Source
 
-[src/save/CookieStorage.ts:17](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/CookieStorage.ts#L17)
+[src/save/CookieStorage.ts:17](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/CookieStorage.ts#L17)
 
 ## Methods
 
@@ -75,7 +75,7 @@ Deletes all data saved in the cookies
 
 #### Source
 
-[src/save/CookieStorage.ts:159](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/CookieStorage.ts#L159)
+[src/save/CookieStorage.ts:159](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/CookieStorage.ts#L159)
 
 ***
 
@@ -93,7 +93,7 @@ Deletes all data saved in the cookies
 
 #### Source
 
-[src/save/CookieStorage.ts:118](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/CookieStorage.ts#L118)
+[src/save/CookieStorage.ts:118](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/CookieStorage.ts#L118)
 
 ***
 
@@ -109,7 +109,7 @@ Prints all values stored in cookies
 
 #### Source
 
-[src/save/CookieStorage.ts:129](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/CookieStorage.ts#L129)
+[src/save/CookieStorage.ts:129](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/CookieStorage.ts#L129)
 
 ***
 
@@ -135,7 +135,7 @@ The default value of the returned bool
 
 #### Source
 
-[src/save/CookieStorage.ts:49](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/CookieStorage.ts#L49)
+[src/save/CookieStorage.ts:49](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/CookieStorage.ts#L49)
 
 ***
 
@@ -161,7 +161,7 @@ The default value of the returned number
 
 #### Source
 
-[src/save/CookieStorage.ts:79](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/CookieStorage.ts#L79)
+[src/save/CookieStorage.ts:79](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/CookieStorage.ts#L79)
 
 ***
 
@@ -187,7 +187,7 @@ The default value of the returned string
 
 #### Source
 
-[src/save/CookieStorage.ts:108](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/CookieStorage.ts#L108)
+[src/save/CookieStorage.ts:108](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/CookieStorage.ts#L108)
 
 ***
 
@@ -213,7 +213,7 @@ The expiry date at which this saved data will be deleted
 
 #### Source
 
-[src/save/CookieStorage.ts:140](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/CookieStorage.ts#L140)
+[src/save/CookieStorage.ts:140](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/CookieStorage.ts#L140)
 
 ***
 
@@ -243,7 +243,7 @@ The expiry date at which this saved data will be deleted
 
 #### Source
 
-[src/save/CookieStorage.ts:37](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/CookieStorage.ts#L37)
+[src/save/CookieStorage.ts:37](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/CookieStorage.ts#L37)
 
 ***
 
@@ -273,7 +273,7 @@ The expiry date at which this saved data will be deleted
 
 #### Source
 
-[src/save/CookieStorage.ts:67](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/CookieStorage.ts#L67)
+[src/save/CookieStorage.ts:67](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/CookieStorage.ts#L67)
 
 ***
 
@@ -303,4 +303,4 @@ The expiry date at which this saved data will be deleted
 
 #### Source
 
-[src/save/CookieStorage.ts:97](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/CookieStorage.ts#L97)
+[src/save/CookieStorage.ts:97](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/CookieStorage.ts#L97)

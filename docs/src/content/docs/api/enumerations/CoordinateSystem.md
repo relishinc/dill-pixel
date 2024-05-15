@@ -15,7 +15,7 @@ CoordinateSystem
 
 #### Source
 
-[src/input/TouchManager.ts:10](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/TouchManager.ts#L10)
+[src/input/TouchManager.ts:10](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/TouchManager.ts#L10)
 
 ***
 
@@ -25,7 +25,7 @@ CoordinateSystem
 
 #### Source
 
-[src/input/TouchManager.ts:9](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/TouchManager.ts#L9)
+[src/input/TouchManager.ts:9](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/TouchManager.ts#L9)
 
 ***
 
@@ -35,4 +35,4 @@ CoordinateSystem
 
 #### Source
 
-[src/input/TouchManager.ts:11](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/TouchManager.ts#L11)
+[src/input/TouchManager.ts:11](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/TouchManager.ts#L11)

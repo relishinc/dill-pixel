@@ -41,7 +41,7 @@ The splashscreen instance to use.
 
 #### Source
 
-[src/load/LoadManager.ts:59](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/LoadManager.ts#L59)
+[src/load/LoadManager.ts:59](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/LoadManager.ts#L59)
 
 ## Accessors
 
@@ -57,7 +57,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/load/LoadManager.ts:98](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/LoadManager.ts#L98)
+[src/load/LoadManager.ts:98](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/LoadManager.ts#L98)
 
 ***
 
@@ -71,7 +71,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/load/LoadManager.ts:87](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/LoadManager.ts#L87)
+[src/load/LoadManager.ts:87](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/LoadManager.ts#L87)
 
 ***
 
@@ -85,7 +85,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/load/LoadManager.ts:91](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/LoadManager.ts#L91)
+[src/load/LoadManager.ts:91](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/LoadManager.ts#L91)
 
 ## Methods
 
@@ -107,7 +107,7 @@ The new size.
 
 #### Source
 
-[src/load/LoadManager.ts:191](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/LoadManager.ts#L191)
+[src/load/LoadManager.ts:191](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/LoadManager.ts#L191)
 
 ***
 
@@ -137,7 +137,7 @@ Is the new load screen the default one.
 
 #### Source
 
-[src/load/LoadManager.ts:161](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/LoadManager.ts#L161)
+[src/load/LoadManager.ts:161](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/LoadManager.ts#L161)
 
 ***
 
@@ -170,7 +170,7 @@ The function to call after all persitent assets have been loaded.
 
 #### Source
 
-[src/load/LoadManager.ts:122](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/LoadManager.ts#L122)
+[src/load/LoadManager.ts:122](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/LoadManager.ts#L122)
 
 ***
 
@@ -192,4 +192,4 @@ PIXI.ticker.shared.elapsedMS / 1000.
 
 #### Source
 
-[src/load/LoadManager.ts:106](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/LoadManager.ts#L106)
+[src/load/LoadManager.ts:106](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/LoadManager.ts#L106)

@@ -31,7 +31,7 @@ function that returns an asset by its id from the pattern and resolution suffix
 
 ### Source
 
-[src/load/assets/AssetFactory.ts:13](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/AssetFactory.ts#L13)
+[src/load/assets/AssetFactory.ts:13](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/AssetFactory.ts#L13)
 
 ## AssetFactory(assetIndex, factory, resolutionSuffix)
 
@@ -63,7 +63,7 @@ resolution suffix of assets
 
 ### Source
 
-[src/load/assets/AssetFactory.ts:21](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/AssetFactory.ts#L21)
+[src/load/assets/AssetFactory.ts:21](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/AssetFactory.ts#L21)
 
 ## AssetFactory(assetName, factory)
 
@@ -91,7 +91,7 @@ function that returns an asset by it's id from the pattern and resolution suffix
 
 ### Source
 
-[src/load/assets/AssetFactory.ts:28](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/AssetFactory.ts#L28)
+[src/load/assets/AssetFactory.ts:28](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/AssetFactory.ts#L28)
 
 ## AssetFactory(assetName, factory, resolutionSuffix)
 
@@ -123,7 +123,7 @@ resolution suffix of assets
 
 ### Source
 
-[src/load/assets/AssetFactory.ts:36](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/AssetFactory.ts#L36)
+[src/load/assets/AssetFactory.ts:36](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/AssetFactory.ts#L36)
 
 ## AssetFactory(minMax, factory)
 
@@ -151,7 +151,7 @@ function that returns an asset by it's id from the pattern and resolution suffix
 
 ### Source
 
-[src/load/assets/AssetFactory.ts:43](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/AssetFactory.ts#L43)
+[src/load/assets/AssetFactory.ts:43](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/AssetFactory.ts#L43)
 
 ## AssetFactory(minMax, factory, resolutionSuffix)
 
@@ -183,7 +183,7 @@ resolution suffix of assets
 
 ### Source
 
-[src/load/assets/AssetFactory.ts:51](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/AssetFactory.ts#L51)
+[src/load/assets/AssetFactory.ts:51](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/AssetFactory.ts#L51)
 
 ## AssetFactory(assetNames, factory)
 
@@ -211,7 +211,7 @@ function that returns an asset by it's id from the pattern and resolution suffix
 
 ### Source
 
-[src/load/assets/AssetFactory.ts:58](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/AssetFactory.ts#L58)
+[src/load/assets/AssetFactory.ts:58](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/AssetFactory.ts#L58)
 
 ## AssetFactory(assetNames, factory, resolutionSuffix)
 
@@ -243,7 +243,7 @@ resolution suffix of assets
 
 ### Source
 
-[src/load/assets/AssetFactory.ts:66](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/AssetFactory.ts#L66)
+[src/load/assets/AssetFactory.ts:66](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/AssetFactory.ts#L66)
 
 ## AssetFactory(patternsByResolution, factory)
 
@@ -272,7 +272,7 @@ function that returns an asset by it's id from the pattern and resolution suffix
 
 ### Source
 
-[src/load/assets/AssetFactory.ts:74](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/AssetFactory.ts#L74)
+[src/load/assets/AssetFactory.ts:74](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/AssetFactory.ts#L74)
 
 ## AssetFactory(patternsByResolution, factory, resolutionSuffix)
 
@@ -305,4 +305,4 @@ resolution suffix of assets
 
 ### Source
 
-[src/load/assets/AssetFactory.ts:84](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/AssetFactory.ts#L84)
+[src/load/assets/AssetFactory.ts:84](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/AssetFactory.ts#L84)

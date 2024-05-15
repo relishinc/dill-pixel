@@ -37,7 +37,7 @@ title: "Sprite"
 
 #### Source
 
-[src/gameobjects/Sprite.ts:20](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/Sprite.ts#L20)
+[src/gameobjects/Sprite.ts:20](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Sprite.ts#L20)
 
 ## Properties
 
@@ -47,7 +47,7 @@ title: "Sprite"
 
 #### Source
 
-[src/gameobjects/Sprite.ts:10](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/Sprite.ts#L10)
+[src/gameobjects/Sprite.ts:10](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Sprite.ts#L10)
 
 ***
 
@@ -57,7 +57,7 @@ title: "Sprite"
 
 #### Source
 
-[src/gameobjects/Sprite.ts:9](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/Sprite.ts#L9)
+[src/gameobjects/Sprite.ts:9](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Sprite.ts#L9)
 
 ## Accessors
 
@@ -71,7 +71,7 @@ title: "Sprite"
 
 #### Source
 
-[src/gameobjects/Sprite.ts:49](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/Sprite.ts#L49)
+[src/gameobjects/Sprite.ts:49](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Sprite.ts#L49)
 
 ***
 
@@ -85,7 +85,7 @@ title: "Sprite"
 
 #### Source
 
-[src/gameobjects/Sprite.ts:57](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/Sprite.ts#L57)
+[src/gameobjects/Sprite.ts:57](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Sprite.ts#L57)
 
 ***
 
@@ -105,7 +105,7 @@ title: "Sprite"
 
 #### Source
 
-[src/gameobjects/Sprite.ts:33](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/Sprite.ts#L33)
+[src/gameobjects/Sprite.ts:33](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Sprite.ts#L33)
 
 ***
 
@@ -125,7 +125,7 @@ title: "Sprite"
 
 #### Source
 
-[src/gameobjects/Sprite.ts:41](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/Sprite.ts#L41)
+[src/gameobjects/Sprite.ts:41](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Sprite.ts#L41)
 
 ***
 
@@ -145,7 +145,7 @@ title: "Sprite"
 
 #### Source
 
-[src/gameobjects/Sprite.ts:61](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/Sprite.ts#L61)
+[src/gameobjects/Sprite.ts:61](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Sprite.ts#L61)
 
 ***
 
@@ -159,7 +159,7 @@ title: "Sprite"
 
 #### Source
 
-[src/gameobjects/Sprite.ts:53](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/Sprite.ts#L53)
+[src/gameobjects/Sprite.ts:53](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Sprite.ts#L53)
 
 ## Methods
 
@@ -181,7 +181,7 @@ The position that the focus should be centred around.
 
 #### Source
 
-[src/gameobjects/Sprite.ts:69](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/Sprite.ts#L69)
+[src/gameobjects/Sprite.ts:69](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Sprite.ts#L69)
 
 ***
 
@@ -203,7 +203,7 @@ The size of the area that the focus should surround.
 
 #### Source
 
-[src/gameobjects/Sprite.ts:73](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/Sprite.ts#L73)
+[src/gameobjects/Sprite.ts:73](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Sprite.ts#L73)
 
 ***
 
@@ -224,7 +224,7 @@ Defaults to this.interactive && this.worldVisible
 
 #### Source
 
-[src/gameobjects/Sprite.ts:77](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/Sprite.ts#L77)
+[src/gameobjects/Sprite.ts:77](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Sprite.ts#L77)
 
 ***
 
@@ -244,7 +244,7 @@ Called when this Focusable is focussed and then activated.
 
 #### Source
 
-[src/gameobjects/Sprite.ts:81](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/Sprite.ts#L81)
+[src/gameobjects/Sprite.ts:81](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Sprite.ts#L81)
 
 ***
 
@@ -264,7 +264,7 @@ Called when this Focusable is focussed.
 
 #### Source
 
-[src/gameobjects/Sprite.ts:83](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/Sprite.ts#L83)
+[src/gameobjects/Sprite.ts:83](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Sprite.ts#L83)
 
 ***
 
@@ -284,4 +284,4 @@ Called when this Focusable is no longer focussed.
 
 #### Source
 
-[src/gameobjects/Sprite.ts:85](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/Sprite.ts#L85)
+[src/gameobjects/Sprite.ts:85](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/Sprite.ts#L85)

@@ -21,7 +21,7 @@ title: "SaveManager"
 
 #### Source
 
-[src/save/SaveManager.ts:15](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/SaveManager.ts#L15)
+[src/save/SaveManager.ts:15](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/SaveManager.ts#L15)
 
 ## Accessors
 
@@ -35,7 +35,7 @@ title: "SaveManager"
 
 #### Source
 
-[src/save/SaveManager.ts:28](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/SaveManager.ts#L28)
+[src/save/SaveManager.ts:28](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/SaveManager.ts#L28)
 
 ***
 
@@ -49,7 +49,7 @@ title: "SaveManager"
 
 #### Source
 
-[src/save/SaveManager.ts:24](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/SaveManager.ts#L24)
+[src/save/SaveManager.ts:24](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/SaveManager.ts#L24)
 
 ***
 
@@ -63,7 +63,7 @@ title: "SaveManager"
 
 #### Source
 
-[src/save/SaveManager.ts:20](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/SaveManager.ts#L20)
+[src/save/SaveManager.ts:20](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/SaveManager.ts#L20)
 
 ## Methods
 
@@ -79,7 +79,7 @@ Deletes all data saved in both the cookies and local storage
 
 #### Source
 
-[src/save/SaveManager.ts:185](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/SaveManager.ts#L185)
+[src/save/SaveManager.ts:185](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/SaveManager.ts#L185)
 
 ***
 
@@ -105,7 +105,7 @@ Where the item is stored
 
 #### Source
 
-[src/save/SaveManager.ts:147](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/SaveManager.ts#L147)
+[src/save/SaveManager.ts:147](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/SaveManager.ts#L147)
 
 ***
 
@@ -127,7 +127,7 @@ What storage to print all values from
 
 #### Source
 
-[src/save/SaveManager.ts:171](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/SaveManager.ts#L171)
+[src/save/SaveManager.ts:171](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/SaveManager.ts#L171)
 
 ***
 
@@ -157,7 +157,7 @@ Where the bool should be stored
 
 #### Source
 
-[src/save/SaveManager.ts:59](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/SaveManager.ts#L59)
+[src/save/SaveManager.ts:59](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/SaveManager.ts#L59)
 
 ***
 
@@ -187,7 +187,7 @@ Where the number should be stored
 
 #### Source
 
-[src/save/SaveManager.ts:95](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/SaveManager.ts#L95)
+[src/save/SaveManager.ts:95](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/SaveManager.ts#L95)
 
 ***
 
@@ -217,7 +217,7 @@ Where the string should be stored
 
 #### Source
 
-[src/save/SaveManager.ts:131](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/SaveManager.ts#L131)
+[src/save/SaveManager.ts:131](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/SaveManager.ts#L131)
 
 ***
 
@@ -243,7 +243,7 @@ The expiry date at which this saved data will be deleted
 
 #### Source
 
-[src/save/SaveManager.ts:163](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/SaveManager.ts#L163)
+[src/save/SaveManager.ts:163](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/SaveManager.ts#L163)
 
 ***
 
@@ -273,7 +273,7 @@ Where the bool should be stored
 
 #### Source
 
-[src/save/SaveManager.ts:41](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/SaveManager.ts#L41)
+[src/save/SaveManager.ts:41](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/SaveManager.ts#L41)
 
 ***
 
@@ -303,7 +303,7 @@ Where the number should be stored
 
 #### Source
 
-[src/save/SaveManager.ts:77](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/SaveManager.ts#L77)
+[src/save/SaveManager.ts:77](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/SaveManager.ts#L77)
 
 ***
 
@@ -333,4 +333,4 @@ Where the string should be stored
 
 #### Source
 
-[src/save/SaveManager.ts:113](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/SaveManager.ts#L113)
+[src/save/SaveManager.ts:113](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/SaveManager.ts#L113)

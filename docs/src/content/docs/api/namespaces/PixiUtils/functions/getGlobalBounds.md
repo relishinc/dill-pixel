@@ -25,4 +25,4 @@ optional rectangle in local coordinate space, defaults to pTarget.getLocalBounds
 
 ## Source
 
-[src/utils/PixiUtils.ts:235](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/PixiUtils.ts#L235)
+[src/utils/PixiUtils.ts:235](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/PixiUtils.ts#L235)

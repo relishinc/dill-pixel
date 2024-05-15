@@ -13,7 +13,7 @@ title: "ISelectable"
 
 #### Source
 
-[src/input/ISelectable.ts:3](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/ISelectable.ts#L3)
+[src/input/ISelectable.ts:3](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/ISelectable.ts#L3)
 
 ***
 
@@ -23,7 +23,7 @@ title: "ISelectable"
 
 #### Source
 
-[src/input/ISelectable.ts:2](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/ISelectable.ts#L2)
+[src/input/ISelectable.ts:2](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/ISelectable.ts#L2)
 
 ***
 
@@ -33,7 +33,7 @@ title: "ISelectable"
 
 #### Source
 
-[src/input/ISelectable.ts:5](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/ISelectable.ts#L5)
+[src/input/ISelectable.ts:5](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/ISelectable.ts#L5)
 
 ***
 
@@ -43,7 +43,7 @@ title: "ISelectable"
 
 #### Source
 
-[src/input/ISelectable.ts:4](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/ISelectable.ts#L4)
+[src/input/ISelectable.ts:4](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/ISelectable.ts#L4)
 
 ## Methods
 
@@ -57,7 +57,7 @@ title: "ISelectable"
 
 #### Source
 
-[src/input/ISelectable.ts:9](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/ISelectable.ts#L9)
+[src/input/ISelectable.ts:9](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/ISelectable.ts#L9)
 
 ***
 
@@ -71,7 +71,7 @@ title: "ISelectable"
 
 #### Source
 
-[src/input/ISelectable.ts:7](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/ISelectable.ts#L7)
+[src/input/ISelectable.ts:7](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/ISelectable.ts#L7)
 
 ***
 
@@ -85,4 +85,4 @@ title: "ISelectable"
 
 #### Source
 
-[src/input/ISelectable.ts:11](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/ISelectable.ts#L11)
+[src/input/ISelectable.ts:11](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/ISelectable.ts#L11)

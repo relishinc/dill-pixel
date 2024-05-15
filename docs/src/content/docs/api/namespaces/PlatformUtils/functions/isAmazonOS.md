@@ -21,4 +21,4 @@ https://docs.aws.amazon.com/silk/latest/developerguide/detecting-silk-ua.html
 
 ## Source
 
-[src/utils/PlatformUtils.ts:510](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/PlatformUtils.ts#L510)
+[src/utils/PlatformUtils.ts:510](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/PlatformUtils.ts#L510)

@@ -25,7 +25,7 @@ TouchManager
 
 #### Source
 
-[src/input/TouchManager.ts:51](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/TouchManager.ts#L51)
+[src/input/TouchManager.ts:51](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/TouchManager.ts#L51)
 
 ## Accessors
 
@@ -41,7 +41,7 @@ Sets the callback to be fired when a pinch is updated
 
 #### Source
 
-[src/input/TouchManager.ts:106](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/TouchManager.ts#L106)
+[src/input/TouchManager.ts:106](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/TouchManager.ts#L106)
 
 ***
 
@@ -57,7 +57,7 @@ Sets the callback to be fired when a pinch ends
 
 #### Source
 
-[src/input/TouchManager.ts:122](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/TouchManager.ts#L122)
+[src/input/TouchManager.ts:122](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/TouchManager.ts#L122)
 
 ***
 
@@ -73,7 +73,7 @@ Sets the callback to be fired when a pinch starts
 
 #### Source
 
-[src/input/TouchManager.ts:114](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/TouchManager.ts#L114)
+[src/input/TouchManager.ts:114](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/TouchManager.ts#L114)
 
 ***
 
@@ -89,7 +89,7 @@ Sets the callback to be fired when a swipe is updated
 
 #### Source
 
-[src/input/TouchManager.ts:81](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/TouchManager.ts#L81)
+[src/input/TouchManager.ts:81](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/TouchManager.ts#L81)
 
 ***
 
@@ -105,7 +105,7 @@ Sets the callback to be fired when a swipe ends
 
 #### Source
 
-[src/input/TouchManager.ts:98](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/TouchManager.ts#L98)
+[src/input/TouchManager.ts:98](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/TouchManager.ts#L98)
 
 ***
 
@@ -121,7 +121,7 @@ Sets the callback to be fired when a swipe starts
 
 #### Source
 
-[src/input/TouchManager.ts:90](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/TouchManager.ts#L90)
+[src/input/TouchManager.ts:90](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/TouchManager.ts#L90)
 
 ***
 
@@ -137,7 +137,7 @@ Sets the minimum magnitude of a pinch. Pinches smaller than this value will be i
 
 #### Source
 
-[src/input/TouchManager.ts:138](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/TouchManager.ts#L138)
+[src/input/TouchManager.ts:138](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/TouchManager.ts#L138)
 
 ***
 
@@ -153,7 +153,7 @@ Sets the minimum magnitude of a swipe. Swipes smaller than this value will be ig
 
 #### Source
 
-[src/input/TouchManager.ts:130](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/TouchManager.ts#L130)
+[src/input/TouchManager.ts:130](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/TouchManager.ts#L130)
 
 ## Methods
 
@@ -169,7 +169,7 @@ destroy
 
 #### Source
 
-[src/input/TouchManager.ts:154](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/TouchManager.ts#L154)
+[src/input/TouchManager.ts:154](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/TouchManager.ts#L154)
 
 ***
 
@@ -191,4 +191,4 @@ Sets what type of CoordinateSystem to use when determining positions for the spe
 
 #### Source
 
-[src/input/TouchManager.ts:147](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/TouchManager.ts#L147)
+[src/input/TouchManager.ts:147](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/TouchManager.ts#L147)

@@ -27,7 +27,7 @@ Voiceover Manager controls voiceover audio playback and guarantees that only one
 
 #### Source
 
-[src/audio/VoiceOverManager.ts:166](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/VoiceOverManager.ts#L166)
+[src/audio/VoiceOverManager.ts:166](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/VoiceOverManager.ts#L166)
 
 ## Properties
 
@@ -43,7 +43,7 @@ Duration, in milliseconds, of the fade out when stopping voiceovers. Must be gre
 
 #### Source
 
-[src/audio/VoiceOverManager.ts:141](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/VoiceOverManager.ts#L141)
+[src/audio/VoiceOverManager.ts:141](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/VoiceOverManager.ts#L141)
 
 ***
 
@@ -57,7 +57,7 @@ Duration, in milliseconds, of the fade out when stopping voiceovers. Must be gre
 
 #### Source
 
-[src/audio/VoiceOverManager.ts:143](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/VoiceOverManager.ts#L143)
+[src/audio/VoiceOverManager.ts:143](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/VoiceOverManager.ts#L143)
 
 ## Accessors
 
@@ -73,7 +73,7 @@ The currently playing voiceover
 
 #### Source
 
-[src/audio/VoiceOverManager.ts:175](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/VoiceOverManager.ts#L175)
+[src/audio/VoiceOverManager.ts:175](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/VoiceOverManager.ts#L175)
 
 ***
 
@@ -89,7 +89,7 @@ Whether a voiceover is currently playing
 
 #### Source
 
-[src/audio/VoiceOverManager.ts:182](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/VoiceOverManager.ts#L182)
+[src/audio/VoiceOverManager.ts:182](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/VoiceOverManager.ts#L182)
 
 ***
 
@@ -105,7 +105,7 @@ Number of voiceovers in the queue
 
 #### Source
 
-[src/audio/VoiceOverManager.ts:186](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/VoiceOverManager.ts#L186)
+[src/audio/VoiceOverManager.ts:186](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/VoiceOverManager.ts#L186)
 
 ***
 
@@ -121,7 +121,7 @@ Ids of voiceovers in the queue
 
 #### Source
 
-[src/audio/VoiceOverManager.ts:190](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/VoiceOverManager.ts#L190)
+[src/audio/VoiceOverManager.ts:190](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/VoiceOverManager.ts#L190)
 
 ## Methods
 
@@ -151,7 +151,7 @@ Id or array of voiceover Ids
 
 #### Source
 
-[src/audio/VoiceOverManager.ts:194](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/VoiceOverManager.ts#L194)
+[src/audio/VoiceOverManager.ts:194](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/VoiceOverManager.ts#L194)
 
 ***
 
@@ -172,4 +172,4 @@ Any callbacks (from [playVO](../../../../../../api/functions/playvo)) will not b
 
 #### Source
 
-[src/audio/VoiceOverManager.ts:268](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/VoiceOverManager.ts#L268)
+[src/audio/VoiceOverManager.ts:268](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/VoiceOverManager.ts#L268)

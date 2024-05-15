@@ -35,7 +35,7 @@ All audio track implementations need to implement this interface to function wit
 
 #### Source
 
-[src/audio/HowlerTrack.ts:35](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L35)
+[src/audio/HowlerTrack.ts:35](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L35)
 
 ## Properties
 
@@ -53,7 +53,7 @@ Howler will attempt to load audio files with these extensions, in this order.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:22](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L22)
+[src/audio/HowlerTrack.ts:22](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L22)
 
 ## Accessors
 
@@ -67,7 +67,7 @@ Howler will attempt to load audio files with these extensions, in this order.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:58](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L58)
+[src/audio/HowlerTrack.ts:58](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L58)
 
 ## Methods
 
@@ -97,7 +97,7 @@ The time in milliseconds the fade should take finish.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:78](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L78)
+[src/audio/HowlerTrack.ts:78](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L78)
 
 ***
 
@@ -119,7 +119,7 @@ the length of the track.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:163](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L163)
+[src/audio/HowlerTrack.ts:163](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L163)
 
 ***
 
@@ -137,7 +137,7 @@ the length of the track.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:151](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L151)
+[src/audio/HowlerTrack.ts:151](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L151)
 
 ***
 
@@ -151,7 +151,7 @@ the length of the track.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:183](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L183)
+[src/audio/HowlerTrack.ts:183](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L183)
 
 ***
 
@@ -173,7 +173,7 @@ the time position
 
 #### Source
 
-[src/audio/HowlerTrack.ts:155](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L155)
+[src/audio/HowlerTrack.ts:155](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L155)
 
 ***
 
@@ -195,7 +195,7 @@ the base volume of this track.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:126](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L126)
+[src/audio/HowlerTrack.ts:126](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L126)
 
 ***
 
@@ -217,7 +217,7 @@ true if the track is set to loop, false otherwise.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:112](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L112)
+[src/audio/HowlerTrack.ts:112](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L112)
 
 ***
 
@@ -239,7 +239,7 @@ true if the track is muted, false otherwise.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:104](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L104)
+[src/audio/HowlerTrack.ts:104](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L104)
 
 ***
 
@@ -261,7 +261,7 @@ true if currently playing, false otherwise.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:167](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L167)
+[src/audio/HowlerTrack.ts:167](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L167)
 
 ***
 
@@ -281,7 +281,7 @@ Loads the source file into memory. Must be called before play() is called.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:88](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L88)
+[src/audio/HowlerTrack.ts:88](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L88)
 
 ***
 
@@ -311,7 +311,7 @@ The callback to call when the event occured. Omit this to remove all events of t
 
 #### Source
 
-[src/audio/HowlerTrack.ts:175](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L175)
+[src/audio/HowlerTrack.ts:175](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L175)
 
 ***
 
@@ -341,7 +341,7 @@ The callback to call when the event occurs.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:171](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L171)
+[src/audio/HowlerTrack.ts:171](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L171)
 
 ***
 
@@ -371,7 +371,7 @@ The callback to call when the event occurs.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:179](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L179)
+[src/audio/HowlerTrack.ts:179](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L179)
 
 ***
 
@@ -391,7 +391,7 @@ Pauses the track.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:70](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L70)
+[src/audio/HowlerTrack.ts:70](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L70)
 
 ***
 
@@ -411,7 +411,7 @@ Plays the track.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:62](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L62)
+[src/audio/HowlerTrack.ts:62](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L62)
 
 ***
 
@@ -437,7 +437,7 @@ true to loop and false to play once.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:122](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L122)
+[src/audio/HowlerTrack.ts:122](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L122)
 
 ***
 
@@ -463,7 +463,7 @@ true to mute and false to unmute.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:108](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L108)
+[src/audio/HowlerTrack.ts:108](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L108)
 
 ***
 
@@ -485,7 +485,7 @@ true to mute and false to unmute.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:145](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L145)
+[src/audio/HowlerTrack.ts:145](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L145)
 
 ***
 
@@ -511,7 +511,7 @@ The time position to set the track to.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:159](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L159)
+[src/audio/HowlerTrack.ts:159](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L159)
 
 ***
 
@@ -537,7 +537,7 @@ The new volume of this track.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:130](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L130)
+[src/audio/HowlerTrack.ts:130](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L130)
 
 ***
 
@@ -571,7 +571,7 @@ The current volume of this track's category.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:138](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L138)
+[src/audio/HowlerTrack.ts:138](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L138)
 
 ***
 
@@ -591,7 +591,7 @@ Stops the track.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:74](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L74)
+[src/audio/HowlerTrack.ts:74](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L74)
 
 ***
 
@@ -611,4 +611,4 @@ Unloads the source file.
 
 #### Source
 
-[src/audio/HowlerTrack.ts:84](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/HowlerTrack.ts#L84)
+[src/audio/HowlerTrack.ts:84](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/HowlerTrack.ts#L84)

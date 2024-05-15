@@ -21,7 +21,7 @@ title: "IObjectPoolItem"
 
 #### Source
 
-[src/gameobjects/ObjectPool.ts:3](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/ObjectPool.ts#L3)
+[src/gameobjects/ObjectPool.ts:3](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ObjectPool.ts#L3)
 
 ***
 
@@ -39,4 +39,4 @@ title: "IObjectPoolItem"
 
 #### Source
 
-[src/gameobjects/ObjectPool.ts:2](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/gameobjects/ObjectPool.ts#L2)
+[src/gameobjects/ObjectPool.ts:2](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/gameobjects/ObjectPool.ts#L2)

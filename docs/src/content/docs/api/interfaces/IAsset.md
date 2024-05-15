@@ -29,7 +29,7 @@ The name of the asset file.
 
 #### Source
 
-[src/load/assets/IAsset.ts:7](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/IAsset.ts#L7)
+[src/load/assets/IAsset.ts:7](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/IAsset.ts#L7)
 
 ***
 
@@ -45,7 +45,7 @@ Path to the asset
 
 #### Source
 
-[src/load/assets/IAsset.ts:8](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/IAsset.ts#L8)
+[src/load/assets/IAsset.ts:8](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/IAsset.ts#L8)
 
 ***
 
@@ -61,7 +61,7 @@ The type of the asset file.
 
 #### Source
 
-[src/load/AssetMapData.ts:16](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/AssetMapData.ts#L16)
+[src/load/AssetMapData.ts:16](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/AssetMapData.ts#L16)
 
 ***
 
@@ -75,7 +75,7 @@ The type of the asset file.
 
 #### Source
 
-[src/load/AssetMapData.ts:26](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/AssetMapData.ts#L26)
+[src/load/AssetMapData.ts:26](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/AssetMapData.ts#L26)
 
 ***
 
@@ -91,7 +91,7 @@ If resolution suffix is set the asset is loaded only on devices with the matched
 
 #### Source
 
-[src/load/assets/IAsset.ts:9](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/IAsset.ts#L9)
+[src/load/assets/IAsset.ts:9](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/IAsset.ts#L9)
 
 ## Methods
 
@@ -109,7 +109,7 @@ If resolution suffix is set the asset is loaded only on devices with the matched
 
 #### Source
 
-[src/load/assets/IAsset.ts:17](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/IAsset.ts#L17)
+[src/load/assets/IAsset.ts:17](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/IAsset.ts#L17)
 
 ***
 
@@ -123,7 +123,7 @@ If resolution suffix is set the asset is loaded only on devices with the matched
 
 #### Source
 
-[src/load/assets/IAsset.ts:11](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/IAsset.ts#L11)
+[src/load/assets/IAsset.ts:11](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/IAsset.ts#L11)
 
 ***
 
@@ -141,7 +141,7 @@ If resolution suffix is set the asset is loaded only on devices with the matched
 
 #### Source
 
-[src/load/assets/IAsset.ts:13](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/IAsset.ts#L13)
+[src/load/assets/IAsset.ts:13](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/IAsset.ts#L13)
 
 ***
 
@@ -159,7 +159,7 @@ If resolution suffix is set the asset is loaded only on devices with the matched
 
 #### Source
 
-[src/load/AssetMapData.ts:38](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/AssetMapData.ts#L38)
+[src/load/AssetMapData.ts:38](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/AssetMapData.ts#L38)
 
 ***
 
@@ -177,4 +177,4 @@ If resolution suffix is set the asset is loaded only on devices with the matched
 
 #### Source
 
-[src/load/assets/IAsset.ts:15](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/IAsset.ts#L15)
+[src/load/assets/IAsset.ts:15](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/IAsset.ts#L15)

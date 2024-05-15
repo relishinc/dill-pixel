@@ -27,7 +27,7 @@ title: "LocalStorage"
 
 #### Source
 
-[src/save/LocalStorage.ts:10](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/LocalStorage.ts#L10)
+[src/save/LocalStorage.ts:10](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/LocalStorage.ts#L10)
 
 ***
 
@@ -41,7 +41,7 @@ title: "LocalStorage"
 
 #### Source
 
-[src/save/LocalStorage.ts:6](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/LocalStorage.ts#L6)
+[src/save/LocalStorage.ts:6](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/LocalStorage.ts#L6)
 
 ## Methods
 
@@ -57,7 +57,7 @@ Deletes all data saved in local storage
 
 #### Source
 
-[src/save/LocalStorage.ts:131](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/LocalStorage.ts#L131)
+[src/save/LocalStorage.ts:131](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/LocalStorage.ts#L131)
 
 ***
 
@@ -79,7 +79,7 @@ The ID of the item to delete
 
 #### Source
 
-[src/save/LocalStorage.ts:103](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/LocalStorage.ts#L103)
+[src/save/LocalStorage.ts:103](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/LocalStorage.ts#L103)
 
 ***
 
@@ -95,7 +95,7 @@ Prints all values stored in local storage
 
 #### Source
 
-[src/save/LocalStorage.ts:116](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/LocalStorage.ts#L116)
+[src/save/LocalStorage.ts:116](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/LocalStorage.ts#L116)
 
 ***
 
@@ -121,7 +121,7 @@ The default value of the returned bool
 
 #### Source
 
-[src/save/LocalStorage.ts:32](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/LocalStorage.ts#L32)
+[src/save/LocalStorage.ts:32](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/LocalStorage.ts#L32)
 
 ***
 
@@ -147,7 +147,7 @@ The default value of the returned number
 
 #### Source
 
-[src/save/LocalStorage.ts:60](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/LocalStorage.ts#L60)
+[src/save/LocalStorage.ts:60](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/LocalStorage.ts#L60)
 
 ***
 
@@ -173,7 +173,7 @@ The default value of the returned string
 
 #### Source
 
-[src/save/LocalStorage.ts:88](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/LocalStorage.ts#L88)
+[src/save/LocalStorage.ts:88](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/LocalStorage.ts#L88)
 
 ***
 
@@ -199,7 +199,7 @@ The stored bool value
 
 #### Source
 
-[src/save/LocalStorage.ts:20](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/LocalStorage.ts#L20)
+[src/save/LocalStorage.ts:20](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/LocalStorage.ts#L20)
 
 ***
 
@@ -225,7 +225,7 @@ The stored number value
 
 #### Source
 
-[src/save/LocalStorage.ts:48](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/LocalStorage.ts#L48)
+[src/save/LocalStorage.ts:48](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/LocalStorage.ts#L48)
 
 ***
 
@@ -251,4 +251,4 @@ The stored string value
 
 #### Source
 
-[src/save/LocalStorage.ts:77](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/save/LocalStorage.ts#L77)
+[src/save/LocalStorage.ts:77](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/save/LocalStorage.ts#L77)

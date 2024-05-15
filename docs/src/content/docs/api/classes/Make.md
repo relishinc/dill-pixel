@@ -31,7 +31,7 @@ title: "Make"
 
 #### Source
 
-[src/utils/factory/Make.ts:157](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L157)
+[src/utils/factory/Make.ts:157](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L157)
 
 ## Methods
 
@@ -49,7 +49,7 @@ title: "Make"
 
 #### Source
 
-[src/utils/factory/Make.ts:959](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L959)
+[src/utils/factory/Make.ts:959](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L959)
 
 ***
 
@@ -69,7 +69,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:459](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L459)
+[src/utils/factory/Make.ts:459](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L459)
 
 #### bitmapText(value, style, alpha, position, anchor, scale)
 
@@ -95,7 +95,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:460](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L460)
+[src/utils/factory/Make.ts:460](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L460)
 
 ***
 
@@ -115,7 +115,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:214](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L214)
+[src/utils/factory/Make.ts:214](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L214)
 
 #### coloredSprite(color, size, shape, opts, alpha, position, anchor, scale)
 
@@ -145,7 +145,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:215](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L215)
+[src/utils/factory/Make.ts:215](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L215)
 
 ***
 
@@ -165,7 +165,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:508](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L508)
+[src/utils/factory/Make.ts:508](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L508)
 
 #### container(alpha, position, scale)
 
@@ -185,7 +185,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:509](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L509)
+[src/utils/factory/Make.ts:509](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L509)
 
 ***
 
@@ -205,7 +205,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:540](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L540)
+[src/utils/factory/Make.ts:540](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L540)
 
 #### flexContainer(alpha, position, settings, scale)
 
@@ -227,7 +227,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:541](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L541)
+[src/utils/factory/Make.ts:541](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L541)
 
 ***
 
@@ -247,7 +247,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:585](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L585)
+[src/utils/factory/Make.ts:585](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L585)
 
 #### graphics(alpha, position, scale)
 
@@ -267,7 +267,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:586](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L586)
+[src/utils/factory/Make.ts:586](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L586)
 
 ***
 
@@ -287,7 +287,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:410](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L410)
+[src/utils/factory/Make.ts:410](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L410)
 
 #### htmlText(value, style, alpha, position, anchor, scale)
 
@@ -313,7 +313,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:411](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L411)
+[src/utils/factory/Make.ts:411](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L411)
 
 ***
 
@@ -333,7 +333,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:689](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L689)
+[src/utils/factory/Make.ts:689](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L689)
 
 #### mesh(geometry, shader, state, drawMode)
 
@@ -355,7 +355,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:690](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L690)
+[src/utils/factory/Make.ts:690](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L690)
 
 ***
 
@@ -375,7 +375,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:889](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L889)
+[src/utils/factory/Make.ts:889](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L889)
 
 #### nineSlice(asset, sheet, leftWidth, topHeight, rightWidth, bottomHeight, alpha, position, scale)
 
@@ -407,7 +407,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:890](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L890)
+[src/utils/factory/Make.ts:890](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L890)
 
 ***
 
@@ -427,7 +427,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:825](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L825)
+[src/utils/factory/Make.ts:825](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L825)
 
 #### simpleMesh(asset, sheet, vertices, uvs, indices, drawMode, alpha, position, scale)
 
@@ -459,7 +459,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:826](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L826)
+[src/utils/factory/Make.ts:826](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L826)
 
 ***
 
@@ -479,7 +479,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:769](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L769)
+[src/utils/factory/Make.ts:769](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L769)
 
 #### simplePlane(asset, sheet, vertsWidth, vertsHeight, alpha, position, scale)
 
@@ -507,7 +507,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:770](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L770)
+[src/utils/factory/Make.ts:770](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L770)
 
 ***
 
@@ -535,7 +535,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:708](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L708)
+[src/utils/factory/Make.ts:708](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L708)
 
 #### simpleRope(asset, sheet, numPoints, segmentLength, autoUpdate, alpha, position, scale)
 
@@ -573,7 +573,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:709](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L709)
+[src/utils/factory/Make.ts:709](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L709)
 
 ***
 
@@ -593,7 +593,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:302](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L302)
+[src/utils/factory/Make.ts:302](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L302)
 
 #### sprite(asset, sheet, alpha, position, anchor, scale)
 
@@ -619,7 +619,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:303](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L303)
+[src/utils/factory/Make.ts:303](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L303)
 
 ***
 
@@ -637,7 +637,7 @@ title: "Make"
 
 #### Source
 
-[src/utils/factory/Make.ts:954](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L954)
+[src/utils/factory/Make.ts:954](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L954)
 
 ***
 
@@ -667,7 +667,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:360](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L360)
+[src/utils/factory/Make.ts:360](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L360)
 
 #### text(settings)
 
@@ -683,7 +683,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:368](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L368)
+[src/utils/factory/Make.ts:368](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L368)
 
 ***
 
@@ -703,7 +703,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:159](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L159)
+[src/utils/factory/Make.ts:159](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L159)
 
 #### texture(asset, sheet)
 
@@ -721,7 +721,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:160](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L160)
+[src/utils/factory/Make.ts:160](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L160)
 
 ***
 
@@ -741,7 +741,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:613](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L613)
+[src/utils/factory/Make.ts:613](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L613)
 
 #### tilingSprite(asset, sheet, width, height, tilePosition, alpha, position, anchor, scale)
 
@@ -773,7 +773,7 @@ title: "Make"
 
 ##### Source
 
-[src/utils/factory/Make.ts:614](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L614)
+[src/utils/factory/Make.ts:614](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L614)
 
 ***
 
@@ -791,4 +791,4 @@ title: "Make"
 
 #### Source
 
-[src/utils/factory/Make.ts:998](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/factory/Make.ts#L998)
+[src/utils/factory/Make.ts:998](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/factory/Make.ts#L998)

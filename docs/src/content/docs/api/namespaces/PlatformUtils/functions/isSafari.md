@@ -25,4 +25,4 @@ https://stackoverflow.com/questions/7944460/detect-safari-browser/23522755 The c
 
 ## Source
 
-[src/utils/PlatformUtils.ts:494](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/PlatformUtils.ts#L494)
+[src/utils/PlatformUtils.ts:494](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/PlatformUtils.ts#L494)

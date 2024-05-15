@@ -17,7 +17,7 @@ title: "IPhysicsAddFactory"
 
 #### Source
 
-[src/physics/interfaces/IPhysicsAddFactory.ts:8](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/physics/interfaces/IPhysicsAddFactory.ts#L8)
+[src/physics/interfaces/IPhysicsAddFactory.ts:8](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/physics/interfaces/IPhysicsAddFactory.ts#L8)
 
 ## Methods
 
@@ -35,7 +35,7 @@ title: "IPhysicsAddFactory"
 
 #### Source
 
-[src/physics/interfaces/IPhysicsAddFactory.ts:23](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/physics/interfaces/IPhysicsAddFactory.ts#L23)
+[src/physics/interfaces/IPhysicsAddFactory.ts:23](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/physics/interfaces/IPhysicsAddFactory.ts#L23)
 
 ***
 
@@ -55,7 +55,7 @@ title: "IPhysicsAddFactory"
 
 ##### Source
 
-[src/physics/interfaces/IPhysicsAddFactory.ts:10](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/physics/interfaces/IPhysicsAddFactory.ts#L10)
+[src/physics/interfaces/IPhysicsAddFactory.ts:10](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/physics/interfaces/IPhysicsAddFactory.ts#L10)
 
 #### physicsSprite(asset, sheet, size, bodyType, alpha, position, scale, __namedParameters)
 
@@ -85,4 +85,4 @@ title: "IPhysicsAddFactory"
 
 ##### Source
 
-[src/physics/interfaces/IPhysicsAddFactory.ts:12](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/physics/interfaces/IPhysicsAddFactory.ts#L12)
+[src/physics/interfaces/IPhysicsAddFactory.ts:12](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/physics/interfaces/IPhysicsAddFactory.ts#L12)

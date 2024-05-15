@@ -15,7 +15,7 @@ For debugging purposes
 
 #### Source
 
-[src/input/IFocusable.ts:7](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/IFocusable.ts#L7)
+[src/input/IFocusable.ts:7](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/IFocusable.ts#L7)
 
 ***
 
@@ -25,7 +25,7 @@ For debugging purposes
 
 #### Source
 
-[src/input/IFocusable.ts:4](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/IFocusable.ts#L4)
+[src/input/IFocusable.ts:4](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/IFocusable.ts#L4)
 
 ## Methods
 
@@ -43,7 +43,7 @@ The position that the focus should be centred around.
 
 #### Source
 
-[src/input/IFocusable.ts:28](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/IFocusable.ts#L28)
+[src/input/IFocusable.ts:28](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/IFocusable.ts#L28)
 
 ***
 
@@ -61,7 +61,7 @@ The size of the area that the focus should surround.
 
 #### Source
 
-[src/input/IFocusable.ts:34](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/IFocusable.ts#L34)
+[src/input/IFocusable.ts:34](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/IFocusable.ts#L34)
 
 ***
 
@@ -78,7 +78,7 @@ Defaults to this.interactive && this.worldVisible
 
 #### Source
 
-[src/input/IFocusable.ts:40](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/IFocusable.ts#L40)
+[src/input/IFocusable.ts:40](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/IFocusable.ts#L40)
 
 ***
 
@@ -94,7 +94,7 @@ Called when this Focusable is focussed and then activated.
 
 #### Source
 
-[src/input/IFocusable.ts:22](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/IFocusable.ts#L22)
+[src/input/IFocusable.ts:22](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/IFocusable.ts#L22)
 
 ***
 
@@ -110,7 +110,7 @@ Called when this Focusable is focussed.
 
 #### Source
 
-[src/input/IFocusable.ts:12](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/IFocusable.ts#L12)
+[src/input/IFocusable.ts:12](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/IFocusable.ts#L12)
 
 ***
 
@@ -126,4 +126,4 @@ Called when this Focusable is no longer focussed.
 
 #### Source
 
-[src/input/IFocusable.ts:17](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/IFocusable.ts#L17)
+[src/input/IFocusable.ts:17](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/IFocusable.ts#L17)

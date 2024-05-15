@@ -31,7 +31,7 @@ _languageId Set to "en_ca".
 
 #### Source
 
-[src/copy/CopyManager.ts:28](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/copy/CopyManager.ts#L28)
+[src/copy/CopyManager.ts:28](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/copy/CopyManager.ts#L28)
 
 ## Properties
 
@@ -41,7 +41,7 @@ _languageId Set to "en_ca".
 
 #### Source
 
-[src/copy/CopyManager.ts:10](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/copy/CopyManager.ts#L10)
+[src/copy/CopyManager.ts:10](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/copy/CopyManager.ts#L10)
 
 ***
 
@@ -53,7 +53,7 @@ Id for English Canada. This is the default.
 
 #### Source
 
-[src/copy/CopyManager.ts:14](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/copy/CopyManager.ts#L14)
+[src/copy/CopyManager.ts:14](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/copy/CopyManager.ts#L14)
 
 ## Accessors
 
@@ -71,7 +71,7 @@ The current set language id.
 
 #### Source
 
-[src/copy/CopyManager.ts:38](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/copy/CopyManager.ts#L38)
+[src/copy/CopyManager.ts:38](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/copy/CopyManager.ts#L38)
 
 ## Methods
 
@@ -93,7 +93,7 @@ The new language id.
 
 #### Source
 
-[src/copy/CopyManager.ts:80](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/copy/CopyManager.ts#L80)
+[src/copy/CopyManager.ts:80](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/copy/CopyManager.ts#L80)
 
 ***
 
@@ -117,7 +117,7 @@ The found copy, or an error string.
 
 #### Source
 
-[src/copy/CopyManager.ts:59](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/copy/CopyManager.ts#L59)
+[src/copy/CopyManager.ts:59](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/copy/CopyManager.ts#L59)
 
 ***
 
@@ -143,4 +143,4 @@ The language code to use.
 
 #### Source
 
-[src/copy/CopyManager.ts:47](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/copy/CopyManager.ts#L47)
+[src/copy/CopyManager.ts:47](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/copy/CopyManager.ts#L47)

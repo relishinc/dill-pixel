@@ -15,7 +15,7 @@ All audio manager implementations need to implement this interface to function w
 
 #### Source
 
-[src/audio/IAudioManager.ts:7](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioManager.ts#L7)
+[src/audio/IAudioManager.ts:7](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioManager.ts#L7)
 
 ***
 
@@ -27,7 +27,7 @@ Enabling this will print all debug logs.
 
 #### Source
 
-[src/audio/IAudioManager.ts:11](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioManager.ts#L11)
+[src/audio/IAudioManager.ts:11](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioManager.ts#L11)
 
 ***
 
@@ -39,7 +39,7 @@ The master value that affects all audio.
 
 #### Source
 
-[src/audio/IAudioManager.ts:15](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioManager.ts#L15)
+[src/audio/IAudioManager.ts:15](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioManager.ts#L15)
 
 ## Methods
 
@@ -67,7 +67,7 @@ The created IAudioTrack.
 
 #### Source
 
-[src/audio/IAudioManager.ts:100](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioManager.ts#L100)
+[src/audio/IAudioManager.ts:100](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioManager.ts#L100)
 
 ***
 
@@ -101,7 +101,7 @@ The time in milliseconds it should take to fade.
 
 #### Source
 
-[src/audio/IAudioManager.ts:92](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioManager.ts#L92)
+[src/audio/IAudioManager.ts:92](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioManager.ts#L92)
 
 ***
 
@@ -130,7 +130,7 @@ This could happen if the source file could not be found.
 
 #### Source
 
-[src/audio/IAudioManager.ts:109](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioManager.ts#L109)
+[src/audio/IAudioManager.ts:109](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioManager.ts#L109)
 
 ***
 
@@ -154,7 +154,7 @@ The volume of the category.
 
 #### Source
 
-[src/audio/IAudioManager.ts:27](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioManager.ts#L27)
+[src/audio/IAudioManager.ts:27](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioManager.ts#L27)
 
 ***
 
@@ -182,7 +182,7 @@ The length of the track or `undefined` if the track doesn't exist.
 
 #### Source
 
-[src/audio/IAudioManager.ts:42](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioManager.ts#L42)
+[src/audio/IAudioManager.ts:42](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioManager.ts#L42)
 
 ***
 
@@ -198,7 +198,7 @@ Sets up any listeners that need the entire Application construction to be comple
 
 #### Source
 
-[src/audio/IAudioManager.ts:20](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioManager.ts#L20)
+[src/audio/IAudioManager.ts:20](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioManager.ts#L20)
 
 ***
 
@@ -228,7 +228,7 @@ The callback to be called when loading is finished.
 
 #### Source
 
-[src/audio/IAudioManager.ts:75](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioManager.ts#L75)
+[src/audio/IAudioManager.ts:75](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioManager.ts#L75)
 
 ***
 
@@ -254,7 +254,7 @@ The category that the track belongs to.
 
 #### Source
 
-[src/audio/IAudioManager.ts:60](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioManager.ts#L60)
+[src/audio/IAudioManager.ts:60](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioManager.ts#L60)
 
 ***
 
@@ -294,7 +294,7 @@ The track playing.
 
 #### Source
 
-[src/audio/IAudioManager.ts:53](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioManager.ts#L53)
+[src/audio/IAudioManager.ts:53](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioManager.ts#L53)
 
 ***
 
@@ -320,7 +320,7 @@ The volume to set.
 
 #### Source
 
-[src/audio/IAudioManager.ts:34](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioManager.ts#L34)
+[src/audio/IAudioManager.ts:34](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioManager.ts#L34)
 
 ***
 
@@ -346,7 +346,7 @@ The category that the track belongs to.
 
 #### Source
 
-[src/audio/IAudioManager.ts:67](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioManager.ts#L67)
+[src/audio/IAudioManager.ts:67](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioManager.ts#L67)
 
 ***
 
@@ -376,4 +376,4 @@ Whether the IAudioTrack should be removed and destroyed too.
 
 #### Source
 
-[src/audio/IAudioManager.ts:83](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioManager.ts#L83)
+[src/audio/IAudioManager.ts:83](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioManager.ts#L83)

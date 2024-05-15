@@ -21,4 +21,4 @@ Get the squared distance between two points.
 
 ## Source
 
-[src/utils/PointUtils.ts:78](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/utils/PointUtils.ts#L78)
+[src/utils/PointUtils.ts:78](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/utils/PointUtils.ts#L78)

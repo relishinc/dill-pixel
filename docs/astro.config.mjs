@@ -16,6 +16,9 @@ export default defineConfig({
       social: {
         github: 'https://github.com/relishinc/dill-pixel',
       },
+      editLink: {
+        baseUrl: 'https://github.com/relishinc/dill-pixel/tree/main/docs',
+      },
       plugins: [
         // Generate the documentation.
         starlightTypeDoc({

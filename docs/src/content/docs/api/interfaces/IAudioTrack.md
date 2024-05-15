@@ -15,7 +15,7 @@ All audio track implementations need to implement this interface to function wit
 
 #### Source
 
-[src/audio/IAudioTrack.ts:5](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L5)
+[src/audio/IAudioTrack.ts:5](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L5)
 
 ## Methods
 
@@ -41,7 +41,7 @@ The time in milliseconds the fade should take finish.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:27](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L27)
+[src/audio/IAudioTrack.ts:27](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L27)
 
 ***
 
@@ -59,7 +59,7 @@ the length of the track.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:103](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L103)
+[src/audio/IAudioTrack.ts:103](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L103)
 
 ***
 
@@ -73,7 +73,7 @@ the length of the track.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:75](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L75)
+[src/audio/IAudioTrack.ts:75](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L75)
 
 ***
 
@@ -91,7 +91,7 @@ the time position
 
 #### Source
 
-[src/audio/IAudioTrack.ts:91](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L91)
+[src/audio/IAudioTrack.ts:91](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L91)
 
 ***
 
@@ -109,7 +109,7 @@ the base volume of this track.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:67](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L67)
+[src/audio/IAudioTrack.ts:67](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L67)
 
 ***
 
@@ -127,7 +127,7 @@ true if the track is set to loop, false otherwise.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:55](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L55)
+[src/audio/IAudioTrack.ts:55](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L55)
 
 ***
 
@@ -145,7 +145,7 @@ true if the track is muted, false otherwise.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:43](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L43)
+[src/audio/IAudioTrack.ts:43](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L43)
 
 ***
 
@@ -163,7 +163,7 @@ true if currently playing, false otherwise.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:109](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L109)
+[src/audio/IAudioTrack.ts:109](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L109)
 
 ***
 
@@ -179,7 +179,7 @@ Loads the source file into memory. Must be called before play() is called.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:32](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L32)
+[src/audio/IAudioTrack.ts:32](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L32)
 
 ***
 
@@ -205,7 +205,7 @@ The callback to call when the event occured. Omit this to remove all events of t
 
 #### Source
 
-[src/audio/IAudioTrack.ts:123](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L123)
+[src/audio/IAudioTrack.ts:123](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L123)
 
 ***
 
@@ -231,7 +231,7 @@ The callback to call when the event occurs.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:116](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L116)
+[src/audio/IAudioTrack.ts:116](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L116)
 
 ***
 
@@ -257,7 +257,7 @@ The callback to call when the event occurs.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:130](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L130)
+[src/audio/IAudioTrack.ts:130](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L130)
 
 ***
 
@@ -273,7 +273,7 @@ Pauses the track.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:15](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L15)
+[src/audio/IAudioTrack.ts:15](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L15)
 
 ***
 
@@ -289,7 +289,7 @@ Plays the track.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:10](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L10)
+[src/audio/IAudioTrack.ts:10](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L10)
 
 ***
 
@@ -311,7 +311,7 @@ true to loop and false to play once.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:61](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L61)
+[src/audio/IAudioTrack.ts:61](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L61)
 
 ***
 
@@ -333,7 +333,7 @@ true to mute and false to unmute.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:49](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L49)
+[src/audio/IAudioTrack.ts:49](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L49)
 
 ***
 
@@ -351,7 +351,7 @@ true to mute and false to unmute.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:77](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L77)
+[src/audio/IAudioTrack.ts:77](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L77)
 
 ***
 
@@ -373,7 +373,7 @@ The time position to set the track to.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:97](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L97)
+[src/audio/IAudioTrack.ts:97](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L97)
 
 ***
 
@@ -395,7 +395,7 @@ The new volume of this track.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:73](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L73)
+[src/audio/IAudioTrack.ts:73](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L73)
 
 ***
 
@@ -425,7 +425,7 @@ The current volume of this track's category.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:85](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L85)
+[src/audio/IAudioTrack.ts:85](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L85)
 
 ***
 
@@ -441,7 +441,7 @@ Stops the track.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:20](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L20)
+[src/audio/IAudioTrack.ts:20](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L20)
 
 ***
 
@@ -457,4 +457,4 @@ Unloads the source file.
 
 #### Source
 
-[src/audio/IAudioTrack.ts:37](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/audio/IAudioTrack.ts#L37)
+[src/audio/IAudioTrack.ts:37](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/audio/IAudioTrack.ts#L37)

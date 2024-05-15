@@ -39,7 +39,7 @@ A list of asset names.
 
 #### Source
 
-[src/load/AssetMap.ts:14](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/AssetMap.ts#L14)
+[src/load/AssetMap.ts:14](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/AssetMap.ts#L14)
 
 ***
 
@@ -63,4 +63,4 @@ The assets or and empty string array if map is empty or group not found.
 
 #### Source
 
-[src/load/AssetMap.ts:23](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/AssetMap.ts#L23)
+[src/load/AssetMap.ts:23](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/AssetMap.ts#L23)

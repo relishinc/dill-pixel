@@ -23,7 +23,7 @@ Keyboard manager
 
 #### Source
 
-[src/input/KeyboardManager.ts:86](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/KeyboardManager.ts#L86)
+[src/input/KeyboardManager.ts:86](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L86)
 
 ## Accessors
 
@@ -37,7 +37,7 @@ Keyboard manager
 
 #### Source
 
-[src/input/KeyboardManager.ts:139](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/KeyboardManager.ts#L139)
+[src/input/KeyboardManager.ts:139](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L139)
 
 ***
 
@@ -51,7 +51,7 @@ Keyboard manager
 
 #### Source
 
-[src/input/KeyboardManager.ts:143](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/KeyboardManager.ts#L143)
+[src/input/KeyboardManager.ts:143](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L143)
 
 ***
 
@@ -65,7 +65,7 @@ Keyboard manager
 
 #### Source
 
-[src/input/KeyboardManager.ts:147](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/KeyboardManager.ts#L147)
+[src/input/KeyboardManager.ts:147](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L147)
 
 ## Methods
 
@@ -79,7 +79,7 @@ Keyboard manager
 
 #### Source
 
-[src/input/KeyboardManager.ts:274](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/KeyboardManager.ts#L274)
+[src/input/KeyboardManager.ts:274](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L274)
 
 ***
 
@@ -101,7 +101,7 @@ Keyboard manager
 
 #### Source
 
-[src/input/KeyboardManager.ts:151](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/KeyboardManager.ts#L151)
+[src/input/KeyboardManager.ts:151](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L151)
 
 ***
 
@@ -115,7 +115,7 @@ Keyboard manager
 
 #### Source
 
-[src/input/KeyboardManager.ts:254](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/KeyboardManager.ts#L254)
+[src/input/KeyboardManager.ts:254](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L254)
 
 ***
 
@@ -133,7 +133,7 @@ Keyboard manager
 
 #### Source
 
-[src/input/KeyboardManager.ts:250](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/KeyboardManager.ts#L250)
+[src/input/KeyboardManager.ts:250](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L250)
 
 ***
 
@@ -155,7 +155,7 @@ returns an object which you can use for removeBinding, or false if not bound
 
 #### Source
 
-[src/input/KeyboardManager.ts:295](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/KeyboardManager.ts#L295)
+[src/input/KeyboardManager.ts:295](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L295)
 
 ***
 
@@ -173,7 +173,7 @@ returns an object which you can use for removeBinding, or false if not bound
 
 #### Source
 
-[src/input/KeyboardManager.ts:319](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/KeyboardManager.ts#L319)
+[src/input/KeyboardManager.ts:319](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L319)
 
 ***
 
@@ -189,7 +189,7 @@ log key bindings to console, if this.debug is true
 
 #### Source
 
-[src/input/KeyboardManager.ts:266](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/KeyboardManager.ts#L266)
+[src/input/KeyboardManager.ts:266](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L266)
 
 ***
 
@@ -203,7 +203,7 @@ log key bindings to console, if this.debug is true
 
 #### Source
 
-[src/input/KeyboardManager.ts:245](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/KeyboardManager.ts#L245)
+[src/input/KeyboardManager.ts:245](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L245)
 
 ***
 
@@ -227,7 +227,7 @@ removes a specific key associated with the direction
 
 #### Source
 
-[src/input/KeyboardManager.ts:199](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/KeyboardManager.ts#L199)
+[src/input/KeyboardManager.ts:199](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L199)
 
 ***
 
@@ -247,7 +247,7 @@ removes all keys associated with the direction
 
 #### Source
 
-[src/input/KeyboardManager.ts:193](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/KeyboardManager.ts#L193)
+[src/input/KeyboardManager.ts:193](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L193)
 
 ***
 
@@ -265,4 +265,4 @@ removes all keys associated with the direction
 
 #### Source
 
-[src/input/KeyboardManager.ts:42](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/KeyboardManager.ts#L42)
+[src/input/KeyboardManager.ts:42](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/KeyboardManager.ts#L42)

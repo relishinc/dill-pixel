@@ -23,4 +23,4 @@ title: "AssetFactoryFunction"
 
 ## Source
 
-[src/load/assets/AssetFactory.ts:4](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/AssetFactory.ts#L4)
+[src/load/assets/AssetFactory.ts:4](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/AssetFactory.ts#L4)

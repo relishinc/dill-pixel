@@ -17,7 +17,7 @@ title: "IBitmapFontData"
 
 #### Source
 
-[src/load/assets/FontAsset.ts:10](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/FontAsset.ts#L10)
+[src/load/assets/FontAsset.ts:10](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/FontAsset.ts#L10)
 
 ***
 
@@ -27,7 +27,7 @@ title: "IBitmapFontData"
 
 #### Source
 
-[src/load/assets/FontAsset.ts:7](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/FontAsset.ts#L7)
+[src/load/assets/FontAsset.ts:7](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/FontAsset.ts#L7)
 
 ***
 
@@ -37,7 +37,7 @@ title: "IBitmapFontData"
 
 #### Source
 
-[src/load/assets/FontAsset.ts:9](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/FontAsset.ts#L9)
+[src/load/assets/FontAsset.ts:9](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/FontAsset.ts#L9)
 
 ***
 
@@ -47,4 +47,4 @@ title: "IBitmapFontData"
 
 #### Source
 
-[src/load/assets/FontAsset.ts:8](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/load/assets/FontAsset.ts#L8)
+[src/load/assets/FontAsset.ts:8](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/load/assets/FontAsset.ts#L8)

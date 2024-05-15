@@ -15,7 +15,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:33](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L33)
+[src/input/InputUtils.ts:33](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L33)
 
 ***
 
@@ -25,7 +25,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:7](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L7)
+[src/input/InputUtils.ts:7](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L7)
 
 ***
 
@@ -35,7 +35,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:32](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L32)
+[src/input/InputUtils.ts:32](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L32)
 
 ***
 
@@ -45,7 +45,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:34](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L34)
+[src/input/InputUtils.ts:34](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L34)
 
 ***
 
@@ -55,7 +55,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:35](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L35)
+[src/input/InputUtils.ts:35](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L35)
 
 ***
 
@@ -65,7 +65,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:36](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L36)
+[src/input/InputUtils.ts:36](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L36)
 
 ***
 
@@ -75,7 +75,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:8](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L8)
+[src/input/InputUtils.ts:8](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L8)
 
 ***
 
@@ -85,7 +85,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:9](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L9)
+[src/input/InputUtils.ts:9](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L9)
 
 ***
 
@@ -95,7 +95,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:10](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L10)
+[src/input/InputUtils.ts:10](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L10)
 
 ***
 
@@ -105,7 +105,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:11](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L11)
+[src/input/InputUtils.ts:11](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L11)
 
 ***
 
@@ -115,7 +115,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:12](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L12)
+[src/input/InputUtils.ts:12](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L12)
 
 ***
 
@@ -125,7 +125,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:13](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L13)
+[src/input/InputUtils.ts:13](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L13)
 
 ***
 
@@ -135,7 +135,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:14](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L14)
+[src/input/InputUtils.ts:14](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L14)
 
 ***
 
@@ -145,7 +145,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:15](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L15)
+[src/input/InputUtils.ts:15](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L15)
 
 ***
 
@@ -155,7 +155,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:16](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L16)
+[src/input/InputUtils.ts:16](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L16)
 
 ***
 
@@ -165,7 +165,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:17](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L17)
+[src/input/InputUtils.ts:17](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L17)
 
 ***
 
@@ -175,7 +175,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:18](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L18)
+[src/input/InputUtils.ts:18](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L18)
 
 ***
 
@@ -185,7 +185,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:19](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L19)
+[src/input/InputUtils.ts:19](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L19)
 
 ***
 
@@ -195,7 +195,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:20](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L20)
+[src/input/InputUtils.ts:20](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L20)
 
 ***
 
@@ -205,7 +205,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:21](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L21)
+[src/input/InputUtils.ts:21](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L21)
 
 ***
 
@@ -215,7 +215,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:22](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L22)
+[src/input/InputUtils.ts:22](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L22)
 
 ***
 
@@ -225,7 +225,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:23](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L23)
+[src/input/InputUtils.ts:23](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L23)
 
 ***
 
@@ -235,7 +235,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:24](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L24)
+[src/input/InputUtils.ts:24](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L24)
 
 ***
 
@@ -245,7 +245,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:25](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L25)
+[src/input/InputUtils.ts:25](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L25)
 
 ***
 
@@ -255,7 +255,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:26](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L26)
+[src/input/InputUtils.ts:26](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L26)
 
 ***
 
@@ -265,7 +265,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:27](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L27)
+[src/input/InputUtils.ts:27](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L27)
 
 ***
 
@@ -275,7 +275,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:28](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L28)
+[src/input/InputUtils.ts:28](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L28)
 
 ***
 
@@ -285,7 +285,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:29](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L29)
+[src/input/InputUtils.ts:29](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L29)
 
 ***
 
@@ -295,7 +295,7 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:30](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L30)
+[src/input/InputUtils.ts:30](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L30)
 
 ***
 
@@ -305,4 +305,4 @@ eNum Events
 
 #### Source
 
-[src/input/InputUtils.ts:31](https://github.com/relishinc/dill-pixel/blob/543438455c9a47928084300159416186c2aa1095/src/input/InputUtils.ts#L31)
+[src/input/InputUtils.ts:31](https://github.com/relishinc/dill-pixel/blob/10f512f7f577ca5e74162827f11215b28df5ca97/src/input/InputUtils.ts#L31)
