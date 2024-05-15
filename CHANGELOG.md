@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.0.1](https://github.com/relishinc/dill-pixel/compare/v2.40.0...v3.0.1) (2024-05-15)
+
+
+### Bug Fixes
+
+* changed defaults ([e554868](https://github.com/relishinc/dill-pixel/commit/e554868ccb6a1213176a8f91f3e4a68c629246fa))
+
+
+### Miscellaneous Chores
+
+* release 3.0.1 ([817f8ab](https://github.com/relishinc/dill-pixel/commit/817f8ab1f8a67b6e44a6d7489d8b4593d1e942eb))
+
 ## [2.40.0](https://github.com/relishinc/dill-pixel/compare/v2.39.15...v2.40.0) (2024-05-15)
 
 
