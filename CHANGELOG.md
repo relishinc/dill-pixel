@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2](https://github.com/relishinc/dill-pixel/compare/v3.0.1...v3.0.2) (2024-05-15)
+
+
+### Bug Fixes
+
+* publish github action ([cbc960a](https://github.com/relishinc/dill-pixel/commit/cbc960a6ca95b67c26e51c9ce99004853a85a1c2))
+
 ## [3.0.1](https://github.com/relishinc/dill-pixel/compare/v2.40.0...v3.0.1) (2024-05-15)
 
 
