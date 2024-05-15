@@ -72,5 +72,5 @@ jobs:
           TAG_NAME=$(git describe --tags $(git rev-list --tags --max-count=1))
           curl -X POST -H 'Content-Type: application/json' $WEBHOOK_URL -d "{
               \"text\": \"A new Dill Pixel release just dropped! Check it out here: https://github
-          .com/relishinc/dill-pixel/releases/tag/$TAG_NAME. Install using 'npm install dill-pixel'\"
+          .com/relishinc/dill-pixel/releases/tag/$TAG_NAME. Install using 'npm install dill-pixel.'\"
           }"
