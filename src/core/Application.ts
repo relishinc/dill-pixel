@@ -54,8 +54,8 @@ export function create<T extends Application = Application>(
 export async function create<T extends Application = Application>(
   ApplicationClass: typeof Application,
   config: Partial<DillPixelApplicationOptions> = {},
-  domElement: string | HTMLElement = ApplicationClass.containerID || Application.containerID,
-  resizeToDOMElement = true,
+  domElement: string | HTMLElement = ApplicationClass.containerID,
+  resizeToDOMElement = false,
 ): Promise<T> {
   let el: HTMLElement | null = null;
   if (typeof domElement === 'string') {
@@ -155,7 +155,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
     Application._instance = this;
     this._resizeDebounce = appConfig?.resizeDebounce ?? 0;
     this._useSpine = appConfig?.useSpine || false;
-    this._useNewResizeManager = appConfig?.useNewResizeManager || false;
+    this._useNewResizeManager = appConfig?.useNewResizeManager ?? true;
     this._resizeOptions = appConfig?.resizeOptions || {};
     if (isDev() || appConfig?.showStatsInProduction) {
       this.addStats().then(() => {

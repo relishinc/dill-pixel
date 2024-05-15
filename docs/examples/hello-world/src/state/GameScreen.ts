@@ -1,5 +1,5 @@
-import { IPoint, State } from '@relish-studios/dill-pixel';
-import { Sprite, Text } from 'pixi.js';
+import { State } from 'dill-pixel';
+import { Point, Sprite, Text } from 'pixi.js';
 import { Application } from '../Application';
 
 export class GameScreen extends State<Application> {
@@ -11,7 +11,7 @@ export class GameScreen extends State<Application> {
     super();
   }
 
-  public init(pSize: IPoint) {
+  public init(pSize: Point) {
     super.init(pSize);
 
     this._bg = this.add.coloredSprite(0xaa5566);
@@ -38,7 +38,7 @@ export class GameScreen extends State<Application> {
     pOnComplete();
   }
 
-  public onResize(pSize: IPoint) {
+  public onResize(pSize: Point) {
     super.onResize(pSize);
     if (this._bg) {
       this._bg.width = this._size.x;
