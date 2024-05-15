@@ -4,6 +4,10 @@ title: Quick Start
 
 import {TabItem, Tabs, Aside, FileTree} from '@astrojs/starlight/components';
 
+<Aside type="tip">
+	We recommend using [Vite](https://vitejs.dev) to bundle your application
+</Aside>
+
 ## Installing the Framework
 
 Make sure you have an up-to-date version of [Node.js](https://nodejs.org/) installed and your current working directory is the one where you intend to create a project. Run the following command in your command line:
@@ -26,10 +30,6 @@ Make sure you have an up-to-date version of [Node.js](https://nodejs.org/) insta
 	</TabItem>
 </Tabs>
 
-<Aside type="tip">
-	We recommend using [Vite](https://vitejs.dev) to bundle your application
-</Aside>
-
 ## Project Setup
 
 We recommend setting up your project directory as follows:
@@ -41,15 +41,19 @@ We recommend setting up your project directory as follows:
 - vite.config.js
 - tsconfig.json
 - index.html
-- src
+- **src**
 		- index.css	  
 	- index.ts
 	- Application.ts
+	- assets
+		- *audio, fonts, images…*
+	- states
+		- …		
 	- …
 
 </FileTree>
 
-Use the following templates to populate your files:
+Use the following templates to populate the above files:
 
 <Tabs>
 	<TabItem label="package.json">
