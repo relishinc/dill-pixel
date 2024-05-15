@@ -2,9 +2,38 @@
 title: Creating a Game
 ---
 
-import {TabItem, Tabs, Aside, FileTree} from '@astrojs/starlight/components';
+import {TabItem, Tabs, Aside, FileTree, Code} from '@astrojs/starlight/components';
+
+import packageJson from '../../../../examples/simple-game/package.json?raw';
+import indexHtml from '../../../../examples/simple-game/index.html?raw';
+import indexCss from '../../../../examples/simple-game/src/index.css?raw';
+import indexTs from '../../../../examples/simple-game/src/index.ts?raw';
+import applicationTs from '../../../../examples/simple-game/src/Application.ts?raw';
 
 In the [Quick Start guide](./quick-start), we learned how to set up a very simple project using dill pixel.
-Now let's go through the process of creating a basic game:
+Now let's go through the process of creating a basic game.
+
+<Aside type="tip">
+	The entire source code for this example can be found in the [GitHub repository](https://github.com/relishinc/dill-pixel/tree/main/docs/examples/simple-game)
+</Aside>
+
+### Create the Files
+
+First, create a `package.json` in your project's root directory:
+
+<Code code={packageJson} lang="json" title="package.json" />
+
+Next, create an `index.html` file in the root directory. This file will be the entry point for your game and dill pixel will automatically create a `<div id="game-container" />` to contain the game canvas:
+
+<Code code={indexHtml} lang="html" title="index.html" />
+
+Create an `index.css` file in the `src` directory that displays the game at full screen:
+
+<Code code={indexCss} lang="css" title="src/index.css" />
+
+Create an `index.ts` file in the `src` directory that initializes the game:
+
+<Code code={indexTs} lang="ts" title="src/index.ts" />
+
 
 

@@ -11,15 +11,6 @@ export default defineConfig((config) => ({
   ...config,
   target: 'esnext',
   logLevel: 'info',
-  server: {
-    port: 3000,
-    host: true,
-    open: true,
-  },
-  preview: {
-    host: true,
-    port: 8080,
-  },
   plugins: [
     createHtmlPlugin(),
     viteStaticCopy({
