@@ -426,6 +426,16 @@ export class Application<T extends Application = any> extends PIXIApplication {
     // Delayed to fix incorrect iOS resizing in WKWebView. See: https://bugs.webkit.org/show_bug.cgi?id=170595
     this.onResize(0.5);
     this._webEventsManager.registerResizeCallback(() => this.onResize(0.5));
+    this._webEventsManager.registerVisibilityChangedCallback((visible: boolean) => {
+      if (visible) {
+        this.onResize(0);
+        this.ticker.start();
+        this.ticker.speed = 1;
+      } else {
+        this.ticker.stop();
+        this.ticker.speed = 0;
+      }
+    });
   }
 
   public async loadDocumentFonts(): Promise<void> {
