@@ -42,6 +42,22 @@ export default defineConfig({
             { label: 'Creating a Game', link: '/guides/creating-game' },
             { label: 'Project Setup', link: '/guides/project-setup' },
             { label: 'Examples', link: '/guides/examples' },
+            { label: 'Using Spine', link: '/guides/spine' },
+            { label: 'Physics', link: '/guides/physics' },
+            { label: 'Audio', link: '/guides/audio' },
+          ],
+        },
+        {
+          label: 'Fundamentals',
+          items: [
+            { label: 'State Management', link: '/fundamentals/state' },
+            { label: 'Layout', link: '/fundamentals/layout' },
+            { label: 'Copy and Content', link: '/fundamentals/copy' },
+            /*
+            { label: 'Events', link: '/fundamentals/events' },
+            { label: 'Inputs', link: '/fundamentals/inputs' },
+            { label: 'Assets', link: '/fundamentals/assets' },
+            */
           ],
         },
 				typeDocSidebarGroup,

@@ -1,6 +1,6 @@
 import { GREEN } from '@/utils/Constants';
 import * as dat from 'dat.gui';
-import { AssetMapData, AssetType, Container, IPoint, State, TextureAsset } from '@relish-studios/dill-pixel';
+import { AssetMapData, AssetType, Container, IPoint, State, TextureAsset } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Sprite, Text } from 'pixi.js';
 import { Application } from '../Application';

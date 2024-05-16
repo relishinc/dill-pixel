@@ -27,8 +27,16 @@ export default defineConfig((config) => ({
           dest: './assets/json',
         },
         {
+          src: normalizePath(path.resolve(__dirname, './src/assets/spine/*')),
+          dest: './assets/spine',
+        },
+        {
           src: normalizePath(path.resolve(__dirname, './src/assets/fonts/*')),
           dest: './assets/fonts',
+        },
+        {
+          src: normalizePath(path.resolve(__dirname, './src/assets/audio/output/*')),
+          dest: './assets/audio',
         },
       ],
     }),

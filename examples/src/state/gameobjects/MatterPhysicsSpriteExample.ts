@@ -1,3 +1,3 @@
-import { MatterPhysicsSprite } from '@relish-studios/dill-pixel';
+import { MatterPhysicsSprite } from 'dill-pixel';
 
 export class MatterPhysicsSpriteExample extends MatterPhysicsSprite {}

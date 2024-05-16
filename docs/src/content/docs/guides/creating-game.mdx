@@ -29,9 +29,9 @@ Now let's go through the process of creating a basic game.
 
 	<Code code={packageJson} lang="json" title="package.json" />
 
-2. Create a `vite.config.js` file in the root directory to configure the build process. The configuration
-is fairly standard but we're using the [vite-plugin-static-copy](https://www.npmjs.com/package/vite-plugin-static-copy)
-to copy our static assets so that they can be loaded from within the game. You can configure the plugin
+2. Create a `vite.config.js` file in the root directory to configure the build process. The default Vite configuration
+is sufficient but for handling static assets we're using the [vite-plugin-static-copy](https://www.npmjs.com/package/vite-plugin-static-copy) 
+so that they can be loaded from within the game. You can configure the plugin
 however you like based on how you've organized your assets.
 
 	<Code code={viteConfigJs} lang="js" title="vite.config.js" />

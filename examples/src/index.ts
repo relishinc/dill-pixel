@@ -1,5 +1,5 @@
 import { Application } from '@/Application';
-import { create } from '@relish-studios/dill-pixel';
+import { create } from 'dill-pixel';
 import './index.css';
 
 // create app

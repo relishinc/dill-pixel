@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "Examples of Dill Pixel Features",
   "main": "index.html",
+  "type": "module",
   "scripts": {
     "start": "vite",
     "dev": "vite",
@@ -26,18 +27,18 @@
     "prettier": "^3.0.3",
     "relishinc-prettier": "github:relishinc/prettier",
     "typescript": "^5.2.2",
-    "vite": "^4.5.3",
-    "vite-plugin-html": "^3.2.0",
-    "vite-plugin-singlefile": "^0.13.5",
+    "vite": "^5",
+    "vite-plugin-html": "^3",
+    "vite-plugin-singlefile": "^2",
     "vite-plugin-static-copy": "^1",
-    "vite-plugin-top-level-await": "^1.3.1",
-    "vite-plugin-wasm": "^3.2.2"
+    "vite-plugin-top-level-await": "^1",
+    "vite-plugin-wasm": "^3"
   },
   "dependencies": {
     "@pixi/filter-drop-shadow": "^5.2.0",
     "@pixi/ui": "^0.9.0",
-    "@relish-studios/dill-pixel": "file:..",
+    "dill-pixel": "file:..",
     "dat.gui": "^0.7.9",
-    "gsap": "^3.11.5"
+    "gsap": "^3"
   }
 }

@@ -7,7 +7,7 @@ import {
   FlexContainer,
   hideAllPopups,
   registerFocusables,
-} from '@relish-studios/dill-pixel';
+} from 'dill-pixel';
 import { Point } from 'pixi.js';
 
 export class ButtonExample extends BaseState {

@@ -1,5 +1,5 @@
 import { BaseState } from '@/state/BaseState';
-import { delay, Signal } from '@relish-studios/dill-pixel';
+import { delay, Signal } from 'dill-pixel';
 import { IPoint } from 'pixi.js';
 
 export class SignalsExample extends BaseState {

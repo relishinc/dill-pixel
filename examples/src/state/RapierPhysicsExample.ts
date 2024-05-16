@@ -8,7 +8,7 @@ import {
   RapierPhysics,
   RapierPhysicsComposite,
   TextureAsset,
-} from '@relish-studios/dill-pixel';
+} from 'dill-pixel';
 import { Point } from 'pixi.js';
 
 export class RapierPhysicsExample extends BaseState {
@@ -65,42 +65,45 @@ export class RapierPhysicsExample extends BaseState {
     this.eventMode = 'static';
     this.on('pointerdown', (e) => {
       const pt = e.getLocalPosition(this);
+      const type = Math.random() > 0.5 ? PhysicsBodyType.CIRCLE : PhysicsBodyType.RECTANGLE;
+      const size: [number, number?] | number = type === PhysicsBodyType.CIRCLE ? this.getObjectSize() : [this.getObjectSize(), this.getObjectSize()];
 
-      const rnd = Math.random();
-      switch (true) {
-        case rnd < 0.5:
-          const type = Math.random() > 0.5 ? PhysicsBodyType.CIRCLE : PhysicsBodyType.RECTANGLE;
+      // make a random colored texture from graphics
+      gfx.clear();
+      gfx.beginFill(Math.floor(Math.random() * 0xffffff));
 
-          const size: PointLike =
-            type === PhysicsBodyType.CIRCLE ? this.getObjectSize() : [this.getObjectSize(), this.getObjectSize()];
+      const useComposite = Math.random() > 0.75;
 
-          // make a random colored texture from graphics
-          gfx.clear();
-          gfx.beginFill(Math.floor(Math.random() * 0xffffff));
-          if (type === PhysicsBodyType.CIRCLE) {
-            gfx.drawCircle(0, 0, (size as number) * 0.5);
-            gfx.endFill();
-            const useJar = Math.random() > 0.5;
-            this.physics.add.physicsSprite({
-              asset: useJar ? 'jar' : this.app.renderer.generateTexture(gfx),
-              size,
-              bodyType: type,
-              mass: 1,
-              position: pt,
-            });
-          } else {
-            gfx.drawRect(0, 0, (size as [number, number])[0], (size as [number, number])[1]);
-            gfx.endFill();
-            this.physics.add.physicsSprite(this.app.renderer.generateTexture(gfx), undefined, size, type, 1, pt);
-          }
-          gfx.clear();
-          break;
-        default:
-          const composite = new RapierPhysicsComposite();
-          composite.x = pt.x;
-          composite.y = pt.y;
-          this.physics.add.existing(composite);
-          break;
+      if ( !useComposite) {
+        if (type === PhysicsBodyType.CIRCLE) {
+          gfx.drawCircle(0, 0, (size as number) * 0.5);
+          gfx.endFill();
+          const useJar = Math.random() > 0.5;
+  
+          this.physics.add.physicsSprite({
+            asset: useJar ? 'jar' : this.app.renderer.generateTexture(gfx),
+            size,
+            bodyType: type,
+            mass: 1,
+            position: pt,
+          });
+        } else {
+          gfx.drawRect(0, 0, (size as [number, number])[0], (size as [number, number])[1]);
+          gfx.endFill();
+          this.physics.add.physicsSprite({
+            asset: this.app.renderer.generateTexture(gfx), 
+            size,
+            bodyType: type,
+            mass: 1,
+            position: pt,
+          });
+        }
+        gfx.clear();
+      } else {
+        const composite = new RapierPhysicsComposite();
+        composite.x = pt.x;
+        composite.y = pt.y;
+        this.physics.add.existing(composite);
       }
     });
   }

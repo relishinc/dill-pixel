@@ -1,6 +1,6 @@
 import { BaseState } from '@/state/BaseState';
 import { DropShadowFilter } from '@pixi/filter-drop-shadow';
-import { AssetMapData, delay, FontAsset } from '@relish-studios/dill-pixel';
+import { AssetMapData, delay, FontAsset } from 'dill-pixel';
 import { Filter, Point } from 'pixi.js';
 import { FONT_OPEN_SANS, FONT_OPEN_SANS_BOLD, FONT_PADALOMA } from '../utils/Constants';
 

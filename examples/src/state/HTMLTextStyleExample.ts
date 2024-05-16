@@ -1,5 +1,5 @@
 import { BaseState } from '@/state/BaseState';
-import { AssetMapData, getHTMLTextStyle, loadAndAddHTMLTextStyle, delay } from '@relish-studios/dill-pixel';
+import { AssetMapData, getHTMLTextStyle, loadAndAddHTMLTextStyle, delay } from 'dill-pixel';
 import { Point } from 'pixi.js';
 import { FONT_ARBORIA, FONT_TIMES, FONT_HELVETICA } from '../utils/Constants';
 

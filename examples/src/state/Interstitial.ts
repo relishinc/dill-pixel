@@ -1,4 +1,4 @@
-import { LoadScreen } from '@relish-studios/dill-pixel';
+import { LoadScreen } from 'dill-pixel';
 import { gsap, Sine } from 'gsap';
 import { Sprite, Point } from 'pixi.js';
 

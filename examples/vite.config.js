@@ -61,7 +61,7 @@ export default defineConfig((config) => ({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@relish-studios/dill-pixel': path.resolve(__dirname, '../src'),
+      'dill-pixel': path.resolve(__dirname, '../src'),
     },
   },
 }));

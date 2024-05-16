@@ -1,6 +1,6 @@
 import { BaseState } from '@/state/BaseState';
-import { AssetMapData, delay, FlexContainer, Make, MathUtils } from '@relish-studios/dill-pixel';
-import { Point, Sprite, Text, TextStyle } from 'pixi.js';
+import { AssetMapData, FlexContainer, MathUtils } from 'dill-pixel';
+import { Point, Sprite, TextStyle } from 'pixi.js';
 
 const whiteTextStyle = (size: number) =>
   new TextStyle({

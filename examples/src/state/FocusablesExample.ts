@@ -8,7 +8,7 @@ import {
   Sprite,
   TextureAsset,
   TextureAtlasAsset,
-} from '@relish-studios/dill-pixel';
+} from 'dill-pixel';
 import { Point } from 'pixi.js';
 
 class Focusable extends Container {

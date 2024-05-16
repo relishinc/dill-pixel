@@ -1,0 +1,59 @@
+---
+title: Audio
+---
+
+dill pixel uses the [Howler.js](https://howlerjs.com/) audio library for playing sounds and music in your game.
+
+## Playing Audio
+
+If you have two audio files – `sound.mp3` and `sound.webm` – in your `src/assets/audio/output` folder and
+you've [configured Vite to serve the assets](/guides/project-setup#build-tools), you can load
+them into your game like this:
+
+```js
+import { playAudioTrack, pauseAudioTrack } from 'dill-pixel';
+
+...
+
+// Play an audio track
+
+playAudioTrack('sound');
+
+// Play an audio track at 50% volume
+
+playAudioTrack('sound', 0.5);
+
+// Play an audio track on a loop
+
+playAudioTrack('sound', 1, true);
+
+// Pause an audio track
+
+pauseAudioTrack('sound');
+
+```
+
+## Categories
+
+Audio tracks can be categorized, which allows similar types of sounds 
+to be grouped together. This can be useful for controlling the volume of a group of sounds (e.g. sound effects, background music, voiceovers)
+
+```js
+
+import { setAudioCategoryVolume, playAudioTrack } from 'dill-pixel';
+
+...
+
+// Play an audio track in the 'sfx' category
+
+playAudioTrack('foo', 1, false, 'sfx');
+
+// Play an audio track in the 'music' category
+
+playAudioTrack('bar', 1, true, 'music');
+
+// Set the volume of all 'sfx' sounds to 50% of their original volume
+
+setAudioCategoryVolume('sfx', 0.5);
+
+```

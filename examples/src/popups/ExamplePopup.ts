@@ -1,5 +1,5 @@
 import { GREEN } from '@/utils/Constants';
-import { Popup, Container } from '@relish-studios/dill-pixel';
+import { Popup, Container } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Point, Sprite, Text } from 'pixi.js';
 

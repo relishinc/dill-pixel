@@ -1,5 +1,5 @@
 import { BaseState } from '@/state/BaseState';
-import { AssetMapData, AssetType, SpineAsset, TextureAsset, TextureAtlasAsset } from '@relish-studios/dill-pixel';
+import { AssetMapData, SpineAsset } from 'dill-pixel';
 import { Spine } from 'pixi-spine';
 import { Point } from 'pixi.js';
 
@@ -13,11 +13,7 @@ export class SpineExample extends BaseState {
   }
 
   public static get Assets(): AssetMapData[] {
-    return [
-      new SpineAsset('spineboy-pro'),
-      new TextureAsset('pickle', AssetType.PNG),
-      new TextureAtlasAsset('buildings'),
-    ];
+    return [new SpineAsset('spineboy-pro')];
   }
 
   init(pSize: Point) {

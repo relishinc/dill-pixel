@@ -1,0 +1,134 @@
+---
+title: Layout
+---
+
+import {Aside} from '@astrojs/starlight/components';
+
+dill pixel includes two useful classes for laying out elements on the canvas: `UICanvas` and `FlexContainer`.
+
+## UICanvas
+
+The [`UICanvas`](/api/classes/uicanvas) class extends PIXI's `Container` and is used for 
+absolutely positioning elements on the canvas. It's very handy for persistent UI elements
+like menus, scores, and other HUD elements.
+
+```js
+import { UICanvas, Make } from 'dill-pixel';
+
+...
+
+// Define a new UICanvas
+
+protected _ui: UICanvas;
+
+...
+
+// Create the UICanvas
+
+this._ui = this.add.uiCanvas({ padding: 20 });
+
+// Add elements to it
+
+this._ui.addElement(Make.text('Hello, World!'), { align: 'top left' });
+this._ui.addElement(Make.sprite({ asset: 'foo' }), { align: 'bottom right', padding: 20 });
+
+```
+
+The `align` property can be set to one of the following values:
+
+- `top left`
+- `top`
+- `top right`
+- `left`
+- `center`
+- `right`
+- `bottom left`
+- `bottom`
+- `bottom right`
+
+Specifying `padding` will add space around the element.
+
+<Aside type="tip">
+  As the browser is resized the elements will remain in the same position relative to the canvas.
+  Check out the [UI Canvas example](https://dillpixel.io/examples/#UICanvasExample) for a demonstration.
+</Aside>
+
+## Flex Container
+
+The [`FlexContainer`](/api/classes/flexcontainer) class extends PIXI's `Container` and is based
+on the CSS Flexbox layout model. It's useful for aligning and arranging elements in a row or column.
+
+```js
+import { FlexContainer } from 'dill-pixel';
+
+...
+
+// Define a new FlexContainer
+
+protected _layout: FlexContainer;
+
+...
+
+// Create the FlexContainer
+
+this._layout = this.add.flexContainer({ 
+  flexDirection: 'column', 
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 20,
+});
+
+// Add elements to it
+
+this._layout.addChild(Make.text('Hello, World!'));
+this._layout.addChild(Make.sprite({ asset: 'foo' }));
+this._layout.addChild(Make.sprite({ asset: 'bar' }));
+
+```
+
+As new elements are added to (or removed from) the flex container, they will be automtically arranged based
+on the properties you've set.
+
+### Direction
+
+The `flexDirection` property can be set to either `row` or `column`.
+
+### Align Items
+
+The `alignItems` property can be set to one of the following values:
+
+- `flex-start`
+- `center`
+- `flex-end`
+
+### Justify Content
+
+The `justifyContent` property can be set to one of the following values:
+
+- `flex-start`
+- `center`
+- `flex-end`
+- `space-between`
+- `space-around`
+- `space-evenly`
+
+### Gap
+
+The `gap` property specifies the space between elements.
+
+### Wrap
+
+The `flexWrap` property can be set to either `nowrap` (default) or `wrap`. If set to `wrap`, elements will 
+wrap to the next line when they reach the edge of the container (the size of the flex container must be 
+specified with `width` and `height` parameters for wrapping to occur).
+
+### Width and Height
+
+The `width` and `height` properties are optional. If not specified, the container will expand to fit 
+its contents. If specified, the `width` and `height` will be used to determine when wrapping occurs and how the elements are
+distributed within the container according to the `justifyContent` property.
+
+<Aside type="tip">
+  Check out the [Flex container example](https://dillpixel.io/examples/#FlexContainerExample) for a demonstration
+  that lets you customize all of the different properties of the container to see how it responds.
+</Aside>

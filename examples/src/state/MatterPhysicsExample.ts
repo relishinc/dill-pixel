@@ -1,6 +1,6 @@
 import { BaseState } from '@/state/BaseState';
 import { MatterPhysicsSpriteExample } from '@/state/gameobjects/MatterPhysicsSpriteExample';
-import { AssetMapData, AssetType, MatterPhysics, PhysicsBodyType, TextureAsset } from '@relish-studios/dill-pixel';
+import { AssetMapData, AssetType, MatterPhysics, PhysicsBodyType, TextureAsset } from 'dill-pixel';
 import { Point } from 'pixi.js';
 
 export class MatterPhysicsExample extends BaseState {
@@ -59,8 +59,7 @@ export class MatterPhysicsExample extends BaseState {
     this.on('pointerdown', (e) => {
       const pt = e.getLocalPosition(this);
       const type = Math.random() > 0.5 ? PhysicsBodyType.CIRCLE : PhysicsBodyType.RECTANGLE;
-      const size: [number, number?] | number =
-        type === PhysicsBodyType.CIRCLE ? this.getObjectSize() : [this.getObjectSize(), this.getObjectSize()];
+      const size: [number, number?] | number = type === PhysicsBodyType.CIRCLE ? this.getObjectSize() : [this.getObjectSize(), this.getObjectSize()];
 
       // make a random colored texture from graphics
       gfx.clear();
@@ -71,21 +70,23 @@ export class MatterPhysicsExample extends BaseState {
         gfx.endFill();
         const useJar = Math.random() > 0.5;
 
-        // test with a sprite that extends the base MatterPhysicsSprite
-        const spr: MatterPhysicsSpriteExample = new MatterPhysicsSpriteExample(
-          useJar ? 'jar' : this.app.renderer.generateTexture(gfx),
-          undefined,
+        this.physics.add.physicsSprite({
+          asset: useJar ? 'jar' : this.app.renderer.generateTexture(gfx),
           size,
-          type,
-        );
-        spr.position.set(pt.x, pt.y);
-
-        // test adding an existing sprite
-        this.physics.add.existing(spr);
+          bodyType: type,
+          mass: 1,
+          position: pt,
+        });
       } else {
         gfx.drawRect(0, 0, (size as [number, number])[0], (size as [number, number])[1]);
         gfx.endFill();
-        this.physics.add.physicsSprite(this.app.renderer.generateTexture(gfx), undefined, size, type, 1, pt);
+        this.physics.add.physicsSprite({
+          asset: this.app.renderer.generateTexture(gfx), 
+          size,
+          bodyType: type,
+          mass: 1,
+          position: pt,
+        });
       }
       gfx.clear();
     });

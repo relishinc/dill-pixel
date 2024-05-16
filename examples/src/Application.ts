@@ -16,7 +16,7 @@ import {
   SplashScreen as DillPixelSplashScreen,
   TextureAsset,
   TransitionType,
-} from '@relish-studios/dill-pixel';
+} from 'dill-pixel';
 import { AudioExample } from './state/AudioExample';
 import { BitmapFontsExample } from './state/BitmapFontsExample';
 import { ButtonExample } from './state/ButtonExample';

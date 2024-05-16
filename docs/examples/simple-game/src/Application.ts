@@ -13,7 +13,7 @@ export class Application extends DillPixelApplication {
   protected setup() {
     (globalThis as any).__PIXI_APP__ = this;
     this.registerDefaultLoadScreen(LoadScreen);
-    this.state.defaultTransitionType = TransitionType.TRANSITION_SIMPLE_INTERSTITIAL;    
+    this.state.defaultTransitionType = TransitionType.TRANSITION_SIMPLE_INTERSTITIAL; 
   }  
 
   // Register the states

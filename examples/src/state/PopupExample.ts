@@ -8,7 +8,7 @@ import {
   showPopup,
   Signals,
   TextureAtlasAsset,
-} from '@relish-studios/dill-pixel';
+} from 'dill-pixel';
 import { Point } from 'pixi.js';
 
 export class PopupExample extends BaseState {

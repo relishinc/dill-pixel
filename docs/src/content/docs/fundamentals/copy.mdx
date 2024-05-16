@@ -1,0 +1,50 @@
+---
+title: Copy and Content
+---
+
+The `CopyManager` class is used to manage the copy and content of your game. It allows you to easily switch between languages and access strings in your game.
+The instance of the `CopyManager` class is available in the `copy` property of the `Application` class.
+
+```js
+// Get the current language ('en_ca' by default)
+
+const lang = this.copy.currentLanguage;
+
+// Load copy data
+
+this.copy.setData({
+  hello: {
+    en_ca: 'Hello',
+    es: 'Hola',
+    fr: 'Bonjour'
+  },
+  goodbye: {
+    en_ca: 'Goodbye',
+    es: 'Adios',
+    fr: 'Au revoir'
+  },
+});
+
+// Get a string
+
+this.copy.getCopy('hello'); // Outputs: 'Hello'
+
+// Change the language
+
+this.copy.changeLanguage('es');
+
+// Get a string
+
+this.copy.getCopy('hello'); // Outputs: 'Hola'
+
+```
+
+Within a game state, you can access the `CopyManager` instance using `this.app.copy`:
+
+```js
+
+// Get a string
+
+this.app.copy.getCopy('hello'); // Outputs: 'Hello'
+
+```

@@ -6,7 +6,7 @@ import {
   Make,
   TextureAsset,
   UICanvas,
-} from '@relish-studios/dill-pixel';
+} from 'dill-pixel';
 import { Point } from 'pixi.js';
 import { BaseState } from './BaseState';
 
@@ -61,7 +61,7 @@ export class UICanvasExample extends BaseState {
     fc2.add.text({ value: 'Item 2' });
     fc2.add.text({ value: 'Item 3' });
 
-    this.extraElement = this.ui.addElement<FlexContainer>(fc2, { align: 'bottom left' });    
+    this.extraElement = this.ui.addElement<FlexContainer>(fc2, { align: 'bottom left', padding: 10 });    
     
     await delay(2);
 
