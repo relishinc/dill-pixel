@@ -2,42 +2,60 @@
 title: Introduction
 ---
 
-import { LinkCard, CardGrid } from '@astrojs/starlight/components';
+import { LinkCard, CardGrid, Card } from '@astrojs/starlight/components';
 
 ## What is dill pixel?
 
-**dill pixel** is a game development framework built on top of the [PixiJS](https://pixijs.com/) rendering engine and provides a robust set of tools and libraries for creating 2D games.
+**dill pixel** is a game development framework built on top of the [PixiJS](https://pixijs.com/) rendering 
+engine and provides a robust set of tools and libraries for creating 2D games. dill pixel is maintained and
+developed by [Relish Studios](https://reli.sh) and has been used to create a wide range of games, from simple educational 
+games to complex interactive experiences.
 
 ## Key features
 
-dill pixel comes with a number of useful features to help you build your game:
+dill pixel offers a number of useful features and libraries to help you build your game:
 
-### State management
-Seamlessly handles your game state and complex transitions between states. [Learn more](/fundamentals/state)
-
-### Spine
-Support for using [Spine animations](https://esotericsoftware.com/) in your games. [Learn more](/guides/spine)
-
-### Layout and Flex container
-Anchored positioning and an HTML-inspired flexbox container makes creating responsive UI layouts a snap. [Learn more](/fundamentals/layout)
-
-### Physics
-Optionally use [Matter](https://brm.io/matter-js/) or [Rapier](https://rapier.rs/) to incorporate physics in your 2D game. [Learn more](/guides/physics)
-
-### Copy manager
-Manage all of your game's content and copy in .json files, including support for multiple languages. [Learn more](/fundamentals/copy)
-
-### Input manager
-Handle mouse, touch, and keyboard input – including sophisticated support for creating tab orders or finding the nearest interactive element for arrow key navigation.
-
-### Audio
-Configure multiple audio channels and queue audio files as they are triggered – optionally based on assigned priorities. [Learn more](/guides/audio)
-
-### Asset map
-Define which assets belong to which game state for automated loading and unloading during game transitions.
-
-### Web events
-Ensures your game can respond to visibility changes or resize events from the browser window.
+<CardGrid>
+  <Card title="State management" icon="approve-check">
+    Seamlessly handles your game state and complex transitions between states. 
+    
+    [Learn more](/fundamentals/state)
+  </Card>
+  <Card title="Spine" icon="approve-check">
+    Support for using [Spine animations](https://esotericsoftware.com/) in your games. 
+    
+    [Learn more](/guides/spine)
+  </Card>
+  <Card title="Layout and Flex container" icon="approve-check">
+    Anchored positioning and an HTML-inspired flexbox container makes creating responsive UI layouts a snap. 
+    
+    [Learn more](/fundamentals/layout)
+  </Card>
+  <Card title="Physics" icon="approve-check">
+    Optionally use [Matter](https://brm.io/matter-js/) or [Rapier](https://rapier.rs/) to incorporate physics in your 2D game. 
+    
+    [Learn more](/guides/physics)
+  </Card>
+  <Card title="Copy manager" icon="approve-check">
+    Manage all of your game's content and copy in .json files, including support for multiple languages. 
+    
+    [Learn more](/fundamentals/copy)
+  </Card>
+  <Card title="Input manager" icon="approve-check">
+    Handle mouse, touch, and keyboard input – including sophisticated support for creating tab orders or finding the nearest interactive element for arrow key navigation.
+  </Card>
+  <Card title="Audio" icon="approve-check">
+    Configure multiple audio channels and queue audio files as they are triggered – optionally based on assigned priorities. 
+    
+    [Learn more](/guides/audio)
+  </Card>
+  <Card title="Asset map" icon="approve-check">
+    Define which assets belong to which game state for automated loading and unloading during game transitions.
+  </Card>
+  <Card title="Web events" icon="approve-check">
+    Ensures your game can respond to visibility changes or resize events from the browser window.
+  </Card>
+</CardGrid>
 
 ## Explore
 
