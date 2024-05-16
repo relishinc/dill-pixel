@@ -1,5 +1,8 @@
-import { HTMLTextStyle, TextStyleFontWeight } from 'pixi.js';
+import {HTMLTextStyle, TextStyleFontWeight} from 'pixi.js';
 
+/**
+ * Type for HTML text variant.
+ */
 type HTMLTextVariant =
   | {
       url: string;
@@ -10,9 +13,20 @@ type HTMLTextVariant =
       weight: TextStyleFontWeight;
     };
 
+/**
+ * Class for managing HTML text styles.
+ */
 export class HTMLTextStyleManager {
+  /**
+   * Object for storing styles.
+   */
   private static _styles: { [styleId: string | number]: HTMLTextStyle };
 
+  /**
+   * Adds a new style.
+   * @param {string | number} id - The ID of the style.
+   * @param {HTMLTextStyle} pTextStyle - The text style to add.
+   */
   public static add(id: string | number, pTextStyle: HTMLTextStyle): void {
     if (HTMLTextStyleManager._styles === undefined) {
       HTMLTextStyleManager._styles = {};
@@ -20,6 +34,11 @@ export class HTMLTextStyleManager {
     HTMLTextStyleManager._styles[id] = pTextStyle;
   }
 
+  /**
+   * Gets a style by ID.
+   * @param {string | number} id - The ID of the style.
+   * @returns {HTMLTextStyle} - The text style.
+   */
   public static get(id: string | number): HTMLTextStyle {
     if (HTMLTextStyleManager._styles === undefined) {
       HTMLTextStyleManager._styles = {};
@@ -31,6 +50,13 @@ export class HTMLTextStyleManager {
     return HTMLTextStyleManager._styles[id];
   }
 
+  /**
+   * Loads a style.
+   * @param {string} family - The font family.
+   * @param {Partial<HTMLTextStyle>} style - The style to load.
+   * @param {HTMLTextVariant} variants - The variants of the style.
+   * @returns {Promise<HTMLTextStyle>} - The loaded text style.
+   */
   public static async load(
     family: string,
     style: Partial<HTMLTextStyle>,
@@ -49,18 +75,42 @@ export class HTMLTextStyleManager {
   }
 }
 
+/**
+ * Adds a new HTML text style.
+ * @param {string | number} pId - The ID of the style.
+ * @param {HTMLTextStyle} pTextStyle - The text style to add.
+ */
 export function addHTMLTextStyle(pId: string | number, pTextStyle: HTMLTextStyle): void {
   HTMLTextStyleManager.add(pId, pTextStyle);
 }
 
+/**
+ * Gets an HTML text style by ID.
+ * @param {string | number} pId - The ID of the style.
+ * @returns {HTMLTextStyle} - The text style.
+ */
 export function getHTMLTextStyle(pId: string | number): HTMLTextStyle {
   return HTMLTextStyleManager.get(pId);
 }
 
+/**
+ * Loads an HTML text style.
+ * @param {string} family - The font family.
+ * @param {Partial<HTMLTextStyle>} style - The style to load.
+ * @param {HTMLTextVariant} variants - The variants of the style.
+ * @returns {Promise<HTMLTextStyle>} - The loaded text style.
+ */
 export function loadHTMLTextStyle(family: string, style: Partial<HTMLTextStyle>, variants: HTMLTextVariant) {
   return HTMLTextStyleManager.load(family, style, variants);
 }
 
+/**
+ * Loads and adds an HTML text style.
+ * @param {string | number} id - The ID of the style.
+ * @param {string} family - The font family.
+ * @param {Partial<HTMLTextStyle>} style - The style to load.
+ * @param {HTMLTextVariant} variants - The variants of the style.
+ */
 export async function loadAndAddHTMLTextStyle(
   id: string | number,
   family: string,

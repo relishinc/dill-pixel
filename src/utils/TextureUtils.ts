@@ -1,5 +1,12 @@
-import { Texture, TextureSource } from 'pixi.js';
+import {Texture, TextureSource} from 'pixi.js';
 
+/**
+ * Creates a linear gradient texture.
+ *
+ * @param {number} width - The width of the texture.
+ * @param {Array<{offset: number, color: string}>} colorStops - An array of objects, each with an offset and a color.
+ * @returns {Texture} - A PIXI texture of the linear gradient.
+ */
 export function createLinearGradientTexture(
   width: number,
   colorStops: {
@@ -27,8 +34,16 @@ export function createLinearGradientTexture(
   }
 }
 
+// Alias for createLinearGradientTexture
 export const createGradientTexture = createLinearGradientTexture;
 
+/**
+ * Creates a radial gradient texture.
+ *
+ * @param {number} radius - The radius of the texture.
+ * @param {Array<{offset: number, color: string}>} colorStops - An array of objects, each with an offset and a color.
+ * @returns {Texture} - A PIXI texture of the radial gradient.
+ */
 export function createRadialGradientTexture(
   radius: number,
   colorStops: {

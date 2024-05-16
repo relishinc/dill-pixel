@@ -1,4 +1,4 @@
-import { Application } from '../core/Application';
+import {Application} from '../core/Application';
 
 /**
  * Alias for the function signature of a visibility change callback.
