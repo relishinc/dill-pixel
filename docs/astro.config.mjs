@@ -41,7 +41,7 @@ export default defineConfig({
           items: [
             { label: 'Creating a Game', link: '/guides/creating-game' },
             { label: 'Project Setup', link: '/guides/project-setup' },
-            { label: 'State Management', link: '/guides/state-management' },
+            { label: 'Examples', link: '/guides/examples' },
           ],
         },
 				typeDocSidebarGroup,

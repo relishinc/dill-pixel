@@ -1,7 +1,6 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig, normalizePath } from 'vite';
-import { createHtmlPlugin } from 'vite-plugin-html';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -12,7 +11,6 @@ export default defineConfig((config) => ({
   target: 'esnext',
   logLevel: 'info',
   plugins: [
-    createHtmlPlugin(),
     viteStaticCopy({
       watch: { reloadPageOnChange: true },
       targets: [

@@ -1,8 +1,9 @@
 {
   "name": "my-dill-pixel-game",
   "version": "0.0.0",
-  "description": "My First Game with Dill Pixel",
+  "description": "Hello World with Dill Pixel",
   "main": "index.html",
+  "type": "module",
   "scripts": {
     "start": "vite",
     "dev": "vite",
@@ -11,8 +12,7 @@
   "author": "Me<me@myname.com>",
   "dependencies": {
     "dill-pixel": "^3",
-    "typescript": "^5.4.5",
-    "vite": "^5",
-    "vite-plugin-html": "^3"
+    "typescript": "^5",
+    "vite": "^5"
   }
 }

@@ -2,7 +2,7 @@
 title: Quick Start
 ---
 
-import {TabItem, Tabs, Aside, FileTree, Code} from '@astrojs/starlight/components';
+import {TabItem, Tabs, Aside, FileTree, Code, Steps} from '@astrojs/starlight/components';
 
 import packageJson from '../../../../examples/hello-world/package.json?raw';
 import indexHtml from '../../../../examples/hello-world/index.html?raw';
@@ -11,10 +11,6 @@ import indexTs from '../../../../examples/hello-world/src/index.ts?raw';
 import applicationTs from '../../../../examples/hello-world/src/Application.ts?raw';
 import loadScreenTs from '../../../../examples/hello-world/src/state/LoadScreen.ts?raw';
 import myScreenTs from '../../../../examples/hello-world/src/state/MyScreen.ts?raw';
-
-<Aside type="tip">
-	We recommend using [Vite](https://vitejs.dev) to bundle your application
-</Aside>
 
 ## Installing the Framework
 
@@ -44,34 +40,42 @@ The most basic example of a dill pixel game is a simple "Hello World" message. L
 
 ### Create the Files
 
-First, create a `package.json` in your project's root directory:
+<Steps>
 
-<Code code={packageJson} lang="json" title="package.json" />
+1. First, create a `package.json` in your project's root directory:
 
-Next, create an `index.html` file in the root directory:
+	<Code code={packageJson} lang="json" title="package.json" />
 
-<Code code={indexHtml} lang="html" title="index.html" />
+	<Aside type="tip">
+		We recommend using [Vite](https://vitejs.dev) to develop locally and bundle your application
+	</Aside>
 
-Create an `index.css` file in the `src` directory:
+2. Next, create an `index.html` file in the root directory:
 
-<Code code={indexCss} lang="css" title="src/index.css" />
+	<Code code={indexHtml} lang="html" title="index.html" />
 
-Create the remaining files in the `src` directory:
+3. Create an `index.css` file in the `src` directory:
 
-<Tabs>
-	<TabItem label="src/index.ts">
-		<Code code={indexTs} lang="ts" />
-	</TabItem>
-	<TabItem label="src/Application.ts">
-		<Code code={applicationTs} lang="ts" />
-	</TabItem>
-	<TabItem label="src/state/LoadScreen.ts">
-		<Code code={loadScreenTs} lang="ts" />
-	</TabItem>	
-	<TabItem label="src/state/MyScreen.ts">
-		<Code code={myScreenTs} lang="ts" />
-	</TabItem>		
-</Tabs>
+	<Code code={indexCss} lang="css" title="src/index.css" />
+
+4. Create the remaining files in the `src` directory:
+
+	<Tabs>
+		<TabItem label="src/index.ts">
+			<Code code={indexTs} lang="ts" />
+		</TabItem>
+		<TabItem label="src/Application.ts">
+			<Code code={applicationTs} lang="ts" />
+		</TabItem>
+		<TabItem label="src/state/LoadScreen.ts">
+			<Code code={loadScreenTs} lang="ts" />
+		</TabItem>	
+		<TabItem label="src/state/MyScreen.ts">
+			<Code code={myScreenTs} lang="ts" />
+		</TabItem>		
+	</Tabs>
+
+</Steps>
 
 Your project directory should look like this:
 

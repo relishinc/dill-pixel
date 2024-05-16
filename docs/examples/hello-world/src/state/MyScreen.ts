@@ -32,7 +32,7 @@ export class MyScreen extends State<Application> {
 
   // When the screen resizes, resize the background
 
-  public onResize(pSize: IPoint) {
+  public onResize(pSize: Point) {
     super.onResize(pSize);
     if (this._bg) {
       this._bg.width = this._size.x;
