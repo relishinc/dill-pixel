@@ -132,6 +132,7 @@ export declare class FlexContainer extends Container {
      * @protected
      */
     protected handleChildAdded(child: any): void;
+    private _ensureHTMLTextLayout;
     /**
      * Lay out the children according to the settings
      * Tries to follow the CSS Flexbox model as closely as possible

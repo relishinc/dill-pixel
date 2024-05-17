@@ -4,10 +4,10 @@ import { Application } from '../../../core';
 import { IPhysicsObject, PhysicsBodyType } from '../../index';
 import { RapierPhysics } from '../RapierPhysics';
 export declare class RapierPhysicsComposite extends Container implements IPhysicsObject {
-    static readonly DEFAULT_DEBUG_COLOR: number;
     visual: Sprite;
     visuals: Sprite[];
     body: RigidBody;
+    static readonly DEFAULT_DEBUG_COLOR: number;
     bodies: RigidBody[];
     collider: Collider;
     colliders: Collider[];
@@ -33,7 +33,6 @@ export declare class RapierPhysicsComposite extends Container implements IPhysic
         body: RigidBody;
         collider: Collider;
     };
-    createBody(): void;
     update(): void;
 }
 //# sourceMappingURL=RapierPhysicsComposite.d.ts.map

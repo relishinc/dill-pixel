@@ -10,6 +10,7 @@ import { AssetMapData, LoadManager, LoadScreen, LoadScreenProvider, SplashScreen
 import { PhysicsBase, PhysicsEngineType } from '../physics';
 import { PopupManager } from '../popup';
 import { SaveManager } from '../save';
+import { Signals } from '../signals';
 import { State, StateManager } from '../state';
 import { Add, HTMLTextStyleManager, Make, OrientationManager, ResizeManager, WebEventsManager } from '../utils';
 import { IResizeManager } from '../utils/IResizeManager';
@@ -117,6 +118,7 @@ export declare class Application<T extends Application = any> extends PIXIApplic
     get defaultState(): string | typeof State | undefined;
     get physics(): PhysicsBase;
     get htmlTextStyles(): typeof HTMLTextStyleManager;
+    get signals(): typeof Signals;
     addStats(): Promise<void>;
     addPhysics(type?: PhysicsEngineType): Promise<PhysicsBase>;
     /**
