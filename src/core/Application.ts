@@ -170,7 +170,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
    * @default resizeDebounce: 0
    * @default useSpine: false
    * @default showStats: false
-   * @default showStateDebugMeny: false
+   * @default showStateDebugMenu: false
    */
   constructor(appConfig?: Partial<DillPixelApplicationOptions> & { [key: string]: any }) {
     if (Application._instance) {
