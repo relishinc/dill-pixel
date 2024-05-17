@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.7](https://github.com/relishinc/dill-pixel/compare/v3.1.6...v3.1.7) (2024-05-17)
+
+
+### Bug Fixes
+
+* reverted hash change behaviour in StateManager for now ([fd5a825](https://github.com/relishinc/dill-pixel/commit/fd5a825299368ce0677d2b807df81d718c1c8fca))
+
 ## [3.1.6](https://github.com/relishinc/dill-pixel/compare/v3.1.5...v3.1.6) (2024-05-17)
 
 
