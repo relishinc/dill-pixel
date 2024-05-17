@@ -1,4 +1,4 @@
-import { Container as PIXIContainer, DisplayObject, IDestroyOptions, IPoint } from 'pixi.js';
+import { Container as PIXIContainer, DisplayObject, HTMLText, IDestroyOptions, IPoint, Ticker } from 'pixi.js';
 import { Signal } from 'typed-signals';
 import { Container } from '../gameobjects';
 import { ContainerLike, PointLike, resolvePointLike } from '../utils';
@@ -341,6 +341,25 @@ export class FlexContainer extends Container {
 
     this.layout();
     this._reparentAddedChild = true;
+
+    if (child instanceof HTMLText) {
+      this._ensureHTMLTextLayout(child as HTMLText);
+    }
+  }
+
+  private _ensureHTMLTextLayout(html?: HTMLText) {
+    // Use a PIXI Ticker to check the rendering state
+    const ticker = new Ticker();
+    let time = 0;
+    ticker.add((dt) => {
+      time += dt;
+      if (time > 100) {
+        ticker.stop();
+        ticker.destroy();
+      }
+      this.layout();
+    });
+    ticker.start();
   }
 
   /**

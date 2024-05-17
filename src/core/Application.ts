@@ -304,6 +304,10 @@ export class Application<T extends Application = any> extends PIXIApplication {
     return HTMLTextStyleManager;
   }
 
+  public get signals(): typeof Signals {
+    return Signals;
+  }
+
   public async addStats() {
     const Stats = await import('stats.js').then((m) => m.default);
     this.stats = new Stats();

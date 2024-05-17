@@ -14,10 +14,10 @@ import { IPhysicsObject, PhysicsBodyType } from '../../index';
 import { RapierPhysics } from '../RapierPhysics';
 
 export class RapierPhysicsComposite extends Container implements IPhysicsObject {
-  public static readonly DEFAULT_DEBUG_COLOR: number = 0x29c5f6;
   visual: Sprite;
   visuals: Sprite[] = [];
   body: RigidBody;
+  public static readonly DEFAULT_DEBUG_COLOR: number = 0x29c5f6;
   bodies: RigidBody[] = [];
   collider: Collider;
   colliders: Collider[] = [];
@@ -75,7 +75,6 @@ export class RapierPhysicsComposite extends Container implements IPhysicsObject 
   }
 
   onAdded() {
-    this.createBody();
     this.physics.addToWorld(this);
   }
 
@@ -138,87 +137,6 @@ export class RapierPhysicsComposite extends Container implements IPhysicsObject 
     this.colliderRef.push({ collider, visual, data });
 
     return { visual, body, collider };
-  }
-
-  createBody() {
-    const main = this.createPiece(0x00fff0, [50, 150], [0, 0], 0, PhysicsBodyType.RECTANGLE, { isMain: true });
-
-    // head
-    const head = this.createPiece(0x0ff000, [25, 25], [0, -100], 0, PhysicsBodyType.CIRCLE);
-    const headParams = RAPIER.JointData.fixed(
-      { x: 0, y: -75 },
-      0.0,
-      {
-        x: 0,
-        y: 25,
-      },
-      0.0,
-    );
-    this.world.createImpulseJoint(headParams, main.body, head.body, true);
-
-    // left arm
-    const leftArm = this.createPiece(0x00ff00, [20, 60], [-35, 20]);
-    this.world.createImpulseJoint(
-      RAPIER.JointData.revolute(
-        { x: -25, y: -75 },
-        {
-          x: 0,
-          y: -30,
-        },
-      ),
-      main.body,
-      leftArm.body,
-      true,
-    );
-
-    // right arm
-    const rightArm = this.createPiece(0x00ff00, [20, 60], [35, 20]);
-    this.world.createImpulseJoint(
-      RAPIER.JointData.revolute(
-        { x: 25, y: -75 },
-        {
-          x: 0,
-          y: -30,
-        },
-      ),
-      main.body,
-      rightArm.body,
-      true,
-    );
-
-    // left leg
-    const leftLeg = this.createPiece(0x00ff00, [20, 80], [-35, 115]);
-    this.world.createImpulseJoint(
-      RAPIER.JointData.revolute(
-        { x: -25, y: 75 },
-        {
-          x: 0,
-          y: -40,
-        },
-      ),
-      main.body,
-      leftLeg.body,
-      true,
-    );
-
-    // right leg
-    const rightLeg = this.createPiece(0x00ff00, [20, 80], [35, 115]);
-    this.world.createImpulseJoint(
-      RAPIER.JointData.revolute(
-        { x: 25, y: 75 },
-        {
-          x: 0,
-          y: -40,
-        },
-      ),
-      main.body,
-      rightLeg.body,
-      true,
-    );
-
-    this.visual = this.visuals[0];
-    this.body = this.bodies[0];
-    this.collider = this.colliders[0];
   }
 
   update() {

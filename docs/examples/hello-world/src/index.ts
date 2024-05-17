@@ -3,7 +3,6 @@ import { Application } from './Application';
 import './index.css';
 
 // Create the application
-
 create(Application, {
   antialias: false,
   resizeOptions: {

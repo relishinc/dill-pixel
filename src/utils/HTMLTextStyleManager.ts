@@ -1,4 +1,5 @@
 import {HTMLTextStyle, TextStyleFontWeight} from 'pixi.js';
+import {delay} from './Delay';
 
 /**
  * Type for HTML text variant.
@@ -119,4 +120,5 @@ export async function loadAndAddHTMLTextStyle(
 ) {
   const loadedStyle = await loadHTMLTextStyle(family, style, variants);
   addHTMLTextStyle(id, loadedStyle);
+  await delay(0.01);
 }

@@ -266,6 +266,17 @@ export class StateManager<T extends Application = Application> extends Container
         window.location.hash = stateId.toLowerCase();
       }
     });
+
+    this.app.signals.stateTransitionStart.connect((stateId) => {
+      setTimeout(() => {
+        // set the selected state in the menu
+        const select = this._statesMenu.querySelector('select');
+        if (select) {
+          select.value = stateId;
+          select.options[select.selectedIndex].selected = true;
+        }
+      }, 100);
+    });
   }
 
   /**
