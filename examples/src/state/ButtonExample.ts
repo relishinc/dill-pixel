@@ -36,7 +36,7 @@ export class ButtonExample extends BaseState {
     super.init(pSize);
     //
     this.setHeaderText('Button example');
-    this.setMainText('');
+    this.setMainText('Check the console to see the button events');
 
     // create a button with some basic textures
     const flex = this.add.flexContainer({ gap: 20, justifyContent: 'center', alignItems: 'center' });

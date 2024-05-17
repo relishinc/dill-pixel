@@ -15,7 +15,7 @@ export class SignalsExample extends BaseState {
     super.init(pSize);
 
     this.setHeaderText('Signals example');
-    this.setMainText('Check the console');
+    this.setMainText('Check the console to see the signal output');
 
     // register the popup
     this.eventMode = 'static';
