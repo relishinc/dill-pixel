@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.1.1](https://github.com/relishinc/dill-pixel/compare/v3.1.0...v3.1.1) (2024-05-17)
+
+
+### Bug Fixes
+
+* added rapier composite to examples, removed from core ([94dd029](https://github.com/relishinc/dill-pixel/commit/94dd0293efdaf7934a5caf04a8b74421f0be9143))
+* added text styles to buttons in examples ([94dd029](https://github.com/relishinc/dill-pixel/commit/94dd0293efdaf7934a5caf04a8b74421f0be9143))
+* issue with HTMLText / FlexContainer layout ([94dd029](https://github.com/relishinc/dill-pixel/commit/94dd0293efdaf7934a5caf04a8b74421f0be9143))
+* left nav for examples ([94dd029](https://github.com/relishinc/dill-pixel/commit/94dd0293efdaf7934a5caf04a8b74421f0be9143))
+
 ## [3.1.0](https://github.com/relishinc/dill-pixel/compare/v3.0.3...v3.1.0) (2024-05-17)
 
 
