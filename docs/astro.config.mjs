@@ -52,11 +52,11 @@ export default defineConfig({
           items: [
             { label: 'State Management', link: '/fundamentals/state' },
             { label: 'Layout', link: '/fundamentals/layout' },
+            { label: 'Assets', link: '/fundamentals/assets' },
             { label: 'Copy and Content', link: '/fundamentals/copy' },
             { label: 'Web Events', link: '/fundamentals/web-events' },
             /*
             { label: 'Inputs', link: '/fundamentals/inputs' },
-            { label: 'Assets', link: '/fundamentals/assets' },
             */
           ],
         },

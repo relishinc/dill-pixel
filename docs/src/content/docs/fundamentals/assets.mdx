@@ -1,3 +1,110 @@
 ---
 title: Assets
 ---
+
+Assets are the static resources that your game loads to run. These can be:
+
+- Images
+- Fonts
+- JSON files
+- [Spine animations](/guides/spine)
+- Audio files
+- Spritesheets
+
+## Loading Assets
+
+Setting up your build tools per our [project setup](/guides/project-setup#build-tools) guide will
+automatically copy your assets to the correct location whether you're developing locally or building for production.
+
+### From the Application
+
+You can load assets that are available globally to the entire application by defining them in 
+the `requiredAssets()` getter in the `Application.ts` file or where your application is defined.
+
+```js
+// Application.ts
+import { AssetMapData, TextureAsset, AssetType, JsonAsset } from 'dill-pixel';
+
+...
+
+public get requiredAssets(): AssetMapData[] {
+  return [
+    new TextureAsset('foo', AssetType.PNG),
+    new TextureAsset('bar', AssetType.JPG),
+    new JsonAsset('config'),
+  ];
+}
+
+```
+
+### From a Game State
+
+For assets that are only needed in a single [game state](/fundamentals/state),
+you can define which assets you want to load in the `Assets()` getter of the game state:
+
+```js
+// MyGameState.ts
+import { AssetMapData, TextureAtlasAsset, JsonAsset, TextureAsset, AssetType } from 'dill-pixel';
+
+...
+
+public static get Assets(): AssetMapData[] {
+  return [
+    new TextureAtlasAsset('myspritesheet'),
+    new JsonAsset('settings'),
+    new TextureAsset('someImage', AssetType.JPG),
+  ];
+}
+
+```
+
+## Accessing Assets
+
+Once your assets are loaded, you can access them in your game. The way you access them depends on the type of asset.
+
+### Images
+
+Images are loaded as `Texture` objects. You can access them by their key:
+
+```js
+
+// A single image
+
+this.add.sprite({ asset: 'foo', position: [-150, 50] });
+
+// A sprite from a spritesheet
+
+this.add.sprite({ asset: 'bar', sheet: 'myspritesheet', position: [150, 50] });
+
+```
+
+### JSON Files
+
+JSON files are accessed using Pixi's `Cache` class. For example, if you have the following file:
+
+```json
+// config.json
+{
+  "foo": "bar",
+  "baz": 42,
+  "qux": [1, 2, 3]
+}
+```
+
+You can access it in your game like this:
+
+```js
+import { Cache } from 'pixi.js';
+
+const config = Cache.get('config')
+console.log(config.foo); // Outputs "bar"
+
+```
+
+### Audio Files
+
+Coming soon
+
+### Fonts
+
+Coming soon
