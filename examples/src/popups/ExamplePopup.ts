@@ -1,5 +1,5 @@
 import { buttonStyle, GREEN } from '@/utils/Constants';
-import { Container, Popup } from 'dill-pixel';
+import { Container, forceFocus, Popup, registerFocusables } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Point, Sprite, Text } from 'pixi.js';
 
@@ -47,10 +47,12 @@ export default class ExamplePopup extends Popup {
     this._button.add.text({ value: 'Close me', anchor: 0.5, style: { ...buttonStyle, fontSize: 18 } });
     this._button.eventMode = 'static';
     this._button.cursor = 'pointer';
+    this._button.focusable = true;
 
-    this._button.on('pointerdown', (e) => {
-      this.hide();
-    });
+    registerFocusables(this._button);
+
+    this._button.on('pointerdown', this.close);
+    this._button.onFocusActivated = this.close;
   }
 
   async animateIn(callback: () => void): Promise<void> {
@@ -59,6 +61,7 @@ export default class ExamplePopup extends Popup {
       await gsap.to(this.blackout, { alpha: 1, visible: true, duration: 0.3 });
     }
     await gsap.to(this, { alpha: 1, y: 0, visible: true, ease: 'sine.out', duration: 0.4 });
+    forceFocus(this._button);
     callback();
   }
 

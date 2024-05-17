@@ -1,6 +1,6 @@
 import { Graphics, Point, Sprite } from 'pixi.js';
 import { Application } from '../core';
-import { hidePopupComplete } from '../functions';
+import { hidePopup, hidePopupComplete } from '../functions';
 import { Container } from '../gameobjects';
 import { WithRequiredProps } from '../utils';
 import { IPopup } from './IPopup';
@@ -37,7 +37,7 @@ export class Popup<T extends Application = Application> extends Container<T> imp
   protected _popupData: any;
   /** Private backing field for {@link state} */
   protected _state: PopupState = PopupState.CLOSED;
-  /** Storage for for {@link PopupToken.backdrop} */
+  /** Storage for {@link PopupToken.backdrop} */
   protected _clickBackdropToClose: boolean | 'static' = true;
   /** Private backing field for {@link keyboardToClose} */
   protected _keyboardToClose: boolean = true;
@@ -127,12 +127,17 @@ export class Popup<T extends Application = Application> extends Container<T> imp
     super.destroy(options);
   }
 
+  public close() {
+    hidePopup(this.id);
+  }
+
   /**
    * Called by {@link show}
    * Don't forget to call the callback when complete
    */
 
   protected animateIn(callback: () => void): Promise<void> | void;
+
   protected async animateIn(callback: () => void): Promise<void> {
     callback();
   }
@@ -142,6 +147,7 @@ export class Popup<T extends Application = Application> extends Container<T> imp
    * Don't forget to call the callback when complete
    */
   protected animateOut(callback: () => void): Promise<void> | void;
+
   protected async animateOut(callback: () => void): Promise<void> {
     callback();
   }

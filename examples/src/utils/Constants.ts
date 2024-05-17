@@ -1,4 +1,6 @@
 // web fonts
+import { TextStyleFontWeight } from 'pixi.js';
+
 export const FONT_ARBORIA = 'arboria';
 export const FONT_TIMES = 'times';
 export const FONT_HELVETICA = 'helvetica';
@@ -13,4 +15,4 @@ export const GREEN = 0x8ac733;
 export const DARK_GREEN = 0x50a564;
 
 // styles
-export const buttonStyle = { fontFamily: 'Kumbh Sans', fontSize: 24, fontWeight: '600' };
+export const buttonStyle = { fontFamily: 'Kumbh Sans', fontSize: 24, fontWeight: '600' as TextStyleFontWeight };

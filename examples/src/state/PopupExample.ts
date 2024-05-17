@@ -1,6 +1,16 @@
 import ExamplePopup from '@/popups/ExamplePopup';
 import { BaseState } from '@/state/BaseState';
-import { AssetMapData, Container, hideAllPopups, showPopup, Signals, TextureAtlasAsset } from 'dill-pixel';
+import {
+  addKeyboardLayer,
+  AssetMapData,
+  Container,
+  hideAllPopups,
+  registerFocusables,
+  removeKeyboardLayer,
+  showPopup,
+  Signals,
+  TextureAtlasAsset,
+} from 'dill-pixel';
 import { Point } from 'pixi.js';
 import { buttonStyle } from '../utils/Constants';
 
@@ -21,12 +31,14 @@ export class PopupExample extends BaseState {
   }
 
   destroy() {
+    removeKeyboardLayer();
     hideAllPopups();
     super.destroy();
   }
 
   init(pSize: Point) {
     super.init(pSize);
+    addKeyboardLayer();
     //
     this.setHeaderText('Popup example');
     this.setMainText('Click the button to open a popup');
@@ -44,12 +56,11 @@ export class PopupExample extends BaseState {
     this._button.add.text({ value: 'Click me', anchor: 0.5, style: buttonStyle });
     this._button.eventMode = 'static';
     this._button.cursor = 'pointer';
+    this._button.focusable = true;
+    registerFocusables(this._button);
 
-    this._button.on('pointerdown', (e) => {
-      this.count++;
-      // showPopup(new PopupToken(ExamplePopup.NAME, this.onClose, true, false, this.count));
-      showPopup({ id: ExamplePopup.NAME, callback: this.onClose, backdrop: true, keyboard: true, data: this.count });
-    });
+    this._button.on('pointerdown', this._showPopup);
+    this._button.onFocusActivated = this._showPopup;
 
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
@@ -65,5 +76,11 @@ export class PopupExample extends BaseState {
         console.log('show popup', token);
       }),
     );
+  }
+
+  _showPopup() {
+    this.count++;
+    // showPopup(new PopupToken(ExamplePopup.NAME, this.onClose, true, false, this.count));
+    showPopup({ id: ExamplePopup.NAME, callback: this.onClose, backdrop: true, keyboard: true, data: this.count });
   }
 }
