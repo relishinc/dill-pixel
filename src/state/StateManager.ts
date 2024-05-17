@@ -98,6 +98,7 @@ export class StateManager<T extends Application = Application> extends Container
 
   private _first: boolean = true;
   private _firstComplete: boolean = false;
+  private _hashChangeListener: boolean = false;
 
   private _defaultStateId?: string | undefined;
 
@@ -347,12 +348,15 @@ export class StateManager<T extends Application = Application> extends Container
   }
 
   protected listenForHashChange() {
-    window.addEventListener('hashchange', () => {
-      const stateId = this.getStateFromHash();
-      if (stateId) {
-        this.transitionTo(stateId);
-      }
-    });
+    if (!this._hashChangeListener) {
+      this._hashChangeListener = true;
+      window.addEventListener('hashchange', () => {
+        const stateId = this.getStateFromHash();
+        if (stateId) {
+          this.transitionTo(stateId);
+        }
+      });
+    }
   }
 
   /**
