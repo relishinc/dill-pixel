@@ -44,7 +44,7 @@ export class AppConfig {
   public useNewResizeManager?: boolean;
   public resizeOptions?: Partial<ResizeManagerOptions>;
 
-  constructor(pConfig?: Partial<IApplicationOptions> & DillPixelApplicationOptions & { [key: string]: any }) {
+  constructor(pConfig?: Partial<IApplicationOptions> & { [key: string]: any }) {
     // If no config is provided, create a default one
     if (pConfig === undefined) {
       pConfig = {

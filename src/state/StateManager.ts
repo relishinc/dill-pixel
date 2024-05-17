@@ -131,7 +131,7 @@ export class StateManager<T extends Application = Application> extends Container
 
   public set useDebugMenu(value: boolean) {
     this._useDebugMenu = value;
-    if (_useDebugMenu) {
+    if (this._useDebugMenu) {
       this.useHash = true;
       this.showDebugMenu();
     }
