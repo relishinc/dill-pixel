@@ -1,6 +1,6 @@
 import ExamplePopup from '@/popups/ExamplePopup';
 import { BaseState } from '@/state/BaseState';
-import { AssetMapData, Container, playAudioTrack, Signals } from 'dill-pixel';
+import { AssetMapData, AudioAsset, Container, playAudioTrack, Signals } from 'dill-pixel';
 import { Point } from 'pixi.js';
 import { buttonStyle } from '../utils/Constants';
 
@@ -12,7 +12,9 @@ export class AudioExample extends BaseState {
   }
 
   public static get Assets(): AssetMapData[] {
-    return [];
+    return [
+      new AudioAsset('sample-3s', 'sfx'),
+    ];
   }
 
   destroy() {

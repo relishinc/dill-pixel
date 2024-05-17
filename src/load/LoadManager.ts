@@ -381,10 +381,6 @@ export class LoadManager extends Container {
       }
 
       if (audioAssets.length > 0) {
-        await Assets.load(
-          audioAssets.map((asset) => asset.getResource().src),
-          this.onPixiLoadProgress,
-        );
         loadAudioFromAssetMap({
           assets: audioAssets,
           progressCallback: this.onAudioLoadProgress,
