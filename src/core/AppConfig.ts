@@ -1,6 +1,23 @@
 import { IApplicationOptions } from 'pixi.js';
+import { isDev } from '../functions';
 import { MathUtils, PlatformUtils } from '../utils';
 import { ResizeManagerOptions } from '../utils/ResizeManagerNew';
+
+const isDevEnv = isDev();
+
+/**
+ * Type for application options.
+ */
+export interface DillPixelApplicationOptions extends IApplicationOptions {
+  resizeDebounce?: number;
+  physics?: boolean;
+  useSpine?: boolean;
+  showStats?: boolean;
+  useHashChange?: boolean;
+  showStateDebugMenu?: boolean;
+  useNewResizeManager?: boolean;
+  resizeOptions?: Partial<ResizeManagerOptions>;
+}
 
 export class AppConfig {
   // index signature
@@ -27,7 +44,7 @@ export class AppConfig {
   public useNewResizeManager?: boolean;
   public resizeOptions?: Partial<ResizeManagerOptions>;
 
-  constructor(pConfig?: Partial<IApplicationOptions> & { [key: string]: any }) {
+  constructor(pConfig?: Partial<IApplicationOptions> & DillPixelApplicationOptions & { [key: string]: any }) {
     // If no config is provided, create a default one
     if (pConfig === undefined) {
       pConfig = {
@@ -65,6 +82,14 @@ export class AppConfig {
       if (pConfig.powerPreference === undefined) {
         pConfig.powerPreference = 'default';
       }
+    }
+
+    if (pConfig.showStats === undefined) {
+      pConfig.showStats = isDevEnv;
+    }
+
+    if (pConfig.showStateDebugMenu === undefined) {
+      pConfig.showStateDebugMenu = isDevEnv;
     }
 
     // If the resolution is set to anything other than a number, determine the resolution from runtime check

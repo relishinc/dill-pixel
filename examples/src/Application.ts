@@ -34,6 +34,14 @@ export class Application extends DillPixelApplication {
     return this.state.getStateFromHash() || this.state.getRegisteredStateIds().sort((a, b) => a.localeCompare(b))[0]; // first one
   }
 
+  async loadHTMLTextStyles(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  customFunction() {
+    console.log('custom function');
+  }
+
   protected getFontsList(): {
     family: string;
     data?: {
@@ -48,11 +56,9 @@ export class Application extends DillPixelApplication {
   }
 
   protected setup() {
-    (globalThis as any).__PIXI_APP__ = this;
     this.registerDefaultLoadScreen(Interstitial);
     this.state.defaultTransitionType = TransitionType.TRANSITION_SIMPLE_INTERSTITIAL;
     this.state.excludeFromDebugList(Interstitial.NAME);
-    this.state.useHash = true;
   }
 
   protected registerStates(): void {
@@ -74,13 +80,5 @@ export class Application extends DillPixelApplication {
 
   protected createAssetMap(): void {
     this.addAssetGroup(DillPixelSplashScreen.NAME, SplashScreen.Assets);
-  }
-
-  async loadHTMLTextStyles(): Promise<void> {
-    return Promise.resolve();
-  }
-
-  customFunction() {
-    console.log('custom function');
   }
 }

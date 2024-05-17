@@ -104,6 +104,7 @@ export class StateManager<T extends Application = Application> extends Container
   private _defaultTransitionType: TransitionStep[] = TransitionType.TRANSITION_ANIM_NEW_IN_FRONT;
 
   private _useHash = false;
+  private _useDebugMenu = false;
   private _statesMenu: HTMLDivElement;
   private _excluded: string[] = [];
 
@@ -124,8 +125,15 @@ export class StateManager<T extends Application = Application> extends Container
   public set useHash(value: boolean) {
     this._useHash = value;
     if (this._useHash) {
-      this.showDebugMenu();
       this.listenForHashChange();
+    }
+  }
+
+  public set useDebugMenu(value: boolean) {
+    this._useDebugMenu = value;
+    if (_useDebugMenu) {
+      this.useHash = true;
+      this.showDebugMenu();
     }
   }
 

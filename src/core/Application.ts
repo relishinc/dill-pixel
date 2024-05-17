@@ -1,7 +1,12 @@
+/**
+ * @file Application.ts
+ * This file defines the main Application class for the project, along with some related types and functions.
+ */
+
 // @ts-ignore
 // require the global.d.ts file
 import FontFaceObserver from 'fontfaceobserver';
-import {Application as PIXIApplication, Assets, IApplicationOptions, Point, Ticker} from 'pixi.js';
+import {Application as PIXIApplication, Assets, Point, Ticker} from 'pixi.js';
 import {HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverManager} from '../audio';
 import {CopyManager} from '../copy';
 import {isDev, updateFocus} from '../functions';
@@ -31,20 +36,27 @@ import {
 } from '../utils';
 import {IResizeManager} from '../utils/IResizeManager';
 import {ResizeManagerNew, ResizeManagerOptions} from '../utils/ResizeManagerNew';
-import {AppConfig} from './AppConfig';
+import {AppConfig, DillPixelApplicationOptions} from './AppConfig';
 
-export interface DillPixelApplicationOptions extends IApplicationOptions {
-  resizeDebounce?: number;
-  physics?: boolean;
-  useSpine?: boolean;
-  showStatsInProduction?: boolean;
-  showStateDebugInProduction?: boolean;
-  useNewResizeManager?: boolean;
-  resizeOptions?: Partial<ResizeManagerOptions>;
-}
-
+/**
+ * Type for font.
+ */
 export type Font = { family: string; data?: { weight?: number | string } };
 
+/**
+ * Utility function to create an instance of the Application class.
+ * @param ApplicationClass - The class of the application.
+ * @param config - The configuration options for the application.
+ * @param domElement - The DOM element for the application.
+ * @param resizeToDOMElement - Whether to resize to the DOM element.
+ * @returns An instance of the Application class.
+ * @example const app = await create(MyApplication, {
+ *   useSpine: true,
+ *   resizeOptions: {
+ *     minSize: { width: 375, height: 700 },
+ *   },
+ * });
+ */
 export function create<T extends Application = Application>(
   ApplicationClass: typeof Application,
   config?: Partial<DillPixelApplicationOptions>,
@@ -90,6 +102,12 @@ export async function create<T extends Application = Application>(
   return instance as T;
 }
 
+const isDevEnv = isDev();
+
+/**
+ * Main Application class.
+ * @extends PIXIApplication
+ */
 export class Application<T extends Application = any> extends PIXIApplication {
   protected static readonly SIZE_MIN_DEFAULT: Point = new Point(1024, 768);
   protected static readonly SIZE_MAX_DEFAULT: Point = new Point(1365, 768);
@@ -114,6 +132,8 @@ export class Application<T extends Application = any> extends PIXIApplication {
   protected _physics: PhysicsBase;
   protected stats: any;
   protected _useSpine: boolean;
+  protected _showStateDebugMenu: boolean;
+  protected _useHash: boolean;
   protected _useNewResizeManager: boolean;
   protected _resizeOptions: Partial<ResizeManagerOptions>;
   protected _initialized: boolean = false;
@@ -144,8 +164,13 @@ export class Application<T extends Application = any> extends PIXIApplication {
    * The config passed in can be a json object, or an `AppConfig` object.
    * @param appConfig
    * @see `AppConfig` for what can be contained in the passed-in config.
-   * @default autoResize: true
    * @default resolution: utils.isMobile.any === false ? 2 : (window.devicePixelRatio > 1 ? 2 : 1);
+   * @default useNewResizeManager: true
+   * @default resizeOptions: undefined
+   * @default resizeDebounce: 0
+   * @default useSpine: false
+   * @default showStats: false
+   * @default showStateDebugMeny: false
    */
   constructor(appConfig?: Partial<DillPixelApplicationOptions> & { [key: string]: any }) {
     if (Application._instance) {
@@ -157,11 +182,16 @@ export class Application<T extends Application = any> extends PIXIApplication {
     this._useSpine = appConfig?.useSpine || false;
     this._useNewResizeManager = appConfig?.useNewResizeManager ?? true;
     this._resizeOptions = appConfig?.resizeOptions || {};
-    if (isDev() || appConfig?.showStatsInProduction) {
+
+    if (appConfig?.showStats) {
       this.addStats().then(() => {
         console.log('stats.js added');
       });
     }
+
+    this._showStateDebugMenu = appConfig?.showStateDebugMenu ?? false;
+    this._useHash = appConfig?.useHashChange ?? false;
+
     // start the ticker if it hasn't been started yet
     if (!this.ticker.started) {
       this.ticker.start();
@@ -390,6 +420,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
     }
 
     await this.init();
+    await this._setup();
     await this.setup();
 
     this._initialized = true;
@@ -480,15 +511,30 @@ export class Application<T extends Application = any> extends PIXIApplication {
     return Promise.resolve();
   }
 
+  /**
+   * adds a {KeyboardFocusManager} to the stage
+   * @protected
+   */
   protected addFocusManager() {
     this._keyboardFocusManager = new KeyboardFocusManager(DefaultKeyboardFocusManagerSprite);
   }
 
+  /**
+   * Adds the Spine plugin to the application.
+   * @protected
+   */
   protected async addSpine() {
     await import('../spine/spine');
   }
 
+  /**
+   * Called after the init method resolves.
+   * Override to set up application specific stuff.
+   * @returns {Promise<void> | void}
+   * @protected
+   */
   protected setup(): Promise<void> | void;
+
   protected async setup(): Promise<void> {
     // override me to set up application specific stuff
   }
@@ -527,8 +573,12 @@ export class Application<T extends Application = any> extends PIXIApplication {
   }
 
   /**
-   * Override to set up the asset map for this application.
+   * Override to set up the asset groups for this application.
+   * States do this by default now.
    * @override
+   * @example addAssetGroups() {
+   *   this.addAssetGroup(SplashScreen.NAME, SplashScreen.Assets);
+   * }
    */
   protected addAssetGroups(): void {
     // override
@@ -538,6 +588,12 @@ export class Application<T extends Application = any> extends PIXIApplication {
     // override
   }
 
+  /**
+   * Registers a state with the state manager.
+   * @param {string | LoadScreen} pIdOrClass
+   * @param {LoadScreenProvider} pScreen
+   * @protected
+   */
   protected registerDefaultLoadScreen(pIdOrClass: string | typeof LoadScreen, pScreen?: LoadScreenProvider): void {
     this.load.registerLoadScreen(pIdOrClass, pScreen, true);
   }
@@ -551,7 +607,8 @@ export class Application<T extends Application = any> extends PIXIApplication {
   }
 
   /**
-   * Override to register any and all popups needed for this application.
+   * Override for a good place to register any and all popups needed for this application.
+   * You can also do this on demand by calling `this.app.popup.registerPopup(...)` from anywhere in your app.
    * @override
    */
   protected registerPopups(): void {
@@ -561,6 +618,12 @@ export class Application<T extends Application = any> extends PIXIApplication {
   /**
    * Override to register any and all states needed for this application.
    * @override
+   * @example
+   * protected registerStates(): void {
+   *   this.state.register(LandingPageState);
+   *   this.state.register(GameState);
+   *   this.state.register(GameOverState);
+   * }
    */
   protected registerStates(): void {
     // override
@@ -568,8 +631,8 @@ export class Application<T extends Application = any> extends PIXIApplication {
 
   /**
    * Called when the application window is resized.
-   * @param debounceDelay A delay (in seconds) before telling the rest of the application that a resize occurred.
-   * @default 0
+   * @param debounceDelay - A delay (in seconds) before telling the rest of the application that a resize occurred.
+   * @returns A promise that resolves when resizing is complete.
    */
   protected onResize(debounceDelay: number): Promise<void> | void;
   protected async onResize(debounceDelay: number = 0): Promise<void> {
@@ -632,10 +695,24 @@ export class Application<T extends Application = any> extends PIXIApplication {
     // override
   }
 
+  /**
+   * Override to load any custom fonts.
+   * @returns {Font[]}
+   * @protected
+   * @example
+   * protected getFontsList(): Font[] {
+   *   return [{ family: 'Open Sans', data: { weight: 400 } }];
+   * }
+   */
   protected getFontsList(): Font[] {
     return [];
   }
 
+  /**
+   * Called after all fonts have been loaded.
+   * @returns {Promise<void>}
+   * @protected
+   */
   protected async allFontsLoaded(): Promise<void> {
     const fonts = this.getFontsList();
     if (fonts?.length > 0) {
@@ -654,13 +731,52 @@ export class Application<T extends Application = any> extends PIXIApplication {
 
   /**
    * Override to specify what should happen after all persistent assets have been loaded.
-   * @override
+   * @returns A promise that resolves when the operation is complete.
    */
   protected onRequiredAssetsLoaded(): Promise<void> | void;
   protected async onRequiredAssetsLoaded(): Promise<void> {
-    // transition to the default state, if set
+    void this.boot();
+  }
+
+  /**
+   * Called after all required assets have been loaded.
+   * @returns {Promise<void> | void}
+   * @protected
+   */
+  protected boot(): Promise<void> | void;
+  protected async boot(): Promise<void> {
+    void this.loadDefaultState();
+  }
+
+  /**
+   * Called from boot to load the default state.
+   * @returns {Promise<void> | void}
+   * @protected
+   */
+  protected loadDefaultState(): Promise<void> | void;
+  protected async loadDefaultState(): Promise<void> {
     if (this.state.default) {
       this.state.transitionTo(this.state.default);
     }
+  }
+
+  /**
+   * Sets up the application.
+   * adds this app as a global variable for debugging
+   * Tells the @link{StateManager} to show the debug menu if configured
+   * Tells the @link{StateManager} to listen for hash changes if configured
+   * @private
+   */
+  private _setup(): void {
+    if (isDevEnv) {
+      // for pixi devtools
+      (globalThis as any).__PIXI_APP__ = this;
+    }
+
+    if (this._showStateDebugMenu) {
+      this.state.showDebugMenu();
+    }
+
+    this.state.useHash = this._useHash;
   }
 }

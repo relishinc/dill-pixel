@@ -5,7 +5,9 @@ import './index.css';
 // create app
 const app = await create(Application, {
   useSpine: true,
-  showStatsInProduction: true,
+  showStats: true,
+  showStateDebugMenu: false,
+  useHashChange: true,
   resizeOptions: {
     minSize: { width: 375, height: 700 },
   },
