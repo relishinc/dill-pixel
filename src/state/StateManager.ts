@@ -356,15 +356,6 @@ export class StateManager<T extends Application = Application> extends Container
           this.transitionTo(stateId);
         }
       });
-      this.app.signals.stateTransitionComplete.connect(() => {
-        // get the current state id
-        const hashId = this.getStateFromHash();
-        if (hashId && this._currentStateId.toLowerCase() !== hashId.toLowerCase()) {
-          this._isTransitioning = true;
-          window.location.hash = this._currentStateId.toLowerCase();
-          this._isTransitioning = false;
-        }
-      });
     }
   }
 
