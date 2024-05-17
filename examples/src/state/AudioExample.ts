@@ -12,9 +12,7 @@ export class AudioExample extends BaseState {
   }
 
   public static get Assets(): AssetMapData[] {
-    return [
-      new AudioAsset('sample-3s', 'sfx'),
-    ];
+    return [new AudioAsset('sample-3s', 'sfx')];
   }
 
   destroy() {

@@ -7,6 +7,7 @@ import {
   FlexContainer,
   hideAllPopups,
   registerFocusables,
+  removeKeyboardLayer,
 } from 'dill-pixel';
 import { Point } from 'pixi.js';
 import { buttonStyle } from '../utils/Constants';
@@ -25,6 +26,7 @@ export class ButtonExample extends BaseState {
   }
 
   destroy() {
+    removeKeyboardLayer();
     hideAllPopups();
     super.destroy();
   }

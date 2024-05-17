@@ -33,13 +33,22 @@ export class BitmapFontsExample extends BaseState {
     });
 
     // Open Sans
-    list.add.bitmapText('Open Sans', { fontName: FONT_OPEN_SANS, fontSize: 128 });
+    list.add.bitmapText({ 
+      value: 'Open Sans', 
+      style: { fontName: FONT_OPEN_SANS, fontSize: 128 } 
+    });
 
     // Open Sans Bold
-    list.add.bitmapText('Open Sans Bold', { fontName: FONT_OPEN_SANS_BOLD, fontSize: 128, letterSpacing: -3.5 });
+    list.add.bitmapText({
+      value: 'Open Sans Bold',
+      style: { fontName: FONT_OPEN_SANS_BOLD, fontSize: 128, letterSpacing: -3.5 },
+    });
 
     // Padaloma
-    const padaloma = list.add.bitmapText('Padaloma', { fontName: FONT_PADALOMA, fontSize: 128, tint: 0xff0000 });
+    const padaloma = list.add.bitmapText({ 
+      value: 'Padaloma', 
+      style: { fontName: FONT_PADALOMA, fontSize: 128, tint: 0xff0000 },
+    });
     padaloma.filters = [shadow];
 
     // Enable cacheAsBitmap to improve performance
@@ -52,7 +61,7 @@ export class BitmapFontsExample extends BaseState {
     padaloma.cacheAsBitmap = false;
     padaloma.text = 'With filters!!!';
     padaloma.cacheAsBitmap = true;
-    
+
     list.layout();
   }
 }

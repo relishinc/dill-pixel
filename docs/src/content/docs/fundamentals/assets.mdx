@@ -2,14 +2,16 @@
 title: Assets
 ---
 
+import {Aside} from '@astrojs/starlight/components';
+
 Assets are the static resources that your game loads to run. These can be:
 
 - Images
-- Fonts
 - JSON files
-- [Spine animations](/guides/spine)
 - Audio files
+- Fonts
 - Spritesheets
+- [Spine animations](/guides/spine)
 
 ## Loading Assets
 
@@ -18,12 +20,19 @@ automatically copy your assets to the correct location whether you're developing
 
 ### From the Application
 
-You can load assets that are available globally to the entire application by defining them in 
+You can load assets that are available globally to the entire application by defining them in
 the `requiredAssets()` getter in the `Application.ts` file or where your application is defined.
 
 ```js
 // Application.ts
-import { AssetMapData, TextureAsset, AssetType, JsonAsset } from 'dill-pixel';
+import { 
+  AssetMapData, 
+  TextureAsset, 
+  AssetType, 
+  JsonAsset,
+  AudioAsset,
+  FontAsset,
+} from 'dill-pixel';
 
 ...
 
@@ -32,10 +41,16 @@ public get requiredAssets(): AssetMapData[] {
     new TextureAsset('foo', AssetType.PNG),
     new TextureAsset('bar', AssetType.JPG),
     new JsonAsset('config'),
+    new AudioAsset('bang', 'sfx'),
+    new FontAsset('myFont'),
   ];
 }
 
 ```
+
+<Aside type="tip">
+  When preloading audio files you have to specify [their category](/guides/audio#categories).
+</Aside>
 
 ### From a Game State
 
@@ -44,7 +59,14 @@ you can define which assets you want to load in the `Assets()` getter of the gam
 
 ```js
 // MyGameState.ts
-import { AssetMapData, TextureAtlasAsset, JsonAsset, TextureAsset, AssetType } from 'dill-pixel';
+import {
+  AssetMapData,
+  TextureAtlasAsset, 
+  JsonAsset, 
+  TextureAsset, 
+  AudioAsset, 
+  AssetType 
+} from 'dill-pixel';
 
 ...
 
@@ -53,6 +75,8 @@ public static get Assets(): AssetMapData[] {
     new TextureAtlasAsset('myspritesheet'),
     new JsonAsset('settings'),
     new TextureAsset('someImage', AssetType.JPG),
+    new AudioAsset('killerSong', 'music'),
+    new AudioAsset('splat', 'sfx'),
   ];
 }
 
@@ -67,15 +91,13 @@ Once your assets are loaded, you can access them in your game. The way you acces
 Images are loaded as `Texture` objects. You can access them by their key:
 
 ```js
-
 // A single image
 
-this.add.sprite({ asset: 'foo', position: [-150, 50] });
+const myImage = this.add.sprite({ asset: 'foo', position: [-150, 50] });
 
 // A sprite from a spritesheet
 
-this.add.sprite({ asset: 'bar', sheet: 'myspritesheet', position: [150, 50] });
-
+const mySprite = this.add.sprite({ asset: 'bar', sheet: 'myspritesheet', position: [150, 50] });
 ```
 
 ### JSON Files
@@ -96,15 +118,40 @@ You can access it in your game like this:
 ```js
 import { Cache } from 'pixi.js';
 
-const config = Cache.get('config')
+const config = Cache.get('config');
 console.log(config.foo); // Outputs "bar"
-
 ```
 
 ### Audio Files
 
-Coming soon
+Once audio files have been loaded, you can [play them](/guides/audio#playing-audio) using the `playAudioTrack` function:
+
+```js
+
+// Play a sound once
+
+playAudioTrack('sound');
+
+```
+
+<Aside type="tip">
+  Audio files don't actually have to be loaded in advance. Because they're streamed, you can
+  play them on demand by just calling `playAudioTrack('sound');` and the file will be loaded and played.
+</Aside>
 
 ### Fonts
 
-Coming soon
+The only font format that can be loaded using the asset manager is an `.fnt` file, which is a bitmap font.
+Once a font has been loaded, you can use it in your game like this:
+
+```js
+
+const myBitmapText = this.add.bitmapText('Hello World!', { 
+  fontName: 'myFont', 
+  fontSize: 64,
+  letterSpacing: -2, 
+});
+
+```
+
+To use web fonts and load custom fonts, check out the [styling text guide](/fundamentals/styling-text).

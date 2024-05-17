@@ -1,6 +1,6 @@
 import starlight from '@astrojs/starlight';
-import { defineConfig } from 'astro/config';
-import starlightTypeDoc, { typeDocSidebarGroup } from 'starlight-typedoc';
+import {defineConfig} from 'astro/config';
+import starlightTypeDoc, {typeDocSidebarGroup} from 'starlight-typedoc';
 
 // https://astro.build/config
 export default defineConfig({
@@ -45,6 +45,7 @@ export default defineConfig({
             { label: 'Using Spine', link: '/guides/spine' },
             { label: 'Physics', link: '/guides/physics' },
             { label: 'Audio', link: '/guides/audio' },
+            { label: 'Popups', link: '/guides/popups' },
           ],
         },
         {
@@ -55,6 +56,7 @@ export default defineConfig({
             { label: 'Assets', link: '/fundamentals/assets' },
             { label: 'Styling Text', link: '/fundamentals/styling-text' },
             { label: 'Copy and Content', link: '/fundamentals/copy' },
+            { label: 'Focus Management', link: '/fundamentals/focus' },
             { label: 'Web Events', link: '/fundamentals/web-events' },
             /*
             { label: 'Inputs', link: '/fundamentals/inputs' },
@@ -62,8 +64,8 @@ export default defineConfig({
           ],
         },
 				typeDocSidebarGroup,
-      ],
-      customCss: ['./src/custom.css'],
-    }),
-  ],
+			],
+			customCss: ['./src/custom.css'],
+		}),
+	],
 });
