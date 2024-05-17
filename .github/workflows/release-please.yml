@@ -20,4 +20,3 @@ jobs:
           package-name: release-please-action
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: v8
-          release-as: next
