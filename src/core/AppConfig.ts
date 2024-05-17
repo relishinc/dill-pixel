@@ -46,6 +46,7 @@ export class AppConfig {
 
   constructor(pConfig?: Partial<IApplicationOptions> & { [key: string]: any }) {
     // If no config is provided, create a default one
+    // TODO: merge the given config with defaults
     if (pConfig === undefined) {
       pConfig = {
         antialias: false,
