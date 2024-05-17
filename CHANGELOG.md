@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.3](https://github.com/relishinc/dill-pixel/compare/v3.1.2...v3.1.3) (2024-05-17)
+
+
+### Bug Fixes
+
+* hashChangeListener in StateManager.ts ([2caad49](https://github.com/relishinc/dill-pixel/commit/2caad4984f09eb2d7447ecd985c77e1d98ae5bd3))
+
 ## [3.1.2](https://github.com/relishinc/dill-pixel/compare/v3.1.1...v3.1.2) (2024-05-17)
 
 
