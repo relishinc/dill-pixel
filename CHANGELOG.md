@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.1.0](https://github.com/relishinc/dill-pixel/compare/v3.0.3...v3.1.0) (2024-05-17)
+
+
+### Features
+
+* moved state debug menu / hash change listening to app config with defaults ([059fbaf](https://github.com/relishinc/dill-pixel/commit/059fbafabd6af7082cc32d7f1cfa9c6ce7a21897))
+
+
+### Bug Fixes
+
+* added todo for app config, force version bump ([1aa0549](https://github.com/relishinc/dill-pixel/commit/1aa05494ed65a15a012aad79d94ef4f5a910d850))
+* typo in StateManager ([f53b29f](https://github.com/relishinc/dill-pixel/commit/f53b29f0a49cd8eeecfe04bf64de266e0537e7bc))
+
 ## [3.0.3](https://github.com/relishinc/dill-pixel/compare/v3.0.2...v3.0.3) (2024-05-15)
 
 
