@@ -32,7 +32,7 @@ export declare class Popup<T extends Application = Application> extends Containe
     protected _popupData: any;
     /** Private backing field for {@link state} */
     protected _state: PopupState;
-    /** Storage for for {@link PopupToken.backdrop} */
+    /** Storage for {@link PopupToken.backdrop} */
     protected _clickBackdropToClose: boolean | 'static';
     /** Private backing field for {@link keyboardToClose} */
     protected _keyboardToClose: boolean;
@@ -66,6 +66,7 @@ export declare class Popup<T extends Application = Application> extends Containe
      */
     show(token: IPopupToken): void;
     destroy(options?: Parameters<typeof Container.prototype.destroy>[0]): void;
+    close(): void;
     /**
      * Called by {@link show}
      * Don't forget to call the callback when complete
