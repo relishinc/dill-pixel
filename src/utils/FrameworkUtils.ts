@@ -4,11 +4,10 @@ type MethodNames = {
 
 /**
  * A helper method for binding methods to the class instance
- * @param instance
- * @param methodNames
+ * @param instance - The instance of the class where the methods are to be bound
+ * @param methodNames - The names of the methods to be bound
  * @example
  * this.bindMethods('onResize', 'onUpdate');
- * @protected
  */
 export function bindMethods(instance: unknown, ...methodNames: string[]) {
   methodNames.forEach((methodName) => {
@@ -19,7 +18,13 @@ export function bindMethods(instance: unknown, ...methodNames: string[]) {
   });
 }
 
-// get all method names of instance and any prototype it extends, all the way up the tree
+/**
+ * Get all method names of instance and any prototype it extends, all the way up the tree
+ * @param instance - The instance of the class
+ * @param excludePrefixes - The prefixes of the methods to be excluded
+ * @param excludeMethodNames - The names of the methods to be excluded
+ * @returns An array of method names
+ */
 function getInstanceMethodNames(
   instance: any,
   excludePrefixes: string[] = [],
@@ -28,7 +33,6 @@ function getInstanceMethodNames(
   const methodNames: string[] = [];
   let prototype = Object.getPrototypeOf(instance);
   while (prototype) {
-    // console.log('binding', prototype.constructor.name, prototype);
     const filteredMethodNames = Object.getOwnPropertyNames(prototype).filter((propertyName) => {
       const ownDescriptor = Object.getOwnPropertyDescriptor(prototype, propertyName);
       if (!ownDescriptor || typeof ownDescriptor.value !== 'function' || propertyName === 'constructor') {
@@ -41,7 +45,6 @@ function getInstanceMethodNames(
     });
     methodNames.push(...filteredMethodNames);
     if (prototype === Object.prototype || prototype.constructor.hasOwnProperty('__dill_pixel_top_level_class')) {
-      // console.log('breaking on prototype', prototype.constructor.name);
       break;
     }
     prototype = Object.getPrototypeOf(prototype);
@@ -49,15 +52,25 @@ function getInstanceMethodNames(
   return methodNames;
 }
 
+/**
+ * Bind all methods of an instance
+ * @param instance - The instance of the class
+ * @param excludePrefixes - The prefixes of the methods to be excluded
+ * @param excludeMethodNames - The names of the methods to be excluded
+ */
 export function bindAllMethods(instance: any, excludePrefixes: string[] = [], excludeMethodNames: string[] = []) {
-  // console.group('bindAllMethods', instance.constructor.name);
   const methodNames = getInstanceMethodNames(instance, excludePrefixes, excludeMethodNames);
-  // console.groupEnd();
   methodNames.forEach((methodName) => {
     instance[methodName] = instance[methodName].bind(instance);
   });
 }
 
+/**
+ * Check if a method exists in an object and invoke it if it does
+ * @param obj - The object to check
+ * @param methodName - The name of the method to check and invoke
+ * @param methodArgs - The arguments to pass to the method if it exists and is invoked
+ */
 export function checkAndInvokeMethod(obj: any, methodName: string, ...methodArgs: any[]): void {
   if (methodName in obj && typeof obj[methodName] === 'function') {
     obj[methodName](...methodArgs);
