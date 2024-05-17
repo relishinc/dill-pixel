@@ -1,5 +1,18 @@
 import { IApplicationOptions } from 'pixi.js';
 import { ResizeManagerOptions } from '../utils/ResizeManagerNew';
+/**
+ * Type for application options.
+ */
+export interface DillPixelApplicationOptions extends IApplicationOptions {
+    resizeDebounce?: number;
+    physics?: boolean;
+    useSpine?: boolean;
+    showStats?: boolean;
+    useHashChange?: boolean;
+    showStateDebugMenu?: boolean;
+    useNewResizeManager?: boolean;
+    resizeOptions?: Partial<ResizeManagerOptions>;
+}
 export declare class AppConfig {
     [key: string]: any;
     autoStart?: boolean;
