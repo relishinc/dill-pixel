@@ -39,7 +39,8 @@ export class KeyboardManager extends Plugin implements IKeyboardManager {
     this._enabled = value;
   }
 
-  public initialize(app: IApplication): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public initialize(_app: IApplication): void {
     // track which keys are down
     document.addEventListener('keydown', this._handleKeyDown);
     document.addEventListener('keyup', this._handleKeyUp);

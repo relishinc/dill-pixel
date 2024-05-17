@@ -22,7 +22,7 @@ export class Portal extends Door {
   }
 
   get collideables(): Entity[] {
-    return System.getNearbyEntities(this, ['Player', 'FX', 'Platform']);
+    return System.getNearbyEntities(this, ['Player', 'FX', 'Platform', 'Wall']);
   }
 
   getBoundingBox() {
@@ -80,7 +80,8 @@ export class Portal extends Door {
     this.view = this.add
       .graphics()
       .ellipse(0, 0, this.config.width * 0.5, this.config.height * 0.5)
-      .fill({ color: this.config.color });
+      .fill({ color: this.config.color })
+      .stroke({ color: 0x666666, width: 3, alignment: 0.5 });
 
     System.onCollision.connect(this._handleCollision);
   }

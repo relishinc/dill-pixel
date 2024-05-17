@@ -1,11 +1,11 @@
-import { Camera } from '@relish-studios/dill-pixel/display/Camera';
+import { Camera } from 'dill-pixel/display/Camera';
 import { Door } from '@/entities/physics/Door';
 import { Platform, PlatformConfig, PlatformMovementConfigOpts } from '@/entities/physics/Platform';
 import { Player } from '@/entities/physics/Player';
 import { Portal } from '@/entities/physics/Portal';
 
 import { BaseScene } from '@/scenes/BaseScene';
-import { Container, delay, FlexContainer } from '@relish-studios/dill-pixel';
+import { Container, delay, FlexContainer } from 'dill-pixel';
 import { Assets, Ticker } from 'pixi.js';
 import { Collision, SnapPhysicsPlugin } from '../../../src/plugins/physics/snap';
 import { GUIController } from 'dat.gui';
@@ -28,7 +28,7 @@ export class EndlessRunnerScene extends BaseScene {
     zoom: 1,
     useSpatialHash: true,
     gridCellSize: 300,
-    debug: true,
+    debug: false,
   };
   private _zoomController: GUIController;
   private _segments: SegmentConfig[];
@@ -78,9 +78,10 @@ export class EndlessRunnerScene extends BaseScene {
     });
 
     this.physics.system.initialize({
-      gravity: 9.8,
+      gravity: 10,
       container: this.level,
       debug: false,
+      fps: 60,
       boundary: {
         width: 2400,
         height: this.app.size.height - 300,
@@ -118,7 +119,6 @@ export class EndlessRunnerScene extends BaseScene {
 
   update(ticker: Ticker) {
     if (this._isPaused) return;
-
     if (
       this.app.keyboard.isKeyDown('ArrowUp') ||
       this.app.keyboard.isKeyDown(' ') ||
@@ -144,7 +144,7 @@ export class EndlessRunnerScene extends BaseScene {
     EndlessRunner.update(ticker.deltaTime);
 
     if (!EndlessRunner.hasEnoughSegments) {
-      while (!EndlessRunner.hasEnoughSegments) {
+      while (!EndlessRunner.hasEnoughSegments && !this._isPaused) {
         const segment = this.createRandomSegment();
         this.level.add.existing(segment);
       }
@@ -182,13 +182,14 @@ export class EndlessRunnerScene extends BaseScene {
       width: 500,
       platforms: [
         this.getPlatFormConfig(250, bottom - 88, 30, 160),
-        this.getPlatFormConfig(250, bottom - 120, 150, 20, false),
+        this.getPlatFormConfig(205, bottom - 120, 60, 20, false),
+        this.getPlatFormConfig(295, bottom - 120, 60, 20, false),
       ],
     };
 
     const segment2Config = {
       width: 300,
-      platforms: [this.getPlatFormConfig(150, bottom - 70, 30, 140)],
+      platforms: [this.getPlatFormConfig(150, bottom - 75, 30, 140)],
     };
 
     const segment3Config = {
@@ -219,6 +220,9 @@ export class EndlessRunnerScene extends BaseScene {
     };
 
     return [
+      segment4Config,
+      segment4Config,
+      segment4Config,
       segment4Config,
       segment2Config,
       segment0Config,
@@ -261,8 +265,9 @@ export class EndlessRunnerScene extends BaseScene {
       this.player.constrainX(50, this.app.size.width - 50);
       this.player.onKilled.connect(this._handlePlayerKilled);
     }
+    this.player.lookRight();
     this.level.add.existing(this.player);
-    this.player.spawn({ x: 100, y: 200 }, delay);
+    this.player.spawn({ x: 100, y: this.app.size.height * 0.3 }, delay);
   }
 
   addControls() {
@@ -322,7 +327,10 @@ export class EndlessRunnerScene extends BaseScene {
   }
 
   destroy() {
+    this._isPaused = true;
     this.physics.destroy();
+    EndlessRunner.destroy();
+    this.level.removeChildren();
     super.destroy();
   }
 

@@ -1,13 +1,19 @@
 {
-  "name": "@relish-studios/dill-pixel",
+  "name": "dill-pixel",
   "version": "8.0.0",
-  "title": "Dill Pixel",
+  "title": "Dill Pixel V8",
   "description": "Relish framework for HTML games",
   "main": "lib/index.js",
   "bin": {
     "dill-pixel": "./cli.mjs",
     "create-dill-pixel": "./cli/create-dill-pixel.mjs"
   },
+  "files": [
+    "lib",
+    "config",
+    "src",
+    "cli"
+  ],
   "types": "./lib/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
@@ -20,10 +26,10 @@
   "scripts": {
     "dev": "cd ./examples && npm run dev",
     "start": "cd ./examples && npm run start",
-    "build": "npm run version && npm run pixi-exports && npm run generate && npm run compile",
-    "build:quick": "npm run compile",
+    "build": "npm run version && npm run pixi-exports && npm run compile",
+    "build:generate": "npm run version && npm run pixi-exports && npm run generate && npm run compile",
     "pixi-exports": "node ./scripts/pixi-exports.js",
-    "compile": "tsc",
+    "compile": "tsc --project ./tsconfig.build.json",
     "build:examples": "cd ./examples && npm run build",
     "visualize:examples": "cd ./examples && npx vite-bundle-visualizer",
     "build:watch": "tsc --watch",

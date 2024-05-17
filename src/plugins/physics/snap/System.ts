@@ -11,6 +11,7 @@ import { Collision, EntityType, Side, SpatialHashGridFilter } from './types';
 import { Wall } from './Wall';
 import { ICamera } from '../../../display/Camera';
 import { getIntersectionArea } from './utils';
+import { Application } from '../../../core/Application';
 
 type SystemBoundary = {
   width: number;
@@ -31,6 +32,7 @@ type CustomSnapPhysicsBoundaryOptions = OptionalSnapPhysicsBoundaryOptions & Req
 
 type SnapPhysicsSystemOptions = {
   gravity: number;
+  fps: number;
   container: PIXIContainer;
   debug: boolean;
   boundary: CustomSnapPhysicsBoundaryOptions;
@@ -56,7 +58,7 @@ export class System {
   static worldBounds: Wall[] = [];
   static boundary: SystemBoundary;
   static camera?: ICamera;
-  static collisionThreshold = 2;
+  static collisionThreshold = 8;
   private static gfx: Graphics;
 
   private static _collisionResolver: ((collision: Collision) => boolean) | null = null;
@@ -221,7 +223,6 @@ export class System {
       Logger.error('SnapPhysicsPlugin: World container not set!');
     }
     // Implement world step logic
-
     System.solids.forEach((solid: Solid) => {
       solid.update(deltaTime);
     });
@@ -339,8 +340,14 @@ export class System {
   }
 
   static initialize(opts: Partial<SnapPhysicsSystemOptions>) {
+    console.log('SYSTEM INITIALIZED');
+    System.enabled = true;
     if (opts.gravity) {
       System.gravity = opts.gravity;
+    }
+    if (opts.fps) {
+      System.fps = opts.fps;
+      Application.getInstance().ticker.maxFPS = opts.fps;
     }
     if (opts.container) {
       System.setContainer(opts.container);
@@ -348,7 +355,6 @@ export class System {
     if (opts.debug !== undefined) {
       System.debug = opts.debug;
     }
-
     if (opts.collisionResolver) {
       System.collisionResolver = opts.collisionResolver;
     }
@@ -383,6 +389,7 @@ export class System {
   }
 
   static cleanup() {
+    console.log('SYSTEM CLEANUP');
     if (System.worldBounds) {
       System.worldBounds.forEach((wall: Wall) => {
         wall.parent.removeChild(wall);
@@ -397,6 +404,7 @@ export class System {
       System.container = null;
     }
     if (System.gfx) {
+      System.gfx.clear();
       // @ts-expect-error GFX can't be null
       System.gfx = null;
     }
@@ -405,5 +413,16 @@ export class System {
       System.grid.destroy();
       System.grid = null;
     }
+
+    if (System.camera) {
+      // @ts-expect-error camera can't be null
+      System.camera = null;
+    }
+
+    this.solids = [];
+    this.actors = [];
+    this.sensors = [];
+    this.typeMap.clear();
+    this.worldBounds = [];
   }
 }

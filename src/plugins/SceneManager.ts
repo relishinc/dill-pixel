@@ -255,7 +255,7 @@ export class SceneManager extends Plugin implements ISceneManager {
 
   private async _initializeCurrentScene(): Promise<void> {
     await this.currentScene.initialize();
-    
+
     // wait one tick so everything in the scene has had a chance to render before triggering the resize
     this.app.ticker.addOnce(() => {
       this.currentScene.resize(this.app.size);
@@ -287,22 +287,18 @@ export class SceneManager extends Plugin implements ISceneManager {
   private _createDebugMenu() {
     this._debugMenu = document.createElement('div');
     this._debugMenu.style.cssText =
-      'position: absolute; bottom: 0; left:0; width:48px; height:48px; z-index: 1000; background-color:' +
-      ' rgba(0,0,0,0.8);' +
-      ' color:' +
-      ' white;' +
-      ' border-top-right-radius:8px';
+      'position: absolute; bottom: 0; left:0; width:48px; height:48px; z-index: 1000; background-color:rgba(0,0,0,0.8); color:white; border-top-right-radius:8px;';
     const icon = document.createElement('i');
     icon.style.cssText =
-      'cursor:pointer; position:absolute;width:100%; font-style:normal; font-size:20px; top:50%;' +
-      ' left:50%; transform:translate(-50%, -50%); text-align:center; pointer-events:none';
+      'cursor:pointer; position:absolute;width:100%; font-style:normal; font-size:20px; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; pointer-events:none';
     icon.innerHTML = '🎬';
     this._debugMenu.appendChild(icon);
 
     (Application.containerElement || document.body).appendChild(this._debugMenu);
 
     this._sceneSelect = document.createElement('select');
-    this._sceneSelect.style.cssText = 'padding:0; border-radius:5px; opacity:0; width:48px; height:48px;';
+    this._sceneSelect.style.cssText =
+      'padding:0; border-radius:5px; opacity:0; width:48px; height:48px; cursor:pointer';
     this._sceneSelect.value = this.defaultScene || '';
 
     const defaultOption = document.createElement('option');

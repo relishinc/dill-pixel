@@ -1,7 +1,7 @@
 import { Segment, SegmentConfig } from '@/entities/physics/Segment';
 import { Point, Pool } from 'pixi.js';
-import { System } from '@relish-studios/dill-pixel/plugins/physics/snap';
-import { PointLike, resolvePointLike } from '@relish-studios/dill-pixel';
+import { System } from 'dill-pixel/plugins/physics/snap';
+import { PointLike, resolvePointLike } from 'dill-pixel';
 
 export class EndlessRunner {
   static movement: Point = new Point();
@@ -40,6 +40,14 @@ export class EndlessRunner {
   static initialize(width: number, movement: PointLike) {
     EndlessRunner.width = width;
     EndlessRunner.movement = resolvePointLike(movement, true);
+  }
+
+  public static destroy() {
+    EndlessRunner.segments.forEach((segment) => {
+      segment.destroy();
+    });
+    EndlessRunner.segments.clear();
+    EndlessRunner._totalWidth = EndlessRunner.width = 0;
   }
 
   private static cacheTotalWidth() {

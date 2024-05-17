@@ -25,22 +25,17 @@
     "allowJs": true,
     "composite": true
   },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "ESNext",
-      "moduleResolution": "Node",
-      "experimentalDecorators": true,
-      "emitDecoratorMetadata": true
-    }
-  },
   "typeRoots": [
     "./node_modules/@types"
   ],
   "include": [
-    "./config/**/*.ts",
-    "./src/**/*.ts"
+    "config/**/*.ts",
+    "src/**/*.ts",
+    "src/**/*.ts"
   ],
   "exclude": [
-    "./lib"
+    "lib",
+    "node_modules",
+    ".cache"
   ]
 }

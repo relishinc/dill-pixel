@@ -1,14 +1,15 @@
-import { Camera } from '@relish-studios/dill-pixel/display/Camera';
+import { Camera } from 'dill-pixel/display/Camera';
 import { Door } from '@/entities/physics/Door';
 import { Platform, PlatformMovementConfigOpts } from '@/entities/physics/Platform';
 import { Player } from '@/entities/physics/Player';
 import { Portal } from '@/entities/physics/Portal';
 
 import { BaseScene } from '@/scenes/BaseScene';
-import { Container, delay, FlexContainer } from '@relish-studios/dill-pixel';
+import { Container, delay, FlexContainer } from 'dill-pixel';
 import { Assets, Ticker } from 'pixi.js';
 import { Collision, SnapPhysicsPlugin } from '../../../src/plugins/physics/snap';
 import { GUIController } from 'dat.gui';
+import { gsap } from 'gsap';
 
 export class SnapPhysicsScene extends BaseScene {
   controls: FlexContainer;
@@ -25,8 +26,8 @@ export class SnapPhysicsScene extends BaseScene {
     useCamera: true,
     zoom: 1,
     useSpatialHash: true,
-    gridCellSize: 400,
-    debug: true,
+    gridCellSize: 300,
+    debug: false,
   };
   private _zoomController: GUIController;
 
@@ -92,23 +93,26 @@ export class SnapPhysicsScene extends BaseScene {
     });
 
     this.physics.system.initialize({
-      gravity: 9.8,
+      gravity: 10,
       container: this.level,
-      debug: false,
+      debug: this.config.debug,
+      useSpatialHashGrid: this.config.useSpatialHash,
+      cellSize: this.config.gridCellSize,
+      fps: 60,
       boundary: {
-        width: 2000,
-        height: this.app.size.height,
-        thickness: 10,
-        padding: 5,
-        sides: ['bottom', 'left', 'right'],
+        width: 2400,
+        height: this.app.size.height - 300,
+        thickness: 20,
+        padding: 0,
+        sides: ['bottom'],
       },
       collisionResolver: this._resolveCollision,
     });
-    const bottom = this.app.size.height - 150;
+    const bottom = this.app.size.height - 300;
     this.addPlatforms(bottom);
     this.addDoors(bottom);
     this.addPortals(bottom);
-    this.addPlayer();
+    this.addPlayer(true);
     this.addControls();
 
     this._handleDebugChanged();
@@ -155,40 +159,33 @@ export class SnapPhysicsScene extends BaseScene {
     this.controls.x = -this.app.size.width * 0.5 + 20;
     this.controls.y = this.app.size.height * 0.5 - (window.innerHeight > window.innerWidth ? 400 : 100);
     this.controls.containerWidth = this.app.size.width - 40;
-
-    // if (this._debugGfx) {
-    // this._drawDebug();
-    // }
   }
 
   addPlatforms(bottom: number) {
-    // floor
-    this.addPlatForm(1000, bottom, 2000);
-
     // first junction
-    this.addPlatForm(500, bottom - 88, 30, 160);
-    this.addPlatForm(500, bottom - 178, 150, 20, false);
+    this.addPlatForm(500, bottom - 90, 30, 160);
+    this.addPlatForm(500, bottom - 180, 150, 20, false);
 
     // hor
     this.addPlatForm(750, bottom - 300, 200, 20, false, true, {
-      speed: 0.5,
+      speed: 2,
       startingDirection: { x: 1, y: 0 },
       range: [180, 0],
     });
 
     // second junction
-    this.addPlatForm(1200, bottom - 150, 30, 300);
+    this.addPlatForm(1200, bottom - 175, 30, 330);
     this.addPlatForm(1265, bottom - 140, 100, 20, false);
     // vert
     this.addPlatForm(1110, bottom - 200, 150, 20, false, true, {
       speed: 1,
       startingDirection: { x: 0, y: 1 },
-      range: [0, 300],
+      range: [0, 150],
     });
 
     // holds portal
     this.addPlatForm(1700, bottom - 500, 200, 20, false, true, {
-      speed: 1.2,
+      speed: 1,
       startingDirection: { x: 0, y: 1 },
       range: [0, 300],
     });
@@ -228,15 +225,13 @@ export class SnapPhysicsScene extends BaseScene {
   }
 
   addPortals(bottom: number) {
-    const portal2 = this.addPortal(400, bottom - 80);
-    const portal3 = this.addPortal(600, bottom - 80);
+    const portal0 = this.addPortal(400, bottom - 80);
+    const portal1 = this.addPortal(600, bottom - 80);
+    const portal2 = this.addPortal(1700, bottom - 580);
 
-    const portal1 = this.addPortal(1700, bottom - 580);
-
-    portal1.debug = true;
-    portal1.connect(portal3);
-    portal2.connect(portal1);
-    portal3.connect(portal2);
+    portal0.connect(portal1);
+    portal1.connect(portal2);
+    portal2.connect(portal0);
   }
 
   addPortal(x: number, y: number) {
@@ -245,15 +240,23 @@ export class SnapPhysicsScene extends BaseScene {
     return portal;
   }
 
-  addPlayer() {
+  addPlayer(first: boolean = false) {
     let delay = 0.5;
     if (!this.player) {
       delay = 1;
       this.player = new Player();
+      this.player.constrainX(0, 2400);
       this.player.onKilled.connect(this._handlePlayerKilled);
     }
     this.level.add.existing(this.player);
-    this.player.spawn({ x: this.doors[0].x, y: this.doors[0].y + this.doors[0].height * 0.5 + 2 }, delay);
+    this.player.lookRight();
+    this.player.spawn(
+      {
+        x: this.doors[0].x,
+        y: this.doors[0].y + this.doors[0].getBoundingBox().height * 0.5 - (first ? 0 : 5),
+      },
+      delay,
+    );
   }
 
   addControls() {
@@ -308,8 +311,14 @@ export class SnapPhysicsScene extends BaseScene {
     return btn;
   }
 
-  _handlePlayerKilled() {
+  async _handlePlayerKilled() {
+    this.level.removeChild(this.player);
+    this.camera.lerp = 0.05;
+    this.camera.follow(this.doors[0], [this.app.screen.width * 0.25, -1000]);
+    await delay(1);
     this.addPlayer();
+    this.camera.follow(this.player, [this.app.screen.width * 0.25, -100]);
+    gsap.to(this.camera, { lerp: 0.1, duration: 0.75, ease: 'sine.out' });
   }
 
   protected _handleDebugChanged() {

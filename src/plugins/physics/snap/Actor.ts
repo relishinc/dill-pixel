@@ -28,7 +28,7 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
 
   moveX(
     amount: number,
-    onCollide?: (collision: Collision, pushingEntity?: Entity, direction?: Point) => void,
+    onCollide?: ((collision: Collision, pushingEntity?: Entity, direction?: Point) => void) | null,
     onNoCollisions?: (() => void) | null,
     pushingEntity?: Entity,
   ): void {
@@ -127,16 +127,14 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   }
 
   isRiding(solid: Entity): boolean {
-    const actorBounds = this.getBoundingBox();
-    const solidBounds = solid.getBoundingBox();
-
     // Basic check if actor is directly on top of the solid
-    return (
-      actorBounds.bottom >= solidBounds.top - 2 &&
-      actorBounds.bottom <= solidBounds.top + 1 &&
-      actorBounds.left < solidBounds.right &&
-      actorBounds.right > solidBounds.left
-    );
+    const isRidingResult =
+      this.bottom >= solid.top - 4 &&
+      this.bottom <= solid.top + 4 &&
+      this.left < solid.right &&
+      this.right > solid.left;
+
+    return isRidingResult;
   }
 
   setPassingThrough(entity: Entity) {

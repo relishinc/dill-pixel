@@ -10,7 +10,7 @@ import Rive, {
   WrappedRenderer,
 } from '@rive-app/canvas-advanced';
 
-import { Container } from '@relish-studios/dill-pixel';
+import { Container } from 'dill-pixel';
 
 // Fit options for the canvas
 export enum Fit {
@@ -111,29 +111,6 @@ export class RiveEntity extends Container {
   private _renderer?: WrappedRenderer;
   private _canvas?: OffscreenCanvas | HTMLCanvasElement;
   private _renderTexture: RenderTexture;
-  /**
-   * Update animation and state machine progress
-   * @param {number} time delta time from last animation frame (in seconds)
-   */
-  private renderLoop = (time: number) => {
-    if (!this._lastTime) this._lastTime = time;
-    const elapsedTime = (time - this._lastTime) / 1000;
-    this._lastTime = time;
-    if (this.artboard && this._renderer) {
-      this.advanceStateMachines(elapsedTime);
-      this.advanceAnimations(elapsedTime);
-      this.artboard.advance(elapsedTime);
-      this._renderer.clear();
-      this._renderer.save();
-      this.artboard.draw(this._renderer);
-      this._renderer.restore();
-      this._renderer.flush();
-      this.updateTexture();
-    }
-    if (this._animFrame && this._rive) {
-      this._rive.requestAnimationFrame(this.renderLoop);
-    }
-  };
 
   /**
    * Constructor will load Rive wasm if it not loaded yet
@@ -399,6 +376,30 @@ export class RiveEntity extends Container {
       input.fire();
     }
   }
+
+  /**
+   * Update animation and state machine progress
+   * @param {number} time delta time from last animation frame (in seconds)
+   */
+  private renderLoop = (time: number) => {
+    if (!this._lastTime) this._lastTime = time;
+    const elapsedTime = (time - this._lastTime) / 1000;
+    this._lastTime = time;
+    if (this.artboard && this._renderer) {
+      this.advanceStateMachines(elapsedTime);
+      this.advanceAnimations(elapsedTime);
+      this.artboard.advance(elapsedTime);
+      this._renderer.clear();
+      this._renderer.save();
+      this.artboard.draw(this._renderer);
+      this._renderer.restore();
+      this._renderer.flush();
+      this.updateTexture();
+    }
+    if (this._animFrame && this._rive) {
+      this._rive.requestAnimationFrame(this.renderLoop);
+    }
+  };
 
   /**
    * Will load wasm and rive sprite asset from assets library

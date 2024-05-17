@@ -1,4 +1,4 @@
-import { AlignItems, FlexContainer, FlexDirection, FlexWrap, JustifyContent, clamp } from '@relish-studios/dill-pixel';
+import { AlignItems, clamp, FlexContainer, FlexDirection, FlexWrap, JustifyContent } from 'dill-pixel';
 import { Graphics, TextStyle } from 'pixi.js';
 
 import { BaseScene } from './BaseScene';

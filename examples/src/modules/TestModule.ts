@@ -1,4 +1,4 @@
-import { IApplication, IPlugin, Plugin } from '@relish-studios/dill-pixel';
+import { IApplication, IPlugin, Plugin } from 'dill-pixel';
 
 import type { V8Application } from '../V8Application';
 

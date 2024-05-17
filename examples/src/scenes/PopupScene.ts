@@ -1,4 +1,4 @@
-import { ActionDetail, Button, Container, PopupConfig } from '@relish-studios/dill-pixel';
+import { ActionDetail, Button, Container, PopupConfig } from 'dill-pixel';
 import { ExamplePopup } from '../popups/ExamplePopup';
 
 import { BaseScene } from './BaseScene';

@@ -1,5 +1,5 @@
-import { PointLike, resolvePointLike } from '@relish-studios/dill-pixel';
-import { Point, Texture } from 'pixi.js';
+import { PointLike, resolvePointLike } from 'dill-pixel';
+import { Point } from 'pixi.js';
 import { Solid as SnapSolid, System } from '../../../../src/plugins/physics/snap';
 
 type Direction = -1 | 0 | 1;
@@ -108,10 +108,10 @@ export class Platform extends SnapSolid<PlatformConfig> {
       this.config.movementConfig.speed.y * deltaTime * this.config.movementConfig.startingDirection.y,
     );
 
-    if (Math.round(Math.abs(this.x - this._startPos.x)) >= this.config.movementConfig.range.x) {
+    if (Math.abs(this.x - this._startPos.x) >= this.config.movementConfig.range.x) {
       this.config.movementConfig.startingDirection.x *= -1;
     }
-    if (Math.round(Math.abs(this.y - this._startPos.y)) >= this.config.movementConfig.range.y) {
+    if (Math.abs(this.y - this._startPos.y) >= this.config.movementConfig.range.y) {
       this.config.movementConfig.startingDirection.y *= -1;
     }
   }
@@ -129,13 +129,15 @@ export class Platform extends SnapSolid<PlatformConfig> {
   }
 
   protected initialize() {
-    this.view = this.add.sprite({
-      asset: Texture.WHITE,
-      width: this.config.width,
-      height: this.config.height,
-      tint: this.config.color,
-      anchor: 0.5,
-    });
+    this.view = this.add
+      .graphics({ x: -this.config.width / 2, y: -this.config.height / 2 })
+      .rect(2, 2, this.config.width, this.config.height)
+      .fill({ color: this.config.color })
+      .stroke({
+        color: 0x0,
+        width: 2,
+        alignment: 0,
+      });
 
     this.position.set(this.config.x, this.config.y);
   }

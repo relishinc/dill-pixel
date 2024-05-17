@@ -10,7 +10,10 @@
     "useDefineForClassFields": true,
     "strictPropertyInitialization": false,
     "module": "ESNext",
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "moduleResolution": "bundler",
     "strict": true,
     "resolveJsonModule": true,
@@ -23,10 +26,10 @@
     "skipLibCheck": true
   },
   "include": [
-    "src",
-    "node_modules"
+    "./src/**/*.ts"
   ],
   "exclude": [
-    ".cache"
+    ".cache",
+    "../lib"
   ]
 }

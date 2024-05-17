@@ -168,7 +168,10 @@ export class Camera extends Container implements ICamera {
     return Application.getInstance();
   }
 
-  follow(target: ContainerLike, offset: PointLike) {
+  follow(target: ContainerLike, offset?: PointLike) {
+    if (!offset) {
+      offset = { x: 0, y: 0 };
+    }
     this.followOffset = offset;
     this.target = target;
   }
@@ -223,8 +226,8 @@ export class Camera extends Container implements ICamera {
 
     this._targetPivot.x = (spritePosition.x * this.scale.x + this.viewportWidth / 2) * (1 / this.scale.x) + offsetX;
 
-    const tMinX = this.viewportWidth / this.scale.x / 2 + posXModifier + this.minX;
-    const tMaxX = this.worldWidth - this.viewportWidth / this.scale.x / 2 + posXModifier + this.maxX;
+    const tMinX = this.viewportWidth / this.scale.x / 2 + posXModifier + this.minX - offsetX;
+    const tMaxX = this.worldWidth - this.viewportWidth / this.scale.x / 2 + posXModifier + this.maxX + offsetX;
 
     if (this._targetPivot.x < tMinX) {
       this._targetPivot.x = tMinX;
@@ -234,7 +237,7 @@ export class Camera extends Container implements ICamera {
 
     this._targetPivot.y = (spritePosition.y * this.scale.y + this.viewportHeight / 2) * (1 / this.scale.y) + offsetY;
 
-    const tMinY = this.viewportHeight / this.scale.y / 2 + posYModifier + this.minY;
+    const tMinY = this.viewportHeight / this.scale.y / 2 + posYModifier + this.minY - offsetY;
     const tMaxY = this.worldHeight - this.viewportHeight / this.scale.y / 2 + posYModifier + this.maxY - offsetY;
 
     if (this._targetPivot.y < tMinY) {

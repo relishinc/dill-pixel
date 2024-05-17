@@ -33,7 +33,7 @@
     "@types/dat.gui": "^0.7.13"
   },
   "dependencies": {
-    "@relish-studios/dill-pixel": "file:..",
-    "dat.gui": "^0.7.9"
+    "dat.gui": "^0.7.9",
+    "dill-pixel": "file:.."
   }
 }

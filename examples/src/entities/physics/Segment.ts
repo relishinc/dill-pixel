@@ -1,5 +1,5 @@
 import { Platform, PlatformConfig } from '@/entities/physics/Platform';
-import { Container } from '@relish-studios/dill-pixel';
+import { Container } from 'dill-pixel';
 import { EndlessRunner } from '@/entities/physics/EndlessRunner';
 import { Pool } from 'pixi.js';
 
@@ -33,14 +33,15 @@ export class Segment extends Container {
   }
 
   update(deltaTime: number) {
-    this.position.x -= Math.ceil(EndlessRunner.movement.x * deltaTime);
-    this.position.y -= Math.ceil(EndlessRunner.movement.y * deltaTime);
     if (EndlessRunner.movement.x !== 0 || EndlessRunner.movement.y !== 0) {
+      const x = Math.ceil(EndlessRunner.movement.x * deltaTime);
+      const y = Math.ceil(EndlessRunner.movement.y * deltaTime);
+      this.x -= x;
+      this.y -= y;
       this._platforms.forEach((platform) => {
-        platform.handleActorInteractions(
-          -Math.ceil(EndlessRunner.movement.x * deltaTime),
-          -Math.ceil(EndlessRunner.movement.y * deltaTime),
-        );
+        platform.isCollideable = false;
+        platform.handleActorInteractions(-x, -y);
+        platform.isCollideable = true;
       });
     }
 

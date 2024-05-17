@@ -70,8 +70,8 @@ export const spineLoaderExtension: AssetExtension<SkeletonJsonAsset | SkeletonBi
       return buffer;
     },
     testParse(asset: unknown, options: ResolvedAsset): Promise<boolean> {
-      const isJsonSpineModel = checkExtension(options.src, '.json') && isJson(asset);
-      const isBinarySpineModel = checkExtension(options.src, '.skel') && isBuffer(asset);
+      const isJsonSpineModel = checkExtension(options.src!, '.json') && isJson(asset);
+      const isBinarySpineModel = checkExtension(options.src!, '.skel') && isBuffer(asset);
 
       return Promise.resolve(isJsonSpineModel || isBinarySpineModel);
     },

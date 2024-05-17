@@ -1,5 +1,5 @@
-import { DOMAdapter, ExtensionType, LoaderParserPriority, checkExtension, extensions } from 'pixi.js';
-import { IApplication, IPlugin, Plugin } from '@relish-studios/dill-pixel';
+import { checkExtension, DOMAdapter, extensions, ExtensionType, LoaderParserPriority } from 'pixi.js';
+import { IApplication, IPlugin, Plugin } from 'dill-pixel';
 
 import type { V8Application } from '../V8Application';
 

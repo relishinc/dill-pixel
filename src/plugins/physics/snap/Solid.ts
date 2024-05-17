@@ -24,7 +24,7 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
     this.yRemainder += y;
     const moveX = Math.round(this.xRemainder);
     const moveY = Math.round(this.yRemainder);
-
+    const ridingActors = this.getAllRidingActors();
     if (moveX !== 0 || moveY !== 0) {
       // Temporarily make this solid non-collidable
       this.isCollideable = false;
@@ -32,11 +32,11 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
       // Move on the X axis
       this.x += moveX;
       this.xRemainder -= moveX;
-      this.handleActorInteractions(moveX, 0);
+      this.handleActorInteractions(moveX, 0, ridingActors);
 
       this.y += moveY;
       this.yRemainder -= moveY;
-      this.handleActorInteractions(0, moveY);
+      this.handleActorInteractions(0, moveY, ridingActors);
 
       // Re-enable collisions
       this.isCollideable = true;
@@ -46,7 +46,7 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
 
   getAllRidingActors(): Actor[] {
     // Implement logic to get all actors riding this solid
-    return System.actors.filter((actor: Actor) => {
+    return (this.collideables as Actor[]).filter((actor: Actor) => {
       return actor.isRiding(this);
     });
   }
@@ -56,14 +56,17 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
     return System.getRectangleIntersection(entity, this, dx, dy);
   }
 
-  public checkActorCollisions() {
-    this.handleActorInteractions(0, 0);
-  }
-
-  public handleActorInteractions(deltaX: number, deltaY: number): void {
-    // Check for collisions with non-riding actors
+  public handleActorInteractions(
+    deltaX: number,
+    deltaY: number,
+    ridingActors: Actor[] = this.getAllRidingActors(),
+  ): void {
     (this.collideables as Actor[]).forEach((actor) => {
-      if (
+      if (ridingActors.includes(actor)) {
+        // Move riding actors along with this solid
+        actor.moveX(deltaX);
+        actor.moveY(deltaY);
+      } else if (
         !actor.passThroughTypes.includes(this.type) &&
         !actor.isPassingThrough(this) &&
         this.collidesWith(actor, deltaX, deltaY)
@@ -76,6 +79,10 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
               : this.getBoundingBox().left - actor.getBoundingBox().right
             : 0;
 
+        if (overlapX !== 0) {
+          actor.moveX(overlapX, actor.squish, null, this);
+        }
+
         const overlapY =
           deltaY !== 0
             ? deltaY > 0
@@ -83,15 +90,9 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
               : this.getBoundingBox().top - actor.getBoundingBox().bottom
             : 0;
 
-        if (overlapX !== 0) {
-          actor.moveX(overlapX, actor.squish, null, this);
-        }
         if (overlapY !== 0) {
           actor.moveY(overlapY, actor.squish, null, this);
         }
-      } else if (actor.isRiding(this) && deltaX !== 0) {
-        actor.moveX(deltaX, () => {});
-        actor.moveY(deltaY, () => {});
       }
     });
   }

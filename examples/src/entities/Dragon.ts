@@ -1,8 +1,8 @@
-import { Container, Interactive } from '@relish-studios/dill-pixel';
+import {Container, Interactive} from 'dill-pixel';
 
-import { Rectangle } from 'pixi.js';
-import { Spine } from '@pixi/spine-pixi';
-import { gsap } from 'gsap';
+import {Rectangle} from 'pixi.js';
+import {Spine} from '@pixi/spine-pixi';
+import {gsap} from 'gsap';
 
 /**
  * Spine-animated cauldron, with some dynamic functionality, like

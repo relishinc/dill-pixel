@@ -62,17 +62,19 @@ export class Container<A extends Application = Application> extends _Container i
 
   /**
    * Update the container. This method is meant to be overridden by subclasses.
-   * @param _ticker
+   * @param ticker
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public update(_ticker: Ticker | number) {}
+  public update(ticker?: Ticker | number) {
+    void ticker;
+  }
 
   /**
    * Resize the container. This method is meant to be overridden by subclasses.
-   * @param _size
+   * @param size
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public resize(_size?: Size) {}
+  public resize(size?: Size) {
+    void size;
+  }
 
   /**
    * This method is called when the container is added to the stage. It is meant to be overridden by subclasses.

@@ -1,6 +1,6 @@
 import { Actor } from '@/entities/Actor';
 import { BaseScene } from '@/scenes/BaseScene';
-import { Button, FlexContainer, Logger, PIXIText } from '@relish-studios/dill-pixel';
+import { Button, FlexContainer, Logger, PIXIText } from 'dill-pixel';
 
 export class FocusScene extends BaseScene {
   protected title = 'Focus Management';

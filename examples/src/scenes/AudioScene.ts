@@ -1,4 +1,4 @@
-import { ActionDetail, FlexContainer } from '@relish-studios/dill-pixel';
+import { ActionDetail, FlexContainer } from 'dill-pixel';
 import { BaseScene } from './BaseScene';
 
 export class AudioScene extends BaseScene {

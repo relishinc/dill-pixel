@@ -10,6 +10,7 @@ export interface ICoreSignals {
     onVoiceOverPaused: Signal<(instance: IAudioInstance) => void>;
     onVoiceOverComplete: Signal<(instance: IAudioInstance) => void>;
     onVoiceOverResumed: Signal<(instance: IAudioInstance) => void>;
+    onVoiceOverStopped: Signal<(instance?: IAudioInstance) => void>;
     // FocusManager;
     onFocusManagerActivated: Signal<() => void>;
     onFocusManagerDeactivated: Signal<() => void>;

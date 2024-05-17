@@ -14,6 +14,7 @@ export function getPreviousMapEntry<K = any, V = any>(map: Map<K, V>, currentKey
     }
     previous = entry;
   }
+  return undefined;
 }
 
 /**

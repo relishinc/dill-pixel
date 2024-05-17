@@ -1,4 +1,4 @@
-import { ActionDetail, Button, FlexContainer } from '@relish-studios/dill-pixel';
+import { ActionDetail, Button, FlexContainer } from 'dill-pixel';
 import { Text } from 'pixi.js';
 import { BaseScene } from './BaseScene';
 

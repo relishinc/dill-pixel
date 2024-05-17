@@ -28,7 +28,7 @@ const defaultConfig = {
 		viteStaticCopy({
 			targets: [
 				{
-					src: './node_modules/@relish-studios/dill-pixel/src/plugins/captions/font/*.*',
+					src: './node_modules/dill-pixel/src/plugins/captions/font/*.*',
 					dest: './dill-pixel/font'
 				},
 			]
@@ -39,7 +39,7 @@ const defaultConfig = {
 			'@': path.resolve(cwd, './src'),
 		},
 	},
-	
+
 };
 
 function extendConfig(userConfig = {}) {

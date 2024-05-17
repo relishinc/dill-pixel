@@ -1,8 +1,8 @@
-import { ColorSource, Graphics, IDestroyOptions, Sprite, Texture } from 'pixi.js';
-import { Application } from '../core/Application';
-import { IFocusable } from '../plugins/focus/FocusManager';
-import { Size } from '../utils/types';
-import { Container, IContainer } from './Container';
+import {ColorSource, DestroyOptions, Graphics, Sprite, Texture} from 'pixi.js';
+import {Application} from '../core/Application';
+import {IFocusable} from '../plugins/focus/FocusManager';
+import {Size} from '../utils/types';
+import {Container, IContainer} from './Container';
 
 /**
  * Interface for Popup
@@ -65,12 +65,31 @@ const defaultPopupConfig = { backing: true, closeOnEscape: true, closeOnPointerD
  * Class representing a Popup
  */
 export class Popup<T = any> extends Container implements IPopup<T> {
+  public static BACKING_TEXTURE: Texture;
   public isShowing: boolean = false;
   public firstFocusableEntity: IFocusable;
   public view: Container;
   public backing?: Container;
   public config: PopupConfig<T>;
-  public static BACKING_TEXTURE: Texture;
+
+  /**
+   * Create a new Popup
+   * @param id - The unique identifier for the popup
+   * @param config - The configuration for the popup
+   */
+  constructor(
+    public readonly id: string | number,
+    config: Partial<PopupConfig> = {},
+  ) {
+    super();
+    this.config = Object.assign({ id, ...defaultPopupConfig }, config);
+
+    this._initialize();
+  }
+
+  get data(): T {
+    return this.config.data as T;
+  }
 
   /**
    * Create a backing for the popup
@@ -100,32 +119,13 @@ export class Popup<T = any> extends Container implements IPopup<T> {
     return backingWrapper;
   }
 
-  /**
-   * Create a new Popup
-   * @param id - The unique identifier for the popup
-   * @param config - The configuration for the popup
-   */
-  constructor(
-    public readonly id: string | number,
-    config: Partial<PopupConfig> = {},
-  ) {
-    super();
-    this.config = Object.assign({ id, ...defaultPopupConfig }, config);
-
-    this._initialize();
-  }
-
-  get data(): T {
-    return this.config.data as T;
-  }
-
   initialize() {}
 
   public beforeHide() {
     this.app.focus.removeFocusLayer(this.id);
   }
 
-  destroy(options?: boolean | IDestroyOptions): void {
+  destroy(options?: boolean | DestroyOptions): void {
     this.app.focus.removeFocusLayer(this.id);
     super.destroy(options);
   }

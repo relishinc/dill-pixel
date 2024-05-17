@@ -1,4 +1,4 @@
-import { Scene } from '@relish-studios/dill-pixel';
+import { Scene } from 'dill-pixel';
 import { Graphics, Text } from 'pixi.js';
 
 import { COLOR_GREEN } from '../utils/Constants';

@@ -1,4 +1,4 @@
-import { ActionDetail, ISpineAnimation, PointLike, resolvePointLike, Signal } from '@relish-studios/dill-pixel';
+import { ActionDetail, ISpineAnimation, PointLike, resolvePointLike, Signal } from 'dill-pixel';
 
 import { gsap } from 'gsap';
 import { Bounds, Point, Rectangle } from 'pixi.js';
@@ -59,15 +59,20 @@ export class Player extends SnapActor {
     if (!this._inPlay) {
       return;
     }
+
+    const riding = this.collideables.find((entity) => this.isRiding(entity));
+
     this._velocity.y =
       this.system.gravity * deltaTime - (this._velocity.y < 0 ? this._jumpPower : -this.system.gravity * 0.25);
 
     if (this._isJumping) {
       this._jumpTimeElapsed += deltaTime;
       this._jumpPower -= this._velocity.y < 0 ? 1 : 3;
+      this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
+    } else if (riding) {
+    } else {
+      this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
     }
-
-    this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
 
     if (!this._isJumping && !this._isMoving) {
       if (this.view.getCurrentAnimation() !== 'idle') {
@@ -136,6 +141,10 @@ export class Player extends SnapActor {
     this._inPlay = false;
     this._spawnFX();
     this.onKilled.emit();
+  }
+
+  public lookRight() {
+    this.view.spine.scale.x = 1;
   }
 
   protected initialize() {

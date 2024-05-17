@@ -1,12 +1,13 @@
-import { IApplication } from '../../core/Application';
-import { CoreFunction, CorePlugin } from '../../core/decorators';
-import { Container } from '../../display/Container';
-import { IPopup, PopupConfig, PopupConstructor } from '../../display/Popup';
-import { Signal } from '../../signals';
-import { getLastMapEntry } from '../../utils/map';
-import { bindAllMethods } from '../../utils/methodBinding';
-import type { IPlugin } from '../Plugin';
-import { Plugin } from '../Plugin';
+import {IApplication} from '../../core/Application';
+import {CoreFunction, CorePlugin} from '../../core/decorators';
+import {Container} from '../../display/Container';
+import type {PopupConfig, PopupConstructor} from '../../display/Popup';
+import {IPopup} from '../../display/Popup';
+import {Signal} from '../../signals';
+import {getLastMapEntry} from '../../utils/map';
+import {bindAllMethods} from '../../utils/methodBinding';
+import type {IPlugin} from '../Plugin';
+import {Plugin} from '../Plugin';
 
 /**`
  * Interface for PopupManager
@@ -43,11 +44,10 @@ export class PopupManager extends Plugin implements IPopupManager {
   // signals
   public onShowPopup: Signal<(detail: PopupSignalDetail) => void> = new Signal<(detail: PopupSignalDetail) => void>(); // Signal for when a popup is shown
   public onHidePopup: Signal<(detail: PopupSignalDetail) => void> = new Signal<(detail: PopupSignalDetail) => void>(); // Signal for when a popup is hidden
-
-  private _currentPopupId: string | number | undefined = undefined; // The id of the current popup
-
   private _popups: Map<string | number, PopupConstructor> = new Map(); // Map of popups
   private _activePopups: Map<string | number, IPopup> = new Map(); // Map of active popups
+
+  private _currentPopupId: string | number | undefined = undefined; // The id of the current popup
 
   get currentPopupId(): string | number | undefined {
     return this._currentPopupId;
@@ -66,9 +66,10 @@ export class PopupManager extends Plugin implements IPopupManager {
 
   /**
    * Initialize the PopupManager
-   * @param app - The application
+   * @param _app
    */
-  initialize(app: IApplication): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  initialize(_app: IApplication): void {
     bindAllMethods(this);
     this.view.name = 'PopupManager';
     this._setupAppListeners();

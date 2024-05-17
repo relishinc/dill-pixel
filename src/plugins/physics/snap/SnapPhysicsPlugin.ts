@@ -44,19 +44,27 @@ export class SnapPhysicsPlugin extends Plugin {
     }
   }
 
+  set fps(value: number) {
+    this.options.fps = value;
+    System.fps = value;
+    this.app.ticker.maxFPS = value;
+  }
+
   public get system(): typeof System {
     return System;
   }
 
   destroy() {
+    this.system.enabled = false;
     System.cleanup();
     super.destroy();
   }
 
   public async initialize(app: IApplication, options?: Partial<SnapPhysicsPluginOptions>) {
     this.options = { ...defaultOptions, ...options };
+    this.system.enabled = true;
     if (this.options.useSpatialHashGrid && this.options.gridCellSize > 0) {
-      System.useSpatialHashGrid(this.options.gridCellSize);
+      this.system.useSpatialHashGrid(this.options.gridCellSize);
     }
     if (this.options.fps > 0) {
       System.fps = this.options.fps;

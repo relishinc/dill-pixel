@@ -440,8 +440,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
   async loadPlugin(listItem: ImportListItem) {
     if (this._plugins.has(listItem.id)) {
-      Logger.error(`Plugin with id "${listItem.id}" already registered. Not registering.`);
-      return Promise.resolve(false);
+      return await this.registerPlugin(this._plugins.get(listItem.id)!, listItem.options);
     }
     const plugin = await getDynamicModuleFromImportListItem(listItem);
     const pluginInstance = new plugin(listItem.id);
@@ -482,7 +481,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   protected async registerPlugin(plugin: IPlugin, options?: any) {
     if (this._plugins.has(plugin.id)) {
       Logger.error(`Plugin with id "${plugin.id}" already registered. Not registering.`);
-      return Promise.resolve();
+      return plugin.initialize(this, options);
     }
     Logger.log(`Registering plugin: ${plugin.id}`);
     this._plugins.set(plugin.id, plugin);

@@ -7,7 +7,7 @@
       "@/*": [
         "src/*"
       ],
-      "@relish-studios/dill-pixel/*": [
+      "dill-pixel/*": [
         "../src/*"
       ]
     },

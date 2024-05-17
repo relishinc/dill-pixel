@@ -1,6 +1,6 @@
 import EN from '@/locales/en';
 import { scenes } from '@/scenes';
-import { AppConfig, Application, create, LoadSceneMethod, LocalStorageAdapter } from '@relish-studios/dill-pixel';
+import { AppConfig, Application, create, LoadSceneMethod, LocalStorageAdapter } from 'dill-pixel';
 
 import { Assets } from 'pixi.js';
 import manifest from './assets.json';
@@ -15,14 +15,15 @@ export class V8Application extends Application {
 const appConfig: AppConfig = {
   id: 'V8Application',
   manifest: manifest,
+  antialias: true,
   plugins: [
     {
       id: 'physics',
       namedExport: 'SnapPhysicsPlugin',
       module: () => import('../../src/plugins/physics/snap'),
       options: {
-        useSpatialHash: false,
-        gridCellSize: 100,
+        useSpatialHashGrid: false,
+        gridCellSize: 300,
         fps: 60,
       },
       autoLoad: false,

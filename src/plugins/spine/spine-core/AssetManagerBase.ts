@@ -376,6 +376,7 @@ export class Downloader {
     request.send();
   }
 
+  // @ts-ignore
   private start(url: string, success: any, error: any) {
     let callbacks = this.callbacks[url];
     try {

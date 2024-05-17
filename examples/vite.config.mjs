@@ -1,4 +1,4 @@
-import {extendConfig} from '@relish-studios/dill-pixel/vite';
+import {extendConfig} from 'dill-pixel/vite';
 import path from 'node:path';
 
 
@@ -11,7 +11,7 @@ export default extendConfig({
 	},
 	resolve: {
 		alias: {
-			'@relish-studios/dill-pixel': path.resolve(__dirname, '../src'),
+			'dill-pixel': path.resolve(__dirname, '../src'),
 		},
 	},
 	define: {

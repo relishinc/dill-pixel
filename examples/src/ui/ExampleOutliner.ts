@@ -1,4 +1,4 @@
-import { Animated, FocusOutliner, FocusOutlinerConfig, IFocusable } from '@relish-studios/dill-pixel';
+import { Animated, FocusOutliner, FocusOutlinerConfig, IFocusable } from 'dill-pixel';
 import { Graphics } from 'pixi.js';
 import { gsap } from 'gsap';
 

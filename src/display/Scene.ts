@@ -1,6 +1,6 @@
 import { Ticker, UnresolvedAsset } from 'pixi.js';
 import { Application } from '../core/Application';
-import { AppSize, Size } from '../utils/types';
+import { Size } from '../utils/types';
 import type { IContainer } from './Container';
 import { Container } from './Container';
 
@@ -67,11 +67,16 @@ export class Scene<T extends Application = Application> extends Container<T> imp
    * Called every frame
    * @param {Ticker} ticker
    */
-  public update(ticker: Ticker) {}
+  public update(ticker?: Ticker) {
+    void ticker;
+  }
 
   /**
    * Called when the window is resized
    * @param {Size} size
+   * @override
    */
-  public resize(size: AppSize): void {}
+  public resize(size?: Size): void {
+    void size;
+  }
 }

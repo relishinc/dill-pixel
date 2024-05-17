@@ -1,6 +1,6 @@
 import { BaseScene } from './BaseScene';
 import { TextStyle } from 'pixi.js';
-import { UICanvas } from '@relish-studios/dill-pixel';
+import { UICanvas } from 'dill-pixel';
 
 const whiteTextStyle = (size: number) =>
   new TextStyle({
