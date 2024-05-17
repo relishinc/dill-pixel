@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.2](https://github.com/relishinc/dill-pixel/compare/v3.1.1...v3.1.2) (2024-05-17)
+
+
+### Bug Fixes
+
+* state debug menu changes to reflect current state ([02921a0](https://github.com/relishinc/dill-pixel/commit/02921a06ef7b1c1ca19f1a19d84f1fb449525227))
+
 ## [3.1.1](https://github.com/relishinc/dill-pixel/compare/v3.1.0...v3.1.1) (2024-05-17)
 
 
