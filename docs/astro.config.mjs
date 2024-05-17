@@ -54,9 +54,9 @@ export default defineConfig({
             { label: 'Layout', link: '/fundamentals/layout' },
             { label: 'Copy and Content', link: '/fundamentals/copy' },
             { label: 'Web Events', link: '/fundamentals/web-events' },
+            { label: 'Assets', link: '/fundamentals/assets' },
             /*
             { label: 'Inputs', link: '/fundamentals/inputs' },
-            { label: 'Assets', link: '/fundamentals/assets' },
             */
           ],
         },

@@ -12,7 +12,7 @@ There are two types of events that are handled:
 - [`visibilitychange`](https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event) - triggered when the browser tab displaying the game is hidden or shown
 - [`resize`](https://developer.mozilla.org/en-US/docs/Web/API/Window/resize_event) - triggered when the browser window is resized
 
-### Adding an Event Listener
+## Adding an Event Listener
 
 To add an event listener, you must first create a callback function that will be called when the event is triggered. 
 Then, you can register the callback function with the `WebEventsManager` instance.
@@ -41,7 +41,7 @@ this.app.webEvents.registerResizeCallback(resizeCallback);
 
 ```
 
-### Removing an Event Listener
+## Removing an Event Listener
 
 To remove an event listener, pass a reference to your callback function:
 
