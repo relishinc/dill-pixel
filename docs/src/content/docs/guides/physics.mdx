@@ -18,11 +18,17 @@ It is designed to be fast, stable, and optionally cross-platform deterministic.
 ## Adding Physics to Your Game
 
 ```js
-import { AssetMapData, AssetType, TextureAsset, TextureAtlasAsset, PhysicsBodyType } from 'dill-pixel';
+import { 
+  AssetMapData, 
+  AssetType, 
+  TextureAsset, 
+  TextureAtlasAsset, 
+  PhysicsBodyType 
+} from 'dill-pixel';
 
 ...
 
-// In your game's state init() method, add the physics engine and initialize it
+// In your game state's init() method, add the physics engine and initialize it
 
 public async init(pSize: Point) {
   await this.app.addPhysics('matter'); // or 'rapier'
