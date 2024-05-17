@@ -1,5 +1,8 @@
-import {DillPixelApplicationOptions} from './AppConfig';
-import {Application} from './Application';
+import { isDev } from '../functions';
+import { DillPixelApplicationOptions } from './AppConfig';
+import { Application } from './Application';
+
+const isDevEnv = isDev();
 
 /**
  * Utility function to create an instance of the Application class.
@@ -54,7 +57,7 @@ export async function create<T extends Application = Application>(
   }
 
   await instance.initialize();
-  if (isDev()) {
+  if (isDevEnv) {
     console.log('Application initialized');
   }
   return instance as T;
