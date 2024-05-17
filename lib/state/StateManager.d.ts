@@ -79,10 +79,12 @@ export declare class StateManager<T extends Application = Application> extends C
     private _defaultStateId?;
     private _defaultTransitionType;
     private _useHash;
+    private _useDebugMenu;
     private _statesMenu;
     private _excluded;
     constructor(_app: Application);
     set useHash(value: boolean);
+    set useDebugMenu(value: boolean);
     set defaultTransitionType(transitionType: TransitionStep[]);
     get default(): string | undefined;
     /**
