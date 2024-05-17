@@ -76,6 +76,7 @@ export declare class StateManager<T extends Application = Application> extends C
     private _debug;
     private _first;
     private _firstComplete;
+    private _hashChangeListener;
     private _defaultStateId?;
     private _defaultTransitionType;
     private _useHash;
