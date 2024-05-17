@@ -717,13 +717,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
       // for pixi devtools
       (globalThis as any).__PIXI_APP__ = this;
     }
-
-    if (this._showStateDebugMenu) {
-      // also uses hash
-      this.state.useDebugMenu();
-    }
-    if (this._useHash) {
-      this.state.useHash = this._useHash;
-    }
+    this.state.useHash = this._useHash;
+    this.state.useDebugMenu = this._showStateDebugMenu;
   }
 }
