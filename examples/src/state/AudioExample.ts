@@ -2,6 +2,7 @@ import ExamplePopup from '@/popups/ExamplePopup';
 import { BaseState } from '@/state/BaseState';
 import { AssetMapData, Container, playAudioTrack, Signals } from 'dill-pixel';
 import { Point } from 'pixi.js';
+import { buttonStyle } from '../utils/Constants';
 
 export class AudioExample extends BaseState {
   _button: Container;
@@ -32,10 +33,20 @@ export class AudioExample extends BaseState {
 
     this._button = this.add.container({
       alpha: 1,
-      position: [0,0],
+      position: [0, 0],
     });
-    this._button.add.coloredSprite({ color: 0xffffff, size: [200, 60], shape: 'rounded_rectangle', radius: 10 });
-    this._button.add.text({ value: 'Play sound', anchor: 0.5 });
+    this._button.add.coloredSprite({
+      color: 0xffffff,
+      size: [200, 60],
+      shape: 'rounded_rectangle',
+      radius: 10,
+    });
+
+    this._button.add.text({
+      style: buttonStyle,
+      value: 'Play sound',
+      anchor: 0.5,
+    });
     this._button.eventMode = 'static';
     this._button.cursor = 'pointer';
 

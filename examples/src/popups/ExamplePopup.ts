@@ -1,5 +1,5 @@
-import { GREEN } from '@/utils/Constants';
-import { Popup, Container } from 'dill-pixel';
+import { buttonStyle, GREEN } from '@/utils/Constants';
+import { Container, Popup } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Point, Sprite, Text } from 'pixi.js';
 
@@ -19,7 +19,6 @@ export default class ExamplePopup extends Popup {
 
     if (this.blackout) {
       this.blackout.alpha = 0;
-      this.blackout.eventMode = 'none';
     }
 
     this._bg = this.add.coloredSprite({
@@ -34,18 +33,18 @@ export default class ExamplePopup extends Popup {
     super.show(token);
     this._text = this.add.text({
       value: `This is popup ${this._popupData}`,
-      style: { align: 'center', fill: 'white', fontSize: 24, fontFamily: 'Kumbh Sans' },
+      style: { align: 'center', fill: 'black', fontSize: 24, fontFamily: 'Kumbh Sans' },
       anchor: 0.5,
-      position: [0, -40]
+      position: [0, -40],
     });
 
     this._button = this.add.container({
       alpha: 1,
-      position: [0,40],
+      position: [0, 40],
     });
 
     this._button.add.coloredSprite({ color: 0xffffff, size: [200, 60], shape: 'rounded_rectangle', radius: 10 });
-    this._button.add.text({ value: 'Close me', anchor: 0.5 });
+    this._button.add.text({ value: 'Close me', anchor: 0.5, style: { ...buttonStyle, fontSize: 18 } });
     this._button.eventMode = 'static';
     this._button.cursor = 'pointer';
 

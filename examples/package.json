@@ -37,8 +37,8 @@
   "dependencies": {
     "@pixi/filter-drop-shadow": "^5.2.0",
     "@pixi/ui": "^0.9.0",
-    "dill-pixel": "file:..",
     "dat.gui": "^0.7.9",
+    "dill-pixel": "file:..",
     "gsap": "^3"
   }
 }

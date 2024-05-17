@@ -30,6 +30,9 @@ if (nav) {
     a.href = `#${state}`;
     nav.appendChild(a);
     a.addEventListener('click', (e) => {
+      if (e.target.classList.contains('active')) {
+        return;
+      }
       nav.classList.add('disabled');
     });
   });
@@ -54,8 +57,7 @@ if (nav) {
   };
   window.addEventListener('hashchange', checkHash);
 
-  // when interstitial is done loading, re-enable nav
-  document.body.addEventListener('loadComplete', () => {
+  app.signals.stateTransitionComplete.connect(() => {
     nav?.classList.remove('disabled');
   });
 

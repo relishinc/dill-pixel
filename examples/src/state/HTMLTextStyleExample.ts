@@ -1,7 +1,7 @@
 import { BaseState } from '@/state/BaseState';
-import { AssetMapData, getHTMLTextStyle, loadAndAddHTMLTextStyle, delay } from 'dill-pixel';
+import { AssetMapData, getHTMLTextStyle, loadAndAddHTMLTextStyle } from 'dill-pixel';
 import { Point } from 'pixi.js';
-import { FONT_ARBORIA, FONT_TIMES, FONT_HELVETICA } from '../utils/Constants';
+import { FONT_ARBORIA, FONT_HELVETICA, FONT_TIMES } from '../utils/Constants';
 
 export class HTMLTextStyleExample extends BaseState {
   public static get NAME(): string {
@@ -17,7 +17,7 @@ export class HTMLTextStyleExample extends BaseState {
 
     this.setHeaderText('HTML text example');
     this.setMainText('Load HTML text styles and apply them to text elements');
-    
+
     const list = this.add.flexContainer({
       flexDirection: 'column',
       alignItems: 'center',
@@ -28,12 +28,12 @@ export class HTMLTextStyleExample extends BaseState {
     // built-in web fonts
     list.add.htmlText('This will render in Times', { fontFamily: FONT_TIMES, fontSize: 40 });
     list.add.htmlText('This will render in Helvetica', { fontFamily: FONT_HELVETICA, fill: 'blue', fontSize: 40 });
-    
+
     // load and add the test style using the helper
     await loadAndAddHTMLTextStyle(
       'arboria',
       FONT_ARBORIA,
-      { fontFamily: FONT_ARBORIA, fontSize: 40, fill: 'white', fontWeight: 'bold', align: 'center' },
+      { fontFamily: FONT_ARBORIA, fontSize: 40, fill: 'white', fontWeight: 'bold', align: 'left' },
       {
         url: 'assets/fonts/arboria.woff2',
         weight: 'bold',
@@ -44,6 +44,6 @@ export class HTMLTextStyleExample extends BaseState {
     const style = getHTMLTextStyle('arboria');
 
     // and use it
-    list.add.htmlText('This will render in Arboria', style);
+    const text = list.add.htmlText('This will render in Arboria', style);
   }
 }

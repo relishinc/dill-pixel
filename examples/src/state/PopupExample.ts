@@ -1,15 +1,8 @@
 import ExamplePopup from '@/popups/ExamplePopup';
 import { BaseState } from '@/state/BaseState';
-import {
-  AssetMapData,
-  Container,
-  hideAllPopups,
-  PopupToken,
-  showPopup,
-  Signals,
-  TextureAtlasAsset,
-} from 'dill-pixel';
+import { AssetMapData, Container, hideAllPopups, showPopup, Signals, TextureAtlasAsset } from 'dill-pixel';
 import { Point } from 'pixi.js';
+import { buttonStyle } from '../utils/Constants';
 
 export class PopupExample extends BaseState {
   count: number = 0;
@@ -44,17 +37,18 @@ export class PopupExample extends BaseState {
 
     this._button = this.add.container({
       alpha: 1,
-      position: [0,250],
+      position: [0, 250],
     });
 
     this._button.add.coloredSprite({ color: 0xffffff, size: [200, 60], shape: 'rounded_rectangle', radius: 10 });
-    this._button.add.text({ value: 'Click me', anchor: 0.5 });
+    this._button.add.text({ value: 'Click me', anchor: 0.5, style: buttonStyle });
     this._button.eventMode = 'static';
     this._button.cursor = 'pointer';
 
     this._button.on('pointerdown', (e) => {
       this.count++;
-      showPopup(new PopupToken(ExamplePopup.NAME, this.onClose, true, false, this.count));
+      // showPopup(new PopupToken(ExamplePopup.NAME, this.onClose, true, false, this.count));
+      showPopup({ id: ExamplePopup.NAME, callback: this.onClose, backdrop: true, keyboard: true, data: this.count });
     });
 
     window.addEventListener('keydown', (e) => {

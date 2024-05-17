@@ -1,15 +1,7 @@
 import { BaseState } from '@/state/BaseState';
-import {
-  AssetMapData,
-  AssetType,
-  PhysicsBodyType,
-  PhysicsEngineType,
-  PointLike,
-  RapierPhysics,
-  RapierPhysicsComposite,
-  TextureAsset,
-} from 'dill-pixel';
+import { AssetMapData, AssetType, PhysicsBodyType, PhysicsEngineType, RapierPhysics, TextureAsset } from 'dill-pixel';
 import { Point } from 'pixi.js';
+import { RapierPhysicsCompositeExample } from './gameobjects/RapierPhysicsCompositeExample';
 
 export class RapierPhysicsExample extends BaseState {
   public static NAME: string = 'RapierPhysicsExample';
@@ -66,7 +58,8 @@ export class RapierPhysicsExample extends BaseState {
     this.on('pointerdown', (e) => {
       const pt = e.getLocalPosition(this);
       const type = Math.random() > 0.5 ? PhysicsBodyType.CIRCLE : PhysicsBodyType.RECTANGLE;
-      const size: [number, number?] | number = type === PhysicsBodyType.CIRCLE ? this.getObjectSize() : [this.getObjectSize(), this.getObjectSize()];
+      const size: [number, number?] | number =
+        type === PhysicsBodyType.CIRCLE ? this.getObjectSize() : [this.getObjectSize(), this.getObjectSize()];
 
       // make a random colored texture from graphics
       gfx.clear();
@@ -74,12 +67,12 @@ export class RapierPhysicsExample extends BaseState {
 
       const useComposite = Math.random() > 0.75;
 
-      if ( !useComposite) {
+      if (!useComposite) {
         if (type === PhysicsBodyType.CIRCLE) {
           gfx.drawCircle(0, 0, (size as number) * 0.5);
           gfx.endFill();
           const useJar = Math.random() > 0.5;
-  
+
           this.physics.add.physicsSprite({
             asset: useJar ? 'jar' : this.app.renderer.generateTexture(gfx),
             size,
@@ -91,7 +84,7 @@ export class RapierPhysicsExample extends BaseState {
           gfx.drawRect(0, 0, (size as [number, number])[0], (size as [number, number])[1]);
           gfx.endFill();
           this.physics.add.physicsSprite({
-            asset: this.app.renderer.generateTexture(gfx), 
+            asset: this.app.renderer.generateTexture(gfx),
             size,
             bodyType: type,
             mass: 1,
@@ -100,7 +93,7 @@ export class RapierPhysicsExample extends BaseState {
         }
         gfx.clear();
       } else {
-        const composite = new RapierPhysicsComposite();
+        const composite = new RapierPhysicsCompositeExample();
         composite.x = pt.x;
         composite.y = pt.y;
         this.physics.add.existing(composite);

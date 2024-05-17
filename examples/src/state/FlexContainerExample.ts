@@ -4,8 +4,8 @@ import { Point, Sprite, TextStyle } from 'pixi.js';
 
 const whiteTextStyle = (size: number) =>
   new TextStyle({
-    fontFamily: 'Arial',
-    fontWeight: 'bold',
+    fontFamily: 'Kumbh Sans',
+    fontWeight: '600',
     fill: 0xffffff,
     fontSize: size ?? 24,
   });
@@ -44,7 +44,13 @@ export class FlexContainerExample extends BaseState {
     this.setHeaderText('Flex container example');
     this.setMainText('Use the controls to adjust the flex container properties');
 
-    this.backing = this.add.coloredSprite({ color: 0x000000, size: [size.x, size.y], shape: 'rectangle', alpha: 0.25, anchor: 0 });
+    this.backing = this.add.coloredSprite({
+      color: 0x000000,
+      size: [size.x, size.y],
+      shape: 'rectangle',
+      alpha: 0.25,
+      anchor: 0,
+    });
 
     this.flexContainer = this.add.flexContainer({
       gap: this.config.gap as number,

@@ -9,6 +9,7 @@ import {
   registerFocusables,
 } from 'dill-pixel';
 import { Point } from 'pixi.js';
+import { buttonStyle } from '../utils/Constants';
 
 export class ButtonExample extends BaseState {
   count: number = 0;
@@ -85,7 +86,7 @@ export class ButtonExample extends BaseState {
       }),
     );
     button.name = name;
-    const label = button.add.text({ value: name, anchor: 0.5 });
+    const label = button.add.text({ value: name, anchor: 0.5, style: buttonStyle });
     button.eventMode = 'static';
     button.cursor = 'pointer';
 
