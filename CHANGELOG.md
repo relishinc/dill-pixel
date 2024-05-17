@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.1.9](https://github.com/relishinc/dill-pixel/compare/v3.1.8...v3.1.9) (2024-05-17)
+
+
+### Bug Fixes
+
+* added close method to Popup ([ada5cc7](https://github.com/relishinc/dill-pixel/commit/ada5cc7f52ccbce0f4a042116ef2959fafa08fd0))
+* focus management in examples ([ada5cc7](https://github.com/relishinc/dill-pixel/commit/ada5cc7f52ccbce0f4a042116ef2959fafa08fd0))
+
 ## [3.1.8](https://github.com/relishinc/dill-pixel/compare/v3.1.7...v3.1.8) (2024-05-17)
 
 
