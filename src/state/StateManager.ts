@@ -360,7 +360,9 @@ export class StateManager<T extends Application = Application> extends Container
         // get the current state id
         const hashId = this.getStateFromHash();
         if (hashId && this._currentStateId.toLowerCase() !== hashId.toLowerCase()) {
+          this._isTransitioning = true;
           window.location.hash = this._currentStateId.toLowerCase();
+          this._isTransitioning = false;
         }
       });
     }
