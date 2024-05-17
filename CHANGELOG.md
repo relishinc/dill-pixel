@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.4](https://github.com/relishinc/dill-pixel/compare/v3.1.3...v3.1.4) (2024-05-17)
+
+
+### Bug Fixes
+
+* use of setter in Application.ts ([4583f47](https://github.com/relishinc/dill-pixel/commit/4583f478d682026f91e9c0d814c5967c5e0580fb))
+
 ## [3.1.3](https://github.com/relishinc/dill-pixel/compare/v3.1.2...v3.1.3) (2024-05-17)
 
 
