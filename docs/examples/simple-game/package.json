@@ -11,7 +11,7 @@
   },
   "author": "Me<me@myname.com>",
   "dependencies": {
-    "dill-pixel": "^3.1.7",
+    "dill-pixel": "^3.1.9",
     "typescript": "^5",
     "vite": "^5",
     "vite-plugin-static-copy": "^1"
