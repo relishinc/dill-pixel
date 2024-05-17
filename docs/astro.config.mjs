@@ -53,8 +53,8 @@ export default defineConfig({
             { label: 'State Management', link: '/fundamentals/state' },
             { label: 'Layout', link: '/fundamentals/layout' },
             { label: 'Copy and Content', link: '/fundamentals/copy' },
+            { label: 'Web Events', link: '/fundamentals/web-events' },
             /*
-            { label: 'Events', link: '/fundamentals/events' },
             { label: 'Inputs', link: '/fundamentals/inputs' },
             { label: 'Assets', link: '/fundamentals/assets' },
             */
