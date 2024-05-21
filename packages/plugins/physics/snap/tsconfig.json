@@ -4,13 +4,11 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "rootDir": "./src",
-    "baseUrl": ".",
     "outDir": "./lib",
     "lib": [
       "ESNext",
       "DOM"
     ],
-    "composite": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -32,7 +30,6 @@
   ],
   "exclude": [
     "./lib",
-    "./node_modules",
-    "./.cache"
+    "./node_modules"
   ]
 }

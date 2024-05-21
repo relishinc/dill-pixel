@@ -1,7 +1,7 @@
 import { FederatedEvent, PointerEvents } from 'pixi.js';
 import { Application } from '../core/Application';
 import { PIXIContainer } from '../pixi';
-import { IFocusable } from '../plugins/focus/FocusManager';
+import { IFocusable } from '../plugins/focus/FocusManagerPlugin';
 import { Signal } from '../signals';
 import { Constructor, PointLike } from '../utils/types';
 

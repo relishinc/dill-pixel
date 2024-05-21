@@ -5,7 +5,7 @@ import { Size } from '../utils/types';
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
 
-export interface IWebEventsManager extends IPlugin {
+export interface IWebEventsPlugin extends IPlugin {
   onResize: Signal<(size: { width: number; height: number }) => void>;
   onVisibilityChanged: Signal<(visible: boolean) => void>;
 }
@@ -13,8 +13,8 @@ export interface IWebEventsManager extends IPlugin {
 /**
  * Maintains a list of callbacks for specific web events and invokes callbacks when event occurs.
  */
-export class WebEventsManager extends Plugin implements IWebEventsManager {
-  public readonly id = 'WebEventsManager';
+export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
+  public readonly id = 'webEvents';
 
   // signals
   public onResize: Signal<(size: Size) => void> = new Signal<(size: Size) => void>();

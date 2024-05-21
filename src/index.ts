@@ -1,10 +1,15 @@
 /**
  * This is the main entry point for the library. It exports all the necessary classes, types, and utilities.
  */
+import type { IPlugin } from './plugins/Plugin';
+import { Plugin } from './plugins/Plugin';
 
 export * from './pixi';
 
 // core
+export type { IPlugin };
+export { Plugin };
+
 /**
  * Export the Application class from the 'core' module.
  * This class is used to create a new application instance.
@@ -20,37 +25,23 @@ export type { IApplication, AppConfig } from './core/Application';
  * Export various types from the 'modules' module.
  * These types are used for type checking the different modules of the application.
  */
-export type { IAssetManager } from './plugins/AssetManager';
-export type { ISceneManager, LoadSceneMethod } from './plugins/SceneManager';
-export type { IWebEventsManager } from './plugins/WebEventsManager';
-export type { IKeyboardManager, KeyboardEventDetail } from './plugins/KeyboardManager';
-export type { IFocusable, IFocusManager, FocusManagerOptions } from './plugins/focus/FocusManager';
+export type { IAssetsPlugin } from './plugins/AssetsPlugin';
+export type { ISceneManagerPlugin, LoadSceneMethod } from './plugins/SceneManagerPlugin';
+export type { IWebEventsPlugin } from './plugins/WebEventsPlugin';
+export type { IPopupManagerPlugin } from './plugins/popups/PopupManagerPlugin';
+export type { IKeyboardPlugin, KeyboardEventDetail } from './plugins/KeyboardPlugin';
+export type { IFocusable, IFocusManagerPlugin, FocusManagerPluginOptions } from './plugins/focus/FocusManagerPlugin';
 export type { IFocusOutliner, FocusOutlinerConfig } from './plugins/focus/FocusOutliner';
 export { FocusOutliner } from './plugins/focus/FocusOutliner';
-export type { IAudioManager } from './plugins/audio/AudioManager';
+export type { IAudioManagerPlugin } from './plugins/audio/AudioManagerPlugin';
 export type { Ii18nPlugin, i18nOptions } from './plugins/i18nPlugin';
-export type { IResizer } from './plugins/Resizer';
-export type { IInputManager, ActionDetail } from './plugins/InputManager';
+export type { IResizerPlugin } from './plugins/ResizerPlugin';
+export type { IInputPlugin, ActionDetail } from './plugins/InputPlugin';
 export type { ICaptionsPlugin, CaptionsOptions } from './plugins/captions/CaptionsPlugin';
 export type { ICaptionRenderer } from './plugins/captions/CaptionsRenderer';
 export type { IVoiceOverPlugin } from './plugins/audio/VoiceOverPlugin';
-export type { IPlugin } from './plugins/Plugin';
 
-export { Plugin } from './plugins/Plugin';
-export { AssetManager } from './plugins/AssetManager';
-export { i18nPlugin } from './plugins/i18nPlugin';
-export { KeyboardManager } from './plugins/KeyboardManager';
-export { Resizer } from './plugins/Resizer';
-export { SceneManager } from './plugins/SceneManager';
-export { SpinePlugin } from './plugins/spine/SpinePlugin';
-export { StatsPlugin } from './plugins/StatsPlugin';
-export { WebEventsManager } from './plugins/WebEventsManager';
-export { InputManager, ActionContext, Action } from './plugins/InputManager';
-export { CaptionsPlugin } from './plugins/captions/CaptionsPlugin';
-export { VoiceOverPlugin } from './plugins/audio/VoiceOverPlugin';
-
-export { default as defaultModules } from './plugins/defaultPlugins';
-
+export { ActionContext, Action } from './plugins/InputPlugin';
 /**
  * Export the StorageAdapter and LocalStorageAdapter classes from the 'store' module.
  * These classes are used for managing the application's storage.
@@ -112,9 +103,9 @@ export { Popup } from './display/Popup';
 export type { PopupConfig } from './display/Popup';
 export { Button } from './display/Button';
 export { Scene } from './display/Scene';
-export { FlexContainer } from './display/FlexContainer';
 export { Camera } from './display/Camera';
 export type { ICamera } from './display/Camera';
+export { FlexContainer } from './display/FlexContainer';
 export { UICanvas } from './display/UICanvas';
 export { SpineAnimation } from './display/SpineAnimation';
 export type { ISpineAnimation } from './display/SpineAnimation';
@@ -146,3 +137,8 @@ export type { SignalConnection } from './signals/Signal';
  * This function is used to create a new application instance.
  */
 export { create } from './core/create';
+
+/**
+ * third party stuff
+ */
+export type { Spine } from './plugins/spine/pixi-spine';

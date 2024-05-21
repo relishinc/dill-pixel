@@ -12,7 +12,7 @@ import type { IPlugin } from '../Plugin';
 import { Plugin } from '../Plugin';
 import { FocusOutliner, FocusOutlinerConfig, IFocusOutliner } from './FocusOutliner';
 
-export type FocusManagerOptions = {
+export type FocusManagerPluginOptions = {
   outliner: IFocusOutliner | Partial<FocusOutlinerConfig> | typeof FocusOutliner;
   usePixiAccessibility: boolean;
 };
@@ -198,7 +198,7 @@ class FocusLayer implements IFocusLayer {
 
 export type FocusChangeDetail = { layer: string | number | null; focusable: IFocusable | null };
 
-export interface IFocusManager extends IPlugin {
+export interface IFocusManagerPlugin extends IPlugin {
   readonly view: Container;
   readonly layerCount: number;
   readonly currentLayerId: string | number | null;
@@ -243,8 +243,8 @@ export interface IFocusManager extends IPlugin {
   removeAllFocusLayers(): void;
 }
 
-export class FocusManager extends Plugin implements IFocusManager {
-  public override readonly id: string = 'FocusManager';
+export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
+  public override readonly id: string = 'focus';
   public readonly view = new Container();
   // signals
   public onFocusManagerActivated: Signal<() => void> = new Signal<() => void>();
@@ -257,7 +257,7 @@ export class FocusManager extends Plugin implements IFocusManager {
   private _focusOutliner: IFocusOutliner;
   private _focusTarget: IFocusable | null = null;
   private _keyboardActive: boolean = false;
-  private _options: FocusManagerOptions;
+  private _options: FocusManagerPluginOptions;
 
   private _layers: Map<string | number, IFocusLayer> = new Map();
 
@@ -293,14 +293,14 @@ export class FocusManager extends Plugin implements IFocusManager {
 
   public initialize(app: IApplication): void {
     bindMethods(this, 'removeAllFocusLayers', '_handleGlobalMouseMove', '_handleGlobalPointerDown');
-    const options: Partial<FocusManagerOptions> = app.config?.focusOptions || {};
+    const options: Partial<FocusManagerPluginOptions> = app.config?.focusOptions || {};
     options.usePixiAccessibility = options.usePixiAccessibility ?? false;
     this._focusOutliner =
       typeof options?.outliner === 'function'
         ? new (options.outliner as Constructor<IFocusOutliner>)()
         : new FocusOutliner(options.outliner as Partial<FocusOutlinerConfig>);
 
-    this._options = options as FocusManagerOptions;
+    this._options = options as FocusManagerPluginOptions;
 
     this.view.addChild(this._focusOutliner as unknown as PIXIContainer);
 

@@ -7,7 +7,7 @@ import {IPlugin, Plugin} from './Plugin';
 /**
  * Interface for Resizer module.
  */
-export interface IResizePlugin extends IPlugin {
+export interface IResizerPlugin extends IPlugin {
   size: Size;
 
   resize(): void;
@@ -16,7 +16,7 @@ export interface IResizePlugin extends IPlugin {
 /**
  * Type definition for Resizer options.
  */
-export type ResizePluginOptions = {
+export type ResizerPluginOptions = {
   autoScroll: boolean;
   useAspectRatio: boolean;
   fixed: boolean;
@@ -28,7 +28,7 @@ export type ResizePluginOptions = {
 /**
  * Default options for Resizer module.
  */
-const defaultOptions: ResizePluginOptions = {
+const defaultOptions: ResizerPluginOptions = {
   autoScroll: false,
   useAspectRatio: false,
   fixed: false,
@@ -37,9 +37,9 @@ const defaultOptions: ResizePluginOptions = {
   debug: false,
 };
 
-export class ResizePlugin extends Plugin implements IResizePlugin {
+export class ResizerPlugin extends Plugin implements IResizerPlugin {
   public readonly id = 'resizer';
-  private _options: ResizePluginOptions;
+  private _options: ResizerPluginOptions;
   private _debugContainer: Container;
   private _gfx: Graphics;
 
@@ -52,7 +52,7 @@ export class ResizePlugin extends Plugin implements IResizePlugin {
   /**
    * Initializes the Resizer module.
    */
-  async initialize(_app: IApplication, options: Partial<ResizePluginOptions> = {}) {
+  async initialize(_app: IApplication, options: Partial<ResizerPluginOptions> = {}) {
     this._options = { ...defaultOptions, ...options };
   }
 

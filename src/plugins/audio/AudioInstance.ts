@@ -3,7 +3,7 @@ import { gsap } from 'gsap';
 import { Signal } from '../../signals';
 import { bindAllMethods } from '../../utils/methodBinding';
 import { IAudioChannel } from './AudioChannel';
-import { IAudioManager } from './AudioManager';
+import { IAudioManagerPlugin } from './AudioManagerPlugin';
 
 export interface IAudioInstance {
   volume: number;
@@ -11,7 +11,7 @@ export interface IAudioInstance {
   channel: IAudioChannel;
   muted: boolean;
   id: string;
-  manager: IAudioManager;
+  manager: IAudioManagerPlugin;
   onStart: Signal<(instance: IAudioInstance) => void>;
   onStop: Signal<(instance: IAudioInstance) => void>;
   onEnd: Signal<(instance: IAudioInstance) => void>;
@@ -47,19 +47,17 @@ export class AudioInstance implements IAudioInstance {
   public onPaused: Signal<(instance: IAudioInstance) => void> = new Signal<(instance: IAudioInstance) => void>();
   public onResumed: Signal<(instance: IAudioInstance) => void> = new Signal<(instance: IAudioInstance) => void>();
   public onProgress: Signal<(instance: IAudioInstance) => void> = new Signal<(instance: IAudioInstance) => void>();
-  private _media: IMediaInstance;
-  private _volume: number = 1;
-  private _muted: boolean = false;
-  private _isPlaying: boolean = false;
 
   constructor(
     public id: string,
     public channel: IAudioChannel,
-    public manager: IAudioManager,
+    public manager: IAudioManagerPlugin,
   ) {
     bindAllMethods(this);
     this.muted = this.channel.muted;
   }
+
+  private _media: IMediaInstance;
 
   get media(): IMediaInstance {
     return this._media;
@@ -76,16 +74,7 @@ export class AudioInstance implements IAudioInstance {
     }
   }
 
-  get muted(): boolean {
-    return this._muted;
-  }
-
-  set muted(value: boolean) {
-    this._muted = value;
-    if (this._media) {
-      this._media.muted = this._muted;
-    }
-  }
+  private _volume: number = 1;
 
   public get volume(): number {
     return this._volume;
@@ -97,6 +86,21 @@ export class AudioInstance implements IAudioInstance {
       this._media.volume = this._volume * this.channel.volume * this.manager.masterVolume;
     }
   }
+
+  private _muted: boolean = false;
+
+  get muted(): boolean {
+    return this._muted;
+  }
+
+  set muted(value: boolean) {
+    this._muted = value;
+    if (this._media) {
+      this._media.muted = this._muted;
+    }
+  }
+
+  private _isPlaying: boolean = false;
 
   get isPlaying() {
     return this._isPlaying;

@@ -1,11 +1,10 @@
-import { Assets } from 'pixi.js';
-import { IApplication } from '../core/Application';
-import { CoreFunction, CorePlugin } from '../core/decorators';
-import { Signal } from '../signals';
-import { Logger } from '../utils/console/Logger';
-import { getDynamicModuleFromImportListItem } from '../utils/framework';
-import { ImportListItem, ImportListItemModule } from '../utils/types';
-import { IPlugin, Plugin } from './Plugin';
+import {Assets} from 'pixi.js';
+import {IApplication} from '../core/Application';
+import {Signal} from '../signals';
+import {Logger} from '../utils/console/Logger';
+import {getDynamicModuleFromImportListItem} from '../utils/framework';
+import {ImportListItem, ImportListItemModule} from '../utils/types';
+import {IPlugin, Plugin} from './Plugin';
 
 /**
  * Type definition for i18n dictionary.
@@ -15,7 +14,7 @@ export type i18nDict = Record<string, any>;
 /**
  * Type definition for i18n translation parameters.
  */
-type i18nTParams = { variant?: number | 'random' } & Record<string, any>;
+export type i18nTParams = { variant?: number | 'random' } & Record<string, any>;
 
 /**
  * Type definition for i18n import list item.
@@ -69,14 +68,14 @@ export interface Ii18nPlugin extends IPlugin {
 /**
  * i18n module class.
  */
-@CorePlugin
 export class i18nPlugin extends Plugin implements Ii18nPlugin {
   public readonly id = 'i18n';
   public onLocaleChanged: Signal<(locale: string) => void> = new Signal<(locale: string) => void>();
 
   private _dicts: Record<string, i18nDict> = {};
-  private _locale: string;
   private _options: i18nOptions;
+
+  private _locale: string;
 
   /**
    * Getter for locale.
@@ -116,7 +115,7 @@ export class i18nPlugin extends Plugin implements Ii18nPlugin {
    * @param localeId The locale id to set.
    * @returns Promise<string>
    */
-  @CoreFunction
+
   async setLocale(localeId: string) {
     this._locale = localeId;
     await this._loadAndSetLocale(localeId);
@@ -134,7 +133,7 @@ export class i18nPlugin extends Plugin implements Ii18nPlugin {
    * @param locale The locale to use for translation.
    * @returns The translated string.
    */
-  @CoreFunction
+
   t(key: string, params?: i18nTParams, locale: string = this._locale): string {
     const dict = this._dicts[locale];
     if (!dict) {
@@ -218,6 +217,14 @@ export class i18nPlugin extends Plugin implements Ii18nPlugin {
     this._dicts[localeId] = file.json
       ? await Assets.load(file.json)
       : await getDynamicModuleFromImportListItem(file as ImportListItem<i18nDict>);
+  }
+
+  protected getCoreFunctions(): string[] {
+    return ['t', 'setLocale'];
+  }
+
+  protected getCoreSignals(): string[] {
+    return ['onLocaleChanged'];
   }
 
   /**

@@ -40,7 +40,7 @@ export type LoadSceneConfig = {
 };
 
 export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
-  public readonly id: string = 'SceneManager';
+  public readonly id: string = 'scenes';
   public onSceneChangeStart: Signal<(detail: { exiting: string | null; entering: string }) => void> = new Signal<
     (detail: { exiting: string | null; entering: string }) => void
   >();

@@ -5,7 +5,7 @@ import { Application, IApplication } from '../core/Application';
 import { bindAllMethods } from '../utils/methodBinding';
 import { Logger } from '../utils/console/Logger';
 import { resolvePointLike } from '../utils/functions';
-import { KeyboardEventDetail } from '../plugins/KeyboardManager';
+import { KeyboardEventDetail } from '../plugins/KeyboardPlugin';
 
 type CameraCOnfig = {
   container: Container;

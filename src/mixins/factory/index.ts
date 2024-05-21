@@ -1,4 +1,3 @@
-/// <reference types="@pixi/spine-pixi" />
 import { BitmapText, Container as PIXIContainer, Graphics, Sprite, Text } from 'pixi.js';
 import { Button, ButtonConfig, ButtonConfigKeys } from '../../display/Button';
 import { Container } from '../../display/Container';
@@ -160,6 +159,7 @@ export const defaultFactoryMethods = {
     }
     const entity: import('../../plugins/spine/pixi-spine/Spine').Spine = (window as any).Spine.from(data);
     if (!props) return entity;
+    console.log('adding spine', props, entity);
     if (props.autoUpdate !== undefined) entity.autoUpdate = props.autoUpdate;
     if (props.animationName) entity.state.setAnimation(props.trackIndex ?? 0, props.animationName, props.loop);
     const { position, x, y, anchor, pivot, scale, scaleX, scaleY, ...rest } = props;

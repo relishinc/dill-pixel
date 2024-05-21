@@ -17,7 +17,7 @@ export type InputManagerOptions = {
 
 export type ActionSignal<T = any> = Signal<(detail: ActionDetail<T>) => void>;
 
-export interface IInputManager extends IPlugin {
+export interface IInputPlugin extends IPlugin {
   activeGamepads: Map<string, Gamepad>;
   activeControllers: Set<string>;
   options: InputManagerOptions;
@@ -81,8 +81,8 @@ export type ActionDetail<T = any> = {
   data?: T;
 };
 
-export class InputManager extends Plugin implements IInputManager {
-  public readonly id = 'InputManager';
+export class InputPlugin extends Plugin implements IInputPlugin {
+  public readonly id = 'input';
   // properties
   public activeGamepads = new Map<string, Gamepad>();
   public activeControllers = new Set<string>([]);

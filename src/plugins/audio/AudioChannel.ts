@@ -1,5 +1,5 @@
 import { IAudioInstance } from './AudioInstance';
-import { IAudioManager } from './AudioManager';
+import { IAudioManagerPlugin } from './AudioManagerPlugin';
 
 export interface IAudioChannel {
   name: string;
@@ -18,16 +18,16 @@ export interface IAudioChannel {
 }
 
 export class AudioChannel {
-  private _muted: boolean = false;
-  private _volume: number = 1.0;
   private _sounds: Map<string, IAudioInstance> = new Map<string, IAudioInstance>();
 
   constructor(
     public name: string,
-    public manager: IAudioManager,
+    public manager: IAudioManagerPlugin,
   ) {
     this.muted = this.manager.muted;
   }
+
+  private _muted: boolean = false;
 
   get muted(): boolean {
     return this._muted;
@@ -37,6 +37,8 @@ export class AudioChannel {
     this._muted = value;
     this._setMuted();
   }
+
+  private _volume: number = 1.0;
 
   get volume(): number {
     return this._volume;

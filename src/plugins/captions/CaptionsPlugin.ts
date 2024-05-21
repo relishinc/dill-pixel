@@ -1,6 +1,5 @@
 import { Assets, Container, Ticker } from 'pixi.js';
 import { IApplication } from '../../core/Application';
-import { CorePlugin } from '../../core/decorators';
 import { Logger } from '../../utils/console/Logger';
 import { isDev } from '../../utils/env';
 import { getDynamicModuleFromImportListItem } from '../../utils/framework';
@@ -110,7 +109,6 @@ export interface ICaptionsPlugin extends IPlugin {
 /**
  * i18n module class.
  */
-@CorePlugin
 export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
   public readonly id = 'captions';
   public view: Container = new Container();

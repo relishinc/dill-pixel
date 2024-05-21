@@ -1,5 +1,5 @@
 import { Container, Graphics, Point } from 'pixi.js';
-import { Application, ICamera, Logger, PIXIContainer, Signal } from 'dill-pixel';
+import { IApplication, ICamera, Logger, PIXIContainer, Signal } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { Sensor } from './Sensor';
@@ -39,6 +39,7 @@ type SnapPhysicsSystemOptions = {
 
 export class System {
   public static DEFAULT_COLLISION_THRESHOLD: number = 2;
+  public static app: IApplication;
   public static container: Container<any>;
   public static grid: SpatialHashGrid | null;
   public static fps: number;
@@ -336,14 +337,13 @@ export class System {
   }
 
   static initialize(opts: Partial<SnapPhysicsSystemOptions>) {
-    console.log('SYSTEM INITIALIZED');
     System.enabled = true;
     if (opts.gravity) {
       System.gravity = opts.gravity;
     }
     if (opts.fps) {
       System.fps = opts.fps;
-      Application.getInstance().ticker.maxFPS = opts.fps;
+      this.app.ticker.maxFPS = opts.fps;
     }
     if (opts.container) {
       System.setContainer(opts.container);

@@ -1,9 +1,7 @@
 import { Ticker, UPDATE_PRIORITY } from 'pixi.js';
 import { Application } from '../core/Application';
-import { CorePlugin } from '../core/decorators';
 import { Plugin } from './Plugin';
 
-@CorePlugin
 export class StatsPlugin extends Plugin {
   public readonly id = 'StatsPlugin';
   public stats: any;

@@ -35,12 +35,37 @@ export class SpineTexture extends Texture {
   private static readonly textureMap: Map<TextureSource, SpineTexture> = new Map<TextureSource, SpineTexture>();
   public readonly texture: PixiTexture;
 
+  private constructor(image: TextureSource) {
+    // Todo: maybe add error handling if you feed a video texture to spine?
+    super(image.resource);
+    this.texture = PixiTexture.from(image);
+  }
+
   public static from(texture: TextureSource): SpineTexture {
     if (SpineTexture.textureMap.has(texture)) {
       return SpineTexture.textureMap.get(texture) as SpineTexture;
     }
 
     return new SpineTexture(texture);
+  }
+
+  public static toPixiBlending(blend: BlendMode): BLEND_MODES {
+    switch (blend) {
+      case BlendMode.Normal:
+        return 'normal';
+
+      case BlendMode.Additive:
+        return 'add';
+
+      case BlendMode.Multiply:
+        return 'multiply';
+
+      case BlendMode.Screen:
+        return 'screen';
+
+      default:
+        throw new Error(`Unknown blendMode: ${String(blend)}`);
+    }
   }
 
   private static toPixiMipMap(filter: TextureFilter): boolean {
@@ -91,31 +116,6 @@ export class SpineTexture extends Texture {
       default:
         throw new Error(`Unknown texture wrap: ${String(wrap)}`);
     }
-  }
-
-  public static toPixiBlending(blend: BlendMode): BLEND_MODES {
-    switch (blend) {
-      case BlendMode.Normal:
-        return 'normal';
-
-      case BlendMode.Additive:
-        return 'add';
-
-      case BlendMode.Multiply:
-        return 'multiply';
-
-      case BlendMode.Screen:
-        return 'screen';
-
-      default:
-        throw new Error(`Unknown blendMode: ${String(blend)}`);
-    }
-  }
-
-  private constructor(image: TextureSource) {
-    // Todo: maybe add error handling if you feed a video texture to spine?
-    super(image.resource);
-    this.texture = PixiTexture.from(image);
   }
 
   public setFilters(minFilter: TextureFilter, magFilter: TextureFilter): void {

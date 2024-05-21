@@ -7,7 +7,7 @@ export type KeyboardEventType = 'keydown' | 'keyup';
 export type KeyboardEventDetail = { event: KeyboardEvent; key: string };
 export type KeySignal = Signal<(detail: KeyboardEventDetail) => void>;
 
-export interface IKeyboardManager extends IPlugin {
+export interface IKeyboardPlugin extends IPlugin {
   enabled: boolean;
 
   onKeyDown(key?: string): KeySignal;
@@ -17,8 +17,8 @@ export interface IKeyboardManager extends IPlugin {
   isKeyDown(key: string): boolean;
 }
 
-export class KeyboardManager extends Plugin implements IKeyboardManager {
-  public readonly id: string = 'KeyboardManager';
+export class KeyboardPlugin extends Plugin implements IKeyboardPlugin {
+  public readonly id: string = 'keyboard';
   // global signals
   public onGlobalKeyDown: Signal<(detail: KeyboardEventDetail) => void> = new Signal();
   public onGlobalKeyUp: Signal<(detail: KeyboardEventDetail) => void> = new Signal();

@@ -27,8 +27,9 @@
  * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-import type { Bounds } from 'pixi.js';
 import { type Bone, ClippingAttachment, MeshAttachment, RegionAttachment, type Skeleton } from '../spine-core';
+
+import type { Bounds } from 'pixi.js';
 
 const QUAD_VERTS = new Float32Array(8);
 const tempVerts: number[] = [];

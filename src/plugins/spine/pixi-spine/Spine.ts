@@ -28,6 +28,8 @@
  *****************************************************************************/
 
 import { Assets, Bounds, Cache, Container, ContainerOptions, DestroyOptions, PointData, Ticker, View } from 'pixi.js';
+import { getSkeletonBounds } from './getSkeletonBounds';
+import { ISpineDebugRenderer } from './SpineDebugRenderer';
 import {
   AnimationState,
   AnimationStateData,
@@ -42,8 +44,6 @@ import {
   TrackEntry,
   Vector2,
 } from '../spine-core';
-import { getSkeletonBounds } from './getSkeletonBounds';
-import { ISpineDebugRenderer } from './SpineDebugRenderer';
 
 export type SpineFromOptions = {
   skeleton: string;
@@ -70,8 +70,8 @@ export interface SpineEvents {
 export class Spine extends Container implements View {
   // Pixi properties
   public batched = true;
-  public override readonly renderPipeId = 'spine';
   public buildId = 0;
+  public override readonly renderPipeId = 'spine';
   public _didSpineUpdate = false;
   public _boundsDirty = true;
   // Spine properties
@@ -175,31 +175,6 @@ export class Spine extends Container implements View {
     });
   }
 
-  addBounds(bounds: Bounds) {
-    bounds.addBounds(this.bounds);
-  }
-
-  // passed local space..
-  public containsPoint(_point: PointData) {
-    return false;
-  }
-
-  /**
-   * Destroys this sprite renderable and optionally its texture.
-   * @param options - Options parameter. A boolean will act as if all options
-   *  have been set to that value
-   * @param {boolean} [options.texture=false] - Should it destroy the current texture of the renderable as well
-   * @param {boolean} [options.textureSource=false] - Should it destroy the textureSource of the renderable as well
-   */
-  public override destroy(options: DestroyOptions = false) {
-    super.destroy(options);
-    Ticker.shared.remove(this.internalUpdate, this);
-    this.state.clearListeners();
-    this.debug = undefined;
-    this.skeleton = null as any;
-    this.state = null as any;
-  }
-
   public update(dt: number): void {
     if (this.autoUpdate && !this.autoUpdateWarned) {
       // eslint-disable-next-line max-len
@@ -272,8 +247,10 @@ export class Spine extends Container implements View {
     if (this.didViewUpdate) return;
     this.didViewUpdate = true;
 
-    if (this.renderGroup) {
-      this.renderGroup.onChildViewUpdate(this);
+    const renderGroup = this.renderGroup || this.parentRenderGroup;
+
+    if (renderGroup) {
+      renderGroup.onChildViewUpdate(this);
     }
 
     this.debug?.renderDebug(this);
@@ -299,6 +276,31 @@ export class Spine extends Container implements View {
       this._bounds.maxX = skeletonBounds.maxX;
       this._bounds.maxY = skeletonBounds.maxY;
     }
+  }
+
+  addBounds(bounds: Bounds) {
+    bounds.addBounds(this.bounds);
+  }
+
+  // passed local space..
+  public containsPoint(_point: PointData) {
+    return false;
+  }
+
+  /**
+   * Destroys this sprite renderable and optionally its texture.
+   * @param options - Options parameter. A boolean will act as if all options
+   *  have been set to that value
+   * @param {boolean} [options.texture=false] - Should it destroy the current texture of the renderable as well
+   * @param {boolean} [options.textureSource=false] - Should it destroy the textureSource of the renderable as well
+   */
+  public override destroy(options: DestroyOptions = false) {
+    super.destroy(options);
+    Ticker.shared.remove(this.internalUpdate, this);
+    this.state.clearListeners();
+    this.debug = undefined;
+    this.skeleton = null as any;
+    this.state = null as any;
   }
 
   protected internalUpdate(_deltaFrame: any, deltaSeconds?: number): void {

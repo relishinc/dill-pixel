@@ -10,36 +10,37 @@ import {
   Renderer,
   RendererDestroyOptions,
 } from 'pixi.js';
-import { IScene } from '../display/Scene';
-import { IAssetManager } from '../plugins/AssetManager';
-import { IAudioManager } from '../plugins/audio/AudioManager';
-import { IVoiceOverPlugin } from '../plugins/audio/VoiceOverPlugin';
-import { CaptionsOptions, ICaptionsPlugin } from '../plugins/captions/CaptionsPlugin';
-import defaultPlugins from '../plugins/defaultPlugins';
-import { FocusManagerOptions, IFocusManager } from '../plugins/focus/FocusManager';
-import { i18nOptions, Ii18nPlugin } from '../plugins/i18nPlugin';
-import { Action, ActionContext, ActionSignal, IInputManager } from '../plugins/InputManager';
-import { IKeyboardManager } from '../plugins/KeyboardManager';
+import type { IScene } from '../display/Scene';
+import { AssetsPlugin, IAssetsPlugin } from '../plugins/AssetsPlugin';
+import { AudioManagerPlugin, IAudioManagerPlugin } from '../plugins/audio/AudioManagerPlugin';
+import type { IVoiceOverPlugin } from '../plugins/audio/VoiceOverPlugin';
+import type { CaptionsOptions, ICaptionsPlugin } from '../plugins/captions/CaptionsPlugin';
+import {
+  FocusManagerPlugin,
+  FocusManagerPluginOptions,
+  IFocusManagerPlugin,
+} from '../plugins/focus/FocusManagerPlugin';
+import { i18nOptions, i18nPlugin, Ii18nPlugin } from '../plugins/i18nPlugin';
+import { Action, ActionContext, ActionSignal, IInputPlugin, InputPlugin } from '../plugins/InputPlugin';
+import { IKeyboardPlugin, KeyboardPlugin } from '../plugins/KeyboardPlugin';
 import { IPlugin } from '../plugins/Plugin';
-import { IPopupManager } from '../plugins/popups/PopupManager';
-import { IResizer, ResizerOptions } from '../plugins/Resizer';
-import { ISceneManager, LoadSceneMethod } from '../plugins/SceneManager';
-import { SpinePlugin } from '../plugins/spine/SpinePlugin';
-import { IWebEventsManager } from '../plugins/WebEventsManager';
+import { IPopupManagerPlugin, PopupManagerPlugin } from '../plugins/popups/PopupManagerPlugin';
+import { IResizerPlugin, ResizerPlugin, ResizerPluginOptions } from '../plugins/ResizerPlugin';
+import { ISceneManagerPlugin, LoadSceneMethod, SceneManagerPlugin } from '../plugins/SceneManagerPlugin';
+import { IWebEventsPlugin, WebEventsPlugin } from '../plugins/WebEventsPlugin';
 import { Signal } from '../signals';
-import { IStorageAdapter } from '../store/adapters/StorageAdapter';
+import type { IStorageAdapter } from '../store/adapters/StorageAdapter';
 import { IStore, Store } from '../store/Store';
 import { isPromise } from '../utils/async';
 import { Logger } from '../utils/console/Logger';
 import { isDev } from '../utils/env';
 import { getDynamicModuleFromImportListItem } from '../utils/framework';
 import { bindAllMethods } from '../utils/methodBinding';
-import { ImportList, ImportListItem, SceneImportList, Size, WithRequiredProps } from '../utils/types';
+import type { ImportList, ImportListItem, SceneImportList, Size, WithRequiredProps } from '../utils/types';
 import { coreFunctionRegistry } from './coreFunctionRegistry';
-import { ICoreFunctions } from './CoreFunctions';
+import type { ICoreFunctions } from './ICoreFunctions';
 import { coreSignalRegistry } from './coreSignalRegistry';
-import { ICoreSignals } from './CoreSignals';
-import { MethodBindingRoot } from './decorators';
+import type { ICoreSignals } from './ICoreSignals';
 
 export interface IApplicationOptions extends ApplicationOptions {
   id: string;
@@ -51,13 +52,13 @@ export interface IApplicationOptions extends ApplicationOptions {
   storageAdapters: ImportList<IStorageAdapter>;
   plugins: ImportList<IPlugin>;
   scenes: SceneImportList<IScene>;
-  focusOptions: Partial<FocusManagerOptions>;
+  focusOptions: Partial<FocusManagerPluginOptions>;
   defaultScene: string;
   defaultSceneLoadMethod: LoadSceneMethod;
   showSceneDebugMenu: boolean;
   manifest: AssetsManifest | Promise<AssetsManifest> | string;
   i18n: Partial<i18nOptions>;
-  resizer: Partial<ResizerOptions>;
+  resizer: Partial<ResizerPluginOptions>;
   captions: Partial<CaptionsOptions>;
   showStats: boolean;
 }
@@ -100,16 +101,16 @@ export interface IApplication extends PIXIPApplication {
   readonly size: Size;
   readonly center: Point;
   manifest: AssetsManifest | string | undefined;
-  assets: IAssetManager;
-  scenes: ISceneManager;
-  webEvents: IWebEventsManager;
-  keyboard: IKeyboardManager;
-  focus: IFocusManager;
-  popups: IPopupManager;
-  audio: IAudioManager;
+  assets: IAssetsPlugin;
+  scenes: ISceneManagerPlugin;
+  webEvents: IWebEventsPlugin;
+  keyboard: IKeyboardPlugin;
+  focus: IFocusManagerPlugin;
+  popups: IPopupManagerPlugin;
+  audio: IAudioManagerPlugin;
   i18n: Ii18nPlugin;
-  resizer: IResizer;
-  input: IInputManager;
+  resizer: IResizerPlugin;
+  input: IInputPlugin;
   store: IStore;
 
   actionContext: string | ActionContext;
@@ -125,12 +126,11 @@ export interface IApplication extends PIXIPApplication {
   getPlugin<T extends IPlugin>(name: string): T;
 }
 
-@MethodBindingRoot
 export class Application<R extends Renderer = Renderer> extends PIXIPApplication<R> implements IApplication {
-  //
   public static containerId = 'dill-pixel-game-container';
   public static containerElement: HTMLElement;
-  protected static instance: Application;
+  protected static instance: IApplication;
+  __dill_pixel_method_binding_root = true;
   // config
   public config: Partial<IApplicationOptions>;
   public manifest: string | AssetsManifest | undefined;
@@ -141,13 +141,13 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   // plugins
   protected _plugins: Map<string, IPlugin> = new Map();
   // default plugins
-  protected _assetManager: IAssetManager;
-  protected _sceneManager: ISceneManager;
-  protected _webEventsManager: IWebEventsManager;
-  protected _keyboardManager: IKeyboardManager;
-  protected _focusManager: IFocusManager;
-  protected _popupManager: IPopupManager;
-  protected _audioManager: IAudioManager;
+  protected _assetManager: IAssetsPlugin;
+  protected _sceneManager: ISceneManagerPlugin;
+  protected _webEventsManager: IWebEventsPlugin;
+  protected _keyboardManager: IKeyboardPlugin;
+  protected _focusManager: IFocusManagerPlugin;
+  protected _popupManager: IPopupManagerPlugin;
+  protected _audioManager: IAudioManagerPlugin;
   protected _voiceoverPlugin: IVoiceOverPlugin;
   protected _captionsPlugin: ICaptionsPlugin;
   protected _actions: ActionSignal;
@@ -166,21 +166,21 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this._i18n;
   }
 
-  protected _resizer: IResizer;
+  protected _resizer: IResizerPlugin;
 
-  public get resizer(): IResizer {
+  public get resizer(): IResizerPlugin {
     if (!this._resizer) {
-      this._resizer = this.getPlugin<IResizer>('resizer');
+      this._resizer = this.getPlugin<IResizerPlugin>('resizer');
     }
     return this._resizer;
   }
 
   // input
-  protected _input: IInputManager;
+  protected _input: IInputPlugin;
 
-  public get input(): IInputManager {
+  public get input(): IInputPlugin {
     if (!this._input) {
-      this._input = this.getPlugin<IInputManager>('InputManager');
+      this._input = this.getPlugin<IInputPlugin>('input');
     }
     return this._input;
   }
@@ -199,37 +199,37 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this._center;
   }
 
-  public get assets(): IAssetManager {
+  public get assets(): IAssetsPlugin {
     if (!this._assetManager) {
-      this._assetManager = this.getPlugin<IAssetManager>('AssetManager');
+      this._assetManager = this.getPlugin<IAssetsPlugin>('assets');
     }
     return this._assetManager;
   }
 
-  public get scenes(): ISceneManager {
+  public get scenes(): ISceneManagerPlugin {
     if (!this._sceneManager) {
-      this._sceneManager = this.getPlugin<ISceneManager>('SceneManager');
+      this._sceneManager = this.getPlugin<ISceneManagerPlugin>('scenes');
     }
     return this._sceneManager;
   }
 
-  public get webEvents(): IWebEventsManager {
+  public get webEvents(): IWebEventsPlugin {
     if (!this._webEventsManager) {
-      this._webEventsManager = this.getPlugin<IWebEventsManager>('WebEventsManager');
+      this._webEventsManager = this.getPlugin<IWebEventsPlugin>('webEvents');
     }
     return this._webEventsManager;
   }
 
-  public get keyboard(): IKeyboardManager {
+  public get keyboard(): IKeyboardPlugin {
     if (!this._keyboardManager) {
-      this._keyboardManager = this.getPlugin<IKeyboardManager>('KeyboardManager');
+      this._keyboardManager = this.getPlugin<IKeyboardPlugin>('keyboard');
     }
     return this._keyboardManager;
   }
 
-  public get focus(): IFocusManager {
+  public get focus(): IFocusManagerPlugin {
     if (!this._focusManager) {
-      this._focusManager = this.getPlugin<IFocusManager>('FocusManager');
+      this._focusManager = this.getPlugin<IFocusManagerPlugin>('focus');
     }
     return this._focusManager;
   }
@@ -238,16 +238,16 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this.resizer.size;
   }
 
-  public get popups(): IPopupManager {
+  public get popups(): IPopupManagerPlugin {
     if (!this._popupManager) {
-      this._popupManager = this.getPlugin<IPopupManager>('PopupManager');
+      this._popupManager = this.getPlugin<IPopupManagerPlugin>('popups');
     }
     return this._popupManager;
   }
 
-  public get audio(): IAudioManager {
+  public get audio(): IAudioManagerPlugin {
     if (!this._audioManager) {
-      this._audioManager = this.getPlugin<IAudioManager>('AudioManager');
+      this._audioManager = this.getPlugin<IAudioManagerPlugin>('audio');
     }
     return this._audioManager;
   }
@@ -272,21 +272,6 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       this._captionsPlugin = this.getPlugin<ICaptionsPlugin>('captions');
     }
     return this._captionsPlugin;
-  }
-
-  /**
-   * Returns the global signals
-   */
-  public get globalSignals(): string[] {
-    return Object.keys(coreSignalRegistry);
-  }
-
-  /**
-   * Returns the global functions
-   * @returns {{[functionName: string]: any}}
-   */
-  public get globalFunctions(): string[] {
-    return Object.keys(coreFunctionRegistry);
   }
 
   get isMobile() {
@@ -343,7 +328,6 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     if (Application.instance) {
       throw new Error('Application is already initialized');
     }
-
     Application.instance = this;
     this.config = Object.assign({ ...defaultApplicationOptions }, config);
 
@@ -473,7 +457,11 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
    */
   protected async preInitialize(config: Partial<IApplicationOptions>): Promise<void> {
     if (config.useSpine) {
-      await this.registerPlugin(new SpinePlugin());
+      await this.loadPlugin({
+        id: 'SpinePlugin',
+        module: () => import('../plugins/spine/SpinePlugin'),
+        namedExport: 'SpinePlugin',
+      });
     }
   }
 
@@ -484,15 +472,79 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       return plugin.initialize(this, options);
     }
     Logger.log(`Registering plugin: ${plugin.id}`);
+    plugin.registerCoreFunctions();
+    plugin.registerCoreSignals();
     this._plugins.set(plugin.id, plugin);
     return plugin.initialize(this, options);
   }
 
   protected async registerDefaultPlugins() {
-    for (let i = 0; i < defaultPlugins.length; i++) {
-      const plugin = new defaultPlugins[i]();
-      await this.registerPlugin(plugin, this.config[plugin.id as keyof IApplicationOptions] || undefined);
-    }
+    /*const defaultPlugins: (new () => Plugin)[] = [
+			  AssetsPlugin,
+			  InputPlugin,
+			  SceneManagerPlugin,
+			  WebEventsPlugin,
+			  KeyboardPlugin,
+			  FocusManagerPlugin,
+			  PopupManagerPlugin,
+			  AudioManagerPlugin,
+			  i18nPlugin,
+			  ResizerPlugin,
+			];
+			for (let i = 0; i < defaultPlugins.length; i++) {
+			  const plugin = new defaultPlugins[i]();
+			  await this.registerPlugin(plugin, this.config[plugin.id as keyof IApplicationOptions] || undefined);
+			}*/
+    await this.loadPlugin({
+      id: 'assets',
+      module: () => import('../plugins/AssetsPlugin'),
+      namedExport: 'AssetsPlugin',
+    });
+    await this.loadPlugin({
+      id: 'input',
+      module: () => import('../plugins/InputPlugin'),
+      namedExport: 'InputPlugin',
+    });
+    await this.loadPlugin({
+      id: 'scenes',
+      module: () => import('../plugins/SceneManagerPlugin'),
+      namedExport: 'SceneManagerPlugin',
+    });
+    await this.loadPlugin({
+      id: 'webEvents',
+      module: () => import('../plugins/WebEventsPlugin'),
+      namedExport: 'WebEventsPlugin',
+    });
+    await this.loadPlugin({
+      id: 'keyboard',
+      module: () => import('../plugins/KeyboardPlugin'),
+      namedExport: 'KeyboardPlugin',
+    });
+    await this.loadPlugin({
+      id: 'focus',
+      module: () => import('../plugins/focus/FocusManagerPlugin'),
+      namedExport: 'FocusManagerPlugin',
+    });
+    await this.loadPlugin({
+      id: 'popups',
+      module: () => import('../plugins/popups/PopupManagerPlugin'),
+      namedExport: 'PopupManagerPlugin',
+    });
+    await this.loadPlugin({
+      id: 'audio',
+      module: () => import('../plugins/audio/AudioManagerPlugin'),
+      namedExport: 'AudioManagerPlugin',
+    });
+    await this.loadPlugin({
+      id: 'i18n',
+      module: () => import('../plugins/i18nPlugin'),
+      namedExport: 'i18nPlugin',
+    });
+    await this.loadPlugin({
+      id: 'resizer',
+      module: () => import('../plugins/ResizerPlugin'),
+      namedExport: 'ResizerPlugin',
+    });
     const showStats = this.config.showStats === true || (isDev && this.config.showStats !== false);
     if (showStats) {
       await this.loadPlugin({

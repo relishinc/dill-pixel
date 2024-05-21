@@ -1,6 +1,6 @@
 import { DestroyOptions, Ticker } from 'pixi.js';
+import type { IApplication } from '../core/Application';
 import { Application } from '../core/Application';
-import { MethodBindingRoot } from '../core/decorators';
 import { Animated } from '../mixins/animated';
 import { FactoryContainer } from '../mixins/factory';
 import { WithSignals } from '../mixins/signals';
@@ -14,7 +14,7 @@ const _Container = Animated(WithSignals(FactoryContainer()));
  * Interface for the Container class.
  */
 export interface IContainer {
-  app: Application;
+  app: IApplication;
 
   destroy(options?: DestroyOptions): void;
 
@@ -38,8 +38,9 @@ type ContainerConfig = {
  * The Container class extends the _Container class (which includes the Animated and Factory mixins) and implements the IContainer interface.
  * It represents a container for PIXI.js display objects.
  */
-@MethodBindingRoot
 export class Container<A extends Application = Application> extends _Container implements IContainer {
+  __dill_pixel_method_binding_root = true;
+
   /**
    * The constructor for the Container class.
    * @param __config - The configuration for the container.

@@ -8,7 +8,6 @@ import topLevelAwait from 'vite-plugin-top-level-await';
 const env = process.env.NODE_ENV;
 const cwd = process.cwd();
 
-
 const defaultConfig = {
 	cacheDir: '.cache',
 	logLevel: 'info',
@@ -36,7 +35,7 @@ const defaultConfig = {
 	],
 	resolve: {
 		alias: {
-			'@': path.resolve(cwd, './src'),
+			'@': path.resolve(cwd, './src')
 		},
 	},
 

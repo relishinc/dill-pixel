@@ -14,7 +14,7 @@ export type SoundDetail = { id: string; instance: IAudioInstance; channelName: s
 export type ChannelVolumeDetail = { channel: IAudioChannel; volume: number };
 export type ChannelName = 'music' | 'sfx' | 'voiceover' | string;
 
-export interface IAudioManager extends IPlugin {
+export interface IAudioManagerPlugin extends IPlugin {
   onSoundStarted: Signal<(detail: SoundDetail) => void>;
   onSoundEnded: Signal<(detail: SoundDetail) => void>;
   onMasterVolumeChanged: Signal<(volume: number) => void>;
@@ -84,7 +84,7 @@ export interface IAudioManager extends IPlugin {
  * const audioManager = new AudioManager();
  * audioManager.play('soundId', 'music');
  */
-export class AudioManager extends Plugin implements IAudioManager {
+export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
   // signals
   /**
    * Signal that is emitted when a sound starts playing.
@@ -120,7 +120,7 @@ export class AudioManager extends Plugin implements IAudioManager {
    * Creates a new AudioManager instance.
    * @param {string} id - The ID of the AudioManager. Default is 'AudioManager'.
    */
-  public constructor(id: string = 'AudioManager') {
+  public constructor(id: string = 'audio') {
     super(id);
 
     this.createChannel('music');

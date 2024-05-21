@@ -27,18 +27,20 @@
  * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-import type { AssetExtension, Loader, ResolvedAsset, Texture } from 'pixi.js';
 import {
+  AssetExtension,
   checkExtension,
   DOMAdapter,
-  extensions,
   ExtensionType,
+  Loader,
   LoaderParserPriority,
   path,
+  ResolvedAsset,
+  Texture,
   TextureSource,
 } from 'pixi.js';
-import { TextureAtlas } from '../../spine-core';
 import { SpineTexture } from '../SpineTexture';
+import { TextureAtlas } from '../../spine-core';
 
 type RawAtlas = string;
 
@@ -108,9 +110,14 @@ export const spineTextureAtlasLoader: AssetExtension<RawAtlas | TextureAtlas, IS
           // eslint-disable-next-line max-len
           const url: string = providedPage ?? path.normalize([...basePath.split(path.sep), pageName].join(path.sep));
 
-          const pixiPromise = loader.load<Texture>({ src: url, data: metadata.imageMetadata }).then((texture) => {
-            page.setTexture(SpineTexture.from(texture.source));
-          });
+          const pixiPromise = loader
+            .load<Texture>({
+              src: url,
+              data: metadata.imageMetadata,
+            })
+            .then((texture) => {
+              page.setTexture(SpineTexture.from(texture.source));
+            });
 
           textureLoadingPromises.push(pixiPromise);
         }
@@ -123,7 +130,7 @@ export const spineTextureAtlasLoader: AssetExtension<RawAtlas | TextureAtlas, IS
   },
 } as AssetExtension<RawAtlas | TextureAtlas, ISpineAtlasMetadata>;
 
-extensions.add(spineTextureAtlasLoader);
+// extensions.add(spineTextureAtlasLoader);
 
 export interface ISpineAtlasMetadata {
   // If you are downloading an .atlas file, this metadata will go to the Texture loader

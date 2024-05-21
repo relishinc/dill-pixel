@@ -1,5 +1,5 @@
 import { Point, Rectangle } from 'pixi.js';
-import { Application } from 'dill-pixel;
+import { Application } from 'dill-pixel';
 import { Entity } from './Entity';
 import { System } from './System';
 import { Collision, EntityType } from './types';

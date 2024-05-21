@@ -27,9 +27,10 @@
  * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-import type { Batch, BatchableObject, Batcher, IndexBufferArray, Texture } from 'pixi.js';
-import { MeshAttachment, RegionAttachment, Slot } from '../spine-core';
 import { Spine } from './Spine';
+import { MeshAttachment, RegionAttachment, Slot } from '../spine-core';
+
+import type { Batch, BatchableObject, Batcher, IndexBufferArray, Texture } from 'pixi.js';
 
 const QUAD_TRIANGLES = [0, 1, 2, 2, 3, 0];
 
@@ -40,14 +41,37 @@ export class BatchableSpineSlot implements BatchableObject {
   location: number;
   batcher: Batcher;
   batch: Batch;
+  renderable: Spine;
+
+  slot: Slot;
   indexSize: number;
   vertexSize: number;
+
   roundPixels: 0 | 1;
-  renderable: Spine;
-  slot: Slot;
 
   get blendMode() {
     return this.renderable.groupBlendMode;
+  }
+
+  reset() {
+    this.renderable = null as any;
+    this.texture = null as any;
+    this.batcher = null as any;
+    this.batch = null as any;
+  }
+
+  setSlot(slot: Slot) {
+    this.slot = slot;
+
+    const attachment = slot.getAttachment();
+
+    if (attachment instanceof RegionAttachment) {
+      this.vertexSize = 4;
+      this.indexSize = 6;
+    } else if (attachment instanceof MeshAttachment) {
+      this.vertexSize = attachment.worldVerticesLength / 2;
+      this.indexSize = attachment.triangles.length;
+    }
   }
 
   packIndex(indexBuffer: IndexBufferArray, index: number, indicesOffset: number) {
@@ -124,27 +148,6 @@ export class BatchableSpineSlot implements BatchableObject {
 
       // texture id
       uint32View[index++] = textureIdAndRound;
-    }
-  }
-
-  reset() {
-    this.renderable = null as any;
-    this.texture = null as any;
-    this.batcher = null as any;
-    this.batch = null as any;
-  }
-
-  setSlot(slot: Slot) {
-    this.slot = slot;
-
-    const attachment = slot.getAttachment();
-
-    if (attachment instanceof RegionAttachment) {
-      this.vertexSize = 4;
-      this.indexSize = 6;
-    } else if (attachment instanceof MeshAttachment) {
-      this.vertexSize = attachment.worldVerticesLength / 2;
-      this.indexSize = attachment.triangles.length;
     }
   }
 }

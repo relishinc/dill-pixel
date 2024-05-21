@@ -11,7 +11,7 @@ import {Plugin} from '../Plugin';
 /**`
  * Interface for PopupManager
  */
-export interface IPopupManager extends IPlugin {
+export interface IPopupManagerPlugin extends IPlugin {
   readonly view: Container; // The view of the PopupManager
   readonly current: IPopup | undefined; // The current active popup
   readonly popupCount: number; // The count of popups
@@ -36,8 +36,8 @@ export type PopupSignalDetail<T = any> = { id: string | number; data?: T };
  * PopupManager
  */
 
-export class PopupManager extends Plugin implements IPopupManager {
-  public readonly id: string = 'PopupManager'; // The id of the PopupManager
+export class PopupManagerPlugin extends Plugin implements IPopupManagerPlugin {
+  public readonly id: string = 'popups'; // The id of the PopupManager
   public readonly view = new Container(); // The view of the PopupManager
 
   // signals

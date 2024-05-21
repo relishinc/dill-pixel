@@ -6,36 +6,33 @@
     "rootDir": "./src",
     "baseUrl": ".",
     "outDir": "./lib",
-    "useDefineForClassFields": true,
-    "strictPropertyInitialization": false,
     "lib": [
       "ESNext",
       "DOM"
     ],
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
     "strict": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
     "esModuleInterop": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
+    "useDefineForClassFields": false,
+    "strictPropertyInitialization": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "allowJs": true,
-    "composite": true
+    "allowJs": true
   },
   "typeRoots": [
     "./node_modules/@types"
   ],
   "include": [
-    "config/**/*.ts",
-    "src/**/*.ts",
-    "src/**/*.ts"
+    "./src/**/*.ts"
   ],
   "exclude": [
-    "lib",
-    "node_modules",
-    ".cache"
+    "./lib",
+    "./node_modules",
+    "./.cache"
   ]
 }

@@ -27,10 +27,10 @@
  * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-import { Container, Graphics, Text } from 'pixi.js';
-import type { AnimationStateListener } from '../spine-core';
-import { ClippingAttachment, MeshAttachment, PathAttachment, RegionAttachment, SkeletonBounds } from '../spine-core';
-import { Spine } from './Spine';
+import {Container, Graphics, Text} from 'pixi.js';
+import {Spine} from './Spine';
+import type {AnimationStateListener} from '../spine-core';
+import {ClippingAttachment, MeshAttachment, PathAttachment, RegionAttachment, SkeletonBounds} from '../spine-core';
 
 /**
  * Make a class that extends from this interface to create your own debug renderer.
@@ -239,22 +239,6 @@ export class SpineDebugRenderer implements ISpineDebugRenderer {
     }
   }
 
-  public unregisterSpine(spine: Spine): void {
-    if (!this.registeredSpines.has(spine)) {
-      console.warn("SpineDebugRenderer.unregisterSpine() - spine is not registered, can't unregister!", spine);
-    }
-    const debugDisplayObjects = this.registeredSpines.get(spine);
-
-    if (!debugDisplayObjects) {
-      return;
-    }
-
-    spine.state.removeListener(debugDisplayObjects.eventCallback);
-
-    debugDisplayObjects.parentDebugContainer.destroy({ textureSource: true, children: true, texture: true });
-    this.registeredSpines.delete(spine);
-  }
-
   drawClippingFunc(spine: Spine, debugDisplayObjects: DebugDisplayObjects, lineWidth: number): void {
     const skeleton = spine.skeleton;
     const slots = skeleton.slots;
@@ -337,6 +321,22 @@ export class SpineDebugRenderer implements ISpineDebugRenderer {
 
       drawPolygon(polygon, 0, polygon.length);
     }
+  }
+
+  public unregisterSpine(spine: Spine): void {
+    if (!this.registeredSpines.has(spine)) {
+      console.warn("SpineDebugRenderer.unregisterSpine() - spine is not registered, can't unregister!", spine);
+    }
+    const debugDisplayObjects = this.registeredSpines.get(spine);
+
+    if (!debugDisplayObjects) {
+      return;
+    }
+
+    spine.state.removeListener(debugDisplayObjects.eventCallback);
+
+    debugDisplayObjects.parentDebugContainer.destroy({ textureSource: true, children: true, texture: true });
+    this.registeredSpines.delete(spine);
   }
 
   private drawBonesFunc(

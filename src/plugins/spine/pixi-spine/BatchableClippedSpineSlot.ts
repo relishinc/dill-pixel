@@ -27,9 +27,10 @@
  * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
+import { Spine } from './Spine';
+
 import type { Batch, BatchableObject, Batcher, IndexBufferArray, Texture } from 'pixi.js';
 import type { SkeletonClipping, Slot } from '../spine-core';
-import { Spine } from './Spine';
 
 export class BatchableClippedSpineSlot implements BatchableObject {
   indexStart: number;
@@ -38,16 +39,34 @@ export class BatchableClippedSpineSlot implements BatchableObject {
   location: number;
   batcher: Batcher;
   batch: Batch;
+  renderable: Spine;
+
+  slot: Slot;
   indexSize: number;
   vertexSize: number;
-  roundPixels: 0 | 1;
-  renderable: Spine;
-  slot: Slot;
   clippedVertices: number[] = [];
   clippedTriangles: number[] = [];
 
+  roundPixels: 0 | 1;
+
   get blendMode() {
     return this.renderable.groupBlendMode;
+  }
+
+  reset() {
+    this.renderable = null as any;
+    this.texture = null as any;
+    this.batcher = null as any;
+    this.batch = null as any;
+  }
+
+  setClipper(clipper: SkeletonClipping) {
+    // copy clipped verts and triangles
+    copyArray(clipper.clippedVertices, this.clippedVertices);
+    copyArray(clipper.clippedTriangles, this.clippedTriangles);
+
+    this.vertexSize = clipper.clippedVertices.length / 8;
+    this.indexSize = clipper.clippedTriangles.length;
   }
 
   packIndex(indexBuffer: IndexBufferArray, index: number, indicesOffset: number) {
@@ -82,22 +101,6 @@ export class BatchableClippedSpineSlot implements BatchableObject {
       // texture id
       float32View[index++] = textureIdAndRound;
     }
-  }
-
-  reset() {
-    this.renderable = null as any;
-    this.texture = null as any;
-    this.batcher = null as any;
-    this.batch = null as any;
-  }
-
-  setClipper(clipper: SkeletonClipping) {
-    // copy clipped verts and triangles
-    copyArray(clipper.clippedVertices, this.clippedVertices);
-    copyArray(clipper.clippedTriangles, this.clippedTriangles);
-
-    this.vertexSize = clipper.clippedVertices.length / 8;
-    this.indexSize = clipper.clippedTriangles.length;
   }
 }
 

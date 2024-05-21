@@ -1,4 +1,3 @@
-import { CorePlugin } from '../../core/decorators';
 import { Signal } from '../../signals';
 import { Logger } from '../../utils/console/Logger';
 import { IPlugin, Plugin } from '../Plugin';
@@ -49,7 +48,6 @@ export interface IVoiceOverPlugin extends IPlugin {
   resumeVO(): void;
 }
 
-@CorePlugin
 export class VoiceOverPlugin extends Plugin implements IVoiceOverPlugin {
   public readonly id = 'voiceover';
   public fadeOutDuration = 0.15;
@@ -206,6 +204,10 @@ export class VoiceOverPlugin extends Plugin implements IVoiceOverPlugin {
         this.onVoiceOverStart.emit(activeVO);
       }
     }
+  }
+
+  protected getCoreSignals(): string[] {
+    return ['onVoiceOverStart', 'onVoiceOverPaused', 'onVoiceOverComplete', 'onVoiceOverResumed', 'onVoiceOverStopped'];
   }
 
   private addToQueue(keys: VoKey[], cb?: VoCallback, priority?: number) {

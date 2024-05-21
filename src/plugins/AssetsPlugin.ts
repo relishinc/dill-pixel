@@ -1,9 +1,9 @@
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
 
-export interface IAssetPlugin extends IPlugin {}
+export interface IAssetsPlugin extends IPlugin {}
 
-export class AssetPlugin extends Plugin implements IAssetPlugin {
+export class AssetsPlugin extends Plugin implements IAssetsPlugin {
   public readonly id: string = 'assets';
 
   public destroy(): void {}
