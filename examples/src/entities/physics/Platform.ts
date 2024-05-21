@@ -1,6 +1,6 @@
 import { PointLike, resolvePointLike } from 'dill-pixel';
 import { Point } from 'pixi.js';
-import { Solid as SnapSolid, System } from '../../../../src/plugins/physics/snap';
+import { Solid as SnapSolid, System } from '@dill-pixel/plugin-snap-physics';
 
 type Direction = -1 | 0 | 1;
 

@@ -2,7 +2,7 @@ import { ActionDetail, ISpineAnimation, PointLike, resolvePointLike, Signal } fr
 
 import { gsap } from 'gsap';
 import { Bounds, Point, Rectangle } from 'pixi.js';
-import { Actor as SnapActor, Collision, Entity } from '../../../../src/plugins/physics/snap';
+import { Actor as SnapActor, Collision, Entity } from '@dill-pixel/plugin-snap-physics';
 import { Platform } from './Platform';
 import { FX } from '@/entities/physics/FX';
 
@@ -70,6 +70,7 @@ export class Player extends SnapActor {
       this._jumpPower -= this._velocity.y < 0 ? 1 : 3;
       this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
     } else if (riding) {
+      // do nothing
     } else {
       this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
     }

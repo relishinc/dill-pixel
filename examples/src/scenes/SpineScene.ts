@@ -1,6 +1,6 @@
 import { Assets } from 'pixi.js';
-import { Boy } from '../entities/Boy.ts';
-import { Dragon } from '../entities/Dragon.ts';
+import { Boy } from '@/entities/Boy';
+import { Dragon } from '@/entities/Dragon';
 import { BaseScene } from './BaseScene';
 
 export class SpineScene extends BaseScene {

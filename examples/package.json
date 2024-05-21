@@ -33,7 +33,8 @@
     "@types/dat.gui": "^0.7.13"
   },
   "dependencies": {
+    "@dill-pixel/plugin-snap-physics": "^8.3.0",
     "dat.gui": "^0.7.9",
-    "dill-pixel": "file:.."
+    "dill-pixel": "^8.3.0"
   }
 }

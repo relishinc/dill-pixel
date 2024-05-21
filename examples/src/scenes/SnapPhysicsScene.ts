@@ -1,13 +1,11 @@
-import { Camera } from 'dill-pixel/display/Camera';
 import { Door } from '@/entities/physics/Door';
 import { Platform, PlatformMovementConfigOpts } from '@/entities/physics/Platform';
 import { Player } from '@/entities/physics/Player';
 import { Portal } from '@/entities/physics/Portal';
-
 import { BaseScene } from '@/scenes/BaseScene';
-import { Container, delay, FlexContainer } from 'dill-pixel';
+import { Camera, Container, delay, FlexContainer } from 'dill-pixel';
 import { Assets, Ticker } from 'pixi.js';
-import { Collision, SnapPhysicsPlugin } from '../../../src/plugins/physics/snap';
+import { Collision, SnapPhysicsPlugin } from '@dill-pixel/plugin-snap-physics';
 import { GUIController } from 'dat.gui';
 import { gsap } from 'gsap';
 
@@ -83,8 +81,10 @@ export class SnapPhysicsScene extends BaseScene {
   }
 
   async initialize() {
+    console.log('SNAP PHYSICS SCENE', this.app.focus);
     await super.initialize();
     await Assets.loadBundle('spine');
+
     this.app.focus.addFocusLayer(this.id);
 
     this.level = this.add.container({

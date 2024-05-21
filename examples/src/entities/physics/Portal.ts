@@ -1,5 +1,5 @@
 import { Bounds } from 'pixi.js';
-import { checkCollision, Collision, Entity, EntityType, System } from '../../../../src/plugins/physics/snap';
+import { checkCollision, Collision, Entity, EntityType, System } from '@dill-pixel/plugin-snap-physics';
 import { Door, DoorConfig } from './Door';
 
 const defaults: DoorConfig = {

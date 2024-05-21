@@ -1,5 +1,5 @@
 import { Texture } from 'pixi.js';
-import { Entity, Sensor, System } from '../../../../src/plugins/physics/snap';
+import { Entity, Sensor, System } from '@dill-pixel/plugin-snap-physics';
 
 export type DoorConfig = {
   width: number;

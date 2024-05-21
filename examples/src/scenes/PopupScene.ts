@@ -43,9 +43,10 @@ export class PopupScene extends BaseScene {
         backing: { color: 'red' },
       }),
     );
-
+    console.log(this.app.signal);
     this.addSignalConnection(
       this.app.actions('showPopup').connect(this._handleShowPopup),
+
       this.app.signal.onHidePopup.connect(() => {
         this.app.func.setActionContext('game');
       }),

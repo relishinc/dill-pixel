@@ -1,8 +1,7 @@
-import {Container, Interactive} from 'dill-pixel';
+import { Container, Interactive, Spine } from 'dill-pixel';
 
-import {Rectangle} from 'pixi.js';
-import {Spine} from '@pixi/spine-pixi';
-import {gsap} from 'gsap';
+import { Rectangle } from 'pixi.js';
+import { gsap } from 'gsap';
 
 /**
  * Spine-animated cauldron, with some dynamic functionality, like
@@ -23,6 +22,7 @@ export class Dragon extends Interactive(Container) {
       data: 'spine/dragon-skeleton',
       animationName: 'dragon-bubbles',
       loop: true,
+      autoUpdate: true,
     });
 
     this.eventMode = 'static';

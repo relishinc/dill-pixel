@@ -1,5 +1,5 @@
 import {pixiManifest} from '@assetpack/plugin-manifest';
-import assetPack from 'dill-pixel/assetpack';
+import assetPack from 'dill-pixel/config/assetpack';
 
 const config = {
 	...assetPack, plugins: {

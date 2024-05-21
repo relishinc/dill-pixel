@@ -1,23 +1,14 @@
 {
-  "extends": "../config/tsconfig.base.json",
+  "extends": "../config/tsconfig.json",
   "compilerOptions": {
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
       "@/*": [
         "src/*"
-      ],
-      "dill-pixel/*": [
-        "../src/*"
       ]
-    },
-    "composite": true
-  },
-  "references": [
-    {
-      "path": ".."
     }
-  ],
+  },
   "include": [
     "src/**/*.ts",
     "src/**/*.json"

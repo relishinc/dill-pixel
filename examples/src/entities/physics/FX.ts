@@ -1,4 +1,4 @@
-import { Actor as SnapActor, Collision, Entity, System } from 'dill-pixel/plugins/physics/snap';
+import { Actor as SnapActor, Collision, Entity, System } from '@dill-pixel/plugin-snap-physics';
 import { Point, Pool, Texture } from 'pixi.js';
 
 export class FX extends SnapActor {

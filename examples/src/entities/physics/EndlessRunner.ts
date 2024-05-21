@@ -1,6 +1,6 @@
 import { Segment, SegmentConfig } from '@/entities/physics/Segment';
 import { Point, Pool } from 'pixi.js';
-import { System } from 'dill-pixel/plugins/physics/snap';
+import { System } from '@dill-pixel/plugin-snap-physics';
 import { PointLike, resolvePointLike } from 'dill-pixel';
 
 export class EndlessRunner {
