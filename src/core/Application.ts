@@ -17,7 +17,8 @@ import type { IVoiceOverPlugin } from '../plugins/audio/VoiceOverPlugin';
 import type { CaptionsOptions, ICaptionsPlugin } from '../plugins/captions/CaptionsPlugin';
 import { FocusManagerPluginOptions, IFocusManagerPlugin } from '../plugins/focus/FocusManagerPlugin';
 import { i18nOptions, Ii18nPlugin } from '../plugins/i18nPlugin';
-import { Action, ActionContext, ActionSignal, IInputPlugin } from '../plugins/InputPlugin';
+import { IInputPlugin } from '../plugins/input/InputPlugin';
+import { Action, ActionContext } from '../plugins/input/actions';
 import { IKeyboardPlugin } from '../plugins/KeyboardPlugin';
 import { IPlugin } from '../plugins/Plugin';
 import { IPopupManagerPlugin } from '../plugins/popups/PopupManagerPlugin';
@@ -37,13 +38,13 @@ import { coreFunctionRegistry } from './coreFunctionRegistry';
 import type { ICoreFunctions } from './ICoreFunctions';
 import { coreSignalRegistry } from './coreSignalRegistry';
 import type { ICoreSignals } from './ICoreSignals';
-import { allDefaults, DefaultPluginIds, defaultPlugins } from '../plugins/defaults';
+import { defaultPlugins } from '../plugins/defaults';
+import { ActionSignal } from '../plugins/input/types';
 
 export interface IApplicationOptions extends ApplicationOptions {
   id: string;
   resizeToContainer: boolean;
   useStore: boolean;
-  defaultPlugins?: DefaultPluginIds[];
   useSpine: boolean;
   useVoiceover: boolean;
   storageAdapters: ImportList<IStorageAdapter>;
@@ -151,6 +152,17 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   constructor() {
     super();
     bindAllMethods(this);
+  }
+
+  public get appVersion() {
+    let version;
+    try {
+      version = __APP_VERSION__;
+    } catch (e) {
+      version = '-1';
+    }
+
+    return version;
   }
 
   protected _i18n: Ii18nPlugin;
@@ -326,7 +338,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     }
     Application.instance = this;
     this.config = Object.assign({ ...defaultApplicationOptions }, config);
-
+    await this.boot(this.config);
     await this.preInitialize(this.config);
     await this.initAssets();
     // initialize the pixi application
@@ -442,6 +454,20 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   }
 
   /**
+   * app hasn't been initialized yet
+   * @protected
+   * @example boot(){
+   *     console.log(this.appVersion);
+   * }
+   * returns {Promise<void> | void}
+   */
+  protected boot(config?: Partial<IApplicationOptions>): Promise<void> | void;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected async boot(config?: Partial<IApplicationOptions>): Promise<void> {
+    Logger.log(`${this.constructor.name}:: v${this.appVersion}`);
+  }
+
+  /**
    * Pre-initialize the application
    * This is called before the application is initialized
    * should register any pixi extensions, etc
@@ -473,17 +499,10 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   }
 
   protected async registerDefaultPlugins() {
-    const defaultIds = this.config.defaultPlugins || allDefaults;
-    for (let i = 0; i < defaultIds.length; i++) {
-      const id = defaultIds[i];
-      const listItem = defaultPlugins.find((p) => p.id === id);
-      if (!listItem) {
-        Logger.error(`Default plugin with id "${id}" not found.`);
-        continue;
-      }
+    for (let i = 0; i < defaultPlugins.length; i++) {
+      const listItem = defaultPlugins[i];
       await this.loadPlugin(listItem);
     }
-
     const showStats = this.config.showStats === true || (isDev && this.config.showStats !== false);
     if (showStats) {
       await this.loadPlugin({

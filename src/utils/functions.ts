@@ -75,3 +75,24 @@ export function setObjectName(object: any, texture: TextureLike, sheet: SpriteSh
     object.__textureSheet = sheet;
   }
 }
+
+type DebouncedFunction<T extends (...args: any[]) => any> = (...args: Parameters<T>) => void;
+
+/**
+ * Debounce a function
+ * @param func - function to debounce
+ * @param wait - time in milliseconds
+ * @example const debounced = debounce(() => console.log('debounced'), 1000);
+ * @example window.addEventListener('resize', debounced);
+ */
+export function debounce<T extends (...args: any[]) => any>(func: T, wait: number): DebouncedFunction<T> {
+  let timeoutId: any;
+  return function (...args: Parameters<T>) {
+    if (timeoutId !== undefined) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      func(...args);
+    }, wait);
+  };
+}

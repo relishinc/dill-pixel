@@ -1,8 +1,11 @@
 import {extendConfig} from 'dill-pixel/config/vite';
-
+import path from 'node:path';
 
 export default extendConfig({
-	define: {
-		__APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+	resolve: {
+		alias: {
+			'dill-pixel': path.resolve(__dirname, '../src'),
+			'@dill-pixel/plugin-snap-physics': path.resolve(__dirname, '../packages/plugins/physics/snap/src'),
+		}
 	},
 });

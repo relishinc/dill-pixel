@@ -1,9 +1,11 @@
 import { IFocusable, IFocusLayer } from '../plugins/focus/FocusManagerPlugin';
 import { i18nTParams } from '../plugins/i18nPlugin';
-import { ActionSignal, ActionContext, InputController } from '../plugins/InputPlugin';
 import { KeySignal } from '../plugins/KeyboardPlugin';
 import { IPopup, PopupConfig, PopupConstructor } from '../display/Popup';
 import { LoadSceneConfig } from '../plugins/SceneManagerPlugin';
+import { InputController } from '../plugins/input/constants';
+import { ActionSignal } from '../plugins/input/types';
+import { ActionContext } from '../plugins/input/actions';
 
 export interface ICoreFunctions {
     addFocusable(focusable: IFocusable | IFocusable[], layerId?: string | number | null | undefined, isDefault?: boolean): void;

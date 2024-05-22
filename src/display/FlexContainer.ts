@@ -182,9 +182,10 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
   }
 
   set size(size: PointLike) {
-    const resolvedSize = resolvePointLike(size);
-    this.config.width = resolvedSize.x;
-    this.config.height = resolvedSize.y;
+    const { x, y } = resolvePointLike(size);
+    this.config.width = x;
+    this.config.height = y;
+
     this.layout();
   }
 
@@ -394,9 +395,9 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
 
     this._childMap.set(child, container);
     this.setFlexChildren();
-
-    this.layout();
     this._reparentAddedChild = true;
+    this.app.render();
+    this.layout();
   }
 
   /**
@@ -417,8 +418,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
 
     const canHaveEndlessWidthOrHeight = ['flex-start'];
 
-    let width = this.config.width;
-    let height = this.config.height;
+    let { width, height } = this.config;
     const { gap, flexDirection, flexWrap, alignItems, justifyContent } = this.config;
 
     if (
@@ -595,6 +595,8 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
         }
       }
     });
+    // force re-render
+
     this.onLayoutComplete.emit();
   }
 

@@ -70,7 +70,7 @@ export class PopupManagerPlugin extends Plugin implements IPopupManagerPlugin {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   initialize(_app: IApplication): void {
     bindAllMethods(this);
-    this.view.name = 'PopupManager';
+    this.view.label = 'PopupManager';
     this._setupAppListeners();
   }
 

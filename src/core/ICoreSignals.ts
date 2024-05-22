@@ -2,10 +2,10 @@ import { Signal } from '../signals';
 import { ChannelVolumeDetail, SoundDetail } from '../plugins/audio/AudioManagerPlugin';
 import { IAudioInstance } from '../plugins/audio/AudioInstance';
 import { FocusChangeDetail } from '../plugins/focus/FocusManagerPlugin';
-import { ActionContext } from '../plugins/InputPlugin';
 import { KeyboardEventDetail } from '../plugins/KeyboardPlugin';
 import { PopupSignalDetail } from '../plugins/popups/PopupManagerPlugin';
 import { Size } from '../utils/types';
+import { ActionContext } from '../../lib';
 
 export interface ICoreSignals {
   // AudioManager;

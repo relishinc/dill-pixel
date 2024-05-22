@@ -36,12 +36,13 @@ export { FocusOutliner } from './plugins/focus/FocusOutliner';
 export type { IAudioManagerPlugin } from './plugins/audio/AudioManagerPlugin';
 export type { Ii18nPlugin, i18nOptions } from './plugins/i18nPlugin';
 export type { IResizerPlugin } from './plugins/ResizerPlugin';
-export type { IInputPlugin, ActionDetail } from './plugins/InputPlugin';
+export type { IInputPlugin } from './plugins/input/InputPlugin';
+export type { ActionDetail, ActionSignal, ActionsList } from './plugins/input/types';
 export type { ICaptionsPlugin, CaptionsOptions } from './plugins/captions/CaptionsPlugin';
 export type { ICaptionRenderer } from './plugins/captions/CaptionsRenderer';
 export type { IVoiceOverPlugin } from './plugins/audio/VoiceOverPlugin';
 
-export { ActionContext, Action } from './plugins/InputPlugin';
+export { ActionContext, Action } from './plugins/input/actions';
 /**
  * Export the StorageAdapter and LocalStorageAdapter classes from the 'store' module.
  * These classes are used for managing the application's storage.
@@ -83,6 +84,7 @@ export { delay } from './utils/async';
 export { pluck, omitKeys } from './utils/object';
 export { bindMethods, bindAllMethods, checkAndInvokeMethod } from './utils/methodBinding';
 export { getDynamicModuleFromImportListItem } from './utils/framework';
+export { debounce } from './utils/functions';
 
 /**
  * Export various mixin classes from the 'mixins' module.

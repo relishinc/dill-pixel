@@ -30,7 +30,7 @@
     "./src/**/*.ts"
   ],
   "exclude": [
-    "./lib",
+    "./lib/index.d.ts",
     "./node_modules",
     "./.cache"
   ]

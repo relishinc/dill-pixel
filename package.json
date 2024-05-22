@@ -1,6 +1,6 @@
 {
   "name": "dill-pixel",
-  "version": "8.3.6",
+  "version": "8.3.9",
   "title": "Dill Pixel V8",
   "description": "Relish framework for HTML games",
   "bin": {
@@ -109,7 +109,7 @@
     "kleur": "^4.1.5",
     "matter-js": "^0.19.0",
     "npm-run-all": "^4.1.5",
-    "pixi.js": "^8.1.4",
+    "pixi.js": "^8.1.5",
     "rimraf": "^5.0.5",
     "stats.js": "^0.17.0",
     "typed-signals": "^2.5.0",

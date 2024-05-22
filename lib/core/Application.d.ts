@@ -6,7 +6,8 @@ import { IVoiceOverPlugin } from '../plugins/audio/VoiceOverPlugin';
 import { CaptionsOptions, ICaptionsPlugin } from '../plugins/captions/CaptionsPlugin';
 import { FocusManagerPluginOptions, IFocusManagerPlugin } from '../plugins/focus/FocusManagerPlugin';
 import { i18nOptions, Ii18nPlugin } from '../plugins/i18nPlugin';
-import { Action, ActionContext, ActionSignal, IInputPlugin } from '../plugins/InputPlugin';
+import { IInputPlugin } from '../plugins/input/InputPlugin';
+import { Action, ActionContext } from '../plugins/input/actions';
 import { IKeyboardPlugin } from '../plugins/KeyboardPlugin';
 import { IPlugin } from '../plugins/Plugin';
 import { IPopupManagerPlugin } from '../plugins/popups/PopupManagerPlugin';
@@ -19,13 +20,12 @@ import { IStore } from '../store/Store';
 import { ImportList, ImportListItem, SceneImportList, Size, WithRequiredProps } from '../utils/types';
 import { ICoreFunctions } from './ICoreFunctions';
 import { ICoreSignals } from './ICoreSignals';
-import { DefaultPluginIds } from '../plugins/defaults';
+import { ActionSignal } from '../plugins/input/types';
 
 export interface IApplicationOptions extends ApplicationOptions {
     id: string;
     resizeToContainer: boolean;
     useStore: boolean;
-    defaultPlugins?: DefaultPluginIds[];
     useSpine: boolean;
     useVoiceover: boolean;
     storageAdapters: ImportList<IStorageAdapter>;
@@ -88,6 +88,7 @@ export declare class Application<R extends Renderer = Renderer> extends PIXIPApp
     protected _captionsPlugin: ICaptionsPlugin;
     protected _actions: ActionSignal;
     constructor();
+    get appVersion(): string | number;
     protected _i18n: Ii18nPlugin;
     get i18n(): Ii18nPlugin;
     protected _resizer: IResizerPlugin;
@@ -138,6 +139,15 @@ export declare class Application<R extends Renderer = Renderer> extends PIXIPApp
      * @returns {IStorageAdapter}
      */
     getStorageAdapter(adapterId: string): IStorageAdapter;
+    /**
+     * app hasn't been initialized yet
+     * @protected
+     * @example boot(){
+     *     console.log(this.appVersion);
+     * }
+     * returns {Promise<void> | void}
+     */
+    protected boot(config?: Partial<IApplicationOptions>): Promise<void> | void;
     /**
      * Pre-initialize the application
      * This is called before the application is initialized

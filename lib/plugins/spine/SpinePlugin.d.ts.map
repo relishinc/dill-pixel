@@ -1,1 +1,1 @@
-{"version":3,"file":"SpinePlugin.d.ts","sourceRoot":"","sources":["../../../src/plugins/spine/SpinePlugin.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,WAAW,CAAC;AAInC,qBAAa,WAAY,SAAQ,MAAM;IACrC,SAAgB,EAAE,iBAAiB;IAEtB,UAAU;CASxB"}
+{"version":3,"file":"SpinePlugin.d.ts","sourceRoot":"","sources":["../../../src/plugins/spine/SpinePlugin.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,WAAW,CAAC;AAGnC,qBAAa,WAAY,SAAQ,MAAM;IACrC,SAAgB,EAAE,iBAAiB;IAEtB,UAAU;CAQxB"}

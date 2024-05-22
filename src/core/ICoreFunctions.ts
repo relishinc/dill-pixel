@@ -1,10 +1,11 @@
 import type { IFocusable, IFocusLayer } from '../plugins/focus/FocusManagerPlugin';
 import type { i18nTParams } from '../plugins/i18nPlugin';
-import type { ActionSignal } from '../plugins/InputPlugin';
-import { ActionContext, InputController } from '../plugins/InputPlugin';
 import type { KeySignal } from '../plugins/KeyboardPlugin';
 import type { IPopup, PopupConfig, PopupConstructor } from '../display/Popup';
 import type { LoadSceneConfig } from '../plugins/SceneManagerPlugin';
+import { InputController } from '../plugins/input/constants';
+import { ActionSignal } from '../plugins/input/types';
+import { ActionContext } from '../plugins/input/actions';
 
 export interface ICoreFunctions {
   // FocusManager;

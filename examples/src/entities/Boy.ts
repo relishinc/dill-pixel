@@ -1,7 +1,6 @@
-import { Container, Interactive } from 'dill-pixel';
+import { Container, Interactive, Spine } from 'dill-pixel';
 
 import { Rectangle } from 'pixi.js';
-import { Spine } from '@pixi/spine-pixi';
 
 export class Boy extends Interactive(Container) {
   private _container: Container;

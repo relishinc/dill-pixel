@@ -4,55 +4,52 @@ import { IPlugin } from './Plugin';
 export const defaultPlugins: ImportList<IPlugin> = [
   {
     id: 'assets',
-    module: () => import('../plugins/AssetsPlugin'),
+    module: () => import('./AssetsPlugin'),
     namedExport: 'AssetsPlugin',
   },
   {
-    id: 'input',
-    module: () => import('../plugins/InputPlugin'),
-    namedExport: 'InputPlugin',
-  },
-  {
-    id: 'scenes',
-    module: () => import('../plugins/SceneManagerPlugin'),
-    namedExport: 'SceneManagerPlugin',
-  },
-  {
     id: 'webEvents',
-    module: () => import('../plugins/WebEventsPlugin'),
+    module: () => import('./WebEventsPlugin'),
     namedExport: 'WebEventsPlugin',
   },
   {
+    id: 'scenes',
+    module: () => import('./SceneManagerPlugin'),
+    namedExport: 'SceneManagerPlugin',
+  },
+  {
+    id: 'input',
+    module: () => import('./input/InputPlugin'),
+    namedExport: 'InputPlugin',
+  },
+  {
     id: 'keyboard',
-    module: () => import('../plugins/KeyboardPlugin'),
+    module: () => import('./KeyboardPlugin'),
     namedExport: 'KeyboardPlugin',
   },
   {
     id: 'focus',
-    module: () => import('../plugins/focus/FocusManagerPlugin'),
+    module: () => import('./focus/FocusManagerPlugin'),
     namedExport: 'FocusManagerPlugin',
   },
   {
     id: 'popups',
-    module: () => import('../plugins/popups/PopupManagerPlugin'),
+    module: () => import('./popups/PopupManagerPlugin'),
     namedExport: 'PopupManagerPlugin',
   },
   {
     id: 'audio',
-    module: () => import('../plugins/audio/AudioManagerPlugin'),
+    module: () => import('./audio/AudioManagerPlugin'),
     namedExport: 'AudioManagerPlugin',
   },
   {
     id: 'i18n',
-    module: () => import('../plugins/i18nPlugin'),
+    module: () => import('./i18nPlugin'),
     namedExport: 'i18nPlugin',
   },
   {
     id: 'resizer',
-    module: () => import('../plugins/ResizerPlugin'),
+    module: () => import('./ResizerPlugin'),
     namedExport: 'ResizerPlugin',
   },
 ] as const;
-
-export type DefaultPluginIds = (typeof defaultPlugins)[number]['id'];
-export const allDefaults: DefaultPluginIds[] = defaultPlugins.map((p) => p.id);

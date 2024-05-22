@@ -38,7 +38,9 @@ const defaultConfig = {
 			'@': path.resolve(cwd, './src')
 		},
 	},
-
+	define: {
+		__APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+	},
 };
 
 function extendConfig(userConfig = {}) {

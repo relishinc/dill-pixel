@@ -6,6 +6,12 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "dill-pixel/*": [
+        "../src/*"
+      ],
+      "@dill-pixel/plugin-snap-physics/*": [
+        "../packages/plugins/physics/snap/src/*"
       ]
     }
   },
