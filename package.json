@@ -1,6 +1,6 @@
 {
   "name": "dill-pixel",
-  "version": "8.3.0",
+  "version": "8.3.6",
   "title": "Dill Pixel V8",
   "description": "Relish framework for HTML games",
   "bin": {
@@ -18,9 +18,11 @@
     "extras/css/loader.css"
   ],
   "main": "lib/dill-pixel.mjs",
+  "types": "lib/index.d.ts",
   "exports": {
     ".": {
-      "default": "./lib/dill-pixel.mjs"
+      "default": "./lib/dill-pixel.mjs",
+      "types": "./lib/index.d.ts"
     },
     "./physics/snap": {
       "default": "./lib/physics/snap.mjs"
@@ -46,6 +48,7 @@
     "dev": "cd ./examples && npm run dev",
     "start": "cd ./examples && npm run start",
     "build": "npm run version && npm run pixi-exports && vite build",
+    "declaration": "tsc --project tsconfig.build.json",
     "pixi-exports": "node ./scripts/pixi-exports.js",
     "compile": "tsc --project ./tsconfig.build.json",
     "build:examples": "cd ./examples && npm run build",
@@ -86,7 +89,8 @@
     "relishinc-prettier": "github:relishinc/prettier",
     "standard-version": "^9.5.0",
     "typedoc": "^0.25.13",
-    "typescript": "^5.4.3"
+    "typescript": "^5.4.3",
+    "vite-plugin-dts": "^3.9.1"
   },
   "dependencies": {
     "@assetpack/cli": "^0.8.0",

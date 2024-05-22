@@ -5,7 +5,6 @@ import { Assets } from 'pixi.js';
 import manifest from './assets.json';
 import { ExampleOutliner } from './ui/ExampleOutliner';
 import TestAdapter from '@/adapters/TestAdapter';
-import SnapPhysicsPlugin from '@dill-pixel/plugin-snap-physics';
 
 export class V8Application extends Application {
   setup() {
@@ -20,13 +19,13 @@ const appConfig: AppConfig = {
   plugins: [
     {
       id: 'physics',
-      module: SnapPhysicsPlugin,
-      // module: () => import('@dill-pixel/plugin-snap-physics'),
+      module: () => import('@dill-pixel/plugin-snap-physics'),
       options: {
         useSpatialHashGrid: false,
         gridCellSize: 300,
         fps: 60,
       },
+      autoLoad: false,
     },
   ],
   storageAdapters: [

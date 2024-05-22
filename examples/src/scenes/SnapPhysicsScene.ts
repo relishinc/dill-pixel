@@ -5,7 +5,7 @@ import { Portal } from '@/entities/physics/Portal';
 import { BaseScene } from '@/scenes/BaseScene';
 import { Camera, Container, delay, FlexContainer } from 'dill-pixel';
 import { Assets, Ticker } from 'pixi.js';
-import { Collision, SnapPhysicsPlugin } from '@dill-pixel/plugin-snap-physics';
+import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
 import { GUIController } from 'dat.gui';
 import { gsap } from 'gsap';
 
@@ -31,8 +31,8 @@ export class SnapPhysicsScene extends BaseScene {
 
   // private _debugGfx = new Graphics();
 
-  protected get physics(): SnapPhysicsPlugin {
-    return this.app.getPlugin('physics') as SnapPhysicsPlugin;
+  protected get physics(): SnapPhysics {
+    return this.app.getPlugin('physics') as SnapPhysics;
   }
 
   configureGUI() {

@@ -1,15 +1,17 @@
 {
   "name": "@dill-pixel/plugin-snap-physics",
-  "version": "8.3.0",
+  "version": "8.3.6",
   "description": "",
   "files": [
     "lib",
     "src"
   ],
   "main": "lib/dill-pixel-plugin-snap-physics.mjs",
+  "types": "lib/index.d.ts",
   "exports": {
     ".": {
-      "default": "./lib/dill-pixel-plugin-snap-physics.mjs"
+      "default": "./lib/dill-pixel-plugin-snap-physics.mjs",
+      "types": "./lib/index.d.ts"
     }
   },
   "scripts": {
@@ -20,7 +22,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "dill-pixel": "8.3.0"
+    "dill-pixel": "^8.3.6",
+    "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
     "dill-pixel": "^8.3.0"

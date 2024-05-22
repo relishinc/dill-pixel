@@ -4,7 +4,6 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "rootDir": "./src",
-    "baseUrl": ".",
     "outDir": "./lib",
     "lib": [
       "ESNext",

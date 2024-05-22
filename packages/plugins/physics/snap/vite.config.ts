@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import path from 'path';
+import dts from 'vite-plugin-dts';
 
 export default defineConfig({
   build: {
@@ -14,4 +15,5 @@ export default defineConfig({
       external: ['pixi.js', 'gsap', 'dill-pixel'], // External dependencies
     },
   },
+  plugins: [dts()],
 });

@@ -1,7 +1,12 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "rootDir": "./src",
+    "outFile": "./lib/dill-pixel.d.ts",
     "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "noUnusedParameters": false,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true
   }
 }

@@ -11,23 +11,19 @@ import {
   RendererDestroyOptions,
 } from 'pixi.js';
 import type { IScene } from '../display/Scene';
-import { AssetsPlugin, IAssetsPlugin } from '../plugins/AssetsPlugin';
-import { AudioManagerPlugin, IAudioManagerPlugin } from '../plugins/audio/AudioManagerPlugin';
+import { IAssetsPlugin } from '../plugins/AssetsPlugin';
+import { IAudioManagerPlugin } from '../plugins/audio/AudioManagerPlugin';
 import type { IVoiceOverPlugin } from '../plugins/audio/VoiceOverPlugin';
 import type { CaptionsOptions, ICaptionsPlugin } from '../plugins/captions/CaptionsPlugin';
-import {
-  FocusManagerPlugin,
-  FocusManagerPluginOptions,
-  IFocusManagerPlugin,
-} from '../plugins/focus/FocusManagerPlugin';
-import { i18nOptions, i18nPlugin, Ii18nPlugin } from '../plugins/i18nPlugin';
-import { Action, ActionContext, ActionSignal, IInputPlugin, InputPlugin } from '../plugins/InputPlugin';
-import { IKeyboardPlugin, KeyboardPlugin } from '../plugins/KeyboardPlugin';
+import { FocusManagerPluginOptions, IFocusManagerPlugin } from '../plugins/focus/FocusManagerPlugin';
+import { i18nOptions, Ii18nPlugin } from '../plugins/i18nPlugin';
+import { Action, ActionContext, ActionSignal, IInputPlugin } from '../plugins/InputPlugin';
+import { IKeyboardPlugin } from '../plugins/KeyboardPlugin';
 import { IPlugin } from '../plugins/Plugin';
-import { IPopupManagerPlugin, PopupManagerPlugin } from '../plugins/popups/PopupManagerPlugin';
-import { IResizerPlugin, ResizerPlugin, ResizerPluginOptions } from '../plugins/ResizerPlugin';
-import { ISceneManagerPlugin, LoadSceneMethod, SceneManagerPlugin } from '../plugins/SceneManagerPlugin';
-import { IWebEventsPlugin, WebEventsPlugin } from '../plugins/WebEventsPlugin';
+import { IPopupManagerPlugin } from '../plugins/popups/PopupManagerPlugin';
+import { IResizerPlugin, ResizerPluginOptions } from '../plugins/ResizerPlugin';
+import { ISceneManagerPlugin, LoadSceneMethod } from '../plugins/SceneManagerPlugin';
+import { IWebEventsPlugin } from '../plugins/WebEventsPlugin';
 import { Signal } from '../signals';
 import type { IStorageAdapter } from '../store/adapters/StorageAdapter';
 import { IStore, Store } from '../store/Store';
@@ -41,12 +37,13 @@ import { coreFunctionRegistry } from './coreFunctionRegistry';
 import type { ICoreFunctions } from './ICoreFunctions';
 import { coreSignalRegistry } from './coreSignalRegistry';
 import type { ICoreSignals } from './ICoreSignals';
+import { allDefaults, DefaultPluginIds, defaultPlugins } from '../plugins/defaults';
 
 export interface IApplicationOptions extends ApplicationOptions {
   id: string;
   resizeToContainer: boolean;
   useStore: boolean;
-  useDefaults: boolean;
+  defaultPlugins?: DefaultPluginIds[];
   useSpine: boolean;
   useVoiceover: boolean;
   storageAdapters: ImportList<IStorageAdapter>;
@@ -84,7 +81,6 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   resolution: window.devicePixelRatio > 1.5 ? 2 : 1,
   // dill pixel options
   useStore: true,
-  useDefaults: true,
   useSpine: false,
   useVoiceover: true,
   storageAdapters: [],
@@ -339,9 +335,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     Logger.initialize(config.id);
 
     // register the default plugins
-    if (this.config.useDefaults) {
-      await this.registerDefaultPlugins();
-    }
+    await this.registerDefaultPlugins();
 
     if (this.config.plugins && this.config.plugins.length > 0) {
       for (let i = 0; i < this.config.plugins.length; i++) {
@@ -479,72 +473,17 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   }
 
   protected async registerDefaultPlugins() {
-    /*const defaultPlugins: (new () => Plugin)[] = [
-			  AssetsPlugin,
-			  InputPlugin,
-			  SceneManagerPlugin,
-			  WebEventsPlugin,
-			  KeyboardPlugin,
-			  FocusManagerPlugin,
-			  PopupManagerPlugin,
-			  AudioManagerPlugin,
-			  i18nPlugin,
-			  ResizerPlugin,
-			];
-			for (let i = 0; i < defaultPlugins.length; i++) {
-			  const plugin = new defaultPlugins[i]();
-			  await this.registerPlugin(plugin, this.config[plugin.id as keyof IApplicationOptions] || undefined);
-			}*/
-    await this.loadPlugin({
-      id: 'assets',
-      module: () => import('../plugins/AssetsPlugin'),
-      namedExport: 'AssetsPlugin',
-    });
-    await this.loadPlugin({
-      id: 'input',
-      module: () => import('../plugins/InputPlugin'),
-      namedExport: 'InputPlugin',
-    });
-    await this.loadPlugin({
-      id: 'scenes',
-      module: () => import('../plugins/SceneManagerPlugin'),
-      namedExport: 'SceneManagerPlugin',
-    });
-    await this.loadPlugin({
-      id: 'webEvents',
-      module: () => import('../plugins/WebEventsPlugin'),
-      namedExport: 'WebEventsPlugin',
-    });
-    await this.loadPlugin({
-      id: 'keyboard',
-      module: () => import('../plugins/KeyboardPlugin'),
-      namedExport: 'KeyboardPlugin',
-    });
-    await this.loadPlugin({
-      id: 'focus',
-      module: () => import('../plugins/focus/FocusManagerPlugin'),
-      namedExport: 'FocusManagerPlugin',
-    });
-    await this.loadPlugin({
-      id: 'popups',
-      module: () => import('../plugins/popups/PopupManagerPlugin'),
-      namedExport: 'PopupManagerPlugin',
-    });
-    await this.loadPlugin({
-      id: 'audio',
-      module: () => import('../plugins/audio/AudioManagerPlugin'),
-      namedExport: 'AudioManagerPlugin',
-    });
-    await this.loadPlugin({
-      id: 'i18n',
-      module: () => import('../plugins/i18nPlugin'),
-      namedExport: 'i18nPlugin',
-    });
-    await this.loadPlugin({
-      id: 'resizer',
-      module: () => import('../plugins/ResizerPlugin'),
-      namedExport: 'ResizerPlugin',
-    });
+    const defaultIds = this.config.defaultPlugins || allDefaults;
+    for (let i = 0; i < defaultIds.length; i++) {
+      const id = defaultIds[i];
+      const listItem = defaultPlugins.find((p) => p.id === id);
+      if (!listItem) {
+        Logger.error(`Default plugin with id "${id}" not found.`);
+        continue;
+      }
+      await this.loadPlugin(listItem);
+    }
+
     const showStats = this.config.showStats === true || (isDev && this.config.showStats !== false);
     if (showStats) {
       await this.loadPlugin({

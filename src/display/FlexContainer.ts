@@ -182,9 +182,9 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
   }
 
   set size(size: PointLike) {
-    const { x, y } = resolvePointLike(size);
-    this.config.width = x;
-    this.config.height = y;
+    const resolvedSize = resolvePointLike(size);
+    this.config.width = resolvedSize.x;
+    this.config.height = resolvedSize.y;
     this.layout();
   }
 
@@ -417,7 +417,8 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
 
     const canHaveEndlessWidthOrHeight = ['flex-start'];
 
-    let { width, height } = this.config;
+    let width = this.config.width;
+    let height = this.config.height;
     const { gap, flexDirection, flexWrap, alignItems, justifyContent } = this.config;
 
     if (
