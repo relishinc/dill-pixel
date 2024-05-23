@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-snap-physics",
-  "version": "8.3.9",
+  "version": "8.4.0",
   "description": "",
   "files": [
     "lib",
@@ -22,10 +22,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "dill-pixel": "8.3.9",
+    "dill-pixel": "8.4.0",
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
-    "dill-pixel": "^8.3.9"
+    "dill-pixel": "^8.4.0"
   }
 }

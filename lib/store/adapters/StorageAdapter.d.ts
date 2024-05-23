@@ -9,9 +9,10 @@ export interface IStorageAdapter extends IPlugin {
      * Saves data under a specified key.
      * @param _key
      * @param _data
+     * @param _rest
      * @returns {Promise<void> | void} A promise that resolves when the data has been saved, or void if the save operation is synchronous.
      */
-    save(_key: string, _data: any): Promise<void> | void;
+    save(_key: string, _data: any, ..._rest: any[]): Promise<void> | void;
     /**
      * Loads data from a specified key.
      * @template T The type of the data to load.
@@ -43,7 +44,8 @@ export declare class StorageAdapter<T extends Application = Application> extends
      * @returns {Promise<void> | void} A promise that resolves when the data has been saved, or void if the save operation is synchronous.
      * @param _key
      * @param _data
+     * @param _rest
      */
-    save(_key: string, _data: any): Promise<void> | void;
+    save(_key: string, _data: any, ..._rest: any[]): Promise<void> | void;
 }
 //# sourceMappingURL=StorageAdapter.d.ts.map
