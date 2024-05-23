@@ -61,6 +61,8 @@ export interface IApplication extends PIXIPApplication {
     actionContext: string | ActionContext;
     onPause: Signal<() => void>;
     onResume: Signal<() => void>;
+    readonly appName: string;
+    readonly appVersion: string | number;
     actions(action: string): ActionSignal;
     initialize(config: AppConfig): Promise<IApplication>;
     postInitialize(): Promise<void>;
@@ -88,7 +90,10 @@ export declare class Application<R extends Renderer = Renderer> extends PIXIPApp
     protected _captionsPlugin: ICaptionsPlugin;
     protected _actions: ActionSignal;
     constructor();
+    protected _appVersion: string | number;
     get appVersion(): string | number;
+    protected _appName: string;
+    get appName(): string;
     protected _i18n: Ii18nPlugin;
     get i18n(): Ii18nPlugin;
     protected _resizer: IResizerPlugin;

@@ -39,7 +39,8 @@ const defaultConfig = {
 		},
 	},
 	define: {
-		__APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+		__DILL_PIXEL_APP_NAME: JSON.stringify(process.env.npm_package_name),
+		__DILL_PIXEL_APP_VERSION: JSON.stringify(process.env.npm_package_version),
 	},
 };
 

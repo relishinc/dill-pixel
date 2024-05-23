@@ -1,14 +1,12 @@
 /**
  * This is the main entry point for the library. It exports all the necessary classes, types, and utilities.
  */
-import type { IPlugin } from './plugins/Plugin';
-import { Plugin } from './plugins/Plugin';
-
+// pixi stuff we want to re-export
 export * from './pixi';
 
 // core
-export type { IPlugin };
-export { Plugin };
+export type { IPlugin } from './plugins/Plugin';
+export { Plugin } from './plugins/Plugin';
 
 /**
  * Export the Application class from the 'core' module.

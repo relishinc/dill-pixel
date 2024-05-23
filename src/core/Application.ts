@@ -26,7 +26,7 @@ import { IResizerPlugin, ResizerPluginOptions } from '../plugins/ResizerPlugin';
 import { ISceneManagerPlugin, LoadSceneMethod } from '../plugins/SceneManagerPlugin';
 import { IWebEventsPlugin } from '../plugins/WebEventsPlugin';
 import { Signal } from '../signals';
-import type { IStorageAdapter } from '../store/adapters/StorageAdapter';
+import { IStorageAdapter } from '../store/adapters/StorageAdapter';
 import { IStore, Store } from '../store/Store';
 import { isPromise } from '../utils/async';
 import { Logger } from '../utils/console/Logger';
@@ -114,6 +114,9 @@ export interface IApplication extends PIXIPApplication {
   onPause: Signal<() => void>;
   onResume: Signal<() => void>;
 
+  readonly appName: string;
+  readonly appVersion: string | number;
+
   actions(action: string): ActionSignal;
 
   initialize(config: AppConfig): Promise<IApplication>;
@@ -154,15 +157,29 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     bindAllMethods(this);
   }
 
+  protected _appVersion: string | number;
+
   public get appVersion() {
-    let version;
     try {
-      version = __APP_VERSION__;
+      this._appVersion = __DILL_PIXEL_APP_VERSION;
     } catch (e) {
-      version = '-1';
+      this._appVersion = -1;
     }
 
-    return version;
+    return this._appVersion;
+  }
+
+  protected _appName: string;
+
+  public get appName(): string {
+    if (!this._appName) {
+      try {
+        this._appName = __DILL_PIXEL_APP_NAME;
+      } catch (e) {
+        this._appName = 'n/a';
+      }
+    }
+    return this._appName;
   }
 
   protected _i18n: Ii18nPlugin;
@@ -337,6 +354,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       throw new Error('Application is already initialized');
     }
     Application.instance = this;
+
     this.config = Object.assign({ ...defaultApplicationOptions }, config);
     await this.boot(this.config);
     await this.preInitialize(this.config);
@@ -464,7 +482,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   protected boot(config?: Partial<IApplicationOptions>): Promise<void> | void;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected async boot(config?: Partial<IApplicationOptions>): Promise<void> {
-    Logger.log(`${this.constructor.name}:: v${this.appVersion}`);
+    Logger.log(`${this.appName}:: v${this.appVersion}`);
   }
 
   /**

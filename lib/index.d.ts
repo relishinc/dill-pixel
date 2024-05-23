@@ -1,8 +1,9 @@
-import { IPlugin, Plugin } from './plugins/Plugin';
-
+/**
+ * This is the main entry point for the library. It exports all the necessary classes, types, and utilities.
+ */
 export * from './pixi';
-export type { IPlugin };
-export { Plugin };
+export type { IPlugin } from './plugins/Plugin';
+export { Plugin } from './plugins/Plugin';
 /**
  * Export the Application class from the 'core' module.
  * This class is used to create a new application instance.
