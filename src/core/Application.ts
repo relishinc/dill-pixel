@@ -7,7 +7,16 @@
 // require the global.d.ts file
 import FontFaceObserver from 'fontfaceobserver';
 import {Application as PIXIApplication, Assets, Point, Ticker} from 'pixi.js';
-import {HowlerManager, IAudioManager, IVoiceOverManager, VoiceOverManager} from '../audio';
+import {
+  Callback,
+  HowlerManager,
+  IAudioManager,
+  IPlayOptions,
+  IVoiceOverManager,
+  PlayMode,
+  playVO,
+  VoiceOverManager
+} from '../audio';
 import {CopyManager} from '../copy';
 import {isDev, updateFocus} from '../functions';
 import {
@@ -457,6 +466,20 @@ export class Application<T extends Application = any> extends PIXIApplication {
   }
 
   /**
+   * Plays a voiceover. Override to e.g. add clauses to playback
+   * @param {string | (string | number)[]} key
+   * @param {PlayMode | Callback | Partial<IPlayOptions>} mode
+   * @param {Callback} callback
+   */
+  public playVO(
+    key: string | (string | number)[],
+    mode?: PlayMode | Callback | Partial<IPlayOptions>,
+    callback?: Callback,
+  ) {
+    playVO(key, mode, callback);
+  }
+
+  /**
    * adds a {KeyboardFocusManager} to the stage
    * @protected
    */
@@ -580,6 +603,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
    * @returns A promise that resolves when resizing is complete.
    */
   protected onResize(debounceDelay: number): Promise<void> | void;
+
   protected async onResize(debounceDelay: number = 0): Promise<void> {
     if (debounceDelay > 0) {
       await delay(debounceDelay);
@@ -679,6 +703,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
    * @returns A promise that resolves when the operation is complete.
    */
   protected onRequiredAssetsLoaded(): Promise<void> | void;
+
   protected async onRequiredAssetsLoaded(): Promise<void> {
     void this.boot();
   }
@@ -689,6 +714,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
    * @protected
    */
   protected boot(): Promise<void> | void;
+
   protected async boot(): Promise<void> {
     void this.loadDefaultState();
   }
@@ -699,6 +725,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
    * @protected
    */
   protected loadDefaultState(): Promise<void> | void;
+
   protected async loadDefaultState(): Promise<void> {
     if (this.state.default) {
       this.state.transitionTo(this.state.default);

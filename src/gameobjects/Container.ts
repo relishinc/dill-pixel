@@ -1,6 +1,5 @@
 import {Container as PIXIContainer, IDestroyOptions, IPoint, Point, Ticker} from 'pixi.js';
 import {SignalConnection, SignalConnections} from 'typed-signals';
-import {playVO} from '../audio';
 import {Application} from '../core';
 import {stopCaption} from '../functions';
 import {IFocusable} from '../input';
@@ -143,7 +142,7 @@ export class Container<T extends Application = Application> extends PIXIContaine
   // focus stuff
   public onFocusBegin(): void {
     if (this._voiceover) {
-      playVO(this._voiceover, { data: { target: this._useAsCaptionTarget ? this : null } });
+      this.app.playVO(this._voiceover, { data: { target: this._useAsCaptionTarget ? this : null } });
     }
   }
 
@@ -186,7 +185,7 @@ export class Container<T extends Application = Application> extends PIXIContaine
   }
 
   protected _onHoverForVO() {
-    playVO(this._voiceover, { data: { target: this._useAsCaptionTarget ? this : null } });
+    this.app.playVO(this._voiceover, { data: { target: this._useAsCaptionTarget ? this : null } });
   }
 
   protected _onOutForVO() {

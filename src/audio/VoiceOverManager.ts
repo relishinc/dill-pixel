@@ -10,7 +10,7 @@ const BLACK = LogUtils.STYLE_BLACK;
 const RED = LogUtils.STYLE_RED_BOLD;
 const BLUE = LogUtils.STYLE_BLUE_BOLD;
 
-type Callback = (pDidPlay: boolean) => void;
+export type Callback = (pDidPlay: boolean) => void;
 
 export enum PlayMode {
   /** Play immediately if nothing else is playing, otherwise add to end of queue */
