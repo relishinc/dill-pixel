@@ -6,9 +6,16 @@ import manifest from './assets.json';
 import { ExampleOutliner } from './ui/ExampleOutliner';
 import TestAdapter from '@/adapters/TestAdapter';
 
+import { SupabaseAdapter } from '@dill-pixel/storage-adapter-supabase';
+import type { Database } from './supabase';
+
 export class V8Application extends Application {
   setup() {
     return Assets.loadBundle(['required', 'game']);
+  }
+
+  get supabase(): SupabaseAdapter<Database> {
+    return this.store.getAdapter('supabase') as SupabaseAdapter<Database>;
   }
 }
 
@@ -30,6 +37,15 @@ const appConfig: AppConfig = {
   ],
   storageAdapters: [
     { id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } },
+    {
+      id: 'supabase',
+      namedExport: 'SupabaseAdapter',
+      module: () => import('@dill-pixel/storage-adapter-supabase'),
+      options: {
+        supabaseUrl: `https://kymsclfscdpzyguuioxy.supabase.co`,
+        anonKey: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5bXNjbGZzY2RwenlndXVpb3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTUxOTAzNjAsImV4cCI6MjAzMDc2NjM2MH0.QomlbjsmzucuX2RIJMsUxD12gMazY3e4-G4laYhr1PM`,
+      },
+    },
     { id: 'test', module: TestAdapter, options: { foo: 'bar' } },
   ],
   scenes: [
@@ -88,6 +104,12 @@ const appConfig: AppConfig = {
       namedExport: 'EndlessRunnerScene',
       module: () => import('@/scenes/EndlessRunnerScene'),
       plugins: ['physics'],
+    },
+    {
+      id: 'supabase',
+      debugLabel: 'Supabase Storage Adapter',
+      namedExport: 'SupabaseAdapterScene',
+      module: () => import('@/scenes/SupabaseAdapterScene'),
     },
   ],
   i18n: {
