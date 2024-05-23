@@ -4,7 +4,6 @@
  */
 
 // @ts-ignore
-// require the global.d.ts file
 import FontFaceObserver from 'fontfaceobserver';
 import {Application as PIXIApplication, Assets, Point, Ticker} from 'pixi.js';
 import {
