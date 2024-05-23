@@ -1,5 +1,5 @@
-import { IApplication } from '../core/Application';
-import { IStorageAdapter } from './adapters/StorageAdapter';
+import { IApplication } from '../core';
+import { IStorageAdapter } from './adapters';
 
 /**
  * Configuration for saving data with an adapter.

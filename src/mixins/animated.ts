@@ -1,6 +1,6 @@
 import {gsap} from 'gsap';
 import {Signal} from '../signals';
-import {Constructor} from '../utils/types';
+import type {Constructor} from '../utils';
 
 /**
  * Extended GSAP animation configuration interface.

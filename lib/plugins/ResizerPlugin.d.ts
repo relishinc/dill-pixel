@@ -1,5 +1,5 @@
-import { IApplication } from '../core/Application';
-import { Size } from '../utils/types';
+import { IApplication } from '../core';
+import { Size } from '../utils';
 import { IPlugin, Plugin } from './Plugin';
 
 /**

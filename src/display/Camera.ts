@@ -1,13 +1,12 @@
 import { Container, Point } from 'pixi.js';
-import { ContainerLike, PointLike } from '../utils/types';
+import type { ContainerLike, PointLike } from '../utils';
+import { bindAllMethods, Logger, resolvePointLike } from '../utils';
 import { Signal } from '../signals';
-import { Application, IApplication } from '../core/Application';
-import { bindAllMethods } from '../utils/methodBinding';
-import { Logger } from '../utils/console/Logger';
-import { resolvePointLike } from '../utils/functions';
-import { KeyboardEventDetail } from '../plugins/KeyboardPlugin';
+import { IApplication } from '../core';
+import type { KeyboardEventDetail } from '../plugins';
+import { Application } from '../Application';
 
-type CameraCOnfig = {
+type CameraConfig = {
   container: Container;
   minX: number;
   maxX: number;
@@ -23,8 +22,8 @@ type CameraCOnfig = {
 };
 
 // require container to be set
-type OptionalCameraConfig = Partial<CameraCOnfig>;
-type RequiredCameraConfig = Required<Pick<CameraCOnfig, 'container'>>;
+type OptionalCameraConfig = Partial<CameraConfig>;
+type RequiredCameraConfig = Required<Pick<CameraConfig, 'container'>>;
 type CustomCameraConfig = OptionalCameraConfig & RequiredCameraConfig;
 
 export interface ICamera {
@@ -45,7 +44,7 @@ export interface ICamera {
   readonly lerp: number;
   readonly target: ContainerLike | null;
   readonly followOffset: Point;
-  app: Application;
+  app: IApplication;
 
   follow(target: ContainerLike, offset: PointLike): void;
 
@@ -164,7 +163,7 @@ export class Camera extends Container implements ICamera {
     this._followOffset = resolvePointLike(value, true);
   }
 
-  get app(): Application {
+  get app(): IApplication {
     return Application.getInstance();
   }
 

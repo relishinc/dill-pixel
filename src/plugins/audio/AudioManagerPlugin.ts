@@ -1,14 +1,14 @@
 import { PlayOptions, sound, SoundSourceMap } from '@pixi/sound';
 import { gsap } from 'gsap';
 import { AssetsManifest, UnresolvedAsset } from 'pixi.js';
-import { IApplication } from '../../core/Application';
 import { Signal } from '../../signals';
-import { Logger } from '../../utils/console/Logger';
+import { Logger } from '../../utils';
 import type { IPlugin } from '../Plugin';
 import { Plugin } from '../Plugin';
 
 import { AudioChannel, IAudioChannel } from './AudioChannel';
 import { AudioInstance, IAudioInstance } from './AudioInstance';
+import { IApplication } from '../../core';
 
 export type SoundDetail = { id: string; instance: IAudioInstance; channelName: string };
 export type ChannelVolumeDetail = { channel: IAudioChannel; volume: number };

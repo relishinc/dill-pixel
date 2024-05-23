@@ -1,7 +1,8 @@
 import { Cursor, Sprite } from 'pixi.js';
-import { Application } from '../core/Application';
 import { Signal } from '../signals';
-import { SpriteSheetLike, TextureLike } from '../utils/types';
+import { SpriteSheetLike, TextureLike } from '../utils';
+import { IApplication } from '../core';
+import { Application } from '../Application';
 
 export type ButtonConfig = {
     textures: {
@@ -27,9 +28,9 @@ declare const _Button: (new () => import('../mixins/factory').IFactoryContainer<
     button: (props?: Partial<import('../mixins/factory/props').ButtonProps> | undefined) => Button;
     flexContainer: (props?: Partial<import('../mixins/factory/props').FlexContainerProps> | undefined) => import('./FlexContainer').FlexContainer<Application<import('pixi.js').Renderer>>;
     uiCanvas: (props?: Partial<import('../mixins/factory/props').UICanvasFactoryProps> | undefined) => import('./UICanvas').UICanvas<Application<import('pixi.js').Renderer>>;
-    spine: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('..').Spine;
+    spine: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('../plugins/spine/pixi-spine').Spine;
     spineAnimation: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('./SpineAnimation').ISpineAnimation;
-}>) & import('../utils/types').Constructor<import('../mixins/signals').ISignalContainer> & import('../utils/types').Constructor<import('../mixins/interaction').IInteractive> & import('../utils/types').Constructor<import('..').IFocusable>;
+}>) & import('../utils').Constructor<import('../mixins').ISignalContainer> & import('../utils').Constructor<import('../mixins').IInteractive> & import('../utils').Constructor<import('..').IFocusable>;
 /**
  * @class
  * @extends {Container}
@@ -50,7 +51,6 @@ export declare class Button extends _Button {
     isDown: boolean;
     isOver: boolean;
     protected config: ButtonConfig;
-    protected _enabled: boolean;
     protected _isDownCallbacks: Map<string, () => void>;
     private _isDownListenerAdded;
     /**
@@ -58,12 +58,13 @@ export declare class Button extends _Button {
      * @param {Partial<ButtonConfig>} config - The configuration for the button.
      */
     constructor(config: Partial<ButtonConfig>);
+    protected _enabled: boolean;
     /**
      * @description Sets the enabled state of the button.
      * @param {boolean} enabled - Whether the button is enabled.
      */
     set enabled(enabled: boolean);
-    get app(): Application<import('pixi.js').Renderer>;
+    get app(): IApplication;
     focusOut(): void;
     blur(): void;
     getFocusArea(): import('pixi.js').Bounds;

@@ -1,6 +1,6 @@
-import { IApplication } from '../core/Application';
-import { Logger } from '../utils/console/Logger';
-import { IStorageAdapter } from './adapters/StorageAdapter';
+import type {IApplication} from '../core';
+import {Logger} from '../utils';
+import type {IStorageAdapter} from './adapters';
 
 /**
  * Configuration for saving data with an adapter.

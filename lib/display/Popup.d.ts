@@ -1,6 +1,6 @@
 import { ColorSource, DestroyOptions, Texture } from 'pixi.js';
-import { IFocusable } from '../plugins/focus/FocusManagerPlugin';
-import { Container, IContainer } from './Container';
+import { IFocusable } from '../plugins';
+import { IContainer, Container } from './Container';
 
 /**
  * Interface for Popup

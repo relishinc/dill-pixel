@@ -1,6 +1,6 @@
 import { Container, Ticker } from 'pixi.js';
-import { IApplication } from '../../core/Application';
-import { ImportListItemModule, Padding, PointLike } from '../../utils/types';
+import { IApplication } from '../../core';
+import { ImportListItemModule, Padding, PointLike } from '../../utils';
 import { IPlugin, Plugin } from '../Plugin';
 import { ICaptionRenderer } from './CaptionsRenderer';
 

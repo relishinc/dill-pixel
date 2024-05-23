@@ -1,4 +1,4 @@
-import { IApplication } from '../../core/Application';
+import { IApplication } from '../../core';
 import { StorageAdapter } from './StorageAdapter';
 
 /**

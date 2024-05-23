@@ -1,7 +1,7 @@
 import { IMediaInstance } from '@pixi/sound';
 import { gsap } from 'gsap';
 import { Signal } from '../../signals';
-import { bindAllMethods } from '../../utils/methodBinding';
+import { bindAllMethods } from '../../utils';
 import { IAudioChannel } from './AudioChannel';
 import { IAudioManagerPlugin } from './AudioManagerPlugin';
 

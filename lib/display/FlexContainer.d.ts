@@ -1,8 +1,8 @@
 import { DestroyOptions } from 'pixi.js';
-import { Application } from '../core/Application';
+import { Application } from '../Application';
 import { PIXIContainer } from '../pixi';
 import { Signal } from '../signals';
-import { ContainerLike, PointLike } from '../utils/types';
+import { ContainerLike, PointLike } from '../utils';
 
 declare const _FlexContainer: (new () => import('../mixins/factory').IFactoryContainer<{
     existing: <TEntity>(entity: TEntity, props?: Partial<import('../mixins/factory/props').ExistingProps> | undefined) => TEntity;
@@ -15,9 +15,9 @@ declare const _FlexContainer: (new () => import('../mixins/factory').IFactoryCon
     button: (props?: Partial<import('../mixins/factory/props').ButtonProps> | undefined) => import('./Button').Button;
     flexContainer: (props?: Partial<import('../mixins/factory/props').FlexContainerProps> | undefined) => FlexContainer<Application<import('pixi.js').Renderer>>;
     uiCanvas: (props?: Partial<import('../mixins/factory/props').UICanvasFactoryProps> | undefined) => import('./UICanvas').UICanvas<Application<import('pixi.js').Renderer>>;
-    spine: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('..').Spine;
+    spine: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('../plugins/spine/pixi-spine').Spine;
     spineAnimation: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('./SpineAnimation').ISpineAnimation;
-}>) & import('../utils/types').Constructor<import('../mixins/signals').ISignalContainer>;
+}>) & import('../utils').Constructor<import('../mixins').ISignalContainer>;
 export interface FlexContainerConfig {
     width: number;
     height: number;
@@ -34,6 +34,8 @@ export interface IFlexContainer {
     onLayoutComplete: Signal<() => void>;
     debug: boolean;
     config: FlexContainerConfig;
+    containerWidth: number;
+    containerHeight: number;
     removeChildren<U extends PIXIContainer>(): U[];
     removeChildAt<U extends PIXIContainer>(index: number): U;
     addChildAt<U extends PIXIContainer>(child: U, index: number): U;

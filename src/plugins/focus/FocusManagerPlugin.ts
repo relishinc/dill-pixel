@@ -1,16 +1,15 @@
 import EventEmitter from 'eventemitter3';
 import { Bounds, Container, PointerEvents, PointLike } from 'pixi.js';
 
-import { IApplication } from '../../core/Application';
+import { IApplication } from '../../core';
 import { PIXIContainer } from '../../pixi';
 import { Signal } from '../../signals';
-import { Logger } from '../../utils/console/Logger';
-import { getLastMapEntry, getPreviousMapEntry } from '../../utils/map';
-import { bindMethods } from '../../utils/methodBinding';
-import { Constructor, PointLike as DillPixelPointLike } from '../../utils/types';
+import type { Constructor, PointLike as DillPixelPointLike } from '../../utils';
+import { bindMethods, getLastMapEntry, getPreviousMapEntry, Logger } from '../../utils';
 import type { IPlugin } from '../Plugin';
 import { Plugin } from '../Plugin';
-import { FocusOutliner, FocusOutlinerConfig, IFocusOutliner } from './FocusOutliner';
+import type { IFocusOutliner } from './FocusOutliner';
+import { FocusOutliner, FocusOutlinerConfig } from './FocusOutliner';
 
 export type FocusManagerPluginOptions = {
   outliner: IFocusOutliner | Partial<FocusOutlinerConfig> | typeof FocusOutliner;

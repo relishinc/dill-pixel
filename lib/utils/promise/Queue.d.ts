@@ -13,12 +13,12 @@ export declare class Queue<T = any | void> {
     private _currentIndex;
     private _isPaused;
     private _isCanceled;
-    private _results;
     /**
      * Creates a new Queue.
      * @param {(Promise<any> | (() => Promise<T>))[]} promises The promises to add to the queue.
      */
     constructor(promises?: (Promise<any> | (() => Promise<T>))[]);
+    private _results;
     /**
      * Gets the results of the promises that have been resolved so far.
      * @returns {T[]} The results.

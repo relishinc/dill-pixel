@@ -1,9 +1,5 @@
 import { BitmapText, Container as PIXIContainer, Graphics, Sprite, Text } from 'pixi.js';
-import { Button } from '../../display/Button';
-import { Container } from '../../display/Container';
-import { FlexContainer } from '../../display/FlexContainer';
-import { ISpineAnimation } from '../../display/SpineAnimation';
-import { UICanvas } from '../../display/UICanvas';
+import { ISpineAnimation, Button, Container, FlexContainer, UICanvas } from '../../display';
 import { ButtonProps, ContainerProps, ExistingProps, FlexContainerProps, GraphicsProps, SpineProps, SpriteProps, TextProps, UICanvasFactoryProps } from './props';
 import { resolveTexture } from './utils';
 

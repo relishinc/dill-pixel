@@ -1,6 +1,7 @@
 import { DestroyOptions, Ticker } from 'pixi.js';
-import { IApplication, Application } from '../core/Application';
-import { Size } from '../utils/types';
+import { IApplication } from '../core';
+import { Application } from '../Application';
+import { Size } from '../utils';
 
 declare const _Container: (new () => import('../mixins/factory').IFactoryContainer<{
     existing: <TEntity>(entity: TEntity, props?: Partial<import('../mixins/factory/props').ExistingProps> | undefined) => TEntity;
@@ -13,9 +14,9 @@ declare const _Container: (new () => import('../mixins/factory').IFactoryContain
     button: (props?: Partial<import('../mixins/factory/props').ButtonProps> | undefined) => import('./Button').Button;
     flexContainer: (props?: Partial<import('../mixins/factory/props').FlexContainerProps> | undefined) => import('./FlexContainer').FlexContainer<Application<import('pixi.js').Renderer>>;
     uiCanvas: (props?: Partial<import('../mixins/factory/props').UICanvasFactoryProps> | undefined) => import('./UICanvas').UICanvas<Application<import('pixi.js').Renderer>>;
-    spine: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('..').Spine;
+    spine: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('../plugins/spine/pixi-spine').Spine;
     spineAnimation: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('./SpineAnimation').ISpineAnimation;
-}>) & import('../utils/types').Constructor<import('../mixins/signals').ISignalContainer> & import('../utils/types').Constructor<import('../mixins/animated').IAnimated>;
+}>) & import('../utils').Constructor<import('../mixins').ISignalContainer> & import('../utils').Constructor<import('../mixins').IAnimated>;
 /**
  * Interface for the Container class.
  */

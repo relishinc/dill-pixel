@@ -1,10 +1,10 @@
 import { PlayOptions } from '@pixi/sound';
 import { AssetsManifest, UnresolvedAsset } from 'pixi.js';
-import { IApplication } from '../../core/Application';
 import { Signal } from '../../signals';
 import { IPlugin, Plugin } from '../Plugin';
 import { IAudioChannel } from './AudioChannel';
 import { IAudioInstance } from './AudioInstance';
+import { IApplication } from '../../core';
 
 export type SoundDetail = {
     id: string;

@@ -1,11 +1,16 @@
 import { BitmapText, Container as PIXIContainer, Graphics, Sprite, Text } from 'pixi.js';
-import { Button, ButtonConfig, ButtonConfigKeys } from '../../display/Button';
-import { Container } from '../../display/Container';
-import { FlexContainer, FlexContainerConfig, FlexContainerConfigKeys } from '../../display/FlexContainer';
-import { ISpineAnimation, SpineAnimation } from '../../display/SpineAnimation';
-import { UICanvas, UICanvasConfig, UICanvasConfigKeys } from '../../display/UICanvas';
-import { resolvePointLike } from '../../utils/functions';
-import { omitKeys, pluck } from '../../utils/object';
+import type { ButtonConfig, FlexContainerConfig, ISpineAnimation, UICanvasConfig } from '../../display';
+import {
+  Button,
+  ButtonConfigKeys,
+  Container,
+  FlexContainer,
+  FlexContainerConfigKeys,
+  SpineAnimation,
+  UICanvas,
+  UICanvasConfigKeys,
+} from '../../display';
+import { omitKeys, pluck, resolvePointLike } from '../../utils';
 import {
   ButtonProps,
   ContainerProps,
@@ -159,7 +164,6 @@ export const defaultFactoryMethods = {
     }
     const entity: import('../../plugins/spine/pixi-spine/Spine').Spine = (window as any).Spine.from(data);
     if (!props) return entity;
-    console.log('adding spine', props, entity);
     if (props.autoUpdate !== undefined) entity.autoUpdate = props.autoUpdate;
     if (props.animationName) entity.state.setAnimation(props.trackIndex ?? 0, props.animationName, props.loop);
     const { position, x, y, anchor, pivot, scale, scaleX, scaleY, ...rest } = props;
@@ -197,7 +201,7 @@ function createFactoryMethods<T extends typeof defaultFactoryMethods = typeof de
   const factoryMethods: any = {};
   for (const key in methods) {
     factoryMethods[key] = (...args: any[]) => {
-      // @ts-ignore
+      // @ts-expect-error - this is fine
       const obj = methods[key](...args);
       if (addToStage) {
         instance.addChild(obj);

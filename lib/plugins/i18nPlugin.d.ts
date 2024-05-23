@@ -1,6 +1,6 @@
-import { IApplication } from '../core/Application';
+import { IApplication } from '../core';
 import { Signal } from '../signals';
-import { ImportListItemModule } from '../utils/types';
+import { ImportListItemModule } from '../utils';
 import { IPlugin, Plugin } from './Plugin';
 
 /**

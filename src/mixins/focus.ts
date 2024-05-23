@@ -1,9 +1,9 @@
 import { FederatedEvent, PointerEvents } from 'pixi.js';
-import { Application } from '../core/Application';
+import { Application } from '../Application';
 import { PIXIContainer } from '../pixi';
-import { IFocusable } from '../plugins/focus/FocusManagerPlugin';
+import type { IFocusable } from '../plugins';
 import { Signal } from '../signals';
-import { Constructor, PointLike } from '../utils/types';
+import type { Constructor, PointLike } from '../utils';
 
 export function Focusable<TBase extends Constructor<PIXIContainer>>(Base: TBase): TBase & Constructor<IFocusable> {
   return class extends Base implements IFocusable {

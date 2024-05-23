@@ -1,6 +1,6 @@
-import { Application } from '../core/Application';
+import { Application } from '../Application';
 import { Signal } from '../signals';
-import { Size } from '../utils/types';
+import { Size } from '../utils';
 import { IPlugin, Plugin } from './Plugin';
 
 export interface IWebEventsPlugin extends IPlugin {

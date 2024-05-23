@@ -1,13 +1,13 @@
 import { Ticker, UPDATE_PRIORITY } from 'pixi.js';
-import { Application } from '../core/Application';
+import { Application } from '../Application';
 import { Plugin } from './Plugin';
+import Stats from 'stats.js';
 
 export class StatsPlugin extends Plugin {
   public readonly id = 'StatsPlugin';
-  public stats: any;
+  public stats: Stats;
 
   public async initialize() {
-    const Stats = await import('stats.js').then((m) => m.default);
     this.stats = new Stats();
     this.stats.dom.id = 'stats';
 

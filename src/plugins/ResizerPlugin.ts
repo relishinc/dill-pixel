@@ -1,8 +1,9 @@
 import {Graphics} from 'pixi.js';
-import {IApplication} from '../core/Application';
-import {Container} from '../display/Container';
-import {Size} from '../utils/types';
-import {IPlugin, Plugin} from './Plugin';
+import type {IApplication} from '../core';
+import {Container} from '../display';
+import type {Size} from '../utils';
+import type {IPlugin} from './Plugin';
+import {Plugin} from './Plugin';
 
 /**
  * Interface for Resizer module.

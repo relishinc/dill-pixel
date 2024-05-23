@@ -1,4 +1,4 @@
-import { Padding, PointLike } from './types';
+import type { Padding, PointLike } from './types';
 
 export function resolvePadding(paddingNum: number, size: number) {
   // check of the paddingNum is a decimal between 0 and 1

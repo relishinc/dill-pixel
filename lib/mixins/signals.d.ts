@@ -1,6 +1,6 @@
 import { DestroyOptions } from 'pixi.js';
 import { SignalConnection, SignalConnections } from '../signals';
-import { Constructor } from '../utils/types';
+import { Constructor } from '../utils';
 
 /**
  * Interface for animated entities.

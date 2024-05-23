@@ -1,6 +1,6 @@
 import { Ticker, UnresolvedAsset } from 'pixi.js';
-import { Application } from '../core/Application';
-import { Size } from '../utils/types';
+import { Application } from '../Application';
+import { Size } from '../utils';
 import { IContainer, Container } from './Container';
 
 export interface IScene extends IContainer {

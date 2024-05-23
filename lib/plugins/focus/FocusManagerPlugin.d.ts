@@ -1,10 +1,10 @@
 import { default as EventEmitter } from 'eventemitter3';
 import { Bounds, Container, PointerEvents, PointLike } from 'pixi.js';
-import { IApplication } from '../../core/Application';
+import { IApplication } from '../../core';
 import { Signal } from '../../signals';
-import { PointLike as DillPixelPointLike } from '../../utils/types';
+import { PointLike as DillPixelPointLike } from '../../utils';
 import { IPlugin, Plugin } from '../Plugin';
-import { FocusOutliner, FocusOutlinerConfig, IFocusOutliner } from './FocusOutliner';
+import { IFocusOutliner, FocusOutliner, FocusOutlinerConfig } from './FocusOutliner';
 
 export type FocusManagerPluginOptions = {
     outliner: IFocusOutliner | Partial<FocusOutlinerConfig> | typeof FocusOutliner;

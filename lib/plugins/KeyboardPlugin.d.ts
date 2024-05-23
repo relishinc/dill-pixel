@@ -1,4 +1,4 @@
-import { IApplication } from '../core/Application';
+import { IApplication } from '../core';
 import { Signal } from '../signals';
 import { IPlugin, Plugin } from './Plugin';
 

@@ -1,5 +1,5 @@
-import { isPromise } from './async';
-import { Constructor, ImportListItem, ImportListItemModule } from './types';
+import {isPromise} from './promise';
+import {Constructor, ImportListItem, ImportListItemModule} from './types';
 
 /**
  * Checks if the given value is a class.

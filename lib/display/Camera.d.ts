@@ -1,9 +1,9 @@
 import { Container, Point } from 'pixi.js';
-import { ContainerLike, PointLike } from '../utils/types';
+import { ContainerLike, PointLike } from '../utils';
 import { Signal } from '../signals';
-import { Application, IApplication } from '../core/Application';
+import { IApplication } from '../core';
 
-type CameraCOnfig = {
+type CameraConfig = {
     container: Container;
     minX: number;
     maxX: number;
@@ -17,8 +17,8 @@ type CameraCOnfig = {
     targetPivot: Point;
     lerp: number;
 };
-type OptionalCameraConfig = Partial<CameraCOnfig>;
-type RequiredCameraConfig = Required<Pick<CameraCOnfig, 'container'>>;
+type OptionalCameraConfig = Partial<CameraConfig>;
+type RequiredCameraConfig = Required<Pick<CameraConfig, 'container'>>;
 type CustomCameraConfig = OptionalCameraConfig & RequiredCameraConfig;
 export interface ICamera {
     onZoom: Signal<(camera: ICamera) => void>;
@@ -38,7 +38,7 @@ export interface ICamera {
     readonly lerp: number;
     readonly target: ContainerLike | null;
     readonly followOffset: Point;
-    app: Application;
+    app: IApplication;
     follow(target: ContainerLike, offset: PointLike): void;
     pan(deltaX: number, deltaY: number): void;
     zoom(scale: number, lerp?: number): void;
@@ -75,7 +75,7 @@ export declare class Camera extends Container implements ICamera {
     protected _followOffset: Point;
     get followOffset(): Point;
     set followOffset(value: PointLike);
-    get app(): Application;
+    get app(): IApplication;
     follow(target: ContainerLike, offset?: PointLike): void;
     pan(deltaX: number, deltaY: number): void;
     zoom(scale: number, lerp?: number): void;

@@ -1,6 +1,6 @@
 import { PIXIContainer } from '../pixi';
-import { IFocusable } from '../plugins/focus/FocusManagerPlugin';
-import { Constructor } from '../utils/types';
+import { IFocusable } from '../plugins';
+import { Constructor } from '../utils';
 
 export declare function Focusable<TBase extends Constructor<PIXIContainer>>(Base: TBase): TBase & Constructor<IFocusable>;
 export declare namespace Focusable {

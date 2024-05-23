@@ -1,5 +1,5 @@
 import { Signal } from '../signals';
-import { Constructor } from '../utils/types';
+import { Constructor } from '../utils';
 
 /**
  * Extended GSAP animation configuration interface.

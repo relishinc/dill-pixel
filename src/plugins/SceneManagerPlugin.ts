@@ -1,13 +1,10 @@
 import { Container } from 'pixi.js';
-import { Application, IApplication } from '../core/Application';
-import { IScene, Scene } from '../display/Scene';
+import type { IApplication } from '../core';
+import { Application } from '../Application';
+import type { IScene } from '../display';
 import { Signal } from '../signals';
-import { Logger } from '../utils/console/Logger';
-import { isDev } from '../utils/env';
-import { getDynamicModuleFromImportListItem } from '../utils/framework';
-import { bindAllMethods } from '../utils/methodBinding';
-import { createQueue, Queue } from '../utils/promise/Queue';
-import { Constructor, ImportList, SceneImportList } from '../utils/types';
+import type { Constructor, ImportList, SceneImportList } from '../utils';
+import { bindAllMethods, createQueue, getDynamicModuleFromImportListItem, isDev, Logger, Queue } from '../utils';
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
 
@@ -15,7 +12,7 @@ export interface ISceneManagerPlugin extends IPlugin {
   isFirstScene: boolean;
   onSceneChangeStart: Signal<(detail: { exiting: string | null; entering: string }) => void>;
   onSceneChangeComplete: Signal<(detail: { current: string }) => void>;
-  loadScreen?: Scene;
+  loadScreen?: IScene;
   view: Container;
   scenes: ImportList<IScene>;
 
@@ -48,7 +45,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
     (detail: { current: string }) => void
   >();
   // TODO: loadScreen is a special scene that can be used right after the application starts
-  public loadScreen?: Scene;
+  public loadScreen?: IScene;
   // view container - gets added to the stage
   public view: Container = new Container();
   // maybe the user wants the enter animation to be different for the first scene

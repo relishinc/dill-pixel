@@ -1,4 +1,4 @@
-import { Application } from '../../core/Application';
+import { Application } from '../../Application';
 import { IPlugin, Plugin } from '../../plugins/Plugin';
 
 /**

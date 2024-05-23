@@ -1,5 +1,6 @@
-import { Application, IApplication } from '../core/Application';
+import { IApplication } from '../core';
 import { SignalConnection, SignalConnections } from '../signals';
+import { Application } from '../Application';
 
 export interface IPlugin {
     id: string;

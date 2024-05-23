@@ -1,8 +1,9 @@
-import { IApplication } from '../../core/Application';
+import { IApplication } from '../../core';
 import { Signal } from '../../signals';
-import { IPlugin, Plugin } from '../Plugin';
+import type { IPlugin } from '../Plugin';
+import { Plugin } from '../Plugin';
 import { Action, ActionContext } from './actions';
-import { ActionDetail, ActionSignal, ActionsList } from './types';
+import type { ActionDetail, ActionSignal, ActionsList } from './types';
 import { InputController } from './constants';
 
 export type InputManagerOptions = {

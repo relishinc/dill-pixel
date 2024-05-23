@@ -1,8 +1,8 @@
 import { Container } from 'pixi.js';
-import { IApplication } from '../core/Application';
-import { IScene, Scene } from '../display/Scene';
+import { IApplication } from '../core';
+import { IScene } from '../display';
 import { Signal } from '../signals';
-import { ImportList, SceneImportList } from '../utils/types';
+import { ImportList, SceneImportList } from '../utils';
 import { IPlugin, Plugin } from './Plugin';
 
 export interface ISceneManagerPlugin extends IPlugin {
@@ -14,7 +14,7 @@ export interface ISceneManagerPlugin extends IPlugin {
     onSceneChangeComplete: Signal<(detail: {
         current: string;
     }) => void>;
-    loadScreen?: Scene;
+    loadScreen?: IScene;
     view: Container;
     scenes: ImportList<IScene>;
     setDefaultLoadMethod(method: LoadSceneMethod): void;
@@ -35,7 +35,7 @@ export declare class SceneManagerPlugin extends Plugin implements ISceneManagerP
     onSceneChangeComplete: Signal<(detail: {
         current: string;
     }) => void>;
-    loadScreen?: Scene;
+    loadScreen?: IScene;
     view: Container;
     isFirstScene: boolean;
     scenes: SceneImportList<IScene>;
