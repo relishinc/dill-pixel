@@ -23,6 +23,7 @@ const states = app.state
 const defaultState = app.state.default;
 
 if (nav) {
+
   // add examples to sidebar nav
   states.forEach((state) => {
     const a = document.createElement('a');
@@ -56,6 +57,9 @@ if (nav) {
     setActiveNavItem(state ?? defaultState);
   };
   window.addEventListener('hashchange', checkHash);
+
+  // disable nav initially
+  nav.classList.add('disabled');
 
   app.signals.stateTransitionComplete.connect(() => {
     nav?.classList.remove('disabled');

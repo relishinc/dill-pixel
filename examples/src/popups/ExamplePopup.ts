@@ -15,12 +15,6 @@ export default class ExamplePopup extends Popup {
   init(size: Point) {
     super.init(size);
 
-    this.alpha = 0;
-
-    if (this.blackout) {
-      this.blackout.alpha = 0;
-    }
-
     this._bg = this.add.coloredSprite({
       color: GREEN,
       size: [400, 300],
@@ -56,17 +50,16 @@ export default class ExamplePopup extends Popup {
   }
 
   async animateIn(callback: () => void): Promise<void> {
-    this.y = 10;
     if (this.blackout) {
-      await gsap.to(this.blackout, { alpha: 1, visible: true, duration: 0.3 });
+      gsap.fromTo(this.blackout, { alpha: 0 }, { alpha: 1, visible: true, duration: 0.3 });
     }
-    await gsap.to(this, { alpha: 1, y: 0, visible: true, ease: 'sine.out', duration: 0.4 });
+    await gsap.fromTo(this, { alpha: 0, y: 20 }, { alpha: 1, y: 0, visible: true, ease: 'sine.out', duration: 0.4 });
     forceFocus(this._button);
     callback();
   }
 
   async animateOut(callback: () => void): Promise<void> {
-    gsap.to(this, { alpha: 0, y: -5, ease: 'sine.in', duration: 0.3 });
+    gsap.to(this, { alpha: 0, y: -10, ease: 'sine.in', duration: 0.3 });
     if (this.blackout) {
       await gsap.to(this.blackout, { alpha: 0, duration: 0.2, delay: 0.1 });
     }

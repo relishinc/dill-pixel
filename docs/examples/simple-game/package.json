@@ -1,7 +1,7 @@
 {
   "name": "my-dill-pixel-game",
   "version": "0.0.0",
-  "description": "My First Game with Dill Pixel",
+  "description": "My First Game with dill pixel",
   "main": "index.html",
   "type": "module",
   "scripts": {

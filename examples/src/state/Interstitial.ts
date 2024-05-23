@@ -1,39 +1,53 @@
 import { LoadScreen } from 'dill-pixel';
 import { gsap, Sine } from 'gsap';
 import { Sprite, Point } from 'pixi.js';
+import { Spinner } from './gameobjects/Spinner';
 
 export class Interstitial extends LoadScreen {
   public static NAME: string = 'Interstitial';
 
   private _bg!: Sprite;
-  private _loaded: boolean = false;
+  private _spinner!: Spinner;
 
   public init(pSize: Point) {
     super.init(pSize);
-    this._bg = this.add.sprite({ asset: 'black2x2', alpha: 0, scale: [this._size.x, this._size.y] });
+    this._bg = this.add.sprite({ asset: 'black2x2', scale: [this._size.x, this._size.y] });
   }
 
   public onLoadProgress(progress: number) {
   }
 
   public async animateIn(pOnComplete: () => void): Promise<void> {
-    const timeline = gsap.timeline();
-    await timeline.to(this._bg, {
+
+    // Create spinner
+    this._spinner = this.add.existing(new Spinner(this.app));
+    this._spinner.start();
+
+    await gsap.timeline().fromTo(this, {
+      alpha: 0,
+    }, {
       duration: 0.5,
       alpha: 1,
       ease: Sine.easeOut,
     });
+
     pOnComplete();
   }
 
   public async animateOut(pOnComplete: () => void): Promise<void> {
-    const timeline = gsap.timeline();
-    await timeline.to(this._bg, {
+
+    await gsap.timeline().fromTo(this, {
+      alpha: 1, 
+    }, {
       duration: 0.5,
       alpha: 0,
       ease: Sine.easeInOut,
     });
-    document.body.dispatchEvent(new Event('loadComplete'));
+  
+    // Remove spinner
+    this._spinner.stop();
+    this.removeChild(this._spinner);
+
     pOnComplete();
   }
 
@@ -44,4 +58,9 @@ export class Interstitial extends LoadScreen {
       this._bg.scale.set(this._size.x, this._size.y);
     }
   }
+
+  public destroy() {
+    super.destroy();
+  }
+
 }

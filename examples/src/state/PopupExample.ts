@@ -19,6 +19,7 @@ export class PopupExample extends BaseState {
   _button: Container;
 
   onClose = () => {
+    console.log('onClose');
     this.count--;
   };
 
@@ -81,6 +82,6 @@ export class PopupExample extends BaseState {
   _showPopup() {
     this.count++;
     // showPopup(new PopupToken(ExamplePopup.NAME, this.onClose, true, false, this.count));
-    showPopup({ id: ExamplePopup.NAME, callback: this.onClose, backdrop: true, keyboard: true, data: this.count });
+    showPopup({ id: ExamplePopup.NAME, callback: this.onClose, backdrop: true, keyboard: false, data: this.count });
   }
 }
