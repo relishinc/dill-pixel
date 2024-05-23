@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.0](https://github.com/relishinc/dill-pixel/compare/v3.1.9...v3.2.0) (2024-05-23)
+
+
+### Features
+
+* playVO method added to Application ([8b8d5cc](https://github.com/relishinc/dill-pixel/commit/8b8d5ccf794021f3bf98556bb02d49a3b24affef))
+
 ## [3.1.9](https://github.com/relishinc/dill-pixel/compare/v3.1.8...v3.1.9) (2024-05-17)
 
 
