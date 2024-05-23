@@ -1,4 +1,4 @@
-import type {Application} from '../../core/Application';
+import type {Application} from '../../Application';
 import {IPlugin, Plugin} from '../../plugins/Plugin';
 
 /**

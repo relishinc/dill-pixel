@@ -10,15 +10,13 @@ import {
   RendererDestroyOptions,
 } from 'pixi.js';
 import type {
-  ICaptionsPlugin,
   IFocusManagerPlugin,
   Ii18nPlugin,
   IInputPlugin,
   IKeyboardPlugin,
   IPlugin,
   IPopupManagerPlugin,
-  IVoiceOverPlugin,
-} from '../plugins';
+} from './plugins';
 import {
   Action,
   ActionContext,
@@ -28,16 +26,17 @@ import {
   IResizerPlugin,
   ISceneManagerPlugin,
   IWebEventsPlugin,
-} from '../plugins';
-import { Signal } from '../signals';
-import type { IStorageAdapter, IStore } from '../store';
-import { Store } from '../store';
-import type { ImportListItem, Size } from '../utils';
-import { bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from '../utils';
-import type { IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals } from './interfaces';
-import { defaultPlugins } from '../plugins/defaults';
-import type { AppConfig } from './types';
-import { coreFunctionRegistry, coreSignalRegistry } from './registries';
+} from './plugins';
+import { Signal } from './signals';
+import type { IStorageAdapter, IStore } from './store';
+import { Store } from './store';
+import type { ImportListItem, Size } from './utils';
+import { bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from './utils';
+import type { AppConfig, IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals } from './core';
+import { coreFunctionRegistry, coreSignalRegistry } from './core';
+import { defaultPlugins } from './plugins/defaults';
+import type { IVoiceOverPlugin } from './plugins/audio/VoiceOverPlugin';
+import type { ICaptionsPlugin } from './plugins/captions';
 
 const defaultApplicationOptions: Partial<IApplicationOptions> = {
   antialias: false,
@@ -434,7 +433,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     if (config.useSpine) {
       await this.loadPlugin({
         id: 'SpinePlugin',
-        module: () => import('../plugins/spine/SpinePlugin'),
+        module: () => import('./plugins/spine/SpinePlugin'),
         namedExport: 'SpinePlugin',
       });
     }
@@ -462,20 +461,20 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     if (showStats) {
       await this.loadPlugin({
         id: 'stats',
-        module: () => import('../plugins/StatsPlugin'),
+        module: () => import('./plugins/StatsPlugin'),
         namedExport: 'StatsPlugin',
       });
     }
     if (this.config.useVoiceover) {
       await this.loadPlugin({
         id: 'voiceover',
-        module: () => import('../plugins/audio/VoiceOverPlugin'),
+        module: () => import('./plugins/audio/VoiceOverPlugin'),
         namedExport: 'VoiceOverPlugin',
         options: this.config['voiceover' as keyof IApplicationOptions] || undefined,
       });
       await this.loadPlugin({
         id: 'captions',
-        module: () => import('../plugins/captions/CaptionsPlugin'),
+        module: () => import('./plugins/captions/CaptionsPlugin'),
         namedExport: 'CaptionsPlugin',
         options: this.config['captions' as keyof IApplicationOptions] || undefined,
       });

@@ -1,7 +1,7 @@
-import { Application } from '../core/Application';
+import { Application } from '../Application';
 import { Signal } from '../signals';
-import { bindAllMethods } from '../utils/methodBinding';
-import { Size } from '../utils/types';
+import type { Size } from '../utils';
+import { bindAllMethods } from '../utils';
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
 

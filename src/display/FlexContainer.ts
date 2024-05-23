@@ -1,13 +1,11 @@
-import { DestroyOptions } from 'pixi.js';
-import { Application } from '../core/Application';
+import type { DestroyOptions } from 'pixi.js';
+import { Application } from '../Application';
 import { FactoryContainer } from '../mixins/factory';
-import { WithSignals } from '../mixins/signals';
+import { WithSignals } from '../mixins';
 import { PIXIContainer } from '../pixi';
 import { Signal } from '../signals';
-import { resolvePointLike } from '../utils/functions';
-import { bindAllMethods } from '../utils/methodBinding';
-import { ContainerLike, PointLike } from '../utils/types';
-import { Logger } from '../utils/console/Logger';
+import type { ContainerLike, PointLike } from '../utils';
+import { bindAllMethods, Logger, resolvePointLike } from '../utils';
 
 const _FlexContainer = WithSignals(FactoryContainer());
 
@@ -51,6 +49,9 @@ export interface IFlexContainer {
   onLayoutComplete: Signal<() => void>;
   debug: boolean;
   config: FlexContainerConfig;
+
+  containerWidth: number;
+  containerHeight: number;
 
   removeChildren<U extends PIXIContainer>(): U[];
 

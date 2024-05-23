@@ -1,13 +1,12 @@
 import { Assets, Container, Ticker } from 'pixi.js';
-import { IApplication } from '../../core/Application';
-import { Logger } from '../../utils/console/Logger';
-import { isDev } from '../../utils/env';
-import { getDynamicModuleFromImportListItem } from '../../utils/framework';
-import { ensurePadding } from '../../utils/padding';
-import { ImportListItem, ImportListItemModule, Padding, PointLike } from '../../utils/types';
-import { IAudioInstance } from '../audio/AudioInstance';
-import { IPlugin, Plugin } from '../Plugin';
-import { CaptionsRenderer, ICaptionRenderer } from './CaptionsRenderer';
+import type { IApplication } from '../../core';
+import type { ImportListItem, ImportListItemModule, Padding, PointLike } from '../../utils';
+import { ensurePadding, getDynamicModuleFromImportListItem, isDev, Logger } from '../../utils';
+import type { IAudioInstance } from '../audio';
+import type { IPlugin } from '../Plugin';
+import { Plugin } from '../Plugin';
+import type { ICaptionRenderer } from './CaptionsRenderer';
+import { CaptionsRenderer } from './CaptionsRenderer';
 
 const isDebug = isDev;
 

@@ -1,12 +1,10 @@
-import {IApplication} from '../../core/Application';
-import {Container} from '../../display/Container';
-import type {PopupConfig, PopupConstructor} from '../../display/Popup';
-import {IPopup} from '../../display/Popup';
-import {Signal} from '../../signals';
-import {getLastMapEntry} from '../../utils/map';
-import {bindAllMethods} from '../../utils/methodBinding';
-import type {IPlugin} from '../Plugin';
-import {Plugin} from '../Plugin';
+import type {IPopup, PopupConfig, PopupConstructor} from '../display';
+import {Container} from '../display';
+import {Signal} from '../signals';
+import {bindAllMethods, getLastMapEntry} from '../utils';
+import type {IPlugin} from './Plugin';
+import {Plugin} from './Plugin';
+import type {IApplication} from '../core';
 
 /**`
  * Interface for PopupManager

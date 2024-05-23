@@ -1,1 +1,1 @@
-export * from './Queue';
+export * from './Logger';

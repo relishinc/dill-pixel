@@ -1,6 +1,6 @@
 import { Ticker, UnresolvedAsset } from 'pixi.js';
-import { Application } from '../core/Application';
-import { Size } from '../utils/types';
+import { Application } from '../Application';
+import type { Size } from '../utils';
 import type { IContainer } from './Container';
 import { Container } from './Container';
 

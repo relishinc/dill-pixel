@@ -1,13 +1,12 @@
 import { Cursor, Sprite } from 'pixi.js';
 
-import { Application } from '../core/Application';
 import { FactoryContainer } from '../mixins/factory';
-import { Focusable } from '../mixins/focus';
-import { Interactive } from '../mixins/interaction';
-import { WithSignals } from '../mixins/signals';
+import { Focusable, Interactive, WithSignals } from '../mixins';
 import { Signal } from '../signals';
-import { bindAllMethods } from '../utils/methodBinding';
-import { SpriteSheetLike, TextureLike } from '../utils/types';
+import type { SpriteSheetLike, TextureLike } from '../utils';
+import { bindAllMethods } from '../utils';
+import type { IApplication } from '../core';
+import { Application } from '../Application';
 
 export type ButtonConfig = {
   textures: {
@@ -51,8 +50,6 @@ export class Button extends _Button {
   public isOver: boolean;
   // config
   protected config: ButtonConfig;
-  // enabled state
-  protected _enabled: boolean;
   // a set of unique callbacks for when the button is down
   protected _isDownCallbacks: Map<string, () => void> = new Map();
   private _isDownListenerAdded: boolean = false;
@@ -95,6 +92,9 @@ export class Button extends _Button {
     );
   }
 
+  // enabled state
+  protected _enabled: boolean;
+
   /**
    * @description Sets the enabled state of the button.
    * @param {boolean} enabled - Whether the button is enabled.
@@ -121,7 +121,7 @@ export class Button extends _Button {
     }
   }
 
-  get app() {
+  get app(): IApplication {
     return Application.getInstance();
   }
 

@@ -1,10 +1,10 @@
 import {Assets} from 'pixi.js';
-import {IApplication} from '../core/Application';
+import {IApplication} from '../core';
 import {Signal} from '../signals';
-import {Logger} from '../utils/console/Logger';
-import {getDynamicModuleFromImportListItem} from '../utils/framework';
-import {ImportListItem, ImportListItemModule} from '../utils/types';
-import {IPlugin, Plugin} from './Plugin';
+import type {ImportListItem, ImportListItemModule} from '../utils';
+import {getDynamicModuleFromImportListItem, Logger} from '../utils';
+import type {IPlugin} from './Plugin';
+import {Plugin} from './Plugin';
 
 /**
  * Type definition for i18n dictionary.
