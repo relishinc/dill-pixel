@@ -1,1 +1,0 @@
-{"version":3,"file":"StatsPlugin.d.ts","sourceRoot":"","sources":["../../src/plugins/StatsPlugin.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,MAAM,EAAE,MAAM,UAAU,CAAC;AAElC,qBAAa,WAAY,SAAQ,MAAM;IACrC,SAAgB,EAAE,iBAAiB;IAC5B,KAAK,EAAE,GAAG,CAAC;IAEL,UAAU;CAexB"}
