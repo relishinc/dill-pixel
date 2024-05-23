@@ -3,7 +3,7 @@
  * This file defines the main Application class for the project, along with some related types and functions.
  */
 import { Application as PIXIApplication, Point } from 'pixi.js';
-import { IAudioManager, IVoiceOverManager } from '../audio';
+import { Callback, IAudioManager, IPlayOptions, IVoiceOverManager, PlayMode } from '../audio';
 import { CopyManager } from '../copy';
 import { DefaultKeyboardFocusManagerSprite, HitAreaRenderer, KeyboardFocusManager, KeyboardManager, MouseManager } from '../input';
 import { AssetMapData, LoadManager, LoadScreen, LoadScreenProvider, SplashScreen } from '../load';
@@ -156,6 +156,13 @@ export declare class Application<T extends Application = any> extends PIXIApplic
      * this.add.htmlText( 'This is some text', getHTMLTextStyle('style1'), ...);
      */
     loadHTMLTextStyles(): Promise<void>;
+    /**
+     * Plays a voiceover. Override to e.g. add clauses to playback
+     * @param {string | (string | number)[]} key
+     * @param {PlayMode | Callback | Partial<IPlayOptions>} mode
+     * @param {Callback} callback
+     */
+    playVO(key: string | (string | number)[], mode?: PlayMode | Callback | Partial<IPlayOptions>, callback?: Callback): void;
     /**
      * adds a {KeyboardFocusManager} to the stage
      * @protected

@@ -1,6 +1,6 @@
 import { Application } from '../core';
 import { HowlerTrack } from './HowlerTrack';
-type Callback = (pDidPlay: boolean) => void;
+export type Callback = (pDidPlay: boolean) => void;
 export declare enum PlayMode {
     /** Play immediately if nothing else is playing, otherwise add to end of queue */
     Append = "append",
@@ -114,5 +114,4 @@ export declare class VoiceOverManager implements IVoiceOverManager {
     private onPause;
     private onResume;
 }
-export {};
 //# sourceMappingURL=VoiceOverManager.d.ts.map
