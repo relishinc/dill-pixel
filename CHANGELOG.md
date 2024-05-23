@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.1](https://github.com/relishinc/dill-pixel/compare/v3.2.0...v3.2.1) (2024-05-23)
+
+
+### Bug Fixes
+
+* minor code cleanup in Application ([d60ceb1](https://github.com/relishinc/dill-pixel/commit/d60ceb11ea615fd5212fd8c34cf633eeab6b9552))
+
 ## [3.2.0](https://github.com/relishinc/dill-pixel/compare/v3.1.9...v3.2.0) (2024-05-23)
 
 
