@@ -1,0 +1,34 @@
+{
+  "name": "@dill-pixel/storage-adapter-firebase",
+  "version": "8.4.0",
+  "description": "",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "main": "lib/dill-pixel-storage-adapter-firebase.mjs",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "default": "./lib/dill-pixel-storage-adapter-firebase.mjs",
+      "types": "./lib/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "dill-pixel": "8.4.0",
+    "vite-plugin-dts": "^3.9.1"
+  },
+  "peerDependencies": {
+    "dill-pixel": "^8.4.0"
+  },
+  "dependencies": {
+    "firebase": "^10.12.1"
+  }
+}
