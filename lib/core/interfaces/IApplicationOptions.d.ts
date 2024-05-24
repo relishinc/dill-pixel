@@ -1,5 +1,5 @@
 import { ApplicationOptions, AssetsManifest } from 'pixi.js';
-import { ImportList, SceneImportList } from '../../utils';
+import { ImportList, LoggerMode, SceneImportList } from '../../utils';
 import { IStorageAdapter } from '../../store';
 import { FocusManagerPluginOptions, i18nOptions, IPlugin, LoadSceneMethod, ResizerPluginOptions } from '../../plugins';
 import { IScene } from '../../display';
@@ -9,6 +9,7 @@ export interface IApplicationOptions extends ApplicationOptions {
     id: string;
     resizeToContainer: boolean;
     container: HTMLElement;
+    logger: LoggerMode;
     useStore: boolean;
     useSpine: boolean;
     useVoiceover: boolean;

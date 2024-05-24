@@ -1,5 +1,5 @@
 import type { ApplicationOptions, AssetsManifest } from 'pixi.js';
-import type { ImportList, SceneImportList } from '../../utils';
+import type { ImportList, LoggerMode, SceneImportList } from '../../utils';
 import type { IStorageAdapter } from '../../store';
 import type {
   FocusManagerPluginOptions,
@@ -15,6 +15,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   id: string;
   resizeToContainer: boolean;
   container: HTMLElement;
+  logger: LoggerMode;
   useStore: boolean;
   useSpine: boolean;
   useVoiceover: boolean;

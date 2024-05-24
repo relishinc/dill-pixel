@@ -1,6 +1,6 @@
 {
   "name": "dill-pixel",
-  "version": "8.4.2",
+  "version": "8.4.5",
   "title": "Dill Pixel V8",
   "description": "Relish framework for HTML games",
   "bin": {
@@ -47,7 +47,7 @@
   "scripts": {
     "dev": "cd ./examples && npm run dev",
     "start": "cd ./examples && npm run start",
-    "build": "npm run version && npm run pixi-exports && vite build",
+    "build": "npm run version && vite build",
     "declaration": "tsc --project tsconfig.build.json",
     "pixi-exports": "node ./scripts/pixi-exports.js",
     "compile": "tsc --project ./tsconfig.build.json",

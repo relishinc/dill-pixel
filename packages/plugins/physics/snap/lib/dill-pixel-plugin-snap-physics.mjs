@@ -1,6 +1,6 @@
-import { Container as B, Signal as w, Logger as y, Plugin as v, Application as b } from "dill-pixel";
-import { Rectangle as m, Sprite as C, Bounds as R, Texture as E, Point as x, Graphics as M } from "pixi.js";
-class z {
+import { Container as S, Signal as B, Logger as m, Plugin as w } from "dill-pixel";
+import { Rectangle as x, Sprite as v, Bounds as C, Texture as R, Point as y, Graphics as E } from "pixi.js";
+class M {
   constructor(t, e = !1) {
     this.cells = /* @__PURE__ */ new Map(), this._cellSize = t, e && d.all.forEach((s) => this.insert(s));
   }
@@ -53,7 +53,7 @@ class z {
     const t = [];
     return this.cells.forEach((e, s) => {
       const [o, n] = s.split(":").map(Number);
-      e.size && t.push(new m(o * this._cellSize, n * this._cellSize, this._cellSize, this._cellSize));
+      e.size && t.push(new x(o * this._cellSize, n * this._cellSize, this._cellSize, this._cellSize));
     }), t;
   }
   getGridKey(t, e) {
@@ -61,7 +61,7 @@ class z {
     return `${s}:${o}`;
   }
 }
-class S extends B {
+class b extends S {
   constructor(t) {
     super(), this.isActor = !1, this.isSolid = !1, this.isSensor = !1, this.debug = !1, this.debugColors = {
       bounds: 16711680,
@@ -73,7 +73,7 @@ class S extends B {
       const t = this.view.getBounds();
       t.scale(1 / this.system.container.worldTransform.d), this._cachedBounds = t;
     }
-    return this._cachedBounds || new m();
+    return this._cachedBounds || new x();
   }
   set cachedBounds(t) {
     this._cachedBounds = t;
@@ -104,11 +104,11 @@ class S extends B {
   }
   getWorldBounds() {
     const t = this.system.container.toLocal(this.view.getGlobalPosition()), e = this.cachedBounds;
-    return e.x = t.x, e.y = t.y, this.view instanceof C && this.view.anchor && (e.x -= this.view.width * this.view.anchor.x, e.y -= this.view.height * this.view.anchor.y), e;
+    return e.x = t.x, e.y = t.y, this.view instanceof v && this.view.anchor && (e.x -= this.view.width * this.view.anchor.x, e.y -= this.view.height * this.view.anchor.y), e;
   }
   getBoundingBox() {
     const t = this.getWorldBounds();
-    return t instanceof R ? t.rectangle : t;
+    return t instanceof C ? t.rectangle : t;
   }
   getOuterBoundingBox() {
     return null;
@@ -116,7 +116,7 @@ class S extends B {
   initialize() {
   }
 }
-class P extends S {
+class z extends b {
   constructor() {
     super(...arguments), this.type = "Solid", this.isSolid = !0;
   }
@@ -162,13 +162,13 @@ const G = {
   height: 10,
   debugColor: 65535
 };
-class p extends P {
+class p extends z {
   constructor(t = {}) {
     super({ ...G, ...t }), this.type = "Wall", this.initialize();
   }
   initialize() {
     this.view = this.add.sprite({
-      asset: E.WHITE,
+      asset: R.WHITE,
       width: this.config.width,
       height: this.config.height,
       tint: this.config.debugColor,
@@ -176,14 +176,14 @@ class p extends P {
     });
   }
 }
-function W(h, t) {
+function I(h, t) {
   return h.x > t.left && h.x < t.right && h.y > t.top && h.y < t.bottom;
 }
 function H(h, t) {
   const e = Math.max(0, Math.min(h.x + h.width, t.x + t.width) - Math.max(h.x, t.x)), s = Math.max(0, Math.min(h.y + h.height, t.y + t.height) - Math.max(h.y, t.y));
   return { x: e, y: s, area: e * s };
 }
-function T(h, t, e, s) {
+function P(h, t, e, s) {
   const o = {
     top: !1,
     bottom: !1,
@@ -214,7 +214,7 @@ const i = class i {
     return i.actors.length + i.solids.length + i.sensors.length;
   }
   static useSpatialHashGrid(t) {
-    i.grid ? i.grid.cellSize = t : i.grid = new z(t, !0);
+    i.grid ? i.grid.cellSize = t : i.grid = new M(t, !0);
   }
   static removeSpatialHashGrid() {
     i.grid && (i.grid.destroy(), i.grid = null);
@@ -281,7 +281,7 @@ const i = class i {
     return a.area > 0 && a.area > i.collisionThreshold;
   }
   static update(t) {
-    i.enabled && (i.container || y.error("SnapPhysicsPlugin: World container not set!"), i.solids.forEach((e) => {
+    i.enabled && (i.container || m.error("SnapPhysicsPlugin: World container not set!"), i.solids.forEach((e) => {
       e.update(t);
     }), i.sensors.forEach((e) => {
       e.update(t);
@@ -295,7 +295,7 @@ const i = class i {
     i.worldBounds.length > 0 && (i.worldBounds.forEach((c) => {
       c.parent.removeChild(c), c.destroy();
     }), i.worldBounds = []);
-    const r = new x(0, 0), a = i.container;
+    const r = new y(0, 0), a = i.container;
     let l;
     n.includes("bottom") && (l = a.addChild(new p({ width: t, height: s })), l.position.set(r.x + t * 0.5, r.y + e + o), i.worldBounds.push(l)), n.includes("top") && (l = a.addChild(new p({ width: t, height: s })), l.position.set(r.x + t * 0.5, r.y + s * 0.5), i.worldBounds.push(l)), n.includes("left") && (l = a.addChild(new p({ width: s, height: e })), l.position.set(r.x - s * 0.5 - o, r.y + e * 0.5 + s * 0.5), i.worldBounds.push(l)), n.includes("right") && (l = a.addChild(new p({ width: s, height: e })), l.position.set(r.x + t + o + s * 0.5, r.y + e * 0.5), i.worldBounds.push(l)), i.grid && i.worldBounds.forEach((c) => {
       var u, g;
@@ -306,7 +306,7 @@ const i = class i {
     !t.type && t.entity1 && t.entity2 && (t.type = `${t.entity1.type}|${t.entity2.type}`), this.onCollision.emit(t);
   }
   static drawDebug() {
-    i.container && (i.gfx || (i.gfx = new M(), i.container.addChild(i.gfx)), i.container.setChildIndex(i.gfx, i.container.children.length - 1), i.gfx.clear(), [...i.actors, ...i.solids, ...i.sensors].forEach((t) => {
+    i.container && (i.gfx || (i.gfx = new E(), i.container.addChild(i.gfx)), i.container.setChildIndex(i.gfx, i.container.children.length - 1), i.gfx.clear(), [...i.actors, ...i.solids, ...i.sensors].forEach((t) => {
       const e = t.getBoundingBox(), s = t.getOuterBoundingBox();
       i.gfx.rect(e.x, e.y, e.width, e.height).stroke({ width: 1, color: t.debugColors.bounds, alignment: 0.5 }), s && i.gfx.rect(s.x, s.y, s.width, s.height).stroke({ width: 1, color: t.debugColors.outerBounds, alignment: 0.5 });
     }), i.grid && i.grid.draw(i.gfx));
@@ -325,7 +325,7 @@ const i = class i {
       t.boundary.thickness,
       t.boundary.padding,
       t.boundary.sides
-    ) : y.error("SnapPhysicsPlugin System.initialize: Boundary width and height required.")), t.useSpatialHashGrid && i.useSpatialHashGrid(t.cellSize ?? 100);
+    ) : m.error("SnapPhysicsPlugin System.initialize: Boundary width and height required.")), t.useSpatialHashGrid && i.useSpatialHashGrid(t.cellSize ?? 100);
   }
   static updateEntity(t) {
     i.grid && i.grid.updateEntity(t);
@@ -336,14 +336,14 @@ const i = class i {
     }), i.worldBounds = []), i.container && (i.container.removeChildren(), i.container = null), i.gfx && (i.gfx.clear(), i.gfx = null), i.grid && (i.grid.destroy(), i.grid = null), i.camera && (i.camera = null), this.solids = [], this.actors = [], this.sensors = [], this.typeMap.clear(), this.worldBounds = [];
   }
 };
-i.DEFAULT_COLLISION_THRESHOLD = 2, i.debug = !0, i.typeMap = /* @__PURE__ */ new Map(), i.actors = [], i.solids = [], i.sensors = [], i.enabled = !0, i.gravity = 10, i.onCollision = new w(), i.worldBounds = [], i.collisionThreshold = 8, i._collisionResolver = null;
+i.DEFAULT_COLLISION_THRESHOLD = 2, i.debug = !0, i.typeMap = /* @__PURE__ */ new Map(), i.actors = [], i.solids = [], i.sensors = [], i.enabled = !0, i.gravity = 10, i.onCollision = new B(), i.worldBounds = [], i.collisionThreshold = 8, i._collisionResolver = null;
 let d = i;
-const A = {
+const T = {
   useSpatialHashGrid: !1,
   gridCellSize: -1,
   fps: -1
 };
-class Y extends v {
+class W extends w {
   constructor() {
     super(...arguments), this.id = "SnapPhysicsPlugin";
   }
@@ -369,10 +369,10 @@ class Y extends v {
     this.system.enabled = !1, d.cleanup(), super.destroy();
   }
   async initialize(t, e) {
-    this.options = { ...A, ...e }, y.log("SnapPhysicsPlugin Initialized"), y.log("instance::", b, b.getInstance()), this.system.app = t, this.system.enabled = !0, this.options.useSpatialHashGrid && this.options.gridCellSize > 0 && this.system.useSpatialHashGrid(this.options.gridCellSize), this.options.fps > 0 && (d.fps = this.options.fps, t.ticker.maxFPS = d.fps);
+    this.options = { ...T, ...e }, this.system.app = t, this.system.enabled = !0, this.options.useSpatialHashGrid && this.options.gridCellSize > 0 && this.system.useSpatialHashGrid(this.options.gridCellSize), this.options.fps > 0 && (d.fps = this.options.fps, t.ticker.maxFPS = d.fps);
   }
 }
-class k extends S {
+class A extends b {
   constructor() {
     super(...arguments), this.type = "Actor", this.isActor = !0, this.passThroughTypes = [], this.passingThrough = /* @__PURE__ */ new Set();
   }
@@ -395,7 +395,7 @@ class k extends S {
     for (o && (o.isCollideable = !1); n !== 0; ) {
       const a = this.x + (n ? r : 0), l = this.collideAt(a - this.x, 0, this.getBoundingBox());
       if (l) {
-        e && l.forEach((c) => e(c, o, new x(a - this.x, 0))), this.xRemainder = 0;
+        e && l.forEach((c) => e(c, o, new y(a - this.x, 0))), this.xRemainder = 0;
         break;
       } else
         this.x = a, n -= r, this.xRemainder -= r, s && s();
@@ -409,7 +409,7 @@ class k extends S {
     for (o && (o.isCollideable = !1); n !== 0; ) {
       const a = this.y + (n ? r : 0), l = this.collideAt(0, a - this.y, this.getBoundingBox());
       if (l) {
-        e && l.forEach((c) => e(c, o, new x(0, a - this.y))), this.yRemainder = 0;
+        e && l.forEach((c) => e(c, o, new y(0, a - this.y))), this.yRemainder = 0;
         break;
       } else
         this.y = a, n -= r, this.yRemainder -= r, s && s();
@@ -418,11 +418,11 @@ class k extends S {
   }
   // Simple bounding box collision check
   collideAt(t, e, s) {
-    const o = new m(s.x + t, s.y + e, s.width, s.height), n = [];
+    const o = new x(s.x + t, s.y + e, s.width, s.height), n = [];
     for (const r of this.collideables) {
       if (!r.isCollideable || this.passThroughTypes.includes(r.type))
         continue;
-      const a = r.getBoundingBox(), l = T(o, a, this, r);
+      const a = r.getBoundingBox(), l = P(o, a, this, r);
       l && (d.collide(l), d.resolveCollision(l) && n.push(l));
     }
     return n.length ? n : !1;
@@ -440,7 +440,7 @@ class k extends S {
     return this.passingThrough.has(t);
   }
 }
-class X extends k {
+class Y extends A {
   constructor() {
     super(...arguments), this.type = "Sensor", this.isSensor = !0;
   }
@@ -455,14 +455,14 @@ class X extends k {
   }
 }
 export {
-  k as Actor,
-  S as Entity,
-  X as Sensor,
-  P as Solid,
+  A as Actor,
+  b as Entity,
+  Y as Sensor,
+  z as Solid,
   d as System,
   p as Wall,
-  T as checkCollision,
-  W as checkPointIntersection,
-  Y as default
+  P as checkCollision,
+  I as checkPointIntersection,
+  W as default
 };
 //# sourceMappingURL=dill-pixel-plugin-snap-physics.mjs.map

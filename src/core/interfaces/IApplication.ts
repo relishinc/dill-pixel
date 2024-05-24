@@ -51,4 +51,6 @@ export interface IApplication extends PIXIPApplication {
   postInitialize(): Promise<void>;
 
   getPlugin<T extends IPlugin>(name: string): T;
+
+  setContainer(container: HTMLElement): void;
 }

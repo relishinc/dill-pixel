@@ -1,7 +1,12 @@
-import { version } from './version';
+import { pixiVersion, version } from './version';
 
 export function sayHello() {
-  let hello: string = `%cDill Pixel Game Framework v${version}`;
-  hello += ' - %chttps://dillpixel.io';
-  console.log(hello, 'color: #74b64c', 'color: #74b64c; font-weight: bold');
+  const hello = `%c Dill Pixel Game Framework v${version} | %cPixi.js v${pixiVersion} %c| %chttps://dillpixel.io `;
+  console.log(
+    hello,
+    'background: rgba(31, 41, 55, 1);color: #74b64c',
+    'background: rgba(31, 41, 55, 1);color: #e91e63',
+    'background: rgba(31, 41, 55, 1);color: #74b64c',
+    'background: rgba(31, 41, 55, 1);color: #74b64c; font-weight: bold',
+  );
 }

@@ -81,7 +81,6 @@ export class SnapPhysicsScene extends BaseScene {
   }
 
   async initialize() {
-    console.log('SNAP PHYSICS SCENE', this.app.focus);
     await super.initialize();
     await Assets.loadBundle('spine');
 

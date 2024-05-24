@@ -1,5 +1,5 @@
 import { Container, Graphics, Point } from 'pixi.js';
-import { IApplication, ICamera, Logger, PIXIContainer, Signal } from 'dill-pixel';
+import { IApplication, ICamera, Logger, Signal } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { Sensor } from './Sensor';
@@ -29,7 +29,7 @@ type CustomSnapPhysicsBoundaryOptions = OptionalSnapPhysicsBoundaryOptions & Req
 type SnapPhysicsSystemOptions = {
   gravity: number;
   fps: number;
-  container: PIXIContainer;
+  container: Container;
   debug: boolean;
   boundary: CustomSnapPhysicsBoundaryOptions;
   collisionResolver: (collision: Collision) => boolean;
@@ -332,7 +332,7 @@ export class System {
     }
   }
 
-  static setContainer(container: PIXIContainer) {
+  static setContainer(container: Container) {
     System.container = container;
   }
 

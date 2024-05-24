@@ -1,6 +1,5 @@
-import { DestroyOptions } from 'pixi.js';
+import { DestroyOptions, Container } from 'pixi.js';
 import { Application } from '../Application';
-import { PIXIContainer } from '../pixi';
 import { Signal } from '../signals';
 import { ContainerLike, PointLike } from '../utils';
 
@@ -15,7 +14,7 @@ declare const _FlexContainer: (new () => import('../mixins/factory').IFactoryCon
     button: (props?: Partial<import('../mixins/factory/props').ButtonProps> | undefined) => import('./Button').Button;
     flexContainer: (props?: Partial<import('../mixins/factory/props').FlexContainerProps> | undefined) => FlexContainer<Application<import('pixi.js').Renderer>>;
     uiCanvas: (props?: Partial<import('../mixins/factory/props').UICanvasFactoryProps> | undefined) => import('./UICanvas').UICanvas<Application<import('pixi.js').Renderer>>;
-    spine: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('../plugins/spine/pixi-spine').Spine;
+    spine: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('../utils').Spine;
     spineAnimation: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('./SpineAnimation').ISpineAnimation;
 }>) & import('../utils').Constructor<import('../mixins').ISignalContainer>;
 export interface FlexContainerConfig {
@@ -36,16 +35,16 @@ export interface IFlexContainer {
     config: FlexContainerConfig;
     containerWidth: number;
     containerHeight: number;
-    removeChildren<U extends PIXIContainer>(): U[];
-    removeChildAt<U extends PIXIContainer>(index: number): U;
-    addChildAt<U extends PIXIContainer>(child: U, index: number): U;
-    setChildIndex<U extends PIXIContainer>(child: U, index: number): void;
-    getChildIndex<U extends PIXIContainer>(child: U): number;
-    getChildAt<U extends PIXIContainer>(index: number): U;
+    removeChildren<U extends Container>(): U[];
+    removeChildAt<U extends Container>(index: number): U;
+    addChildAt<U extends Container>(child: U, index: number): U;
+    setChildIndex<U extends Container>(child: U, index: number): void;
+    getChildIndex<U extends Container>(child: U): number;
+    getChildAt<U extends Container>(index: number): U;
     setFlexChildren(): void;
     cleanup(): void;
     handleChildAdded(child: any): void;
-    deleteChild(child: PIXIContainer): boolean;
+    deleteChild(child: Container): boolean;
     layout(): void;
     added(): void;
 }
@@ -61,11 +60,11 @@ export declare class FlexContainer<T extends Application = Application> extends 
     protected paddingRight: number;
     protected paddingTop: number;
     protected paddingBottom: number;
-    protected _childMap: Map<PIXIContainer<import('pixi.js').ContainerChild>, PIXIContainer<import('pixi.js').ContainerChild>>;
+    protected _childMap: Map<Container<import('pixi.js').ContainerChild>, Container<import('pixi.js').ContainerChild>>;
     private _reparentAddedChild;
     constructor(config?: Partial<FlexContainerConfig>);
-    protected _flexChildren: PIXIContainer[];
-    get flexChildren(): PIXIContainer<import('pixi.js').ContainerChild>[];
+    protected _flexChildren: Container[];
+    get flexChildren(): Container<import('pixi.js').ContainerChild>[];
     get gap(): number;
     set gap(value: number);
     get flexWrap(): FlexWrap;
@@ -93,22 +92,22 @@ export declare class FlexContainer<T extends Application = Application> extends 
      * Removes all the children from the container
      * Override because we need to ensure it returns the proper re-parented children
      */
-    removeChildren: <U extends PIXIContainer<import('pixi.js').ContainerChild>>() => U[];
+    removeChildren: <U extends Container<import('pixi.js').ContainerChild>>() => U[];
     /**
      * Removes a child from the container at the specified index
      * Override because we need to remove from the inner container
      */
-    removeChildAt: <U extends PIXIContainer<import('pixi.js').ContainerChild>>(index: number) => U;
+    removeChildAt: <U extends Container<import('pixi.js').ContainerChild>>(index: number) => U;
     /**
      * Adds a child to the container at the specified index
      * Override because we need to ensure it sets the child index properly
      */
-    addChildAt: <U extends PIXIContainer<import('pixi.js').ContainerChild>>(child: U, index: number) => U;
+    addChildAt: <U extends Container<import('pixi.js').ContainerChild>>(child: U, index: number) => U;
     /**
      * Sets the index of the child in the container
      * Override because we need to ensure it targets the parent container that we added
      */
-    setChildIndex: <U extends PIXIContainer<import('pixi.js').ContainerChild>>(child: U, index: number) => void;
+    setChildIndex: <U extends Container<import('pixi.js').ContainerChild>>(child: U, index: number) => void;
     /**
      * Gets the index of a child in the container
      * Override because we need to ensure it targets the parent container that we added
@@ -116,19 +115,19 @@ export declare class FlexContainer<T extends Application = Application> extends 
      * @param {number} index
      * @returns {U}
      */
-    getChildIndex: <U extends PIXIContainer<import('pixi.js').ContainerChild>>(child: U) => number;
+    getChildIndex: <U extends Container<import('pixi.js').ContainerChild>>(child: U) => number;
     /**
      * Gets the child at the specified index
      * Override due to re-parenting
      */
-    getChildAt: <U extends PIXIContainer<import('pixi.js').ContainerChild>>(index: number) => U;
+    getChildAt: <U extends Container<import('pixi.js').ContainerChild>>(index: number) => U;
     destroy(_options?: DestroyOptions | boolean): void;
     /**
      * Removes one or more children from the container
      * Override because we need to ensure it returns the proper re-parented children
      * @param children
      */
-    removeChild(...children: PIXIContainer[]): PIXIContainer;
+    removeChild(...children: Container[]): Container;
     /**
      * Public method to manually trigger a layout
      */
@@ -140,14 +139,14 @@ export declare class FlexContainer<T extends Application = Application> extends 
      * Ensures we delete the child from the map when it's removed
      * @protected
      */
-    protected handleChildRemoved(child: PIXIContainer): void;
+    protected handleChildRemoved(child: Container): void;
     /**
      * Deletes a child from the map
-     * @param {PIXIContainer} child
+     * @param {Container} child
      * @returns {boolean}
      * @protected
      */
-    protected deleteChild(child: PIXIContainer): boolean;
+    protected deleteChild(child: Container): boolean;
     /**
      * Sorts the children in the container
      * Needed because we need to ensure re-parented children are sorted by their actual index in the container

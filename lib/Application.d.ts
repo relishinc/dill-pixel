@@ -1,4 +1,4 @@
-import { Application as PIXIPApplication, AssetsManifest, DestroyOptions, Point, Renderer, RendererDestroyOptions } from 'pixi.js';
+import { AssetsManifest, DestroyOptions, Renderer, RendererDestroyOptions, Application as PIXIPApplication, Point } from 'pixi.js';
 import { IFocusManagerPlugin, Ii18nPlugin, IInputPlugin, IKeyboardPlugin, IPlugin, IPopupManagerPlugin, Action, ActionContext, ActionSignal, IAssetsPlugin, IAudioManagerPlugin, IResizerPlugin, ISceneManagerPlugin, IWebEventsPlugin } from './plugins';
 import { Signal } from './signals';
 import { IStorageAdapter, IStore } from './store';
@@ -8,7 +8,6 @@ import { IVoiceOverPlugin } from './plugins/audio/VoiceOverPlugin';
 import { ICaptionsPlugin } from './plugins/captions';
 
 export declare class Application<R extends Renderer = Renderer> extends PIXIPApplication<R> implements IApplication {
-    static containerId: string;
     static containerElement: HTMLElement;
     protected static instance: IApplication;
     __dill_pixel_method_binding_root: boolean;
@@ -69,6 +68,7 @@ export declare class Application<R extends Renderer = Renderer> extends PIXIPApp
      * @param {DestroyOptions} options
      */
     destroy(rendererDestroyOptions?: RendererDestroyOptions, options?: DestroyOptions): void;
+    setContainer(container: HTMLElement): void;
     initialize(config: AppConfig): Promise<IApplication>;
     getPlugin<T extends IPlugin>(pluginName: string): T;
     postInitialize(): Promise<void>;

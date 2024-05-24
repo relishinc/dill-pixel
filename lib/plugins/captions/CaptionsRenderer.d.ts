@@ -1,7 +1,7 @@
-import { Container } from '../../display/Container';
-import { Size } from '../../utils/types';
+import { Container as PIXIContainer } from 'pixi.js';
+import { Container } from '../../display';
+import { Size } from '../../utils';
 import { CaptionsPlugin } from './CaptionsPlugin';
-import { PIXIContainer } from '../../pixi';
 
 export type CaptionLine = {
     id: string;

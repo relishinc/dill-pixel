@@ -34,7 +34,7 @@ export declare class Factory {
         button: (props?: Partial<ButtonProps> | undefined) => Button;
         flexContainer: (props?: Partial<FlexContainerProps> | undefined) => FlexContainer<import('../..').Application<import('pixi.js').Renderer>>;
         uiCanvas: (props?: Partial<UICanvasFactoryProps> | undefined) => UICanvas<import('../..').Application<import('pixi.js').Renderer>>;
-        spine: (props?: Partial<SpineProps> | undefined) => import('../../plugins/spine/pixi-spine').Spine;
+        spine: (props?: Partial<SpineProps> | undefined) => import('../../utils').Spine;
         spineAnimation: (props?: Partial<SpineProps> | undefined) => ISpineAnimation;
     };
 }

@@ -28,7 +28,7 @@ declare const _Button: (new () => import('../mixins/factory').IFactoryContainer<
     button: (props?: Partial<import('../mixins/factory/props').ButtonProps> | undefined) => Button;
     flexContainer: (props?: Partial<import('../mixins/factory/props').FlexContainerProps> | undefined) => import('./FlexContainer').FlexContainer<Application<import('pixi.js').Renderer>>;
     uiCanvas: (props?: Partial<import('../mixins/factory/props').UICanvasFactoryProps> | undefined) => import('./UICanvas').UICanvas<Application<import('pixi.js').Renderer>>;
-    spine: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('../plugins/spine/pixi-spine').Spine;
+    spine: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('../utils').Spine;
     spineAnimation: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('./SpineAnimation').ISpineAnimation;
 }>) & import('../utils').Constructor<import('../mixins').ISignalContainer> & import('../utils').Constructor<import('../mixins').IInteractive> & import('../utils').Constructor<import('..').IFocusable>;
 /**

@@ -1,4 +1,4 @@
-import { Application, IApplication, Logger, Plugin } from 'dill-pixel';
+import { Application, IApplication, Plugin } from 'dill-pixel';
 import { System } from './System';
 
 type SnapPhysicsPluginOptions = {
@@ -61,8 +61,6 @@ export class SnapPhysicsPlugin extends Plugin {
 
   public async initialize(app: IApplication, options?: Partial<SnapPhysicsPluginOptions>) {
     this.options = { ...defaultOptions, ...options };
-    Logger.log('SnapPhysicsPlugin Initialized');
-    Logger.log('instance::', Application, Application.getInstance());
     this.system.app = app;
     this.system.enabled = true;
 

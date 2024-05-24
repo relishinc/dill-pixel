@@ -31,5 +31,6 @@ export interface IApplication extends PIXIPApplication {
     initialize(config: AppConfig): Promise<IApplication>;
     postInitialize(): Promise<void>;
     getPlugin<T extends IPlugin>(name: string): T;
+    setContainer(container: HTMLElement): void;
 }
 //# sourceMappingURL=IApplication.d.ts.map

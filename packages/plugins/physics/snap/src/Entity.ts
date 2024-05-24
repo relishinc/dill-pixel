@@ -1,5 +1,6 @@
+import type { Container as PIXIContianer } from 'pixi.js';
 import { Bounds, Rectangle, Sprite } from 'pixi.js';
-import { Application, Container, PIXIContainer } from 'dill-pixel';
+import { Application, Container } from 'dill-pixel';
 import { ICollider } from './ICollider';
 import { System } from './System';
 import { EntityType } from './types';
@@ -14,7 +15,7 @@ export class Entity<T = any, A extends Application = Application> extends Contai
     outerBounds: 0x00ff00,
   };
   type: EntityType = 'Solid';
-  view: PIXIContainer;
+  view: PIXIContianer;
   isCollideable: boolean = true;
   xRemainder: number = 0;
   yRemainder: number = 0;

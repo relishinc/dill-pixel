@@ -1,14 +1,5 @@
-import {
-  Application as PIXIPApplication,
-  AssetInitOptions,
-  Assets,
-  AssetsManifest,
-  DestroyOptions,
-  isMobile,
-  Point,
-  Renderer,
-  RendererDestroyOptions,
-} from 'pixi.js';
+import type { AssetInitOptions, AssetsManifest, DestroyOptions, Renderer, RendererDestroyOptions } from 'pixi.js';
+import { Application as PIXIPApplication, Assets, isMobile, Point } from 'pixi.js';
 import type {
   IFocusManagerPlugin,
   Ii18nPlugin,
@@ -69,7 +60,6 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
 };
 
 export class Application<R extends Renderer = Renderer> extends PIXIPApplication<R> implements IApplication {
-  public static containerId = 'dill-pixel-game-container';
   public static containerElement: HTMLElement;
   protected static instance: IApplication;
   __dill_pixel_method_binding_root = true;
@@ -283,20 +273,28 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     super.destroy(rendererDestroyOptions, options);
   }
 
+  public setContainer(container: HTMLElement) {
+    if (!Application.containerElement) {
+      Application.containerElement = container;
+    }
+  }
+
   public async initialize(config: AppConfig): Promise<IApplication> {
     if (Application.instance) {
       throw new Error('Application is already initialized');
     }
     Application.instance = this;
-
     this.config = Object.assign({ ...defaultApplicationOptions }, config);
+    if (config.container) {
+      Application.containerElement = config.container;
+    }
+    // initialize the logger
+    Logger.initialize(this.config.logger);
     await this.boot(this.config);
     await this.preInitialize(this.config);
     await this.initAssets();
     // initialize the pixi application
     await this.init(this.config);
-    // initialize the logger
-    Logger.initialize(config.id);
 
     // register the default plugins
     await this.registerDefaultPlugins();
@@ -418,7 +416,12 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   protected boot(config?: Partial<IApplicationOptions>): Promise<void> | void;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected async boot(config?: Partial<IApplicationOptions>): Promise<void> {
-    Logger.log(`${this.appName}:: v${this.appVersion}`);
+    console.log(
+      `%c App info - %c${this.appName} | %cv${this.appVersion} `,
+      `background: rgba(31, 41, 55, 1); color: #74b64c`,
+      `background: rgba(31, 41, 55, 1); color: #74b64c; font-weight:bold`,
+      `background: rgba(31, 41, 55, 1); color: #74b64c; font-weight:bold`,
+    );
   }
 
   /**
@@ -445,7 +448,6 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       Logger.error(`Plugin with id "${plugin.id}" already registered. Not registering.`);
       return plugin.initialize(this, options);
     }
-    Logger.log(`Registering plugin: ${plugin.id}`);
     plugin.registerCoreFunctions();
     plugin.registerCoreSignals();
     this._plugins.set(plugin.id, plugin);
@@ -482,25 +484,15 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   }
 
   protected async registerPlugins() {
-    if (isDev) {
-      Logger.log(
-        'No custom plugins registered using "registerPlugins". Register them by overriding the "registerPlugins"' +
-          ' method in your' +
-          ' Application class.',
-      );
-    }
+    // override this method to register custom plugins,
+    // or do it in the app config during bootstrap
     return Promise.resolve();
   }
 
   // storage
   protected async registerStorageAdapters() {
-    if (isDev) {
-      Logger.log(
-        'No storage adapters registered using "registerStorageAdapters". Register them by overriding the' +
-          ' "registerStorageAdapters" method in your' +
-          ' Application class.',
-      );
-    }
+    // override this method to register custom storage adapters,
+    // or do it in the app config during bootstrap
     return Promise.resolve();
   }
 

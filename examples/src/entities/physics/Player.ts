@@ -60,21 +60,14 @@ export class Player extends SnapActor {
       return;
     }
 
-    const riding = this.collideables.find((entity) => this.isRiding(entity));
-
     this._velocity.y =
       this.system.gravity * deltaTime - (this._velocity.y < 0 ? this._jumpPower : -this.system.gravity * 0.25);
 
     if (this._isJumping) {
       this._jumpTimeElapsed += deltaTime;
       this._jumpPower -= this._velocity.y < 0 ? 1 : 3;
-      this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
-    } else if (riding) {
-      // do nothing
-    } else {
-      this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
     }
-
+    this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
     if (!this._isJumping && !this._isMoving) {
       if (this.view.getCurrentAnimation() !== 'idle') {
         this.view.setAnimation('idle', true);
@@ -155,7 +148,6 @@ export class Player extends SnapActor {
       loop: true,
     });
 
-    // console.log(this.view.animationNames);
     this.view.scale.set(0.15);
     this.app.actions('move_left').connect(this._handleAction);
     this.app.actions('move_right').connect(this._handleAction);
@@ -174,8 +166,10 @@ export class Player extends SnapActor {
       this.isRiding(collision.entity2)
     ) {
       this._resetJump();
-    } else if (collision.top && collision.entity2.bottom <= this.top + 1) {
-      this._hitHead = true;
+    } else {
+      if (collision.top && collision.entity2.bottom <= this.top + 1) {
+        this._hitHead = true;
+      }
     }
   }
 

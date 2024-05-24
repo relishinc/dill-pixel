@@ -46,6 +46,7 @@ export async function create(
   await instance.initialize(config);
   if (el) {
     el.appendChild(instance.canvas as HTMLCanvasElement);
+    instance.setContainer(el);
   } else {
     throw new Error('No element found to append the view to.');
   }

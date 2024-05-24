@@ -1,5 +1,5 @@
 import EN from '@/locales/en';
-import { AppConfig, Application, create, LoadSceneMethod, LocalStorageAdapter } from 'dill-pixel';
+import { AppConfig, Application, create, LocalStorageAdapter } from 'dill-pixel';
 
 import { Assets } from 'pixi.js';
 import manifest from './assets.json';
@@ -102,7 +102,7 @@ const appConfig: AppConfig = {
   resizer: {
     minSize: { width: 960, height: 600 },
   },
-  defaultSceneLoadMethod: 'exitEnter' as LoadSceneMethod,
+  defaultSceneLoadMethod: 'exitEnter',
   useSpine: true,
   showStats: true,
   showSceneDebugMenu: true,

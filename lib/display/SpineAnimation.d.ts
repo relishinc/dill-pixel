@@ -1,5 +1,5 @@
 import { SpineProps } from '../mixins/factory/props';
-import { Spine } from '../plugins/spine/pixi-spine';
+import { Spine } from '../utils';
 
 declare const _SpineAnimation: (new () => import('../mixins/factory').IFactoryContainer<{
     existing: <TEntity>(entity: TEntity, props?: Partial<import('../mixins/factory/props').ExistingProps> | undefined) => TEntity;
@@ -14,7 +14,7 @@ declare const _SpineAnimation: (new () => import('../mixins/factory').IFactoryCo
     uiCanvas: (props?: Partial<import('../mixins/factory/props').UICanvasFactoryProps> | undefined) => import('./UICanvas').UICanvas<import('..').Application<import('pixi.js').Renderer>>;
     spine: (props?: Partial<SpineProps> | undefined) => Spine;
     spineAnimation: (props?: Partial<SpineProps> | undefined) => ISpineAnimation;
-}>) & import('..').Constructor<import('../mixins').ISignalContainer>;
+}>) & import('../utils').Constructor<import('../mixins').ISignalContainer>;
 export interface ISpineAnimation extends InstanceType<typeof _SpineAnimation> {
     spine: Spine;
     animationNames: string[];

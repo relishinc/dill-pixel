@@ -1,7 +1,7 @@
 import { FactoryContainer } from '../mixins/factory';
 import type { SpineProps } from '../mixins/factory/props';
 import { WithSignals } from '../mixins';
-import type { Spine } from '../plugins/spine/pixi-spine';
+import type { Spine } from '../utils';
 
 const _SpineAnimation = WithSignals(FactoryContainer());
 
@@ -33,8 +33,6 @@ export class SpineAnimation extends _SpineAnimation {
       if (props.autoUpdate !== undefined) this.spine.autoUpdate = props.autoUpdate;
       if (props.animationName) this.setAnimation(props.animationName, props.loop, props.trackIndex ?? 0);
     }
-
-    // this.spine.position.set(-this.spine.width * 0.5, -this.spine.height * 0.5);
   }
 
   get animationNames() {
