@@ -241,6 +241,7 @@ export declare class AudioManagerPlugin extends Plugin implements IAudioManagerP
     load(soundId: string | string[], channelName?: ChannelName, options?: PlayOptions): void;
     protected getCoreSignals(): string[];
     private _verifySoundId;
+    private _findAndAddFromManifest;
     /**
      * @private
      */

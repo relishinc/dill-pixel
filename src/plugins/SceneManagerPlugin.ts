@@ -3,7 +3,7 @@ import type { IApplication } from '../core';
 import { Application } from '../Application';
 import type { IScene } from '../display';
 import { Signal } from '../signals';
-import type { Constructor, ImportList, SceneImportList } from '../utils';
+import type { Constructor, SceneImportList } from '../utils';
 import { bindAllMethods, createQueue, getDynamicModuleFromImportListItem, isDev, Logger, Queue } from '../utils';
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
@@ -14,7 +14,7 @@ export interface ISceneManagerPlugin extends IPlugin {
   onSceneChangeComplete: Signal<(detail: { current: string }) => void>;
   loadScreen?: IScene;
   view: Container;
-  scenes: ImportList<IScene>;
+  scenes: SceneImportList<IScene>;
 
   setDefaultLoadMethod(method: LoadSceneMethod): void;
 
@@ -98,6 +98,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
   }
 
   public async loadDefaultScene(): Promise<void> {
+    await this.app.assets.loadRequired();
     return this.loadScene(this.defaultScene);
   }
 
@@ -151,6 +152,8 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
         this._queue.add(
           this._exitLastScene,
           this._destroyLastScene,
+          this._unloadLastScene,
+          this._loadCurrentScene,
           this._initializeCurrentScene,
           this._addCurrentScene,
           this._enterCurrentScene,
@@ -159,26 +162,33 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
         break;
       case 'enterExit':
         this._queue.add(
+          this._loadCurrentScene,
           this._initializeCurrentScene,
           this._addCurrentScene,
           this._enterCurrentScene,
           this._startCurrentScene,
           this._destroyLastScene,
+          this._unloadLastScene,
         );
         break;
       case 'enterBehind':
         this._queue.add(
+          this._loadCurrentScene,
           this._initializeCurrentScene,
           this._addCurrentSceneBehind,
           this._enterCurrentScene,
           this._exitLastScene,
           this._destroyLastScene,
+          this._unloadLastScene,
           this._startCurrentScene,
         );
         break;
+      case 'immediate':
       default:
         this._queue.add(
           this._destroyLastScene,
+          this._unloadLastScene,
+          this._loadCurrentScene,
           this._initializeCurrentScene,
           this._addCurrentScene,
           this._enterCurrentScene,
@@ -228,11 +238,35 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
 
     this.currentScene = new SceneClass();
     this.currentScene.id = this._currentSceneId;
+    if (sceneItem.bundles !== undefined) {
+      this.currentScene.bundles = sceneItem.bundles;
+    }
+    if (sceneItem.assets !== undefined) {
+      this.currentScene.assets = sceneItem.assets;
+    }
+    if (sceneItem.backgroundAssets !== undefined) {
+      this.currentScene.backgroundAssets = sceneItem.backgroundAssets;
+    }
+    if (sceneItem.backgroundBundles !== undefined) {
+      this.currentScene.backgroundBundles = sceneItem.backgroundBundles;
+    }
+    if (sceneItem.autoUnloadAssets !== undefined) {
+      this.currentScene.autoUnloadAssets = sceneItem.autoUnloadAssets;
+    }
+
     this.onSceneChangeStart.emit({ exiting: this._lastScene?.id || null, entering: this.currentScene.id });
   }
 
   private _queueComplete() {
+    if (this.isFirstScene) {
+      // background required assets
+      this.app.assets.loadBackground();
+    }
     this.isFirstScene = false;
+
+    // load any background assets for the current scene
+    void this.app.assets.loadSceneAssets(this.currentScene, true);
+
     this._lastScene = null;
     this.onSceneChangeComplete.emit({ current: this.currentScene.id });
     this._queue = null;
@@ -253,6 +287,17 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
       return Promise.resolve();
     }
     await this._lastScene.exit();
+    return Promise.resolve();
+  }
+
+  private async _loadCurrentScene(): Promise<any> {
+    await this.app.assets.loadSceneAssets(this.currentScene);
+  }
+
+  private async _unloadLastScene(): Promise<any> {
+    if (this._lastScene && this._lastScene.autoUnloadAssets) {
+      return this.app.assets.unloadSceneAssets(this._lastScene);
+    }
     return Promise.resolve();
   }
 

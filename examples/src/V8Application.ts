@@ -1,21 +1,23 @@
 import EN from '@/locales/en';
 import { AppConfig, Application, create, LocalStorageAdapter } from 'dill-pixel';
-
-import { Assets } from 'pixi.js';
 import manifest from './assets.json';
 import { ExampleOutliner } from './ui/ExampleOutliner';
 import TestAdapter from '@/adapters/TestAdapter';
 
-export class V8Application extends Application {
-  setup() {
-    return Assets.loadBundle(['required', 'game']);
-  }
-}
+export class V8Application extends Application {}
 
 const appConfig: AppConfig = {
   id: 'V8Application',
   manifest: manifest,
   antialias: true,
+  assets: {
+    required: {
+      bundles: ['required', 'game'],
+    },
+    background: {
+      bundles: ['audio'],
+    },
+  },
   plugins: [
     {
       id: 'physics',
@@ -38,6 +40,7 @@ const appConfig: AppConfig = {
       debugLabel: 'Audio',
       namedExport: 'AudioScene',
       module: () => import('@/scenes/AudioScene'),
+      autoUnloadAssets: true,
     },
     {
       id: 'voiceover',

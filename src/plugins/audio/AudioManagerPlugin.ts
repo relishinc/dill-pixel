@@ -1,6 +1,6 @@
-import { PlayOptions, sound, SoundSourceMap } from '@pixi/sound';
+import { PlayOptions, Sound, sound, SoundSourceMap } from '@pixi/sound';
 import { gsap } from 'gsap';
-import { AssetsManifest, UnresolvedAsset } from 'pixi.js';
+import { Assets, AssetsManifest, UnresolvedAsset } from 'pixi.js';
 import { Signal } from '../../signals';
 import { Logger } from '../../utils';
 import type { IPlugin } from '../Plugin';
@@ -553,6 +553,7 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
   }
 
   private _verifySoundId(soundId: string): string {
+    const originalSoundId = soundId;
     if (this._idMap.has(soundId)) {
       return this._idMap.get(soundId) as string;
     }
@@ -566,12 +567,69 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
       } else if (sound.exists(soundId + '.wav')) {
         soundId += '.wav';
       } else {
-        throw new Error(`Sound with ID ${soundId} does not exist.`);
+        soundId = originalSoundId;
+        let sound = Assets.get(soundId);
+        if (!sound) {
+          soundId = originalSoundId + '.mp3';
+          sound = Assets.get(soundId);
+        }
+        if (!sound) {
+          soundId = originalSoundId + '.ogg';
+          sound = Assets.get(soundId);
+        }
+        if (!sound) {
+          soundId = originalSoundId + '.wav';
+          sound = Assets.get(soundId);
+        }
+        if (sound) {
+          this._findAndAddFromManifest(soundId, sound);
+        } else {
+          throw new Error(`Sound with ID ${soundId} does not exist.`);
+        }
       }
     }
-    // Logger.log(`Sound with id:${originalId} is now mapped to id:${soundId}`);
+    Logger.log(`Sound with id:${originalSoundId} is now mapped to id:${soundId}`);
     this._idMap.set(soundId, soundId);
     return soundId;
+  }
+
+  private _findAndAddFromManifest(soundId: string, sound: Sound) {
+    const manifest = this.app.manifest;
+    if (manifest === undefined || typeof manifest === 'string') {
+      throw new Error('Manifest is not available');
+    }
+    for (let i = 0; i < manifest.bundles.length; i++) {
+      const bundle = manifest.bundles[i];
+      if (!Array.isArray(bundle?.assets)) {
+        bundle.assets = [bundle.assets];
+      }
+      for (let j = 0; j < bundle.assets.length; j++) {
+        const asset = bundle.assets[j];
+        // detect sound assets by asset.src extension
+        const src = asset.src;
+        const filename = sound.url.split('/').pop() ?? '';
+        if (Array.isArray(src)) {
+          for (let s = 0; s < src.length; s++) {
+            const urlOrResolvedSrc = src[s];
+            let url: string;
+            if (typeof urlOrResolvedSrc !== 'string') {
+              url = urlOrResolvedSrc.src!;
+            } else {
+              url = urlOrResolvedSrc as string;
+            }
+            if (url.includes(filename)) {
+              this.add(asset);
+              return;
+            }
+          }
+        } else {
+          if (src?.includes(filename)) {
+            this.add(asset);
+            return;
+          }
+        }
+      }
+    }
   }
 
   /**

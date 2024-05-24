@@ -48,4 +48,7 @@ export interface ICoreSignals {
   // WebEventsManager;
   onResize: Signal<(size: Size) => void>;
   onVisibilityChanged: Signal<(visible: boolean) => void>;
+  // AssetPlugin
+  onLoadProgress: Signal<(progress: number) => void>;
+  onLoadComplete: Signal<() => void>;
 }

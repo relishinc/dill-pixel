@@ -1,22 +1,38 @@
-import { Ticker, UnresolvedAsset } from 'pixi.js';
+import { Ticker } from 'pixi.js';
 import { Application } from '../Application';
 import { Size } from '../utils';
 import { IContainer, Container } from './Container';
 
+export type SceneAssets = string | string[] | null;
+export type SceneBundles = string | string[] | null;
 export interface IScene extends IContainer {
     id: string;
     enter: () => Promise<any>;
     exit: () => Promise<any>;
     initialize: () => Promise<void> | void;
     start: () => Promise<void> | void;
-    bundles?: string[] | null;
-    assets?: string[] | UnresolvedAsset[] | null;
+    assets?: SceneAssets;
+    bundles?: SceneBundles;
+    backgroundAssets?: SceneAssets;
+    backgroundBundles?: SceneBundles;
+    autoUnloadAssets?: boolean;
 }
 export declare class Scene<T extends Application = Application> extends Container<T> implements IScene {
     readonly id: string;
+    autoUnloadAssets: boolean;
     constructor();
-    get assets(): string[] | UnresolvedAsset[] | null;
-    get bundles(): string[] | null;
+    private _assets;
+    get assets(): SceneAssets;
+    set assets(value: SceneAssets);
+    private _bundles;
+    get bundles(): SceneBundles;
+    set bundles(value: string | string[] | null);
+    private _backgroundAssets;
+    get backgroundAssets(): SceneAssets;
+    set backgroundAssets(value: SceneAssets);
+    private _backgroundBundles;
+    get backgroundBundles(): SceneBundles;
+    set backgroundBundles(value: string | string[] | null);
     /**
      * Called to initialize the scene
      * Called before the scene is added to the stage

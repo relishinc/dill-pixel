@@ -1,8 +1,11 @@
-import { Ticker, UnresolvedAsset } from 'pixi.js';
+import { Ticker } from 'pixi.js';
 import { Application } from '../Application';
 import type { Size } from '../utils';
 import type { IContainer } from './Container';
 import { Container } from './Container';
+
+export type SceneAssets = string | string[] | null;
+export type SceneBundles = string | string[] | null;
 
 export interface IScene extends IContainer {
   id: string;
@@ -10,23 +13,60 @@ export interface IScene extends IContainer {
   exit: () => Promise<any>;
   initialize: () => Promise<void> | void;
   start: () => Promise<void> | void;
-  bundles?: string[] | null;
-  assets?: string[] | UnresolvedAsset[] | null;
+  assets?: SceneAssets;
+  bundles?: SceneBundles;
+  backgroundAssets?: SceneAssets;
+  backgroundBundles?: SceneBundles;
+  autoUnloadAssets?: boolean;
 }
 
 export class Scene<T extends Application = Application> extends Container<T> implements IScene {
   public readonly id: string;
+  autoUnloadAssets: boolean = false;
 
   constructor() {
     super({ autoResize: true, autoUpdate: true, priority: -9999 });
   }
 
-  get assets(): string[] | UnresolvedAsset[] | null {
-    return null;
+  private _assets: SceneAssets = null;
+
+  get assets(): SceneAssets {
+    return this._assets;
   }
 
-  get bundles(): string[] | null {
-    return null;
+  set assets(value: SceneAssets) {
+    this._assets = value;
+  }
+
+  private _bundles: SceneBundles = null;
+
+  get bundles(): SceneBundles {
+    return this._bundles;
+  }
+
+  set bundles(value: string | string[] | null) {
+    this._bundles = value;
+  }
+
+  //
+  private _backgroundAssets: SceneAssets = null;
+
+  get backgroundAssets(): SceneAssets {
+    return this._backgroundAssets;
+  }
+
+  set backgroundAssets(value: SceneAssets) {
+    this._backgroundAssets = value;
+  }
+
+  private _backgroundBundles: SceneBundles = null;
+
+  get backgroundBundles(): SceneBundles {
+    return this._backgroundBundles;
+  }
+
+  set backgroundBundles(value: string | string[] | null) {
+    this._backgroundBundles = value;
   }
 
   /**

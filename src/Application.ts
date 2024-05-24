@@ -380,7 +380,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return this.config.plugins?.find((plugin) => plugin.id === id);
   }
 
-  async loadPlugin(listItem: ImportListItem) {
+  async loadPlugin(listItem: ImportListItem, isDefault: boolean = false) {
     if (this._plugins.has(listItem.id)) {
       return await this.registerPlugin(this._plugins.get(listItem.id)!, listItem.options);
     }
@@ -389,7 +389,11 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     if (pluginInstance.id !== listItem.id) {
       pluginInstance.id = listItem.id;
     }
-    return await this.registerPlugin(pluginInstance, listItem.options);
+    let opts = listItem.options;
+    if (isDefault && !opts) {
+      opts = this.config[pluginInstance.id as keyof IApplicationOptions];
+    }
+    return await this.registerPlugin(pluginInstance, opts);
   }
 
   public sendAction(action: string, data?: any) {
@@ -457,7 +461,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   protected async registerDefaultPlugins() {
     for (let i = 0; i < defaultPlugins.length; i++) {
       const listItem = defaultPlugins[i];
-      await this.loadPlugin(listItem);
+      await this.loadPlugin(listItem, true);
     }
     const showStats = this.config.showStats === true || (isDev && this.config.showStats !== false);
     if (showStats) {

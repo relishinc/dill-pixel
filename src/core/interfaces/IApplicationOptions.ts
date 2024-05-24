@@ -4,6 +4,7 @@ import type { IStorageAdapter } from '../../store';
 import type {
   FocusManagerPluginOptions,
   i18nOptions,
+  IAssetsPluginOptions,
   IPlugin,
   LoadSceneMethod,
   ResizerPluginOptions,
@@ -21,6 +22,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   useVoiceover: boolean;
   storageAdapters: ImportList<IStorageAdapter>;
   plugins: ImportList<IPlugin>;
+  assets: Partial<IAssetsPluginOptions>;
   scenes: SceneImportList<IScene>;
   focusOptions: Partial<FocusManagerPluginOptions>;
   defaultScene: string;

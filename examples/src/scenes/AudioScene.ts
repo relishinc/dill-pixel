@@ -2,9 +2,9 @@ import { ActionDetail, FlexContainer } from 'dill-pixel';
 import { BaseScene } from './BaseScene';
 
 export class AudioScene extends BaseScene {
+  backgroundLoad: true;
   protected readonly title = 'Audio';
   protected readonly subtitle = 'Demonstrates audio channels and volume control.';
-
   protected config = {
     master: 0.5,
     music: 0.25,

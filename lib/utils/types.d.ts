@@ -1,4 +1,5 @@
 import { Point, Texture } from 'pixi.js';
+import { SceneAssets, SceneBundles } from '../display';
 
 /**
  * A generic constructor type.
@@ -79,10 +80,13 @@ export type ImportListItem<T = any> = {
 type SceneItemOptions = {
     debugLabel?: string;
     plugins?: string[];
-    assets?: string | string[];
+    assets?: SceneAssets;
+    bundles?: SceneBundles;
+    backgroundAssets?: SceneAssets;
+    backgroundBundles?: SceneBundles;
     autoUnloadAssets?: boolean;
 };
-export type SceneImportListItem<T> = ImportListItem<T> & SceneItemOptions;
+export type SceneImportListItem<T> = ImportListItem<T> & Partial<SceneItemOptions>;
 /**
  * A type that represents an import list.
  * @template T The type of the instance that the constructor creates.

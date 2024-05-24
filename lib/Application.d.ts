@@ -74,7 +74,7 @@ export declare class Application<R extends Renderer = Renderer> extends PIXIPApp
     postInitialize(): Promise<void>;
     actions<T = any>(action: Action | string): ActionSignal<T>;
     getUnloadedPlugin(id: string): ImportListItem<IPlugin> | undefined;
-    loadPlugin(listItem: ImportListItem): Promise<void>;
+    loadPlugin(listItem: ImportListItem, isDefault?: boolean): Promise<void>;
     sendAction(action: string, data?: any): void;
     /**
      * Get a storage adapter by id
