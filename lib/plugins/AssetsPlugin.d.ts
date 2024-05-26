@@ -2,7 +2,7 @@ import { IPlugin, Plugin } from './Plugin';
 import { IScene } from '../display';
 import { Signal } from '../signals';
 import { IApplication } from '../core';
-import { SceneImportListItem } from '../utils';
+import { AssetLoadingOptions, SceneImportListItem } from '../utils';
 
 export interface IAssetsPlugin extends IPlugin {
     onLoadStart: Signal<() => void>;
@@ -15,16 +15,6 @@ export interface IAssetsPlugin extends IPlugin {
     loadRequired(): Promise<void>;
     loadBackground(): void;
 }
-export interface IAssetsPluginOptions {
-    required?: {
-        assets?: string | string[];
-        bundles?: string | string[];
-    };
-    background?: {
-        assets?: string | string[];
-        bundles?: string | string[];
-    };
-}
 export declare class AssetsPlugin extends Plugin implements IAssetsPlugin {
     readonly id: string;
     onLoadStart: Signal<() => void>;
@@ -32,7 +22,7 @@ export declare class AssetsPlugin extends Plugin implements IAssetsPlugin {
     onLoadComplete: Signal<() => void>;
     private _required;
     private _background;
-    initialize(_app: IApplication, options?: Partial<IAssetsPluginOptions>): Promise<void> | void;
+    initialize(_app: IApplication, options?: AssetLoadingOptions): Promise<void> | void;
     loadRequired(): Promise<void>;
     loadBackground(): void;
     loadAssets(assets: string | string[]): Promise<any>;

@@ -3,11 +3,12 @@ import { Graphics, Text } from 'pixi.js';
 
 import { COLOR_GREEN } from '@/utils/Constants';
 import { V8Application } from '@/V8Application';
+import { GUI } from 'dat.gui';
 
 export class BaseScene extends Scene<V8Application> {
   protected readonly title: string;
   protected readonly subtitle: string;
-  protected gui: any;
+  protected gui: GUI;
   protected config: any;
   protected _bg: Graphics;
   protected _title: Text;
@@ -83,7 +84,7 @@ export class BaseScene extends Scene<V8Application> {
     });
     this.gui.domElement.id = 'gui';
     this.gui.domElement.style.marginRight = `0px`;
-    this.app.canvas.parentNode?.appendChild(this.gui.domElement.parentNode);
+    this.app.canvas.parentNode?.appendChild(this.gui.domElement.parentNode!);
     (this.gui.domElement.parentNode as HTMLElement).style.cssText = `position: absolute;
     top: 0;
     left: 0;

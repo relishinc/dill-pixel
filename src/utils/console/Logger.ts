@@ -55,9 +55,9 @@ export class Logger {
       return;
     }
     if (Logger.mode === 'default') {
-      return console.log(`%c[ Logger:: ${capitalize(type)} ]`, colors[type], ...args);
+      return console.log(`%c ${capitalize(type)} `, colors[type], ...args);
     }
-    console.groupCollapsed(`%c Logger:: ${capitalize(type)} `, colors[type], ...args);
+    console.groupCollapsed(`%c ${capitalize(type)} `, colors[type], ...args);
     console.trace(`%c Stack `, colors[type]);
     console.groupEnd();
   }

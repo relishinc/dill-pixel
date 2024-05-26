@@ -1,4 +1,5 @@
-import { Container, Interactive, Logger, Spine } from 'dill-pixel';
+import type { Spine } from 'dill-pixel';
+import { Container, Interactive, Logger } from 'dill-pixel';
 
 import { Rectangle } from 'pixi.js';
 
@@ -16,7 +17,7 @@ export class Boy extends Interactive(Container) {
       autoUpdate: true,
       loop: true,
     });
-    this._animations = this._spine.state.data.skeletonData.animations.map((a) => a.name);
+    this._animations = this._spine.state.data.skeletonData.animations.map((a: any) => a.name);
     Logger.log(this._animations);
     this._currentAnimation = 0;
   }

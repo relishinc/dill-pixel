@@ -238,17 +238,8 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
 
     this.currentScene = new SceneClass();
     this.currentScene.id = this._currentSceneId;
-    if (sceneItem.bundles !== undefined) {
-      this.currentScene.bundles = sceneItem.bundles;
-    }
-    if (sceneItem.assets !== undefined) {
+    if (sceneItem?.assets) {
       this.currentScene.assets = sceneItem.assets;
-    }
-    if (sceneItem.backgroundAssets !== undefined) {
-      this.currentScene.backgroundAssets = sceneItem.backgroundAssets;
-    }
-    if (sceneItem.backgroundBundles !== undefined) {
-      this.currentScene.backgroundBundles = sceneItem.backgroundBundles;
     }
     if (sceneItem.autoUnloadAssets !== undefined) {
       this.currentScene.autoUnloadAssets = sceneItem.autoUnloadAssets;

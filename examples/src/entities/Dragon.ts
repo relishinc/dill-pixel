@@ -1,4 +1,5 @@
-import { Container, Interactive, Spine } from 'dill-pixel';
+import type { Spine } from 'dill-pixel';
+import { Container, Interactive } from 'dill-pixel';
 
 import { Rectangle } from 'pixi.js';
 import { gsap } from 'gsap';

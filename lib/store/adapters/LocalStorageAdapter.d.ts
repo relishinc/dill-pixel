@@ -14,10 +14,12 @@ export interface ILocalStorageAdapterOptions {
  * A class representing a storage adapter that uses the local storage.
  */
 export declare class LocalStorageAdapter extends StorageAdapter {
+    readonly id: string;
     /**
      * The namespace to use for the keys in the local storage.
      */
     namespace: string;
+    constructor(id?: string);
     /**
      * Gets the prefix to use for the keys in the local storage.
      * @returns {string} The prefix.

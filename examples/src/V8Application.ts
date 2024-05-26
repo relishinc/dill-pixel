@@ -1,17 +1,14 @@
 import EN from '@/locales/en';
-import { AppConfig, Application, create, LocalStorageAdapter } from 'dill-pixel';
+import { create, LocalStorageAdapter } from 'dill-pixel';
 import manifest from './assets.json';
 import { ExampleOutliner } from './ui/ExampleOutliner';
-import TestAdapter from '@/adapters/TestAdapter';
 
-export class V8Application extends Application {}
-
-const appConfig: AppConfig = {
+create({
   id: 'V8Application',
   manifest: manifest,
   antialias: true,
   assets: {
-    required: {
+    preload: {
       bundles: ['required', 'game'],
     },
     background: {
@@ -30,17 +27,13 @@ const appConfig: AppConfig = {
       autoLoad: false,
     },
   ],
-  storageAdapters: [
-    { id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } },
-    { id: 'test', module: TestAdapter, options: { foo: 'bar' } },
-  ],
+  storageAdapters: [{ id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } }],
   scenes: [
     {
       id: 'audio',
       debugLabel: 'Audio',
       namedExport: 'AudioScene',
       module: () => import('@/scenes/AudioScene'),
-      autoUnloadAssets: true,
     },
     {
       id: 'voiceover',
@@ -103,11 +96,11 @@ const appConfig: AppConfig = {
     ],
   },
   resizer: {
-    minSize: { width: 960, height: 600 },
+    minSize: { width: 500, height: 700 },
   },
   defaultSceneLoadMethod: 'exitEnter',
-  useSpine: true,
-  showStats: true,
+  useSpine: false,
+  showStats: false,
   showSceneDebugMenu: true,
   focusOptions: {
     outliner: ExampleOutliner,
@@ -122,6 +115,4 @@ const appConfig: AppConfig = {
     textColor: 0xffffff,
     maxWidth: 0.4,
   },
-};
-
-void create(V8Application, appConfig);
+});

@@ -1,6 +1,6 @@
 import { Ticker } from 'pixi.js';
 import { Application } from '../Application';
-import type { Size } from '../utils';
+import type { AssetLoadingOptions, Size } from '../utils';
 import type { IContainer } from './Container';
 import { Container } from './Container';
 
@@ -13,10 +13,7 @@ export interface IScene extends IContainer {
   exit: () => Promise<any>;
   initialize: () => Promise<void> | void;
   start: () => Promise<void> | void;
-  assets?: SceneAssets;
-  bundles?: SceneBundles;
-  backgroundAssets?: SceneAssets;
-  backgroundBundles?: SceneBundles;
+  assets?: AssetLoadingOptions;
   autoUnloadAssets?: boolean;
 }
 
@@ -28,45 +25,32 @@ export class Scene<T extends Application = Application> extends Container<T> imp
     super({ autoResize: true, autoUpdate: true, priority: -9999 });
   }
 
-  private _assets: SceneAssets = null;
+  /**
+   * The assets to load for the scene
+   * @private
+   * @type {AssetLoadingOptions}
+   * @example
+   * ```ts
+   * assets: {
+   *  preload: {
+   *  assets: ['path/to/asset.png'],
+   *  bundles: ['bundle1', 'bundle2'],
+   *  },
+   *  background: {
+   *   assets: ['path/to/asset.png'],
+   *   bundles: ['bundle1', 'bundle2'],
+   *   },
+   * }
+   * ```
+   */
+  private _assets: AssetLoadingOptions;
 
-  get assets(): SceneAssets {
+  get assets(): AssetLoadingOptions {
     return this._assets;
   }
 
-  set assets(value: SceneAssets) {
+  set assets(value: AssetLoadingOptions) {
     this._assets = value;
-  }
-
-  private _bundles: SceneBundles = null;
-
-  get bundles(): SceneBundles {
-    return this._bundles;
-  }
-
-  set bundles(value: string | string[] | null) {
-    this._bundles = value;
-  }
-
-  //
-  private _backgroundAssets: SceneAssets = null;
-
-  get backgroundAssets(): SceneAssets {
-    return this._backgroundAssets;
-  }
-
-  set backgroundAssets(value: SceneAssets) {
-    this._backgroundAssets = value;
-  }
-
-  private _backgroundBundles: SceneBundles = null;
-
-  get backgroundBundles(): SceneBundles {
-    return this._backgroundBundles;
-  }
-
-  set backgroundBundles(value: string | string[] | null) {
-    this._backgroundBundles = value;
   }
 
   /**

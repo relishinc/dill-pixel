@@ -1,10 +1,9 @@
 import type { ApplicationOptions, AssetsManifest } from 'pixi.js';
-import type { ImportList, LoggerMode, SceneImportList } from '../../utils';
+import type { AssetLoadingOptions, ImportList, LoggerMode, SceneImportList } from '../../utils';
 import type { IStorageAdapter } from '../../store';
 import type {
   FocusManagerPluginOptions,
   i18nOptions,
-  IAssetsPluginOptions,
   IPlugin,
   LoadSceneMethod,
   ResizerPluginOptions,
@@ -22,7 +21,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   useVoiceover: boolean;
   storageAdapters: ImportList<IStorageAdapter>;
   plugins: ImportList<IPlugin>;
-  assets: Partial<IAssetsPluginOptions>;
+  assets: AssetLoadingOptions;
   scenes: SceneImportList<IScene>;
   focusOptions: Partial<FocusManagerPluginOptions>;
   defaultScene: string;

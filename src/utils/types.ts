@@ -1,5 +1,4 @@
 import {Point, Texture} from 'pixi.js';
-import {SceneAssets, SceneBundles} from '../display';
 
 /**
  * A generic constructor type.
@@ -66,13 +65,21 @@ export type ImportListItem<T = any> = {
   autoLoad?: boolean;
 };
 
+export type AssetLoadingOptions = {
+  preload?: {
+    assets?: string | string[];
+    bundles?: string | string[];
+  };
+  background?: {
+    assets?: string | string[];
+    bundles?: string | string[];
+  };
+};
+
 type SceneItemOptions = {
   debugLabel?: string;
   plugins?: string[];
-  assets?: SceneAssets;
-  bundles?: SceneBundles;
-  backgroundAssets?: SceneAssets;
-  backgroundBundles?: SceneBundles;
+  assets?: AssetLoadingOptions;
   autoUnloadAssets?: boolean;
 };
 

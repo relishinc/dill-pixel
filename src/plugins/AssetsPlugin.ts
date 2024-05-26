@@ -4,7 +4,7 @@ import { Assets } from 'pixi.js';
 import type { IScene } from '../display';
 import { Signal } from '../signals';
 import { IApplication } from '../core';
-import { Logger, SceneImportListItem } from '../utils';
+import { AssetLoadingOptions, Logger, SceneImportListItem } from '../utils';
 
 export interface IAssetsPlugin extends IPlugin {
   onLoadStart: Signal<() => void>;
@@ -24,11 +24,6 @@ export interface IAssetsPlugin extends IPlugin {
   loadBackground(): void;
 }
 
-export interface IAssetsPluginOptions {
-  required?: { assets?: string | string[]; bundles?: string | string[] };
-  background?: { assets?: string | string[]; bundles?: string | string[] };
-}
-
 export class AssetsPlugin extends Plugin implements IAssetsPlugin {
   public readonly id: string = 'assets';
   public onLoadStart: Signal<() => void> = new Signal();
@@ -38,9 +33,9 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
   private _required: { assets?: string | string[]; bundles?: string | string[] } = {};
   private _background: { assets?: string | string[]; bundles?: string | string[] } = {};
 
-  public initialize(_app: IApplication, options?: Partial<IAssetsPluginOptions>): Promise<void> | void {
-    if (options?.required) {
-      this._required = options.required;
+  public initialize(_app: IApplication, options?: AssetLoadingOptions): Promise<void> | void {
+    if (options?.preload) {
+      this._required = options.preload;
     }
     if (options?.background) {
       this._background = options.background;
@@ -64,7 +59,6 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
   }
 
   public loadBackground() {
-    console.log('loadBackground', this._background, Assets);
     if (this._background) {
       if (this._background.assets) {
         void Assets.backgroundLoad(this._background.assets);
@@ -84,33 +78,33 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
   }
 
   public async unloadSceneAssets(scene: IScene | SceneImportListItem<any>) {
-    if (scene.assets) {
-      void Assets.unload(scene.assets);
+    if (scene.assets?.preload?.assets) {
+      void Assets.unload(scene.assets.preload.assets);
     }
-    if (scene.bundles) {
-      void Assets.unloadBundle(scene.bundles);
+    if (scene.assets?.preload?.bundles) {
+      void Assets.unloadBundle(scene.assets.preload.bundles);
     }
     return Promise.resolve();
   }
 
   public async loadSceneAssets(scene: IScene | SceneImportListItem<any>, background = false) {
     if (background) {
-      if (scene.backgroundAssets || scene.backgroundBundles) {
-        if (scene.backgroundAssets) {
-          void Assets.backgroundLoad(scene.backgroundAssets);
+      if (scene.assets?.background) {
+        if (scene.assets.background.assets) {
+          void Assets.backgroundLoad(scene.assets.background.assets);
         }
-        if (scene.backgroundBundles) {
-          void Assets.backgroundLoadBundle(scene.backgroundBundles);
+        if (scene.assets.background.bundles) {
+          void Assets.backgroundLoadBundle(scene.assets.background.bundles);
         }
       }
     } else {
       this._handleLoadStart();
       this._handleLoadProgress(0);
-      if (scene.assets) {
-        await Assets.load(scene.assets, this._handleLoadProgress);
+      if (scene.assets?.preload?.assets) {
+        await Assets.load(scene.assets.preload.assets, this._handleLoadProgress);
       }
-      if (scene.bundles) {
-        await Assets.loadBundle(scene.bundles, this._handleLoadProgress);
+      if (scene.assets?.preload?.bundles) {
+        await Assets.loadBundle(scene.assets.preload.bundles, this._handleLoadProgress);
       }
       this._handleLoadComplete();
     }

@@ -21,6 +21,10 @@ export class LocalStorageAdapter extends StorageAdapter {
    */
   public namespace: string = '';
 
+  constructor(public readonly id: string = 'localStorage') {
+    super(id);
+  }
+
   /**
    * Gets the prefix to use for the keys in the local storage.
    * @returns {string} The prefix.
