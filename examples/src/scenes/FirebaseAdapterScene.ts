@@ -109,7 +109,7 @@ export class FirebaseAdapterScene extends BaseScene {
       });
       this.usernameInput.value = '';
       this.scoreInput.value = '';
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving data:', error);
       this.errorText.text = error.message || 'An error occurred';
     }
@@ -122,7 +122,7 @@ export class FirebaseAdapterScene extends BaseScene {
       console.log('Loaded data:', data);
       this.scores = data;
       this.refreshScoreboard();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading data:', error);
       this.errorText.text = error.message || 'An error occurred';
     }
@@ -133,7 +133,7 @@ export class FirebaseAdapterScene extends BaseScene {
     try {
       await this.app.firebase.deleteCollection(action.data.collection);
       this.refreshScoreboard();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error clearing data:', error);
       this.errorText.text = error.message || 'An error occurred';
     }
@@ -150,11 +150,13 @@ export class FirebaseAdapterScene extends BaseScene {
       );
       console.log('Deleted data:', data);
 
-      this.deleteScoreFromScoreboard({
-        username: data.username,
-        score: data.score,
-      });
-    } catch (error) {
+      if (data) {
+        this.deleteScoreFromScoreboard({
+          username: data.username,
+          score: data.score,
+        });
+      }
+    } catch (error: any) {
       console.error('Error deleting data:', error);
       this.errorText.text = error.message || 'An error occurred';
     }
@@ -366,10 +368,12 @@ export class FirebaseAdapterScene extends BaseScene {
       // const data = await this.app.firebase.deleteDocumentById('users', 'id-here');
       console.log('Deleted data:', data);
 
-      this.deleteScoreFromScoreboard({
-        username: data.username,
-        score: data.score,
-      });
+      if (data) {
+        this.deleteScoreFromScoreboard({
+          username: data.username,
+          score: data.score,
+        });
+      }
 
       // 2. via the action:
       // this.app.sendAction('delete_from_firebase', {
@@ -402,7 +406,7 @@ export class FirebaseAdapterScene extends BaseScene {
     // add scores
     try {
       data = await this.app.firebase.getCollection('users');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading data during scoreboard refresh:', error);
       this.errorText.text = error.message || 'An error occurred';
       return;
