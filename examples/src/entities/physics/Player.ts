@@ -13,6 +13,7 @@ export class Player extends SnapActor {
   onKilled = new Signal();
   speed: number = 6;
   constraints?: { x?: { min?: number; max?: number } };
+
   private _canJump: boolean = false;
   private _isJumping: boolean = false;
   private _jumpPower: number = 0;

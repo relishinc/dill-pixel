@@ -12,7 +12,7 @@ create({
       bundles: ['required', 'game'],
     },
     background: {
-      bundles: ['audio'],
+      bundles: ['audio', 'spine'],
     },
   },
   plugins: [
@@ -57,6 +57,11 @@ create({
       id: 'spine',
       debugLabel: 'Spine Testing',
       namedExport: 'SpineScene',
+      assets: {
+        preload: {
+          bundles: ['spine'],
+        },
+      },
       module: () => import('@/scenes/SpineScene'),
     },
     {
@@ -77,6 +82,11 @@ create({
       namedExport: 'SnapPhysicsScene',
       module: () => import('@/scenes/SnapPhysicsScene'),
       plugins: ['physics'],
+      assets: {
+        preload: {
+          bundles: ['spine'],
+        },
+      },
     },
     {
       id: 'runner',
@@ -84,6 +94,11 @@ create({
       namedExport: 'EndlessRunnerScene',
       module: () => import('@/scenes/EndlessRunnerScene'),
       plugins: ['physics'],
+      assets: {
+        preload: {
+          bundles: ['spine'],
+        },
+      },
     },
   ],
   i18n: {
@@ -99,8 +114,8 @@ create({
     minSize: { width: 500, height: 700 },
   },
   defaultSceneLoadMethod: 'exitEnter',
-  useSpine: false,
-  showStats: false,
+  useSpine: true,
+  showStats: true,
   showSceneDebugMenu: true,
   focusOptions: {
     outliner: ExampleOutliner,

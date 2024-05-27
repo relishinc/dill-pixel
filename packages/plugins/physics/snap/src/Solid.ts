@@ -29,14 +29,15 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
       // Temporarily make this solid non-collidable
       this.isCollideable = false;
 
+      // Move on the Y axis
+      this.y += moveY;
+      this.yRemainder -= moveY;
+      this.handleActorInteractions(0, moveY, ridingActors);
+
       // Move on the X axis
       this.x += moveX;
       this.xRemainder -= moveX;
       this.handleActorInteractions(moveX, 0, ridingActors);
-
-      this.y += moveY;
-      this.yRemainder -= moveY;
-      this.handleActorInteractions(0, moveY, ridingActors);
 
       // Re-enable collisions
       this.isCollideable = true;
@@ -64,8 +65,8 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
     (this.collideables as Actor[]).forEach((actor) => {
       if (ridingActors.includes(actor)) {
         // Move riding actors along with this solid
-        actor.moveX(deltaX);
         actor.moveY(deltaY);
+        actor.moveX(deltaX);
       } else if (
         !actor.passThroughTypes.includes(this.type) &&
         !actor.isPassingThrough(this) &&

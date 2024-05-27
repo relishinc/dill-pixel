@@ -7,6 +7,7 @@ import { Solid } from './Solid';
 import { SpatialHashGrid } from './SpatialHashGrid';
 import { Collision, EntityType, Side, SpatialHashGridFilter } from './types';
 import { Wall } from './Wall';
+import { SnapPhysicsPlugin } from './SnapPhysicsPlugin';
 
 type SystemBoundary = {
     width: number;
@@ -35,6 +36,7 @@ type SnapPhysicsSystemOptions = {
 };
 export declare class System {
     static DEFAULT_COLLISION_THRESHOLD: number;
+    static plugin: SnapPhysicsPlugin;
     static app: IApplication;
     static container: Container<any>;
     static grid: SpatialHashGrid | null;
@@ -79,7 +81,7 @@ export declare class System {
      * @param dy
      */
     static getRectangleIntersection(entity1: Entity, entity2: Entity, dx: number, dy: number): boolean;
-    static update(deltaTime: number): void;
+    static update(deltaTime: number, preUpdateHooks?: ((deltaTime: number) => void)[], postUpdateHooks?: ((deltaTime: number) => void)[]): void;
     static addBoundary(width: number, height: number, size?: number, padding?: number, sides?: Side[]): void;
     static collide(collision: Collision): void;
     static drawDebug(): void;

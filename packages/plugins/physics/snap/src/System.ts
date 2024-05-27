@@ -8,6 +8,7 @@ import { SpatialHashGrid } from './SpatialHashGrid';
 import { Collision, EntityType, Side, SpatialHashGridFilter } from './types';
 import { Wall } from './Wall';
 import { getIntersectionArea } from './utils';
+import { SnapPhysicsPlugin } from './SnapPhysicsPlugin';
 
 type SystemBoundary = {
   width: number;
@@ -39,6 +40,7 @@ type SnapPhysicsSystemOptions = {
 
 export class System {
   public static DEFAULT_COLLISION_THRESHOLD: number = 2;
+  public static plugin: SnapPhysicsPlugin;
   public static app: IApplication;
   public static container: Container<any>;
   public static grid: SpatialHashGrid | null;
@@ -86,6 +88,7 @@ export class System {
     } else {
       System.grid = new SpatialHashGrid(cellSize, true);
     }
+    System.plugin.options.useSpatialHashGrid = true;
   }
 
   static removeSpatialHashGrid() {
@@ -212,23 +215,34 @@ export class System {
     return intersection.area > 0 && intersection.area > System.collisionThreshold;
   }
 
-  static update(deltaTime: number) {
+  static update(
+    deltaTime: number,
+    preUpdateHooks?: ((deltaTime: number) => void)[],
+    postUpdateHooks?: ((deltaTime: number) => void)[],
+  ) {
     if (!System.enabled) {
       return;
     }
     if (!System.container) {
       Logger.error('SnapPhysicsPlugin: World container not set!');
     }
+    if (preUpdateHooks) {
+      preUpdateHooks.forEach((hook) => hook(deltaTime));
+    }
     // Implement world step logic
+    System.actors.forEach((actor: Actor) => {
+      actor.update(deltaTime);
+    });
     System.solids.forEach((solid: Solid) => {
       solid.update(deltaTime);
     });
     System.sensors.forEach((sensor: Sensor) => {
       sensor.update(deltaTime);
     });
-    System.actors.forEach((actor: Actor) => {
-      actor.update(deltaTime);
-    });
+
+    if (postUpdateHooks) {
+      postUpdateHooks.forEach((hook) => hook(deltaTime));
+    }
 
     if (System.debug) {
       System.drawDebug();
@@ -385,7 +399,6 @@ export class System {
   }
 
   static cleanup() {
-    console.log('SYSTEM CLEANUP');
     if (System.worldBounds) {
       System.worldBounds.forEach((wall: Wall) => {
         wall.parent.removeChild(wall);

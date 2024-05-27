@@ -40,12 +40,21 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
     }
     while (move !== 0) {
       const nextX = this.x + (move ? sign : 0); // Predict the next X position
-      const collisions: Collision[] | false = this.collideAt(nextX - this.x, 0, this.getBoundingBox());
+      const collisions: Collision[] | false = this.collideAt(nextX - this.x, 0, this.getBoundingBox(), [
+        'left',
+        'right',
+      ]);
       if (collisions) {
         if (onCollide) {
-          collisions.forEach((collision) => onCollide(collision, pushingEntity, new Point(nextX - this.x, 0)));
+          collisions.forEach((collision) => {
+            onCollide(collision, pushingEntity, new Point(nextX - this.x, 0));
+          });
         }
-        this.xRemainder = 0; // Reset the remainder to prevent sliding
+        for (const collision of collisions) {
+          if (!this.isRiding(collision.entity2)) {
+            this.xRemainder = 0;
+          }
+        }
         break;
       } else {
         this.x = nextX;
@@ -77,7 +86,10 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
 
     while (move !== 0) {
       const nextY = this.y + (move ? sign : 0); // Predict the next Y position
-      const collisions: Collision[] | false = this.collideAt(0, nextY - this.y, this.getBoundingBox());
+      const collisions: Collision[] | false = this.collideAt(0, nextY - this.y, this.getBoundingBox(), [
+        'top',
+        'bottom',
+      ]);
       if (collisions) {
         if (onCollide) {
           collisions.forEach((collision) => onCollide(collision, pushingEntity, new Point(0, nextY - this.y)));
@@ -100,7 +112,12 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   }
 
   // Simple bounding box collision check
-  collideAt(x: number, y: number, box: Rectangle): Collision[] | false {
+  collideAt(
+    x: number,
+    y: number,
+    box: Rectangle,
+    sides?: ('top' | 'right' | 'bottom' | 'left')[],
+  ): Collision[] | false {
     const nextPosition = new Rectangle(box.x + x, box.y + y, box.width, box.height);
     const collisions = [];
     // Iterate through all solids in the level to check for collisions
@@ -108,11 +125,16 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
       if (!entity.isCollideable || this.passThroughTypes.includes(entity.type)) {
         continue;
       }
+
       const solidBounds = entity.getBoundingBox();
-      const collisionResult = checkCollision(nextPosition, solidBounds, this, entity);
-      // if (entity.type === 'Platform') {
-      //   console.log(entity, collisionResult);
-      // }
+      let collisionResult = checkCollision(nextPosition, solidBounds, this, entity);
+      if (sides?.length && collisionResult) {
+        // check to be sure collision includes all sides
+        const collisionSides = sides.filter((side) => (collisionResult as Collision)[side]);
+        if (!collisionSides.length) {
+          collisionResult = false;
+        }
+      }
       if (collisionResult) {
         System.collide(collisionResult);
         // if the collision resolver returns true,
@@ -127,14 +149,9 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   }
 
   isRiding(solid: Entity): boolean {
-    // Basic check if actor is directly on top of the solid
-    const isRidingResult =
-      this.bottom >= solid.top - 4 &&
-      this.bottom <= solid.top + 4 &&
-      this.left < solid.right &&
-      this.right > solid.left;
-
-    return isRidingResult;
+    return (
+      this.bottom >= solid.top - 2 && this.bottom <= solid.top + 2 && this.left < solid.right && this.right > solid.left
+    );
   }
 
   setPassingThrough(entity: Entity) {

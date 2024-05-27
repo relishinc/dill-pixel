@@ -225,6 +225,8 @@ export class SnapPhysicsScene extends BaseScene {
 
   addPortals(bottom: number) {
     const portal0 = this.addPortal(400, bottom - 80);
+    portal0.debug = true;
+    portal0.label = 'portal0';
     const portal1 = this.addPortal(600, bottom - 80);
     const portal2 = this.addPortal(1700, bottom - 580);
 

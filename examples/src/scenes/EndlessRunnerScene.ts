@@ -139,15 +139,16 @@ export class EndlessRunnerScene extends BaseScene {
       this.app.sendAction('move_right');
     }
 
-    this.physics.system.update(ticker.deltaTime);
-    EndlessRunner.update(ticker.deltaTime);
-
+    // add more segments if needed
     if (!EndlessRunner.hasEnoughSegments) {
       while (!EndlessRunner.hasEnoughSegments && !this._isPaused) {
         const segment = this.createRandomSegment();
         this.level.add.existing(segment);
       }
     }
+
+    // update physics - adding EndlessRunner.update to pre-update hooks
+    this.physics.system.update(ticker.deltaTime, [EndlessRunner.update]);
 
     if (this.player.x < -50 || this.player.y > this.app.size.height + 50) {
       this.player.kill();

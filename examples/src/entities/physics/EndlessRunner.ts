@@ -29,7 +29,7 @@ export class EndlessRunner {
   }
 
   static update(deltaTime: number) {
-    this.segments.forEach((segment) => {
+    EndlessRunner.segments.forEach((segment) => {
       segment.update(deltaTime);
     });
     if (System.grid) {

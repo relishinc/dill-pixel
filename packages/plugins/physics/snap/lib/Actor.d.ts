@@ -14,7 +14,7 @@ export declare class Actor<T = any, A extends Application = Application> extends
     squish(_collision?: Collision, _pushingEntity?: Entity, _direction?: Point): void;
     moveX(amount: number, onCollide?: ((collision: Collision, pushingEntity?: Entity, direction?: Point) => void) | null, onNoCollisions?: (() => void) | null, pushingEntity?: Entity): void;
     moveY(amount: number, onCollide?: ((collision: Collision, pushingEntity?: Entity, direction?: Point) => void) | null, onNoCollisions?: (() => void) | null, pushingEntity?: Entity): void;
-    collideAt(x: number, y: number, box: Rectangle): Collision[] | false;
+    collideAt(x: number, y: number, box: Rectangle, sides?: ('top' | 'right' | 'bottom' | 'left')[]): Collision[] | false;
     isRiding(solid: Entity): boolean;
     setPassingThrough(entity: Entity): void;
     removePassingThrough(entity: Entity): void;
