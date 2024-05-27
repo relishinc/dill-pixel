@@ -5,7 +5,7 @@ import { Assets } from 'pixi.js';
 import manifest from './assets.json';
 import { ExampleOutliner } from './ui/ExampleOutliner';
 import TestAdapter from '@/adapters/TestAdapter';
-import { FirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
+import type { FirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,

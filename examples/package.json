@@ -34,6 +34,8 @@
   },
   "dependencies": {
     "@dill-pixel/plugin-snap-physics": "^8.3.6",
+    "@dill-pixel/storage-adapter-firebase": "file:../packages/storage-adapters/firebase/src",
+    "@pixi/ui": "^2.1.1",
     "dat.gui": "^0.7.9",
     "dill-pixel": "file:.."
   }

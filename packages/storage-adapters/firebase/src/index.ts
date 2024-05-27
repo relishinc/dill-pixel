@@ -53,32 +53,38 @@ export class FirebaseAdapter extends StorageAdapter {
    * Save or update a document in a collection.
    * @param collectionName The name of the collection.
    * @param data The data to save.
-   * @param id The ID of the document to update, if applicable.
-   * @returns The saved document.
+   * @param id The ID of the document to save or update, if applicable.
+   * @returns The saved or updated document.
    *
    * @example
    * await this.app.firebase.save('users', { username: 'relish', score: 50 }, 'custom-id');
    */
-  async save(collectionName: string, data: DocumentData, id?: string): Promise<any> {
+  async save(collectionName: string, data: DocumentData, id?: string): Promise<DocumentData> {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
 
     let docRef;
+    try {
+      if (id) {
+        docRef = doc(this.db, collectionName, id);
+      } else {
+        docRef = await addDoc(collection(this.db, collectionName), data);
+      }
 
-    if (id) {
-      docRef = doc(this.db, collectionName, id);
-      await setDoc(docRef, data);
-    } else {
-      docRef = await addDoc(collection(this.db, collectionName), data);
+      // If the document does not exist, it will be created.
+      // If the document does exist, the data will be merged into the existing document.
+      await setDoc(docRef, data, { merge: true });
+
+      // TODO: what to return?
+      const docSnap = await getDoc(docRef);
+      return {
+        id: docSnap.id,
+        ...docSnap.data(),
+      };
+    } catch (error) {
+      throw new Error(`Error saving document: ${error}`);
     }
-
-    // TODO: what to return?
-    const docSnap = await getDoc(docRef);
-    return {
-      id: docSnap.id,
-      ...docSnap.data(),
-    };
   }
 
   /**
@@ -95,13 +101,20 @@ export class FirebaseAdapter extends StorageAdapter {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
     const docRef = doc(this.db, collectionName, id);
-    const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
-      return docSnap.data();
-    } else {
-      console.log('No such document!');
-      return null;
+    try {
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        return {
+          id: docSnap.id,
+          ...docSnap.data(),
+        };
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw new Error(`Error getting document: ${error}`);
     }
   }
 
@@ -119,16 +132,20 @@ export class FirebaseAdapter extends StorageAdapter {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
-    const collectionRef = collection(this.db, collectionName);
-    const q = query(collectionRef, where(field, '==', value));
-    const querySnapshot = await getDocs(q);
 
-    if (!querySnapshot.empty) {
-      const doc = querySnapshot.docs[0];
-      return { id: doc.id, ...doc.data() };
-    } else {
-      console.log('No such document!');
-      return null;
+    try {
+      const collectionRef = collection(this.db, collectionName);
+      const q = query(collectionRef, where(field, '==', value));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0];
+        return { id: doc.id, ...doc.data() };
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw new Error(`Error getting document: ${error}`);
     }
   }
 
@@ -144,32 +161,52 @@ export class FirebaseAdapter extends StorageAdapter {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
-    const collectionRef = collection(this.db, collectionName);
-    const querySnapshot = await getDocs(collectionRef);
 
-    const documents: DocumentData[] = [];
-    querySnapshot.forEach((doc) => {
-      documents.push({ id: doc.id, ...doc.data() });
-    });
+    try {
+      const collectionRef = collection(this.db, collectionName);
+      const querySnapshot = await getDocs(collectionRef);
 
-    return documents;
+      const documents: DocumentData[] = [];
+      querySnapshot.forEach((doc) => {
+        documents.push({ id: doc.id, ...doc.data() });
+      });
+
+      return documents;
+    } catch (error) {
+      throw new Error(`Error getting collection: ${error}`);
+    }
   }
 
   /**
    * Delete a document by its ID.
    * @param collectionName The name of the collection.
    * @param id The ID of the document to delete.
-   * @returns void
+   * @returns The deleted document, or null if not found.
    *
    * @example
    * await this.app.firebase.deleteDocumentById('users', 'custom-id');
    */
-  async deleteDocumentById(collectionName: string, id: string): Promise<void> {
+  async deleteDocumentById(collectionName: string, id: string): Promise<DocumentData | null> {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
-    const docRef = doc(this.db, collectionName, id);
-    await deleteDoc(docRef);
+
+    try {
+      const docRef = doc(this.db, collectionName, id);
+      const docToDelete = await getDoc(docRef);
+
+      if (!docToDelete.exists()) {
+        return null;
+      }
+
+      await deleteDoc(docRef);
+      return {
+        id: docToDelete.id,
+        ...docToDelete.data(),
+      };
+    } catch (error) {
+      throw new Error(`Error deleting document: ${error}`);
+    }
   }
 
   /**
@@ -186,14 +223,19 @@ export class FirebaseAdapter extends StorageAdapter {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
-    // find the document by the field
-    const docRef = await this.getDocumentByField(collectionName, field, value);
-    if (docRef) {
-      await deleteDoc(doc(this.db, collectionName, docRef.id));
-      return docRef;
-    }
 
-    return null;
+    try {
+      const docToDelete = await this.getDocumentByField(collectionName, field, value);
+
+      if (!docToDelete) return null;
+
+      const docRef = doc(this.db, collectionName, docToDelete.id);
+      await deleteDoc(docRef);
+
+      return docToDelete;
+    } catch (error) {
+      throw new Error(`Error deleting document: ${error}`);
+    }
   }
 
   /**
@@ -208,15 +250,20 @@ export class FirebaseAdapter extends StorageAdapter {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
-    const collectionRef = collection(this.db, collectionName);
-    const querySnapshot = await getDocs(collectionRef);
 
-    const docsToDelete: Promise<void>[] = [];
-    querySnapshot.forEach((doc) => {
-      docsToDelete.push(deleteDoc(doc.ref));
-    });
+    try {
+      const collectionRef = collection(this.db, collectionName);
+      const querySnapshot = await getDocs(collectionRef);
 
-    await Promise.all(docsToDelete);
+      const docsToDelete: Promise<void>[] = [];
+      querySnapshot.forEach((doc) => {
+        docsToDelete.push(deleteDoc(doc.ref));
+      });
+
+      await Promise.all(docsToDelete);
+    } catch (error) {
+      throw new Error(`Error deleting collection: ${error}`);
+    }
   }
 
   /**
@@ -239,15 +286,20 @@ export class FirebaseAdapter extends StorageAdapter {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
-    const collectionRef = collection(this.db, collectionName);
-    const q = query(collectionRef, where(field, operator, value));
-    const querySnapshot = await getDocs(q);
 
-    const documents: DocumentData[] = [];
-    querySnapshot.forEach((doc) => {
-      documents.push({ id: doc.id, ...doc.data() });
-    });
+    try {
+      const collectionRef = collection(this.db, collectionName);
+      const q = query(collectionRef, where(field, operator, value));
+      const querySnapshot = await getDocs(q);
 
-    return documents;
+      const documents: DocumentData[] = [];
+      querySnapshot.forEach((doc) => {
+        documents.push({ id: doc.id, ...doc.data() });
+      });
+
+      return documents;
+    } catch (error) {
+      throw new Error(`Error querying collection: ${error}`);
+    }
   }
 }

@@ -358,17 +358,20 @@ export class FirebaseAdapterScene extends BaseScene {
     deleteButtonBg.accessibleTitle = 'Delete';
     deleteButtonBg.accessibleHint = 'Press to delete this score';
     deleteButtonBg.onInteraction('click').connect(async () => {
-      // delete the score
-      console.log('DELETING SCORE...', score);
-
-      // via the adapter:
+      // 1. via the adapter:
+      // using field value
       const data = await this.app.firebase.deleteDocumentByField('users', 'username', score.username);
+
+      // using ID
+      // const data = await this.app.firebase.deleteDocumentById('users', 'id-here');
+      console.log('Deleted data:', data);
+
       this.deleteScoreFromScoreboard({
         username: data.username,
         score: data.score,
       });
 
-      // via the action:
+      // 2. via the action:
       // this.app.sendAction('delete_from_firebase', {
       //   collection: 'users',
       //   data: { username: score.username },
