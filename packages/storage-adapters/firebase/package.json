@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/storage-adapter-firebase",
-  "version": "9.0.0",
+  "version": "8.6.1",
   "description": "",
   "files": [
     "lib",
