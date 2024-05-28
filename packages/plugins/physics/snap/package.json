@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-snap-physics",
-  "version": "8.4.2",
+  "version": "9.0.0",
   "description": "",
   "files": [
     "lib",
