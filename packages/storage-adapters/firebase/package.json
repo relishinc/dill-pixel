@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/storage-adapter-firebase",
-  "version": "8.4.0",
+  "version": "8.6.1",
   "description": "",
   "files": [
     "lib",
@@ -16,19 +16,20 @@
   },
   "scripts": {
     "build": "vite build",
+    "publish": "npm run build && npm publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "dill-pixel": "8.4.0",
+    "dill-pixel": "8.6.1",
     "vite-plugin-dts": "^3.9.1"
-  },
-  "peerDependencies": {
-    "dill-pixel": "^8.4.0"
   },
   "dependencies": {
     "firebase": "^10.12.1"
+  },
+  "peerDependencies": {
+    "dill-pixel": "8.6.1"
   }
 }

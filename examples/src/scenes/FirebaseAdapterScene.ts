@@ -5,6 +5,7 @@ import { Graphics, Text } from 'pixi.js';
 import { SimpleButton } from '@/popups/ExamplePopup';
 import { gsap } from 'gsap';
 interface Score {
+  id: string;
   username: string;
   score: number;
 }
@@ -104,6 +105,7 @@ export class FirebaseAdapterScene extends BaseScene {
       const data = await this.app.firebase.save(action.data.collection, action.data.data);
       console.log('Saved data:', data);
       this.addScoreToScoreboard({
+        id: data.id,
         username: data.username,
         score: data.score,
       });
@@ -120,7 +122,14 @@ export class FirebaseAdapterScene extends BaseScene {
     try {
       const data = await this.app.firebase.getCollection(action.data.collection);
       console.log('Loaded data:', data);
-      this.scores = data;
+      this.scores = data.map((score: any) => {
+        return {
+          id: score.id,
+          username: score.username,
+          score: score.score,
+        };
+      });
+      console.log('scores', this.scores);
       this.refreshScoreboard();
     } catch (error: any) {
       console.error('Error loading data:', error);
@@ -152,6 +161,7 @@ export class FirebaseAdapterScene extends BaseScene {
 
       if (data) {
         this.deleteScoreFromScoreboard({
+          id: data.id,
           username: data.username,
           score: data.score,
         });
@@ -275,8 +285,13 @@ export class FirebaseAdapterScene extends BaseScene {
   private deleteScoreFromScoreboard(score: Score) {
     // delete the score
     const scoreToDelete = this.scores.find((s) => {
-      return s.username === score.username && s.score === score.score;
-    }) as Score;
+      return s.id === score.id;
+    });
+
+    if (!scoreToDelete) {
+      this.errorText.text = 'Score not found';
+      return;
+    }
 
     const index = this.scores.indexOf(scoreToDelete);
     this.scores.splice(index, 1);
@@ -370,6 +385,7 @@ export class FirebaseAdapterScene extends BaseScene {
 
       if (data) {
         this.deleteScoreFromScoreboard({
+          id: data.id,
           username: data.username,
           score: data.score,
         });
@@ -417,6 +433,7 @@ export class FirebaseAdapterScene extends BaseScene {
 
     data.forEach((score: any) => {
       this.scores.push({
+        id: score.id,
         username: score.username,
         score: score.score,
       });
