@@ -14,7 +14,6 @@ import { ResizerPlugin } from './ResizerPlugin';
 export const defaultPlugins: ImportList<IPlugin> = [
   {
     id: 'assets',
-    // module: () => import('./AssetsPlugin'),
     module: AssetsPlugin,
     namedExport: 'AssetsPlugin',
   },

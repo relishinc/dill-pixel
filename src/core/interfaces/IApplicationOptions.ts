@@ -1,4 +1,4 @@
-import type { ApplicationOptions, AssetsManifest } from 'pixi.js';
+import type { ApplicationOptions } from 'pixi.js';
 import type { AssetLoadingOptions, ImportList, LoggerMode, SceneImportList } from '../../utils';
 import type { IStorageAdapter } from '../../store';
 import type {
@@ -27,7 +27,6 @@ export interface IApplicationOptions extends ApplicationOptions {
   defaultScene: string;
   defaultSceneLoadMethod: LoadSceneMethod;
   showSceneDebugMenu: boolean;
-  manifest: AssetsManifest | Promise<AssetsManifest> | string;
   i18n: Partial<i18nOptions>;
   resizer: Partial<ResizerPluginOptions>;
   captions: Partial<CaptionsOptions>;

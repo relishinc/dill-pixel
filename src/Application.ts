@@ -56,7 +56,9 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   plugins: [],
   scenes: [],
   defaultSceneLoadMethod: 'immediate',
-  manifest: './assets.json',
+  assets: {
+    manifest: './assets.json',
+  },
 };
 
 export class Application<R extends Renderer = Renderer> extends PIXIPApplication<R> implements IApplication {
@@ -518,11 +520,9 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   }
 
   protected async initAssets(): Promise<void> {
-    const opts: Partial<AssetInitOptions> = {
-      texturePreference: { resolution: this.config.resolution! >= 1.5 ? 1 : 0.5 },
-    };
-    if (this.config.manifest) {
-      let manifest = this.config.manifest;
+    const opts: Partial<AssetInitOptions> = this.config.assets?.initOptions || {};
+    if (this.config.assets?.manifest) {
+      let manifest = this.config.assets.manifest || opts.manifest;
       if (isPromise(manifest)) {
         manifest = await manifest;
       }

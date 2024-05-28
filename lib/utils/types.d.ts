@@ -1,4 +1,4 @@
-import { Point, Texture } from 'pixi.js';
+import { AssetInitOptions, AssetsManifest, AssetsPreferences, Point, Texture } from 'pixi.js';
 
 /**
  * A generic constructor type.
@@ -77,6 +77,9 @@ export type ImportListItem<T = any> = {
     autoLoad?: boolean;
 };
 export type AssetLoadingOptions = {
+    manifest?: AssetsManifest | Promise<AssetsManifest> | string;
+    initOptions?: Partial<AssetInitOptions>;
+    assetPreferences?: Partial<AssetsPreferences>;
     preload?: {
         assets?: string | string[];
         bundles?: string | string[];

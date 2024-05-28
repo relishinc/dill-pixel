@@ -1,3 +1,4 @@
+import type {AssetInitOptions, AssetsManifest, AssetsPreferences} from 'pixi.js';
 import {Point, Texture} from 'pixi.js';
 
 /**
@@ -66,6 +67,9 @@ export type ImportListItem<T = any> = {
 };
 
 export type AssetLoadingOptions = {
+  manifest?: AssetsManifest | Promise<AssetsManifest> | string;
+  initOptions?: Partial<AssetInitOptions>;
+  assetPreferences?: Partial<AssetsPreferences>;
   preload?: {
     assets?: string | string[];
     bundles?: string | string[];

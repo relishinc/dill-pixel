@@ -5,9 +5,9 @@ import { ExampleOutliner } from './ui/ExampleOutliner';
 
 create({
   id: 'V8Application',
-  manifest: manifest,
   antialias: true,
   assets: {
+    manifest: manifest,
     preload: {
       bundles: ['required', 'game'],
     },

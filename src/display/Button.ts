@@ -201,7 +201,9 @@ export class Button extends _Button {
     }
     if (!this.isDown) {
       window.removeEventListener('pointerup', this.handlePointerUpOutside);
+      this.off('pointerupoutside', this.handlePointerUpOutside);
       window.addEventListener('pointerup', this.handlePointerUpOutside);
+      this.on('pointerupoutside', this.handlePointerUpOutside);
       this.isDown = true;
       this.view.texture = this.make.texture({
         asset: this.config.textures.active || this.config.textures.hover || this.config.textures.default,
@@ -234,10 +236,11 @@ export class Button extends _Button {
    * @description Handles the pointer up event.
    */
   protected handlePointerUpOutside() {
-    if (!this._enabled || this.isOver) {
+    if (!this._enabled) {
       return;
     }
     window.removeEventListener('pointerup', this.handlePointerUpOutside);
+    this.off('pointerupoutside', this.handlePointerUpOutside);
     this.view.texture = this.make.texture({ asset: this.config.textures.default, sheet: this.config.sheet });
     this.isDown = false;
     this.isOver = false;

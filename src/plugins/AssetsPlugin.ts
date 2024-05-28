@@ -1,10 +1,11 @@
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
+import type { AssetsPreferences } from 'pixi.js';
 import { Assets } from 'pixi.js';
 import type { IScene } from '../display';
 import { Signal } from '../signals';
 import { IApplication } from '../core';
-import { AssetLoadingOptions, Logger, SceneImportListItem } from '../utils';
+import { AssetLoadingOptions, isDev, Logger, SceneImportListItem } from '../utils';
 
 export interface IAssetsPlugin extends IPlugin {
   onLoadStart: Signal<() => void>;
@@ -24,11 +25,19 @@ export interface IAssetsPlugin extends IPlugin {
   loadBackground(): void;
 }
 
+const detaultAssetPreferences: Partial<AssetsPreferences> = {
+  preferWorkers: !isDev,
+  crossOrigin: 'anonymous',
+};
+
 export class AssetsPlugin extends Plugin implements IAssetsPlugin {
   public readonly id: string = 'assets';
   public onLoadStart: Signal<() => void> = new Signal();
   public onLoadProgress: Signal<(progress: number) => void> = new Signal();
   public onLoadComplete: Signal<() => void> = new Signal();
+
+  private _loadedBundles: Set<string> = new Set();
+  private _loadedAssets: Set<string> = new Set();
 
   private _required: { assets?: string | string[]; bundles?: string | string[] } = {};
   private _background: { assets?: string | string[]; bundles?: string | string[] } = {};
@@ -40,6 +49,7 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
     if (options?.background) {
       this._background = options.background;
     }
+    Assets.setPreferences({ ...detaultAssetPreferences, ...options?.assetPreferences });
     Logger.log('AssetsPlugin initialized', _app, options, this._required);
   }
 
@@ -70,19 +80,29 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
   }
 
   public async loadAssets(assets: string | string[]) {
-    return Assets.load(assets, this._handleLoadProgress);
+    await Assets.load(assets, this._handleLoadProgress);
+    this._markAssetsLoaded(assets);
+    return Promise.resolve();
   }
 
-  public async loadBundles(bundle: string | string[]) {
-    return Assets.loadBundle(bundle, this._handleLoadProgress);
+  public async loadBundles(bundles: string | string[]) {
+    await Assets.loadBundle(bundles, this._handleLoadProgress);
+    this._markBundlesLoaded(bundles);
+    return Promise.resolve();
   }
 
   public async unloadSceneAssets(scene: IScene | SceneImportListItem<any>) {
     if (scene.assets?.preload?.assets) {
-      void Assets.unload(scene.assets.preload.assets);
+      const assets = scene.assets.preload.assets;
+      void Assets.unload(assets).then(() => {
+        this._markAssetsUnloaded(assets);
+      });
     }
     if (scene.assets?.preload?.bundles) {
-      void Assets.unloadBundle(scene.assets.preload.bundles);
+      const bundles = scene.assets.preload.bundles;
+      void Assets.unloadBundle(bundles).then(() => {
+        this._markBundlesUnloaded(bundles);
+      });
     }
     return Promise.resolve();
   }
@@ -91,20 +111,46 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
     if (background) {
       if (scene.assets?.background) {
         if (scene.assets.background.assets) {
-          void Assets.backgroundLoad(scene.assets.background.assets);
+          let assets = Array.isArray(scene.assets.background.assets)
+            ? scene.assets.background.assets
+            : [scene.assets.background.assets];
+          assets = assets.filter((asset) => !this._isAssetLoaded(asset));
+          if (assets.length) {
+            void Assets.backgroundLoad(assets);
+          }
         }
         if (scene.assets.background.bundles) {
-          void Assets.backgroundLoadBundle(scene.assets.background.bundles);
+          let bundles = Array.isArray(scene.assets.background.bundles)
+            ? scene.assets.background.bundles
+            : [scene.assets.background.bundles];
+          bundles = bundles.filter((bundle) => !this._isBundleLoaded(bundle));
+          if (bundles.length) {
+            void Assets.backgroundLoadBundle(bundles);
+          }
         }
       }
     } else {
       this._handleLoadStart();
       this._handleLoadProgress(0);
       if (scene.assets?.preload?.assets) {
-        await Assets.load(scene.assets.preload.assets, this._handleLoadProgress);
+        let assets: string[] = Array.isArray(scene.assets.preload.assets)
+          ? scene.assets.preload.assets
+          : [scene.assets.preload.assets];
+        assets = assets.filter((asset) => !this._isAssetLoaded(asset));
+        if (assets.length) {
+          await Assets.load(assets, this._handleLoadProgress);
+          this._markAssetsLoaded(assets);
+        }
       }
       if (scene.assets?.preload?.bundles) {
-        await Assets.loadBundle(scene.assets.preload.bundles, this._handleLoadProgress);
+        let bundles: string[] = Array.isArray(scene.assets.preload.bundles)
+          ? scene.assets.preload.bundles
+          : [scene.assets.preload.bundles];
+        bundles = bundles.filter((bundle) => !this._isBundleLoaded(bundle));
+        if (bundles.length) {
+          await Assets.loadBundle(bundles, this._handleLoadProgress);
+          this._markBundlesLoaded(bundles);
+        }
       }
       this._handleLoadComplete();
     }
@@ -116,6 +162,50 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
 
   protected getCoreSignals(): string[] {
     return ['onLoadStart', 'onLoadProgress', 'onLoadComplete'];
+  }
+
+  private _isAssetLoaded(alias: string) {
+    return this._loadedAssets.has(alias);
+  }
+
+  private _isBundleLoaded(alias: string) {
+    return this._loadedBundles.has(alias);
+  }
+
+  private _markAssetsLoaded(urls: string[] | string) {
+    if (!Array.isArray(urls)) {
+      urls = [urls];
+    }
+    urls.forEach((url) => {
+      this._loadedAssets.add(url);
+    });
+  }
+
+  private _markBundlesLoaded(aliases: string[] | string) {
+    if (!Array.isArray(aliases)) {
+      aliases = [aliases];
+    }
+    aliases.forEach((alias) => {
+      this._loadedBundles.add(alias);
+    });
+  }
+
+  private _markAssetsUnloaded(urls: string[] | string) {
+    if (!Array.isArray(urls)) {
+      urls = [urls];
+    }
+    urls.forEach((url) => {
+      this._loadedAssets.delete(url);
+    });
+  }
+
+  private _markBundlesUnloaded(aliases: string[] | string) {
+    if (!Array.isArray(aliases)) {
+      aliases = [aliases];
+    }
+    aliases.forEach((alias) => {
+      this._loadedBundles.delete(alias);
+    });
   }
 
   private _handleLoadStart() {
