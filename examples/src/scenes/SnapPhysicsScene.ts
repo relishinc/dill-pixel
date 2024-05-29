@@ -33,7 +33,7 @@ export class SnapPhysicsScene extends BaseScene {
   private _joystick: Joystick;
 
   protected get physics(): SnapPhysics {
-    return this.app.getPlugin('physics') as SnapPhysics;
+    return this.app.getPlugin('physics') as unknown as SnapPhysics;
   }
 
   configureGUI() {
@@ -165,9 +165,9 @@ export class SnapPhysicsScene extends BaseScene {
 
     // hor
     this.addPlatForm(750, bottom - 300, 200, 20, false, true, {
-      speed: 2,
+      speed: 1,
       startingDirection: { x: 1, y: 0 },
-      range: [180, 0],
+      range: [240, 0],
     });
 
     // second junction
@@ -177,14 +177,14 @@ export class SnapPhysicsScene extends BaseScene {
     this.addPlatForm(1110, bottom - 200, 150, 20, false, true, {
       speed: 1,
       startingDirection: { x: 0, y: 1 },
-      range: [0, 150],
+      range: [0, 225],
     });
 
     // holds portal
-    this.addPlatForm(1700, bottom - 500, 200, 20, false, true, {
+    this.addPlatForm(1700, bottom - 400, 200, 20, false, true, {
       speed: 1,
       startingDirection: { x: 0, y: 1 },
-      range: [0, 300],
+      range: [0, 500],
     });
   }
 

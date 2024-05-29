@@ -7,7 +7,6 @@ import { BaseScene } from '@/scenes/BaseScene';
 import { Camera, Container, delay, UICanvas } from 'dill-pixel';
 import { Assets, Ticker } from 'pixi.js';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
-import { GUIController } from 'dat.gui';
 import { SegmentConfig } from '@/entities/physics/Segment';
 import { EndlessRunner } from '@/entities/physics/EndlessRunner';
 import { Joystick } from '@/ui/Joystick';
@@ -22,7 +21,7 @@ export class EndlessRunnerScene extends BaseScene {
   _isPaused: boolean = false;
   camera: Camera;
   protected readonly title = 'Snap Physics - Endless Runner';
-  protected readonly subtitle = 'Arrows to move, up to jump';
+  protected readonly subtitle = 'Arrows, WASD to move, up / spacebar to jump, "P" to pause.';
   protected config = {
     useCamera: false,
     zoom: 1,
@@ -30,14 +29,13 @@ export class EndlessRunnerScene extends BaseScene {
     gridCellSize: 300,
     debug: false,
   };
-  private _zoomController: GUIController;
   private _segments: SegmentConfig[];
   private _joystick: Joystick;
 
   // private _debugGfx = new Graphics();
 
   protected get physics(): SnapPhysics {
-    return this.app.getPlugin('physics') as SnapPhysics;
+    return this.app.getPlugin('physics') as unknown as SnapPhysics;
   }
 
   configureGUI() {
@@ -83,13 +81,7 @@ export class EndlessRunnerScene extends BaseScene {
       container: this.level,
       debug: false,
       fps: 60,
-      boundary: {
-        width: 2400,
-        height: this.app.size.height - 300,
-        thickness: 20,
-        padding: 100,
-        sides: ['bottom'],
-      },
+
       useSpatialHashGrid: this.config.useSpatialHash,
       cellSize: this.config.gridCellSize,
       collisionResolver: this._resolveCollision,
@@ -97,13 +89,14 @@ export class EndlessRunnerScene extends BaseScene {
     const bottom = this.app.size.height - 200;
     this._segments = this.createSegments(bottom);
 
-    EndlessRunner.initialize(2400, [1, 0]);
+    EndlessRunner.initialize(this.app.size.width * 0.75, [1, 0]);
 
     while (!EndlessRunner.hasEnoughSegments) {
-      const segment = this.createRandomSegment();
-      segment.x += Math.max(this.app.size.width * 0.6, 500);
+      const segment = this.getEmptySegment(bottom);
       this.level.add.existing(segment);
     }
+
+    EndlessRunner.width = this.app.size.width * 2;
 
     this.addPlayer();
     this.addControls();
@@ -111,7 +104,12 @@ export class EndlessRunnerScene extends BaseScene {
     this._handleDebugChanged();
     this._handleUseCameraChanged();
 
-    this.app.keyboard.onKeyDown('z').connect(this._toggleZoom);
+    this.addSignalConnection(
+      this.app.keyboard.onKeyDown('p').connect(() => {
+        this.app.sendAction('pause');
+      }),
+      this.app.actions('pause').connect(this._togglePause),
+    );
   }
 
   async start() {
@@ -162,6 +160,14 @@ export class EndlessRunnerScene extends BaseScene {
     return EndlessRunner.createSegment(this._segments[Math.floor(Math.random() * this._segments.length)]);
   }
 
+  getEmptySegment(bottom: number) {
+    const emptySegmentConfig = {
+      width: 1000,
+      platforms: [this.getPlatFormConfig(500, bottom, 1000, 20)],
+    };
+    return EndlessRunner.createSegment(emptySegmentConfig);
+  }
+
   resize() {
     super.resize();
     if (this.camera) {
@@ -170,17 +176,30 @@ export class EndlessRunnerScene extends BaseScene {
     }
 
     this.player.constrainX(50, this.app.size.width - 50);
+
+    this._isPaused = true;
+    EndlessRunner.width = this.app.size.width * 2;
+    this.level.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
+
+    this.app.ticker.addOnce(() => {
+      this._isPaused = false;
+    });
   }
 
   createSegments(bottom: number): SegmentConfig[] {
     const segment0Config = {
-      width: 800,
-      platforms: [this.getPlatFormConfig(400, bottom - 88, 30, 160)],
+      width: 600,
+      platforms: [
+        this.getPlatFormConfig(300, bottom - 50, 400, 20),
+        this.getPlatFormConfig(250, bottom - 100, 30, 100),
+        this.getPlatFormConfig(370, bottom - 300, 200, 30),
+      ],
     };
 
     const segment1Config = {
       width: 500,
       platforms: [
+        this.getPlatFormConfig(250, bottom, 500, 20),
         this.getPlatFormConfig(250, bottom - 88, 30, 160),
         this.getPlatFormConfig(205, bottom - 120, 60, 20, false),
         this.getPlatFormConfig(295, bottom - 120, 60, 20, false),
@@ -189,49 +208,39 @@ export class EndlessRunnerScene extends BaseScene {
 
     const segment2Config = {
       width: 300,
-      platforms: [this.getPlatFormConfig(150, bottom - 75, 30, 140)],
+      platforms: [this.getPlatFormConfig(150, bottom, 300, 20), this.getPlatFormConfig(150, bottom - 75, 30, 140)],
     };
 
     const segment3Config = {
       width: 500,
       platforms: [
-        this.getPlatFormConfig(250, bottom - 150, 200, 20, false, true, {
-          speed: 0.5,
+        this.getPlatFormConfig(250, bottom, 500, 20),
+        this.getPlatFormConfig(250, bottom - 240, 200, 20, false, true, {
+          speed: 1,
           startingDirection: { x: 1, y: 0 },
-          range: [180, 0],
+          range: [250, 0],
         }),
       ],
     };
 
     const segment4Config = {
-      width: 300,
+      width: 400,
       platforms: [
-        this.getPlatFormConfig(150, bottom - 120, 200, 20, false, true, {
-          speed: 0.5,
+        this.getPlatFormConfig(200, bottom, 400, 20),
+        this.getPlatFormConfig(200, bottom - 120, 200, 20, false, true, {
+          speed: 1,
           startingDirection: { x: 0, y: 1 },
-          range: [0, 100],
+          range: [0, 200],
         }),
       ],
     };
 
     const segment5Config = {
       width: 300,
-      platforms: [this.getPlatFormConfig(150, bottom - 220, 30, 200)],
+      platforms: [this.getPlatFormConfig(150, bottom, 300, 20), this.getPlatFormConfig(150, bottom - 220, 30, 200)],
     };
 
-    return [
-      segment4Config,
-      segment4Config,
-      segment4Config,
-      segment4Config,
-      segment2Config,
-      segment0Config,
-      segment1Config,
-      segment2Config,
-      segment5Config,
-      segment3Config,
-      segment4Config,
-    ];
+    return [segment0Config, segment1Config, segment2Config, segment3Config, segment4Config, segment5Config];
     // return [segment0Config];
   }
 
@@ -267,7 +276,7 @@ export class EndlessRunnerScene extends BaseScene {
     }
     this.player.lookRight();
     this.level.add.existing(this.player);
-    this.player.spawn({ x: 100, y: this.app.size.height * 0.3 }, delay);
+    this.player.spawn({ x: this.app.size.width * 0.1, y: this.app.size.height * 0.3 }, delay);
   }
 
   addControls() {
@@ -368,6 +377,10 @@ export class EndlessRunnerScene extends BaseScene {
     }
   }
 
+  private _togglePause() {
+    this._isPaused = !this._isPaused;
+  }
+
   private _adjustCollisionThreshold() {
     if (!this.camera) {
       return;
@@ -377,14 +390,6 @@ export class EndlessRunnerScene extends BaseScene {
 
   private _resetCollisionThreshold() {
     this.physics.system.collisionThreshold = this.physics.system.DEFAULT_COLLISION_THRESHOLD;
-  }
-
-  private _toggleZoom() {
-    if (this._zoomController.getValue() > 1) {
-      this._zoomController.setValue(1);
-    } else {
-      this._zoomController.setValue(2);
-    }
   }
 
   private _handleSpatialHashChanged() {

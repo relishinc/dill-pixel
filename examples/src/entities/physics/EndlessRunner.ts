@@ -10,8 +10,12 @@ export class EndlessRunner {
   static width: number;
   private static _totalWidth: number = 0;
 
+  static get currentWidth() {
+    return EndlessRunner._totalWidth;
+  }
+
   static get hasEnoughSegments() {
-    return EndlessRunner._totalWidth >= EndlessRunner.width * 1.5;
+    return EndlessRunner._totalWidth >= EndlessRunner.width;
   }
 
   static createSegment(config: SegmentConfig) {
@@ -30,6 +34,10 @@ export class EndlessRunner {
 
   static update(deltaTime: number) {
     EndlessRunner.segments.forEach((segment) => {
+      if (segment.x <= -segment.width) {
+        EndlessRunner.removeSegment(segment);
+        return;
+      }
       segment.update(deltaTime);
     });
     if (System.grid) {
@@ -43,11 +51,15 @@ export class EndlessRunner {
   }
 
   public static destroy() {
+    EndlessRunner.clear();
+    EndlessRunner._totalWidth = EndlessRunner.width = 0;
+  }
+
+  public static clear() {
     EndlessRunner.segments.forEach((segment) => {
-      segment.destroy();
+      EndlessRunner.removeSegment(segment);
     });
     EndlessRunner.segments.clear();
-    EndlessRunner._totalWidth = EndlessRunner.width = 0;
   }
 
   private static cacheTotalWidth() {

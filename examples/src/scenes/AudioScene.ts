@@ -1,12 +1,7 @@
-import { ActionDetail, Button, ButtonConfig, FlexContainer, SceneAssets } from 'dill-pixel';
+import { ActionDetail, Button, ButtonAction, ButtonConfig, FlexContainer, SceneAssets } from 'dill-pixel';
 import { BaseScene } from './BaseScene';
 
 export class AudioScene extends BaseScene {
-  assets: SceneAssets = {
-    preload: {
-      bundles: ['audio'],
-    },
-  };
   protected readonly title = 'Audio';
   protected readonly subtitle = 'Demonstrates audio channels and volume control.';
   protected config = {
@@ -23,6 +18,14 @@ export class AudioScene extends BaseScene {
   constructor() {
     super();
     this.alpha = 0;
+  }
+
+  get assets(): SceneAssets {
+    return {
+      preload: {
+        bundles: ['audio'],
+      },
+    };
   }
 
   public async initialize() {
@@ -108,7 +111,9 @@ export class AudioScene extends BaseScene {
       scale: 0.5,
       cursor: 'pointer',
       textures: {
-        default: this.app.audio.isPlaying(config?.actions?.click?.data?.id, 'music') ? 'btn/red' : 'btn/blue',
+        default: this.app.audio.isPlaying((config?.actions?.click as ButtonAction)?.data?.id, 'music')
+          ? 'btn/red'
+          : 'btn/blue',
         hover: 'btn/yellow',
         disabled: 'btn/grey',
         active: 'btn/red',

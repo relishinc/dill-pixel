@@ -27,7 +27,8 @@ type RequiredCameraConfig = Required<Pick<CameraConfig, 'container'>>;
 type CustomCameraConfig = OptionalCameraConfig & RequiredCameraConfig;
 
 export interface ICamera {
-  onZoom: Signal<(camera: ICamera) => void>;
+  onZoom: Signal<(camera?: ICamera) => void>;
+  onZoomComplete: Signal<(camera?: ICamera) => void>;
   container: Container;
   minX: number;
   minY: number;
@@ -56,8 +57,8 @@ export interface ICamera {
 }
 
 export class Camera extends Container implements ICamera {
-  public onZoom = new Signal<(camera: ICamera) => void>();
-  public onZoomComplete = new Signal<(camera: ICamera) => void>();
+  public onZoom = new Signal<(camera?: ICamera) => void>();
+  public onZoomComplete = new Signal<(camera?: ICamera) => void>();
   public container: Container;
   public minX: number = 0;
   public minY: number = 0;

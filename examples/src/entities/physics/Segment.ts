@@ -44,9 +44,5 @@ export class Segment extends Container {
         platform.isCollideable = true;
       });
     }
-
-    if (this.getGlobalPosition().x + this.width < -1000) {
-      EndlessRunner.removeSegment(this);
-    }
   }
 }

@@ -50,6 +50,7 @@ const defaults: PlatformConfig = {
 export class Platform extends SnapSolid<PlatformConfig> {
   type = 'Platform';
   private _startPos: Point;
+  private _lastPos: Point = new Point();
 
   constructor(config?: Partial<PlatformConfigOpts>) {
     const hasConfig = config !== undefined;
@@ -108,12 +109,19 @@ export class Platform extends SnapSolid<PlatformConfig> {
       this.config.movementConfig.speed.y * deltaTime * this.config.movementConfig.startingDirection.y,
     );
 
-    if (Math.abs(this.x - this._startPos.x) >= this.config.movementConfig.range.x) {
-      this.config.movementConfig.startingDirection.x *= -1;
+    if (this.x !== this._lastPos.x) {
+      if (Math.abs(this.x - this._startPos.x) >= this.config.movementConfig.range.x * 0.5) {
+        this.config.movementConfig.startingDirection.x *= -1;
+      }
     }
-    if (Math.abs(this.y - this._startPos.y) >= this.config.movementConfig.range.y) {
-      this.config.movementConfig.startingDirection.y *= -1;
+    if (this.y !== this._lastPos.y) {
+      if (Math.abs(this.y - this._startPos.y) >= this.config.movementConfig.range.y * 0.5) {
+        this.config.movementConfig.startingDirection.y *= -1;
+      }
     }
+
+    this._lastPos.x = this.x;
+    this._lastPos.y = this.y;
   }
 
   reset() {

@@ -8,7 +8,10 @@ export declare class Actor<T = any, A extends Application = Application> extends
     isActor: boolean;
     passThroughTypes: EntityType[];
     passingThrough: Set<Entity>;
+    riding: Set<Entity>;
+    ridingAmounts: Map<Entity, number>;
     get collideables(): Entity[];
+    get mostRidingSolid(): Entity | null;
     added(): void;
     removed(): void;
     squish(_collision?: Collision, _pushingEntity?: Entity, _direction?: Point): void;

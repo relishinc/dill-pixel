@@ -4,10 +4,12 @@ import { SpriteSheetLike, TextureLike } from '../utils';
 import { IApplication } from '../core';
 import { Application } from '../Application';
 
-export type ButtonAction = (() => void) | (() => Promise<void>) | {
+export type ButtonCallback = (() => void) | (() => Promise<void>);
+export type ButtonAction = {
     id: string | number;
     data?: any;
 };
+export type ButtonActionOrCallback = ButtonAction | ButtonCallback;
 type ButtonTextureId = 'default' | 'hover' | 'active' | 'disabled';
 export type ButtonConfig = {
     textures: {
@@ -24,11 +26,11 @@ export type ButtonConfig = {
         click?: string;
     };
     actions?: {
-        hover?: ButtonAction;
-        out?: ButtonAction;
-        up?: ButtonAction;
-        down?: ButtonAction;
-        click?: ButtonAction;
+        hover?: ButtonActionOrCallback;
+        out?: ButtonActionOrCallback;
+        up?: ButtonActionOrCallback;
+        down?: ButtonActionOrCallback;
+        click?: ButtonActionOrCallback;
     };
     cursor: Cursor;
     disabledCursor: Cursor;
