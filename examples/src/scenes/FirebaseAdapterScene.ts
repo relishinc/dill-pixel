@@ -4,6 +4,15 @@ import { Input } from '@pixi/ui';
 import { Graphics, Text } from 'pixi.js';
 import { SimpleButton } from '@/popups/ExamplePopup';
 import { gsap } from 'gsap';
+import {
+  collection,
+  DocumentData,
+  limit,
+  onSnapshot,
+  orderBy,
+  QuerySnapshot,
+  where,
+} from '@dill-pixel/storage-adapter-firebase';
 interface Score {
   id: string;
   username: string;
@@ -60,9 +69,7 @@ export class FirebaseAdapterScene extends BaseScene {
 
     // add a load button
     const loadButton = this.createButton('Reload', 'blue', () => {
-      this.app.sendAction('load_from_firebase', {
-        collection: 'users',
-      });
+      this.app.sendAction('load_from_firebase');
     });
     this.buttonContainer.addChild(loadButton);
 
@@ -94,21 +101,25 @@ export class FirebaseAdapterScene extends BaseScene {
     this.errorText.anchor = 0.5;
     this.errorText.y = this.inputContainer.y + 130;
 
-    // refresh the scoreboard
-    this.refreshScoreboard();
+    // listen for changes to the users collection
+    const colRef = collection(this.app.firebase.db, 'users');
+
+    // runs immediately
+    onSnapshot(colRef, (snapshot: QuerySnapshot<DocumentData>) => {
+      snapshot.docChanges().forEach((change) => {
+        console.log(`Change doc: ${change.doc.id}`);
+        console.log(`Change type: ${change.type}`);
+        console.log(`Change details: ${JSON.stringify(change.doc.data())}`);
+      });
+      this.refreshScoreboard();
+    });
   }
 
   private async _handleSave(action: ActionDetail) {
     this.errorText.text = '';
 
     try {
-      const data = await this.app.firebase.save(action.data.collection, action.data.data);
-      console.log('Saved data:', data);
-      this.addScoreToScoreboard({
-        id: data.id,
-        username: data.username,
-        score: data.score,
-      });
+      await this.app.firebase.save(action.data.collection, action.data.data);
       this.usernameInput.value = '';
       this.scoreInput.value = '';
     } catch (error: any) {
@@ -117,31 +128,15 @@ export class FirebaseAdapterScene extends BaseScene {
     }
   }
 
-  private async _handleLoad(action: ActionDetail) {
-    this.errorText.text = '';
-    try {
-      const data = await this.app.firebase.getCollection(action.data.collection);
-      console.log('Loaded data:', data);
-      this.scores = data.map((score: any) => {
-        return {
-          id: score.id,
-          username: score.username,
-          score: score.score,
-        };
-      });
-      console.log('scores', this.scores);
-      this.refreshScoreboard();
-    } catch (error: any) {
-      console.error('Error loading data:', error);
-      this.errorText.text = error.message || 'An error occurred';
-    }
+  private _handleLoad() {
+    this.refreshScoreboard();
   }
 
   private async _handleClear(action: ActionDetail) {
     this.errorText.text = '';
     try {
       await this.app.firebase.deleteCollection(action.data.collection);
-      this.refreshScoreboard();
+      // this.refreshScoreboard();
     } catch (error: any) {
       console.error('Error clearing data:', error);
       this.errorText.text = error.message || 'An error occurred';
@@ -152,20 +147,8 @@ export class FirebaseAdapterScene extends BaseScene {
     this.errorText.text = '';
 
     try {
-      const data = await this.app.firebase.deleteDocumentByField(
-        action.data.collection,
-        'username',
-        action.data.data.username,
-      );
-      console.log('Deleted data:', data);
-
-      if (data) {
-        this.deleteScoreFromScoreboard({
-          id: data.id,
-          username: data.username,
-          score: data.score,
-        });
-      }
+      await this.removeScoreFromScoreboard(action.data.data);
+      await this.app.firebase.deleteDocumentById('users', action.data.data.id);
     } catch (error: any) {
       console.error('Error deleting data:', error);
       this.errorText.text = error.message || 'An error occurred';
@@ -267,46 +250,32 @@ export class FirebaseAdapterScene extends BaseScene {
     this.scoreboard.pivot.x = 120;
   }
 
-  private addScoreToScoreboard(score: Score) {
-    // if there are no scores, remove the message
-    if (this.scores.length === 0) {
-      this.scoreboardMessage.text = '';
-    }
+  private removeScoreFromScoreboard(score: Score): Promise<void> {
+    return new Promise((resolve) => {
+      // delete the score
+      const scoreToDelete = this.scores.find((s) => {
+        return s.id === score.id;
+      });
 
-    // add the score
-    this.scores.push(score);
+      if (!scoreToDelete) {
+        this.errorText.text = 'Score not found';
+        resolve();
+        return;
+      }
 
-    const scoreUI = this.createScoreUI(score);
-    this.scoreboard.addChild(scoreUI);
+      const index = this.scores.indexOf(scoreToDelete);
+      this.scores.splice(index, 1);
 
-    gsap.fromTo(scoreUI, { alpha: 0, y: 10 }, { alpha: 1, y: 0, duration: 0.3 });
-  }
-
-  private deleteScoreFromScoreboard(score: Score) {
-    // delete the score
-    const scoreToDelete = this.scores.find((s) => {
-      return s.id === score.id;
-    });
-
-    if (!scoreToDelete) {
-      this.errorText.text = 'Score not found';
-      return;
-    }
-
-    const index = this.scores.indexOf(scoreToDelete);
-    this.scores.splice(index, 1);
-
-    const scoreElement = this.scoreboard.getChildAt(index);
-    gsap.to(scoreElement, {
-      alpha: 0,
-      x: -10,
-      duration: 0.3,
-      onComplete: () => {
-        this.scoreboard.removeChildAt(index);
-        if (!this.scores.length) {
-          this.scoreboardMessage.text = 'No scores yet.';
-        }
-      },
+      const scoreElement = this.scoreboard.getChildAt(index);
+      gsap.to(scoreElement, {
+        alpha: 0,
+        x: -10,
+        duration: 0.3,
+        onComplete: () => {
+          // this.scoreboard.removeChildAt(index);
+          resolve();
+        },
+      });
     });
   }
 
@@ -330,14 +299,13 @@ export class FirebaseAdapterScene extends BaseScene {
             // resolve when the last child is removed
             if (idx === reversedChildren.length - 1) {
               this.scoreboard.removeChildren();
+              // clear scores
+              this.scores = [];
               resolve();
             }
           },
         });
       });
-
-      // clear scores
-      this.scores = [];
     });
   }
 
@@ -376,25 +344,18 @@ export class FirebaseAdapterScene extends BaseScene {
     deleteButtonBg.accessibleHint = 'Press to delete this score';
     deleteButtonBg.onInteraction('click').connect(async () => {
       // 1. via the adapter:
+      await this.removeScoreFromScoreboard(score);
+
       // using field value
-      const data = await this.app.firebase.deleteDocumentByField('users', 'username', score.username);
+      await this.app.firebase.deleteDocumentByField('users', 'username', score.username);
 
       // using ID
-      // const data = await this.app.firebase.deleteDocumentById('users', 'id-here');
-      console.log('Deleted data:', data);
-
-      if (data) {
-        this.deleteScoreFromScoreboard({
-          id: data.id,
-          username: data.username,
-          score: data.score,
-        });
-      }
+      // await this.app.firebase.deleteDocumentById('users', 'id-here');
 
       // 2. via the action:
       // this.app.sendAction('delete_from_firebase', {
       //   collection: 'users',
-      //   data: { username: score.username },
+      //   data: score,
       // });
     });
     deleteButton.scale = 0.7;
@@ -416,12 +377,22 @@ export class FirebaseAdapterScene extends BaseScene {
   }
 
   private async refreshScoreboard() {
+    console.log('Refreshing scoreboard...');
     this.errorText.text = '';
     let data;
 
     // add scores
     try {
-      data = await this.app.firebase.getCollection('users');
+      //* Option 1:
+      // data = await this.app.firebase.getCollection('users');
+
+      //* Option 2:
+      data = await this.app.firebase.queryCollection(
+        'users',
+        orderBy('score', 'desc'),
+        limit(5),
+        where('score', '>', 0),
+      );
     } catch (error: any) {
       console.error('Error loading data during scoreboard refresh:', error);
       this.errorText.text = error.message || 'An error occurred';
