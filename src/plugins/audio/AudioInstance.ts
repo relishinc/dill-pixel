@@ -7,6 +7,7 @@ import { IAudioManagerPlugin } from './AudioManagerPlugin';
 
 export interface IAudioInstance {
   volume: number;
+  storedVolume: number;
   media: IMediaInstance;
   channel: IAudioChannel;
   muted: boolean;
@@ -41,6 +42,7 @@ export interface IAudioInstance {
 }
 
 export class AudioInstance implements IAudioInstance {
+  public storedVolume: number;
   public onStart: Signal<(instance: IAudioInstance) => void> = new Signal<(instance: IAudioInstance) => void>();
   public onStop: Signal<(instance: IAudioInstance) => void> = new Signal<(instance: IAudioInstance) => void>();
   public onEnd: Signal<(instance: IAudioInstance) => void> = new Signal<(instance: IAudioInstance) => void>();
@@ -106,6 +108,10 @@ export class AudioInstance implements IAudioInstance {
     return this._isPlaying;
   }
 
+  set isPlaying(value: boolean) {
+    this._isPlaying = value;
+  }
+
   pause(): void {
     this._isPlaying = false;
     if (this._media) {
@@ -121,6 +127,7 @@ export class AudioInstance implements IAudioInstance {
   }
 
   remove(): void {
+    this._isPlaying = false;
     this.channel.remove(this.id);
   }
 
@@ -128,6 +135,7 @@ export class AudioInstance implements IAudioInstance {
     if (this._media) {
       this._media.stop();
     }
+    this._isPlaying = false;
     this.onEnd.emit(this);
   }
 
@@ -158,7 +166,7 @@ export class AudioInstance implements IAudioInstance {
     this._media.off('resumed', this._handleMediaResumed);
   }
 
-  destroy() {
+  public destroy() {
     this.stop();
     this.removeListeners();
   }
@@ -177,18 +185,22 @@ export class AudioInstance implements IAudioInstance {
   }
 
   private _handleMediaEnded() {
+    this._isPlaying = false;
     this.onEnd.emit(this);
   }
 
   private _handleMediaStarted() {
+    this._isPlaying = true;
     this.onStart.emit(this);
   }
 
   private _handleMediaStopped() {
+    this._isPlaying = false;
     this.onStop.emit(this);
   }
 
   private _handleMediaPaused() {
+    this._isPlaying = false;
     this.onPaused.emit(this);
   }
 
@@ -197,6 +209,7 @@ export class AudioInstance implements IAudioInstance {
   }
 
   private _handleMediaResumed() {
+    this._isPlaying = true;
     this.onResumed.emit(this);
   }
 }

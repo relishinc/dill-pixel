@@ -4,12 +4,31 @@ import { SpriteSheetLike, TextureLike } from '../utils';
 import { IApplication } from '../core';
 import { Application } from '../Application';
 
+export type ButtonAction = (() => void) | (() => Promise<void>) | {
+    id: string | number;
+    data?: any;
+};
+type ButtonTextureId = 'default' | 'hover' | 'active' | 'disabled';
 export type ButtonConfig = {
     textures: {
         default: TextureLike;
         hover?: TextureLike;
         active?: TextureLike;
         disabled?: TextureLike;
+    };
+    sounds?: {
+        hover?: string;
+        out?: string;
+        up?: string;
+        down?: string;
+        click?: string;
+    };
+    actions?: {
+        hover?: ButtonAction;
+        out?: ButtonAction;
+        up?: ButtonAction;
+        down?: ButtonAction;
+        click?: ButtonAction;
     };
     cursor: Cursor;
     disabledCursor: Cursor;
@@ -71,6 +90,7 @@ export declare class Button extends _Button {
     getFocusPosition(): number[];
     addIsDownCallback(callbackId: string, callback: () => void): void;
     removeIsDownCallback(callbackId: string): void;
+    setTexture(textureId: ButtonTextureId, texture: TextureLike): void;
     /**
      * @description Handles the pointer over event.
      * Sets the texture of the button to the hover texture and emits the onOver event.
@@ -96,6 +116,7 @@ export declare class Button extends _Button {
      * @description Handles the pointer up event.
      */
     protected handlePointerUpOutside(): void;
+    private _doAction;
     private _checkIsDownCallbacks;
     private _handleIsDownCallbacks;
 }

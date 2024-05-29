@@ -5,6 +5,8 @@ import { IStore } from '../../store';
 import { Signal } from '../../signals';
 import { IApplicationOptions } from './IApplicationOptions';
 import { AppConfig } from '../types';
+import { ICoreSignals } from './ICoreSignals';
+import { ICoreFunctions } from './ICoreFunctions';
 
 export interface IApplication extends PIXIPApplication {
     config: Partial<IApplicationOptions>;
@@ -27,6 +29,9 @@ export interface IApplication extends PIXIPApplication {
     onResume: Signal<() => void>;
     readonly appName: string;
     readonly appVersion: string | number;
+    signal: ICoreSignals;
+    func: ICoreFunctions;
+    exec: ICoreFunctions;
     actions(action: string): ActionSignal;
     initialize(config: AppConfig): Promise<IApplication>;
     postInitialize(): Promise<void>;

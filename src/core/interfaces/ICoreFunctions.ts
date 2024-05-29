@@ -38,7 +38,7 @@ export interface ICoreFunctions {
 
   actions<T = any>(action: string): ActionSignal<T>;
 
-  sendAction<T = any>(actionId: string, data?: T): void;
+  sendAction<T = any>(actionId: string | number, data?: T): void;
 
   setActionContext(context: string | ActionContext): string;
 

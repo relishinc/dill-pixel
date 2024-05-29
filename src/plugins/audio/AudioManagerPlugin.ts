@@ -9,6 +9,7 @@ import { Plugin } from '../Plugin';
 import { AudioChannel, IAudioChannel } from './AudioChannel';
 import { AudioInstance, IAudioInstance } from './AudioInstance';
 import { IApplication } from '../../core';
+import TweenVars = gsap.TweenVars;
 
 export type SoundDetail = { id: string; instance: IAudioInstance; channelName: string };
 export type ChannelVolumeDetail = { channel: IAudioChannel; volume: number };
@@ -32,6 +33,8 @@ export interface IAudioManagerPlugin extends IPlugin {
   createChannel(name: string): void;
 
   play(soundId: string, channelName: ChannelName, options?: PlayOptions): Promise<IAudioInstance>;
+
+  isPlaying(soundId: string, channelName: ChannelName): boolean;
 
   load(soundId: string | string[], channelName: ChannelName, options?: PlayOptions): void;
 
@@ -73,6 +76,8 @@ export interface IAudioManagerPlugin extends IPlugin {
   restore(): void;
 
   getAudioInstance(soundId: string, channelName: string): IAudioInstance | undefined;
+
+  stopAll(fade?: boolean, duration?: number, props?: TweenVars): void;
 }
 
 /**
@@ -347,6 +352,14 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
     }
   }
 
+  isPlaying(soundId: string, channelName: ChannelName): boolean {
+    const channel = this._channels.get(channelName);
+    if (channel) {
+      return channel.get(soundId)?.isPlaying === true;
+    }
+    return false;
+  }
+
   /**
    * Plays a sound with the specified ID in the specified channel.
    * @param {string} soundId
@@ -366,6 +379,7 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
       audioInstance.media = mediaInstance;
       if (options?.volume !== undefined) {
         mediaInstance.volume = options.volume;
+
         audioInstance.onStart.connect(() => {
           () => this._soundStarted(soundId, audioInstance, channelName);
         });
@@ -373,6 +387,7 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
           () => this._soundEnded(soundId, audioInstance, channelName);
         });
       }
+      audioInstance.isPlaying = true;
       return audioInstance;
     } else {
       throw new Error(`Channel ${channelName} does not exist.`);
@@ -545,6 +560,34 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
       } else {
         throw new Error(`Channel ${channelName} does not exist.`);
       }
+    }
+  }
+
+  public stopAll(fade: boolean = false, duration: number = 1, props: TweenVars = {}) {
+    if (fade) {
+      // get all playing sounds
+      const playingSounds: IAudioInstance[] = [];
+      this._channels.forEach((channel) => {
+        channel.instances.forEach((instance) => {
+          if (instance.isPlaying) {
+            instance.storedVolume = instance.volume;
+            playingSounds.push(instance);
+          }
+        });
+      });
+      gsap.to(playingSounds, {
+        volume: 0,
+        duration,
+        ...props,
+        onComplete: () => {
+          playingSounds.forEach((instance) => {
+            instance.stop();
+            instance.volume = instance.storedVolume;
+          });
+        },
+      });
+    } else {
+      sound.stopAll();
     }
   }
 

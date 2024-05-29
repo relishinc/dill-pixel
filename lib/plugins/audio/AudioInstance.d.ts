@@ -5,6 +5,7 @@ import { IAudioManagerPlugin } from './AudioManagerPlugin';
 
 export interface IAudioInstance {
     volume: number;
+    storedVolume: number;
     media: IMediaInstance;
     channel: IAudioChannel;
     muted: boolean;
@@ -31,6 +32,7 @@ export declare class AudioInstance implements IAudioInstance {
     id: string;
     channel: IAudioChannel;
     manager: IAudioManagerPlugin;
+    storedVolume: number;
     onStart: Signal<(instance: IAudioInstance) => void>;
     onStop: Signal<(instance: IAudioInstance) => void>;
     onEnd: Signal<(instance: IAudioInstance) => void>;
@@ -49,6 +51,7 @@ export declare class AudioInstance implements IAudioInstance {
     set muted(value: boolean);
     private _isPlaying;
     get isPlaying(): boolean;
+    set isPlaying(value: boolean);
     pause(): void;
     resume(): void;
     remove(): void;

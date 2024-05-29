@@ -28,12 +28,12 @@
       "assets": [
         {
           "alias": [
-            "audio/music/horizon.mp3",
-            "horizon.mp3"
+            "audio/music/Cheerful Annoyance.ogg",
+            "Cheerful Annoyance.ogg"
           ],
           "src": [
-            "audio/music/horizon.mp3",
-            "audio/music/horizon.ogg"
+            "audio/music/Cheerful Annoyance.mp3",
+            "audio/music/Cheerful Annoyance.ogg"
           ],
           "data": {
             "tags": {
@@ -43,12 +43,87 @@
         },
         {
           "alias": [
-            "audio/sfx/bubble-land-sfx.wav",
-            "bubble-land-sfx.wav"
+            "audio/music/Drumming Sticks.ogg",
+            "Drumming Sticks.ogg"
           ],
           "src": [
-            "audio/sfx/bubble-land-sfx.mp3",
-            "audio/sfx/bubble-land-sfx.ogg"
+            "audio/music/Drumming Sticks.mp3",
+            "audio/music/Drumming Sticks.ogg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "audio/music/Game Over.ogg",
+            "Game Over.ogg"
+          ],
+          "src": [
+            "audio/music/Game Over.mp3",
+            "audio/music/Game Over.ogg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "audio/music/Mishief Stroll.ogg",
+            "Mishief Stroll.ogg"
+          ],
+          "src": [
+            "audio/music/Mishief Stroll.mp3",
+            "audio/music/Mishief Stroll.ogg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "audio/music/Night at the Beach.ogg",
+            "Night at the Beach.ogg"
+          ],
+          "src": [
+            "audio/music/Night at the Beach.mp3",
+            "audio/music/Night at the Beach.ogg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "audio/sfx/click.ogg",
+            "click.ogg"
+          ],
+          "src": [
+            "audio/sfx/click.mp3",
+            "audio/sfx/click.ogg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "audio/sfx/hover.ogg",
+            "hover.ogg"
+          ],
+          "src": [
+            "audio/sfx/hover.mp3",
+            "audio/sfx/hover.ogg"
           ],
           "data": {
             "tags": {

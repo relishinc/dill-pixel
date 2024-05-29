@@ -8,6 +8,10 @@ import { bindAllMethods } from '../utils';
 import type { IApplication } from '../core';
 import { Application } from '../Application';
 
+export type ButtonAction = (() => void) | (() => Promise<void>) | { id: string | number; data?: any };
+
+type ButtonTextureId = 'default' | 'hover' | 'active' | 'disabled';
+
 export type ButtonConfig = {
   textures: {
     default: TextureLike;
@@ -15,13 +19,35 @@ export type ButtonConfig = {
     active?: TextureLike;
     disabled?: TextureLike;
   };
+  sounds?: {
+    hover?: string;
+    out?: string;
+    up?: string;
+    down?: string;
+    click?: string;
+  };
+  actions?: {
+    hover?: ButtonAction;
+    out?: ButtonAction;
+    up?: ButtonAction;
+    down?: ButtonAction;
+    click?: ButtonAction;
+  };
   cursor: Cursor;
   disabledCursor: Cursor;
   sheet: SpriteSheetLike;
   enabled: boolean;
 };
 
-export const ButtonConfigKeys: (keyof ButtonConfig)[] = ['textures', 'cursor', 'disabledCursor', 'sheet', 'enabled'];
+export const ButtonConfigKeys: (keyof ButtonConfig)[] = [
+  'textures',
+  'sounds',
+  'actions',
+  'cursor',
+  'disabledCursor',
+  'sheet',
+  'enabled',
+];
 
 // Create a new class that extends Container and includes the Interactive and Focusable mixins.
 const _Button = Focusable(Interactive(WithSignals(FactoryContainer())));
@@ -154,6 +180,16 @@ export class Button extends _Button {
     this._isDownCallbacks.delete(callbackId);
   }
 
+  setTexture(textureId: ButtonTextureId, texture: TextureLike) {
+    this.config.textures[textureId] = texture;
+    if (textureId === 'default') {
+      this.view.texture = this.make.texture({
+        asset: this.config.textures.default,
+        sheet: this.config.sheet,
+      });
+    }
+  }
+
   /**
    * @description Handles the pointer over event.
    * Sets the texture of the button to the hover texture and emits the onOver event.
@@ -173,6 +209,12 @@ export class Button extends _Button {
       sheet: this.config.sheet,
     });
     this.onOver.emit();
+    if (this.config.sounds?.hover) {
+      void this.app.audio.play(this.config.sounds.hover, 'sfx');
+    }
+    if (this.config.actions?.hover) {
+      this._doAction(this.config.actions.hover);
+    }
   }
 
   /**
@@ -210,6 +252,14 @@ export class Button extends _Button {
         sheet: this.config.sheet,
       });
       this.onDown.emit();
+      if (this.config.sounds?.down) {
+        void this.app.audio.play(this.config.sounds.down, 'sfx');
+      }
+      if (this.config.actions?.down) {
+        if (this.config.actions?.down) {
+          this._doAction(this.config.actions.down);
+        }
+      }
     }
   }
 
@@ -225,11 +275,23 @@ export class Button extends _Button {
 
     this.view.texture = this.make.texture({ asset: this.config.textures.default, sheet: this.config.sheet });
     this.onUp.emit();
+    if (this.config.sounds?.up) {
+      void this.app.audio.play(this.config.sounds.up, 'sfx');
+    }
+    if (this.config.actions?.up) {
+      this._doAction(this.config.actions.up);
+    }
   }
 
   protected handleClick() {
     this.isDown = false;
     this.onClick.emit();
+    if (this.config.sounds?.click) {
+      void this.app.audio.play(this.config.sounds.click, 'sfx');
+    }
+    if (this.config.actions?.click) {
+      this._doAction(this.config.actions.click);
+    }
   }
 
   /**
@@ -245,6 +307,24 @@ export class Button extends _Button {
     this.isDown = false;
     this.isOver = false;
     this.onUpOutside.emit();
+
+    if (this.config.sounds?.up) {
+      void this.app.audio.play(this.config.sounds.up, 'sfx');
+    }
+    if (this.config.actions?.up) {
+      this._doAction(this.config.actions.up);
+    }
+  }
+
+  private _doAction(action: ButtonAction) {
+    if (typeof action === 'function') {
+      void action();
+    } else {
+      if (!action.data.button) {
+        action.data.button = this;
+      }
+      this.app.exec.sendAction(action.id, action.data);
+    }
   }
 
   private _checkIsDownCallbacks() {

@@ -16,7 +16,7 @@ export interface ICoreFunctions {
     isControllerActive(controller: InputController): boolean;
     isGamepadActive(gamepad: Gamepad): boolean;
     actions<T = any>(action: string): ActionSignal<T>;
-    sendAction<T = any>(actionId: string, data?: T): void;
+    sendAction<T = any>(actionId: string | number, data?: T): void;
     setActionContext(context: string | ActionContext): string;
     onKeyDown(key?: string): KeySignal;
     onKeyUp(key?: string): KeySignal;

@@ -41,8 +41,8 @@ export declare class InputPlugin extends Plugin implements IInputPlugin {
     destroy(): void;
     isControllerActive(controller: InputController): boolean;
     isGamepadActive(gamepad: Gamepad): boolean;
-    actions<T = any>(action: string): ActionSignal<T>;
-    sendAction<T = any>(actionId: string, data?: T): void;
+    actions<T = any>(action: string | number): ActionSignal<T>;
+    sendAction<T = any>(actionId: string | number, data?: T): void;
     setActionContext(context: string | ActionContext): string;
     protected getCoreFunctions(): string[];
     protected getCoreSignals(): string[];

@@ -6,6 +6,7 @@ import { IAudioChannel } from './AudioChannel';
 import { IAudioInstance } from './AudioInstance';
 import { IApplication } from '../../core';
 
+import TweenVars = gsap.TweenVars;
 export type SoundDetail = {
     id: string;
     instance: IAudioInstance;
@@ -31,6 +32,7 @@ export interface IAudioManagerPlugin extends IPlugin {
     vo: IAudioChannel;
     createChannel(name: string): void;
     play(soundId: string, channelName: ChannelName, options?: PlayOptions): Promise<IAudioInstance>;
+    isPlaying(soundId: string, channelName: ChannelName): boolean;
     load(soundId: string | string[], channelName: ChannelName, options?: PlayOptions): void;
     stop(soundId: string, channelName: ChannelName): IAudioInstance | undefined;
     setChannelVolume(channelName: ChannelName | ChannelName[], volume: number): void;
@@ -49,6 +51,7 @@ export interface IAudioManagerPlugin extends IPlugin {
     suspend(): void;
     restore(): void;
     getAudioInstance(soundId: string, channelName: string): IAudioInstance | undefined;
+    stopAll(fade?: boolean, duration?: number, props?: TweenVars): void;
 }
 /**
  * AudioManager is a class that manages audio playback in the application.
@@ -180,6 +183,7 @@ export declare class AudioManagerPlugin extends Plugin implements IAudioManagerP
      * @param {UnresolvedAsset} soundAsset
      */
     add(soundAsset: UnresolvedAsset): void;
+    isPlaying(soundId: string, channelName: ChannelName): boolean;
     /**
      * Plays a sound with the specified ID in the specified channel.
      * @param {string} soundId
@@ -239,6 +243,7 @@ export declare class AudioManagerPlugin extends Plugin implements IAudioManagerP
     suspend(): void;
     getAudioInstance(soundId: string, channelName?: string): IAudioInstance | undefined;
     load(soundId: string | string[], channelName?: ChannelName, options?: PlayOptions): void;
+    stopAll(fade?: boolean, duration?: number, props?: TweenVars): void;
     protected getCoreSignals(): string[];
     private _verifySoundId;
     private _findAndAddFromManifest;

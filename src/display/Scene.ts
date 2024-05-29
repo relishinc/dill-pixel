@@ -4,8 +4,7 @@ import type { AssetLoadingOptions, Size } from '../utils';
 import type { IContainer } from './Container';
 import { Container } from './Container';
 
-export type SceneAssets = string | string[] | null;
-export type SceneBundles = string | string[] | null;
+export type SceneAssets = Omit<AssetLoadingOptions, 'manifest' | 'initOptions' | 'assetPreferences'>;
 
 export interface IScene extends IContainer {
   id: string;
@@ -13,7 +12,7 @@ export interface IScene extends IContainer {
   exit: () => Promise<any>;
   initialize: () => Promise<void> | void;
   start: () => Promise<void> | void;
-  assets?: AssetLoadingOptions;
+  assets?: SceneAssets;
   autoUnloadAssets?: boolean;
 }
 
