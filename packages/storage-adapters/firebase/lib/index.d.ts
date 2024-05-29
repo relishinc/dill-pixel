@@ -1,6 +1,6 @@
 import { StorageAdapter, IApplication } from 'dill-pixel';
-import { FirebaseOptions } from 'firebase/app';
-import { Firestore, DocumentData, WhereFilterOp } from 'firebase/firestore';
+import { FirebaseApp, FirebaseOptions } from 'firebase/app';
+import { Firestore, DocumentData, QueryConstraint } from 'firebase/firestore';
 
 export * from 'firebase/firestore';
 /**
@@ -18,6 +18,11 @@ export declare class FirebaseAdapter extends StorageAdapter {
      * @returns {void}
      */
     initialize(_app: IApplication, options: FirebaseOptions): void;
+    /**
+     * Returns the Firebase app.
+     * @returns {FirebaseApp} The Firebase app.
+     */
+    get firebaseApp(): FirebaseApp;
     /**
      * Returns the Firestore database.
      * @returns {Firestore} The Firestore database.
@@ -54,7 +59,7 @@ export declare class FirebaseAdapter extends StorageAdapter {
      * @example
      * await this.app.firebase.getDocumentByField('users', 'username', 'relish');
      */
-    getDocumentByField(collectionName: string, field: string, value: any): Promise<DocumentData | null>;
+    getDocumentByField(collectionName: string, field: string, value: unknown): Promise<DocumentData | null>;
     /**
      * Get all documents in a collection.
      * @param collectionName The name of the collection.
@@ -84,7 +89,7 @@ export declare class FirebaseAdapter extends StorageAdapter {
      * @example
      * await this.app.firebase.deleteDocumentByField('users', 'username', 'relish');
      */
-    deleteDocumentByField(collectionName: string, field: string, value: any): Promise<DocumentData | null>;
+    deleteDocumentByField(collectionName: string, field: string, value: unknown): Promise<DocumentData | null>;
     /**
      * Delete all documents in a collection.
      * @param collectionName The name of the collection.
@@ -95,16 +100,14 @@ export declare class FirebaseAdapter extends StorageAdapter {
      */
     deleteCollection(collectionName: string): Promise<void>;
     /**
-     * Query a collection by a field value.
+     * Query a collection.
      * @param collectionName The name of the collection.
-     * @param field The field to query.
-     * @param operator The operator to use for the query.
-     * @param value The value to query.
+     * @param queries The query constraints to apply.
      * @returns An array of documents.
      *
      * @example
-     * await this.app.firebase.queryCollection('users', 'username', '==', 'relish');
+     * await this.app.firebase.queryCollection('users', where('score', '>', 0), limit(10));
      */
-    queryCollection(collectionName: string, field: string, operator: WhereFilterOp, value: any): Promise<DocumentData[]>;
+    queryCollection(collectionName: string, ...queries: QueryConstraint[]): Promise<DocumentData[]>;
 }
 //# sourceMappingURL=index.d.ts.map

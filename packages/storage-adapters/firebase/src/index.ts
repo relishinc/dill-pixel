@@ -13,9 +13,11 @@ import {
   query,
   where,
 } from 'firebase/firestore';
-import type { Firestore, DocumentData, WhereFilterOp } from 'firebase/firestore';
+import type { Firestore, DocumentData, QueryConstraint } from 'firebase/firestore';
 
 // TODO: better way to do this?
+// should we export just "firebase", that way all services are available (ex. firebase/firestore, firebase/storage, firebase/functions etc.)
+// maybe won't have to do this when this adapter is installed via npm because firebase will be installed along with it?
 export * from 'firebase/firestore';
 
 /**
@@ -39,6 +41,14 @@ export class FirebaseAdapter extends StorageAdapter {
     this._options = options;
     this._firebaseApp = initializeApp(this._options);
     this._db = getFirestore(this._firebaseApp); // initialize Firestore and get a reference to the database
+  }
+
+  /**
+   * Returns the Firebase app.
+   * @returns {FirebaseApp} The Firebase app.
+   */
+  get firebaseApp(): FirebaseApp {
+    return this._firebaseApp;
   }
 
   /**
@@ -128,7 +138,7 @@ export class FirebaseAdapter extends StorageAdapter {
    * @example
    * await this.app.firebase.getDocumentByField('users', 'username', 'relish');
    */
-  async getDocumentByField(collectionName: string, field: string, value: any): Promise<DocumentData | null> {
+  async getDocumentByField(collectionName: string, field: string, value: unknown): Promise<DocumentData | null> {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
@@ -219,7 +229,7 @@ export class FirebaseAdapter extends StorageAdapter {
    * @example
    * await this.app.firebase.deleteDocumentByField('users', 'username', 'relish');
    */
-  async deleteDocumentByField(collectionName: string, field: string, value: any): Promise<DocumentData | null> {
+  async deleteDocumentByField(collectionName: string, field: string, value: unknown): Promise<DocumentData | null> {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
@@ -267,32 +277,26 @@ export class FirebaseAdapter extends StorageAdapter {
   }
 
   /**
-   * Query a collection by a field value.
+   * Query a collection.
    * @param collectionName The name of the collection.
-   * @param field The field to query.
-   * @param operator The operator to use for the query.
-   * @param value The value to query.
+   * @param queries The query constraints to apply.
    * @returns An array of documents.
    *
    * @example
-   * await this.app.firebase.queryCollection('users', 'username', '==', 'relish');
+   * await this.app.firebase.queryCollection('users', where('score', '>', 0), limit(10));
    */
-  async queryCollection(
-    collectionName: string,
-    field: string,
-    operator: WhereFilterOp,
-    value: any,
-  ): Promise<DocumentData[]> {
+  async queryCollection(collectionName: string, ...queries: QueryConstraint[]): Promise<DocumentData[]> {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
 
+    const documents: DocumentData[] = [];
     try {
       const collectionRef = collection(this.db, collectionName);
-      const q = query(collectionRef, where(field, operator, value));
-      const querySnapshot = await getDocs(q);
 
-      const documents: DocumentData[] = [];
+      const q = query(collectionRef, ...queries);
+
+      const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         documents.push({ id: doc.id, ...doc.data() });
       });

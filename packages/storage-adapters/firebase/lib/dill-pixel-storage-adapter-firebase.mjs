@@ -1,8 +1,8 @@
-import { StorageAdapter as y, Logger as p } from "dill-pixel";
-import { initializeApp as E } from "firebase/app";
-import { getFirestore as g, doc as c, addDoc as m, collection as n, setDoc as z, getDoc as d, query as u, where as b, getDocs as l, deleteDoc as h } from "firebase/firestore";
+import { StorageAdapter as f, Logger as u } from "dill-pixel";
+import { initializeApp as b } from "firebase/app";
+import { getFirestore as p, doc as a, addDoc as y, collection as s, setDoc as E, getDoc as d, query as w, where as g, getDocs as c, deleteDoc as h } from "firebase/firestore";
 export * from "firebase/firestore";
-class R extends y {
+class C extends f {
   /**
    * Initializes the adapter.
    * @param {IApplication} _app The application that the adapter belongs to.
@@ -10,7 +10,14 @@ class R extends y {
    * @returns {void}
    */
   initialize(i, r) {
-    p.log("FirebaseAdapter initialized"), this._options = r, this._firebaseApp = E(this._options), this._db = g(this._firebaseApp);
+    u.log("FirebaseAdapter initialized"), this._options = r, this._firebaseApp = b(this._options), this._db = p(this._firebaseApp);
+  }
+  /**
+   * Returns the Firebase app.
+   * @returns {FirebaseApp} The Firebase app.
+   */
+  get firebaseApp() {
+    return this._firebaseApp;
   }
   /**
    * Returns the Firestore database.
@@ -34,7 +41,7 @@ class R extends y {
       throw new Error("Firestore has not been initialized. Call initialize() first.");
     let t;
     try {
-      e ? t = c(this.db, i, e) : t = await m(n(this.db, i), r), await z(t, r, { merge: !0 });
+      e ? t = a(this.db, i, e) : t = await y(s(this.db, i), r), await E(t, r, { merge: !0 });
       const o = await d(t);
       return {
         id: o.id,
@@ -56,7 +63,7 @@ class R extends y {
   async getDocumentById(i, r) {
     if (!this.db)
       throw new Error("Firestore has not been initialized. Call initialize() first.");
-    const e = c(this.db, i, r);
+    const e = a(this.db, i, r);
     try {
       const t = await d(e);
       return t.exists() ? {
@@ -81,12 +88,12 @@ class R extends y {
     if (!this.db)
       throw new Error("Firestore has not been initialized. Call initialize() first.");
     try {
-      const t = n(this.db, i), o = u(t, b(r, "==", e)), s = await l(o);
-      if (s.empty)
+      const t = s(this.db, i), o = w(t, g(r, "==", e)), l = await c(o);
+      if (l.empty)
         return null;
       {
-        const a = s.docs[0];
-        return { id: a.id, ...a.data() };
+        const n = l.docs[0];
+        return { id: n.id, ...n.data() };
       }
     } catch (t) {
       throw new Error(`Error getting document: ${t}`);
@@ -104,7 +111,7 @@ class R extends y {
     if (!this.db)
       throw new Error("Firestore has not been initialized. Call initialize() first.");
     try {
-      const r = n(this.db, i), e = await l(r), t = [];
+      const r = s(this.db, i), e = await c(r), t = [];
       return e.forEach((o) => {
         t.push({ id: o.id, ...o.data() });
       }), t;
@@ -125,7 +132,7 @@ class R extends y {
     if (!this.db)
       throw new Error("Firestore has not been initialized. Call initialize() first.");
     try {
-      const e = c(this.db, i, r), t = await d(e);
+      const e = a(this.db, i, r), t = await d(e);
       return t.exists() ? (await h(e), {
         id: t.id,
         ...t.data()
@@ -151,7 +158,7 @@ class R extends y {
       const t = await this.getDocumentByField(i, r, e);
       if (!t)
         return null;
-      const o = c(this.db, i, t.id);
+      const o = a(this.db, i, t.id);
       return await h(o), t;
     } catch (t) {
       throw new Error(`Error deleting document: ${t}`);
@@ -169,7 +176,7 @@ class R extends y {
     if (!this.db)
       throw new Error("Firestore has not been initialized. Call initialize() first.");
     try {
-      const r = n(this.db, i), e = await l(r), t = [];
+      const r = s(this.db, i), e = await c(r), t = [];
       e.forEach((o) => {
         t.push(h(o.ref));
       }), await Promise.all(t);
@@ -178,30 +185,29 @@ class R extends y {
     }
   }
   /**
-   * Query a collection by a field value.
+   * Query a collection.
    * @param collectionName The name of the collection.
-   * @param field The field to query.
-   * @param operator The operator to use for the query.
-   * @param value The value to query.
+   * @param queries The query constraints to apply.
    * @returns An array of documents.
    *
    * @example
-   * await this.app.firebase.queryCollection('users', 'username', '==', 'relish');
+   * await this.app.firebase.queryCollection('users', where('score', '>', 0), limit(10));
    */
-  async queryCollection(i, r, e, t) {
+  async queryCollection(i, ...r) {
     if (!this.db)
       throw new Error("Firestore has not been initialized. Call initialize() first.");
+    const e = [];
     try {
-      const o = n(this.db, i), s = u(o, b(r, e, t)), a = await l(s), w = [];
-      return a.forEach((f) => {
-        w.push({ id: f.id, ...f.data() });
-      }), w;
-    } catch (o) {
-      throw new Error(`Error querying collection: ${o}`);
+      const t = s(this.db, i), o = w(t, ...r);
+      return (await c(o)).forEach((n) => {
+        e.push({ id: n.id, ...n.data() });
+      }), e;
+    } catch (t) {
+      throw new Error(`Error querying collection: ${t}`);
     }
   }
 }
 export {
-  R as FirebaseAdapter
+  C as FirebaseAdapter
 };
 //# sourceMappingURL=dill-pixel-storage-adapter-firebase.mjs.map
