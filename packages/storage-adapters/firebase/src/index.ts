@@ -20,6 +20,10 @@ import type { Firestore, DocumentData, QueryConstraint } from 'firebase/firestor
 // maybe won't have to do this when this adapter is installed via npm because firebase will be installed along with it?
 export * from 'firebase/firestore';
 
+interface DocumentResult extends DocumentData {
+  id: string;
+}
+
 /**
  * A class representing a storage adapter that uses Firebase.
  * @extends StorageAdapter
@@ -61,15 +65,15 @@ export class FirebaseAdapter extends StorageAdapter {
 
   /**
    * Save or update a document in a collection.
-   * @param collectionName The name of the collection.
-   * @param data The data to save.
-   * @param id The ID of the document to save or update, if applicable.
-   * @returns The saved or updated document.
+   * @param {string} collectionName The name of the collection.
+   * @param {DocumentData} data The data to save or update.
+   * @param {string} id The ID of the document to save or update, if applicable.
+   * @returns {Promise<DocumentResult>} The saved or updated document.
    *
    * @example
    * await this.app.firebase.save('users', { username: 'relish', score: 50 }, 'custom-id');
    */
-  async save(collectionName: string, data: DocumentData, id?: string): Promise<DocumentData> {
+  async save(collectionName: string, data: DocumentData, id?: string): Promise<DocumentResult> {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
@@ -99,14 +103,14 @@ export class FirebaseAdapter extends StorageAdapter {
 
   /**
    * Get a single document by its ID.
-   * @param collectionName The name of the collection.
-   * @param id The ID of the document to get.
-   * @returns The document, or null if not found.
+   * @param {string} collectionName The name of the collection.
+   * @param {string} id The ID of the document to get.
+   * @returns {Promise<DocumentResult | null>} The document, or null if not found.
    *
    * @example
    * await this.app.firebase.getDocumentById('users', 'custom-id');
    */
-  async getDocumentById(collectionName: string, id: string): Promise<DocumentData | null> {
+  async getDocumentById(collectionName: string, id: string): Promise<DocumentResult | null> {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
@@ -130,15 +134,15 @@ export class FirebaseAdapter extends StorageAdapter {
 
   /**
    * Get a single document by a field value.
-   * @param collectionName The name of the collection.
-   * @param field The field to query.
-   * @param value The value to query.
-   * @returns The document, or null if not found.
+   * @param {string} collectionName The name of the collection.
+   * @param {string} field The field to query.
+   * @param {unknown} value The value to query.
+   * @returns {Promise<DocumentResult | null>} The document, or null if not found.
    *
    * @example
    * await this.app.firebase.getDocumentByField('users', 'username', 'relish');
    */
-  async getDocumentByField(collectionName: string, field: string, value: unknown): Promise<DocumentData | null> {
+  async getDocumentByField(collectionName: string, field: string, value: unknown): Promise<DocumentResult | null> {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
@@ -161,13 +165,13 @@ export class FirebaseAdapter extends StorageAdapter {
 
   /**
    * Get all documents in a collection.
-   * @param collectionName The name of the collection.
-   * @returns An array of documents.
+   * @param {string} collectionName The name of the collection.
+   * @returns {Promise<DocumentResult[]>} An array of documents.
    *
    * @example
    * await this.app.firebase.getCollection('users');
    */
-  async getCollection(collectionName: string): Promise<DocumentData[]> {
+  async getCollection(collectionName: string): Promise<DocumentResult[]> {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
@@ -176,7 +180,7 @@ export class FirebaseAdapter extends StorageAdapter {
       const collectionRef = collection(this.db, collectionName);
       const querySnapshot = await getDocs(collectionRef);
 
-      const documents: DocumentData[] = [];
+      const documents: DocumentResult[] = [];
       querySnapshot.forEach((doc) => {
         documents.push({ id: doc.id, ...doc.data() });
       });
@@ -189,14 +193,14 @@ export class FirebaseAdapter extends StorageAdapter {
 
   /**
    * Delete a document by its ID.
-   * @param collectionName The name of the collection.
-   * @param id The ID of the document to delete.
-   * @returns The deleted document, or null if not found.
+   * @param {string} collectionName The name of the collection.
+   * @param {string} id The ID of the document to delete.
+   * @returns {Promise<DocumentResult | null>} The deleted document, or null if not found.
    *
    * @example
    * await this.app.firebase.deleteDocumentById('users', 'custom-id');
    */
-  async deleteDocumentById(collectionName: string, id: string): Promise<DocumentData | null> {
+  async deleteDocumentById(collectionName: string, id: string): Promise<DocumentResult | null> {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
@@ -221,15 +225,15 @@ export class FirebaseAdapter extends StorageAdapter {
 
   /**
    * Delete a document by a field value.
-   * @param collectionName The name of the collection.
-   * @param field The field to query.
-   * @param value The value to query.
-   * @returns The deleted document, or null if not found.
+   * @param {string} collectionName The name of the collection.
+   * @param {string} field The field to query.
+   * @param {unknown} value The value to query.
+   * @returns {Promise<DocumentResult | null>} The deleted document, or null if not found.
    *
    * @example
    * await this.app.firebase.deleteDocumentByField('users', 'username', 'relish');
    */
-  async deleteDocumentByField(collectionName: string, field: string, value: unknown): Promise<DocumentData | null> {
+  async deleteDocumentByField(collectionName: string, field: string, value: unknown): Promise<DocumentResult | null> {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
@@ -250,8 +254,8 @@ export class FirebaseAdapter extends StorageAdapter {
 
   /**
    * Delete all documents in a collection.
-   * @param collectionName The name of the collection.
-   * @returns void
+   * @param {string} collectionName The name of the collection.
+   * @returns {Promise<void>} A promise that resolves when the operation is complete.
    *
    * @example
    * await this.app.firebase.deleteCollection('users');
@@ -278,19 +282,19 @@ export class FirebaseAdapter extends StorageAdapter {
 
   /**
    * Query a collection.
-   * @param collectionName The name of the collection.
-   * @param queries The query constraints to apply.
-   * @returns An array of documents.
+   * @param {string} collectionName The name of the collection.
+   * @param {QueryConstraint[]} queries The query constraints to apply.
+   * @returns {Promise<DocumentResult[]>} An array of documents.
    *
    * @example
    * await this.app.firebase.queryCollection('users', where('score', '>', 0), limit(10));
    */
-  async queryCollection(collectionName: string, ...queries: QueryConstraint[]): Promise<DocumentData[]> {
+  async queryCollection(collectionName: string, ...queries: QueryConstraint[]): Promise<DocumentResult[]> {
     if (!this.db) {
       throw new Error('Firestore has not been initialized. Call initialize() first.');
     }
 
-    const documents: DocumentData[] = [];
+    const documents: DocumentResult[] = [];
     try {
       const collectionRef = collection(this.db, collectionName);
 

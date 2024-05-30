@@ -13,11 +13,11 @@ import {
   QuerySnapshot,
   where,
 } from '@dill-pixel/storage-adapter-firebase';
-interface Score {
+type Score = {
   id: string;
   username: string;
   score: number;
-}
+};
 
 export class FirebaseAdapterScene extends BaseScene {
   protected readonly title = 'Firebase Storage Adapter';
@@ -107,11 +107,11 @@ export class FirebaseAdapterScene extends BaseScene {
     // runs immediately
     onSnapshot(colRef, (snapshot: QuerySnapshot<DocumentData>) => {
       snapshot.docChanges().forEach((change) => {
-        console.log(`Change doc: ${change.doc.id}`);
         console.log(`Change type: ${change.type}`);
         console.log(`Change details: ${JSON.stringify(change.doc.data())}`);
       });
-      this.refreshScoreboard();
+
+      snapshot.docChanges().length && this.refreshScoreboard();
     });
   }
 
