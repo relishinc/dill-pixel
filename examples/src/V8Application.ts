@@ -7,15 +7,6 @@ import { ExampleOutliner } from './ui/ExampleOutliner';
 import TestAdapter from '@/adapters/TestAdapter';
 import type { FirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
 
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-};
-
 export class V8Application extends Application {
   setup() {
     return Assets.loadBundle(['required', 'game']);
@@ -49,7 +40,6 @@ const appConfig: AppConfig = {
       id: 'firebase',
       namedExport: 'FirebaseAdapter',
       module: () => import('@dill-pixel/storage-adapter-firebase'),
-      options: firebaseConfig,
     },
   ],
   scenes: [

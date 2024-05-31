@@ -4,15 +4,8 @@ import { Input } from '@pixi/ui';
 import { Graphics, Text } from 'pixi.js';
 import { SimpleButton } from '@/popups/ExamplePopup';
 import { gsap } from 'gsap';
-import {
-  collection,
-  DocumentData,
-  limit,
-  onSnapshot,
-  orderBy,
-  QuerySnapshot,
-  where,
-} from '@dill-pixel/storage-adapter-firebase';
+import { collection, DocumentData, limit, onSnapshot, orderBy, QuerySnapshot, where } from 'firebase/firestore';
+
 type Score = {
   id: string;
   username: string;
@@ -119,6 +112,7 @@ export class FirebaseAdapterScene extends BaseScene {
     this.errorText.text = '';
 
     try {
+      // await this.app.store.save('firebase', action.data.collection, action.data.data);
       await this.app.firebase.save(action.data.collection, action.data.data);
       this.usernameInput.value = '';
       this.scoreInput.value = '';
@@ -347,7 +341,7 @@ export class FirebaseAdapterScene extends BaseScene {
       await this.removeScoreFromScoreboard(score);
 
       // using field value
-      await this.app.firebase.deleteDocumentByField('users', 'username', score.username);
+      await this.app.firebase.deleteDocumentWhere('users', 'username', score.username);
 
       // using ID
       // await this.app.firebase.deleteDocumentById('users', 'id-here');
