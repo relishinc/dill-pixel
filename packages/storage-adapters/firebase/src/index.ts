@@ -93,7 +93,6 @@ export class FirebaseAdapter extends StorageAdapter {
       // If the document does exist, the data will be merged into the existing document.
       await setDoc(docRef, data, { merge: true });
 
-      // TODO: what to return?
       const docSnap = await getDoc(docRef);
       return {
         id: docSnap.id,
@@ -122,14 +121,16 @@ export class FirebaseAdapter extends StorageAdapter {
     try {
       const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
-        return {
-          id: docSnap.id,
-          ...docSnap.data(),
-        };
-      } else {
-        return null;
-      }
+      if (!docSnap.exists()) return null;
+
+      const data = {
+        id: docSnap.id,
+        ...docSnap.data(),
+      };
+
+      if (!data) return null;
+
+      return data;
     } catch (error) {
       throw new Error(`Error getting document: ${error}`);
     }
