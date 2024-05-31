@@ -9,12 +9,13 @@ export declare class Actor<T = any, A extends Application = Application> extends
     passThroughTypes: EntityType[];
     passingThrough: Set<Entity>;
     riding: Set<Entity>;
-    ridingAmounts: Map<Entity, number>;
+    mostRiding: Entity | null;
+    get ridingAllowed(): boolean;
     get collideables(): Entity[];
-    get mostRidingSolid(): Entity | null;
     added(): void;
     removed(): void;
     squish(_collision?: Collision, _pushingEntity?: Entity, _direction?: Point): void;
+    preUpdate(): void;
     moveX(amount: number, onCollide?: ((collision: Collision, pushingEntity?: Entity, direction?: Point) => void) | null, onNoCollisions?: (() => void) | null, pushingEntity?: Entity): void;
     moveY(amount: number, onCollide?: ((collision: Collision, pushingEntity?: Entity, direction?: Point) => void) | null, onNoCollisions?: (() => void) | null, pushingEntity?: Entity): void;
     collideAt(x: number, y: number, box: Rectangle, sides?: ('top' | 'right' | 'bottom' | 'left')[]): Collision[] | false;
@@ -22,5 +23,7 @@ export declare class Actor<T = any, A extends Application = Application> extends
     setPassingThrough(entity: Entity): void;
     removePassingThrough(entity: Entity): void;
     isPassingThrough(entity: Entity): boolean;
+    private clearAllRiding;
+    private setAllRiding;
 }
 //# sourceMappingURL=Actor.d.ts.map

@@ -1,15 +1,15 @@
-import { Door } from '@/entities/physics/Door';
+import { Assets } from 'pixi.js';
+import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
+import { Container, UICanvas } from 'dill-pixel';
 import { Platform, PlatformConfig, PlatformMovementConfigOpts } from '@/entities/physics/Platform';
-import { Player } from '@/entities/physics/Player';
-import { Portal } from '@/entities/physics/Portal';
 
 import { BaseScene } from '@/scenes/BaseScene';
-import { Camera, Container, delay, UICanvas } from 'dill-pixel';
-import { Assets, Ticker } from 'pixi.js';
-import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
-import { SegmentConfig } from '@/entities/physics/Segment';
+import { Door } from '@/entities/physics/Door';
 import { EndlessRunner } from '@/entities/physics/EndlessRunner';
 import { Joystick } from '@/ui/Joystick';
+import { Player } from '@/entities/physics/Player';
+import { Portal } from '@/entities/physics/Portal';
+import { SegmentConfig } from '@/entities/physics/Segment';
 
 export class EndlessRunnerScene extends BaseScene {
   ui: UICanvas;
@@ -19,12 +19,9 @@ export class EndlessRunnerScene extends BaseScene {
   doors: Door[] = [];
   portals: Portal[] = [];
   _isPaused: boolean = false;
-  camera: Camera;
   protected readonly title = 'Snap Physics - Endless Runner';
   protected readonly subtitle = 'Arrows, WASD to move, up / spacebar to jump, "P" to pause.';
   protected config = {
-    useCamera: false,
-    zoom: 1,
     useSpatialHash: true,
     gridCellSize: 300,
     debug: false,
@@ -81,28 +78,28 @@ export class EndlessRunnerScene extends BaseScene {
       container: this.level,
       debug: false,
       fps: 60,
-
       useSpatialHashGrid: this.config.useSpatialHash,
       cellSize: this.config.gridCellSize,
       collisionResolver: this._resolveCollision,
     });
+
+    this.physics.system.enabled = true;
+    this.physics.system.updateHooks.add(this.physicsUpdate);
+
     const bottom = this.app.size.height - 200;
     this._segments = this.createSegments(bottom);
 
-    EndlessRunner.initialize(this.app.size.width * 0.75, [1, 0]);
+    EndlessRunner.initialize(this.app.size.width * 0.75, [1, 0], this.level);
 
     while (!EndlessRunner.hasEnoughSegments) {
-      const segment = this.getEmptySegment(bottom);
-      this.level.add.existing(segment);
+      this.getEmptySegment(bottom);
     }
 
     EndlessRunner.width = this.app.size.width * 2;
 
     this.addPlayer();
-    this.addControls();
 
     this._handleDebugChanged();
-    this._handleUseCameraChanged();
 
     this.addSignalConnection(
       this.app.keyboard.onKeyDown('p').connect(() => {
@@ -110,14 +107,12 @@ export class EndlessRunnerScene extends BaseScene {
       }),
       this.app.actions('pause').connect(this._togglePause),
     );
+    this.addControls();
   }
 
-  async start() {
-    await delay(0.5);
-  }
-
-  update(ticker: Ticker) {
+  physicsUpdate(deltaTime: number) {
     if (this._isPaused) return;
+    EndlessRunner.update(deltaTime);
     if (
       this.app.keyboard.isKeyDown('ArrowUp') ||
       this.app.keyboard.isKeyDown(' ') ||
@@ -143,13 +138,9 @@ export class EndlessRunnerScene extends BaseScene {
     // add more segments if needed
     if (!EndlessRunner.hasEnoughSegments) {
       while (!EndlessRunner.hasEnoughSegments && !this._isPaused) {
-        const segment = this.createRandomSegment();
-        this.level.add.existing(segment);
+        this.createRandomSegment();
       }
     }
-
-    // update physics - adding EndlessRunner.update to pre-update hooks
-    this.physics.system.update(ticker.deltaTime, [EndlessRunner.update]);
 
     if (this.player.x < -50 || this.player.y > this.app.size.height + 50) {
       this.player.kill();
@@ -170,20 +161,11 @@ export class EndlessRunnerScene extends BaseScene {
 
   resize() {
     super.resize();
-    if (this.camera) {
-      this.camera.viewportWidth = this.app.size.width;
-      this.camera.viewportHeight = this.app.size.height;
-    }
 
     this.player.constrainX(50, this.app.size.width - 50);
 
-    this._isPaused = true;
-    EndlessRunner.width = this.app.size.width * 2;
+    // EndlessRunner.width = this.app.size.width * 2;
     this.level.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
-
-    this.app.ticker.addOnce(() => {
-      this._isPaused = false;
-    });
   }
 
   createSegments(bottom: number): SegmentConfig[] {
@@ -313,8 +295,9 @@ export class EndlessRunnerScene extends BaseScene {
       innerScale: 0.7,
       outerScale: 0.7,
     });
-    this.ui.addElement(this._joystick, { align: 'left' });
-    this.ui.addElement(jumpButton, { align: 'right', padding: { right: 15 } });
+
+    this.ui.addElement(this._joystick, { align: 'bottom left', padding: { left: 20 } });
+    this.ui.addElement(jumpButton, { align: 'bottom right', padding: { bottom: 10, right: 20 } });
 
     if (!this.app.isMobile) {
       this._joystick.visible = false;
@@ -339,57 +322,8 @@ export class EndlessRunnerScene extends BaseScene {
     this.physics.system.debug = debug;
   }
 
-  protected _handleCameraZoomChanged() {
-    const { zoom } = this.config;
-    if (this.camera) {
-      this.camera.zoom(zoom);
-    }
-  }
-
-  protected _handleUseCameraChanged() {
-    const { useCamera } = this.config;
-    if (useCamera) {
-      this.camera = new Camera({
-        container: this.level,
-        viewportWidth: this.app.size.width,
-        viewportHeight: this.app.size.height,
-        worldWidth: this.physics.system.worldWidth,
-        worldHeight: this.physics.system.worldHeight,
-        minX: -300,
-        minY: 0,
-        maxX: 300,
-        maxY: 200,
-        lerp: 0.1,
-      });
-      this.physics.system.camera = this.camera;
-      this.add.existing(this.camera);
-      this.camera.follow(this.player, [this.app.screen.width * 0.25, -100]);
-      this.camera.onZoom.connect(this._adjustCollisionThreshold);
-      this.camera.onZoomComplete.connect(this._resetCollisionThreshold);
-      this._handleCameraZoomChanged();
-    } else {
-      this.removeChild(this.camera);
-      // @ts-expect-error camera can't be null error
-      this.camera = null;
-      this.addChild(this.level);
-      this.level.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
-      this.level.pivot.set(0, 0);
-    }
-  }
-
   private _togglePause() {
     this._isPaused = !this._isPaused;
-  }
-
-  private _adjustCollisionThreshold() {
-    if (!this.camera) {
-      return;
-    }
-    this.physics.system.collisionThreshold = Math.round(this.camera.scale.x + 2);
-  }
-
-  private _resetCollisionThreshold() {
-    this.physics.system.collisionThreshold = this.physics.system.DEFAULT_COLLISION_THRESHOLD;
   }
 
   private _handleSpatialHashChanged() {

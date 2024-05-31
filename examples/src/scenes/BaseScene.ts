@@ -1,8 +1,8 @@
-import { Scene } from 'dill-pixel';
 import { Graphics, Text } from 'pixi.js';
 
 import { COLOR_GREEN } from '@/utils/Constants';
 import { GUI } from 'dat.gui';
+import { Scene } from 'dill-pixel';
 
 export class BaseScene extends Scene {
   protected readonly title: string;
@@ -23,7 +23,7 @@ export class BaseScene extends Scene {
     this._title = this.add.text({
       text: this.title ?? this.id,
       style: { fill: 'white', fontWeight: 'bold', fontFamily: 'Arial', align: 'left' },
-      x: -this.app.center.x + 100,
+      x: -this.app.size.width * 0.5 + this.app.size.width * 0.1,
       y: -this.app.center.y + 50,
     });
 
@@ -66,7 +66,7 @@ export class BaseScene extends Scene {
         });
     }
     if (this._title) {
-      this._title.position.set(-this.app.center.x + 100, -this.app.center.y + 50);
+      this._title.position.set(-this.app.center.x + Math.min(this.app.size.width * 0.1, 100), -this.app.center.y + 50);
     }
     if (this._subtitle) {
       this._subtitle.position.set(this._title.x + 1, this._title.y + this._title.height + 10);
@@ -92,5 +92,5 @@ export class BaseScene extends Scene {
     z-index: 0;`;
   }
 
-  protected configureGUI() {}
+  protected configureGUI() { }
 }

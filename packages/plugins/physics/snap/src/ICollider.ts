@@ -10,4 +10,10 @@ export interface ICollider {
   bottom: number;
   left: number;
   right: number;
+
+  preUpdate(): void;
+
+  update(deltaTime?: number): void;
+
+  postUpdate(): void;
 }

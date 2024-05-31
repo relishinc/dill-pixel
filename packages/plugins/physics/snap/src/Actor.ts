@@ -10,6 +10,12 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   isActor = true;
   passThroughTypes: EntityType[] = [];
   passingThrough: Set<Entity> = new Set();
+  riding: Set<Entity> = new Set();
+  mostRiding: Entity | null = null;
+
+  get ridingAllowed(): boolean {
+    return true;
+  }
 
   get collideables(): Entity[] {
     return System.getNearbyEntities(this, (e) => e.isSolid);
@@ -25,6 +31,10 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   squish(_collision?: Collision, _pushingEntity?: Entity, _direction?: Point) {}
+
+  preUpdate() {
+    this.setAllRiding();
+  }
 
   moveX(
     amount: number,
@@ -149,9 +159,10 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   }
 
   isRiding(solid: Entity): boolean {
-    return (
-      this.bottom >= solid.top - 2 && this.bottom <= solid.top + 2 && this.left < solid.right && this.right > solid.left
-    );
+    const thisBounds = this.getBoundingBox();
+    const solidBounds = solid.getBoundingBox();
+    const withinTolerance = Math.abs(thisBounds.bottom - solidBounds.top) <= 1;
+    return withinTolerance && thisBounds.left < solidBounds.right && thisBounds.right > solidBounds.left;
   }
 
   setPassingThrough(entity: Entity) {
@@ -164,5 +175,43 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
 
   isPassingThrough(entity: Entity) {
     return this.passingThrough.has(entity);
+  }
+
+  private clearAllRiding() {
+    this.mostRiding = null;
+    this.riding.clear();
+  }
+
+  private setAllRiding() {
+    this.clearAllRiding();
+    this.collideables.forEach((entity) => {
+      if (this.isRiding(entity)) {
+        this.riding.add(entity);
+      }
+    });
+    let mostAmount = 0;
+    for (const entity of this.riding) {
+      // Check how much the actor is riding the entity
+      if (this.right > entity.left && this.left < entity.right) {
+        this.mostRiding = entity;
+        break;
+      }
+      let amount = 0;
+      if (this.right > entity.left && this.left < entity.left) {
+        // left edge
+        amount = this.right - entity.left;
+        if (amount > mostAmount) {
+          mostAmount = amount;
+          this.mostRiding = entity;
+        }
+      } else if (this.left < entity.right && this.right > entity.right) {
+        // right edge
+        amount = entity.right - this.left;
+        if (amount > mostAmount) {
+          mostAmount = amount;
+          this.mostRiding = entity;
+        }
+      }
+    }
   }
 }

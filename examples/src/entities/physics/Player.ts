@@ -33,6 +33,10 @@ export class Player extends SnapActor {
     return this._velocity;
   }
 
+  get ridingAllowed(): boolean {
+    return !this._isJumping;
+  }
+
   get cachedBounds() {
     if (!this._cachedBounds || this._dirtyBounds) {
       const bounds = new Rectangle(0, 0, 44, 90);
@@ -68,7 +72,9 @@ export class Player extends SnapActor {
       this._jumpTimeElapsed += deltaTime;
       this._jumpPower -= this._velocity.y < 0 ? 1 : 3;
     }
+
     this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
+
     if (!this._isJumping && !this._isMoving) {
       if (this.view.getCurrentAnimation() !== 'idle') {
         this.view.setAnimation('idle', true);
@@ -81,7 +87,13 @@ export class Player extends SnapActor {
     }
 
     this._isMoving = false;
+
+    if (this.mostRiding && this.mostRiding.type === 'Platform') {
+      this.mostRiding.view.tint = 0x0;
+    }
   }
+
+  postUpdate() {}
 
   public squish(collision: Collision, pushingEntity: Entity, direction?: Point) {
     if (collision.bottom && pushingEntity.type === 'Platform' && (pushingEntity as Platform).canJumpThroughBottom) {

@@ -128,6 +128,19 @@ export class Platform extends SnapSolid<PlatformConfig> {
     this.removeChildren();
   }
 
+  postUpdate() {
+    let isBeingRidden = false;
+    for (const actor of this.collideables) {
+      if (actor.riding.has(this)) {
+        isBeingRidden = true;
+        break;
+      }
+    }
+    if (!isBeingRidden) {
+      this.view.tint = this.config.color;
+    }
+  }
+
   protected handleCollisionChange(isColliding: boolean) {
     if (isColliding) {
       this.view.tint = 0x0;

@@ -4,7 +4,6 @@ import { Player } from '@/entities/physics/Player';
 import { Portal } from '@/entities/physics/Portal';
 import { BaseScene } from '@/scenes/BaseScene';
 import { Camera, Container, delay, UICanvas } from 'dill-pixel';
-import { Assets, Ticker } from 'pixi.js';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
 import { GUIController } from 'dat.gui';
 import { gsap } from 'gsap';
@@ -26,7 +25,7 @@ export class SnapPhysicsScene extends BaseScene {
     zoom: 1,
     useSpatialHash: true,
     gridCellSize: 300,
-    debug: false,
+    debug: true,
   };
   private _zoomController: GUIController;
 
@@ -45,7 +44,7 @@ export class SnapPhysicsScene extends BaseScene {
       .name('Use Camera');
 
     this._zoomController = this.gui
-      .add(this.config, 'zoom', 0.75, 2, 0.05)
+      .add(this.config, 'zoom', 0.25, 3, 0.05)
       .onChange(() => {
         this._handleCameraZoomChanged();
       })
@@ -83,13 +82,12 @@ export class SnapPhysicsScene extends BaseScene {
 
   async initialize() {
     await super.initialize();
-    await Assets.loadBundle('spine');
 
     this.app.focus.addFocusLayer(this.id);
 
     this.level = this.add.container({
-      label: 'Level',
       position: [-this.app.size.width * 0.5, -this.app.size.height * 0.5],
+      label: 'Level',
     });
 
     this.physics.system.initialize({
@@ -115,17 +113,18 @@ export class SnapPhysicsScene extends BaseScene {
     this.addPlayer(true);
     this.addControls();
 
+    this.physics.system.enabled = true;
+    this.physics.system.updateHooks.add(this.physicsUpdate);
+
     this._handleDebugChanged();
     this._handleUseCameraChanged();
 
     this.app.keyboard.onKeyDown('z').connect(this._toggleZoom);
   }
 
-  async start() {
-    await delay(0.5);
-  }
+  async start() {}
 
-  update(ticker: Ticker) {
+  physicsUpdate() {
     if (this._isPaused) return;
     if (
       this.app.keyboard.isKeyDown('ArrowUp') ||
@@ -149,7 +148,6 @@ export class SnapPhysicsScene extends BaseScene {
     ) {
       this.app.sendAction('move_right');
     }
-    this.physics.system.update(ticker.deltaTime);
   }
 
   resize() {
@@ -165,9 +163,9 @@ export class SnapPhysicsScene extends BaseScene {
 
     // hor
     this.addPlatForm(750, bottom - 300, 200, 20, false, true, {
-      speed: 1,
+      speed: 2,
       startingDirection: { x: 1, y: 0 },
-      range: [240, 0],
+      range: [180, 0],
     });
 
     // second junction
@@ -177,14 +175,14 @@ export class SnapPhysicsScene extends BaseScene {
     this.addPlatForm(1110, bottom - 200, 150, 20, false, true, {
       speed: 1,
       startingDirection: { x: 0, y: 1 },
-      range: [0, 225],
+      range: [0, 150],
     });
 
     // holds portal
-    this.addPlatForm(1700, bottom - 400, 200, 20, false, true, {
+    this.addPlatForm(1700, bottom - 500, 200, 20, false, true, {
       speed: 1,
       startingDirection: { x: 0, y: 1 },
-      range: [0, 500],
+      range: [0, 300],
     });
   }
 
@@ -227,10 +225,12 @@ export class SnapPhysicsScene extends BaseScene {
     portal0.label = 'portal0';
     const portal1 = this.addPortal(600, bottom - 80);
     const portal2 = this.addPortal(1700, bottom - 580);
+    const portal3 = this.addPortal(2000, bottom - 80);
 
     portal0.connect(portal1);
     portal1.connect(portal2);
     portal2.connect(portal0);
+    portal3.connect(portal0);
   }
 
   addPortal(x: number, y: number) {
@@ -292,8 +292,8 @@ export class SnapPhysicsScene extends BaseScene {
       innerScale: 0.7,
       outerScale: 0.7,
     });
-    this.ui.addElement(this._joystick, { align: 'left' });
-    this.ui.addElement(jumpButton, { align: 'right', padding: { right: 15 } });
+    this.ui.addElement(this._joystick, { align: 'bottom left', padding: { left: 20 } });
+    this.ui.addElement(jumpButton, { align: 'bottom right', padding: { bottom: 10, right: 20 } });
 
     if (!this.app.isMobile) {
       this._joystick.visible = false;

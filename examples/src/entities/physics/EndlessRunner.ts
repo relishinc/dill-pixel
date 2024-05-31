@@ -1,9 +1,10 @@
 import { Segment, SegmentConfig } from '@/entities/physics/Segment';
 import { Point, Pool } from 'pixi.js';
 import { System } from '@dill-pixel/plugin-snap-physics';
-import { PointLike, resolvePointLike } from 'dill-pixel';
+import { Container, PointLike, resolvePointLike } from 'dill-pixel';
 
 export class EndlessRunner {
+  static container: Container;
   static movement: Point = new Point();
   static pool: Pool<Segment> = new Pool(Segment, 10);
   static segments: Set<Segment> = new Set();
@@ -19,8 +20,9 @@ export class EndlessRunner {
   }
 
   static createSegment(config: SegmentConfig) {
+    config.container = EndlessRunner.container ?? config?.container;
     const segment = this.pool.get(config);
-    segment.x = EndlessRunner._totalWidth;
+    segment.setPosition(EndlessRunner._totalWidth, 0);
     EndlessRunner.segments.add(segment);
     EndlessRunner.cacheTotalWidth();
     return segment;
@@ -45,7 +47,8 @@ export class EndlessRunner {
     }
   }
 
-  static initialize(width: number, movement: PointLike) {
+  static initialize(width: number, movement: PointLike, container: Container) {
+    EndlessRunner.container = container;
     EndlessRunner.width = width;
     EndlessRunner.movement = resolvePointLike(movement, true);
   }

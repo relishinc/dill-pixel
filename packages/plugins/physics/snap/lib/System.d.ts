@@ -1,4 +1,4 @@
-import { Container } from 'pixi.js';
+import { Container, Ticker } from 'pixi.js';
 import { IApplication, ICamera, Signal } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
@@ -46,14 +46,20 @@ export declare class System {
     static actors: Actor[];
     static solids: Solid[];
     static sensors: Sensor[];
-    static enabled: boolean;
     static gravity: number;
     static onCollision: Signal<(collision: Collision) => void>;
     static worldBounds: Wall[];
     static boundary: SystemBoundary;
     static camera?: ICamera;
     static collisionThreshold: number;
+    static updateHooks: Set<(deltaTime: number) => void>;
+    static preUpdateHooks: Set<(deltaTime: number) => void>;
+    static postUpdateHooks: Set<(deltaTime: number) => void>;
     private static gfx;
+    private static _ticker;
+    private static _enabled;
+    static get enabled(): boolean;
+    static set enabled(value: boolean);
     private static _collisionResolver;
     static set collisionResolver(collisionResolverMethod: (collision: Collision) => boolean);
     static get worldWidth(): number;
@@ -81,7 +87,7 @@ export declare class System {
      * @param dy
      */
     static getRectangleIntersection(entity1: Entity, entity2: Entity, dx: number, dy: number): boolean;
-    static update(deltaTime: number, preUpdateHooks?: ((deltaTime: number) => void)[], postUpdateHooks?: ((deltaTime: number) => void)[]): void;
+    static update(ticker: Ticker): void;
     static addBoundary(width: number, height: number, size?: number, padding?: number, sides?: Side[]): void;
     static collide(collision: Collision): void;
     static drawDebug(): void;

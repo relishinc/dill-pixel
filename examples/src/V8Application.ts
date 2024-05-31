@@ -1,11 +1,22 @@
-import EN from '@/locales/en';
 import { create, LocalStorageAdapter } from 'dill-pixel';
-import manifest from './assets.json';
+
+import EN from '@/locales/en';
 import { ExampleOutliner } from './ui/ExampleOutliner';
+import manifest from './assets.json';
 
 create({
   id: 'V8Application',
   antialias: true,
+  resizer: {
+    minSize: { width: 500, height: 800 },
+  },
+  defaultSceneLoadMethod: 'exitEnter',
+  useSpine: true,
+  showStats: true,
+  showSceneDebugMenu: true,
+  focusOptions: {
+    outliner: ExampleOutliner,
+  },
   assets: {
     manifest: manifest,
     preload: {
@@ -22,7 +33,15 @@ create({
       options: {
         useSpatialHashGrid: false,
         gridCellSize: 300,
-        fps: 60,
+      },
+      autoLoad: false,
+    },
+    {
+      id: 'arcade',
+      module: () => import('@dill-pixel/plugin-arcade-physics'),
+      options: {
+        debug: true,
+        useTree: true,
       },
       autoLoad: false,
     },
@@ -76,6 +95,19 @@ create({
       namedExport: 'UICanvasScene',
       module: () => import('@/scenes/UICanvasScene'),
     },
+
+    {
+      id: 'runner',
+      debugLabel: 'Endless Runner',
+      namedExport: 'EndlessRunnerScene',
+      module: () => import('@/scenes/EndlessRunnerScene'),
+      plugins: ['physics'],
+      assets: {
+        preload: {
+          bundles: ['spine'],
+        },
+      },
+    },
     {
       id: 'physics',
       debugLabel: 'Snap Physics',
@@ -89,14 +121,14 @@ create({
       },
     },
     {
-      id: 'runner',
-      debugLabel: 'Endless Runner',
-      namedExport: 'EndlessRunnerScene',
-      module: () => import('@/scenes/EndlessRunnerScene'),
-      plugins: ['physics'],
+      id: 'arcade',
+      debugLabel: 'Arcade Physics',
+      namedExport: 'ArcadePhysicsScene',
+      module: () => import('@/scenes/ArcadePhysicsScene'),
+      plugins: ['arcade'],
       assets: {
         preload: {
-          bundles: ['spine'],
+          bundles: ['spine', 'game'],
         },
       },
     },
@@ -110,16 +142,7 @@ create({
       { id: 'fr-json', json: '/locales/fr.json' },
     ],
   },
-  resizer: {
-    minSize: { width: 500, height: 700 },
-  },
-  defaultSceneLoadMethod: 'exitEnter',
-  useSpine: true,
-  showStats: true,
-  showSceneDebugMenu: true,
-  focusOptions: {
-    outliner: ExampleOutliner,
-  },
+
   captions: {
     files: [
       { id: 'en', json: 'audio/vo/en/cc.json' },

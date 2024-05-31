@@ -1,4 +1,5 @@
 import { ActionDetail, Button, ButtonAction, ButtonConfig, FlexContainer, SceneAssets } from 'dill-pixel';
+
 import { BaseScene } from './BaseScene';
 
 export class AudioScene extends BaseScene {
@@ -38,7 +39,7 @@ export class AudioScene extends BaseScene {
     this.app.audio.music.volume = this.config.music;
     this.app.audio.sfx.volume = this.config.sfx;
 
-    this.buttonContainer = this.add.flexContainer({ gap: 20, justifyContent: 'center' });
+    this.buttonContainer = this.add.flexContainer({ x: -this.app.size.width * 0.5, gap: 50, justifyContent: 'center', flexWrap: "wrap", width: this.app.size.width });
     this.musicButtons = this.buttonContainer.add.flexContainer({
       gap: 10,
       width: 256,
@@ -48,26 +49,31 @@ export class AudioScene extends BaseScene {
 
     this.musicButtons.add.text({ text: 'MUSIC', style: { fill: 0xffffff, fontSize: 36, fontWeight: 'bold' } });
     this.addButton(this.musicButtons, 'Cheer', {
+      sounds: { hover: 'hover' },
       actions: {
         click: { id: 'music', data: { id: 'Cheerful Annoyance' } },
       },
     });
     this.addButton(this.musicButtons, 'Drums', {
+      sounds: { hover: 'hover' },
       actions: {
         click: { id: 'music', data: { id: 'Drumming Sticks' } },
       },
     });
     this.addButton(this.musicButtons, 'Mischief', {
+      sounds: { hover: 'hover' },
       actions: {
         click: { id: 'music', data: { id: 'Mishief Stroll' } },
       },
     });
     this.addButton(this.musicButtons, 'Beach', {
+      sounds: { hover: 'hover' },
       actions: {
         click: { id: 'music', data: { id: 'Night at the Beach' } },
       },
     });
     this.addButton(this.musicButtons, 'Game Over', {
+      sounds: { hover: 'hover' },
       actions: {
         click: { id: 'music', data: { id: 'Game Over' } },
       },
@@ -89,7 +95,7 @@ export class AudioScene extends BaseScene {
     );
   }
 
-  public async start() {}
+  public async start() { }
 
   public destroy() {
     super.destroy();
@@ -98,7 +104,11 @@ export class AudioScene extends BaseScene {
 
   resize() {
     super.resize();
-    this.buttonContainer.position.set(0, -this.buttonContainer.height / 2);
+    this.buttonContainer.containerWidth = this.app.size.width;
+    this.app.ticker.addOnce(() => {
+      this.buttonContainer.position.set(-this.app.size.width * 0.5, -this.buttonContainer.height * 0.5);
+    })
+
   }
 
   addButton(
@@ -175,6 +185,7 @@ export class AudioScene extends BaseScene {
 
     if (this.app.audio.isPlaying(action.data.id, 'music')) {
       this.app.audio.stop(action.data.id, 'music');
+      this.app.audio.play('click', 'sfx')
       button.setTexture('default', 'btn/blue');
       return;
     }

@@ -75,6 +75,12 @@ export class Entity<T = any, A extends Application = Application> extends Contai
     return [];
   }
 
+  preUpdate() {}
+
+  update(deltaTime?: number) {}
+
+  postUpdate() {}
+
   getWorldBounds(): Bounds | Rectangle {
     const pos = this.system.container.toLocal(this.view.getGlobalPosition());
     const bounds = this.cachedBounds;

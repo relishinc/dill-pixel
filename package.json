@@ -1,6 +1,6 @@
 {
   "name": "dill-pixel",
-  "version": "8.6.5",
+  "version": "8.6.6",
   "title": "Dill Pixel V8",
   "description": "Relish framework for HTML games",
   "bin": {
@@ -118,7 +118,6 @@
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-singlefile": "^0.13.5",
     "vite-plugin-static-copy": "^1.0.3",
-    "vite-plugin-top-level-await": "^1.4.1",
-    "vite-plugin-wasm": "^3.3.0"
+    "vite-plugin-top-level-await": "^1.4.1"
   }
 }

@@ -28,7 +28,6 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
     if (moveX !== 0 || moveY !== 0) {
       // Temporarily make this solid non-collidable
       this.isCollideable = false;
-
       // Move on the Y axis
       this.y += moveY;
       this.yRemainder -= moveY;
@@ -48,7 +47,7 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
   getAllRidingActors(): Actor[] {
     // Implement logic to get all actors riding this solid
     return (this.collideables as Actor[]).filter((actor: Actor) => {
-      return actor.isRiding(this);
+      return actor.riding.has(this);
     });
   }
 
@@ -65,8 +64,10 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
     (this.collideables as Actor[]).forEach((actor) => {
       if (ridingActors.includes(actor)) {
         // Move riding actors along with this solid
-        actor.moveY(deltaY);
-        actor.moveX(deltaX);
+        if (actor.mostRiding === this) {
+          actor.moveY(deltaY);
+          actor.moveX(deltaX);
+        }
       } else if (
         !actor.passThroughTypes.includes(this.type) &&
         !actor.isPassingThrough(this) &&

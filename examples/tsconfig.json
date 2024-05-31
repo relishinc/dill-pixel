@@ -12,6 +12,9 @@
       ],
       "@dill-pixel/plugin-snap-physics/*": [
         "../packages/plugins/physics/snap/src/*"
+      ],
+      "@dill-pixel/plugin-arcade-physics/*": [
+        "../packages/plugins/physics/arcade/src/*"
       ]
     }
   },

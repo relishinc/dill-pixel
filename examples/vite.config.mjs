@@ -6,6 +6,7 @@ export default extendConfig({
 		alias: {
 			'dill-pixel': path.resolve(__dirname, '../src'),
 			'@dill-pixel/plugin-snap-physics': path.resolve(__dirname, '../packages/plugins/physics/snap/src'),
+			'@dill-pixel/plugin-arcade-physics': path.resolve(__dirname, '../packages/plugins/physics/arcade/src'),
 		}
 	},
 });

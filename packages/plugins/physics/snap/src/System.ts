@@ -1,4 +1,4 @@
-import { Container, Graphics, Point } from 'pixi.js';
+import { Container, Graphics, Point, Ticker } from 'pixi.js';
 import { IApplication, ICamera, Logger, Signal } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
@@ -51,14 +51,42 @@ export class System {
   static actors: Actor[] = [];
   static solids: Solid[] = [];
   static sensors: Sensor[] = [];
-  static enabled: boolean = true;
   static gravity: number = 10;
   static onCollision: Signal<(collision: Collision) => void> = new Signal<(collision: Collision) => void>();
   static worldBounds: Wall[] = [];
   static boundary: SystemBoundary;
   static camera?: ICamera;
   static collisionThreshold = 8;
+  static updateHooks: Set<(deltaTime: number) => void> = new Set();
+  static preUpdateHooks: Set<(deltaTime: number) => void> = new Set();
+  static postUpdateHooks: Set<(deltaTime: number) => void> = new Set();
   private static gfx: Graphics;
+  private static _ticker: Ticker;
+
+  private static _enabled: boolean = false;
+
+  static get enabled() {
+    return System._enabled;
+  }
+
+  static set enabled(value: boolean) {
+    System._enabled = value;
+    if (System._enabled) {
+      if (!System._ticker) {
+        System._ticker = new Ticker();
+      }
+      System._ticker.maxFPS = System.fps;
+      System._ticker.start();
+      System._ticker.add(System.update);
+    } else {
+      if (System._ticker) {
+        System._ticker.stop();
+        System._ticker.destroy();
+        // @ts-expect-error ticker can't be null
+        System._ticker = null;
+      }
+    }
+  }
 
   private static _collisionResolver: ((collision: Collision) => boolean) | null = null;
 
@@ -215,33 +243,42 @@ export class System {
     return intersection.area > 0 && intersection.area > System.collisionThreshold;
   }
 
-  static update(
-    deltaTime: number,
-    preUpdateHooks?: ((deltaTime: number) => void)[],
-    postUpdateHooks?: ((deltaTime: number) => void)[],
-  ) {
+  static update(ticker: Ticker) {
     if (!System.enabled) {
       return;
     }
+    const deltaTime = ticker.deltaTime;
     if (!System.container) {
       Logger.error('SnapPhysicsPlugin: World container not set!');
     }
-    if (preUpdateHooks) {
-      preUpdateHooks.forEach((hook) => hook(deltaTime));
+    if (System.preUpdateHooks) {
+      System.preUpdateHooks.forEach((hook) => hook(deltaTime));
     }
+    if (System.updateHooks) {
+      System.updateHooks.forEach((hook) => hook(deltaTime));
+    }
+
     // Implement world step logic
-    System.actors.forEach((actor: Actor) => {
-      actor.update(deltaTime);
+    System.all.forEach((entity: Entity) => {
+      entity.preUpdate();
     });
+
     System.solids.forEach((solid: Solid) => {
       solid.update(deltaTime);
     });
     System.sensors.forEach((sensor: Sensor) => {
       sensor.update(deltaTime);
     });
+    System.actors.forEach((actor: Actor) => {
+      actor.update(deltaTime);
+    });
 
-    if (postUpdateHooks) {
-      postUpdateHooks.forEach((hook) => hook(deltaTime));
+    System.all.forEach((entity: Entity) => {
+      entity.postUpdate();
+    });
+
+    if (System.postUpdateHooks) {
+      System.postUpdateHooks.forEach((hook) => hook(deltaTime));
     }
 
     if (System.debug) {
@@ -334,6 +371,7 @@ export class System {
       System.gfx
         .rect(bounds.x, bounds.y, bounds.width, bounds.height)
         .stroke({ width: 1, color: entity.debugColors.bounds, alignment: 0.5 });
+
       if (outerBounds) {
         System.gfx
           .rect(outerBounds.x, outerBounds.y, outerBounds.width, outerBounds.height)
@@ -351,13 +389,11 @@ export class System {
   }
 
   static initialize(opts: Partial<SnapPhysicsSystemOptions>) {
-    System.enabled = true;
     if (opts.gravity) {
       System.gravity = opts.gravity;
     }
     if (opts.fps) {
       System.fps = opts.fps;
-      this.app.ticker.maxFPS = opts.fps;
     }
     if (opts.container) {
       System.setContainer(opts.container);
@@ -399,6 +435,10 @@ export class System {
   }
 
   static cleanup() {
+    System.enabled = false;
+    System.postUpdateHooks.clear();
+    System.preUpdateHooks.clear();
+    System.updateHooks.clear();
     if (System.worldBounds) {
       System.worldBounds.forEach((wall: Wall) => {
         wall.parent.removeChild(wall);
@@ -428,10 +468,10 @@ export class System {
       System.camera = null;
     }
 
-    this.solids = [];
-    this.actors = [];
-    this.sensors = [];
-    this.typeMap.clear();
-    this.worldBounds = [];
+    System.solids = [];
+    System.actors = [];
+    System.sensors = [];
+    System.typeMap.clear();
+    System.worldBounds = [];
   }
 }

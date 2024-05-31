@@ -1,8 +1,8 @@
-import { Container as S, Signal as v, Logger as y, Plugin as w } from "dill-pixel";
-import { Rectangle as b, Sprite as C, Bounds as R, Texture as M, Point as x, Graphics as E } from "pixi.js";
-class z {
+import { Container as S, Signal as w, Logger as y, Plugin as v } from "dill-pixel";
+import { Rectangle as b, Sprite as C, Bounds as R, Texture as E, Ticker as M, Point as x, Graphics as z } from "pixi.js";
+class H {
   constructor(t, e = !1) {
-    this.cells = /* @__PURE__ */ new Map(), this._cellSize = t, e && l.all.forEach((s) => this.insert(s));
+    this.cells = /* @__PURE__ */ new Map(), this._cellSize = t, e && d.all.forEach((s) => this.insert(s));
   }
   get cellSize() {
     return this._cellSize;
@@ -16,9 +16,9 @@ class z {
   insert(t) {
     var c;
     const e = t.getBoundingBox(), s = Math.floor(e.x / this._cellSize), o = Math.floor(e.y / this._cellSize), n = Math.floor((e.x + e.width) / this._cellSize), r = Math.floor((e.y + e.height) / this._cellSize);
-    for (let h = s; h <= n; h++)
-      for (let a = o; a <= r; a++) {
-        const u = this.getGridKey(h * this._cellSize, a * this._cellSize);
+    for (let l = s; l <= n; l++)
+      for (let h = o; h <= r; h++) {
+        const u = this.getGridKey(l * this._cellSize, h * this._cellSize);
         this.cells.has(u) || this.cells.set(u, /* @__PURE__ */ new Set()), (c = this.cells.get(u)) == null || c.add(t);
       }
   }
@@ -29,9 +29,9 @@ class z {
   }
   query(t, e) {
     const s = /* @__PURE__ */ new Set(), o = Math.floor(Math.min(t.x, t.x + t.width) / this._cellSize), n = Math.floor(Math.min(t.y, t.y + t.height) / this._cellSize), r = Math.floor(Math.max(t.x, t.x + t.width) / this._cellSize), c = Math.floor(Math.max(t.y, t.y + t.height) / this._cellSize);
-    for (let h = o; h <= r; h++)
-      for (let a = n; a <= c; a++) {
-        const u = this.getGridKey(h * this._cellSize, a * this._cellSize), g = this.cells.get(u);
+    for (let l = o; l <= r; l++)
+      for (let h = n; h <= c; h++) {
+        const u = this.getGridKey(l * this._cellSize, h * this._cellSize), g = this.cells.get(u);
         g && g.forEach((f) => {
           e !== void 0 ? Array.isArray(e) ? e.includes(f.type) && s.add(f) : e(f) && s.add(f) : s.add(f);
         });
@@ -39,7 +39,7 @@ class z {
     return [...s];
   }
   updateAll() {
-    l.all.forEach((t) => this.updateEntity(t));
+    d.all.forEach((t) => this.updateEntity(t));
   }
   updateEntity(t) {
     this.remove(t), this.insert(t);
@@ -97,10 +97,16 @@ class B extends S {
     return this.getBoundingBox().right;
   }
   get system() {
-    return l;
+    return d;
   }
   get collideables() {
     return [];
+  }
+  preUpdate() {
+  }
+  update(t) {
+  }
+  postUpdate() {
   }
   getWorldBounds() {
     const t = this.system.container.toLocal(this.view.getGlobalPosition()), e = this.cachedBounds;
@@ -116,35 +122,35 @@ class B extends S {
   initialize() {
   }
 }
-class A extends B {
+class k extends B {
   constructor() {
     super(...arguments), this.type = "Solid", this.isSolid = !0;
   }
   get collideables() {
-    return l.getNearbyEntities(this, (t) => t.isActor);
+    return d.getNearbyEntities(this, (t) => t.isActor);
   }
   added() {
-    l.addSolid(this);
+    d.addSolid(this);
   }
   removed() {
-    l.removeSolid(this);
+    d.removeSolid(this);
   }
   move(t, e) {
     this.xRemainder += t, this.yRemainder += e;
     const s = Math.round(this.xRemainder), o = Math.round(this.yRemainder), n = this.getAllRidingActors();
-    (s !== 0 || o !== 0) && (this.isCollideable = !1, this.y += o, this.yRemainder -= o, this.handleActorInteractions(0, o, n), this.x += s, this.xRemainder -= s, this.handleActorInteractions(s, 0, n), this.isCollideable = !0), l.updateEntity(this);
+    (s !== 0 || o !== 0) && (this.isCollideable = !1, this.y += o, this.yRemainder -= o, this.handleActorInteractions(0, o, n), this.x += s, this.xRemainder -= s, this.handleActorInteractions(s, 0, n), this.isCollideable = !0), d.updateEntity(this);
   }
   getAllRidingActors() {
-    return this.collideables.filter((t) => t.isRiding(this));
+    return this.collideables.filter((t) => t.riding.has(this));
   }
   // Simple collision detection between this solid and an actor
   collidesWith(t, e, s) {
-    return l.getRectangleIntersection(t, this, e, s);
+    return d.getRectangleIntersection(t, this, e, s);
   }
   handleActorInteractions(t, e, s = this.getAllRidingActors()) {
     this.collideables.forEach((o) => {
       if (s.includes(o))
-        o.moveY(e), o.moveX(t);
+        o.mostRiding === this && (o.moveY(e), o.moveX(t));
       else if (!o.passThroughTypes.includes(this.type) && !o.isPassingThrough(this) && this.collidesWith(o, t, e)) {
         const n = t !== 0 ? t > 0 ? this.getBoundingBox().right - o.getBoundingBox().left : this.getBoundingBox().left - o.getBoundingBox().right : 0;
         n !== 0 && o.moveX(n, o.squish, null, this);
@@ -157,18 +163,18 @@ class A extends B {
   handleCollisionChange(t) {
   }
 }
-const G = {
+const T = {
   width: 10,
   height: 10,
   debugColor: 65535
 };
-class p extends A {
+class p extends k {
   constructor(t = {}) {
-    super({ ...G, ...t }), this.type = "Wall", this.initialize();
+    super({ ...T, ...t }), this.type = "Wall", this.initialize();
   }
   initialize() {
     this.view = this.add.sprite({
-      asset: M.WHITE,
+      asset: E.WHITE,
       width: this.config.width,
       height: this.config.height,
       tint: this.config.debugColor,
@@ -176,14 +182,14 @@ class p extends A {
     });
   }
 }
-function I(d, t) {
-  return d.x > t.left && d.x < t.right && d.y > t.top && d.y < t.bottom;
+function I(a, t) {
+  return a.x > t.left && a.x < t.right && a.y > t.top && a.y < t.bottom;
 }
-function P(d, t) {
-  const e = Math.max(0, Math.min(d.x + d.width, t.x + t.width) - Math.max(d.x, t.x)), s = Math.max(0, Math.min(d.y + d.height, t.y + t.height) - Math.max(d.y, t.y));
+function A(a, t) {
+  const e = Math.max(0, Math.min(a.x + a.width, t.x + t.width) - Math.max(a.x, t.x)), s = Math.max(0, Math.min(a.y + a.height, t.y + t.height) - Math.max(a.y, t.y));
   return { x: e, y: s, area: e * s };
 }
-function m(d, t, e, s) {
+function m(a, t, e, s) {
   const o = {
     top: !1,
     bottom: !1,
@@ -193,9 +199,15 @@ function m(d, t, e, s) {
     entity2: s,
     type: `${e == null ? void 0 : e.type}|${s == null ? void 0 : s.type}`
   };
-  return d.intersects(t) ? (o.left = d.left < t.right && d.left > t.left, o.right = d.right > t.left && d.right < t.right, o.top = d.top < t.bottom && d.top > t.top, o.bottom = d.bottom > t.top && d.bottom < t.bottom, o) : !1;
+  return a.intersects(t) ? (o.left = a.left < t.right && a.left > t.left, o.right = a.right > t.left && a.right < t.right, o.top = a.top < t.bottom && a.top > t.top, o.bottom = a.bottom > t.top && a.bottom < t.bottom, o) : !1;
 }
 const i = class i {
+  static get enabled() {
+    return i._enabled;
+  }
+  static set enabled(t) {
+    i._enabled = t, i._enabled ? (i._ticker || (i._ticker = new M()), i._ticker.maxFPS = i.fps, i._ticker.start(), i._ticker.add(i.update)) : i._ticker && (i._ticker.stop(), i._ticker.destroy(), i._ticker = null);
+  }
   static set collisionResolver(t) {
     i._collisionResolver = t;
   }
@@ -214,7 +226,7 @@ const i = class i {
     return i.actors.length + i.solids.length + i.sensors.length;
   }
   static useSpatialHashGrid(t) {
-    i.grid ? i.grid.cellSize = t : i.grid = new z(t, !0), i.plugin.options.useSpatialHashGrid = !0;
+    i.grid ? i.grid.cellSize = t : i.grid = new H(t, !0), i.plugin.options.useSpatialHashGrid = !0;
   }
   static removeSpatialHashGrid() {
     i.grid && (i.grid.destroy(), i.grid = null);
@@ -277,36 +289,43 @@ const i = class i {
   static getRectangleIntersection(t, e, s, o) {
     const n = t.getBoundingBox(), r = e.getBoundingBox().clone();
     r.x += s, r.y += o;
-    const c = P(n, r);
+    const c = A(n, r);
     return c.area > 0 && c.area > i.collisionThreshold;
   }
-  static update(t, e, s) {
-    i.enabled && (i.container || y.error("SnapPhysicsPlugin: World container not set!"), e && e.forEach((o) => o(t)), i.actors.forEach((o) => {
-      o.update(t);
-    }), i.solids.forEach((o) => {
-      o.update(t);
-    }), i.sensors.forEach((o) => {
-      o.update(t);
-    }), s && s.forEach((o) => o(t)), i.debug ? i.drawDebug() : i.gfx && i.gfx.clear(), i.camera && i.camera.update());
+  static update(t) {
+    if (!i.enabled)
+      return;
+    const e = t.deltaTime;
+    i.container || y.error("SnapPhysicsPlugin: World container not set!"), i.preUpdateHooks && i.preUpdateHooks.forEach((s) => s(e)), i.updateHooks && i.updateHooks.forEach((s) => s(e)), i.all.forEach((s) => {
+      s.preUpdate();
+    }), i.solids.forEach((s) => {
+      s.update(e);
+    }), i.sensors.forEach((s) => {
+      s.update(e);
+    }), i.actors.forEach((s) => {
+      s.update(e);
+    }), i.all.forEach((s) => {
+      s.postUpdate();
+    }), i.postUpdateHooks && i.postUpdateHooks.forEach((s) => s(e)), i.debug ? i.drawDebug() : i.gfx && i.gfx.clear(), i.camera && i.camera.update();
   }
   static addBoundary(t, e, s = 10, o = 5, n = ["top", "bottom", "left", "right"]) {
     if (!i.container)
       throw new Error("System container not set. Set World.container before calling System.addBoundary().");
-    i.worldBounds.length > 0 && (i.worldBounds.forEach((a) => {
-      a.parent.removeChild(a), a.destroy();
+    i.worldBounds.length > 0 && (i.worldBounds.forEach((h) => {
+      h.parent.removeChild(h), h.destroy();
     }), i.worldBounds = []);
     const r = new x(0, 0), c = i.container;
-    let h;
-    n.includes("bottom") && (h = c.addChild(new p({ width: t, height: s })), h.position.set(r.x + t * 0.5, r.y + e + o), i.worldBounds.push(h)), n.includes("top") && (h = c.addChild(new p({ width: t, height: s })), h.position.set(r.x + t * 0.5, r.y + s * 0.5), i.worldBounds.push(h)), n.includes("left") && (h = c.addChild(new p({ width: s, height: e })), h.position.set(r.x - s * 0.5 - o, r.y + e * 0.5 + s * 0.5), i.worldBounds.push(h)), n.includes("right") && (h = c.addChild(new p({ width: s, height: e })), h.position.set(r.x + t + o + s * 0.5, r.y + e * 0.5), i.worldBounds.push(h)), i.grid && i.worldBounds.forEach((a) => {
+    let l;
+    n.includes("bottom") && (l = c.addChild(new p({ width: t, height: s })), l.position.set(r.x + t * 0.5, r.y + e + o), i.worldBounds.push(l)), n.includes("top") && (l = c.addChild(new p({ width: t, height: s })), l.position.set(r.x + t * 0.5, r.y + s * 0.5), i.worldBounds.push(l)), n.includes("left") && (l = c.addChild(new p({ width: s, height: e })), l.position.set(r.x - s * 0.5 - o, r.y + e * 0.5 + s * 0.5), i.worldBounds.push(l)), n.includes("right") && (l = c.addChild(new p({ width: s, height: e })), l.position.set(r.x + t + o + s * 0.5, r.y + e * 0.5), i.worldBounds.push(l)), i.grid && i.worldBounds.forEach((h) => {
       var u, g;
-      (u = i.grid) == null || u.remove(a), (g = i.grid) == null || g.insert(a);
+      (u = i.grid) == null || u.remove(h), (g = i.grid) == null || g.insert(h);
     });
   }
   static collide(t) {
     !t.type && t.entity1 && t.entity2 && (t.type = `${t.entity1.type}|${t.entity2.type}`), this.onCollision.emit(t);
   }
   static drawDebug() {
-    i.container && (i.gfx || (i.gfx = new E(), i.container.addChild(i.gfx)), i.container.setChildIndex(i.gfx, i.container.children.length - 1), i.gfx.clear(), [...i.actors, ...i.solids, ...i.sensors].forEach((t) => {
+    i.container && (i.gfx || (i.gfx = new z(), i.container.addChild(i.gfx)), i.container.setChildIndex(i.gfx, i.container.children.length - 1), i.gfx.clear(), [...i.actors, ...i.solids, ...i.sensors].forEach((t) => {
       const e = t.getBoundingBox(), s = t.getOuterBoundingBox();
       i.gfx.rect(e.x, e.y, e.width, e.height).stroke({ width: 1, color: t.debugColors.bounds, alignment: 0.5 }), s && i.gfx.rect(s.x, s.y, s.width, s.height).stroke({ width: 1, color: t.debugColors.outerBounds, alignment: 0.5 });
     }), i.grid && i.grid.draw(i.gfx));
@@ -315,7 +334,7 @@ const i = class i {
     i.container = t;
   }
   static initialize(t) {
-    i.enabled = !0, t.gravity && (i.gravity = t.gravity), t.fps && (i.fps = t.fps, this.app.ticker.maxFPS = t.fps), t.container && i.setContainer(t.container), t.debug !== void 0 && (i.debug = t.debug), t.collisionResolver && (i.collisionResolver = t.collisionResolver), t.boundary && (i.boundary = {
+    t.gravity && (i.gravity = t.gravity), t.fps && (i.fps = t.fps), t.container && i.setContainer(t.container), t.debug !== void 0 && (i.debug = t.debug), t.collisionResolver && (i.collisionResolver = t.collisionResolver), t.boundary && (i.boundary = {
       width: t.boundary.width,
       height: t.boundary.height,
       padding: t.boundary.padding ?? 0
@@ -331,19 +350,19 @@ const i = class i {
     i.grid && i.grid.updateEntity(t);
   }
   static cleanup() {
-    i.worldBounds && (i.worldBounds.forEach((t) => {
+    i.enabled = !1, i.postUpdateHooks.clear(), i.preUpdateHooks.clear(), i.updateHooks.clear(), i.worldBounds && (i.worldBounds.forEach((t) => {
       t.parent.removeChild(t), t.destroy();
-    }), i.worldBounds = []), i.container && (i.container.removeChildren(), i.container = null), i.gfx && (i.gfx.clear(), i.gfx = null), i.grid && (i.grid.destroy(), i.grid = null), i.camera && (i.camera = null), this.solids = [], this.actors = [], this.sensors = [], this.typeMap.clear(), this.worldBounds = [];
+    }), i.worldBounds = []), i.container && (i.container.removeChildren(), i.container = null), i.gfx && (i.gfx.clear(), i.gfx = null), i.grid && (i.grid.destroy(), i.grid = null), i.camera && (i.camera = null), i.solids = [], i.actors = [], i.sensors = [], i.typeMap.clear(), i.worldBounds = [];
   }
 };
-i.DEFAULT_COLLISION_THRESHOLD = 2, i.debug = !0, i.typeMap = /* @__PURE__ */ new Map(), i.actors = [], i.solids = [], i.sensors = [], i.enabled = !0, i.gravity = 10, i.onCollision = new v(), i.worldBounds = [], i.collisionThreshold = 8, i._collisionResolver = null;
-let l = i;
-const T = {
+i.DEFAULT_COLLISION_THRESHOLD = 2, i.debug = !0, i.typeMap = /* @__PURE__ */ new Map(), i.actors = [], i.solids = [], i.sensors = [], i.gravity = 10, i.onCollision = new w(), i.worldBounds = [], i.collisionThreshold = 8, i.updateHooks = /* @__PURE__ */ new Set(), i.preUpdateHooks = /* @__PURE__ */ new Set(), i.postUpdateHooks = /* @__PURE__ */ new Set(), i._enabled = !1, i._collisionResolver = null;
+let d = i;
+const G = {
   useSpatialHashGrid: !1,
   gridCellSize: -1,
   fps: -1
 };
-class W extends w {
+class W extends v {
   constructor() {
     super(...arguments), this.id = "SnapPhysicsPlugin";
   }
@@ -351,86 +370,86 @@ class W extends w {
     return this.options.gridCellSize;
   }
   set gridCellSize(t) {
-    this.options.gridCellSize = t, this.options.useSpatialHashGrid && this.options.gridCellSize > 0 && l.useSpatialHashGrid(this.options.gridCellSize);
+    this.options.gridCellSize = t, this.options.useSpatialHashGrid && this.options.gridCellSize > 0 && d.useSpatialHashGrid(this.options.gridCellSize);
   }
   get useSpatialHashGrid() {
     return this.options.useSpatialHashGrid;
   }
   set useSpatialHashGrid(t) {
-    this.options.useSpatialHashGrid = t, this.options.useSpatialHashGrid && this.options.gridCellSize > 0 ? l.useSpatialHashGrid(this.options.gridCellSize) : l.removeSpatialHashGrid();
+    this.options.useSpatialHashGrid = t, this.options.useSpatialHashGrid && this.options.gridCellSize > 0 ? d.useSpatialHashGrid(this.options.gridCellSize) : d.removeSpatialHashGrid();
   }
   set fps(t) {
-    this.options.fps = t, l.fps = t, this.app.ticker.maxFPS = t;
+    this.options.fps = t, d.fps = t;
   }
   get system() {
-    return l;
+    return d;
   }
   destroy() {
-    this.system.enabled = !1, l.cleanup(), super.destroy();
+    this.system.enabled = !1, d.cleanup(), super.destroy();
   }
   async initialize(t, e) {
-    this.options = { ...T, ...e }, this.system.app = t, this.system.plugin = this, this.system.enabled = !0, this.options.useSpatialHashGrid && this.options.gridCellSize > 0 && this.system.useSpatialHashGrid(this.options.gridCellSize), this.options.fps > 0 && (l.fps = this.options.fps, t.ticker.maxFPS = l.fps);
+    this.options = { ...G, ...e }, this.system.app = t, this.system.plugin = this, this.options.useSpatialHashGrid && this.options.gridCellSize > 0 && this.system.useSpatialHashGrid(this.options.gridCellSize), this.options.fps > 0 && (d.fps = this.options.fps);
   }
 }
-class H extends B {
+class P extends B {
   constructor() {
-    super(...arguments), this.type = "Actor", this.isActor = !0, this.passThroughTypes = [], this.passingThrough = /* @__PURE__ */ new Set(), this.riding = /* @__PURE__ */ new Set(), this.ridingAmounts = /* @__PURE__ */ new Map();
+    super(...arguments), this.type = "Actor", this.isActor = !0, this.passThroughTypes = [], this.passingThrough = /* @__PURE__ */ new Set(), this.riding = /* @__PURE__ */ new Set(), this.mostRiding = null;
+  }
+  get ridingAllowed() {
+    return !0;
   }
   get collideables() {
-    return l.getNearbyEntities(this, (t) => t.isSolid);
-  }
-  get mostRidingSolid() {
-    let t = null, e = 0;
-    for (const [s, o] of this.ridingAmounts)
-      o > e && (t = s, e = o);
-    return t;
+    return d.getNearbyEntities(this, (t) => t.isSolid);
   }
   added() {
-    l.addActor(this);
+    d.addActor(this);
   }
   removed() {
-    l.removeActor(this);
+    d.removeActor(this);
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   squish(t, e, s) {
+  }
+  preUpdate() {
+    this.setAllRiding();
   }
   moveX(t, e, s, o) {
     this.xRemainder += t;
     let n = Math.round(this.xRemainder);
     const r = Math.sign(n);
     for (o && (o.isCollideable = !1); n !== 0; ) {
-      const c = this.x + (n ? r : 0), h = this.collideAt(c - this.x, 0, this.getBoundingBox(), [
+      const c = this.x + (n ? r : 0), l = this.collideAt(c - this.x, 0, this.getBoundingBox(), [
         "left",
         "right"
       ]);
-      if (h) {
-        e && h.forEach((a) => {
-          e(a, o, new x(c - this.x, 0));
+      if (l) {
+        e && l.forEach((h) => {
+          e(h, o, new x(c - this.x, 0));
         });
-        for (const a of h)
-          this.isRiding(a.entity2) || (this.xRemainder = 0);
+        for (const h of l)
+          this.isRiding(h.entity2) || (this.xRemainder = 0);
         break;
       } else
         this.x = c, n -= r, this.xRemainder -= r, s && s();
     }
-    l.updateEntity(this), o && (o.isCollideable = !0);
+    d.updateEntity(this), o && (o.isCollideable = !0);
   }
   moveY(t, e, s, o) {
     this.yRemainder += t;
     let n = Math.round(this.yRemainder);
     const r = Math.sign(n);
     for (o && (o.isCollideable = !1); n !== 0; ) {
-      const c = this.y + (n ? r : 0), h = this.collideAt(0, c - this.y, this.getBoundingBox(), [
+      const c = this.y + (n ? r : 0), l = this.collideAt(0, c - this.y, this.getBoundingBox(), [
         "top",
         "bottom"
       ]);
-      if (h) {
-        e && h.forEach((a) => e(a, o, new x(0, c - this.y))), this.yRemainder = 0;
+      if (l) {
+        e && l.forEach((h) => e(h, o, new x(0, c - this.y))), this.yRemainder = 0;
         break;
       } else
         this.y = c, n -= r, this.yRemainder -= r, s && s();
     }
-    l.updateEntity(this), o && (o.isCollideable = !0);
+    d.updateEntity(this), o && (o.isCollideable = !0);
   }
   // Simple bounding box collision check
   collideAt(t, e, s, o) {
@@ -438,14 +457,15 @@ class H extends B {
     for (const c of this.collideables) {
       if (!c.isCollideable || this.passThroughTypes.includes(c.type))
         continue;
-      const h = c.getBoundingBox();
-      let a = m(n, h, this, c);
-      o != null && o.length && a && (o.filter((g) => a[g]).length || (a = !1)), a && (l.collide(a), l.resolveCollision(a) && r.push(a));
+      const l = c.getBoundingBox();
+      let h = m(n, l, this, c);
+      o != null && o.length && h && (o.filter((g) => h[g]).length || (h = !1)), h && (d.collide(h), d.resolveCollision(h) && r.push(h));
     }
     return r.length ? r : !1;
   }
   isRiding(t) {
-    return this.bottom >= t.top - 2 && this.bottom <= t.top + 2 && this.left < t.right && this.right > t.left ? (this.riding.add(t), this.ridingAmounts.set(t, Math.max(t.right - this.left, this.right - t.left)), !0) : (this.riding.has(t) && (this.riding.delete(t), this.ridingAmounts.delete(t)), !1);
+    const e = this.getBoundingBox(), s = t.getBoundingBox();
+    return Math.abs(e.bottom - s.top) <= 1 && e.left < s.right && e.right > s.left;
   }
   setPassingThrough(t) {
     this.passingThrough.add(t);
@@ -456,8 +476,25 @@ class H extends B {
   isPassingThrough(t) {
     return this.passingThrough.has(t);
   }
+  clearAllRiding() {
+    this.mostRiding = null, this.riding.clear();
+  }
+  setAllRiding() {
+    this.clearAllRiding(), this.collideables.forEach((e) => {
+      this.isRiding(e) && this.riding.add(e);
+    });
+    let t = 0;
+    for (const e of this.riding) {
+      if (this.right > e.left && this.left < e.right) {
+        this.mostRiding = e;
+        break;
+      }
+      let s = 0;
+      this.right > e.left && this.left < e.left ? (s = this.right - e.left, s > t && (t = s, this.mostRiding = e)) : this.left < e.right && this.right > e.right && (s = e.right - this.left, s > t && (t = s, this.mostRiding = e));
+    }
+  }
 }
-class X extends H {
+class X extends P {
   constructor() {
     super(...arguments), this.type = "Sensor", this.isSensor = !0, this.isColliding = !1, this.passThroughTypes = ["Actor", "Player"], this._activeCollisions = null;
   }
@@ -468,13 +505,13 @@ class X extends H {
     this._activeCollisions = t;
   }
   get collideables() {
-    return l.actors;
+    return d.actors;
   }
   added() {
-    l.addSensor(this);
+    d.addSensor(this);
   }
   removed() {
-    l.removeSensor(this);
+    d.removeSensor(this);
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(t) {
@@ -490,7 +527,7 @@ class X extends H {
       if (!e.isCollideable)
         continue;
       const s = m(this.getBoundingBox(), e.getBoundingBox(), this, e);
-      s && t.push(s), s && (l.collide(s), l.resolveCollision(s) && t.push(s));
+      s && t.push(s), s && (d.collide(s), d.resolveCollision(s) && t.push(s));
     }
     return t.length ? t : null;
   }
@@ -509,11 +546,11 @@ class X extends H {
   }
 }
 export {
-  H as Actor,
+  P as Actor,
   B as Entity,
   X as Sensor,
-  A as Solid,
-  l as System,
+  k as Solid,
+  d as System,
   p as Wall,
   m as checkCollision,
   I as checkPointIntersection,

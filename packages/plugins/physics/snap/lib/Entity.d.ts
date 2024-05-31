@@ -32,6 +32,9 @@ export declare class Entity<T = any, A extends Application = Application> extend
     get right(): number;
     get system(): typeof System;
     get collideables(): Entity[];
+    preUpdate(): void;
+    update(deltaTime?: number): void;
+    postUpdate(): void;
     getWorldBounds(): Bounds | Rectangle;
     getBoundingBox(): Rectangle;
     getOuterBoundingBox(): Rectangle | null;

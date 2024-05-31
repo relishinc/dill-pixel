@@ -15,6 +15,7 @@ export interface ISceneManagerPlugin extends IPlugin {
   loadScreen?: IScene;
   view: Container;
   scenes: SceneImportList<IScene>;
+  currentScene: IScene;
 
   setDefaultLoadMethod(method: LoadSceneMethod): void;
 
