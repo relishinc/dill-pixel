@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.3.0](https://github.com/relishinc/dill-pixel/compare/v3.2.6...v3.3.0) (2024-06-03)
+
+
+### Features
+
+* added Logger utility (ported from v8) ([1294666](https://github.com/relishinc/dill-pixel/commit/12946663cf08bda7cc48072fa677fddb89dda39c))
+
+
+### Bug Fixes
+
+* removed some await calls in Application where they weren't required ([d950f88](https://github.com/relishinc/dill-pixel/commit/d950f889e5721bd50206580a3027082f9315939b))
+
 ## [3.2.6](https://github.com/relishinc/dill-pixel/compare/v3.2.5...v3.2.6) (2024-06-03)
 
 
