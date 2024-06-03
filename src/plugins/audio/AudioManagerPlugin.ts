@@ -513,7 +513,11 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
   /**
    * Restores the audio state after it has been suspended.
    */
-  public restore() {
+  public async restore() {
+    const ctx = sound?.context?.audioContext;
+    if (ctx) {
+      await ctx.resume();
+    }
     if (this._storedVolume !== undefined) {
       this.masterVolume = this._storedVolume;
     }
