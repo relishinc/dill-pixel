@@ -641,7 +641,6 @@ export class Application<T extends Application = any> extends PIXIApplication {
       this._loadManager.onResize(this._size);
       this._popupManager.onResize(this._size);
       this._orientationManager.onResize();
-
       Signals.onResize.emit(this._size);
 
       updateFocus();

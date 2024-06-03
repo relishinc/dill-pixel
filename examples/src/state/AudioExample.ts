@@ -6,6 +6,7 @@ import { buttonStyle } from '../utils/Constants';
 
 export class AudioExample extends BaseState {
   _button: Container;
+  _musicButton: Container;
 
   public static get NAME(): string {
     return 'AudioExample';
@@ -52,6 +53,29 @@ export class AudioExample extends BaseState {
 
     this._button.on('pointerdown', (e) => {
       playAudioTrack('sample-3s', 1, false, 'sfx');
+    });
+
+    this._musicButton = this.add.container({
+      alpha: 1,
+      position: [0, 75],
+    });
+    this._musicButton.add.coloredSprite({
+      color: 0xffffff,
+      size: [200, 60],
+      shape: 'rounded_rectangle',
+      radius: 10,
+    });
+
+    this._musicButton.add.text({
+      style: buttonStyle,
+      value: 'Play Music',
+      anchor: 0.5,
+    });
+    this._musicButton.eventMode = 'static';
+    this._musicButton.cursor = 'pointer';
+
+    this._musicButton.on('pointerdown', (e) => {
+      playAudioTrack('looped-track', 1, true, 'music');
     });
   }
 

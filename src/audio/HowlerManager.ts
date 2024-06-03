@@ -3,7 +3,7 @@ import { Dictionary } from 'typescript-collections';
 import { Application } from '../core';
 import { AssetMapAudioData } from '../load';
 import { Signals } from '../signals';
-import { LogUtils, MathUtils } from '../utils';
+import { delay, LogUtils, MathUtils } from '../utils';
 import * as AudioCategory from './AudioCategory';
 import { AudioCollection } from './AudioCollection';
 import { AudioToken } from './AudioToken';
@@ -444,9 +444,18 @@ export class HowlerManager implements IAudioManager {
     this.play(token.id, token.volume, token.loop, token.category);
   }
 
-  private onVisibilityChanged(isVisible: boolean): void {
+  private async onVisibilityChanged(isVisible: boolean): Promise<void> {
     if (this.autoMuteOnVisibilityChange) {
       if (isVisible) {
+        try {
+          const { ctx } = Howler;
+          if (ctx) {
+            await delay(0.1);
+            await ctx.resume();
+          }
+        } catch (e) {
+          console.error('Error resuming audio context', e);
+        }
         this._masterVolume = this._previousMasterVolume;
         this.updateAllCategoryVolume();
       } else {
