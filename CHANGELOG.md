@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.2](https://github.com/relishinc/dill-pixel/compare/v3.2.1...v3.2.2) (2024-06-03)
+
+
+### Bug Fixes
+
+* added 'pagehide' / 'pageshow' event handlers into WebEventsManager ([134a1dd](https://github.com/relishinc/dill-pixel/commit/134a1dd4c134162c0fb9027495139670b089230a))
+
 ## [3.2.1](https://github.com/relishinc/dill-pixel/compare/v3.2.0...v3.2.1) (2024-05-23)
 
 
