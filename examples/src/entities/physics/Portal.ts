@@ -79,6 +79,11 @@ export class Portal extends Sensor<DoorConfig> {
     return rect;
   }
 
+  preUpdate() {
+    super.preUpdate();
+    this.showingPartnerConnections = false;
+  }
+
   update(deltaTime: number) {
     // Implement update logic
     super.update(deltaTime);

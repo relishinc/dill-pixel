@@ -12,6 +12,14 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   passingThrough: Set<Entity> = new Set();
   riding: Set<Entity> = new Set();
   mostRiding: Entity | null = null;
+  protected _activeCollisions: Collision[];
+  get activeCollisions() {
+    return this._activeCollisions;
+  }
+
+  set activeCollisions(value) {
+    this._activeCollisions = value;
+  }
 
   get ridingAllowed(): boolean {
     return true;
@@ -32,7 +40,8 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   squish(_collision?: Collision, _pushingEntity?: Entity, _direction?: Point) {}
 
-  preUpdate() {
+  postUpdate() {
+    // console.log('HIIHHIIH!', this.type);
     this.setAllRiding();
   }
 

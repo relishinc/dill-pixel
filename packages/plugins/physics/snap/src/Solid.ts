@@ -51,11 +51,6 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
     });
   }
 
-  // Simple collision detection between this solid and an actor
-  collidesWith(entity: Entity, dx: number, dy: number): boolean {
-    return System.getRectangleIntersection(entity, this, dx, dy);
-  }
-
   public handleActorInteractions(
     deltaX: number,
     deltaY: number,

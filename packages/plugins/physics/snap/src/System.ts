@@ -39,7 +39,7 @@ type SnapPhysicsSystemOptions = {
 };
 
 export class System {
-  public static DEFAULT_COLLISION_THRESHOLD: number = 2;
+  public static DEFAULT_COLLISION_THRESHOLD: number = 0;
   public static plugin: SnapPhysicsPlugin;
   public static app: IApplication;
   public static container: Container<any>;
@@ -103,7 +103,7 @@ export class System {
   }
 
   static get all(): Entity[] {
-    return [...System.actors, ...System.solids];
+    return [...System.actors, ...System.solids, ...System.sensors];
   }
 
   static get totalEntities(): number {
@@ -251,6 +251,7 @@ export class System {
     if (!System.container) {
       Logger.error('SnapPhysicsPlugin: World container not set!');
     }
+
     if (System.preUpdateHooks) {
       System.preUpdateHooks.forEach((hook) => hook(deltaTime));
     }
@@ -281,16 +282,16 @@ export class System {
       System.postUpdateHooks.forEach((hook) => hook(deltaTime));
     }
 
+    if (System.camera) {
+      System.camera.update();
+    }
+
     if (System.debug) {
       System.drawDebug();
     } else {
       if (System.gfx) {
         System.gfx.clear();
       }
-    }
-
-    if (System.camera) {
-      System.camera.update();
     }
   }
 

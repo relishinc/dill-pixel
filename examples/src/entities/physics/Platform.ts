@@ -97,31 +97,18 @@ export class Platform extends SnapSolid<PlatformConfig> {
   }
 
   added() {
-    this._startPos = this.position.clone();
+    const pt = this.position.clone();
+    this._startPos = new Point(Math.round(pt.x), Math.round(pt.y));
     super.added();
   }
 
-  update(deltaTime: number) {
+  update() {
     if (!this.config.moving || !this.config.movementConfig) return;
 
     this.move(
-      this.config.movementConfig.speed.x * deltaTime * this.config.movementConfig.startingDirection.x,
-      this.config.movementConfig.speed.y * deltaTime * this.config.movementConfig.startingDirection.y,
+      this.config.movementConfig.speed.x * this.config.movementConfig.startingDirection.x,
+      this.config.movementConfig.speed.y * this.config.movementConfig.startingDirection.y,
     );
-
-    if (this.x !== this._lastPos.x) {
-      if (Math.abs(this.x - this._startPos.x) >= this.config.movementConfig.range.x * 0.5) {
-        this.config.movementConfig.startingDirection.x *= -1;
-      }
-    }
-    if (this.y !== this._lastPos.y) {
-      if (Math.abs(this.y - this._startPos.y) >= this.config.movementConfig.range.y * 0.5) {
-        this.config.movementConfig.startingDirection.y *= -1;
-      }
-    }
-
-    this._lastPos.x = this.x;
-    this._lastPos.y = this.y;
   }
 
   reset() {
@@ -136,29 +123,33 @@ export class Platform extends SnapSolid<PlatformConfig> {
         break;
       }
     }
-    if (!isBeingRidden) {
-      this.view.tint = this.config.color;
-    }
-  }
-
-  protected handleCollisionChange(isColliding: boolean) {
-    if (isColliding) {
+    if (isBeingRidden) {
       this.view.tint = 0x0;
     } else {
       this.view.tint = this.config.color;
     }
+
+    if (!this.config.moving || !this.config.movementConfig) return;
+    if (this.x !== this._lastPos.x) {
+      if (Math.round(Math.abs(this.x - this._startPos.x)) >= Math.round(this.config.movementConfig.range.x * 0.5)) {
+        this.config.movementConfig.startingDirection.x *= -1;
+      }
+    }
+    if (this.y !== this._lastPos.y) {
+      if (Math.round(Math.abs(this.y - this._startPos.y)) >= Math.round(this.config.movementConfig.range.y * 0.5)) {
+        this.config.movementConfig.startingDirection.y *= -1;
+      }
+    }
+
+    this._lastPos.x = this.x;
+    this._lastPos.y = this.y;
   }
 
   protected initialize() {
     this.view = this.add
       .graphics({ x: -this.config.width / 2, y: -this.config.height / 2 })
       .rect(2, 2, this.config.width, this.config.height)
-      .fill({ color: this.config.color })
-      .stroke({
-        color: 0x0,
-        width: 2,
-        alignment: 0,
-      });
+      .fill({ color: this.config.color });
 
     this.position.set(this.config.x, this.config.y);
   }

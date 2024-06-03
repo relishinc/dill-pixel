@@ -358,7 +358,8 @@ export class SnapPhysicsScene extends BaseScene {
     if (!this.camera) {
       return;
     }
-    this.physics.system.collisionThreshold = Math.round(this.camera.scale.x + 2);
+    // this.physics.system.collisionThreshold = Math.round(this.camera.scale.x + 2);
+    this.physics.system.collisionThreshold = 0;
   }
 
   private _resetCollisionThreshold() {
@@ -390,9 +391,9 @@ export class SnapPhysicsScene extends BaseScene {
         return false;
       case 'Player|Platform':
         // eslint-disable-next-line no-case-declarations
-        const platform = collision.entity2 as Platform;
+        const platform: Platform = collision.entity2 as Platform;
         // eslint-disable-next-line no-case-declarations
-        const player = collision.entity1 as Player;
+        const player: Player = collision.entity1 as Player;
         if (platform.canJumpThroughBottom) {
           if (collision.top) {
             player.setPassingThrough(platform);

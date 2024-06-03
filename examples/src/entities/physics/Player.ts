@@ -65,8 +65,7 @@ export class Player extends SnapActor {
       return;
     }
 
-    this._velocity.y =
-      this.system.gravity * deltaTime - (this._velocity.y < 0 ? this._jumpPower : -this.system.gravity * 0.25);
+    this._velocity.y = this.system.gravity - (this._velocity.y < 0 ? this._jumpPower : -this.system.gravity * 0.25);
 
     if (this._isJumping) {
       this._jumpTimeElapsed += deltaTime;
@@ -92,8 +91,6 @@ export class Player extends SnapActor {
       this.mostRiding.view.tint = 0x0;
     }
   }
-
-  postUpdate() {}
 
   public squish(collision: Collision, pushingEntity: Entity, direction?: Point) {
     if (collision.bottom && pushingEntity.type === 'Platform' && (pushingEntity as Platform).canJumpThroughBottom) {

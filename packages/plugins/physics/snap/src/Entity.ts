@@ -77,7 +77,9 @@ export class Entity<T = any, A extends Application = Application> extends Contai
 
   preUpdate() {}
 
-  update(deltaTime?: number) {}
+  update(deltaTime?: number) {
+    void deltaTime;
+  }
 
   postUpdate() {}
 
@@ -102,6 +104,14 @@ export class Entity<T = any, A extends Application = Application> extends Contai
 
   getOuterBoundingBox(): Rectangle | null {
     return null;
+  }
+
+  // Simple collision detection between this solid and an actor
+  collidesWith(entity: Entity, dx: number = 0, dy: number = 0): boolean {
+    if (!entity) {
+      return false;
+    }
+    return System.getRectangleIntersection(entity, this, dx, dy);
   }
 
   protected initialize() {}

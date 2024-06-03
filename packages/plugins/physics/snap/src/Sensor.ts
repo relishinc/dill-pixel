@@ -18,15 +18,6 @@ export class Sensor<T = any, A extends Application = Application> extends Actor<
    */
   passThroughTypes: EntityType[] = ['Actor', 'Player'];
 
-  protected _activeCollisions = null as null | Collision[];
-  get activeCollisions() {
-    return this._activeCollisions;
-  }
-
-  set activeCollisions(value) {
-    this._activeCollisions = value;
-  }
-
   get collideables(): Entity[] {
     return System.actors;
   }
@@ -41,8 +32,8 @@ export class Sensor<T = any, A extends Application = Application> extends Actor<
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(_deltaTime?: number) {
-    this.activeCollisions = this.resolveAllCollisions();
-    this.isColliding = !!this.activeCollisions;
+    this.activeCollisions = this.resolveAllCollisions() || [];
+    this.isColliding = this.activeCollisions ? this.activeCollisions.length > 0 : false;
   }
 
   /**

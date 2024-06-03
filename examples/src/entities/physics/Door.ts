@@ -29,7 +29,8 @@ export class Door extends Sensor<DoorConfig> {
   update(deltaTime: number) {
     super.update(deltaTime);
     this.moveY(System.gravity * deltaTime, null);
-    if (this.isColliding) {
+    const player = System.getNearbyEntities(this, (entity) => entity.type === 'Player')[0];
+    if (this.collidesWith(player)) {
       this.view.tint = 0x0;
     } else {
       this.view.tint = this.config.color;
