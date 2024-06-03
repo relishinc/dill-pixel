@@ -71,7 +71,6 @@ export class PopupManager<T extends Application = Application> extends Container
    * @param size Screen size, in pixels(?)
    */
   public onResize(size: Point): void {
-    console.log('popup manager onResize', size);
     this._size = size;
     this.position.set(this._size.x * 0.5, this._size.y * 0.5);
     for (let i = 0; i < this._activePopups.length; ++i) {
