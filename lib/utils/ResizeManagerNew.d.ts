@@ -26,7 +26,7 @@ export declare class ResizeManagerNew extends ResizeManager {
     /**
      * Initializes the Resizer module.
      */
-    initialize(options?: Partial<ResizeManagerOptions>): Promise<void>;
+    initialize(options?: Partial<ResizeManagerOptions>): void;
     /**
      * Resizes the application based on window size and module options.
      */

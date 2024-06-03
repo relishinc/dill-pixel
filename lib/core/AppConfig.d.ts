@@ -1,9 +1,11 @@
 import { IApplicationOptions } from 'pixi.js';
+import { LoggerMode } from '../utils/Logger';
 import { ResizeManagerOptions } from '../utils/ResizeManagerNew';
 /**
  * Type for application options.
  */
 export interface DillPixelApplicationOptions extends IApplicationOptions {
+    logger: LoggerMode;
     resizeDebounce?: number;
     physics?: boolean;
     useSpine?: boolean;
