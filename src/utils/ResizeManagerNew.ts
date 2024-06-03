@@ -52,7 +52,7 @@ export class ResizeManagerNew extends ResizeManager {
   /**
    * Initializes the Resizer module.
    */
-  async initialize(options: Partial<ResizeManagerOptions> = {}) {
+  initialize(options: Partial<ResizeManagerOptions> = {}) {
     this._options = { ...defaultOptions, ...options };
     this.resize();
   }

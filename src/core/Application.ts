@@ -373,7 +373,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
     }
 
     await this.init();
-    await this._setup();
+    this._setup();
     await this.setup();
 
     this._initialized = true;
@@ -387,7 +387,7 @@ export class Application<T extends Application = any> extends PIXIApplication {
     if (this._useSpine) {
       await this.addSpine();
     }
-    await this.resizer.initialize(this._resizeOptions);
+    this.resizer.initialize(this._resizeOptions);
     this.addToStage(this._stateManager);
     this.addToStage(this._popupManager);
     this.addToStage(this._loadManager);
