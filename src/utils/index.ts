@@ -23,3 +23,4 @@ export * from './Delay';
 export { scaleToWidth, scaleToHeight, scaleToSize, scaleUniform } from './PixiUtils';
 export * from './AssetUtils';
 export { bindMethods, bindAllMethods } from './FrameworkUtils';
+export { Logger } from './Logger';

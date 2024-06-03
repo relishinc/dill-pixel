@@ -37,6 +37,7 @@ import {
   bindMethods,
   delay,
   HTMLTextStyleManager,
+  Logger,
   Make,
   OrientationManager,
   ResizeManager,
@@ -190,6 +191,8 @@ export class Application<T extends Application = any> extends PIXIApplication {
      * Bind methods from some manager classes to callable methods in the application
      */
     this.startSplashProcess = this._loadManager.startSplashProcess.bind(this._loadManager);
+
+    Logger.initialize(appConfig?.logger);
   }
 
   static get containerElement(): HTMLElement | undefined {

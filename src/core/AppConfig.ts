@@ -1,6 +1,7 @@
 import { IApplicationOptions } from 'pixi.js';
 import { isDev } from '../functions';
 import { MathUtils, PlatformUtils } from '../utils';
+import { LoggerMode } from '../utils/Logger';
 import { ResizeManagerOptions } from '../utils/ResizeManagerNew';
 
 const isDevEnv = isDev();
@@ -9,6 +10,7 @@ const isDevEnv = isDev();
  * Type for application options.
  */
 export interface DillPixelApplicationOptions extends IApplicationOptions {
+  logger: LoggerMode;
   resizeDebounce?: number;
   physics?: boolean;
   useSpine?: boolean;
@@ -74,6 +76,7 @@ export class AppConfig {
         useNewResizeManager: true,
         resizeOptions: undefined,
         resolution: PlatformUtils.isMobile() ? (PlatformUtils.isRetina() ? 2 : 1) : 2,
+        logger: undefined,
       };
     } else {
       // If a config is provided but particular properties are not set that need to be, do your sanity checks here.
