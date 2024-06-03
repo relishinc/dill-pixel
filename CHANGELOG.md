@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.4](https://github.com/relishinc/dill-pixel/compare/v3.2.3...v3.2.4) (2024-06-03)
+
+
+### Bug Fixes
+
+* formatting in hello line ([18dfca1](https://github.com/relishinc/dill-pixel/commit/18dfca106ff0181248f2e77e2c5c52cc8b776e99))
+* typo in dillpixel.io url ([8ac5da7](https://github.com/relishinc/dill-pixel/commit/8ac5da7904d9e1ddf9bb35aa95baf8ce35f88975))
+
 ## [3.2.3](https://github.com/relishinc/dill-pixel/compare/v3.2.2...v3.2.3) (2024-06-03)
 
 
