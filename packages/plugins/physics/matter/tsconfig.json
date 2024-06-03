@@ -6,7 +6,10 @@
     "baseUrl": ".",
     "rootDir": "./src",
     "outDir": "./lib",
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -20,9 +23,21 @@
     "emitDecoratorMetadata": true,
     "allowJs": true,
     "composite": true,
-    "paths": { "dill-pixel/*": ["../../../src/*"] }
+    "paths": {
+      "dill-pixel/*": [
+        "../../../src/*"
+      ]
+    }
   },
-  "typeRoots": ["./node_modules/@types"],
-  "include": ["./src/**/*.ts", "../../../src/**/*.ts"],
-  "exclude": ["./lib", "./node_modules"]
+  "typeRoots": [
+    "./node_modules/@types"
+  ],
+  "include": [
+    "./src/**/*.ts",
+    "../../../src/**/*.ts"
+  ],
+  "exclude": [
+    "./lib",
+    "./node_modules"
+  ]
 }

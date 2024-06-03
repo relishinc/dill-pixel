@@ -3,9 +3,13 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "baseUrl": ".",
     "rootDir": "./src",
     "outDir": "./lib",
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -20,7 +24,15 @@
     "allowJs": true,
     "composite": true
   },
-  "typeRoots": ["./node_modules/@types"],
-  "include": ["./src/**/*.ts"],
-  "exclude": ["./lib", "./node_modules"]
+  "typeRoots": [
+    "./node_modules/@types"
+  ],
+  "include": [
+    "./src/**/*.ts",
+    "../../../src/**/*.ts"
+  ],
+  "exclude": [
+    "./lib",
+    "./node_modules"
+  ]
 }
