@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.6](https://github.com/relishinc/dill-pixel/compare/v3.2.5...v3.2.6) (2024-06-03)
+
+
+### Bug Fixes
+
+* removed log in PopupManager ([fbf8d16](https://github.com/relishinc/dill-pixel/commit/fbf8d16ff2738ef1b4e209ef3fd30eb661ea16e0))
+
 ## [3.2.5](https://github.com/relishinc/dill-pixel/compare/v3.2.4...v3.2.5) (2024-06-03)
 
 
