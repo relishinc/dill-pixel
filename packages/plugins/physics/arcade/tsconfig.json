@@ -5,10 +5,7 @@
     "moduleResolution": "bundler",
     "rootDir": "./src",
     "outDir": "./lib",
-    "lib": [
-      "ESNext",
-      "DOM"
-    ],
+    "lib": ["ESNext", "DOM"],
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -20,17 +17,10 @@
     "strictPropertyInitialization": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "allowJs": true
+    "allowJs": true,
+    "composite": true
   },
-  "typeRoots": [
-    "./node_modules/@types"
-  ],
-  "include": [
-    "./src/**/*.ts",
-    "../packages/**/*.ts"
-  ],
-  "exclude": [
-    "./lib",
-    "./node_modules"
-  ]
+  "typeRoots": ["./node_modules/@types"],
+  "include": ["./src/**/*.ts", "../packages/**/*.ts"],
+  "exclude": ["./lib", "./node_modules"]
 }

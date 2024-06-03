@@ -1,5 +1,5 @@
-import { FederatedEvent, Graphics, Point, Sprite } from 'pixi.js';
 import { Container, Signal } from 'dill-pixel';
+import { FederatedEvent, Graphics, Point, Sprite } from 'pixi.js';
 
 export interface JoystickChangeEvent {
   angle: number;
@@ -128,12 +128,12 @@ export class Joystick extends Container {
 
     this.eventData = event.data;
 
-    let newPosition = this.eventData.getLocalPosition(this);
+    const newPosition = this.eventData.getLocalPosition(this);
 
-    let sideX = newPosition.x - this.startPosition.x;
-    let sideY = newPosition.y - this.startPosition.y;
+    const sideX = newPosition.x - this.startPosition.x;
+    const sideY = newPosition.y - this.startPosition.y;
 
-    let centerPoint = new Point(0, 0);
+    const centerPoint = new Point(0, 0);
     let angle = 0;
 
     if (sideX == 0 && sideY == 0) {
@@ -177,8 +177,8 @@ export class Joystick extends Container {
       return;
     }
 
-    let tanVal = Math.abs(sideY / sideX);
-    let radian = Math.atan(tanVal);
+    const tanVal = Math.abs(sideY / sideX);
+    const radian = Math.atan(tanVal);
     angle = (radian * 180) / Math.PI;
 
     let centerX = 0;
@@ -235,7 +235,7 @@ export class Joystick extends Container {
   }
 
   protected getDirection(center: Point) {
-    let rad = Math.atan2(center.y, center.x); // [-PI, PI]
+    const rad = Math.atan2(center.y, center.x); // [-PI, PI]
     if ((rad >= -Math.PI / 8 && rad < 0) || (rad >= 0 && rad < Math.PI / 8)) {
       return Direction.RIGHT;
     } else if (rad >= Math.PI / 8 && rad < (3 * Math.PI) / 8) {

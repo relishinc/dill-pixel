@@ -1,4 +1,4 @@
-import { create, LocalStorageAdapter } from 'dill-pixel';
+import { LocalStorageAdapter, create } from 'dill-pixel';
 
 import EN from '@/locales/en';
 import { ExampleOutliner } from './ui/ExampleOutliner';
@@ -42,6 +42,14 @@ create({
       options: {
         debug: true,
         useTree: true,
+      },
+      autoLoad: false,
+    },
+    {
+      id: 'matter',
+      module: () => import('@dill-pixel/plugin-matter-physics'),
+      options: {
+        debug: true,
       },
       autoLoad: false,
     },
@@ -126,6 +134,18 @@ create({
       namedExport: 'ArcadePhysicsScene',
       module: () => import('@/scenes/ArcadePhysicsScene'),
       plugins: ['arcade'],
+      assets: {
+        preload: {
+          bundles: ['spine', 'game'],
+        },
+      },
+    },
+    {
+      id: 'matter',
+      debugLabel: 'Matter Physics',
+      namedExport: 'MatterPhysicsScene',
+      module: () => import('@/scenes/MatterPhysicsScene'),
+      plugins: ['matter'],
       assets: {
         preload: {
           bundles: ['spine', 'game'],

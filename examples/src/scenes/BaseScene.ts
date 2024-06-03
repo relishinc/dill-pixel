@@ -92,5 +92,5 @@ export class BaseScene extends Scene {
     z-index: 0;`;
   }
 
-  protected configureGUI() { }
+  protected configureGUI() {}
 }

@@ -39,7 +39,13 @@ export class AudioScene extends BaseScene {
     this.app.audio.music.volume = this.config.music;
     this.app.audio.sfx.volume = this.config.sfx;
 
-    this.buttonContainer = this.add.flexContainer({ x: -this.app.size.width * 0.5, gap: 50, justifyContent: 'center', flexWrap: "wrap", width: this.app.size.width });
+    this.buttonContainer = this.add.flexContainer({
+      x: -this.app.size.width * 0.5,
+      gap: 50,
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      width: this.app.size.width,
+    });
     this.musicButtons = this.buttonContainer.add.flexContainer({
       gap: 10,
       width: 256,
@@ -95,7 +101,7 @@ export class AudioScene extends BaseScene {
     );
   }
 
-  public async start() { }
+  public async start() {}
 
   public destroy() {
     super.destroy();
@@ -107,8 +113,7 @@ export class AudioScene extends BaseScene {
     this.buttonContainer.containerWidth = this.app.size.width;
     this.app.ticker.addOnce(() => {
       this.buttonContainer.position.set(-this.app.size.width * 0.5, -this.buttonContainer.height * 0.5);
-    })
-
+    });
   }
 
   addButton(
@@ -185,7 +190,7 @@ export class AudioScene extends BaseScene {
 
     if (this.app.audio.isPlaying(action.data.id, 'music')) {
       this.app.audio.stop(action.data.id, 'music');
-      this.app.audio.play('click', 'sfx')
+      this.app.audio.play('click', 'sfx');
       button.setTexture('default', 'btn/blue');
       return;
     }
