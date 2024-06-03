@@ -46,6 +46,8 @@ export declare class WebEventsManager {
      * @param pCallback The callback to unregister.
      */
     unregisterResizeCallback(pCallback: ResizeCallback): void;
+    private onPageHide;
+    private onPageShow;
     /**
      * Called when the browser visibility changes. Passes the `hidden` flag of the document to all callbacks.
      */
