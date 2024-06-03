@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.5](https://github.com/relishinc/dill-pixel/compare/v3.2.4...v3.2.5) (2024-06-03)
+
+
+### Bug Fixes
+
+* resume audio context when visibilitychange is triggered ([ccc8b7a](https://github.com/relishinc/dill-pixel/commit/ccc8b7a03695d5fe587fe8017eb13ca52d98c0c3))
+
 ## [3.2.4](https://github.com/relishinc/dill-pixel/compare/v3.2.3...v3.2.4) (2024-06-03)
 
 
