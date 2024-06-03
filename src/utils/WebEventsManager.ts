@@ -26,10 +26,12 @@ export class WebEventsManager {
    * Creates callback arrays and registers to web events.
    */
   constructor(private app: Application) {
-    this._visibilityChangedCallbacks = new Array<VisibilityChangedCallback>();
+    this._visibilityChangedCallbacks = [];
     document.addEventListener('visibilitychange', this.onVisibilityChanged.bind(this), false);
+    window.addEventListener('pagehide', this.onPageHide.bind(this), false);
+    window.addEventListener('pageshow', this.onPageShow.bind(this), false);
 
-    this._resizeCallbacks = new Array<ResizeCallback>();
+    this._resizeCallbacks = [];
     window.addEventListener('resize', this.onResize.bind(this));
     document.addEventListener('fullscreenchange', this.onResize.bind(this));
   }
@@ -90,13 +92,21 @@ export class WebEventsManager {
     }
   }
 
+  private onPageHide() {
+    this.onVisibilityChanged(null, false);
+  }
+
+  private onPageShow() {
+    this.onVisibilityChanged(null, true);
+  }
+
   /**
    * Called when the browser visibility changes. Passes the `hidden` flag of the document to all callbacks.
    */
-  private onVisibilityChanged(): void {
+  private onVisibilityChanged(e?: Event | null, visible?: boolean): void {
     this._visibilityChangedCallbacks.forEach((callback) => {
       // We are sending a ! param so that the registered functions get pVisible instead of pHidden
-      callback(!document.hidden);
+      callback(visible === undefined ? !document.hidden : visible);
     });
   }
 

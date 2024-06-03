@@ -173,7 +173,6 @@ export class HowlerManager implements IAudioManager {
 
   public init(): void {
     Application.instance.webEvents.registerVisibilityChangedCallback(this.onVisibilityChanged.bind(this));
-
     Signals.playAudio.connect(this.onPlayRequested);
     Signals.loadAudio.connect(this.loadFromIds);
     Signals.loadAudioFromAssetMap.connect(this.loadFromAssetMapData);
