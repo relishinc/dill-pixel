@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.3](https://github.com/relishinc/dill-pixel/compare/v3.2.2...v3.2.3) (2024-06-03)
+
+
+### Bug Fixes
+
+* added dillpixel.io url to hello script ([6df3773](https://github.com/relishinc/dill-pixel/commit/6df3773488fea2d4960cde1519ede196e9458519))
+
 ## [3.2.2](https://github.com/relishinc/dill-pixel/compare/v3.2.1...v3.2.2) (2024-06-03)
 
 
