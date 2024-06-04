@@ -1,4 +1,4 @@
-import { ActionDetail, Button, FlexContainer } from 'dill-pixel';
+import { ActionDetail, Button, FlexContainer, Logger } from 'dill-pixel';
 import { BaseScene } from './BaseScene';
 import { Input } from '@pixi/ui';
 import { Graphics, Text } from 'pixi.js';
@@ -100,8 +100,8 @@ export class FirebaseAdapterScene extends BaseScene {
     // runs immediately
     onSnapshot(colRef, (snapshot: QuerySnapshot<DocumentData>) => {
       snapshot.docChanges().forEach((change: { type: any; doc: { data: () => any } }) => {
-        console.log(`Change type: ${change.type}`);
-        console.log(`Change details: ${JSON.stringify(change.doc.data())}`);
+        Logger.log(`Change type: ${change.type}`);
+        Logger.log(`Change details: ${JSON.stringify(change.doc.data())}`);
       });
 
       snapshot.docChanges().length && this.refreshScoreboard();
@@ -371,7 +371,7 @@ export class FirebaseAdapterScene extends BaseScene {
   }
 
   private async refreshScoreboard() {
-    console.log('Refreshing scoreboard...');
+    Logger.log('Refreshing scoreboard...');
     this.errorText.text = '';
     let data;
 

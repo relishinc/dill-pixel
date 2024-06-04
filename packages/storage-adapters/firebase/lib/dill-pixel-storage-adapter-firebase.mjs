@@ -1,25 +1,15 @@
-import { StorageAdapter as f, Logger as w } from "dill-pixel";
-import { initializeApp as p } from "firebase/app";
-import { getFirestore as b, doc as c, addDoc as _, collection as s, setDoc as g, getDoc as h, query as u, where as y, getDocs as d, deleteDoc as E } from "firebase/firestore";
-var n = { BASE_URL: "/", MODE: "production", DEV: !1, PROD: !0, SSR: !1 };
-const m = {
-  apiKey: n.VITE_FIREBASE_API_KEY,
-  authDomain: n.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: n.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: n.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: n.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: n.VITE_FIREBASE_APP_ID
+import { StorageAdapter as u, Logger as w } from "dill-pixel";
+import { initializeApp as f } from "firebase/app";
+import { getFirestore as p, doc as s, addDoc as b, collection as a, setDoc as m, getDoc as l, query as E, where as g, getDocs as c, deleteDoc as h } from "firebase/firestore";
+const y = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
-class R extends f {
-  /**
-   * Initializes the adapter.
-   * @param {IApplication} _app The application that the adapter belongs to.
-   * @param {FirebaseOptions} options The options to initialize the adapter with.
-   * @returns {void}
-   */
-  initialize(i, e = {}) {
-    w.log("FirebaseAdapter initialized"), this._options = { ...m, ...e }, this._firebaseApp = p(this._options), this._db = b(this._firebaseApp);
-  }
+class D extends u {
   /**
    * Returns the Firebase app.
    * @returns {FirebaseApp} The Firebase app.
@@ -33,6 +23,15 @@ class R extends f {
    */
   get db() {
     return this._db;
+  }
+  /**
+   * Initializes the adapter.
+   * @param {IApplication} _app The application that the adapter belongs to.
+   * @param {FirebaseOptions} options The options to initialize the adapter with.
+   * @returns {void}
+   */
+  initialize(i, e = {}) {
+    w.log("FirebaseAdapter initialized"), this._options = { ...y, ...e }, this._firebaseApp = f(this._options), this._db = p(this._firebaseApp);
   }
   /**
    * Save or update a document in a collection.
@@ -49,8 +48,8 @@ class R extends f {
       throw new Error("Firestore has not been initialized. Call initialize() first.");
     let t;
     try {
-      r ? t = c(this.db, i, r) : t = await _(s(this.db, i), e), await g(t, e, { merge: !0 });
-      const o = await h(t);
+      r ? t = s(this.db, i, r) : t = await b(a(this.db, i), e), await m(t, e, { merge: !0 });
+      const o = await l(t);
       return {
         id: o.id,
         ...o.data()
@@ -71,9 +70,9 @@ class R extends f {
   async getDocumentById(i, e) {
     if (!this.db)
       throw new Error("Firestore has not been initialized. Call initialize() first.");
-    const r = c(this.db, i, e);
+    const r = s(this.db, i, e);
     try {
-      const t = await h(r);
+      const t = await l(r);
       if (!t.exists())
         return null;
       const o = {
@@ -99,12 +98,12 @@ class R extends f {
     if (!this.db)
       throw new Error("Firestore has not been initialized. Call initialize() first.");
     try {
-      const t = s(this.db, i), o = u(t, y(e, "==", r)), l = await d(o);
-      if (l.empty)
+      const t = a(this.db, i), o = E(t, g(e, "==", r)), d = await c(o);
+      if (d.empty)
         return null;
       {
-        const a = l.docs[0];
-        return { id: a.id, ...a.data() };
+        const n = d.docs[0];
+        return { id: n.id, ...n.data() };
       }
     } catch (t) {
       throw new Error(`Error getting document: ${t}`);
@@ -122,7 +121,7 @@ class R extends f {
     if (!this.db)
       throw new Error("Firestore has not been initialized. Call initialize() first.");
     try {
-      const e = s(this.db, i), r = await d(e), t = [];
+      const e = a(this.db, i), r = await c(e), t = [];
       return r.forEach((o) => {
         t.push({ id: o.id, ...o.data() });
       }), t;
@@ -143,8 +142,8 @@ class R extends f {
     if (!this.db)
       throw new Error("Firestore has not been initialized. Call initialize() first.");
     try {
-      const r = c(this.db, i, e), t = await h(r);
-      return t.exists() ? (await E(r), {
+      const r = s(this.db, i, e), t = await l(r);
+      return t.exists() ? (await h(r), {
         id: t.id,
         ...t.data()
       }) : null;
@@ -169,8 +168,8 @@ class R extends f {
       const t = await this.getDocumentWhere(i, e, r);
       if (!t)
         return null;
-      const o = c(this.db, i, t.id);
-      return await E(o), t;
+      const o = s(this.db, i, t.id);
+      return await h(o), t;
     } catch (t) {
       throw new Error(`Error deleting document: ${t}`);
     }
@@ -187,9 +186,9 @@ class R extends f {
     if (!this.db)
       throw new Error("Firestore has not been initialized. Call initialize() first.");
     try {
-      const e = s(this.db, i), r = await d(e), t = [];
+      const e = a(this.db, i), r = await c(e), t = [];
       r.forEach((o) => {
-        t.push(E(o.ref));
+        t.push(h(o.ref));
       }), await Promise.all(t);
     } catch (e) {
       throw new Error(`Error deleting collection: ${e}`);
@@ -209,9 +208,9 @@ class R extends f {
       throw new Error("Firestore has not been initialized. Call initialize() first.");
     const r = [];
     try {
-      const t = s(this.db, i), o = u(t, ...e);
-      return (await d(o)).forEach((a) => {
-        r.push({ id: a.id, ...a.data() });
+      const t = a(this.db, i), o = E(t, ...e);
+      return (await c(o)).forEach((n) => {
+        r.push({ id: n.id, ...n.data() });
       }), r;
     } catch (t) {
       throw new Error(`Error querying collection: ${t}`);
@@ -219,6 +218,7 @@ class R extends f {
   }
 }
 export {
-  R as FirebaseAdapter
+  D as FirebaseAdapter,
+  D as default
 };
 //# sourceMappingURL=dill-pixel-storage-adapter-firebase.mjs.map
