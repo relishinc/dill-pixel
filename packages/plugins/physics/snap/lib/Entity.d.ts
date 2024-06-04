@@ -38,6 +38,7 @@ export declare class Entity<T = any, A extends Application = Application> extend
     getWorldBounds(): Bounds | Rectangle;
     getBoundingBox(): Rectangle;
     getOuterBoundingBox(): Rectangle | null;
+    collidesWith(entity: Entity, dx?: number, dy?: number): boolean;
     protected initialize(): void;
 }
 //# sourceMappingURL=Entity.d.ts.map

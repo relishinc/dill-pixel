@@ -119,6 +119,10 @@ class B extends S {
   getOuterBoundingBox() {
     return null;
   }
+  // Simple collision detection between this solid and an actor
+  collidesWith(t, e = 0, s = 0) {
+    return t ? d.getRectangleIntersection(t, this, e, s) : !1;
+  }
   initialize() {
   }
 }
@@ -142,10 +146,6 @@ class k extends B {
   }
   getAllRidingActors() {
     return this.collideables.filter((t) => t.riding.has(this));
-  }
-  // Simple collision detection between this solid and an actor
-  collidesWith(t, e, s) {
-    return d.getRectangleIntersection(t, this, e, s);
   }
   handleActorInteractions(t, e, s = this.getAllRidingActors()) {
     this.collideables.forEach((o) => {
@@ -220,7 +220,7 @@ const i = class i {
     return (t = i.boundary) != null && t.height ? i.boundary.height + (i.boundary.padding ?? 0) : i.container.height;
   }
   static get all() {
-    return [...i.actors, ...i.solids];
+    return [...i.actors, ...i.solids, ...i.sensors];
   }
   static get totalEntities() {
     return i.actors.length + i.solids.length + i.sensors.length;
@@ -306,7 +306,7 @@ const i = class i {
       s.update(e);
     }), i.all.forEach((s) => {
       s.postUpdate();
-    }), i.postUpdateHooks && i.postUpdateHooks.forEach((s) => s(e)), i.debug ? i.drawDebug() : i.gfx && i.gfx.clear(), i.camera && i.camera.update();
+    }), i.postUpdateHooks && i.postUpdateHooks.forEach((s) => s(e)), i.camera && i.camera.update(), i.debug ? i.drawDebug() : i.gfx && i.gfx.clear();
   }
   static addBoundary(t, e, s = 10, o = 5, n = ["top", "bottom", "left", "right"]) {
     if (!i.container)
@@ -355,7 +355,7 @@ const i = class i {
     }), i.worldBounds = []), i.container && (i.container.removeChildren(), i.container = null), i.gfx && (i.gfx.clear(), i.gfx = null), i.grid && (i.grid.destroy(), i.grid = null), i.camera && (i.camera = null), i.solids = [], i.actors = [], i.sensors = [], i.typeMap.clear(), i.worldBounds = [];
   }
 };
-i.DEFAULT_COLLISION_THRESHOLD = 2, i.debug = !0, i.typeMap = /* @__PURE__ */ new Map(), i.actors = [], i.solids = [], i.sensors = [], i.gravity = 10, i.onCollision = new w(), i.worldBounds = [], i.collisionThreshold = 8, i.updateHooks = /* @__PURE__ */ new Set(), i.preUpdateHooks = /* @__PURE__ */ new Set(), i.postUpdateHooks = /* @__PURE__ */ new Set(), i._enabled = !1, i._collisionResolver = null;
+i.DEFAULT_COLLISION_THRESHOLD = 0, i.debug = !0, i.typeMap = /* @__PURE__ */ new Map(), i.actors = [], i.solids = [], i.sensors = [], i.gravity = 10, i.onCollision = new w(), i.worldBounds = [], i.collisionThreshold = 8, i.updateHooks = /* @__PURE__ */ new Set(), i.preUpdateHooks = /* @__PURE__ */ new Set(), i.postUpdateHooks = /* @__PURE__ */ new Set(), i._enabled = !1, i._collisionResolver = null;
 let d = i;
 const G = {
   useSpatialHashGrid: !1,
@@ -395,6 +395,12 @@ class P extends B {
   constructor() {
     super(...arguments), this.type = "Actor", this.isActor = !0, this.passThroughTypes = [], this.passingThrough = /* @__PURE__ */ new Set(), this.riding = /* @__PURE__ */ new Set(), this.mostRiding = null;
   }
+  get activeCollisions() {
+    return this._activeCollisions;
+  }
+  set activeCollisions(t) {
+    this._activeCollisions = t;
+  }
   get ridingAllowed() {
     return !0;
   }
@@ -410,7 +416,7 @@ class P extends B {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   squish(t, e, s) {
   }
-  preUpdate() {
+  postUpdate() {
     this.setAllRiding();
   }
   moveX(t, e, s, o) {
@@ -496,13 +502,7 @@ class P extends B {
 }
 class X extends P {
   constructor() {
-    super(...arguments), this.type = "Sensor", this.isSensor = !0, this.isColliding = !1, this.passThroughTypes = ["Actor", "Player"], this._activeCollisions = null;
-  }
-  get activeCollisions() {
-    return this._activeCollisions;
-  }
-  set activeCollisions(t) {
-    this._activeCollisions = t;
+    super(...arguments), this.type = "Sensor", this.isSensor = !0, this.isColliding = !1, this.passThroughTypes = ["Actor", "Player"];
   }
   get collideables() {
     return d.actors;
@@ -515,7 +515,7 @@ class X extends P {
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(t) {
-    this.activeCollisions = this.resolveAllCollisions(), this.isColliding = !!this.activeCollisions;
+    this.activeCollisions = this.resolveAllCollisions() || [], this.isColliding = this.activeCollisions ? this.activeCollisions.length > 0 : !1;
   }
   /**
    * Resolve all collisions for this sensor

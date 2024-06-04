@@ -1,15 +1,19 @@
-import { Plugin as f, Container as w } from "dill-pixel";
-import { Runner as l, Engine as g, Bodies as o, World as b } from "matter-js";
+import { Application as g, Plugin as p, Container as f } from "dill-pixel";
+import { Runner as d, Engine as l, Bodies as a, World as u } from "matter-js";
 import { Graphics as y } from "pixi.js";
 const e = class e {
+  static get app() {
+    return g.getInstance();
+  }
   static set enabled(i) {
-    e._enabled = i, e._enabled ? e._engine && l.run(e._engine) : e._runner && l.stop(e._runner);
+    e._enabled = i, e._enabled ? e._engine && (d.run(e._engine), e.app.ticker.add(e.update)) : e._runner && (d.stop(e._runner), e.app.ticker.remove(e.update));
   }
   static get enabled() {
     return e._enabled;
   }
   static set debug(i) {
-    e._debug = i;
+    var t;
+    e._debug = i, !e._debug && e._debugGraphics && (e._debugGraphics.destroy(), (t = e._debugGraphics.parent) == null || t.removeChild(e._debugGraphics), e._debugGraphics = null);
   }
   static get debug() {
     return e._debug;
@@ -27,53 +31,55 @@ const e = class e {
     e._bounds = i;
   }
   static initialize(i) {
-    if (e._options = { ...e.pluginOptions, ...i }, e._engine = g.create(e._options.engine), e._runner = l.create(e._options.runner), l.run(e._engine), e._options.worldBounds && (e.bounds = e._options.worldBounds), e._options.createWalls) {
-      const t = e._options.createWalls.thickness ?? 10, { width: s, height: r } = e.bounds, n = [];
-      e._options.createWalls.top && n.push(
-        o.rectangle(s / 2, -t / 2, s, t, {
+    if (e._options = { ...e.pluginOptions, ...i }, e._engine = l.create(e._options.engine), e._runner = d.create(e._options.runner), d.run(e._engine), e._options.container && (e.container = e._options.container), e._options.worldBounds && (e.bounds = e._options.worldBounds), e._options.createWalls) {
+      const t = e._options.createWalls.thickness ?? 10, { width: s, height: n } = e.bounds, r = [];
+      e._options.createWalls.top && r.push(
+        a.rectangle(s / 2, -t / 2, s, t, {
           isStatic: !0
         })
-      ), e._options.createWalls.bottom && n.push(o.rectangle(s / 2, r + t / 2, s, t, {
+      ), e._options.createWalls.bottom && r.push(a.rectangle(s / 2, n + t / 2, s, t, {
         isStatic: !0
-      })), e._options.createWalls.left && n.push(
-        o.rectangle(-s / 2 - t / 2, -t / 2, t, r + t, {
+      })), e._options.createWalls.left && r.push(
+        a.rectangle(-s / 2 - t / 2, -t / 2, t, n + t, {
           isStatic: !0
         })
-      ), e._options.createWalls.right && n.push(o.rectangle(s / 2 + t / 2, -t / 2, t, r + t, {
+      ), e._options.createWalls.right && r.push(a.rectangle(s / 2 + t / 2, -t / 2, t, n + t, {
         isStatic: !0
-      })), e.addToWorld(...n);
+      })), e.addToWorld(...r);
     }
   }
   static addToWorld(...i) {
     i.forEach((t) => {
       let s;
-      t.hasOwnProperty("body") ? (s = t.body, this._objects.add(t)) : s = t, b.add(e._engine.world, s);
+      t.hasOwnProperty("body") ? (s = t.body, this._objects.add(t)) : s = t, u.add(e._engine.world, s);
     });
   }
   static removeFromWorld(...i) {
     i.forEach((t) => {
       let s;
-      t.hasOwnProperty("body") ? (s = t.body, this._objects.add(t)) : s = t, b.remove(this._engine.world, s), e._objects.delete(t);
+      t.hasOwnProperty("body") ? (s = t.body, this._objects.add(t)) : s = t, u.remove(this._engine.world, s), e._objects.delete(t);
     });
   }
-  static update() {
-    e._enabled && e._engine && (e._objects.forEach((i) => {
-      i.update();
-    }), e.debug && e.drawDebug(), g.update(e._engine, 16.666666666666668, 1));
+  static update(i) {
+    e._enabled && e._engine && (e._objects.forEach((t) => {
+      t.update();
+    }), e.debug && e.drawDebug(), l.update(e._engine, 16.666666666666668, i.deltaTime));
   }
   static drawDebug() {
-    e._debugGraphics || (e._debugGraphics = new y(), e._debugGraphics.zIndex = 1e3, e._debugGraphics.sortableChildren = !0), e._debugGraphics.clear(), e._objects.forEach((i) => {
-      const t = i.body, s = (i == null ? void 0 : i.debugColor) || 2737654, r = t.vertices;
-      e._debugGraphics.moveTo(r[0].x, r[0].y);
-      for (let n = 1; n < r.length; n++)
-        e._debugGraphics.lineTo(r[n].x, r[n].y);
-      e._debugGraphics.lineTo(r[0].x, r[0].y), e._debugGraphics.fill({ color: s }), e._debugGraphics.stroke({ color: 16711680, alignment: 0.5 });
+    e._debugGraphics || (e._debugGraphics = new y(), e._debugGraphics.zIndex = 1e3, e._debugGraphics.sortableChildren = !0), e.container && !e._debugGraphics.parent && e.container.addChild(e._debugGraphics), e._debugGraphics.clear(), e._objects.forEach((i) => {
+      const t = i.body, s = (i == null ? void 0 : i.debugColor) || 2737654, n = t.vertices;
+      if (e._debugGraphics && n.length > 0) {
+        e._debugGraphics.moveTo(n[0].x, n[0].y);
+        for (let r = 1; r < n.length; r++)
+          e._debugGraphics.lineTo(n[r].x, n[r].y);
+        e._debugGraphics.lineTo(n[0].x, n[0].y), e._debugGraphics.fill({ color: s, alpha: 0.25 }), e._debugGraphics.stroke({ color: 16711680, alignment: 0.5 });
+      }
     });
   }
 };
-e._debug = !1, e._enabled = !1, e._objects = /* @__PURE__ */ new Set();
-let c = e;
-const u = {
+e._debug = !1, e._enabled = !1, e._objects = /* @__PURE__ */ new Set(), e._debugGraphics = null;
+let o = e;
+const h = {
   debug: !1,
   autoInit: !1,
   engine: {},
@@ -83,29 +89,28 @@ const u = {
     enabled: !0
   }
 };
-class v extends f {
+class x extends p {
   initialize(i, t) {
     this._options = {
-      ...u,
+      ...h,
       ...t,
-      runner: { ...u.runner, ...t == null ? void 0 : t.runner },
-      engine: { ...u.engine, ...t == null ? void 0 : t.engine }
-    }, this._options.autoInit && c.initialize(this._options);
+      runner: { ...h.runner, ...t == null ? void 0 : t.runner },
+      engine: { ...h.engine, ...t == null ? void 0 : t.engine }
+    }, this._options.autoInit && o.initialize(this._options);
   }
   get system() {
-    return c;
+    return o;
   }
 }
-var d = /* @__PURE__ */ ((a) => (a.RECTANGLE = "rectangle", a.CIRCLE = "circle", a.CONVEX = "convex", a.TRAPEZOID = "trapezoid", a.POLYGON = "polygon", a.CHAMFER = "chamfer", a))(d || {});
-const h = class h extends w {
+const c = class c extends f {
   constructor(i = {}) {
-    super(), this.config = i, i.view && (this.view = this.add.existing(i.view)), i.bodyType && (this.bodyType = i.bodyType);
+    super(), this.config = i, this.bodyDefinition = {}, i.view && (this.view = this.add.existing(i.view)), i.bodyType && (this.bodyType = i.bodyType), i.bodyDefinition && (this.bodyDefinition = i.bodyDefinition);
   }
   get debugColor() {
-    return h.DEFAULT_DEBUG_COLOR;
+    return c.DEFAULT_DEBUG_COLOR;
   }
   get system() {
-    return c;
+    return o;
   }
   added() {
     this.createBody(), this.system.addToWorld(this);
@@ -114,19 +119,19 @@ const h = class h extends w {
     this.system.removeFromWorld(this.body);
   }
   createBody() {
-    var s, r;
-    const i = ((s = this.config.size) == null ? void 0 : s.width) || this.view.width, t = ((r = this.config.size) == null ? void 0 : r.height) || this.view.height;
+    var s, n;
+    const i = ((s = this.config.size) == null ? void 0 : s.width) || this.view.width, t = ((n = this.config.size) == null ? void 0 : n.height) || this.view.height;
     switch (this.bodyType) {
-      case d.RECTANGLE:
-        this.body = o.rectangle(this.x, this.y, i, t);
+      case "rectangle":
+        this.body = a.rectangle(this.x, this.y, i, t, this.bodyDefinition);
         break;
-      case d.CIRCLE:
-        this.body = o.circle(this.x, this.y, i * 0.5);
+      case "circle":
+        this.body = a.circle(this.x, this.y, i * 0.5, this.bodyDefinition);
         break;
-      case d.CONVEX:
+      case "convex":
         break;
-      case d.TRAPEZOID:
-        this.body = o.trapezoid(this.x, this.y, i, t, 0.5);
+      case "trapezoid":
+        this.body = a.trapezoid(this.x, this.y, i, t, 0.5, this.bodyDefinition);
         break;
     }
   }
@@ -134,11 +139,11 @@ const h = class h extends w {
     this.view && this.body && (this.x = this.body.position.x, this.y = this.body.position.y, this.rotation = this.body.angle);
   }
 };
-h.DEFAULT_DEBUG_COLOR = 2737654;
-let p = h;
+c.DEFAULT_DEBUG_COLOR = 2737654;
+let b = c;
 export {
-  p as Entity,
-  c as System,
-  v as default
+  b as Entity,
+  o as System,
+  x as default
 };
 //# sourceMappingURL=dill-pixel-plugin-matter-physics.mjs.map

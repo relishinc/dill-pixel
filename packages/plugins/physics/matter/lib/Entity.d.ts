@@ -1,20 +1,23 @@
+import { IBodyDefinition } from 'matter-js';
 import { Container, Size } from 'dill-pixel';
 import { IMatterPhysicsObject } from './interfaces';
+import { MatterBodyType } from './types';
 import { Container as PIXIContainer } from 'pixi.js';
-import { PhysicsBodyType } from './constants';
 import { System } from './System';
 
 export type EntityConfig = {
-    bodyType?: PhysicsBodyType;
+    bodyType?: MatterBodyType;
     size?: Size;
     view?: PIXIContainer;
+    bodyDefinition?: Partial<IBodyDefinition>;
 };
 export declare class Entity extends Container implements IMatterPhysicsObject {
     config: Partial<EntityConfig>;
     static readonly DEFAULT_DEBUG_COLOR: number;
     body: Matter.Body;
     view: PIXIContainer;
-    bodyType: PhysicsBodyType;
+    bodyType: MatterBodyType;
+    bodyDefinition: Partial<IBodyDefinition>;
     constructor(config?: Partial<EntityConfig>);
     get debugColor(): number;
     get system(): typeof System;

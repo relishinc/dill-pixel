@@ -10,7 +10,6 @@ export declare class Solid<T = any, A extends Application = Application> extends
     removed(): void;
     move(x: number, y: number): void;
     getAllRidingActors(): Actor[];
-    collidesWith(entity: Entity, dx: number, dy: number): boolean;
     handleActorInteractions(deltaX: number, deltaY: number, ridingActors?: Actor[]): void;
     protected handleCollisionChange(_isColliding?: boolean): void;
 }

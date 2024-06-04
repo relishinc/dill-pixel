@@ -15,9 +15,6 @@ export declare class Sensor<T = any, A extends Application = Application> extend
      * but not have this sensor be "pushed" by them
      */
     passThroughTypes: EntityType[];
-    protected _activeCollisions: Collision[] | null;
-    get activeCollisions(): Collision[] | null;
-    set activeCollisions(value: Collision[] | null);
     get collideables(): Entity[];
     added(): void;
     removed(): void;

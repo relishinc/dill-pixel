@@ -1,14 +1,15 @@
 import { IPlugin, Plugin } from './Plugin';
+import { UnresolvedAsset } from 'pixi.js';
 import { IScene } from '../display';
 import { Signal } from '../signals';
 import { IApplication } from '../core';
-import { AssetLoadingOptions, SceneImportListItem } from '../utils';
+import { AssetLike, AssetLoadingOptions, AssetTypes, SceneImportListItem } from '../utils';
 
 export interface IAssetsPlugin extends IPlugin {
     onLoadStart: Signal<() => void>;
     onLoadProgress: Signal<(progress: number) => void>;
     onLoadComplete: Signal<() => void>;
-    loadAssets(assets: string | string[]): Promise<void>;
+    loadAssets(assets: string | string[] | UnresolvedAsset | UnresolvedAsset[] | AssetLike | AssetLike[]): Promise<void>;
     loadBundles(bundle: string | string[]): Promise<void>;
     loadSceneAssets(scene: IScene | SceneImportListItem<any>, background?: boolean): Promise<void>;
     unloadSceneAssets(scene: IScene | SceneImportListItem<any>): Promise<void>;
@@ -27,7 +28,7 @@ export declare class AssetsPlugin extends Plugin implements IAssetsPlugin {
     initialize(_app: IApplication, options?: AssetLoadingOptions): Promise<void> | void;
     loadRequired(): Promise<void>;
     loadBackground(): void;
-    loadAssets(assets: string | string[]): Promise<void>;
+    loadAssets(assets: AssetTypes): Promise<void>;
     loadBundles(bundles: string | string[]): Promise<void>;
     unloadSceneAssets(scene: IScene | SceneImportListItem<any>): Promise<void>;
     loadSceneAssets(scene: IScene | SceneImportListItem<any>, background?: boolean): Promise<void>;

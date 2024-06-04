@@ -236,7 +236,7 @@ export declare class AudioManagerPlugin extends Plugin implements IAudioManagerP
     /**
      * Restores the audio state after it has been suspended.
      */
-    restore(): void;
+    restore(): Promise<void>;
     /**
      * Suspends the audio by setting the master volume to 0 and pausing all sounds.
      */

@@ -1,4 +1,4 @@
-import { AssetInitOptions, AssetsManifest, AssetsPreferences, Point, Texture } from 'pixi.js';
+import { AssetInitOptions, AssetsManifest, AssetsPreferences, UnresolvedAsset, Point, Texture } from 'pixi.js';
 
 /**
  * A generic constructor type.
@@ -76,17 +76,25 @@ export type ImportListItem<T = any> = {
     options?: any;
     autoLoad?: boolean;
 };
+export type AssetExtension = 'png' | 'jpg' | 'jpeg' | 'webp' | 'gif' | 'avif' | 'svg' | 'json' | 'xml' | 'txt' | 'mp4' | 'm4v' | 'webm' | 'ogg' | 'wav' | 'mp3' | string;
+export type AssetLike = {
+    alias?: string;
+    src: string | string[];
+    ext: AssetExtension;
+};
+export type BundleTypes = string | string[];
+export type AssetTypes = string | string[] | UnresolvedAsset | UnresolvedAsset[] | AssetLike | AssetLike[];
 export type AssetLoadingOptions = {
     manifest?: AssetsManifest | Promise<AssetsManifest> | string;
     initOptions?: Partial<AssetInitOptions>;
     assetPreferences?: Partial<AssetsPreferences>;
     preload?: {
-        assets?: string | string[];
-        bundles?: string | string[];
+        assets?: AssetTypes;
+        bundles?: BundleTypes;
     };
     background?: {
-        assets?: string | string[];
-        bundles?: string | string[];
+        assets?: AssetTypes;
+        bundles?: BundleTypes;
     };
 };
 type SceneItemOptions = {

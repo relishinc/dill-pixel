@@ -1,11 +1,12 @@
 import { Engine, Runner } from 'matter-js';
-import { Rectangle } from 'pixi.js';
+import { Container, Rectangle } from 'pixi.js';
 import { IMatterPhysicsObject } from './interfaces';
 import { MatterBodyLike } from './types';
 import { MatterPhysicsPluginOptions } from './MatterPhysicsPlugin';
 
 export declare class System {
     static pluginOptions: Partial<MatterPhysicsPluginOptions>;
+    static container: Container;
     private static _options;
     private static _debug;
     private static _enabled;
@@ -14,6 +15,7 @@ export declare class System {
     private static _bounds;
     private static _objects;
     private static _debugGraphics;
+    private static get app();
     static set enabled(value: boolean);
     static get enabled(): boolean;
     static set debug(value: boolean);
@@ -25,7 +27,7 @@ export declare class System {
     static initialize(options: Partial<MatterPhysicsPluginOptions>): void;
     static addToWorld(...objects: (IMatterPhysicsObject | MatterBodyLike)[]): void;
     static removeFromWorld(...objects: (IMatterPhysicsObject | MatterBodyLike)[]): void;
-    static update(): void;
+    private static update;
     static drawDebug(): void;
 }
 //# sourceMappingURL=System.d.ts.map
