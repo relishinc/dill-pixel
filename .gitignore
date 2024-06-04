@@ -15,8 +15,9 @@ node_modules
 npm-debug.log*
 examples/.cache
 examples/node_modules
-lib
 
+#lib folders
+lib
 packages/plugins/physics/arcade/lib
 packages/plugins/physics/snap/lib
 packages/plugins/physics/matter/lib
