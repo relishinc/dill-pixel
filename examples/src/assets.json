@@ -20,6 +20,15 @@
           "src": [
             "locales/fr.json"
           ]
+        },
+        {
+          "alias": [
+            "static/jar.png"
+          ],
+          "src": [
+            "static/jar@1x.png",
+            "static/jar@0.5x.png"
+          ]
         }
       ]
     },
@@ -308,8 +317,7 @@
       "assets": [
         {
           "alias": [
-            "required/jar.png",
-            "jar.png"
+            "required/jar.png"
           ],
           "src": [
             "required/jar@1x.png",

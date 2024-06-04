@@ -60,7 +60,8 @@
     "build:docs": "cd ./docs && npm run build",
     "dev:docs": "cd ./docs && npm run dev",
     "typedoc": "npm run version && typedoc --out typedoc src",
-    "version": "node ./scripts/generate-version.js"
+    "version": "node ./scripts/generate-version.js",
+    "clean": "node ./scripts/clean.mjs"
   },
   "repository": {
     "type": "git",

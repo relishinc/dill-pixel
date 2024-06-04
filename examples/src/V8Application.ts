@@ -1,4 +1,4 @@
-import { LocalStorageAdapter, create } from 'dill-pixel';
+import { create, LocalStorageAdapter } from 'dill-pixel';
 
 import EN from '@/locales/en';
 import { ExampleOutliner } from './ui/ExampleOutliner';
@@ -56,6 +56,7 @@ create({
   ],
   storageAdapters: [{ id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } }],
   scenes: [
+    { id: 'assets', debugLabel: 'Assets', namedExport: 'AssetScene', module: () => import('@/scenes/AssetScene') },
     {
       id: 'audio',
       debugLabel: 'Audio',

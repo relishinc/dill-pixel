@@ -1,11 +1,12 @@
 import type { DestroyOptions } from 'pixi.js';
-import { Container } from 'pixi.js';
+import { Container as PIXIContainer } from 'pixi.js';
 import { Application } from '../Application';
 import { FactoryContainer } from '../mixins/factory';
 import { WithSignals } from '../mixins';
 import { Signal } from '../signals';
 import type { ContainerLike, PointLike } from '../utils';
 import { bindAllMethods, Logger, resolvePointLike } from '../utils';
+import type { Container } from './Container';
 
 const _FlexContainer = WithSignals(FactoryContainer());
 
@@ -45,7 +46,7 @@ const defaultConfig = {
   padding: 0,
 };
 
-export interface IFlexContainer {
+export interface IFlexContainer extends Container {
   onLayoutComplete: Signal<() => void>;
   debug: boolean;
   config: FlexContainerConfig;
@@ -53,17 +54,17 @@ export interface IFlexContainer {
   containerWidth: number;
   containerHeight: number;
 
-  removeChildren<U extends Container>(): U[];
+  removeChildren<U extends PIXIContainer>(): U[];
 
-  removeChildAt<U extends Container>(index: number): U;
+  removeChildAt<U extends PIXIContainer>(index: number): U;
 
-  addChildAt<U extends Container>(child: U, index: number): U;
+  addChildAt<U extends PIXIContainer>(child: U, index: number): U;
 
-  setChildIndex<U extends Container>(child: U, index: number): void;
+  setChildIndex<U extends PIXIContainer>(child: U, index: number): void;
 
-  getChildIndex<U extends Container>(child: U): number;
+  getChildIndex<U extends PIXIContainer>(child: U): number;
 
-  getChildAt<U extends Container>(index: number): U;
+  getChildAt<U extends PIXIContainer>(index: number): U;
 
   setFlexChildren(): void;
 
@@ -71,7 +72,7 @@ export interface IFlexContainer {
 
   handleChildAdded(child: any): void;
 
-  deleteChild(child: Container): boolean;
+  deleteChild(child: PIXIContainer): boolean;
 
   layout(): void;
 
@@ -91,7 +92,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
   protected paddingRight: number = 0;
   protected paddingTop: number = 0;
   protected paddingBottom: number = 0;
-  protected _childMap = new Map<Container, Container>();
+  protected _childMap = new Map<PIXIContainer, PIXIContainer>();
   private _reparentAddedChild: boolean = true;
 
   constructor(config: Partial<FlexContainerConfig> = {}) {
@@ -109,7 +110,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
     this.layout();
   }
 
-  protected _flexChildren: Container[] = [];
+  protected _flexChildren: PIXIContainer[] = [];
 
   get flexChildren() {
     return this._flexChildren;
@@ -201,7 +202,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
    * Removes all the children from the container
    * Override because we need to ensure it returns the proper re-parented children
    */
-  public removeChildren = <U extends Container>() => {
+  public removeChildren = <U extends PIXIContainer>() => {
     const children = this.flexChildren;
     this.removeChild(...children);
     return children as U[];
@@ -211,7 +212,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
    * Removes a child from the container at the specified index
    * Override because we need to remove from the inner container
    */
-  public removeChildAt = <U extends Container>(index: number): U => {
+  public removeChildAt = <U extends PIXIContainer>(index: number): U => {
     return this.removeChild(this.flexChildren[index]) as U;
   };
 
@@ -219,7 +220,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
    * Adds a child to the container at the specified index
    * Override because we need to ensure it sets the child index properly
    */
-  public addChildAt = <U extends Container>(child: U, index: number) => {
+  public addChildAt = <U extends PIXIContainer>(child: U, index: number) => {
     const newChild = this.add.existing(child);
     this.setChildIndex(newChild, index);
     return newChild;
@@ -229,8 +230,8 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
    * Sets the index of the child in the container
    * Override because we need to ensure it targets the parent container that we added
    */
-  public setChildIndex = <U extends Container>(child: U, index: number) => {
-    const actualChild = this._childMap.get(child as Container);
+  public setChildIndex = <U extends PIXIContainer>(child: U, index: number) => {
+    const actualChild = this._childMap.get(child as PIXIContainer);
     if (actualChild) {
       super.setChildIndex(actualChild, index);
       this.setFlexChildren();
@@ -245,8 +246,8 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
    * @param {number} index
    * @returns {U}
    */
-  public getChildIndex = <U extends Container>(child: U) => {
-    if (this._childMap.has(child as Container)) {
+  public getChildIndex = <U extends PIXIContainer>(child: U) => {
+    if (this._childMap.has(child as PIXIContainer)) {
       return super.getChildIndex(child.parent);
     }
     return super.getChildIndex(child);
@@ -256,7 +257,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
    * Gets the child at the specified index
    * Override due to re-parenting
    */
-  public getChildAt = <U extends Container>(index: number) => {
+  public getChildAt = <U extends PIXIContainer>(index: number) => {
     return super.getChildAt(index)?.getChildAt(0) as U;
   };
 
@@ -272,7 +273,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
    * Override because we need to ensure it returns the proper re-parented children
    * @param children
    */
-  public removeChild(...children: Container[]): Container {
+  public removeChild(...children: PIXIContainer[]): PIXIContainer {
     if (this._reparentAddedChild) {
       children.forEach((child) => {
         const actualChild = this._childMap.get(child);
@@ -306,7 +307,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
    * Ensures we delete the child from the map when it's removed
    * @protected
    */
-  protected handleChildRemoved(child: Container) {
+  protected handleChildRemoved(child: PIXIContainer) {
     if (this._reparentAddedChild) {
       if (!this.deleteChild(child)) {
         child = (child as Container).getChildAt(0);
@@ -321,7 +322,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
    * @returns {boolean}
    * @protected
    */
-  protected deleteChild(child: Container): boolean {
+  protected deleteChild(child: PIXIContainer): boolean {
     const isInMap = this._childMap.has(child as Container);
     if (isInMap) {
       // disconnect signal
@@ -449,7 +450,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
     let lineItems: { index: number; width: number; height: number }[] = [];
     let lineStart = 0;
 
-    const shouldWrap = (childRef: Container, x: number, y: number) =>
+    const shouldWrap = (childRef: PIXIContainer, x: number, y: number) =>
       (flexDirection === 'row' && x + childRef.width + gap! > width!) ||
       (flexDirection === 'column' && y + childRef.height + gap! > height!);
 
@@ -465,7 +466,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
       columnWidth = 0;
     };
 
-    const updateLayoutVariables = (childRef: Container) => {
+    const updateLayoutVariables = (childRef: PIXIContainer) => {
       if (flexDirection === 'row') {
         x += childRef.width + gap!;
         rowHeight = Math.max(rowHeight, childRef.height);
@@ -514,7 +515,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
       });
     };
 
-    const handleAlignment = (newLayoutProps: { x: number; y: number }[], items: (Container | null)[]) => {
+    const handleAlignment = (newLayoutProps: { x: number; y: number }[], items: (PIXIContainer | null)[]) => {
       newLayoutProps.forEach((props, index) => {
         const childRef = items[index] as Container;
         if (!childRef) return;
