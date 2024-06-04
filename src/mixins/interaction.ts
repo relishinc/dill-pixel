@@ -1,8 +1,8 @@
-import { AllFederatedEventMap, DestroyOptions, FederatedEvent } from 'pixi.js';
-import { PIXIContainer } from '../pixi';
+import type { AllFederatedEventMap, DestroyOptions } from 'pixi.js';
+import { Container, FederatedEvent } from 'pixi.js';
 import { Signal } from '../signals';
 
-import { Constructor } from '../utils/types';
+import type { Constructor } from '../utils';
 
 // gets all the event names from the PIXI event map
 type InteractionEventName = keyof AllFederatedEventMap;
@@ -13,7 +13,7 @@ export interface IInteractive {
   onInteraction: (eventName: InteractionEventName) => InteractionSignal;
 }
 
-export function Interactive<TBase extends Constructor<PIXIContainer>>(Base: TBase): TBase & Constructor<IInteractive> {
+export function Interactive<TBase extends Constructor<Container>>(Base: TBase): TBase & Constructor<IInteractive> {
   return class extends Base implements IInteractive {
     private _signals: Map<InteractionEventName, InteractionSignal> = new Map();
 

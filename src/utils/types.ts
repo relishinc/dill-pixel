@@ -1,3 +1,4 @@
+import type {AssetInitOptions, AssetsManifest, AssetsPreferences, UnresolvedAsset} from 'pixi.js';
 import {Point, Texture} from 'pixi.js';
 
 /**
@@ -58,21 +59,63 @@ export type ImportListItemModule<T> = (() => Promise<any>) | Promise<any> | Cons
  * @template T The type of the instance that the constructor creates.
  */
 export type ImportListItem<T = any> = {
-	id: string;
-	module: ImportListItemModule<T>;
-	namedExport?: string;
-	options?: any;
-	autoLoad?: boolean;
+  id: string;
+  module: ImportListItemModule<T>;
+  namedExport?: string;
+  options?: any;
+  autoLoad?: boolean;
+};
+
+export type AssetExtension =
+  | 'png'
+  | 'jpg'
+  | 'jpeg'
+  | 'webp'
+  | 'gif'
+  | 'avif'
+  | 'svg'
+  | 'json'
+  | 'xml'
+  | 'txt'
+  | 'mp4'
+  | 'm4v'
+  | 'webm'
+  | 'ogg'
+  | 'wav'
+  | 'mp3'
+  | string;
+
+export type AssetLike = {
+  alias?: string;
+  src: string | string[];
+  ext: AssetExtension;
+};
+export type BundleTypes = string | string[];
+
+export type AssetTypes = string | string[] | UnresolvedAsset | UnresolvedAsset[] | AssetLike | AssetLike[];
+
+export type AssetLoadingOptions = {
+  manifest?: AssetsManifest | Promise<AssetsManifest> | string;
+  initOptions?: Partial<AssetInitOptions>;
+  assetPreferences?: Partial<AssetsPreferences>;
+  preload?: {
+    assets?: AssetTypes;
+    bundles?: BundleTypes;
+  };
+  background?: {
+    assets?: AssetTypes;
+    bundles?: BundleTypes;
+  };
 };
 
 type SceneItemOptions = {
-	debugLabel?: string;
-	plugins?: string[];
-	assets?: string | string[];
-	autoUnloadAssets?: boolean;
+  debugLabel?: string;
+  plugins?: string[];
+  assets?: AssetLoadingOptions;
+  autoUnloadAssets?: boolean;
 };
 
-export type SceneImportListItem<T> = ImportListItem<T> & SceneItemOptions;
+export type SceneImportListItem<T> = ImportListItem<T> & Partial<SceneItemOptions>;
 
 /**
  * A type that represents an import list.
@@ -82,53 +125,54 @@ export type ImportList<T> = ImportListItem<T>[];
 export type SceneImportList<T> = SceneImportListItem<T>[];
 
 export type AppSize = {
-	width: number;
-	height: number;
-	screenWidth: number;
-	screenHeight: number;
+  width: number;
+  height: number;
+  screenWidth: number;
+  screenHeight: number;
 };
 
 // from gsap
 export type EaseString =
-	| 'none'
-	| 'power1'
-	| 'power1.in'
-	| 'power1.out'
-	| 'power1.inOut'
-	| 'power2'
-	| 'power2.in'
-	| 'power2.out'
-	| 'power2.inOut'
-	| 'power3'
-	| 'power3.in'
-	| 'power3.out'
-	| 'power3.inOut'
-	| 'power4'
-	| 'power4.in'
-	| 'power4.out'
-	| 'power4.inOut'
-	| 'back'
-	| 'back.in'
-	| 'back.out'
-	| 'back.inOut'
-	| 'bounce'
-	| 'bounce.in'
-	| 'bounce.out'
-	| 'bounce.inOut'
-	| 'circ'
-	| 'circ.in'
-	| 'circ.out'
-	| 'circ.inOut'
-	| 'elastic'
-	| 'elastic.in'
-	| 'elastic.out'
-	| 'elastic.inOut'
-	| 'expo'
-	| 'expo.in'
-	| 'expo.out'
-	| 'expo.inOut'
-	| 'sine'
-	| 'sine.in'
-	| 'sine.out'
-	| 'sine.inOut'
-	| ({} & string);
+  | 'none'
+  | 'power1'
+  | 'power1.in'
+  | 'power1.out'
+  | 'power1.inOut'
+  | 'power2'
+  | 'power2.in'
+  | 'power2.out'
+  | 'power2.inOut'
+  | 'power3'
+  | 'power3.in'
+  | 'power3.out'
+  | 'power3.inOut'
+  | 'power4'
+  | 'power4.in'
+  | 'power4.out'
+  | 'power4.inOut'
+  | 'back'
+  | 'back.in'
+  | 'back.out'
+  | 'back.inOut'
+  | 'bounce'
+  | 'bounce.in'
+  | 'bounce.out'
+  | 'bounce.inOut'
+  | 'circ'
+  | 'circ.in'
+  | 'circ.out'
+  | 'circ.inOut'
+  | 'elastic'
+  | 'elastic.in'
+  | 'elastic.out'
+  | 'elastic.inOut'
+  | 'expo'
+  | 'expo.in'
+  | 'expo.out'
+  | 'expo.inOut'
+  | 'sine'
+  | 'sine.in'
+  | 'sine.out'
+  | 'sine.inOut';
+
+export type { Spine } from '../plugins/spine/pixi-spine';

@@ -1,8 +1,7 @@
 import { Bounds, Container, DestroyOptions, Graphics, PointLike } from 'pixi.js';
-import { Application } from '../../core/Application';
-import { resolvePointLike } from '../../utils/functions';
-import { bindAllMethods } from '../../utils/methodBinding';
-import { IFocusable } from './FocusManagerPlugin';
+import { Application } from '../../Application';
+import { bindAllMethods, resolvePointLike } from '../../utils';
+import type { IFocusable } from './FocusManagerPlugin';
 
 export type FocusOutlinerConfig = {
   color: number;

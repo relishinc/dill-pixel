@@ -1,10 +1,8 @@
-import { Application, IApplication } from '../core/Application';
+import type { IApplication, ICoreFunctions, ICoreSignals } from '../core';
+import { coreFunctionRegistry, coreSignalRegistry } from '../core';
 import { SignalConnection, SignalConnections } from '../signals';
-import { bindAllMethods } from '../utils/methodBinding';
-import { coreFunctionRegistry } from '../core/coreFunctionRegistry';
-import { ICoreFunctions } from '../core/ICoreFunctions';
-import { ICoreSignals } from '../core/ICoreSignals';
-import { coreSignalRegistry } from '../core/coreSignalRegistry';
+import { bindAllMethods } from '../utils';
+import { Application } from '../Application';
 
 export interface IPlugin {
   id: string;

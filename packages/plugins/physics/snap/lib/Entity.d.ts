@@ -1,5 +1,5 @@
-import { Bounds, Rectangle } from 'pixi.js';
-import { Application, Container, PIXIContainer } from 'dill-pixel';
+import { Container as PIXIContianer, Bounds, Rectangle } from 'pixi.js';
+import { Application, Container } from 'dill-pixel';
 import { ICollider } from './ICollider';
 import { System } from './System';
 import { EntityType } from './types';
@@ -14,7 +14,7 @@ export declare class Entity<T = any, A extends Application = Application> extend
         outerBounds: number;
     };
     type: EntityType;
-    view: PIXIContainer;
+    view: PIXIContianer;
     isCollideable: boolean;
     xRemainder: number;
     yRemainder: number;
@@ -32,9 +32,13 @@ export declare class Entity<T = any, A extends Application = Application> extend
     get right(): number;
     get system(): typeof System;
     get collideables(): Entity[];
+    preUpdate(): void;
+    update(deltaTime?: number): void;
+    postUpdate(): void;
     getWorldBounds(): Bounds | Rectangle;
     getBoundingBox(): Rectangle;
     getOuterBoundingBox(): Rectangle | null;
+    collidesWith(entity: Entity, dx?: number, dy?: number): boolean;
     protected initialize(): void;
 }
 //# sourceMappingURL=Entity.d.ts.map

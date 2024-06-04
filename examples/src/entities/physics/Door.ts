@@ -27,7 +27,14 @@ export class Door extends Sensor<DoorConfig> {
   }
 
   update(deltaTime: number) {
+    super.update(deltaTime);
     this.moveY(System.gravity * deltaTime, null);
+    const player = System.getNearbyEntities(this, (entity) => entity.type === 'Player')[0];
+    if (this.collidesWith(player)) {
+      this.view.tint = 0x0;
+    } else {
+      this.view.tint = this.config.color;
+    }
   }
 
   protected initialize() {
@@ -38,13 +45,5 @@ export class Door extends Sensor<DoorConfig> {
       tint: this.config.color,
       anchor: 0.5,
     });
-  }
-
-  protected handleCollisionChange(isColliding: boolean) {
-    if (isColliding) {
-      this.view.tint = 0x0;
-    } else {
-      this.view.tint = this.config.color;
-    }
   }
 }

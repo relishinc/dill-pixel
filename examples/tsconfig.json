@@ -7,9 +7,21 @@
       "@/*": ["src/*"],
       "dill-pixel/*": ["../src/*"],
       "@dill-pixel/plugin-snap-physics/*": ["../packages/plugins/physics/snap/src/*"],
+      "@dill-pixel/plugin-arcade-physics/*": ["../packages/plugins/physics/arcade/src/*"],
+      "@dill-pixel/plugin-matter-physics/*": ["../packages/plugins/physics/matter/src/*"],
+      "@dill-pixel/storage-adapter-firebase/*": ["../packages/storage-adapters/firebase/src/*"],
       "@dill-pixel/storage-adapter-supabase/*": ["../packages/storage-adapters/supabase/src/*"]
-    }
+    },
+    "types": ["vite/client"] // added this to resolve errors when using import.meta.env
   },
-  "include": ["src/**/*.ts", "src/**/*.json"],
+  "references": [
+    { "path": ".." },
+    { "path": "../packages/plugins/physics/snap" },
+    { "path": "../packages/plugins/physics/arcade" },
+    { "path": "../packages/plugins/physics/matter" },
+    { "path": "../packages/storage-adapters/firebase" },
+    { "path": "../packages/storage-adapters/supabase" }
+  ],
+  "include": ["src/**/*.ts", "src/**/*.json", "../packages/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

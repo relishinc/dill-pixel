@@ -1,5 +1,5 @@
-import { Container, Graphics, Point } from 'pixi.js';
-import { IApplication, ICamera, Logger, PIXIContainer, Signal } from 'dill-pixel';
+import { Container, Graphics, Point, Ticker } from 'pixi.js';
+import { IApplication, ICamera, Logger, Signal } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { Sensor } from './Sensor';
@@ -8,6 +8,7 @@ import { SpatialHashGrid } from './SpatialHashGrid';
 import { Collision, EntityType, Side, SpatialHashGridFilter } from './types';
 import { Wall } from './Wall';
 import { getIntersectionArea } from './utils';
+import { SnapPhysicsPlugin } from './SnapPhysicsPlugin';
 
 type SystemBoundary = {
   width: number;
@@ -29,7 +30,7 @@ type CustomSnapPhysicsBoundaryOptions = OptionalSnapPhysicsBoundaryOptions & Req
 type SnapPhysicsSystemOptions = {
   gravity: number;
   fps: number;
-  container: PIXIContainer;
+  container: Container;
   debug: boolean;
   boundary: CustomSnapPhysicsBoundaryOptions;
   collisionResolver: (collision: Collision) => boolean;
@@ -38,7 +39,8 @@ type SnapPhysicsSystemOptions = {
 };
 
 export class System {
-  public static DEFAULT_COLLISION_THRESHOLD: number = 2;
+  public static DEFAULT_COLLISION_THRESHOLD: number = 0;
+  public static plugin: SnapPhysicsPlugin;
   public static app: IApplication;
   public static container: Container<any>;
   public static grid: SpatialHashGrid | null;
@@ -49,14 +51,42 @@ export class System {
   static actors: Actor[] = [];
   static solids: Solid[] = [];
   static sensors: Sensor[] = [];
-  static enabled: boolean = true;
   static gravity: number = 10;
   static onCollision: Signal<(collision: Collision) => void> = new Signal<(collision: Collision) => void>();
   static worldBounds: Wall[] = [];
   static boundary: SystemBoundary;
   static camera?: ICamera;
   static collisionThreshold = 8;
+  static updateHooks: Set<(deltaTime: number) => void> = new Set();
+  static preUpdateHooks: Set<(deltaTime: number) => void> = new Set();
+  static postUpdateHooks: Set<(deltaTime: number) => void> = new Set();
   private static gfx: Graphics;
+  private static _ticker: Ticker;
+
+  private static _enabled: boolean = false;
+
+  static get enabled() {
+    return System._enabled;
+  }
+
+  static set enabled(value: boolean) {
+    System._enabled = value;
+    if (System._enabled) {
+      if (!System._ticker) {
+        System._ticker = new Ticker();
+      }
+      System._ticker.maxFPS = System.fps;
+      System._ticker.start();
+      System._ticker.add(System.update);
+    } else {
+      if (System._ticker) {
+        System._ticker.stop();
+        System._ticker.destroy();
+        // @ts-expect-error ticker can't be null
+        System._ticker = null;
+      }
+    }
+  }
 
   private static _collisionResolver: ((collision: Collision) => boolean) | null = null;
 
@@ -73,7 +103,7 @@ export class System {
   }
 
   static get all(): Entity[] {
-    return [...System.actors, ...System.solids];
+    return [...System.actors, ...System.solids, ...System.sensors];
   }
 
   static get totalEntities(): number {
@@ -86,6 +116,7 @@ export class System {
     } else {
       System.grid = new SpatialHashGrid(cellSize, true);
     }
+    System.plugin.options.useSpatialHashGrid = true;
   }
 
   static removeSpatialHashGrid() {
@@ -212,14 +243,27 @@ export class System {
     return intersection.area > 0 && intersection.area > System.collisionThreshold;
   }
 
-  static update(deltaTime: number) {
+  static update(ticker: Ticker) {
     if (!System.enabled) {
       return;
     }
+    const deltaTime = ticker.deltaTime;
     if (!System.container) {
       Logger.error('SnapPhysicsPlugin: World container not set!');
     }
+
+    if (System.preUpdateHooks) {
+      System.preUpdateHooks.forEach((hook) => hook(deltaTime));
+    }
+    if (System.updateHooks) {
+      System.updateHooks.forEach((hook) => hook(deltaTime));
+    }
+
     // Implement world step logic
+    System.all.forEach((entity: Entity) => {
+      entity.preUpdate();
+    });
+
     System.solids.forEach((solid: Solid) => {
       solid.update(deltaTime);
     });
@@ -230,16 +274,24 @@ export class System {
       actor.update(deltaTime);
     });
 
+    System.all.forEach((entity: Entity) => {
+      entity.postUpdate();
+    });
+
+    if (System.postUpdateHooks) {
+      System.postUpdateHooks.forEach((hook) => hook(deltaTime));
+    }
+
+    if (System.camera) {
+      System.camera.update();
+    }
+
     if (System.debug) {
       System.drawDebug();
     } else {
       if (System.gfx) {
         System.gfx.clear();
       }
-    }
-
-    if (System.camera) {
-      System.camera.update();
     }
   }
 
@@ -320,6 +372,7 @@ export class System {
       System.gfx
         .rect(bounds.x, bounds.y, bounds.width, bounds.height)
         .stroke({ width: 1, color: entity.debugColors.bounds, alignment: 0.5 });
+
       if (outerBounds) {
         System.gfx
           .rect(outerBounds.x, outerBounds.y, outerBounds.width, outerBounds.height)
@@ -332,18 +385,16 @@ export class System {
     }
   }
 
-  static setContainer(container: PIXIContainer) {
+  static setContainer(container: Container) {
     System.container = container;
   }
 
   static initialize(opts: Partial<SnapPhysicsSystemOptions>) {
-    System.enabled = true;
     if (opts.gravity) {
       System.gravity = opts.gravity;
     }
     if (opts.fps) {
       System.fps = opts.fps;
-      this.app.ticker.maxFPS = opts.fps;
     }
     if (opts.container) {
       System.setContainer(opts.container);
@@ -385,7 +436,10 @@ export class System {
   }
 
   static cleanup() {
-    console.log('SYSTEM CLEANUP');
+    System.enabled = false;
+    System.postUpdateHooks.clear();
+    System.preUpdateHooks.clear();
+    System.updateHooks.clear();
     if (System.worldBounds) {
       System.worldBounds.forEach((wall: Wall) => {
         wall.parent.removeChild(wall);
@@ -415,10 +469,10 @@ export class System {
       System.camera = null;
     }
 
-    this.solids = [];
-    this.actors = [];
-    this.sensors = [];
-    this.typeMap.clear();
-    this.worldBounds = [];
+    System.solids = [];
+    System.actors = [];
+    System.sensors = [];
+    System.typeMap.clear();
+    System.worldBounds = [];
   }
 }

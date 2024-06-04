@@ -1,22 +1,28 @@
 import { Segment, SegmentConfig } from '@/entities/physics/Segment';
 import { Point, Pool } from 'pixi.js';
 import { System } from '@dill-pixel/plugin-snap-physics';
-import { PointLike, resolvePointLike } from 'dill-pixel';
+import { Container, PointLike, resolvePointLike } from 'dill-pixel';
 
 export class EndlessRunner {
+  static container: Container;
   static movement: Point = new Point();
   static pool: Pool<Segment> = new Pool(Segment, 10);
   static segments: Set<Segment> = new Set();
   static width: number;
   private static _totalWidth: number = 0;
 
+  static get currentWidth() {
+    return EndlessRunner._totalWidth;
+  }
+
   static get hasEnoughSegments() {
-    return EndlessRunner._totalWidth >= EndlessRunner.width * 1.5;
+    return EndlessRunner._totalWidth >= EndlessRunner.width;
   }
 
   static createSegment(config: SegmentConfig) {
+    config.container = EndlessRunner.container ?? config?.container;
     const segment = this.pool.get(config);
-    segment.x = EndlessRunner._totalWidth;
+    segment.setPosition(EndlessRunner._totalWidth, 0);
     EndlessRunner.segments.add(segment);
     EndlessRunner.cacheTotalWidth();
     return segment;
@@ -29,7 +35,11 @@ export class EndlessRunner {
   }
 
   static update(deltaTime: number) {
-    this.segments.forEach((segment) => {
+    EndlessRunner.segments.forEach((segment) => {
+      if (segment.x <= -segment.width) {
+        EndlessRunner.removeSegment(segment);
+        return;
+      }
       segment.update(deltaTime);
     });
     if (System.grid) {
@@ -37,17 +47,22 @@ export class EndlessRunner {
     }
   }
 
-  static initialize(width: number, movement: PointLike) {
+  static initialize(width: number, movement: PointLike, container: Container) {
+    EndlessRunner.container = container;
     EndlessRunner.width = width;
     EndlessRunner.movement = resolvePointLike(movement, true);
   }
 
   public static destroy() {
+    EndlessRunner.clear();
+    EndlessRunner._totalWidth = EndlessRunner.width = 0;
+  }
+
+  public static clear() {
     EndlessRunner.segments.forEach((segment) => {
-      segment.destroy();
+      EndlessRunner.removeSegment(segment);
     });
     EndlessRunner.segments.clear();
-    EndlessRunner._totalWidth = EndlessRunner.width = 0;
   }
 
   private static cacheTotalWidth() {

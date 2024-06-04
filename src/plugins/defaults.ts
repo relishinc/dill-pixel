@@ -1,55 +1,65 @@
-import type { ImportList } from '../utils/types';
-import { IPlugin } from './Plugin';
+import type { ImportList } from '../utils';
+import type { IPlugin } from './Plugin';
+import { AssetsPlugin } from './AssetsPlugin';
+import { WebEventsPlugin } from './WebEventsPlugin';
+import { SceneManagerPlugin } from './SceneManagerPlugin';
+import { InputPlugin } from './input';
+import { KeyboardPlugin } from './KeyboardPlugin';
+import { FocusManagerPlugin } from './focus';
+import { PopupManagerPlugin } from './PopupManagerPlugin';
+import { AudioManagerPlugin } from './audio';
+import { i18nPlugin } from './i18nPlugin';
+import { ResizerPlugin } from './ResizerPlugin';
 
 export const defaultPlugins: ImportList<IPlugin> = [
   {
     id: 'assets',
-    module: () => import('./AssetsPlugin'),
+    module: AssetsPlugin,
     namedExport: 'AssetsPlugin',
   },
   {
     id: 'webEvents',
-    module: () => import('./WebEventsPlugin'),
+    module: WebEventsPlugin,
     namedExport: 'WebEventsPlugin',
   },
   {
     id: 'scenes',
-    module: () => import('./SceneManagerPlugin'),
+    module: SceneManagerPlugin,
     namedExport: 'SceneManagerPlugin',
   },
   {
     id: 'input',
-    module: () => import('./input/InputPlugin'),
+    module: InputPlugin,
     namedExport: 'InputPlugin',
   },
   {
     id: 'keyboard',
-    module: () => import('./KeyboardPlugin'),
+    module: KeyboardPlugin,
     namedExport: 'KeyboardPlugin',
   },
   {
     id: 'focus',
-    module: () => import('./focus/FocusManagerPlugin'),
+    module: FocusManagerPlugin,
     namedExport: 'FocusManagerPlugin',
   },
   {
     id: 'popups',
-    module: () => import('./popups/PopupManagerPlugin'),
+    module: PopupManagerPlugin,
     namedExport: 'PopupManagerPlugin',
   },
   {
     id: 'audio',
-    module: () => import('./audio/AudioManagerPlugin'),
+    module: AudioManagerPlugin,
     namedExport: 'AudioManagerPlugin',
   },
   {
     id: 'i18n',
-    module: () => import('./i18nPlugin'),
+    module: i18nPlugin,
     namedExport: 'i18nPlugin',
   },
   {
     id: 'resizer',
-    module: () => import('./ResizerPlugin'),
+    module: ResizerPlugin,
     namedExport: 'ResizerPlugin',
   },
 ] as const;

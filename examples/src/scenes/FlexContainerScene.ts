@@ -2,6 +2,7 @@ import { AlignItems, clamp, FlexContainer, FlexDirection, FlexWrap, JustifyConte
 import { Graphics, TextStyle } from 'pixi.js';
 
 import { BaseScene } from './BaseScene';
+import { GUIController } from 'dat.gui';
 
 const whiteTextStyle = (size: number) =>
   new TextStyle({
@@ -29,6 +30,8 @@ export class FlexContainerScene extends BaseScene {
   };
   protected backing: Graphics;
   protected flexContainer: FlexContainer;
+  protected widthUI: GUIController;
+  protected heightUI: GUIController;
 
   configureGUI() {
     this.gui
@@ -38,11 +41,11 @@ export class FlexContainerScene extends BaseScene {
       })
       .name('Show backing');
 
-    this.gui.add(this.config, 'width', 0, 2000, 1).onChange(() => {
+    this.widthUI = this.gui.add(this.config, 'width', 0, 2000, 1).onChange(() => {
       this.addItems();
     });
 
-    this.gui.add(this.config, 'height', 0, 2000, 1).onChange(() => {
+    this.heightUI = this.gui.add(this.config, 'height', 0, 2000, 1).onChange(() => {
       this.addItems();
     });
 
@@ -124,6 +127,7 @@ export class FlexContainerScene extends BaseScene {
     if (this.backing) {
       this.backing.position.set(-this.backing.width / 2, -this.backing.height / 2);
       this.flexContainer.position.set(this.backing.position.x, this.backing.position.y);
+
       if (this.config.useBacking) {
         this.flexContainer.size = [this.backing.width, this.backing.height];
       }

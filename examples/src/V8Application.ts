@@ -1,42 +1,75 @@
+import { Application, create, LocalStorageAdapter } from 'dill-pixel';
+
 import EN from '@/locales/en';
-import { AppConfig, Application, create, LoadSceneMethod, LocalStorageAdapter } from 'dill-pixel';
-
-import { Assets } from 'pixi.js';
-import manifest from './assets.json';
 import { ExampleOutliner } from './ui/ExampleOutliner';
-import TestAdapter from '@/adapters/TestAdapter';
-
+import manifest from './assets.json';
+import type { IFirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
 import { SupabaseAdapter } from '@dill-pixel/storage-adapter-supabase';
 import type { Database } from './supabase';
 
 export class V8Application extends Application {
-  setup() {
-    return Assets.loadBundle(['required', 'game']);
+  get firebase(): IFirebaseAdapter {
+    return this.store.getAdapter('firebase') as unknown as IFirebaseAdapter;
   }
 
   get supabase(): SupabaseAdapter<Database> {
-    return this.store.getAdapter('supabase') as SupabaseAdapter<Database>;
+    return this.store.getAdapter('supabase') as unknown as SupabaseAdapter<Database>;
   }
 }
 
-const appConfig: AppConfig = {
-  id: 'V8Application',
-  manifest: manifest,
-  antialias: true,
-  plugins: [
-    {
-      id: 'physics',
-      module: () => import('@dill-pixel/plugin-snap-physics'),
-      options: {
-        useSpatialHashGrid: false,
-        gridCellSize: 300,
-        fps: 60,
-      },
-      autoLoad: false,
+create(
+  {
+    id: 'V8Application',
+    antialias: true,
+    resizer: {
+      minSize: { width: 500, height: 800 },
     },
-  ],
-  storageAdapters: [
-    { id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } },
+    defaultSceneLoadMethod: 'exitEnter',
+    useSpine: true,
+    showStats: true,
+    showSceneDebugMenu: true,
+    focusOptions: {
+      outliner: ExampleOutliner,
+    },
+    assets: {
+      manifest: manifest,
+      preload: {
+        bundles: ['required', 'game'],
+      },
+      background: {
+        bundles: ['audio', 'spine'],
+      },
+    },
+    plugins: [
+      {
+        id: 'physics',
+        module: () => import('@dill-pixel/plugin-snap-physics'),
+        options: {
+          useSpatialHashGrid: false,
+          gridCellSize: 300,
+        },
+        autoLoad: false,
+      },
+      {
+        id: 'arcade',
+        module: () => import('@dill-pixel/plugin-arcade-physics'),
+        options: {
+          debug: true,
+          useTree: true,
+        },
+        autoLoad: false,
+      },
+      {
+        id: 'matter',
+        module: () => import('@dill-pixel/plugin-matter-physics'),
+        options: {
+          debug: true,
+        },
+        autoLoad: false,
+      },
+    ],
+    storageAdapters: [
+      { id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } },
     {
       id: 'supabase',
       namedExport: 'SupabaseAdapter',
@@ -46,101 +79,148 @@ const appConfig: AppConfig = {
         anonKey: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5bXNjbGZzY2RwenlndXVpb3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTUxOTAzNjAsImV4cCI6MjAzMDc2NjM2MH0.QomlbjsmzucuX2RIJMsUxD12gMazY3e4-G4laYhr1PM`,
       },
     },
-    { id: 'test', module: TestAdapter, options: { foo: 'bar' } },
-  ],
-  scenes: [
-    {
-      id: 'audio',
-      debugLabel: 'Audio',
-      namedExport: 'AudioScene',
-      module: () => import('@/scenes/AudioScene'),
-    },
-    {
-      id: 'voiceover',
-      debugLabel: 'Voiceover / Captions',
-      namedExport: 'VoiceoverScene',
-      module: () => import('@/scenes/VoiceoverScene'),
-    },
-    {
-      id: 'focus',
-      debugLabel: 'Focus Management',
-      namedExport: 'FocusScene',
-      module: () => import('@/scenes/FocusScene'),
-    },
-    {
-      id: 'popups',
-      debugLabel: 'Popup Management',
-      namedExport: 'PopupScene',
-      module: () => import('@/scenes/PopupScene'),
-    },
-    {
-      id: 'spine',
-      debugLabel: 'Spine Testing',
-      namedExport: 'SpineScene',
-      module: () => import('@/scenes/SpineScene'),
-    },
-    {
-      id: 'flexContainer',
-      debugLabel: 'Flex Container',
-      namedExport: 'FlexContainerScene',
-      module: () => import('@/scenes/FlexContainerScene'),
-    },
-    {
-      id: 'uiCanvas',
-      debugLabel: 'UICanvas',
-      namedExport: 'UICanvasScene',
-      module: () => import('@/scenes/UICanvasScene'),
-    },
-    {
-      id: 'physics',
-      debugLabel: 'Snap Physics',
-      namedExport: 'SnapPhysicsScene',
-      module: () => import('@/scenes/SnapPhysicsScene'),
-      plugins: ['physics'],
-    },
-    {
-      id: 'runner',
-      debugLabel: 'Endless Runner',
-      namedExport: 'EndlessRunnerScene',
-      module: () => import('@/scenes/EndlessRunnerScene'),
-      plugins: ['physics'],
-    },
+      {
+        id: 'firebase',
+        namedExport: 'FirebaseAdapter',
+        module: () => import('@dill-pixel/storage-adapter-firebase'),
+      },
+    ],
+    scenes: [
+      {
+        id: 'assets',
+        debugLabel: 'Assets',
+        namedExport: 'AssetScene',
+        module: () => import('@/scenes/AssetScene'),
+      },
+      {
+        id: 'audio',
+        debugLabel: 'Audio',
+        namedExport: 'AudioScene',
+        module: () => import('@/scenes/AudioScene'),
+      },
+      {
+        id: 'voiceover',
+        debugLabel: 'Voiceover / Captions',
+        namedExport: 'VoiceoverScene',
+        module: () => import('@/scenes/VoiceoverScene'),
+      },
+      {
+        id: 'focus',
+        debugLabel: 'Focus Management',
+        namedExport: 'FocusScene',
+        module: () => import('@/scenes/FocusScene'),
+      },
+      {
+        id: 'popups',
+        debugLabel: 'Popup Management',
+        namedExport: 'PopupScene',
+        module: () => import('@/scenes/PopupScene'),
+      },
+      {
+        id: 'spine',
+        debugLabel: 'Spine Testing',
+        namedExport: 'SpineScene',
+        assets: {
+          preload: {
+            bundles: ['spine'],
+          },
+        },
+        module: () => import('@/scenes/SpineScene'),
+      },
+      {
+        id: 'flexContainer',
+        debugLabel: 'Flex Container',
+        namedExport: 'FlexContainerScene',
+        module: () => import('@/scenes/FlexContainerScene'),
+      },
+      {
+        id: 'uiCanvas',
+        debugLabel: 'UICanvas',
+        namedExport: 'UICanvasScene',
+        module: () => import('@/scenes/UICanvasScene'),
+      },
+
+      {
+        id: 'runner',
+        debugLabel: 'Endless Runner',
+        namedExport: 'EndlessRunnerScene',
+        module: () => import('@/scenes/EndlessRunnerScene'),
+        plugins: ['physics'],
+        assets: {
+          preload: {
+            bundles: ['spine'],
+          },
+        },
+      },
+      {
+        id: 'physics',
+        debugLabel: 'Snap Physics',
+        namedExport: 'SnapPhysicsScene',
+        module: () => import('@/scenes/SnapPhysicsScene'),
+        plugins: ['physics'],
+        assets: {
+          preload: {
+            bundles: ['spine'],
+          },
+        },
+      },
+      {
+        id: 'arcade',
+        debugLabel: 'Arcade Physics',
+        namedExport: 'ArcadePhysicsScene',
+        module: () => import('@/scenes/ArcadePhysicsScene'),
+        plugins: ['arcade'],
+        assets: {
+          preload: {
+            bundles: ['spine', 'game'],
+          },
+        },
+      },
+      {
+        id: 'matter',
+        debugLabel: 'Matter Physics',
+        namedExport: 'MatterPhysicsScene',
+        module: () => import('@/scenes/MatterPhysicsScene'),
+        plugins: ['matter'],
+        assets: {
+          preload: {
+            bundles: ['spine', 'game'],
+          },
+        },
+      },
+      {
+        id: 'firebase',
+        debugLabel: 'Firebase Adapter',
+        namedExport: 'FirebaseAdapterScene',
+        module: () => import('@/scenes/FirebaseAdapterScene'),
+      },
     {
       id: 'supabase',
-      debugLabel: 'Supabase Storage Adapter',
+      debugLabel: 'Supabase Adapter',
       namedExport: 'SupabaseAdapterScene',
       module: () => import('@/scenes/SupabaseAdapterScene'),
     },
-  ],
-  i18n: {
-    loadAll: true,
-    locales: ['en', 'fr', 'fr-json'],
-    files: [
-      { id: 'en', module: EN },
-      { id: 'fr', module: () => import('@/locales/fr') },
-      { id: 'fr-json', json: '/locales/fr.json' },
     ],
-  },
-  resizer: {
-    minSize: { width: 960, height: 600 },
-  },
-  defaultSceneLoadMethod: 'exitEnter' as LoadSceneMethod,
-  useSpine: true,
-  showStats: true,
-  showSceneDebugMenu: true,
-  focusOptions: {
-    outliner: ExampleOutliner,
-  },
-  captions: {
-    files: [
-      { id: 'en', json: 'audio/vo/en/cc.json' },
-      { id: 'fr', json: 'audio/vo/fr/cc.json' },
-    ],
-    backgroundAlpha: 0.5,
-    backgroundColor: 0x0,
-    textColor: 0xffffff,
-    maxWidth: 0.4,
-  },
-};
+    i18n: {
+      loadAll: true,
+      locales: ['en', 'fr', 'fr-json'],
+      files: [
+        { id: 'en', module: EN },
+        { id: 'fr', module: () => import('@/locales/fr') },
+        { id: 'fr-json', json: '/locales/fr.json' },
+      ],
+    },
 
-void create(V8Application, appConfig);
+    captions: {
+      files: [
+        { id: 'en', json: 'audio/vo/en/cc.json' },
+        { id: 'fr', json: 'audio/vo/fr/cc.json' },
+      ],
+      backgroundAlpha: 0.5,
+      backgroundColor: 0x0,
+      textColor: 0xffffff,
+      maxWidth: 0.4,
+    },
+  },
+  V8Application,
+);

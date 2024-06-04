@@ -1,12 +1,13 @@
 import { Actor } from '@/entities/Actor';
 import { BaseScene } from '@/scenes/BaseScene';
-import { Button, FlexContainer, Logger, PIXIText } from 'dill-pixel';
+import { Button, FlexContainer, Logger } from 'dill-pixel';
+import { Text } from 'pixi.js';
 
 export class FocusScene extends BaseScene {
   protected title = 'Focus Management';
   protected subtitle =
     'Tab to changed focus. Enter or space to make the circles move.\nF to change focus layer.\nNotice only one item is focusable on layer  two"?';
-  private _focusLayerLabel: PIXIText;
+  private _focusLayerLabel: Text;
   private actor1: Actor;
   private actor2: Actor;
   private button: Button;

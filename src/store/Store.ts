@@ -1,6 +1,6 @@
-import { IApplication } from '../core/Application';
-import { Logger } from '../utils/console/Logger';
-import { IStorageAdapter } from './adapters/StorageAdapter';
+import type {IApplication} from '../core';
+import {Logger} from '../utils';
+import type {IStorageAdapter} from './adapters';
 
 /**
  * Configuration for saving data with an adapter.
@@ -20,7 +20,7 @@ export interface IStore {
 
   registerAdapter(adapter: IStorageAdapter, adapterOptions: any): void;
 
-  getAdapter<T extends IStorageAdapter>(adapterId: string): T;
+  getAdapter<T extends IStorageAdapter = IStorageAdapter>(adapterId: string): T;
 
   hasAdapter(adapterId: string): boolean;
 
@@ -62,7 +62,7 @@ export class Store implements IStore {
    * @param {string} adapterId The ID of the adapter.
    * @returns {T} The adapter.
    */
-  getAdapter<T extends IStorageAdapter>(adapterId: string): T {
+  getAdapter<T extends IStorageAdapter = IStorageAdapter>(adapterId: string): T {
     const adapter = this._adapters.get(adapterId);
     if (!adapter) {
       throw new Error(`Adapter ${adapterId} not found`);

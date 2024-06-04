@@ -1,9 +1,10 @@
-import { Container, Focusable, Interactive, PIXIGraphics } from 'dill-pixel';
+import { Container, Focusable, Interactive } from 'dill-pixel';
+import { Graphics } from 'pixi.js';
 
 const _Actor = Focusable(Interactive(Container));
 
 export class Actor extends _Actor {
-  private _view: PIXIGraphics;
+  private _view: Graphics;
   private _originalY: number;
 
   constructor(private color: number = 0xffffff) {

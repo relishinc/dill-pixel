@@ -1,6 +1,7 @@
 import { Signal } from '../../signals';
-import { Logger } from '../../utils/console/Logger';
-import { IPlugin, Plugin } from '../Plugin';
+import { Logger } from '../../utils';
+import type { IPlugin } from '../Plugin';
+import { Plugin } from '../Plugin';
 import { IAudioInstance } from './AudioInstance';
 
 export type PlayMode = 'append' | 'override' | 'new';

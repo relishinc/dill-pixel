@@ -1,7 +1,7 @@
-import { Application } from '../core/Application';
+import { Application } from '../Application';
 import { Signal } from '../signals';
-import { bindAllMethods } from '../utils/methodBinding';
-import { Size } from '../utils/types';
+import type { Size } from '../utils';
+import { bindAllMethods } from '../utils';
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
 
@@ -34,6 +34,8 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
 
   public initialize(): void {
     document.addEventListener('visibilitychange', this._onVisibilityChanged, false);
+    window.addEventListener('pagehide', this._onPageHide, false);
+    window.addEventListener('pageshow', this._onPageShow, false);
     window.addEventListener('resize', this._onResize);
     document.addEventListener('fullscreenchange', this._onResize);
   }
@@ -42,6 +44,8 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
     document.removeEventListener('visibilitychange', this._onVisibilityChanged, false);
     window.removeEventListener('resize', this._onResize);
     document.removeEventListener('fullscreenchange', this._onResize);
+    window.removeEventListener('pagehide', this._onPageHide, false);
+    window.removeEventListener('pageshow', this._onPageShow, false);
   }
 
   protected getCoreSignals(): string[] {
@@ -67,5 +71,24 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
       screenHeight = el.offsetHeight;
     }
     this.onResize.emit({ width: screenWidth, height: screenHeight });
+  }
+
+  /**
+   * Called when the page is hidden.
+   * Some browsers (like Safari) don't support the `visibilitychange` event, so we also listen for `pagehide`.
+   * We're just mimicking the `visibilitychange` event here.
+   */
+  private _onPageHide() {
+    this.onVisibilityChanged.emit(false);
+  }
+
+  /**
+   * Called when the page is shown.
+   * Some browsers (like Safari) don't support the `visibilitychange` event, so we also listen for `pageshow`.
+   * We're just mimicking the `visibilitychange` event here.
+   * @private
+   */
+  private _onPageShow() {
+    this.onVisibilityChanged.emit(true);
   }
 }

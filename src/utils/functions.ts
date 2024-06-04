@@ -1,7 +1,7 @@
 import { Point } from 'pixi.js';
-import { PointLike, Size, SizeLike, SpriteSheetLike, TextureLike } from './types';
+import type { PointLike, Size, SizeLike, SpriteSheetLike, TextureLike } from './types';
 
-type PointLikeResult = { x: number; y: number } | Point;
+export type PointLikeResult = { x: number; y: number } | Point;
 
 export function resolvePointLike(
   position?: PointLike,

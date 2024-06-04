@@ -28,15 +28,15 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
     if (moveX !== 0 || moveY !== 0) {
       // Temporarily make this solid non-collidable
       this.isCollideable = false;
+      // Move on the Y axis
+      this.y += moveY;
+      this.yRemainder -= moveY;
+      this.handleActorInteractions(0, moveY, ridingActors);
 
       // Move on the X axis
       this.x += moveX;
       this.xRemainder -= moveX;
       this.handleActorInteractions(moveX, 0, ridingActors);
-
-      this.y += moveY;
-      this.yRemainder -= moveY;
-      this.handleActorInteractions(0, moveY, ridingActors);
 
       // Re-enable collisions
       this.isCollideable = true;
@@ -47,13 +47,8 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
   getAllRidingActors(): Actor[] {
     // Implement logic to get all actors riding this solid
     return (this.collideables as Actor[]).filter((actor: Actor) => {
-      return actor.isRiding(this);
+      return actor.riding.has(this);
     });
-  }
-
-  // Simple collision detection between this solid and an actor
-  collidesWith(entity: Entity, dx: number, dy: number): boolean {
-    return System.getRectangleIntersection(entity, this, dx, dy);
   }
 
   public handleActorInteractions(
@@ -64,8 +59,10 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
     (this.collideables as Actor[]).forEach((actor) => {
       if (ridingActors.includes(actor)) {
         // Move riding actors along with this solid
-        actor.moveX(deltaX);
-        actor.moveY(deltaY);
+        if (actor.mostRiding === this) {
+          actor.moveY(deltaY);
+          actor.moveX(deltaX);
+        }
       } else if (
         !actor.passThroughTypes.includes(this.type) &&
         !actor.isPassingThrough(this) &&

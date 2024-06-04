@@ -1,4 +1,4 @@
-import { Logger } from '../console/Logger';
+import {Logger} from '../console';
 
 /**
  * Creates a new Queue with the given promises.
@@ -18,7 +18,6 @@ export class Queue<T = any | void> {
   private _currentIndex: number = 0;
   private _isPaused: boolean = false;
   private _isCanceled: boolean = false;
-  private _results: T[];
 
   /**
    * Creates a new Queue.
@@ -27,6 +26,8 @@ export class Queue<T = any | void> {
   constructor(promises: (Promise<any> | (() => Promise<T>))[] = []) {
     this._promises = promises;
   }
+
+  private _results: T[];
 
   /**
    * Gets the results of the promises that have been resolved so far.

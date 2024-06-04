@@ -1,6 +1,6 @@
-import { IApplication } from '../../core/Application';
-import { Logger } from '../../utils/console/Logger';
-import { StorageAdapter } from './StorageAdapter';
+import type {IApplication} from '../../core';
+import {Logger} from '../../utils';
+import {StorageAdapter} from './StorageAdapter';
 
 /**
  * Interface for the options of the LocalStorageAdapter.
@@ -20,6 +20,10 @@ export class LocalStorageAdapter extends StorageAdapter {
    * The namespace to use for the keys in the local storage.
    */
   public namespace: string = '';
+
+  constructor(public readonly id: string = 'localStorage') {
+    super(id);
+  }
 
   /**
    * Gets the prefix to use for the keys in the local storage.

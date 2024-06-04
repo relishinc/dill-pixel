@@ -1,6 +1,6 @@
 {
   "name": "dill-pixel",
-  "version": "8.4.0",
+  "version": "8.7.0",
   "title": "Dill Pixel V8",
   "description": "Relish framework for HTML games",
   "bin": {
@@ -47,7 +47,7 @@
   "scripts": {
     "dev": "cd ./examples && npm run dev",
     "start": "cd ./examples && npm run start",
-    "build": "npm run version && npm run pixi-exports && vite build",
+    "build": "npm run version && vite build",
     "declaration": "tsc --project tsconfig.build.json",
     "pixi-exports": "node ./scripts/pixi-exports.js",
     "compile": "tsc --project ./tsconfig.build.json",
@@ -60,7 +60,8 @@
     "build:docs": "cd ./docs && npm run build",
     "dev:docs": "cd ./docs && npm run dev",
     "typedoc": "npm run version && typedoc --out typedoc src",
-    "version": "node ./scripts/generate-version.js"
+    "version": "node ./scripts/generate-version.js",
+    "clean": "node ./scripts/clean.mjs"
   },
   "repository": {
     "type": "git",
@@ -113,12 +114,11 @@
     "rimraf": "^5.0.5",
     "stats.js": "^0.17.0",
     "typed-signals": "^2.5.0",
-    "vite": "^5.2.10",
+    "vite": "^5.2.11",
     "vite-bundle-visualizer": "^1.1.0",
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-singlefile": "^0.13.5",
     "vite-plugin-static-copy": "^1.0.3",
-    "vite-plugin-top-level-await": "^1.4.1",
-    "vite-plugin-wasm": "^3.3.0"
+    "vite-plugin-top-level-await": "^1.4.1"
   }
 }

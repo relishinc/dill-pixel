@@ -2,7 +2,7 @@ import { Signal } from '../../signals';
 import { ActionContext } from './actions';
 
 export type ActionDetail<T = any> = {
-  id: string;
+  id: string | number;
   context: string | ActionContext;
   data?: T;
 };

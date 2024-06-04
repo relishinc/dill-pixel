@@ -1,16 +1,13 @@
 import EventEmitter from 'eventemitter3';
 import { Bounds, Container, PointerEvents, PointLike } from 'pixi.js';
-
-import { IApplication } from '../../core/Application';
-import { PIXIContainer } from '../../pixi';
+import { IApplication } from '../../core';
 import { Signal } from '../../signals';
-import { Logger } from '../../utils/console/Logger';
-import { getLastMapEntry, getPreviousMapEntry } from '../../utils/map';
-import { bindMethods } from '../../utils/methodBinding';
-import { Constructor, PointLike as DillPixelPointLike } from '../../utils/types';
+import type { Constructor, PointLike as DillPixelPointLike } from '../../utils';
+import { bindMethods, getLastMapEntry, getPreviousMapEntry, Logger } from '../../utils';
 import type { IPlugin } from '../Plugin';
 import { Plugin } from '../Plugin';
-import { FocusOutliner, FocusOutlinerConfig, IFocusOutliner } from './FocusOutliner';
+import type { IFocusOutliner } from './FocusOutliner';
+import { FocusOutliner, FocusOutlinerConfig } from './FocusOutliner';
 
 export type FocusManagerPluginOptions = {
   outliner: IFocusOutliner | Partial<FocusOutlinerConfig> | typeof FocusOutliner;
@@ -302,7 +299,7 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
 
     this._options = options as FocusManagerPluginOptions;
 
-    this.view.addChild(this._focusOutliner as unknown as PIXIContainer);
+    this.view.addChild(this._focusOutliner as unknown as Container);
 
     this._updatePixiAccessibility();
 

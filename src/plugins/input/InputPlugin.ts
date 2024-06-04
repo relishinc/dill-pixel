@@ -1,8 +1,9 @@
-import { IApplication } from '../../core/Application';
+import { IApplication } from '../../core';
 import { Signal } from '../../signals';
-import { IPlugin, Plugin } from '../Plugin';
+import type { IPlugin } from '../Plugin';
+import { Plugin } from '../Plugin';
 import { Action, ActionContext } from './actions';
-import { ActionDetail, ActionSignal, ActionsList } from './types';
+import type { ActionDetail, ActionSignal, ActionsList } from './types';
 import { InputController } from './constants';
 
 export type InputManagerOptions = {
@@ -61,7 +62,7 @@ export class InputPlugin extends Plugin implements IInputPlugin {
   public onContextChanged: Signal<(context: string | ActionContext) => void> = new Signal<
     (context: string | ActionContext) => void
   >();
-  private _actionSignals: Map<string, ActionSignal> = new Map();
+  private _actionSignals: Map<string | number, ActionSignal> = new Map();
 
   // private properties
   private _context: string | ActionContext = ActionContext.General;
@@ -107,14 +108,14 @@ export class InputPlugin extends Plugin implements IInputPlugin {
     return this.activeGamepads.has(gamepad.id);
   }
 
-  actions<T = any>(action: string): ActionSignal<T> {
+  actions<T = any>(action: string | number): ActionSignal<T> {
     if (!this._actionSignals.has(action)) {
       this._actionSignals.set(action, new Signal<(actionDetail: ActionDetail<T>) => void>());
     }
     return this._actionSignals.get(action)!;
   }
 
-  sendAction<T = any>(actionId: string, data?: T): void {
+  sendAction<T = any>(actionId: string | number, data?: T): void {
     return this.actions<T>(actionId).emit({ id: actionId, context: this.context, data });
   }
 

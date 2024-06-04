@@ -1,4 +1,4 @@
-import { Application, IApplication, Logger, Plugin } from 'dill-pixel';
+import { IApplication, Plugin } from 'dill-pixel';
 import { System } from './System';
 
 type SnapPhysicsPluginOptions = {
@@ -23,7 +23,6 @@ export class SnapPhysicsPlugin extends Plugin {
 
   set gridCellSize(value: number) {
     this.options.gridCellSize = value;
-
     if (this.options.useSpatialHashGrid && this.options.gridCellSize > 0) {
       System.useSpatialHashGrid(this.options.gridCellSize);
     }
@@ -46,7 +45,6 @@ export class SnapPhysicsPlugin extends Plugin {
   set fps(value: number) {
     this.options.fps = value;
     System.fps = value;
-    this.app.ticker.maxFPS = value;
   }
 
   public get system(): typeof System {
@@ -61,17 +59,14 @@ export class SnapPhysicsPlugin extends Plugin {
 
   public async initialize(app: IApplication, options?: Partial<SnapPhysicsPluginOptions>) {
     this.options = { ...defaultOptions, ...options };
-    Logger.log('SnapPhysicsPlugin Initialized');
-    Logger.log('instance::', Application, Application.getInstance());
     this.system.app = app;
-    this.system.enabled = true;
+    this.system.plugin = this;
 
     if (this.options.useSpatialHashGrid && this.options.gridCellSize > 0) {
       this.system.useSpatialHashGrid(this.options.gridCellSize);
     }
     if (this.options.fps > 0) {
       System.fps = this.options.fps;
-      app.ticker.maxFPS = System.fps;
     }
   }
 }

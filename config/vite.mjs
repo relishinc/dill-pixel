@@ -48,4 +48,6 @@ function extendConfig(userConfig = {}) {
 	return mergeConfig(defaultConfig, userConfig);
 }
 
-export {defaultConfig, extendConfig};
+export {extendConfig};
+
+export default defaultConfig;

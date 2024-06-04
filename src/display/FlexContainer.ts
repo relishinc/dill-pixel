@@ -1,13 +1,12 @@
-import { DestroyOptions } from 'pixi.js';
-import { Application } from '../core/Application';
+import type { DestroyOptions } from 'pixi.js';
+import { Container as PIXIContainer } from 'pixi.js';
+import { Application } from '../Application';
 import { FactoryContainer } from '../mixins/factory';
-import { WithSignals } from '../mixins/signals';
-import { PIXIContainer } from '../pixi';
+import { WithSignals } from '../mixins';
 import { Signal } from '../signals';
-import { resolvePointLike } from '../utils/functions';
-import { bindAllMethods } from '../utils/methodBinding';
-import { ContainerLike, PointLike } from '../utils/types';
-import { Logger } from '../utils/console/Logger';
+import type { ContainerLike, PointLike } from '../utils';
+import { bindAllMethods, Logger, resolvePointLike } from '../utils';
+import type { Container } from './Container';
 
 const _FlexContainer = WithSignals(FactoryContainer());
 
@@ -47,10 +46,13 @@ const defaultConfig = {
   padding: 0,
 };
 
-export interface IFlexContainer {
+export interface IFlexContainer extends Container {
   onLayoutComplete: Signal<() => void>;
   debug: boolean;
   config: FlexContainerConfig;
+
+  containerWidth: number;
+  containerHeight: number;
 
   removeChildren<U extends PIXIContainer>(): U[];
 
@@ -308,7 +310,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
   protected handleChildRemoved(child: PIXIContainer) {
     if (this._reparentAddedChild) {
       if (!this.deleteChild(child)) {
-        child = (child as PIXIContainer).getChildAt(0);
+        child = (child as Container).getChildAt(0);
         this.deleteChild(child);
       }
     }
@@ -316,12 +318,12 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
 
   /**
    * Deletes a child from the map
-   * @param {PIXIContainer} child
+   * @param {Container} child
    * @returns {boolean}
    * @protected
    */
   protected deleteChild(child: PIXIContainer): boolean {
-    const isInMap = this._childMap.has(child as PIXIContainer);
+    const isInMap = this._childMap.has(child as Container);
     if (isInMap) {
       // disconnect signal
       if (child instanceof FlexContainer) {
@@ -332,7 +334,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
           console.warn(e);
         }
       }
-      this._childMap.delete(child as PIXIContainer);
+      this._childMap.delete(child as Container);
       this.setFlexChildren();
       this.layout();
       return true;
@@ -360,7 +362,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
     if (this.flexChildren.length === this.children.length) return;
     // remove any children that are not in the flex children list
     this.children.forEach((child) => {
-      if (!(child as PIXIContainer)?.children?.length) {
+      if (!(child as Container)?.children?.length) {
         super.removeChild(child);
       }
     });
@@ -515,7 +517,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
 
     const handleAlignment = (newLayoutProps: { x: number; y: number }[], items: (PIXIContainer | null)[]) => {
       newLayoutProps.forEach((props, index) => {
-        const childRef = items[index] as PIXIContainer;
+        const childRef = items[index] as Container;
         if (!childRef) return;
 
         if (flexDirection === 'row') {
@@ -547,7 +549,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
     items.forEach((childRef, index) => {
       if (!childRef) return;
 
-      const item = childRef as PIXIContainer;
+      const item = childRef as Container;
 
       // Check for wrapping
       if (flexWrap === 'wrap' && shouldWrap(item, x, y)) {
@@ -573,16 +575,13 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
     layoutProps = newLayoutProps;
 
     items.forEach((childRef, index) => {
-      const item = childRef as PIXIContainer;
+      const item = childRef as Container;
       const { x, y } = layoutProps[index] || { x: 0, y: 0 };
       item.position.set(x, y);
     });
 
     // handle alignment within container bounds
-    const totalHeight = this.children.reduce(
-      (acc, child) => Math.max(acc, child.y + (child as PIXIContainer).height),
-      0,
-    );
+    const totalHeight = this.children.reduce((acc, child) => Math.max(acc, child.y + (child as Container).height), 0);
     this.children.forEach((child) => {
       if (this.config.flexDirection === 'row') {
         switch (this.config.alignItems) {

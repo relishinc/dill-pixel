@@ -1,13 +1,24 @@
 import { sayHello } from '../hello';
-import { delay } from '../utils/async';
-import { AppConfig, Application, IApplication } from './Application';
+import { delay } from '../utils';
+import { IApplication } from './interfaces';
+import { AppConfig } from './types';
+import { Application } from '../Application';
 
-export async function create<T extends IApplication = Application>(
-  ApplicationClass: new () => T,
+export const DEFAULT_GAME_CONTAINER_ID = 'dill-pixel-game-container';
+
+export function createContainer(id: string) {
+  const container = document.createElement('div');
+  container.setAttribute('id', id);
+  document.body.appendChild(container);
+  return container;
+}
+
+export async function create(
   config: AppConfig = { id: 'DillPixelApplication' },
-  domElement: string | Window | HTMLElement = Application.containerId,
+  ApplicationClass: new () => IApplication = Application,
+  domElement: string | Window | HTMLElement = DEFAULT_GAME_CONTAINER_ID,
   speak: boolean = true,
-): Promise<T> {
+): Promise<IApplication> {
   if (speak) {
     sayHello();
   }
@@ -15,7 +26,7 @@ export async function create<T extends IApplication = Application>(
   if (typeof domElement === 'string') {
     el = document.getElementById(domElement);
     if (!el) {
-      el = Application.createContainer(domElement);
+      el = createContainer(domElement);
     }
   } else if (domElement instanceof HTMLElement) {
     el = domElement;
@@ -28,14 +39,15 @@ export async function create<T extends IApplication = Application>(
       'You passed in a DOM Element, but none was found. If you instead pass in a string, a container will be created for you, using the string for its id.',
     );
   }
-  Application.containerElement = el;
   if (config.resizeToContainer) {
     config.resizeTo = el;
   }
+  config.container = el;
   const instance = new ApplicationClass();
   await instance.initialize(config);
   if (el) {
     el.appendChild(instance.canvas as HTMLCanvasElement);
+    instance.setContainer(el);
   } else {
     throw new Error('No element found to append the view to.');
   }
@@ -46,5 +58,5 @@ export async function create<T extends IApplication = Application>(
   await instance.postInitialize();
 
   // return th app instance
-  return instance as unknown as T;
+  return instance as unknown as IApplication;
 }

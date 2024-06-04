@@ -1,11 +1,10 @@
 import { DestroyOptions, Ticker } from 'pixi.js';
-import type { IApplication } from '../core/Application';
-import { Application } from '../core/Application';
-import { Animated } from '../mixins/animated';
+import type { IApplication } from '../core';
+import { Application } from '../Application';
+import { Animated, WithSignals } from '../mixins';
 import { FactoryContainer } from '../mixins/factory';
-import { WithSignals } from '../mixins/signals';
-import { bindAllMethods } from '../utils/methodBinding';
-import { Size } from '../utils/types';
+import type { Size } from '../utils';
+import { bindAllMethods } from '../utils';
 
 // Create a new class that extends PIXI.Container and includes the Animated and Factory mixins.
 const _Container = Animated(WithSignals(FactoryContainer()));

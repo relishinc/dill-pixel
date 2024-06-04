@@ -1,13 +1,19 @@
 import { Cursor, Sprite } from 'pixi.js';
 
-import { Application } from '../core/Application';
 import { FactoryContainer } from '../mixins/factory';
-import { Focusable } from '../mixins/focus';
-import { Interactive } from '../mixins/interaction';
-import { WithSignals } from '../mixins/signals';
+import { Focusable, Interactive, WithSignals } from '../mixins';
 import { Signal } from '../signals';
-import { bindAllMethods } from '../utils/methodBinding';
-import { SpriteSheetLike, TextureLike } from '../utils/types';
+import type { SpriteSheetLike, TextureLike } from '../utils';
+import { bindAllMethods } from '../utils';
+import type { IApplication } from '../core';
+import { Application } from '../Application';
+
+export type ButtonCallback = (() => void) | (() => Promise<void>);
+export type ButtonAction = { id: string | number; data?: any };
+
+export type ButtonActionOrCallback = ButtonAction | ButtonCallback;
+
+type ButtonTextureId = 'default' | 'hover' | 'active' | 'disabled';
 
 export type ButtonConfig = {
   textures: {
@@ -16,13 +22,35 @@ export type ButtonConfig = {
     active?: TextureLike;
     disabled?: TextureLike;
   };
+  sounds?: {
+    hover?: string;
+    out?: string;
+    up?: string;
+    down?: string;
+    click?: string;
+  };
+  actions?: {
+    hover?: ButtonActionOrCallback;
+    out?: ButtonActionOrCallback;
+    up?: ButtonActionOrCallback;
+    down?: ButtonActionOrCallback;
+    click?: ButtonActionOrCallback;
+  };
   cursor: Cursor;
   disabledCursor: Cursor;
   sheet: SpriteSheetLike;
   enabled: boolean;
 };
 
-export const ButtonConfigKeys: (keyof ButtonConfig)[] = ['textures', 'cursor', 'disabledCursor', 'sheet', 'enabled'];
+export const ButtonConfigKeys: (keyof ButtonConfig)[] = [
+  'textures',
+  'sounds',
+  'actions',
+  'cursor',
+  'disabledCursor',
+  'sheet',
+  'enabled',
+];
 
 // Create a new class that extends Container and includes the Interactive and Focusable mixins.
 const _Button = Focusable(Interactive(WithSignals(FactoryContainer())));
@@ -51,8 +79,6 @@ export class Button extends _Button {
   public isOver: boolean;
   // config
   protected config: ButtonConfig;
-  // enabled state
-  protected _enabled: boolean;
   // a set of unique callbacks for when the button is down
   protected _isDownCallbacks: Map<string, () => void> = new Map();
   private _isDownListenerAdded: boolean = false;
@@ -95,6 +121,9 @@ export class Button extends _Button {
     );
   }
 
+  // enabled state
+  protected _enabled: boolean;
+
   /**
    * @description Sets the enabled state of the button.
    * @param {boolean} enabled - Whether the button is enabled.
@@ -121,7 +150,7 @@ export class Button extends _Button {
     }
   }
 
-  get app() {
+  get app(): IApplication {
     return Application.getInstance();
   }
 
@@ -154,6 +183,16 @@ export class Button extends _Button {
     this._isDownCallbacks.delete(callbackId);
   }
 
+  setTexture(textureId: ButtonTextureId, texture: TextureLike) {
+    this.config.textures[textureId] = texture;
+    if (textureId === 'default') {
+      this.view.texture = this.make.texture({
+        asset: this.config.textures.default,
+        sheet: this.config.sheet,
+      });
+    }
+  }
+
   /**
    * @description Handles the pointer over event.
    * Sets the texture of the button to the hover texture and emits the onOver event.
@@ -173,6 +212,12 @@ export class Button extends _Button {
       sheet: this.config.sheet,
     });
     this.onOver.emit();
+    if (this.config.sounds?.hover) {
+      void this.app.audio.play(this.config.sounds.hover, 'sfx');
+    }
+    if (this.config.actions?.hover) {
+      this._doAction(this.config.actions.hover);
+    }
   }
 
   /**
@@ -201,13 +246,23 @@ export class Button extends _Button {
     }
     if (!this.isDown) {
       window.removeEventListener('pointerup', this.handlePointerUpOutside);
+      this.off('pointerupoutside', this.handlePointerUpOutside);
       window.addEventListener('pointerup', this.handlePointerUpOutside);
+      this.on('pointerupoutside', this.handlePointerUpOutside);
       this.isDown = true;
       this.view.texture = this.make.texture({
         asset: this.config.textures.active || this.config.textures.hover || this.config.textures.default,
         sheet: this.config.sheet,
       });
       this.onDown.emit();
+      if (this.config.sounds?.down) {
+        void this.app.audio.play(this.config.sounds.down, 'sfx');
+      }
+      if (this.config.actions?.down) {
+        if (this.config.actions?.down) {
+          this._doAction(this.config.actions.down);
+        }
+      }
     }
   }
 
@@ -223,25 +278,56 @@ export class Button extends _Button {
 
     this.view.texture = this.make.texture({ asset: this.config.textures.default, sheet: this.config.sheet });
     this.onUp.emit();
+    if (this.config.sounds?.up) {
+      void this.app.audio.play(this.config.sounds.up, 'sfx');
+    }
+    if (this.config.actions?.up) {
+      this._doAction(this.config.actions.up);
+    }
   }
 
   protected handleClick() {
     this.isDown = false;
     this.onClick.emit();
+    if (this.config.sounds?.click) {
+      void this.app.audio.play(this.config.sounds.click, 'sfx');
+    }
+    if (this.config.actions?.click) {
+      this._doAction(this.config.actions.click);
+    }
   }
 
   /**
    * @description Handles the pointer up event.
    */
   protected handlePointerUpOutside() {
-    if (!this._enabled || this.isOver) {
+    if (!this._enabled) {
       return;
     }
     window.removeEventListener('pointerup', this.handlePointerUpOutside);
+    this.off('pointerupoutside', this.handlePointerUpOutside);
     this.view.texture = this.make.texture({ asset: this.config.textures.default, sheet: this.config.sheet });
     this.isDown = false;
     this.isOver = false;
     this.onUpOutside.emit();
+
+    if (this.config.sounds?.up) {
+      void this.app.audio.play(this.config.sounds.up, 'sfx');
+    }
+    if (this.config.actions?.up) {
+      this._doAction(this.config.actions.up);
+    }
+  }
+
+  private _doAction(action: ButtonActionOrCallback) {
+    if (typeof action === 'function') {
+      void action();
+    } else {
+      if (!action.data.button) {
+        action.data.button = this;
+      }
+      this.app.exec.sendAction(action.id, action.data);
+    }
   }
 
   private _checkIsDownCallbacks() {
