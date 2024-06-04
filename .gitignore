@@ -1,6 +1,6 @@
 
 # dependencies
-/node_modules
+node_modules
 
 # production
 /deploy
@@ -11,6 +11,7 @@
 .idea
 *.iml
 
+.npmrc
 npm-debug.log*
 examples/.cache
 examples/node_modules

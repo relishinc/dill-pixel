@@ -2,6 +2,7 @@ import { sayHello } from '../hello';
 import { delay } from '../utils';
 import { IApplication } from './interfaces';
 import { AppConfig } from './types';
+import { Application } from '../Application';
 
 export const DEFAULT_GAME_CONTAINER_ID = 'dill-pixel-game-container';
 
@@ -13,8 +14,8 @@ export function createContainer(id: string) {
 }
 
 export async function create(
-  ApplicationClass: new () => IApplication,
   config: AppConfig = { id: 'DillPixelApplication' },
+  ApplicationClass: new () => IApplication = Application,
   domElement: string | Window | HTMLElement = DEFAULT_GAME_CONTAINER_ID,
   speak: boolean = true,
 ): Promise<IApplication> {
@@ -46,6 +47,7 @@ export async function create(
   await instance.initialize(config);
   if (el) {
     el.appendChild(instance.canvas as HTMLCanvasElement);
+    instance.setContainer(el);
   } else {
     throw new Error('No element found to append the view to.');
   }

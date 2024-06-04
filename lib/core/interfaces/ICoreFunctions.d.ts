@@ -1,5 +1,5 @@
 import { ActionSignal, i18nTParams, IFocusable, IFocusLayer, KeySignal, LoadSceneConfig, ActionContext, InputController } from '../../plugins';
-import { IPopup, PopupConfig, PopupConstructor } from '../../display';
+import { IPopup, IScene, PopupConfig, PopupConstructor } from '../../display';
 
 export interface ICoreFunctions {
     addFocusable(focusable: IFocusable | IFocusable[], layerId?: string | number | null | undefined, isDefault?: boolean): void;
@@ -16,7 +16,7 @@ export interface ICoreFunctions {
     isControllerActive(controller: InputController): boolean;
     isGamepadActive(gamepad: Gamepad): boolean;
     actions<T = any>(action: string): ActionSignal<T>;
-    sendAction<T = any>(actionId: string, data?: T): void;
+    sendAction<T = any>(actionId: string | number, data?: T): void;
     setActionContext(context: string | ActionContext): string;
     onKeyDown(key?: string): KeySignal;
     onKeyUp(key?: string): KeySignal;
@@ -26,5 +26,10 @@ export interface ICoreFunctions {
     hidePopup<T = any>(id: string | number, data?: T): Promise<IPopup<T> | undefined>;
     removeAllPopups(animate?: boolean): void;
     loadScene(sceneIdOrLoadSceneConfig: LoadSceneConfig | string): Promise<void>;
+    loadAssets(assets: string | string[]): Promise<void>;
+    loadBundles(bundle: string | string[]): Promise<void>;
+    loadSceneAssets(scene: IScene, background?: boolean): Promise<void>;
+    unloadSceneAssets(scene: IScene): Promise<void>;
+    loadRequired(): Promise<void>;
 }
 //# sourceMappingURL=ICoreFunctions.d.ts.map

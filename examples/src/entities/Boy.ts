@@ -1,4 +1,5 @@
-import { Container, Interactive, Spine } from 'dill-pixel';
+import type { Spine } from 'dill-pixel';
+import { Container, Interactive, Logger } from 'dill-pixel';
 
 import { Rectangle } from 'pixi.js';
 
@@ -16,13 +17,13 @@ export class Boy extends Interactive(Container) {
       autoUpdate: true,
       loop: true,
     });
-    this._animations = this._spine.state.data.skeletonData.animations.map((a) => a.name);
-    console.log(this._animations);
+    this._animations = this._spine.state.data.skeletonData.animations.map((a: any) => a.name);
+    Logger.log(this._animations);
     this._currentAnimation = 0;
   }
 
   added() {
-    console.log('Boy added!');
+    Logger.log('Boy added!');
     this._setAnimation();
 
     this.eventMode = 'static';
@@ -34,7 +35,7 @@ export class Boy extends Interactive(Container) {
   }
 
   _next() {
-    console.log('Boy:: next');
+    Logger.log('Boy:: next');
     this._currentAnimation++;
     if (this._currentAnimation >= this._animations.length) {
       this._currentAnimation = 0;
@@ -43,7 +44,7 @@ export class Boy extends Interactive(Container) {
   }
 
   _setAnimation() {
-    console.log(`Boy:: setting animation to ${this._animations[this._currentAnimation]}`);
+    Logger.log(`Boy:: setting animation to ${this._animations[this._currentAnimation]}`);
     this._spine.state.setAnimation(0, this._animations[this._currentAnimation], true);
   }
 }

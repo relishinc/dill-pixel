@@ -36,5 +36,7 @@ export interface ICoreSignals {
     }) => void>;
     onResize: Signal<(size: Size) => void>;
     onVisibilityChanged: Signal<(visible: boolean) => void>;
+    onLoadProgress: Signal<(progress: number) => void>;
+    onLoadComplete: Signal<() => void>;
 }
 //# sourceMappingURL=ICoreSignals.d.ts.map

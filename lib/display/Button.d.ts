@@ -4,12 +4,33 @@ import { SpriteSheetLike, TextureLike } from '../utils';
 import { IApplication } from '../core';
 import { Application } from '../Application';
 
+export type ButtonCallback = (() => void) | (() => Promise<void>);
+export type ButtonAction = {
+    id: string | number;
+    data?: any;
+};
+export type ButtonActionOrCallback = ButtonAction | ButtonCallback;
+type ButtonTextureId = 'default' | 'hover' | 'active' | 'disabled';
 export type ButtonConfig = {
     textures: {
         default: TextureLike;
         hover?: TextureLike;
         active?: TextureLike;
         disabled?: TextureLike;
+    };
+    sounds?: {
+        hover?: string;
+        out?: string;
+        up?: string;
+        down?: string;
+        click?: string;
+    };
+    actions?: {
+        hover?: ButtonActionOrCallback;
+        out?: ButtonActionOrCallback;
+        up?: ButtonActionOrCallback;
+        down?: ButtonActionOrCallback;
+        click?: ButtonActionOrCallback;
     };
     cursor: Cursor;
     disabledCursor: Cursor;
@@ -28,7 +49,7 @@ declare const _Button: (new () => import('../mixins/factory').IFactoryContainer<
     button: (props?: Partial<import('../mixins/factory/props').ButtonProps> | undefined) => Button;
     flexContainer: (props?: Partial<import('../mixins/factory/props').FlexContainerProps> | undefined) => import('./FlexContainer').FlexContainer<Application<import('pixi.js').Renderer>>;
     uiCanvas: (props?: Partial<import('../mixins/factory/props').UICanvasFactoryProps> | undefined) => import('./UICanvas').UICanvas<Application<import('pixi.js').Renderer>>;
-    spine: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('../plugins/spine/pixi-spine').Spine;
+    spine: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('../utils').Spine;
     spineAnimation: (props?: Partial<import('../mixins/factory/props').SpineProps> | undefined) => import('./SpineAnimation').ISpineAnimation;
 }>) & import('../utils').Constructor<import('../mixins').ISignalContainer> & import('../utils').Constructor<import('../mixins').IInteractive> & import('../utils').Constructor<import('..').IFocusable>;
 /**
@@ -71,6 +92,7 @@ export declare class Button extends _Button {
     getFocusPosition(): number[];
     addIsDownCallback(callbackId: string, callback: () => void): void;
     removeIsDownCallback(callbackId: string): void;
+    setTexture(textureId: ButtonTextureId, texture: TextureLike): void;
     /**
      * @description Handles the pointer over event.
      * Sets the texture of the button to the hover texture and emits the onOver event.
@@ -96,6 +118,7 @@ export declare class Button extends _Button {
      * @description Handles the pointer up event.
      */
     protected handlePointerUpOutside(): void;
+    private _doAction;
     private _checkIsDownCallbacks;
     private _handleIsDownCallbacks;
 }

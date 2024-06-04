@@ -3,6 +3,7 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "baseUrl": ".",
     "rootDir": "./src",
     "outDir": "./lib",
     "lib": [
@@ -20,13 +21,15 @@
     "strictPropertyInitialization": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "allowJs": true
+    "allowJs": true,
+    "composite": true
   },
   "typeRoots": [
     "./node_modules/@types"
   ],
   "include": [
-    "./src/**/*.ts"
+    "./src/**/*.ts",
+    "../../../src/**/*.ts"
   ],
   "exclude": [
     "./lib",

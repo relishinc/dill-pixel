@@ -5,6 +5,7 @@ export interface IAudioChannel {
     name: string;
     muted: boolean;
     volume: number;
+    instances: IAudioInstance[];
     add(id: string, instance: IAudioInstance): IAudioInstance;
     get(id: string): IAudioInstance | undefined;
     remove(id: string): IAudioInstance | undefined;
@@ -16,6 +17,7 @@ export declare class AudioChannel {
     manager: IAudioManagerPlugin;
     private _sounds;
     constructor(name: string, manager: IAudioManagerPlugin);
+    get instances(): IAudioInstance[];
     private _muted;
     get muted(): boolean;
     set muted(value: boolean);

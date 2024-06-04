@@ -1,22 +1,43 @@
-import { Ticker, UnresolvedAsset } from 'pixi.js';
+import { Ticker } from 'pixi.js';
 import { Application } from '../Application';
-import { Size } from '../utils';
+import { AssetLoadingOptions, Size } from '../utils';
 import { IContainer, Container } from './Container';
 
+export type SceneAssets = Omit<AssetLoadingOptions, 'manifest' | 'initOptions' | 'assetPreferences'>;
 export interface IScene extends IContainer {
     id: string;
     enter: () => Promise<any>;
     exit: () => Promise<any>;
     initialize: () => Promise<void> | void;
     start: () => Promise<void> | void;
-    bundles?: string[] | null;
-    assets?: string[] | UnresolvedAsset[] | null;
+    assets?: SceneAssets;
+    autoUnloadAssets?: boolean;
 }
 export declare class Scene<T extends Application = Application> extends Container<T> implements IScene {
     readonly id: string;
+    autoUnloadAssets: boolean;
     constructor();
-    get assets(): string[] | UnresolvedAsset[] | null;
-    get bundles(): string[] | null;
+    /**
+     * The assets to load for the scene
+     * @private
+     * @type {AssetLoadingOptions}
+     * @example
+     * ```ts
+     * assets: {
+     *  preload: {
+     *  assets: ['path/to/asset.png'],
+     *  bundles: ['bundle1', 'bundle2'],
+     *  },
+     *  background: {
+     *   assets: ['path/to/asset.png'],
+     *   bundles: ['bundle1', 'bundle2'],
+     *   },
+     * }
+     * ```
+     */
+    private _assets;
+    get assets(): AssetLoadingOptions;
+    set assets(value: AssetLoadingOptions);
     /**
      * Called to initialize the scene
      * Called before the scene is added to the stage

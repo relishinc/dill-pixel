@@ -1,6 +1,6 @@
 import type { ActionSignal, i18nTParams, IFocusable, IFocusLayer, KeySignal, LoadSceneConfig } from '../../plugins';
 import { ActionContext, InputController } from '../../plugins';
-import type { IPopup, PopupConfig, PopupConstructor } from '../../display';
+import type { IPopup, IScene, PopupConfig, PopupConstructor } from '../../display';
 
 export interface ICoreFunctions {
   // FocusManager;
@@ -38,7 +38,7 @@ export interface ICoreFunctions {
 
   actions<T = any>(action: string): ActionSignal<T>;
 
-  sendAction<T = any>(actionId: string, data?: T): void;
+  sendAction<T = any>(actionId: string | number, data?: T): void;
 
   setActionContext(context: string | ActionContext): string;
 
@@ -60,4 +60,15 @@ export interface ICoreFunctions {
 
   // SceneManager;
   loadScene(sceneIdOrLoadSceneConfig: LoadSceneConfig | string): Promise<void>;
+
+  // AssetsPlugin
+  loadAssets(assets: string | string[]): Promise<void>;
+
+  loadBundles(bundle: string | string[]): Promise<void>;
+
+  loadSceneAssets(scene: IScene, background?: boolean): Promise<void>;
+
+  unloadSceneAssets(scene: IScene): Promise<void>;
+
+  loadRequired(): Promise<void>;
 }

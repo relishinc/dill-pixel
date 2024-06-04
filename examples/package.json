@@ -12,7 +12,6 @@
     "prebuild": "run-s clean format lint assets",
     "build": "vite build",
     "types": "tsc",
-    "prepreview": "run-s build",
     "preview": "vite preview --open",
     "lint": "eslint src --ext .ts",
     "lint-fix": "eslint src --ext .ts --fix",
@@ -33,10 +32,12 @@
     "@types/dat.gui": "^0.7.13"
   },
   "dependencies": {
-    "@dill-pixel/plugin-snap-physics": "^8.3.6",
-    "@dill-pixel/storage-adapter-firebase": "file:../packages/storage-adapters/firebase/src",
-    "@pixi/ui": "^2.1.1",
+    "@dill-pixel/plugin-arcade-physics": "file:../packages/plugins/physics/arcade",
+    "@dill-pixel/plugin-snap-physics": "file:../packages/plugins/physics/snap",
+    "@dill-pixel/plugin-matter-physics": "file:../packages/plugins/physics/matter",
+    "@dill-pixel/storage-adapter-firebase": "file:../packages/storage-adapters/firebase",
     "dat.gui": "^0.7.9",
-    "dill-pixel": "file:.."
+    "dill-pixel": "file:..",
+    "@pixi/ui": "^2.1.1"
   }
 }

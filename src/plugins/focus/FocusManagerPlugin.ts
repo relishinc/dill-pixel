@@ -1,8 +1,6 @@
 import EventEmitter from 'eventemitter3';
 import { Bounds, Container, PointerEvents, PointLike } from 'pixi.js';
-
 import { IApplication } from '../../core';
-import { PIXIContainer } from '../../pixi';
 import { Signal } from '../../signals';
 import type { Constructor, PointLike as DillPixelPointLike } from '../../utils';
 import { bindMethods, getLastMapEntry, getPreviousMapEntry, Logger } from '../../utils';
@@ -301,7 +299,7 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
 
     this._options = options as FocusManagerPluginOptions;
 
-    this.view.addChild(this._focusOutliner as unknown as PIXIContainer);
+    this.view.addChild(this._focusOutliner as unknown as Container);
 
     this._updatePixiAccessibility();
 

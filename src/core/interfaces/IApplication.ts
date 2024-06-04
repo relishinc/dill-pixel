@@ -19,6 +19,8 @@ import type { IStore } from '../../store';
 import { Signal } from '../../signals';
 import type { IApplicationOptions } from './IApplicationOptions';
 import type { AppConfig } from '../types';
+import { ICoreSignals } from './ICoreSignals';
+import type { ICoreFunctions } from './ICoreFunctions';
 
 export interface IApplication extends PIXIPApplication {
   config: Partial<IApplicationOptions>;
@@ -43,6 +45,9 @@ export interface IApplication extends PIXIPApplication {
 
   readonly appName: string;
   readonly appVersion: string | number;
+  signal: ICoreSignals;
+  func: ICoreFunctions;
+  exec: ICoreFunctions;
 
   actions(action: string): ActionSignal;
 
@@ -51,4 +56,6 @@ export interface IApplication extends PIXIPApplication {
   postInitialize(): Promise<void>;
 
   getPlugin<T extends IPlugin>(name: string): T;
+
+  setContainer(container: HTMLElement): void;
 }

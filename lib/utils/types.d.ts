@@ -1,4 +1,4 @@
-import { Point, Texture } from 'pixi.js';
+import { AssetInitOptions, AssetsManifest, AssetsPreferences, Point, Texture } from 'pixi.js';
 
 /**
  * A generic constructor type.
@@ -76,13 +76,26 @@ export type ImportListItem<T = any> = {
     options?: any;
     autoLoad?: boolean;
 };
+export type AssetLoadingOptions = {
+    manifest?: AssetsManifest | Promise<AssetsManifest> | string;
+    initOptions?: Partial<AssetInitOptions>;
+    assetPreferences?: Partial<AssetsPreferences>;
+    preload?: {
+        assets?: string | string[];
+        bundles?: string | string[];
+    };
+    background?: {
+        assets?: string | string[];
+        bundles?: string | string[];
+    };
+};
 type SceneItemOptions = {
     debugLabel?: string;
     plugins?: string[];
-    assets?: string | string[];
+    assets?: AssetLoadingOptions;
     autoUnloadAssets?: boolean;
 };
-export type SceneImportListItem<T> = ImportListItem<T> & SceneItemOptions;
+export type SceneImportListItem<T> = ImportListItem<T> & Partial<SceneItemOptions>;
 /**
  * A type that represents an import list.
  * @template T The type of the instance that the constructor creates.
@@ -95,6 +108,6 @@ export type AppSize = {
     screenWidth: number;
     screenHeight: number;
 };
-export type EaseString = 'none' | 'power1' | 'power1.in' | 'power1.out' | 'power1.inOut' | 'power2' | 'power2.in' | 'power2.out' | 'power2.inOut' | 'power3' | 'power3.in' | 'power3.out' | 'power3.inOut' | 'power4' | 'power4.in' | 'power4.out' | 'power4.inOut' | 'back' | 'back.in' | 'back.out' | 'back.inOut' | 'bounce' | 'bounce.in' | 'bounce.out' | 'bounce.inOut' | 'circ' | 'circ.in' | 'circ.out' | 'circ.inOut' | 'elastic' | 'elastic.in' | 'elastic.out' | 'elastic.inOut' | 'expo' | 'expo.in' | 'expo.out' | 'expo.inOut' | 'sine' | 'sine.in' | 'sine.out' | 'sine.inOut' | ({} & string);
-export {};
+export type EaseString = 'none' | 'power1' | 'power1.in' | 'power1.out' | 'power1.inOut' | 'power2' | 'power2.in' | 'power2.out' | 'power2.inOut' | 'power3' | 'power3.in' | 'power3.out' | 'power3.inOut' | 'power4' | 'power4.in' | 'power4.out' | 'power4.inOut' | 'back' | 'back.in' | 'back.out' | 'back.inOut' | 'bounce' | 'bounce.in' | 'bounce.out' | 'bounce.inOut' | 'circ' | 'circ.in' | 'circ.out' | 'circ.inOut' | 'elastic' | 'elastic.in' | 'elastic.out' | 'elastic.inOut' | 'expo' | 'expo.in' | 'expo.out' | 'expo.inOut' | 'sine' | 'sine.in' | 'sine.out' | 'sine.inOut';
+export type { Spine } from '../plugins/spine/pixi-spine';
 //# sourceMappingURL=types.d.ts.map

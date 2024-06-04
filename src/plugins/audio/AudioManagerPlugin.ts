@@ -1,6 +1,6 @@
-import { PlayOptions, sound, SoundSourceMap } from '@pixi/sound';
+import { PlayOptions, Sound, sound, SoundSourceMap } from '@pixi/sound';
 import { gsap } from 'gsap';
-import { AssetsManifest, UnresolvedAsset } from 'pixi.js';
+import { Assets, AssetsManifest, UnresolvedAsset } from 'pixi.js';
 import { Signal } from '../../signals';
 import { Logger } from '../../utils';
 import type { IPlugin } from '../Plugin';
@@ -9,6 +9,7 @@ import { Plugin } from '../Plugin';
 import { AudioChannel, IAudioChannel } from './AudioChannel';
 import { AudioInstance, IAudioInstance } from './AudioInstance';
 import { IApplication } from '../../core';
+import TweenVars = gsap.TweenVars;
 
 export type SoundDetail = { id: string; instance: IAudioInstance; channelName: string };
 export type ChannelVolumeDetail = { channel: IAudioChannel; volume: number };
@@ -32,6 +33,8 @@ export interface IAudioManagerPlugin extends IPlugin {
   createChannel(name: string): void;
 
   play(soundId: string, channelName: ChannelName, options?: PlayOptions): Promise<IAudioInstance>;
+
+  isPlaying(soundId: string, channelName: ChannelName): boolean;
 
   load(soundId: string | string[], channelName: ChannelName, options?: PlayOptions): void;
 
@@ -70,9 +73,11 @@ export interface IAudioManagerPlugin extends IPlugin {
 
   suspend(): void;
 
-  restore(): void;
+  restore(): Promise<void>;
 
   getAudioInstance(soundId: string, channelName: string): IAudioInstance | undefined;
+
+  stopAll(fade?: boolean, duration?: number, props?: TweenVars): void;
 }
 
 /**
@@ -347,6 +352,14 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
     }
   }
 
+  isPlaying(soundId: string, channelName: ChannelName): boolean {
+    const channel = this._channels.get(channelName);
+    if (channel) {
+      return channel.get(soundId)?.isPlaying === true;
+    }
+    return false;
+  }
+
   /**
    * Plays a sound with the specified ID in the specified channel.
    * @param {string} soundId
@@ -366,6 +379,7 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
       audioInstance.media = mediaInstance;
       if (options?.volume !== undefined) {
         mediaInstance.volume = options.volume;
+
         audioInstance.onStart.connect(() => {
           () => this._soundStarted(soundId, audioInstance, channelName);
         });
@@ -373,6 +387,7 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
           () => this._soundEnded(soundId, audioInstance, channelName);
         });
       }
+      audioInstance.isPlaying = true;
       return audioInstance;
     } else {
       throw new Error(`Channel ${channelName} does not exist.`);
@@ -498,7 +513,11 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
   /**
    * Restores the audio state after it has been suspended.
    */
-  public restore() {
+  public async restore() {
+    const ctx = sound?.context?.audioContext;
+    if (ctx) {
+      await ctx.resume();
+    }
     if (this._storedVolume !== undefined) {
       this.masterVolume = this._storedVolume;
     }
@@ -548,11 +567,40 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
     }
   }
 
+  public stopAll(fade: boolean = false, duration: number = 1, props: TweenVars = {}) {
+    if (fade) {
+      // get all playing sounds
+      const playingSounds: IAudioInstance[] = [];
+      this._channels.forEach((channel) => {
+        channel.instances.forEach((instance) => {
+          if (instance.isPlaying) {
+            instance.storedVolume = instance.volume;
+            playingSounds.push(instance);
+          }
+        });
+      });
+      gsap.to(playingSounds, {
+        volume: 0,
+        duration,
+        ...props,
+        onComplete: () => {
+          playingSounds.forEach((instance) => {
+            instance.stop();
+            instance.volume = instance.storedVolume;
+          });
+        },
+      });
+    } else {
+      sound.stopAll();
+    }
+  }
+
   protected getCoreSignals(): string[] {
     return ['onSoundStarted', 'onSoundEnded', 'onMuted', 'onMasterVolumeChanged', 'onChannelVolumeChanged'];
   }
 
   private _verifySoundId(soundId: string): string {
+    const originalSoundId = soundId;
     if (this._idMap.has(soundId)) {
       return this._idMap.get(soundId) as string;
     }
@@ -566,12 +614,69 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
       } else if (sound.exists(soundId + '.wav')) {
         soundId += '.wav';
       } else {
-        throw new Error(`Sound with ID ${soundId} does not exist.`);
+        soundId = originalSoundId;
+        let sound = Assets.get(soundId);
+        if (!sound) {
+          soundId = originalSoundId + '.mp3';
+          sound = Assets.get(soundId);
+        }
+        if (!sound) {
+          soundId = originalSoundId + '.ogg';
+          sound = Assets.get(soundId);
+        }
+        if (!sound) {
+          soundId = originalSoundId + '.wav';
+          sound = Assets.get(soundId);
+        }
+        if (sound) {
+          this._findAndAddFromManifest(soundId, sound);
+        } else {
+          throw new Error(`Sound with ID ${soundId} does not exist.`);
+        }
       }
     }
-    // Logger.log(`Sound with id:${originalId} is now mapped to id:${soundId}`);
+    Logger.log(`Sound with id:${originalSoundId} is now mapped to id:${soundId}`);
     this._idMap.set(soundId, soundId);
     return soundId;
+  }
+
+  private _findAndAddFromManifest(soundId: string, sound: Sound) {
+    const manifest = this.app.manifest;
+    if (manifest === undefined || typeof manifest === 'string') {
+      throw new Error('Manifest is not available');
+    }
+    for (let i = 0; i < manifest.bundles.length; i++) {
+      const bundle = manifest.bundles[i];
+      if (!Array.isArray(bundle?.assets)) {
+        bundle.assets = [bundle.assets];
+      }
+      for (let j = 0; j < bundle.assets.length; j++) {
+        const asset = bundle.assets[j];
+        // detect sound assets by asset.src extension
+        const src = asset.src;
+        const filename = sound.url.split('/').pop() ?? '';
+        if (Array.isArray(src)) {
+          for (let s = 0; s < src.length; s++) {
+            const urlOrResolvedSrc = src[s];
+            let url: string;
+            if (typeof urlOrResolvedSrc !== 'string') {
+              url = urlOrResolvedSrc.src!;
+            } else {
+              url = urlOrResolvedSrc as string;
+            }
+            if (url.includes(filename)) {
+              this.add(asset);
+              return;
+            }
+          }
+        } else {
+          if (src?.includes(filename)) {
+            this.add(asset);
+            return;
+          }
+        }
+      }
+    }
   }
 
   /**

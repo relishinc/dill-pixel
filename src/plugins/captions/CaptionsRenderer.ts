@@ -1,10 +1,9 @@
 import { gsap } from 'gsap';
-import { BitmapText, Sprite, Texture } from 'pixi.js';
-import { Container } from '../../display/Container';
-import { Logger } from '../../utils/console/Logger';
-import { Size } from '../../utils/types';
+import { BitmapText, Container as PIXIContainer, Sprite, Texture } from 'pixi.js';
+import { Container } from '../../display';
+import type { Size } from '../../utils';
+import { Logger } from '../../utils';
 import { CaptionsPlugin } from './CaptionsPlugin';
-import { PIXIContainer } from '../../pixi';
 
 export type CaptionLine = {
   id: string;

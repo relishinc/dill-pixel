@@ -13,6 +13,7 @@ export class Player extends SnapActor {
   onKilled = new Signal();
   speed: number = 6;
   constraints?: { x?: { min?: number; max?: number } };
+
   private _canJump: boolean = false;
   private _isJumping: boolean = false;
   private _jumpPower: number = 0;
@@ -30,6 +31,10 @@ export class Player extends SnapActor {
 
   get velocity() {
     return this._velocity;
+  }
+
+  get ridingAllowed(): boolean {
+    return !this._isJumping;
   }
 
   get cachedBounds() {
@@ -60,20 +65,14 @@ export class Player extends SnapActor {
       return;
     }
 
-    const riding = this.collideables.find((entity) => this.isRiding(entity));
-
-    this._velocity.y =
-      this.system.gravity * deltaTime - (this._velocity.y < 0 ? this._jumpPower : -this.system.gravity * 0.25);
+    this._velocity.y = this.system.gravity - (this._velocity.y < 0 ? this._jumpPower : -this.system.gravity * 0.25);
 
     if (this._isJumping) {
       this._jumpTimeElapsed += deltaTime;
       this._jumpPower -= this._velocity.y < 0 ? 1 : 3;
-      this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
-    } else if (riding) {
-      // do nothing
-    } else {
-      this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
     }
+
+    this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
 
     if (!this._isJumping && !this._isMoving) {
       if (this.view.getCurrentAnimation() !== 'idle') {
@@ -87,6 +86,10 @@ export class Player extends SnapActor {
     }
 
     this._isMoving = false;
+
+    if (this.mostRiding && this.mostRiding.type === 'Platform') {
+      this.mostRiding.view.tint = 0x0;
+    }
   }
 
   public squish(collision: Collision, pushingEntity: Entity, direction?: Point) {
@@ -155,7 +158,6 @@ export class Player extends SnapActor {
       loop: true,
     });
 
-    // console.log(this.view.animationNames);
     this.view.scale.set(0.15);
     this.app.actions('move_left').connect(this._handleAction);
     this.app.actions('move_right').connect(this._handleAction);
@@ -174,8 +176,10 @@ export class Player extends SnapActor {
       this.isRiding(collision.entity2)
     ) {
       this._resetJump();
-    } else if (collision.top && collision.entity2.bottom <= this.top + 1) {
-      this._hitHead = true;
+    } else {
+      if (collision.top && collision.entity2.bottom <= this.top + 1) {
+        this._hitHead = true;
+      }
     }
   }
 

@@ -33,5 +33,18 @@ export declare class WebEventsPlugin extends Plugin implements IWebEventsPlugin 
      * Called when the browser resizes.
      */
     private _onResize;
+    /**
+     * Called when the page is hidden.
+     * Some browsers (like Safari) don't support the `visibilitychange` event, so we also listen for `pagehide`.
+     * We're just mimicking the `visibilitychange` event here.
+     */
+    private _onPageHide;
+    /**
+     * Called when the page is shown.
+     * Some browsers (like Safari) don't support the `visibilitychange` event, so we also listen for `pageshow`.
+     * We're just mimicking the `visibilitychange` event here.
+     * @private
+     */
+    private _onPageShow;
 }
 //# sourceMappingURL=WebEventsPlugin.d.ts.map

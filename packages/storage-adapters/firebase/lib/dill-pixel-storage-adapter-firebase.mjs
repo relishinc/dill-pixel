@@ -74,10 +74,13 @@ class R extends f {
     const r = c(this.db, i, e);
     try {
       const t = await h(r);
-      return t.exists() ? {
+      if (!t.exists())
+        return null;
+      const o = {
         id: t.id,
         ...t.data()
-      } : null;
+      };
+      return o || null;
     } catch (t) {
       throw new Error(`Error getting document: ${t}`);
     }

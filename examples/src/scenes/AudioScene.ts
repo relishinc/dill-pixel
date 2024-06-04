@@ -1,10 +1,10 @@
-import { ActionDetail, FlexContainer } from 'dill-pixel';
+import { ActionDetail, Button, ButtonAction, ButtonConfig, FlexContainer, SceneAssets } from 'dill-pixel';
+
 import { BaseScene } from './BaseScene';
 
 export class AudioScene extends BaseScene {
   protected readonly title = 'Audio';
   protected readonly subtitle = 'Demonstrates audio channels and volume control.';
-
   protected config = {
     master: 0.5,
     music: 0.25,
@@ -12,13 +12,21 @@ export class AudioScene extends BaseScene {
     vo: 2,
     muted: false,
   };
-
   protected buttonContainer: FlexContainer;
+  protected musicButtons: FlexContainer;
   protected sfxButtons: FlexContainer;
 
   constructor() {
     super();
     this.alpha = 0;
+  }
+
+  get assets(): SceneAssets {
+    return {
+      preload: {
+        bundles: ['audio'],
+      },
+    };
   }
 
   public async initialize() {
@@ -31,7 +39,52 @@ export class AudioScene extends BaseScene {
     this.app.audio.music.volume = this.config.music;
     this.app.audio.sfx.volume = this.config.sfx;
 
-    this.buttonContainer = this.add.flexContainer({ gap: 20, justifyContent: 'center' });
+    this.buttonContainer = this.add.flexContainer({
+      x: -this.app.size.width * 0.5,
+      gap: 50,
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      width: this.app.size.width,
+    });
+    this.musicButtons = this.buttonContainer.add.flexContainer({
+      gap: 10,
+      width: 256,
+      flexDirection: 'column',
+      alignItems: 'center',
+    });
+
+    this.musicButtons.add.text({ text: 'MUSIC', style: { fill: 0xffffff, fontSize: 36, fontWeight: 'bold' } });
+    this.addButton(this.musicButtons, 'Cheer', {
+      sounds: { hover: 'hover' },
+      actions: {
+        click: { id: 'music', data: { id: 'Cheerful Annoyance' } },
+      },
+    });
+    this.addButton(this.musicButtons, 'Drums', {
+      sounds: { hover: 'hover' },
+      actions: {
+        click: { id: 'music', data: { id: 'Drumming Sticks' } },
+      },
+    });
+    this.addButton(this.musicButtons, 'Mischief', {
+      sounds: { hover: 'hover' },
+      actions: {
+        click: { id: 'music', data: { id: 'Mishief Stroll' } },
+      },
+    });
+    this.addButton(this.musicButtons, 'Beach', {
+      sounds: { hover: 'hover' },
+      actions: {
+        click: { id: 'music', data: { id: 'Night at the Beach' } },
+      },
+    });
+    this.addButton(this.musicButtons, 'Game Over', {
+      sounds: { hover: 'hover' },
+      actions: {
+        click: { id: 'music', data: { id: 'Game Over' } },
+      },
+    });
+
     this.sfxButtons = this.buttonContainer.add.flexContainer({
       gap: 10,
       width: 256,
@@ -40,38 +93,50 @@ export class AudioScene extends BaseScene {
     });
 
     this.sfxButtons.add.text({ text: 'SFX', style: { fill: 0xffffff, fontSize: 36, fontWeight: 'bold' } });
+    this.addButton(this.sfxButtons, 'Click', { sounds: { hover: 'hover', click: 'click' } });
 
-    this.addButton(this.sfxButtons, 'Bubble', () => {
-      this.app.sendAction('sfx', {
-        id: 'bubble-land-sfx',
-      });
-    });
-
-    this.app.actions('sfx').connect(this._handleSfx);
+    this.addSignalConnection(
+      this.app.actions('sfx').connect(this._handleSfx),
+      this.app.actions('music').connect(this._handleMusic),
+    );
   }
 
-  public async start() {
-    void this.app.audio.fadeIn('horizon', 'music', { volume: 1 });
-  }
+  public async start() {}
 
   public destroy() {
-    void this.app.audio.fadeOut('horizon', 'music');
     super.destroy();
+    this.app.audio.stopAll(true, 0.5, { ease: 'sine.in' });
   }
 
   resize() {
     super.resize();
-    this.buttonContainer.position.set(0, -this.buttonContainer.height / 2);
+    this.buttonContainer.containerWidth = this.app.size.width;
+    this.app.ticker.addOnce(() => {
+      this.buttonContainer.position.set(-this.app.size.width * 0.5, -this.buttonContainer.height * 0.5);
+    });
   }
 
-  addButton(container: FlexContainer, label: string = 'Button', callback: () => void) {
+  addButton(
+    container: FlexContainer,
+    label: string = 'Button',
+    config: Partial<ButtonConfig> = {},
+    callback?: () => void,
+  ) {
     const btn = container.add.button({
       scale: 0.5,
       cursor: 'pointer',
-      textures: { default: 'btn/blue', hover: 'btn/yellow', disabled: 'btn/grey', active: 'btn/red' },
+      textures: {
+        default: this.app.audio.isPlaying((config?.actions?.click as ButtonAction)?.data?.id, 'music')
+          ? 'btn/red'
+          : 'btn/blue',
+        hover: 'btn/yellow',
+        disabled: 'btn/grey',
+        active: 'btn/red',
+      },
       sheet: 'ui.json',
       accessibleTitle: label,
       accessibleHint: `Press me to play a sound`,
+      ...config,
     });
 
     btn.add.text({
@@ -80,7 +145,9 @@ export class AudioScene extends BaseScene {
       style: { fill: 0xffffff, fontWeight: 'bold', fontSize: 48, align: 'center' },
     });
 
-    this.addSignalConnection(btn.onClick.connect(callback));
+    if (callback) {
+      this.addSignalConnection(btn.onClick.connect(callback));
+    }
 
     btn.label = label;
     this.app.focus.add(btn, this.id, false);
@@ -116,5 +183,19 @@ export class AudioScene extends BaseScene {
 
   private _handleSfx(action: ActionDetail) {
     this.app.audio.play(action.data.id, 'sfx');
+  }
+
+  private _handleMusic(action: ActionDetail) {
+    const button = action.data.button as Button;
+
+    if (this.app.audio.isPlaying(action.data.id, 'music')) {
+      this.app.audio.stop(action.data.id, 'music');
+      this.app.audio.play('click', 'sfx');
+      button.setTexture('default', 'btn/blue');
+      return;
+    }
+    this.app.audio.play(action.data.id, 'music', { singleInstance: true, loop: true });
+
+    button.setTexture('default', 'btn/red');
   }
 }

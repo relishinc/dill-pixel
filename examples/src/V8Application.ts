@@ -1,140 +1,199 @@
-import EN from '@/locales/en';
-import { AppConfig, Application, create, LoadSceneMethod, LocalStorageAdapter } from 'dill-pixel';
+import { Application, LocalStorageAdapter, create } from 'dill-pixel';
 
-import { Assets } from 'pixi.js';
-import manifest from './assets.json';
+import EN from '@/locales/en';
 import { ExampleOutliner } from './ui/ExampleOutliner';
-import TestAdapter from '@/adapters/TestAdapter';
+import manifest from './assets.json';
 import type { FirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
 
-export class V8Application extends Application {
-  setup() {
-    return Assets.loadBundle(['required', 'game']);
-  }
-
+class V8Application extends Application {
   get firebase(): FirebaseAdapter {
     return this.store.getAdapter('firebase') as FirebaseAdapter;
   }
 }
 
-const appConfig: AppConfig = {
-  id: 'V8Application',
-  manifest: manifest,
-  antialias: true,
-  plugins: [
-    {
-      id: 'physics',
-      module: () => import('@dill-pixel/plugin-snap-physics'),
-      options: {
-        useSpatialHashGrid: false,
-        gridCellSize: 300,
-        fps: 60,
+create(
+  {
+    id: 'V8Application',
+    antialias: true,
+    resizer: {
+      minSize: { width: 500, height: 800 },
+    },
+    defaultSceneLoadMethod: 'exitEnter',
+    useSpine: true,
+    showStats: true,
+    showSceneDebugMenu: true,
+    focusOptions: {
+      outliner: ExampleOutliner,
+    },
+    assets: {
+      manifest: manifest,
+      preload: {
+        bundles: ['required', 'game'],
       },
-      autoLoad: false,
+      background: {
+        bundles: ['audio', 'spine'],
+      },
     },
-  ],
-  storageAdapters: [
-    { id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } },
-    { id: 'test', module: TestAdapter, options: { foo: 'bar' } },
-    {
-      id: 'firebase',
-      namedExport: 'FirebaseAdapter',
-      module: () => import('@dill-pixel/storage-adapter-firebase'),
-    },
-  ],
-  scenes: [
-    {
-      id: 'audio',
-      debugLabel: 'Audio',
-      namedExport: 'AudioScene',
-      module: () => import('@/scenes/AudioScene'),
-    },
-    {
-      id: 'voiceover',
-      debugLabel: 'Voiceover / Captions',
-      namedExport: 'VoiceoverScene',
-      module: () => import('@/scenes/VoiceoverScene'),
-    },
-    {
-      id: 'focus',
-      debugLabel: 'Focus Management',
-      namedExport: 'FocusScene',
-      module: () => import('@/scenes/FocusScene'),
-    },
-    {
-      id: 'popups',
-      debugLabel: 'Popup Management',
-      namedExport: 'PopupScene',
-      module: () => import('@/scenes/PopupScene'),
-    },
-    {
-      id: 'spine',
-      debugLabel: 'Spine Testing',
-      namedExport: 'SpineScene',
-      module: () => import('@/scenes/SpineScene'),
-    },
-    {
-      id: 'flexContainer',
-      debugLabel: 'Flex Container',
-      namedExport: 'FlexContainerScene',
-      module: () => import('@/scenes/FlexContainerScene'),
-    },
-    {
-      id: 'uiCanvas',
-      debugLabel: 'UICanvas',
-      namedExport: 'UICanvasScene',
-      module: () => import('@/scenes/UICanvasScene'),
-    },
-    {
-      id: 'physics',
-      debugLabel: 'Snap Physics',
-      namedExport: 'SnapPhysicsScene',
-      module: () => import('@/scenes/SnapPhysicsScene'),
-      plugins: ['physics'],
-    },
-    {
-      id: 'runner',
-      debugLabel: 'Endless Runner',
-      namedExport: 'EndlessRunnerScene',
-      module: () => import('@/scenes/EndlessRunnerScene'),
-      plugins: ['physics'],
-    },
-    {
-      id: 'firebase',
-      debugLabel: 'Firebase Storage Adapter',
-      namedExport: 'FirebaseAdapterScene',
-      module: () => import('@/scenes/FirebaseAdapterScene'),
-    },
-  ],
-  i18n: {
-    loadAll: true,
-    locales: ['en', 'fr', 'fr-json'],
-    files: [
-      { id: 'en', module: EN },
-      { id: 'fr', module: () => import('@/locales/fr') },
-      { id: 'fr-json', json: '/locales/fr.json' },
+    plugins: [
+      {
+        id: 'physics',
+        module: () => import('@dill-pixel/plugin-snap-physics'),
+        options: {
+          useSpatialHashGrid: false,
+          gridCellSize: 300,
+        },
+        autoLoad: false,
+      },
+      {
+        id: 'arcade',
+        module: () => import('@dill-pixel/plugin-arcade-physics'),
+        options: {
+          debug: true,
+          useTree: true,
+        },
+        autoLoad: false,
+      },
+      {
+        id: 'matter',
+        module: () => import('@dill-pixel/plugin-matter-physics'),
+        options: {
+          debug: true,
+        },
+        autoLoad: false,
+      },
     ],
-  },
-  resizer: {
-    minSize: { width: 960, height: 600 },
-  },
-  defaultSceneLoadMethod: 'exitEnter' as LoadSceneMethod,
-  useSpine: true,
-  showStats: true,
-  showSceneDebugMenu: true,
-  focusOptions: {
-    outliner: ExampleOutliner,
-  },
-  captions: {
-    files: [
-      { id: 'en', json: 'audio/vo/en/cc.json' },
-      { id: 'fr', json: 'audio/vo/fr/cc.json' },
+    storageAdapters: [
+      { id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } },
+      {
+        id: 'firebase',
+        namedExport: 'FirebaseAdapter',
+        module: () => import('@dill-pixel/storage-adapter-firebase'),
+      },
     ],
-    backgroundAlpha: 0.5,
-    backgroundColor: 0x0,
-    textColor: 0xffffff,
-    maxWidth: 0.4,
-  },
-};
+    scenes: [
+      {
+        id: 'audio',
+        debugLabel: 'Audio',
+        namedExport: 'AudioScene',
+        module: () => import('@/scenes/AudioScene'),
+      },
+      {
+        id: 'voiceover',
+        debugLabel: 'Voiceover / Captions',
+        namedExport: 'VoiceoverScene',
+        module: () => import('@/scenes/VoiceoverScene'),
+      },
+      {
+        id: 'focus',
+        debugLabel: 'Focus Management',
+        namedExport: 'FocusScene',
+        module: () => import('@/scenes/FocusScene'),
+      },
+      {
+        id: 'popups',
+        debugLabel: 'Popup Management',
+        namedExport: 'PopupScene',
+        module: () => import('@/scenes/PopupScene'),
+      },
+      {
+        id: 'spine',
+        debugLabel: 'Spine Testing',
+        namedExport: 'SpineScene',
+        assets: {
+          preload: {
+            bundles: ['spine'],
+          },
+        },
+        module: () => import('@/scenes/SpineScene'),
+      },
+      {
+        id: 'flexContainer',
+        debugLabel: 'Flex Container',
+        namedExport: 'FlexContainerScene',
+        module: () => import('@/scenes/FlexContainerScene'),
+      },
+      {
+        id: 'uiCanvas',
+        debugLabel: 'UICanvas',
+        namedExport: 'UICanvasScene',
+        module: () => import('@/scenes/UICanvasScene'),
+      },
 
-void create(V8Application, appConfig);
+      {
+        id: 'runner',
+        debugLabel: 'Endless Runner',
+        namedExport: 'EndlessRunnerScene',
+        module: () => import('@/scenes/EndlessRunnerScene'),
+        plugins: ['physics'],
+        assets: {
+          preload: {
+            bundles: ['spine'],
+          },
+        },
+      },
+      {
+        id: 'physics',
+        debugLabel: 'Snap Physics',
+        namedExport: 'SnapPhysicsScene',
+        module: () => import('@/scenes/SnapPhysicsScene'),
+        plugins: ['physics'],
+        assets: {
+          preload: {
+            bundles: ['spine'],
+          },
+        },
+      },
+      {
+        id: 'arcade',
+        debugLabel: 'Arcade Physics',
+        namedExport: 'ArcadePhysicsScene',
+        module: () => import('@/scenes/ArcadePhysicsScene'),
+        plugins: ['arcade'],
+        assets: {
+          preload: {
+            bundles: ['spine', 'game'],
+          },
+        },
+      },
+      {
+        id: 'matter',
+        debugLabel: 'Matter Physics',
+        namedExport: 'MatterPhysicsScene',
+        module: () => import('@/scenes/MatterPhysicsScene'),
+        plugins: ['matter'],
+        assets: {
+          preload: {
+            bundles: ['spine', 'game'],
+          },
+        },
+      },
+      {
+        id: 'firebase',
+        debugLabel: 'Firebase Storage Adapter',
+        namedExport: 'FirebaseAdapterScene',
+        module: () => import('@/scenes/FirebaseAdapterScene'),
+      },
+    ],
+    i18n: {
+      loadAll: true,
+      locales: ['en', 'fr', 'fr-json'],
+      files: [
+        { id: 'en', module: EN },
+        { id: 'fr', module: () => import('@/locales/fr') },
+        { id: 'fr-json', json: '/locales/fr.json' },
+      ],
+    },
+
+    captions: {
+      files: [
+        { id: 'en', json: 'audio/vo/en/cc.json' },
+        { id: 'fr', json: 'audio/vo/fr/cc.json' },
+      ],
+      backgroundAlpha: 0.5,
+      backgroundColor: 0x0,
+      textColor: 0xffffff,
+      maxWidth: 0.4,
+    },
+  },
+  V8Application,
+);

@@ -2,7 +2,7 @@ import { Container } from 'pixi.js';
 import { IApplication } from '../core';
 import { IScene } from '../display';
 import { Signal } from '../signals';
-import { ImportList, SceneImportList } from '../utils';
+import { SceneImportList } from '../utils';
 import { IPlugin, Plugin } from './Plugin';
 
 export interface ISceneManagerPlugin extends IPlugin {
@@ -16,7 +16,8 @@ export interface ISceneManagerPlugin extends IPlugin {
     }) => void>;
     loadScreen?: IScene;
     view: Container;
-    scenes: ImportList<IScene>;
+    scenes: SceneImportList<IScene>;
+    currentScene: IScene;
     setDefaultLoadMethod(method: LoadSceneMethod): void;
     loadDefaultScene(): Promise<void>;
     loadScene(sceneIdOrLoadSceneConfig: LoadSceneConfig | string): Promise<void>;
@@ -61,6 +62,8 @@ export declare class SceneManagerPlugin extends Plugin implements ISceneManagerP
     private _queueComplete;
     private _destroyLastScene;
     private _exitLastScene;
+    private _loadCurrentScene;
+    private _unloadLastScene;
     private _initializeCurrentScene;
     private _addCurrentScene;
     private _addCurrentSceneBehind;

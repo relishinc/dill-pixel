@@ -9,5 +9,6 @@ export * from './object';
 export * from './bind';
 export * from './padding';
 export * from './platform';
+export * from './string';
 export * from './types';
 //# sourceMappingURL=index.d.ts.map

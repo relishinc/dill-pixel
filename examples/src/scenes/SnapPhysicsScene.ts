@@ -3,14 +3,14 @@ import { Platform, PlatformMovementConfigOpts } from '@/entities/physics/Platfor
 import { Player } from '@/entities/physics/Player';
 import { Portal } from '@/entities/physics/Portal';
 import { BaseScene } from '@/scenes/BaseScene';
-import { Camera, Container, delay, FlexContainer } from 'dill-pixel';
-import { Assets, Ticker } from 'pixi.js';
+import { Camera, Container, delay, UICanvas } from 'dill-pixel';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
 import { GUIController } from 'dat.gui';
 import { gsap } from 'gsap';
+import { Joystick } from '@/ui/Joystick';
 
 export class SnapPhysicsScene extends BaseScene {
-  controls: FlexContainer;
+  ui: UICanvas;
   level: Container;
   player: Player;
   platforms: Platform[] = [];
@@ -25,14 +25,14 @@ export class SnapPhysicsScene extends BaseScene {
     zoom: 1,
     useSpatialHash: true,
     gridCellSize: 300,
-    debug: false,
+    debug: true,
   };
   private _zoomController: GUIController;
 
-  // private _debugGfx = new Graphics();
+  private _joystick: Joystick;
 
   protected get physics(): SnapPhysics {
-    return this.app.getPlugin('physics') as SnapPhysics;
+    return this.app.getPlugin('physics') as unknown as SnapPhysics;
   }
 
   configureGUI() {
@@ -44,7 +44,7 @@ export class SnapPhysicsScene extends BaseScene {
       .name('Use Camera');
 
     this._zoomController = this.gui
-      .add(this.config, 'zoom', 0.75, 2, 0.05)
+      .add(this.config, 'zoom', 0.25, 3, 0.05)
       .onChange(() => {
         this._handleCameraZoomChanged();
       })
@@ -81,15 +81,13 @@ export class SnapPhysicsScene extends BaseScene {
   }
 
   async initialize() {
-    console.log('SNAP PHYSICS SCENE', this.app.focus);
     await super.initialize();
-    await Assets.loadBundle('spine');
 
     this.app.focus.addFocusLayer(this.id);
 
     this.level = this.add.container({
-      label: 'Level',
       position: [-this.app.size.width * 0.5, -this.app.size.height * 0.5],
+      label: 'Level',
     });
 
     this.physics.system.initialize({
@@ -115,19 +113,19 @@ export class SnapPhysicsScene extends BaseScene {
     this.addPlayer(true);
     this.addControls();
 
+    this.physics.system.enabled = true;
+    this.physics.system.updateHooks.add(this.physicsUpdate);
+
     this._handleDebugChanged();
     this._handleUseCameraChanged();
 
     this.app.keyboard.onKeyDown('z').connect(this._toggleZoom);
   }
 
-  async start() {
-    await delay(0.5);
-  }
+  async start() {}
 
-  update(ticker: Ticker) {
+  physicsUpdate() {
     if (this._isPaused) return;
-
     if (
       this.app.keyboard.isKeyDown('ArrowUp') ||
       this.app.keyboard.isKeyDown(' ') ||
@@ -136,29 +134,26 @@ export class SnapPhysicsScene extends BaseScene {
       this.app.sendAction('jump');
     }
 
-    if (this.app.keyboard.isKeyDown('ArrowLeft')) {
+    if (
+      this.app.keyboard.isKeyDown('ArrowLeft') ||
+      this.app.keyboard.isKeyDown('a') ||
+      this._joystick.direction.includes('left')
+    ) {
       this.app.sendAction('move_left');
     }
-    if (this.app.keyboard.isKeyDown('a')) {
-      this.app.sendAction('move_left');
-    }
-    if (this.app.keyboard.isKeyDown('ArrowRight')) {
+    if (
+      this.app.keyboard.isKeyDown('ArrowRight') ||
+      this.app.keyboard.isKeyDown('d') ||
+      this._joystick.direction.includes('right')
+    ) {
       this.app.sendAction('move_right');
     }
-    if (this.app.keyboard.isKeyDown('d')) {
-      this.app.sendAction('move_right');
-    }
-    this.physics.system.update(ticker.deltaTime);
   }
 
   resize() {
     super.resize();
     this.camera.viewportWidth = this.app.size.width;
     this.camera.viewportHeight = this.app.size.height;
-
-    this.controls.x = -this.app.size.width * 0.5 + 20;
-    this.controls.y = this.app.size.height * 0.5 - (window.innerHeight > window.innerWidth ? 400 : 100);
-    this.controls.containerWidth = this.app.size.width - 40;
   }
 
   addPlatforms(bottom: number) {
@@ -226,12 +221,16 @@ export class SnapPhysicsScene extends BaseScene {
 
   addPortals(bottom: number) {
     const portal0 = this.addPortal(400, bottom - 80);
+    portal0.debug = true;
+    portal0.label = 'portal0';
     const portal1 = this.addPortal(600, bottom - 80);
     const portal2 = this.addPortal(1700, bottom - 580);
+    const portal3 = this.addPortal(2000, bottom - 80);
 
     portal0.connect(portal1);
     portal1.connect(portal2);
     portal2.connect(portal0);
+    portal3.connect(portal0);
   }
 
   addPortal(x: number, y: number) {
@@ -260,55 +259,46 @@ export class SnapPhysicsScene extends BaseScene {
   }
 
   addControls() {
-    this.controls = this.add.flexContainer({
-      justifyContent: 'space-between',
-      width: this.app.size.width - 40,
-      height: 100,
-      x: -this.app.size.width * 0.5 + 20,
-      y: this.app.size.height * 0.5 - (window.innerHeight > window.innerWidth ? 400 : 100),
+    this.ui = this.add.uiCanvas({ padding: 10, useAppSize: true });
+    this.ui.zIndex = 100;
+
+    const jumpButton = this.make.button({
+      cursor: 'pointer',
+      scale: 0.5,
+      textures: {
+        default: 'btn_circle/up',
+        hover: 'btn_circle/over',
+        disabled: 'btn_circle/up',
+        active: 'btn_circle/down',
+      },
+      sheet: 'ui.json',
+      accessibleTitle: 'jump',
+      accessibleHint: `Press to jump`,
     });
 
-    const leftSide = this.controls.add.flexContainer({ gap: 10 });
-    const rightSide = this.controls.add.flexContainer({ gap: 10 });
-
-    const leftButton = this.makeControl('←', () => {
-      this.app.sendAction('move_left');
-    });
-    const rightButton = this.makeControl('→', () => {
-      this.app.sendAction('move_right');
-    });
-    const jumpButton = this.makeControl('JUMP', () => {
+    jumpButton.addIsDownCallback('jump', () => {
       this.app.sendAction('jump');
     });
 
-    leftSide.add.existing(leftButton);
-    leftSide.add.existing(rightButton);
-    rightSide.add.existing(jumpButton);
-
-    this.controls.layout();
-  }
-
-  makeControl(label: string = 'Button', callback: () => void) {
-    const btn = this.make.button({
-      scale: 0.5,
-      cursor: 'pointer',
-      textures: { default: 'btn/blue', hover: 'btn/yellow', disabled: 'btn/grey', active: 'btn/red' },
-      sheet: 'ui.json',
-      accessibleTitle: label,
-      accessibleHint: `Press me to play a sound`,
+    this._joystick = new Joystick({
+      inner: this.make.sprite({
+        asset: 'joystick/handle',
+        sheet: 'ui.json',
+      }),
+      outer: this.make.sprite({
+        asset: 'joystick/base',
+        sheet: 'ui.json',
+      }),
+      innerScale: 0.7,
+      outerScale: 0.7,
     });
+    this.ui.addElement(this._joystick, { align: 'bottom left', padding: { left: 20 } });
+    this.ui.addElement(jumpButton, { align: 'bottom right', padding: { bottom: 10, right: 20 } });
 
-    btn.add.text({
-      text: label,
-      anchor: 0.5,
-      style: { fill: 0xffffff, fontWeight: 'bold', fontSize: 48, align: 'center' },
-    });
-
-    btn.addIsDownCallback(label, callback);
-
-    btn.label = label;
-    this.app.focus.add(btn, this.id, false);
-    return btn;
+    if (!this.app.isMobile) {
+      this._joystick.visible = false;
+      jumpButton.visible = false;
+    }
   }
 
   async _handlePlayerKilled() {
@@ -368,7 +358,8 @@ export class SnapPhysicsScene extends BaseScene {
     if (!this.camera) {
       return;
     }
-    this.physics.system.collisionThreshold = Math.round(this.camera.scale.x + 2);
+    // this.physics.system.collisionThreshold = Math.round(this.camera.scale.x + 2);
+    this.physics.system.collisionThreshold = 0;
   }
 
   private _resetCollisionThreshold() {
@@ -400,9 +391,9 @@ export class SnapPhysicsScene extends BaseScene {
         return false;
       case 'Player|Platform':
         // eslint-disable-next-line no-case-declarations
-        const platform = collision.entity2 as Platform;
+        const platform: Platform = collision.entity2 as Platform;
         // eslint-disable-next-line no-case-declarations
-        const player = collision.entity1 as Player;
+        const player: Player = collision.entity1 as Player;
         if (platform.canJumpThroughBottom) {
           if (collision.top) {
             player.setPassingThrough(platform);
