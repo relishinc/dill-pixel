@@ -1,5 +1,5 @@
 import type {Application} from '../../Application';
-import {IPlugin, Plugin} from '../../plugins/Plugin';
+import {IPlugin, Plugin} from '../../plugins';
 
 /**
  * Interface for a storage adapter module.
@@ -12,7 +12,11 @@ export interface IStorageAdapter extends IPlugin {
    * @param _rest
    * @returns {Promise<void> | void} A promise that resolves when the data has been saved, or void if the save operation is synchronous.
    */
-  save(_key: string, _data: any, ..._rest: any[]): Promise<void> | void;
+  save<TExpectedSaveResult = any>(
+    _key: string,
+    _data: any,
+    ..._rest: any[]
+  ): Promise<TExpectedSaveResult> | TExpectedSaveResult | null;
 
   /**
    * Loads data from a specified key.
@@ -20,7 +24,7 @@ export interface IStorageAdapter extends IPlugin {
    * @returns {Promise<T> | T | null} A promise that resolves with the loaded data, or the loaded data if the load operation is synchronous, or null if no data was found.
    * @param _key
    */
-  load<T = any>(_key: string): Promise<T> | T | null;
+  load<TExpectedLoadResult = any>(_key: string): Promise<TExpectedLoadResult> | TExpectedLoadResult | null;
 }
 
 /**
@@ -42,9 +46,9 @@ export class StorageAdapter<T extends Application = Application> extends Plugin<
    * @param {string} _key The key from which to load the data.
    * @returns {Promise<T> | T | null} A promise that resolves with the loaded data, or the loaded data if the load operation is synchronous, or null if no data was found.
    */
-  load<T = any>(_key: string): Promise<T> | T | null;
+  load<TExpectedLoadResult = any>(_key: string): Promise<TExpectedLoadResult> | TExpectedLoadResult | null;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async load<T = any>(_key: string): Promise<T | null> {
+  async load<TExpectedLoadResult = any>(_key: string): Promise<TExpectedLoadResult | null> {
     return null;
   }
 
@@ -56,9 +60,20 @@ export class StorageAdapter<T extends Application = Application> extends Plugin<
    * @param _rest
    */
 
-  save(_key: string, _data: any, ..._rest: any[]): Promise<void> | void;
+  save<TExpectedSaveResult = any>(
+    _key: string,
+    _data: any,
+    ..._rest: any[]
+  ): Promise<TExpectedSaveResult> | TExpectedSaveResult | null;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async save(_key: string, _data: any, ..._rest: any[]): Promise<void> {
-    return;
+  async save<TExpectedSaveResult = any>(
+    _key: string,
+    _data: any,
+    ..._rest: any[]
+  ): Promise<TExpectedSaveResult | null> {
+    void _key;
+    void _data;
+    void _rest;
+    return null;
   }
 }

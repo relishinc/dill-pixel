@@ -3,8 +3,9 @@ import { Graphics, Text } from 'pixi.js';
 import { COLOR_GREEN } from '@/utils/Constants';
 import { GUI } from 'dat.gui';
 import { Scene } from 'dill-pixel';
+import { V8Application } from '@/V8Application';
 
-export class BaseScene extends Scene {
+export class BaseScene extends Scene<V8Application> {
   protected readonly title: string;
   protected readonly subtitle: string;
   protected gui: GUI;

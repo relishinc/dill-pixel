@@ -2,3 +2,4 @@
 /creds
 /creds/*
 .voiceover
+.env

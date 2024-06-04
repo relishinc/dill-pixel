@@ -3,6 +3,7 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "baseUrl": ".",
     "rootDir": "./src",
     "outDir": "./lib",
     "lib": ["ESNext", "DOM"],
@@ -20,10 +21,11 @@
     "allowJs": true,
     "composite": true,
     "paths": {
-      "dill-pixel/*": ["../../../src/*"]
-    }
+      "dill-pixel/*": ["../../src/*"]
+    },
+    "types": ["vite/client"] // added this to resolve errors when using import.meta.env
   },
   "typeRoots": ["./node_modules/@types"],
-  "include": ["./src/**/*.ts", "../../../src/**/*.ts"],
+  "include": ["./src/**/*.ts", "../../src/**/*.ts"],
   "exclude": ["./lib", "./node_modules"]
 }

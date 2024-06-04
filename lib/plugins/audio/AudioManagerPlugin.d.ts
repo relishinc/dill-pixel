@@ -49,7 +49,7 @@ export interface IAudioManagerPlugin extends IPlugin {
     pause(): void;
     resume(): void;
     suspend(): void;
-    restore(): void;
+    restore(): Promise<void>;
     getAudioInstance(soundId: string, channelName: string): IAudioInstance | undefined;
     stopAll(fade?: boolean, duration?: number, props?: TweenVars): void;
 }

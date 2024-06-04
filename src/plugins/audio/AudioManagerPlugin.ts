@@ -73,7 +73,7 @@ export interface IAudioManagerPlugin extends IPlugin {
 
   suspend(): void;
 
-  restore(): void;
+  restore(): Promise<void>;
 
   getAudioInstance(soundId: string, channelName: string): IAudioInstance | undefined;
 
