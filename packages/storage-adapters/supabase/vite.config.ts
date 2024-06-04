@@ -3,6 +3,9 @@ import path from 'path';
 import dts from 'vite-plugin-dts';
 
 export default defineConfig({
+  define: {
+    'process.env': 'import.meta.env',
+  },
   build: {
     outDir: './lib',
     sourcemap: true,

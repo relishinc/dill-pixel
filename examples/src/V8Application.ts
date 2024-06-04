@@ -4,7 +4,7 @@ import EN from '@/locales/en';
 import { ExampleOutliner } from './ui/ExampleOutliner';
 import manifest from './assets.json';
 import type { IFirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
-import { SupabaseAdapter } from '@dill-pixel/storage-adapter-supabase';
+import { SupabaseAdapter } from '@dill-pixel/storage-adapter-supabase/SupabaseAdapter';
 import type { Database } from './supabase';
 
 export class V8Application extends Application {
@@ -70,15 +70,11 @@ create(
     ],
     storageAdapters: [
       { id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } },
-    {
-      id: 'supabase',
-      namedExport: 'SupabaseAdapter',
-      module: () => import('@dill-pixel/storage-adapter-supabase'),
-      options: {
-        supabaseUrl: `https://kymsclfscdpzyguuioxy.supabase.co`,
-        anonKey: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5bXNjbGZzY2RwenlndXVpb3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTUxOTAzNjAsImV4cCI6MjAzMDc2NjM2MH0.QomlbjsmzucuX2RIJMsUxD12gMazY3e4-G4laYhr1PM`,
+      {
+        id: 'supabase',
+        namedExport: 'SupabaseAdapter',
+        module: () => import('@dill-pixel/storage-adapter-supabase'),
       },
-    },
       {
         id: 'firebase',
         namedExport: 'FirebaseAdapter',
@@ -194,12 +190,12 @@ create(
         namedExport: 'FirebaseAdapterScene',
         module: () => import('@/scenes/FirebaseAdapterScene'),
       },
-    {
-      id: 'supabase',
-      debugLabel: 'Supabase Adapter',
-      namedExport: 'SupabaseAdapterScene',
-      module: () => import('@/scenes/SupabaseAdapterScene'),
-    },
+      {
+        id: 'supabase',
+        debugLabel: 'Supabase Adapter',
+        namedExport: 'SupabaseAdapterScene',
+        module: () => import('@/scenes/SupabaseAdapterScene'),
+      },
     ],
     i18n: {
       loadAll: true,
