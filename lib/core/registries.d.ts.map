@@ -1,1 +1,0 @@
-{"version":3,"file":"registries.d.ts","sourceRoot":"","sources":["../../src/core/registries.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,cAAc,EAAE,YAAY,EAAE,MAAM,cAAc,CAAC;AAGjE,eAAO,MAAM,kBAAkB,EAAE;KAAG,CAAC,IAAI,MAAM,YAAY,GAAG,YAAY,CAAC,CAAC,CAAC;CAAO,CAAC;AAGrF,eAAO,MAAM,oBAAoB,EAAE;KAAG,CAAC,IAAI,MAAM,cAAc,GAAG,cAAc,CAAC,CAAC,CAAC;CAAO,CAAC"}
