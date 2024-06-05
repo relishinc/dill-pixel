@@ -1,4 +1,4 @@
-import { ActionDetail, Button, FlexContainer } from 'dill-pixel';
+import { ActionDetail, Button, FlexContainer, Logger } from 'dill-pixel';
 import { BaseScene } from './BaseScene';
 import { Input } from '@pixi/ui';
 import { Graphics, Text } from 'pixi.js';
@@ -75,9 +75,7 @@ export class SupabaseAdapterScene extends BaseScene {
 
     // add a load button
     const loadButton = this.createButton('Reload', 'blue', () => {
-      this.app.sendAction('load_from_supabase', {
-        tableId: 'scores',
-      });
+      this.app.sendAction('load_from_supabase');
     });
     this.buttonContainer.addChild(loadButton);
 
@@ -125,11 +123,11 @@ export class SupabaseAdapterScene extends BaseScene {
     // add error text
     this.errorText = this.add.text({
       text: '',
-      style: { fill: 0xff0000, fontSize: 18, align: 'center' },
+      style: { fill: 0xf79295, fontSize: 18, align: 'center', fontWeight: 'bold' },
     });
 
     this.errorText.anchor = 0.5;
-    this.errorText.y = this.inputContainer.y + 130;
+    this.errorText.y = this.inputContainer.y + 100;
 
     // refresh the scoreboard
     this.refreshScoreboard();
@@ -147,7 +145,7 @@ export class SupabaseAdapterScene extends BaseScene {
       return;
     }
 
-    console.log('Signed in:', data);
+    Logger.log('Signed in:', data);
     this.user = data.user;
 
     // hide the unauthenticated UI elements
@@ -176,7 +174,7 @@ export class SupabaseAdapterScene extends BaseScene {
       return;
     }
 
-    console.log('Signed out');
+    Logger.log('Signed out');
     this.user = null;
 
     // hide the authenticated UI elements
@@ -198,13 +196,24 @@ export class SupabaseAdapterScene extends BaseScene {
 
   private async _handleSave(action: ActionDetail) {
     this.errorText.text = '';
-    const { data, error } = await this.app.supabase.save(action.data.tableId, action.data.data);
+
+    // Option 1: use the store
+    // const res = await this.app.store.save('supabase', action.data.tableId, action.data.data);
+    // const { data, error } = res[0];
+
+    // Option 2: use the adapter
+    const {data, error} = await this.app.supabase.save(action.data.tableId, action.data.data);
 
     if (error) {
       console.error('Error saving data:', error);
+
+      if (error.code === '23505') {
+        this.errorText.text = 'Username already exists. Please use a different one.';
+      } else {
       this.errorText.text = error.details || error.message || 'An error occurred';
+      }
     } else {
-      console.log('Saved data:', data);
+      Logger.log('Saved data:', data);
       const scoreToAdd = data[0];
       this.addScoreToScoreboard({
         user_id: scoreToAdd.user_id,
@@ -216,18 +225,8 @@ export class SupabaseAdapterScene extends BaseScene {
     }
   }
 
-  private async _handleLoad(action: ActionDetail) {
-    this.errorText.text = '';
-    const { data, error } = await this.app.supabase.load(action.data.tableId);
-
-    if (error) {
-      console.error('Error loading data:', error);
-      this.errorText.text = error.details;
-    } else {
-      console.log('Loaded data:', data);
-      this.scores = data;
+  private async _handleLoad() {
       this.refreshScoreboard();
-    }
   }
 
   private async _handleClear() {
@@ -243,7 +242,7 @@ export class SupabaseAdapterScene extends BaseScene {
       console.error('Error clearing data:', error);
       this.errorText.text = error.details;
     } else {
-      console.log('Cleared data');
+      Logger.log('Cleared data');
       this.refreshScoreboard();
     }
   }
@@ -256,7 +255,7 @@ export class SupabaseAdapterScene extends BaseScene {
       console.error('Error deleting data:', error);
       this.errorText.text = error.details;
     } else {
-      console.log('Deleted data:', data);
+      Logger.log('Deleted data:', data);
       const scoreToDelete = data[0];
       this.deleteScoreFromScoreboard({
         user_id: scoreToDelete.user_id,
@@ -477,7 +476,7 @@ export class SupabaseAdapterScene extends BaseScene {
       deleteButtonBg.accessibleHint = 'Press to delete this score';
       deleteButtonBg.onInteraction('click').connect(() => {
         // delete the score
-        console.log('DELETING SCORE...', score);
+        Logger.log('DELETING SCORE...', score);
 
         // via the adapter:
         // await this.app.supabase.delete('scores', { username: score.username });
@@ -512,7 +511,8 @@ export class SupabaseAdapterScene extends BaseScene {
     this.errorText.text = '';
 
     // add scores
-    const { data, error } = await this.app.supabase.load('scores');
+    const { data, error } = await this.app.supabase.load('scores').order('score', { ascending: false }).limit(5);
+    Logger.log("Loaded data: ", data);
 
     if (error) {
       console.error('Error loading data during scoreboard refresh:', error);

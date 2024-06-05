@@ -131,6 +131,8 @@ export class FirebaseAdapter extends StorageAdapter implements IFirebaseAdapter 
     }
   }
 
+  // TODO: add a "load" method?
+
   /**
    * Get a single document by its ID.
    * @param {string} collectionName The name of the collection.

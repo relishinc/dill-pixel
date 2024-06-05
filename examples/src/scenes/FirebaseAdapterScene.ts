@@ -11,7 +11,6 @@ type Score = {
   username: string;
   score: number;
 };
-
 export class FirebaseAdapterScene extends BaseScene {
   protected readonly title = 'Firebase Storage Adapter';
   protected readonly subtitle = 'Demonstrates custom adapter functionality';

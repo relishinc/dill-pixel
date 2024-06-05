@@ -1,6 +1,7 @@
 import { StorageAdapter, Logger, IApplication, IStorageAdapter } from 'dill-pixel';
 import { createClient } from '@supabase/supabase-js';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 
 type SaveMethod = 'insert' | 'update' | 'upsert';
 
@@ -18,12 +19,13 @@ const defaultConfig: ISupabaseAdapterOptions = {
   anonKey: process.env.VITE_SUPABASE_ANON_KEY,
 };
 
+// TODO: fix type error
 export interface ISupabaseAdapter extends IStorageAdapter {
   // client: SupabaseClient<Database>; // TODO: get this to work
 
   initialize(app: IApplication, options?: Partial<ISupabaseAdapterOptions>): void;
   save(tableId: string, data: any, method?: SaveMethod): Promise<any>;
-  load(tableId: string, ...selectors: string[]): Promise<any>;
+  load(tableId: string, selectors: string[]): PostgrestFilterBuilder<any, any, any>;
   delete(tableId: string, data: DeleteData): Promise<any>;
 }
 
@@ -55,7 +57,6 @@ export class SupabaseAdapter<Database = any> extends StorageAdapter implements I
     if (!this._options.supabaseUrl) {
       throw new Error('Supabase URL is not set');
     }
-
     if (!this._options.anonKey) {
       throw new Error('Supabase anon key is not set');
     }
@@ -69,6 +70,9 @@ export class SupabaseAdapter<Database = any> extends StorageAdapter implements I
    * @param {any} data The data to save.
    * @param {SaveMethod} method The method to use for saving the data.
    * @returns {Promise<any>} The saved data.
+   *
+   * @example
+   * await this.app.supabase.save('scores', { username: 'relish', score: 50 })
    */
   async save(tableId: string, data: any, method: SaveMethod = 'upsert'): Promise<any> {
     if (!Array.isArray(data)) {
@@ -88,12 +92,16 @@ export class SupabaseAdapter<Database = any> extends StorageAdapter implements I
   /**
    * Loads data from a specified table in the Supabase database.
    * @param {string} tableId The table from which to load the data.
-   * @param {string[]} selectors The columns to select.
-   * @returns {Promise<any>} The loaded data.
+   * @param {string[]} selectors The columns to select. Default is '*'.
+   * @returns {PostgrestFilterBuilder<any, any, any>} PostgrestFilterBuilder // TODO
+   *
+   * @example
+   * await this.app.supabase.load('scores', ['score', 'username']).order('score', { ascending: false }).limit(5)
    */
 
-  async load(tableId: string, ...selectors: string[]): Promise<any> {
-    return await this.client.from(tableId).select(...selectors);
+  // TODO: sort out type error
+  load(tableId: string, selectors?: string[]): PostgrestFilterBuilder<any, any, any> {
+    return this.client.from(tableId).select(selectors?.join(','));
   }
 
   /**
@@ -101,6 +109,9 @@ export class SupabaseAdapter<Database = any> extends StorageAdapter implements I
    * @param {string} tableId The table from which to load the data.
    * @param {DeleteData} data The data to delete.
    * @returns {Promise<any>} The deleted data.
+   *
+   * @example
+   * await this.app.supabase.delete('scores', { username: 'relish', score: 50 })
    */
 
   async delete(tableId: string, data: DeleteData): Promise<any> {

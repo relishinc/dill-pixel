@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/storage-adapter-supabase",
-  "version": "8.4.0",
+  "version": "8.7.5",
   "description": "",
   "files": [
     "lib",
@@ -22,11 +22,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "dill-pixel": "8.4.0",
+    "dill-pixel": "^8.7.1",
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
-    "dill-pixel": "^8.4.0"
+    "dill-pixel": "^8.7.1"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.43.4"
