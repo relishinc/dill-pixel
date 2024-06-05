@@ -1,9 +1,23 @@
 import { Container } from '../display';
-import { Container as PIXIContainer, FederatedPointerEvent, Text, Texture } from 'pixi.js';
+import {
+  Container as PIXIContainer,
+  FederatedPointerEvent,
+  FillStyleInputs,
+  Graphics,
+  Sprite,
+  Text,
+  Texture,
+} from 'pixi.js';
 import { ensurePadding, Logger, Padding, PointLike } from '../utils';
 import { Focusable, Interactive, WithSignals } from '../mixins';
 import { TextProps } from '../mixins/factory/props';
 import { gsap } from 'gsap';
+
+export type BgStyleOptions = {
+  radius: number;
+  fill: FillStyleInputs;
+  stroke: FillStyleInputs;
+};
 
 export interface InputOptions {
   input: Partial<TextProps>;
@@ -11,10 +25,13 @@ export interface InputOptions {
   padding: Padding;
   value: string;
   minWidth: number;
-  bg?: PIXIContainer;
-  caret?: PIXIContainer;
+  fixed: boolean;
   maxLength?: number;
+  pattern: string;
+  type: 'text' | 'password';
   debug: boolean;
+  bg: BgStyleOptions;
+  caret?: PIXIContainer;
 }
 
 export interface InputProps extends Omit<InputOptions, 'padding'> {
@@ -29,16 +46,24 @@ const defaultOptions: InputOptions = {
       fontWeight: 'bold',
     },
   },
+  fixed: true,
   placeholder: {},
   value: '',
   padding: { top: 0, left: 0, bottom: 0, right: 0 },
   minWidth: 200,
   debug: false,
+  pattern: '',
+  type: 'text',
+  bg: {
+    radius: 5,
+    fill: { color: 0xffffff },
+    stroke: { width: 1, color: 0x0 },
+  },
 };
 
 export class Input extends Focusable(Interactive(WithSignals(Container))) {
   public options: InputOptions;
-  public bg: PIXIContainer;
+  public bg: Graphics;
   public caret: PIXIContainer;
   public input: Text;
   public placeholderInput: Text;
@@ -46,6 +71,10 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   private domElement: HTMLInputElement;
   private _focusTimer: any;
   private _pointerDownTimer: any;
+  private _inner: Container;
+  private _inputContainer: Container;
+  private _mask: Sprite;
+  private _lastWidth: number = 0;
 
   constructor(options: Partial<InputProps>) {
     super({ autoUpdate: true });
@@ -72,26 +101,27 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
       };
     }
 
-    this.bg = this.options.bg
-      ? this.add.existing(this.options.bg)
-      : this.add.container({
-          x: this.options.padding.left,
-          y: this.options.padding.top,
-          interactive: true,
-        });
+    this._inner = this.add.container();
+
+    this.bg = this._inner.add
+      .graphics()
+      .roundRect(0, 0, 100, 50, this.options?.bg?.radius ?? 0)
+      .fill(this.options.bg.fill);
+
+    this._inputContainer = this._inner.add.container();
 
     this.caret = this.options.caret
-      ? this.add.existing(this.options.caret)
-      : this.add.sprite({ asset: Texture.WHITE, width: 3, height: 10, tint: 0x0, alpha: 0, visible: false });
+      ? this._inner.add.existing(this.options.caret)
+      : this._inner.add.sprite({ asset: Texture.WHITE, width: 3, height: 10, tint: 0x0, alpha: 0, visible: false });
 
-    this.input = this.add.text({
-      text: this.options.value ?? this.options.placeholder.text,
+    this.input = this._inputContainer.add.text({
       ...this.options.input,
+      text: this.options.value ?? '',
       label: 'input',
+      resolution: 2,
     });
 
-    this.placeholderInput = this.add.text({
-      text: this.options.value ?? this.options.placeholder.text,
+    this.placeholderInput = this._inputContainer.add.text({
       ...this.options.input,
       ...this.options.placeholder,
       style: {
@@ -99,10 +129,12 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
         ...this.options.placeholder.style,
         fill: this.options.placeholder?.style?.fill ?? 0x666666,
       },
+      resolution: 2,
       label: 'placeholder',
     });
 
-    this.bg.width = Math.max(this.options.minWidth, this.input.width);
+    this.placeholderInput.style.align = this.input.style.align;
+    this.placeholderInput.text = this.options.placeholder.text || '';
 
     this.addSignalConnection(
       this.onInteraction('click').connect(this.handleClick, -1),
@@ -110,10 +142,23 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     );
 
     this.input.eventMode = this.placeholderInput.eventMode = 'none';
+
+    if (this.options.fixed) {
+      this._mask = this._inner.add.sprite({
+        asset: Texture.WHITE,
+        width: this.bg.width - this.options.padding.left - this.options.padding.right,
+        height: this.bg.height - this.options.padding.top - this.options.padding.bottom,
+        tint: 0xff0000,
+        alpha: 0.5,
+      });
+      this._inputContainer.mask = this._mask;
+    }
   }
 
+  private _value: string = '';
+
   public get value() {
-    return this.input.text?.trim() ?? '';
+    return this._value?.trim() ?? '';
   }
 
   public set value(value: string) {
@@ -149,7 +194,6 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   focusOut() {
-    Logger.log('focusOut');
     this.domElement?.blur();
   }
 
@@ -157,20 +201,60 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     this.bg.x = 0;
     this.bg.y = 0;
 
-    this.input.x = this.options.padding.left;
+    // size background
+    const bgHeight =
+      this.input.getLocalBounds().y +
+      this.input.style.fontSize +
+      this.options.padding.top +
+      this.options.padding.bottom;
+
+    const bgWidth = this.options.fixed
+      ? this.options.minWidth
+      : Math.max(this.options.minWidth, this.input.width) + this.options.padding.left + this.options.padding.right;
+
+    // position inputs
+    // the 'align' property doesn't affect single line text,
+    // so we need to do this manually
+    const diff = this.options.minWidth - bgWidth + this.options.padding.left + this.options.padding.right;
+    const inputAvailableWidth = bgWidth - this.options.padding.left - this.options.padding.right;
+
+    switch (this.input.style.align) {
+      case 'center':
+        this.input.x = bgWidth / 2 - this.input.width / 2;
+        this.placeholderInput.x = bgWidth / 2 - this.placeholderInput.width / 2;
+        this._inner.x = diff >= 0 ? 0 : diff / 2;
+        if (this.options.fixed) {
+          const inputDiff = this.input.width - inputAvailableWidth;
+          if (inputDiff > 0) {
+            this.input.x -= inputDiff / 2;
+          }
+        }
+        break;
+      case 'right':
+        this.input.x = bgWidth - this.options.padding.right - this.input.width;
+        this.placeholderInput.x = bgWidth - this.options.padding.right - this.placeholderInput.width;
+        this._inner.x = diff >= 0 ? 0 : diff;
+        break;
+      default:
+        this.input.x = this.options.padding.left;
+        this.placeholderInput.x = this.options.padding.left;
+        this._inner.x = 0;
+        if (this.options.fixed) {
+          const inputDiff = this.input.width - inputAvailableWidth;
+          if (inputDiff > 0) {
+            this.input.x -= inputDiff;
+          }
+        }
+        break;
+    }
+
     this.input.y = this.options.padding.top;
+    this.placeholderInput.y = this.input.y;
 
-    this.placeholderInput.position.set(this.input.x, this.input.y);
-
+    // position caret
     this.caret.x = this.input.x + this.input.width + 1;
     this.caret.y = this.input.y - this.input.style.fontSize * 0.075;
     this.caret.height = this.input.style.fontSize * 1.15;
-
-    this.bg.height =
-      this.input.getLocalBounds().y + this.input.height + this.options.padding.top + this.options.padding.bottom;
-
-    this.bg.width =
-      Math.max(this.options.minWidth, this.input.width) + this.options.padding.left + this.options.padding.right;
 
     // check if value is empty
     if (this.value === '') {
@@ -178,9 +262,30 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     } else {
       this.placeholderInput.visible = false;
     }
+
+    if (this.options.fixed) {
+      this._mask.width = bgWidth - this.options.padding.left - this.options.padding.right;
+      this._mask.height = bgHeight;
+      this._mask.position.set(this.options.padding.left, 0);
+    }
+
+    if (bgWidth !== this._lastWidth) {
+      this.drawBg(bgWidth, bgHeight);
+    }
+  }
+
+  drawBg(width: number, height: number) {
+    this.bg
+      .clear()
+      .roundRect(0, 0, width, height, this.options?.bg?.radius ?? 0)
+      .fill(this.options.bg.fill)
+      .stroke(this.options.bg.stroke);
+
+    this._lastWidth = width;
   }
 
   destroy() {
+    this.app.stage.off('pointerdown', this._checkPointerDownOutside);
     this.hideCursor();
     this.destroyDomElement();
     super.destroy();
@@ -188,9 +293,11 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
 
   protected createDomElement() {
     if (!this.domElement) {
-      Logger.log(this.label, 'createDomElement');
       this.domElement = document.createElement('input');
       this.domElement.type = 'text';
+      this.domElement.pattern = this.options.pattern;
+      this.domElement.type = this.options.type;
+
       this.domElement.style.position = 'absolute';
 
       if (this.options.debug) {
@@ -241,17 +348,25 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   protected blinkCaret() {
-    this.cursorAnimation = gsap.to(this.caret, {
-      duration: 0.5,
-      alpha: 1,
-      yoyo: true,
-      repeat: -1,
-    });
+    if (this.cursorAnimation) {
+      this.cursorAnimation.kill();
+    }
+    Logger.log('blinkCaret');
+    this.cursorAnimation = gsap.fromTo(
+      this.caret,
+      { alpha: 0 },
+      {
+        duration: 0.5,
+        alpha: 1,
+        yoyo: true,
+        repeat: -1,
+        overwrite: true,
+      },
+    );
   }
 
   private _handleFocus() {
     this.showCursor();
-
     clearTimeout(this._pointerDownTimer);
     this._pointerDownTimer = setTimeout(() => {
       this.app.stage.off('pointerdown', this._checkPointerDownOutside);
@@ -268,7 +383,22 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     this.app.stage.off('pointerdown', this._checkPointerDownOutside);
   }
 
-  private _handleDomElementChange() {
-    this.input.text = this.domElement.value;
+  private _handleDomElementChange(e: Event) {
+    const target = e.target as HTMLInputElement;
+    if (this.options.pattern !== '') {
+      const filteredValue = target.value.replace(new RegExp(`${this.options.pattern}`, 'g'), '');
+      target.value = filteredValue;
+      this._value = filteredValue;
+    } else {
+      this._value = this.domElement.value;
+    }
+
+    this.input.text =
+      this.options.type === 'password'
+        ? this._value
+            ?.split('')
+            .map(() => '*')
+            .join('')
+        : this._value;
   }
 }

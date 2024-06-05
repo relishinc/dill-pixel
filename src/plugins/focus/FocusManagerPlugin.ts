@@ -469,8 +469,9 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
       return;
     }
     if (!this._options.usePixiAccessibility) {
-      e.preventDefault();
+      // e.preventDefault();
       if (e.key === 'Tab') {
+        e.preventDefault();
         const layer = this._getCurrentLayer();
         const focusables = layer?.availableFocusables;
         if (!focusables) {
@@ -500,7 +501,7 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
       return;
     }
     if (!this._options.usePixiAccessibility) {
-      e.preventDefault();
+      // e.preventDefault();
       if (this._focusTarget && this._focusTarget.isFocused) {
         this._focusTarget.emit('click', { type: 'click' });
         this._focusTarget.emit('pointerup', { type: 'pointerup' });
