@@ -11,3 +11,4 @@ export * from './padding';
 export * from './platform';
 export * from './string';
 export * from './types';
+export * from './text';

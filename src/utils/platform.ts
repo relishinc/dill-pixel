@@ -1,4 +1,4 @@
-import { isMobile as PIXIUtilsIsMobile } from 'pixi.js';
+import {isMobile as PIXIUtilsIsMobile} from 'pixi.js';
 
 /**
  * Checks if the device has a retina display.
@@ -12,6 +12,12 @@ export const isRetina =
     window.matchMedia(
       '(-webkit-min-device-pixel-ratio: 1.5), (min--moz-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3/2), (min-resolution: 1.5dppx)',
     ).matches);
+
+/**
+ * Check if we're on a touch device
+ */
+export const isTouch: boolean =
+  'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator?.maxTouchPoints > 0;
 
 /**
  * Checks if the device is a mobile device.

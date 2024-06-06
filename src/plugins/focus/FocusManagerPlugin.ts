@@ -479,7 +479,7 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
         }
         if (!this._keyboardActive) {
           this._activate();
-          this._setTarget(layer.currentFocusable || layer.defaultFocusable || null);
+          this._setTarget(this._focusTarget || layer.currentFocusable || layer.defaultFocusable || null);
         } else {
           // check if we're on the last focusable
           if (e.shiftKey) {
@@ -503,8 +503,8 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
     if (!this._options.usePixiAccessibility) {
       // e.preventDefault();
       if (this._focusTarget && this._focusTarget.isFocused) {
-        this._focusTarget.emit('click', { type: 'click' });
-        this._focusTarget.emit('pointerup', { type: 'pointerup' });
+        this._focusTarget.emit('click', { type: 'click', originalEvent: e });
+        this._focusTarget.emit('pointerup', { type: 'pointerup', originalEvent: e });
       }
     }
   }
@@ -671,7 +671,6 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
 
   private _setupKeyboardListeners(): void {
     window.addEventListener('keydown', this._onKeyDown, false);
-
     this._addGlobalListeners();
   }
 
