@@ -28,6 +28,8 @@ export class MatterPhysicsScene extends BaseScene {
   }
 
   destroy() {
+    this.off('click', this._addEntity)
+    this.off('tap', this._addEntity)
     this.physics.destroy();
     super.destroy();
   }
@@ -58,6 +60,7 @@ export class MatterPhysicsScene extends BaseScene {
     this.physics.system.enabled = true;
 
     this.on('click', this._addEntity);
+    this.on('tap', this._addEntity);
     this._handleDebugChanged();
 
   }
