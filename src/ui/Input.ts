@@ -10,7 +10,7 @@ import {
   Texture,
 } from 'pixi.js';
 import { Focusable, Interactive, WithSignals } from '../mixins';
-import { Logger, Padding, PointLike, ensurePadding, getNearestCharacterIndex, isMobile, isTouch } from '../utils';
+import { Padding, PointLike, ensurePadding, getNearestCharacterIndex, isAndroid, isIos, isMobile, isTouch } from '../utils';
 
 import { Container } from '../display';
 import { Signal } from '../signals';
@@ -139,7 +139,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   private _mask: Sprite;
   private _lastWidth: number = 0;
   private _lastHeight: number = 0;
-  private _keyboardHeight: { before: number; after: number } = { before: 0, after: 0 };
+  private _disableCheck: any;
 
   constructor(
     options: Partial<InputProps>,
@@ -186,10 +186,15 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
 
     this.input.eventMode = this.placeholder.eventMode = 'none';
 
+    if (isTouch) {
+      this.addSignalConnection(
+        this.onInteraction('pointertap').connect(this.handleClick, -1),
+      );
+    }
     this.addSignalConnection(
-      this.onInteraction('click').connect(this.handleClick, -1),
-      this.onInteraction('tap').connect(this.handleClick, -1),
-    );
+      this.onInteraction('click').connect(this.handleClick, -1)
+    )
+
 
     if (this.options.fixed) {
       const scale = this.isClone ? this.clone?.options?.focusOverlay?.scale ?? 1 : 1;
@@ -255,7 +260,6 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   resize() {
-    this._keyboardHeight.after = window.innerHeight;
   }
 
   resetBg() {
@@ -263,17 +267,9 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   added() {
-    this.createDomElement();
+
     if (this.isClone) {
       this.showCursor();
-    }
-
-    this.addSignalConnection(this.app.signal.onVisibilityChanged.connect(this._handleVisibilityChanged));
-  }
-
-  private _handleVisibilityChanged(visible: boolean) {
-    if (!visible) {
-      this._handleDomElementBlur();
     }
   }
 
@@ -282,8 +278,10 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     if ((e.originalEvent as unknown as KeyboardEvent)?.key) {
       return;
     }
+
     const nearestCharacterIndex = getNearestCharacterIndex(this.input, e);
-    this._focusDomElement(nearestCharacterIndex);
+    this.createDomElement(nearestCharacterIndex);
+    // this._focusDomElement(nearestCharacterIndex);
   }
 
   focusIn() {
@@ -291,20 +289,28 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   _focusDomElement(selection?: number) {
-    clearTimeout(this._focusTimer);
-    this._focusTimer = setTimeout(() => {
-      this._keyboardHeight.before = window.innerHeight;
-      if (this.domElement) {
-        this.domElement.focus();
-        // set position to end
-        if (selection === undefined) {
-          this.domElement.selectionStart = this.domElement.value?.length;
-        } else {
-          this.domElement.setSelectionRange(selection, selection, 'none');
-        }
-        this._updateCaretAndSelection();
+    if (isIos) {
+      this._triggerFocusAndSelection(selection);
+    } else {
+      clearTimeout(this._focusTimer);
+      this._focusTimer = setTimeout(() => {
+        this._triggerFocusAndSelection(selection);
+      }, 100);
+    }
+  }
+
+  _triggerFocusAndSelection(selection?: number) {
+    this._disableCheck = true;
+    if (this.domElement) {
+      this.domElement.focus();
+      this.domElement.click()
+      if (selection === undefined) {
+        this.domElement.selectionStart = this.domElement.value?.length;
+      } else {
+        this.domElement.setSelectionRange(selection, selection, 'none');
       }
-    }, 100);
+      this._updateCaretAndSelection();
+    }
   }
 
   _checkPointerDownOutside(e: FederatedPointerEvent) {
@@ -415,13 +421,6 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
       this.selectionGraphics?.clear();
     }
 
-    if (this.options.debug) {
-      // get global pos
-      const globalPos = this.getGlobalPosition();
-      this.domElement.style.left = `${globalPos.x + this.width + 10}px`;
-      this.domElement.style.height = `${this.input.style.fontSize}px`;
-      this.domElement.style.top = `${globalPos.y}px`;
-    }
 
     if (this.cloneOverlay) {
       this._positionCloneOverlay();
@@ -445,10 +444,6 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
       (this.error || (this.isClone && this.clone?.error)) && this.options?.error?.bg
         ? { ...this.options.bg, ...this.options.error.bg }
         : this.options.bg;
-
-    if (this.isClone) {
-      Logger.log(this.options.error);
-    }
 
     this.bg
       .clear()
@@ -514,47 +509,54 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     this.placeholder.style.align = this.input.style.align;
   }
 
-  protected createDomElement() {
+  protected createDomElement(selection?: number) {
     if (this.isClone && this.clone?.domElement) {
       this.domElement = this.clone.domElement;
       this._addDomElementListeners();
       return;
     }
-    if (!this.domElement) {
-      this.domElement = document.createElement('input');
-      this.domElement.type = 'text';
-      if (this.options.type && AVAILABLE_TYPES.includes(this.options.type)) {
-        this.domElement.type = this.options.type;
-      }
-
-      if (this.options.pattern) {
-        this.domElement.pattern = this.options.pattern;
-      }
-      if (this.options.regex) {
-        this._regex = this.options.regex;
-      }
-
-      this.domElement.style.position = 'absolute';
-
-      if (this.options.debug) {
-        this.domElement.style.opacity = '0.7';
-        this.domElement.style.padding = `10px 10px`;
-        this.domElement.style.fontSize = `${this.input.style.fontSize}px`;
-      } else {
-        this.domElement.style.left = '-1000px';
-        this.domElement.style.top = '-1000px';
-        this.domElement.style.opacity = '0';
-        this.domElement.style.pointerEvents = 'none';
-      }
-      this.app.canvas.parentElement?.appendChild(this.domElement);
-      this.domElement.value = this.value;
-      this.domElement.setAttribute('placeholder', this.options?.placeholder?.text ?? '');
-      if (this.options?.maxLength) {
-        this.domElement.setAttribute('maxLength', this.options.maxLength.toString());
-      }
-
-      this._addDomElementListeners();
+    this.domElement = document.createElement('input');
+    this.domElement.type = 'text';
+    if (this.options.type && AVAILABLE_TYPES.includes(this.options.type)) {
+      this.domElement.type = this.options.type;
     }
+
+    if (this.options.pattern) {
+      this.domElement.pattern = this.options.pattern;
+    }
+    if (this.options.regex) {
+      this._regex = this.options.regex;
+    }
+
+    const pos = this.getGlobalPosition()
+    const bounds = this.getBounds();
+    bounds.x = pos.x;
+    bounds.y = pos.y
+    bounds.width = this.width - this.options.padding.left;
+
+    this.domElement.style.position = 'fixed';
+    this.domElement.style.border = 'none';
+    this.domElement.style.outline = 'none';
+    this.domElement.style.left = isAndroid ? `0` : `${bounds.left}px`;
+    this.domElement.style.top = isAndroid ? `0` : `${bounds.top}px`;
+    this.domElement.style.width = `${bounds.width}px`;
+    this.domElement.style.height = `${bounds.height}px`;
+    this.domElement.style.padding = '0';
+
+    if (this.options.debug) {
+      this.domElement.style.opacity = '0.8';
+    } else {
+      this.domElement.style.opacity = '0.0000001';
+    }
+    this.app.canvas.parentElement?.appendChild(this.domElement);
+    this.domElement.value = this.value;
+    this.domElement.setAttribute('placeholder', this.options?.placeholder?.text ?? '');
+    if (this.options?.maxLength) {
+      this.domElement.setAttribute('maxLength', this.options.maxLength.toString());
+    }
+
+    this._addDomElementListeners();
+    this._focusDomElement(selection)
   }
 
   protected destroyDomElement() {
@@ -629,6 +631,9 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   private _addDomElementListeners() {
+    if (this.isClone) {
+      return;
+    }
     this._removeDomElementListeners();
     this.domElement.addEventListener('focus', this._handleDomElementFocus, false);
     this.domElement.addEventListener('blur', this._handleDomElementBlur, false);
@@ -645,7 +650,6 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
 
     if (!this.isClone) {
       this._pointerDownTimer = setTimeout(() => {
-        this.app.stage.off('pointerdown', this._checkPointerDownOutside);
         this.app.stage.on('pointerdown', this._checkPointerDownOutside);
       }, 250);
 
@@ -745,22 +749,18 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   private _handleDomElementFocus() {
+    this.app.stage.off('pointerdown', this._checkPointerDownOutside);
     this._handleFocus();
   }
 
   private _handleDomElementBlur() {
+    if (this.isClone) {
+      return;
+    }
     this.hideCursor();
-    this.app.stage.off('pointerdown', this._checkPointerDownOutside);
     this._removeCloneOverlay();
+    this.destroyDomElement();
   }
-
-  // private _handleSelectionChange() {
-  //   const start = this.domElement.selectionStart ?? this._value.length;
-  //   const end = this.domElement.selectionEnd  || start;
-  //   const text = this._value.substring(start > end ? end : start, start > end ? start : end);
-  //   const metrics = CanvasTextMetrics.measureText(text, this.input.style);
-  //   Logger.log(
-  // }
 
   private _handleDomElementKeyup() {
     this._updateCaretAndSelection();

@@ -106,7 +106,7 @@ export class UIScene extends BaseScene {
         minWidth: 400,
         placeholder: { text: 'Touch overlay' },
         padding: [12, 15],
-        focusOverlay: { activeFilter: ['mobile', 'touch'], marginTop: 60, scale: 2.5, backing: { active: true, color: 0x0 } },
+        focusOverlay: { activeFilter: ['mobile', 'touch', 'desktop'], marginTop: 60, scale: 2.5, backing: { active: true, color: 0x0 } },
         bg: {
           radius: 10,
           stroke: {
@@ -115,7 +115,7 @@ export class UIScene extends BaseScene {
           },
         },
       }),
-      { label: 'tel' },
+      { label: 'overlay' },
     );
 
     this.app.focus.add([input, tel, input2, input3, input4, input5, withOverlay], this.id);

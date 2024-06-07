@@ -1,16 +1,17 @@
-import {Graphics} from 'pixi.js';
-import type {IApplication} from '../core';
-import {Container} from '../display';
-import type {Size} from '../utils';
-import type {IPlugin} from './Plugin';
-import {Plugin} from './Plugin';
+import { Graphics, Point } from 'pixi.js';
+
+import { Container } from '../display';
+import type { IApplication } from '../core';
+import type { IPlugin } from './Plugin';
+import { Plugin } from './Plugin';
+import type { Size } from '../utils';
 
 /**
  * Interface for Resizer module.
  */
 export interface IResizerPlugin extends IPlugin {
-  size: Size;
-
+  readonly size: Size;
+  readonly scale: number;
   resize(): void;
 }
 
@@ -43,11 +44,15 @@ export class ResizerPlugin extends Plugin implements IResizerPlugin {
   private _options: ResizerPluginOptions;
   private _debugContainer: Container;
   private _gfx: Graphics;
-
   private _size: Size;
+  private _scale: number;
 
-  get size() {
+  get size(): Size {
     return this._size;
+  }
+
+  get scale(): number {
+    return this._scale;
   }
 
   /**
@@ -88,6 +93,8 @@ export class ResizerPlugin extends Plugin implements IResizerPlugin {
     const scaleX = screenWidth < minWidth ? minWidth / screenWidth : 1;
     const scaleY = screenHeight < minHeight ? minHeight / screenHeight : 1;
     const scale = scaleX > scaleY ? scaleX : scaleY;
+
+    this._scale = scale;
 
     const width = screenWidth * scale;
     const height = screenHeight * scale;

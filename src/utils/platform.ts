@@ -1,4 +1,4 @@
-import {isMobile as PIXIUtilsIsMobile} from 'pixi.js';
+import { isMobile as PIXIUtilsIsMobile } from 'pixi.js';
 
 /**
  * Checks if the device has a retina display.
@@ -25,3 +25,6 @@ export const isTouch: boolean =
  * @type {boolean}
  */
 export const isMobile = PIXIUtilsIsMobile.any;
+
+export const isAndroid = PIXIUtilsIsMobile.android.device;
+export const isIos = PIXIUtilsIsMobile.apple.device;

@@ -36,8 +36,6 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
     document.addEventListener('visibilitychange', this._onVisibilityChanged, false);
     window.addEventListener('pagehide', this._onPageHide, false);
     window.addEventListener('pageshow', this._onPageShow, false);
-    window.addEventListener('focus', this._onWindowFocus, false);
-    window.addEventListener('blur', this._onWindowBlur, false);
     window.addEventListener('resize', this._onResize);
     document.addEventListener('fullscreenchange', this._onResize);
   }
@@ -48,8 +46,6 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
     document.removeEventListener('fullscreenchange', this._onResize);
     window.removeEventListener('pagehide', this._onPageHide, false);
     window.removeEventListener('pageshow', this._onPageShow, false);
-    window.removeEventListener('focus', this._onWindowFocus, false);
-    window.removeEventListener('blur', this._onWindowBlur, false);
   }
 
   protected getCoreSignals(): string[] {
@@ -94,13 +90,5 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
    */
   private _onPageShow() {
     this.onVisibilityChanged.emit(true);
-  }
-
-  private _onWindowFocus() {
-    this.onVisibilityChanged.emit(true);
-  }
-
-  private _onWindowBlur() {
-    this.onVisibilityChanged.emit(false);
   }
 }
