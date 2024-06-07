@@ -2,6 +2,8 @@ import { FlexContainer, Input } from 'dill-pixel';
 
 import { BaseScene } from '@/scenes/BaseScene';
 
+const overlaySettings = { activeFilter: ['mobile', 'touch'], marginTop: 60, scale: 2.5, backing: { active: true, color: 0x0 } };
+
 export class UIScene extends BaseScene {
   public title = 'UI';
   public subtitle = 'UI components';
@@ -35,6 +37,8 @@ export class UIScene extends BaseScene {
       }),
       { label: 'input' },
     );
+
+
 
     const tel = this.list.add.existing(
       new Input({
@@ -73,6 +77,7 @@ export class UIScene extends BaseScene {
         style: { align: 'right' },
         placeholder: { text: 'Align right' },
         padding: [12, 15],
+        focusOverlay: overlaySettings,
       }),
       { label: 'input3' },
     );
@@ -84,6 +89,7 @@ export class UIScene extends BaseScene {
         placeholder: { text: 'Disallow numbers' },
         padding: [12, 15],
         pattern: '[^a-z]*',
+        focusOverlay: overlaySettings,
       }),
       { label: 'input4' },
     );
@@ -94,6 +100,7 @@ export class UIScene extends BaseScene {
         style: { align: 'left' },
         placeholder: { text: 'Password' },
         padding: [12, 15],
+        focusOverlay: overlaySettings,
         type: 'password',
       }),
       { label: 'input5' },
@@ -104,7 +111,7 @@ export class UIScene extends BaseScene {
         minWidth: 400,
         placeholder: { text: 'Touch overlay' },
         padding: [12, 15],
-        focusOverlay: { activeFilter: ['mobile', 'touch'], marginTop: 60, scale: 2.5, backing: { active: true, color: 0x0 } },
+        focusOverlay: overlaySettings,
         bg: {
           radius: 10,
           stroke: {

@@ -1,6 +1,7 @@
 import { PointLike, resolvePointLike } from 'dill-pixel';
-import { Point } from 'pixi.js';
 import { Solid as SnapSolid, System } from '@dill-pixel/plugin-snap-physics';
+
+import { Point } from 'pixi.js';
 
 type Direction = -1 | 0 | 1;
 
@@ -83,10 +84,10 @@ export class Platform extends SnapSolid<PlatformConfig> {
       canJumpThroughBottom: config?.canJumpThroughBottom === true,
       movementConfig: config.movementConfig
         ? {
-            speed: resolvePointLike(config.movementConfig.speed, true),
-            startingDirection: config.movementConfig.startingDirection || { x: 1, y: 0 },
-            range: resolvePointLike(config.movementConfig.range, true),
-          }
+          speed: resolvePointLike(config.movementConfig.speed, true),
+          startingDirection: config.movementConfig.startingDirection || { x: 1, y: 0 },
+          range: resolvePointLike(config.movementConfig.range, true),
+        }
         : undefined,
     };
   }
@@ -148,7 +149,7 @@ export class Platform extends SnapSolid<PlatformConfig> {
   protected initialize() {
     this.view = this.add
       .graphics({ x: -this.config.width / 2, y: -this.config.height / 2 })
-      .rect(2, 2, this.config.width, this.config.height)
+      .rect(0, 0, this.config.width, this.config.height)
       .fill({ color: this.config.color });
 
     this.position.set(this.config.x, this.config.y);

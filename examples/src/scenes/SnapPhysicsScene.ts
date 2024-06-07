@@ -1,13 +1,14 @@
-import { Door } from '@/entities/physics/Door';
+import { Camera, Container, UICanvas, delay } from 'dill-pixel';
+import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
 import { Platform, PlatformMovementConfigOpts } from '@/entities/physics/Platform';
+
+import { BaseScene } from '@/scenes/BaseScene';
+import { Door } from '@/entities/physics/Door';
+import { GUIController } from 'dat.gui';
+import { Joystick } from '@/ui/Joystick';
 import { Player } from '@/entities/physics/Player';
 import { Portal } from '@/entities/physics/Portal';
-import { BaseScene } from '@/scenes/BaseScene';
-import { Camera, Container, delay, UICanvas } from 'dill-pixel';
-import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
-import { GUIController } from 'dat.gui';
 import { gsap } from 'gsap';
-import { Joystick } from '@/ui/Joystick';
 
 export class SnapPhysicsScene extends BaseScene {
   ui: UICanvas;
@@ -22,7 +23,7 @@ export class SnapPhysicsScene extends BaseScene {
   protected readonly subtitle = 'Arrows to move, up to jump';
   protected config = {
     useCamera: true,
-    zoom: 1,
+    zoom: 3,
     useSpatialHash: true,
     gridCellSize: 300,
     debug: true,
@@ -122,7 +123,7 @@ export class SnapPhysicsScene extends BaseScene {
     this.app.keyboard.onKeyDown('z').connect(this._toggleZoom);
   }
 
-  async start() {}
+  async start() { }
 
   physicsUpdate() {
     if (this._isPaused) return;

@@ -1,14 +1,15 @@
+import { Collision, EntityType, Side, SpatialHashGridFilter } from './types';
 import { Container, Graphics, Point, Ticker } from 'pixi.js';
 import { IApplication, ICamera, Logger, Signal } from 'dill-pixel';
+
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { Sensor } from './Sensor';
+import { SnapPhysicsPlugin } from './SnapPhysicsPlugin';
 import { Solid } from './Solid';
 import { SpatialHashGrid } from './SpatialHashGrid';
-import { Collision, EntityType, Side, SpatialHashGridFilter } from './types';
 import { Wall } from './Wall';
 import { getIntersectionArea } from './utils';
-import { SnapPhysicsPlugin } from './SnapPhysicsPlugin';
 
 type SystemBoundary = {
   width: number;
