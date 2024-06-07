@@ -1,5 +1,5 @@
-import { Signal } from '../../signals';
 import { ActionContext } from './actions';
+import { Signal } from '../../signals';
 
 export type ActionDetail<T = any> = {
   id: string | number;
@@ -7,5 +7,5 @@ export type ActionDetail<T = any> = {
   data?: T;
 };
 
-export type ActionSignal<T = any> = Signal<(detail: ActionDetail<T>) => void>;
+export type ActionSignal<TActionData = any> = Signal<(detail: ActionDetail<TActionData>) => void>;
 export type ActionsList = string[];

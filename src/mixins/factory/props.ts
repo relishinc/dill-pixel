@@ -1,8 +1,10 @@
-import { TextStyleOptions } from 'pixi.js';
-import { ButtonConfig } from '../../display/Button';
-import { FlexContainerConfig } from '../../display/FlexContainer';
-import { UICanvasProps } from '../../display/UICanvas';
 import { PointLike, SpriteSheetLike, TextureLike, WithRequiredProps } from '../../utils/types';
+
+import { ButtonConfig } from '../../display/Button';
+import { ContainerConfig } from '../../display';
+import { FlexContainerConfig } from '../../display/FlexContainer';
+import { TextStyleOptions } from 'pixi.js';
+import { UICanvasProps } from '../../display/UICanvas';
 
 export interface AbstractProps {
   [key: string]: any;
@@ -34,9 +36,9 @@ export interface VisibilityProps {
   visible: boolean;
 }
 
-export interface ExistingProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {}
+export interface ExistingProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps { }
 
-export interface GraphicsProps extends AbstractProps, PositionProps, ScaleProps, PivotProps, VisibilityProps {}
+export interface GraphicsProps extends AbstractProps, PositionProps, ScaleProps, PivotProps, VisibilityProps { }
 
 export interface SpriteProps extends AbstractProps, TextureProps, ScaleProps, PositionProps, VisibilityProps {
   anchor: PointLike;
@@ -50,15 +52,15 @@ export interface TextProps extends AbstractProps, PositionProps, ScaleProps, Vis
   style: Partial<TextStyleOptions>;
 }
 
-export interface OmittedTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {}
+export interface OmittedTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps { }
 
 export const TextPropsKeys: (keyof TextProps)[] = ['text', 'anchor', 'resolution', 'roundPixels', 'style'];
 
-export interface ContainerProps extends AbstractProps, PositionProps, ScaleProps, PivotProps, VisibilityProps {}
+export interface ContainerProps extends AbstractProps, PositionProps, ScaleProps, PivotProps, VisibilityProps, ContainerConfig { }
 
-export interface FlexContainerProps extends ContainerProps, FlexContainerConfig {}
+export interface FlexContainerProps extends ContainerProps, FlexContainerConfig { }
 
-export interface UICanvasFactoryProps extends ContainerProps, UICanvasProps {}
+export interface UICanvasFactoryProps extends ContainerProps, UICanvasProps { }
 
 // spine
 type SpineData = {
@@ -74,6 +76,6 @@ export interface SpineProps extends AbstractProps, ScaleProps, PositionProps, Vi
   loop: boolean;
 }
 
-interface _ButtonProps extends AbstractProps, ScaleProps, PositionProps, PivotProps, VisibilityProps, ButtonConfig {}
+interface _ButtonProps extends AbstractProps, ScaleProps, PositionProps, PivotProps, VisibilityProps, ButtonConfig { }
 
 export type ButtonProps = WithRequiredProps<_ButtonProps, 'textures'>;

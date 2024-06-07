@@ -1,20 +1,21 @@
-import { Container } from '../display';
 import {
   CanvasTextMetrics,
-  Container as PIXIContainer,
   FederatedEvent,
   FederatedPointerEvent,
   Graphics,
+  Container as PIXIContainer,
   Rectangle,
   Sprite,
   Text,
   Texture,
 } from 'pixi.js';
-import { ensurePadding, getNearestCharacterIndex, isMobile, isTouch, Logger, Padding, PointLike } from '../utils';
 import { Focusable, Interactive, WithSignals } from '../mixins';
+import { Logger, Padding, PointLike, ensurePadding, getNearestCharacterIndex, isMobile, isTouch } from '../utils';
+
+import { Container } from '../display';
+import { Signal } from '../signals';
 import { TextProps } from '../mixins/factory/props';
 import { gsap } from 'gsap';
-import { Signal } from '../signals';
 
 export type BgStyleOptions = {
   radius: number;
@@ -22,41 +23,50 @@ export type BgStyleOptions = {
   stroke: { width?: number; color?: number; alpha?: number };
 };
 
-export type OverlayOnFocusOptions = {
+export type ColorOptions = {
+  color: number;
+  alpha: number
+};
+
+export type PlaceholderOptions = {
+  text: string;
+};
+
+export type FocusOverlayOptions = {
   mobile: boolean;
   touch: boolean;
   desktop: boolean;
-  settings: {
-    scale: number;
-    marginTop: number;
-  };
+  activeFilter?: boolean | (() => boolean) | ('mobile' | 'touch' | 'desktop')[];
+  scale: number;
+  marginTop: number;
+  backing: {
+    active: boolean;
+    options: Partial<ColorOptions>
+  }
 };
 
-export interface InputOptions {
-  input: Partial<TextProps>;
-  placeholder: Partial<TextProps>;
-  padding: Padding;
+export interface InputOptions extends Partial<TextProps> {
   value: string;
-  minWidth: number;
-  fixed: boolean;
-  maxLength?: number;
-  pattern: string;
   type: 'text' | 'password' | 'number' | 'email' | 'tel' | 'url';
+  fixed: boolean;
+  pattern: string;
   debug: boolean;
-  bg: Partial<BgStyleOptions>;
-  caret?: PIXIContainer;
+  minWidth: number;
+  padding: Padding;
+  maxLength?: number;
+  blurOnEnter: boolean,
   regex?: RegExp;
-  selectionColor: number;
+  bg: Partial<BgStyleOptions>;
+  placeholder: Partial<PlaceholderOptions & ColorOptions>;
+  selection: Partial<ColorOptions>;
+  caret: Partial<ColorOptions>;
   error?: {
     input?: {
       fill?: number;
     };
-    bg?: {
-      fill?: number;
-      stroke?: { width?: number; color?: number; alpha?: number };
-    };
+    bg?: Partial<Omit<BgStyleOptions, 'stroke'>>
   };
-  overlayOnFocus: Partial<OverlayOnFocusOptions>;
+  focusOverlay: Partial<FocusOverlayOptions>;
 }
 
 export interface InputProps extends Omit<InputOptions, 'padding'> {
@@ -70,35 +80,34 @@ export type InputDetail = {
 };
 
 const defaultOptions: InputOptions = {
-  input: {
-    style: {
-      fill: '#000000',
-      fontSize: 20,
-      fontWeight: 'bold',
-    },
-  },
-  fixed: true,
-  placeholder: {},
   value: '',
-  padding: { top: 0, left: 0, bottom: 0, right: 0 },
-  minWidth: 200,
-  debug: false,
-  pattern: '',
   type: 'text',
+  fixed: true,
+  pattern: '',
+  debug: false,
+  minWidth: 200,
+  padding: { top: 0, left: 0, bottom: 0, right: 0 },
+  blurOnEnter: true,
+  style: {
+    fill: '#000000',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
   bg: {
     radius: 5,
     fill: { color: 0xffffff },
     stroke: { width: 1, color: 0x0 },
   },
-  selectionColor: 0x00ff00,
-  overlayOnFocus: {
-    mobile: false,
-    touch: false,
-    desktop: false,
-    settings: {
-      scale: 1,
-      marginTop: 60,
-    },
+  placeholder: {},
+  selection: { color: 0x00ff00 },
+  caret: {
+    color: 0x0,
+    alpha: 0.8,
+  },
+  focusOverlay: {
+    activeFilter: false,
+    scale: 1,
+    marginTop: 60,
   },
 };
 
@@ -106,6 +115,7 @@ const AVAILABLE_TYPES = ['text', 'password', 'number', 'email', 'tel', 'url'];
 
 export class Input extends Focusable(Interactive(WithSignals(Container))) {
   // signals
+  public onEnter: Signal<(detail: InputDetail) => void> = new Signal<(detail: InputDetail) => void>();
   public onChange: Signal<(detail: InputDetail) => void> = new Signal<(detail: InputDetail) => void>();
   public onError: Signal<(detail: InputDetail) => void> = new Signal<(detail: InputDetail) => void>();
   // public
@@ -120,6 +130,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   protected domElement: HTMLInputElement;
   protected selectionGraphics: Graphics;
   protected cloneOverlay: Input;
+  protected overlayBacking: Sprite;
   // private
   private _focusTimer: any;
   private _pointerDownTimer: any;
@@ -140,33 +151,25 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     this.options = {
       ...defaultOptions,
       ...options,
-      input: {
-        ...defaultOptions.input,
-        ...(options.input ?? {}),
-        style: {
-          ...defaultOptions.input.style,
-          ...(options?.input?.style ?? {}),
-        },
+      style: {
+        ...defaultOptions.style,
+        ...(options?.style ?? {}),
       },
       padding: ensurePadding(options.padding ?? defaultOptions.padding),
       bg: {
         ...defaultOptions.bg,
         ...(options.bg ?? {}),
       },
-      overlayOnFocus: {
-        ...defaultOptions.overlayOnFocus,
-        ...(options.overlayOnFocus ?? {}),
-        settings: {
-          ...defaultOptions.overlayOnFocus.settings,
-          ...(options.overlayOnFocus?.settings ?? { marginTop: 60, scale: 1 }),
-        },
+      focusOverlay: {
+        ...defaultOptions.focusOverlay,
+        ...(options.focusOverlay ?? {}),
       },
     };
 
     if (!this.options.placeholder) {
       this.options.placeholder = {
-        ...this.options.input,
-        style: { ...this.options.input.style, fill: 0x888888 },
+        color: Number(this.options.style?.fill) ?? 0x666666,
+        alpha: 1
       };
     }
 
@@ -189,7 +192,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     );
 
     if (this.options.fixed) {
-      const scale = this.isClone ? this.clone?.options?.overlayOnFocus?.settings?.scale ?? 1 : 1;
+      const scale = this.isClone ? this.clone?.options?.focusOverlay?.scale ?? 1 : 1;
       this._mask = this._inner.add.sprite({
         asset: Texture.WHITE,
         width: this.bg.width * scale - this.options.padding.left - this.options.padding.right,
@@ -244,6 +247,11 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
 
   public set value(value: string) {
     this.domElement.value = value;
+    const event = new Event('input', {
+      bubbles: true,
+      cancelable: true,
+    });
+    this.domElement.dispatchEvent(event);
   }
 
   resize() {
@@ -258,6 +266,14 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     this.createDomElement();
     if (this.isClone) {
       this.showCursor();
+    }
+
+    this.addSignalConnection(this.app.signal.onVisibilityChanged.connect(this._handleVisibilityChanged));
+  }
+
+  private _handleVisibilityChanged(visible: boolean) {
+    if (!visible) {
+      this._handleDomElementBlur();
     }
   }
 
@@ -359,7 +375,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     this.placeholder.y = this.input.y;
 
     if (this.isClone && this.clone) {
-      const cloneScale = this.clone.options?.overlayOnFocus?.settings?.scale ?? 1;
+      const cloneScale = this.clone.options?.focusOverlay?.scale ?? 1;
       this.error = this.clone.error;
       this._value = this.clone.input.text;
       this.input.text = this._value;
@@ -383,7 +399,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     }
 
     if (this.options.fixed) {
-      const scale = this.isClone ? this.options?.overlayOnFocus?.settings?.scale ?? 1 : 1;
+      const scale = this.isClone ? this.options?.focusOverlay?.scale ?? 1 : 1;
       this._mask.width = (bgWidth - this.options.padding.left - this.options.padding.right) * scale;
       this._mask.height = bgHeight * scale;
       this._mask.position.set(this.options.padding.left * scale, 0);
@@ -421,7 +437,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     this.selectionGraphics?.clear();
     this.selectionGraphics
       .rect(rect.left + this.input.x, this.caret.y, rect.width, this.caret.height)
-      .fill({ color: this.options.selectionColor });
+      .fill({ color: this.options.selection.color });
   }
 
   drawBg(width: number = this._lastWidth, height: number = this._lastHeight) {
@@ -463,22 +479,20 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   protected addCaret() {
-    this.caret = this.options.caret
-      ? this._inputContainer.add.existing(this.options.caret)
-      : this._inputContainer.add.sprite({
-          asset: Texture.WHITE,
-          width: 3,
-          height: 10,
-          tint: 0x0,
-          alpha: 0,
-          visible: false,
-        });
+    this.caret = this._inputContainer.add.sprite({
+      asset: Texture.WHITE,
+      width: 3,
+      height: 10,
+      tint: this.options.caret.color ?? 0x0,
+      alpha: 0,
+      visible: false,
+    });
   }
 
   protected addInput() {
     this.input = this._inputContainer.add.text({
-      ...this.options.input,
-      style: { ...(this.options.input?.style || {}), padding: 2 },
+      ...this.options,
+      style: { ...(this.options?.style || {}), padding: 2 },
       text: this.options.value ?? '',
       label: 'input',
       resolution: 2,
@@ -487,12 +501,11 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
 
   protected addPlaceholder() {
     this.placeholder = this._inputContainer.add.text({
-      ...this.options.input,
+      ...this.options,
       ...this.options.placeholder,
       style: {
-        ...this.options.input.style,
-        ...this.options.placeholder.style,
-        fill: this.options.placeholder?.style?.fill ?? 0x666666,
+        ...this.options.style,
+        fill: this.options.placeholder?.color ?? 0x666666,
       },
       resolution: 2,
       label: 'placeholder',
@@ -612,7 +625,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     this.domElement.removeEventListener('blur', this._handleDomElementBlur, false);
     this.domElement.removeEventListener('input', this._handleDomElementChange, false);
     this.domElement.removeEventListener('keyup', this._handleDomElementKeyup, false);
-    this.domElement.removeEventListener('keydown', this._updateCaretAndSelection, false);
+    this.domElement.removeEventListener('keydown', this._handleDomElementKeydown, false);
   }
 
   private _addDomElementListeners() {
@@ -621,7 +634,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     this.domElement.addEventListener('blur', this._handleDomElementBlur, false);
     this.domElement.addEventListener('input', this._handleDomElementChange, false);
     this.domElement.addEventListener('keyup', this._handleDomElementKeyup, false);
-    this.domElement.addEventListener('keydown', this._updateCaretAndSelection, false);
+    this.domElement.addEventListener('keydown', this._handleDomElementKeydown, false);
   }
 
   private _handleFocus() {
@@ -636,40 +649,37 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
         this.app.stage.on('pointerdown', this._checkPointerDownOutside);
       }, 250);
 
+      const hasOverlay = Boolean(this.options.focusOverlay.activeFilter);
       if (
-        this.options.overlayOnFocus.mobile ||
-        this.options.overlayOnFocus.touch ||
-        this.options.overlayOnFocus.desktop
+        hasOverlay
       ) {
         // decide if we should show an overlay
         if (this.cloneOverlay) {
           this._removeCloneOverlay();
         }
-
+        const isList = Array.isArray(this.options.focusOverlay.activeFilter);
         let shouldShow = false;
-        if (isMobile && this.options.overlayOnFocus.mobile) {
-          shouldShow = true;
-        }
-        if (isTouch && this.options.overlayOnFocus.touch) {
-          shouldShow = true;
-        }
-        if (!isMobile && !isTouch && this.options.overlayOnFocus.desktop) {
-          shouldShow = true;
+        if (isList) {
+          const filterList = this.options.focusOverlay.activeFilter as ('mobile' | 'touch' | 'desktop')[];
+          if ((isMobile && filterList.includes('mobile')) || (isTouch && filterList.includes('touch')) || (!isMobile && !isTouch && filterList.includes('desktop'))) {
+            shouldShow = true;
+          }
+        } else if (typeof this.options.focusOverlay.activeFilter === 'function') {
+          shouldShow = this.options.focusOverlay.activeFilter()
+        } else {
+          shouldShow = hasOverlay;
         }
 
         if (shouldShow) {
           const opts = structuredClone(this.options);
-          const scale = this.options.overlayOnFocus?.settings?.scale || 1;
-          opts.overlayOnFocus = { mobile: false, touch: false, desktop: false };
-          const fontSize = Number(opts.input.style?.fontSize || defaultOptions.input.style?.fontSize) * scale;
-          if (!opts.input.style) {
-            opts.input.style = {};
+          const scale = this.options.focusOverlay?.scale || 1;
+          opts.focusOverlay = { activeFilter: false };
+          const fontSize = Number(opts.style?.fontSize || defaultOptions.style?.fontSize || 20) * scale;
+          if (!opts.style) {
+            opts.style = {};
           }
-          if (!opts.placeholder.style) {
-            opts.placeholder.style = {};
-          }
-          opts.input.style.fontSize = fontSize;
-          opts.placeholder.style.fontSize = fontSize;
+
+          opts.style.fontSize = fontSize;
           if (opts.padding) {
             opts.padding.left *= scale;
             opts.padding.top *= scale;
@@ -682,21 +692,24 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
           if (opts.bg?.stroke?.width) {
             opts.bg.stroke.width *= scale;
           }
-          if (opts.error?.bg?.stroke?.width) {
-            opts.error.bg.stroke.width *= scale;
-          }
           if (opts.minWidth) {
             opts.minWidth *= scale;
             if (opts.minWidth > this.app.size.width) {
               opts.minWidth = this.app.size.width - (opts.bg?.stroke?.width ? opts.bg.stroke.width * 2 + 20 : 20);
             }
           }
+
+          // should we show backing?
+          if (this.options.focusOverlay?.backing?.active) {
+            const backing = this.make.sprite({ asset: Texture.WHITE, tint: this.options.focusOverlay.backing.options?.color ?? 0x0, alpha: this.options.focusOverlay.backing.options?.alpha ?? 0.8, width: this.app.size.width, height: this.app.size.height, eventMode: "static" });
+            this.overlayBacking = this.app.stage.addChild(backing);
+          }
+
           this.cloneOverlay = new Input(opts, true, this);
           this.cloneOverlay.label = `${this.label} -- clone`;
           this.cloneOverlay.alpha = 0;
           this.cloneOverlay.input.text = this.value;
           this.cloneOverlay.validate();
-          Logger.log(this.cloneOverlay);
           this.app.stage.addChild(this.cloneOverlay);
           this._positionCloneOverlay();
           this._showCloneOverlay();
@@ -706,7 +719,9 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   private _showCloneOverlay() {
+    this.cloneOverlay.pivot.y = -20;
     gsap.to(this.cloneOverlay, { duration: 0.5, alpha: 0.8, ease: 'sine.out', delay: 0.1 });
+    gsap.to(this.cloneOverlay.pivot, { duration: 0.5, y: 0, ease: 'sine.out', delay: 0.1 });
   }
 
   private _positionCloneOverlay() {
@@ -715,10 +730,14 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     }
     const w = this.cloneOverlay.options.minWidth;
     this.cloneOverlay.x = this.app.size.width * 0.5 - w * 0.5;
-    this.cloneOverlay.y = this.options.overlayOnFocus.settings?.marginTop || 20;
+    this.cloneOverlay.y = this.options.focusOverlay?.marginTop || 20;
   }
 
   private _removeCloneOverlay() {
+    this.overlayBacking?.destroy();
+    this.overlayBacking?.parent?.removeChild(this.overlayBacking);
+    // @ts-expect-error cloneOverlay can't be null
+    this.overlayBacking = null;
     this.cloneOverlay?.destroy();
     this.cloneOverlay?.parent?.removeChild(this.cloneOverlay);
     // @ts-expect-error cloneOverlay can't be null
@@ -745,6 +764,16 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
 
   private _handleDomElementKeyup() {
     this._updateCaretAndSelection();
+  }
+
+  private _handleDomElementKeydown(e: KeyboardEvent) {
+    this._updateCaretAndSelection();
+    if (!this.isClone && e.key === 'Enter') {
+      if (this.options.blurOnEnter) {
+        this.domElement.blur();
+      }
+      this.onEnter.emit({ input: this, value: this._value, domElement: this.domElement });
+    }
   }
 
   private _updateCaretAndSelection() {
@@ -782,9 +811,9 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     this.input.text =
       this.options.type === 'password'
         ? this._value
-            ?.split('')
-            .map(() => '*')
-            .join('')
+          ?.split('')
+          .map(() => '*')
+          .join('')
         : this._value;
 
     this._updateCaretAndSelection();

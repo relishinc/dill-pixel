@@ -1,4 +1,4 @@
-import { Application, IApplication, Logger } from "dill-pixel";
+import { Application, IApplication } from "dill-pixel";
 import { Bodies, Body, Engine, Runner, World } from "matter-js";
 import { Container, Graphics, Rectangle, Ticker } from "pixi.js";
 

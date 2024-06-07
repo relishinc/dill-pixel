@@ -1,10 +1,10 @@
-import { ActionDetail, Button, FlexContainer, Logger } from 'dill-pixel';
-import { BaseScene } from './BaseScene';
-import { Input } from '@pixi/ui';
+import { ActionDetail, Button, FlexContainer, IFocusable, Input, Logger } from 'dill-pixel';
+import { DocumentData, QuerySnapshot, collection, limit, onSnapshot, orderBy, where } from 'firebase/firestore';
 import { Graphics, Text } from 'pixi.js';
+
+import { BaseScene } from './BaseScene';
 import { SimpleButton } from '@/popups/ExamplePopup';
 import { gsap } from 'gsap';
-import { collection, DocumentData, limit, onSnapshot, orderBy, QuerySnapshot, where } from 'firebase/firestore';
 
 type Score = {
   id: string;
@@ -15,6 +15,8 @@ type Score = {
 export class FirebaseAdapterScene extends BaseScene {
   protected readonly title = 'Firebase Storage Adapter';
   protected readonly subtitle = 'Demonstrates custom adapter functionality';
+
+  protected list: FlexContainer;
 
   protected buttonContainer: FlexContainer;
   protected buttons: Button[] = [];
@@ -34,30 +36,33 @@ export class FirebaseAdapterScene extends BaseScene {
     super();
   }
 
+  private _sendSaveScoreAction() {
+    const username = this.usernameInput.value;
+    const scoreAsNum = parseInt(this.scoreInput.value, 10);
+    this.app.sendAction('save_to_firebase', {
+      collection: 'users',
+      data: { username, score: scoreAsNum },
+    });
+  }
+
   public async initialize() {
     await super.initialize();
-
-    // add a container for some buttons
-    this.buttonContainer = this.add.flexContainer({
-      gap: 10,
-      justifyContent: 'center',
-      alignItems: 'center',
-    });
-    this.buttonContainer.y -= 80;
-
     // add a focus layer
     this.app.focus.addFocusLayer(this.id);
 
-    // add a save button
-    const saveButton = this.createButton('Save', 'green', () => {
-      const username = this.usernameInput.value;
-      const scoreAsNum = parseInt(this.scoreInput.value, 10);
+    this.list = this.add.flexContainer({ gap: 50, flexDirection: "column", alignItems: "center" });
 
-      this.app.sendAction('save_to_firebase', {
-        collection: 'users',
-        data: { username, score: scoreAsNum },
-      });
+    // create inputs
+    this.createInputs();
+
+    // add a container for some buttons
+    this.buttonContainer = this.list.add.flexContainer({
+      gap: 10,
+      flexDirection: this.app.size.width < 600 ? 'column' : "row"
     });
+
+    // add a save button
+    const saveButton = this.createButton('Save', 'green', this._sendSaveScoreAction);
     this.buttonContainer.addChild(saveButton);
 
     // add a load button
@@ -78,9 +83,6 @@ export class FirebaseAdapterScene extends BaseScene {
     this.app.actions('load_from_firebase').connect(this._handleLoad);
     this.app.actions('clear_firebase').connect(this._handleClear);
     this.app.actions('delete_from_firebase').connect(this._handleDelete);
-
-    // create inputs
-    this.createInputs();
 
     // create scoreboard
     this.createScoreboard();
@@ -106,6 +108,8 @@ export class FirebaseAdapterScene extends BaseScene {
 
       snapshot.docChanges().length && this.refreshScoreboard();
     });
+
+    this.app.focus.sortFocusablesByPosition()
   }
 
   private async _handleSave(action: ActionDetail) {
@@ -176,14 +180,12 @@ export class FirebaseAdapterScene extends BaseScene {
 
   private createInputs() {
     // add a container for some inputs
-    this.inputContainer = this.add.flexContainer({
+    this.inputContainer = this.list.add.flexContainer({
       gap: 10,
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: 'column',
+      flexDirection: "column"
     });
 
-    this.inputContainer.y = this.buttonContainer.y - 160;
+
 
     // add inputs
     this.usernameInput = this.createInput('Username');
@@ -191,57 +193,53 @@ export class FirebaseAdapterScene extends BaseScene {
 
     this.inputContainer.addChild(this.usernameInput);
     this.inputContainer.addChild(this.scoreInput);
+
+    this.addSignalConnection(
+      this.scoreInput.onEnter.connect(this._sendSaveScoreAction)
+    )
+
+    this.app.focus.add([this.usernameInput, this.scoreInput], this.id, true);
   }
 
   private createInput(placeholder: string) {
     return new Input({
-      bg: new Graphics()
-        .roundRect(0, 0, 320, 70, 11 + 5)
-        .fill('#DCB000')
-        .roundRect(5, 5, 320 - 5 * 2, 70 - 5 * 2, 11)
-        .fill('#FFFFFF'),
-      textStyle: {
-        fill: '#728779',
+      minWidth: 375,
+      fixed: true,
+      padding: [10, 15],
+      bg: { radius: 20, stroke: { color: 0xDCB000, width: 3 } },
+      style: {
+        align: 'center', fill: '#728779',
         fontSize: 22,
         fontWeight: 'bold',
       },
-      align: 'center',
-      placeholder,
+      placeholder: {
+        text: placeholder
+      },
     });
   }
 
   private createScoreboard() {
-    this.scoreboard = this.add.flexContainer({
-      gap: 10,
-      alignItems: 'flex-start',
-      flexDirection: 'column',
-    });
+
+    const scoreboardContainer = this.list.add.flexContainer({ gap: 10, flexDirection: 'column' });
 
     // scoreboard heading
-    this.scoreboardHeading = this.add.text({
+    this.scoreboardHeading = scoreboardContainer.add.text({
       text: 'Scoreboard',
       style: { fill: 0xffffff, fontSize: 42, align: 'center', fontWeight: 'bold' },
     });
 
-    this.scoreboardHeading.anchor = 0.5;
-
     // scoreboard message
-    this.scoreboardMessage = this.add.text({
+    this.scoreboardMessage = scoreboardContainer.add.text({
       text: '',
       style: { fill: 0xffffff, fontSize: 18, align: 'center' },
     });
+
+    this.scoreboard = scoreboardContainer.add.flexContainer({
+      gap: 10,
+      flexDirection: 'column',
+    });
+
     this.scoreboardMessage.anchor = 0.5;
-
-    this.positionScoreboard();
-  }
-
-  private positionScoreboard() {
-    this.scoreboard.y = this.buttonContainer.y + 180;
-    this.scoreboardHeading.y = this.scoreboard.y - 70;
-    this.scoreboardMessage.y = this.scoreboardHeading.y + 40;
-
-    // better way to do this?
-    this.scoreboard.pivot.x = 120;
   }
 
   private removeScoreFromScoreboard(score: Score): Promise<void> {
@@ -267,6 +265,13 @@ export class FirebaseAdapterScene extends BaseScene {
         duration: 0.3,
         onComplete: () => {
           // this.scoreboard.removeChildAt(index);
+          Logger.log('removing', scoreElement)
+          this.scoreboard.removeChild(scoreElement);
+          const btn = scoreElement.getChildByLabel('delete-button') as unknown as IFocusable;
+          console.log(btn);
+          if (btn) {
+            this.app.focus.remove(btn)
+          }
           resolve();
         },
       });
@@ -292,7 +297,10 @@ export class FirebaseAdapterScene extends BaseScene {
           onComplete: () => {
             // resolve when the last child is removed
             if (idx === reversedChildren.length - 1) {
-              this.scoreboard.removeChildren();
+              const children = this.scoreboard.removeChildren();
+              children.forEach((child) => {
+                this.app.focus.remove(child.getChildByLabel('delete-button') as unknown as IFocusable)
+              })
               // clear scores
               this.scores = [];
               resolve();
@@ -334,6 +342,7 @@ export class FirebaseAdapterScene extends BaseScene {
     const deleteButton = this.make.container();
 
     const deleteButtonBg = new SimpleButton();
+    deleteButtonBg.label = 'delete-button';
     deleteButtonBg.accessibleTitle = 'Delete';
     deleteButtonBg.accessibleHint = 'Press to delete this score';
     deleteButtonBg.onInteraction('click').connect(async () => {
@@ -351,6 +360,7 @@ export class FirebaseAdapterScene extends BaseScene {
       //   collection: 'users',
       //   data: score,
       // });
+      this.app.focus.remove(deleteButtonBg);
     });
     deleteButton.scale = 0.7;
 
@@ -358,7 +368,7 @@ export class FirebaseAdapterScene extends BaseScene {
       text: '✖',
       style: { fill: 0xffffff, align: 'center' },
     });
-    deleteButtonText.anchor = 0.5;
+    deleteButtonText.anchor = 0.5
     deleteButtonText.x = deleteButtonBg.width / 2;
     deleteButtonText.y = deleteButtonBg.height / 2;
     deleteButtonText.eventMode = 'none';
@@ -366,6 +376,8 @@ export class FirebaseAdapterScene extends BaseScene {
     deleteButton.addChild(deleteButtonBg);
     deleteButton.addChild(deleteButtonText);
     scoreContainer.addChild(deleteButton);
+
+    this.app.focus.add(deleteButtonBg, this.id)
 
     return scoreContainer;
   }
@@ -416,5 +428,11 @@ export class FirebaseAdapterScene extends BaseScene {
     } else {
       this.scoreboardMessage.text = 'No scores yet.';
     }
+  }
+
+  resize() {
+    super.resize();
+    this.list.y = this._subtitle.y + 60;
+    this.buttonContainer.flexDirection = this.app.size.width < 600 ? 'column' : 'row';
   }
 }

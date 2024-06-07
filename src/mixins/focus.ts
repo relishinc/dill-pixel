@@ -1,9 +1,10 @@
-import type { PointerEvents } from 'pixi.js';
+import type { Constructor, PointLike } from '../utils';
 import { Container, FederatedEvent } from 'pixi.js';
+import type { DestroyOptions, PointerEvents } from 'pixi.js';
+
 import { Application } from '../Application';
 import type { IFocusable } from '../plugins';
 import { Signal } from '../signals';
-import type { Constructor, PointLike } from '../utils';
 
 export function Focusable<TBase extends Constructor<Container>>(Base: TBase): TBase & Constructor<IFocusable> {
   return class extends Base implements IFocusable {
@@ -40,6 +41,14 @@ export function Focusable<TBase extends Constructor<Container>>(Base: TBase): TB
       return Application.getInstance();
     }
 
+    public destroy(options?: DestroyOptions): void {
+      this.off('mouseover', this._onMouseOver);
+      this.off('mousedown', this._onMouseDown);
+      this.off('click', this._handleClick);
+      this.off('tap', this._handleClick);
+      super.destroy(options);
+    }
+
     public focusIn() {
       if (this.app.focus.active) {
         // @ts-expect-error Argument of type { type: string; } is not assignable to parameter of type FederatedPointerEvent
@@ -63,7 +72,7 @@ export function Focusable<TBase extends Constructor<Container>>(Base: TBase): TB
       }
     }
 
-    public click() {}
+    public click() { }
 
     public getFocusPosition() {
       return null;
@@ -92,7 +101,7 @@ export function Focusable<TBase extends Constructor<Container>>(Base: TBase): TB
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected _handleKeyUp(_e: KeyboardEvent) {}
+    protected _handleKeyUp(_e: KeyboardEvent) { }
 
     private _maybeEmit(type: string, e: FederatedEvent) {
       if (this._eventsDisabled || e.type) {

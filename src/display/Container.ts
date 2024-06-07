@@ -1,8 +1,9 @@
-import { DestroyOptions, Ticker } from 'pixi.js';
-import type { IApplication } from '../core';
-import { Application } from '../Application';
 import { Animated, WithSignals } from '../mixins';
+import { DestroyOptions, Ticker } from 'pixi.js';
+
+import { Application } from '../Application';
 import { FactoryContainer } from '../mixins/factory';
+import type { IApplication } from '../core';
 import type { Size } from '../utils';
 import { bindAllMethods } from '../utils';
 
@@ -27,11 +28,17 @@ export interface IContainer {
 /**
  * Configuration for the Container class.
  */
-type ContainerConfig = {
+export type ContainerConfig = {
   autoResize: boolean;
   autoUpdate: boolean;
   priority: number;
 };
+
+export const ContainerConfigKeys: (keyof ContainerConfig)[] = [
+  'autoResize',
+  'autoUpdate',
+  'priority',
+];
 
 const defaultConfig: ContainerConfig = { autoResize: true, autoUpdate: false, priority: 0 };
 
@@ -47,7 +54,7 @@ export class Container<A extends Application = Application> extends _Container i
    * The constructor for the Container class.
    * @param config - The configuration for the container.
    */
-  constructor(config: Partial<ContainerConfig>) {
+  constructor(config: Partial<ContainerConfig> = {}) {
     super();
     this.__config = { ...defaultConfig, ...config };
     // Bind all methods of this class to the current instance.
@@ -83,7 +90,7 @@ export class Container<A extends Application = Application> extends _Container i
   /**
    * This method is called when the container is added to the stage. It is meant to be overridden by subclasses.
    */
-  public added() {}
+  public added() { }
 
   destroy(options?: DestroyOptions): void {
     if (this.__config.autoUpdate) {
@@ -92,7 +99,7 @@ export class Container<A extends Application = Application> extends _Container i
     super.destroy(options);
   }
 
-  public removed() {}
+  public removed() { }
 
   /**
    * This method is called when the container is added to the stage. It sets up auto-resizing and auto-updating if enabled.

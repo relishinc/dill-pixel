@@ -94,7 +94,7 @@ export class MatterPhysicsScene extends BaseScene {
       });
     }
 
-    entity.position.set(e.data.global.x, e.data.global.y);
+    entity.position.set(e.pageX, e.pageY);
     this.level.add.existing(entity);
   }
 

@@ -72,6 +72,8 @@ export interface IFocusLayer {
 
   sortFocusables(): void;
 
+  sortFocusablesByPosition(): void;
+
   next(): IFocusable | null;
 
   prev(): IFocusable | null;
@@ -85,7 +87,7 @@ class FocusLayer implements IFocusLayer {
   private _focusables: IFocusable[] = [];
   private _currentIndex: number = 0;
 
-  constructor(public id: string | number) {}
+  constructor(public id: string | number) { }
 
   private _current: boolean = false;
 
@@ -163,6 +165,18 @@ class FocusLayer implements IFocusLayer {
     }
   }
 
+  public sortFocusablesByPosition() {
+    if (this._current) {
+      this._focusables.sort((a: IFocusable, b: IFocusable) => {
+        if (a.position.y !== b.position.y) {
+          return a.position.y - b.position.y;
+        }
+        return a.position.x - b.position.x;
+      });
+    }
+    Logger.log(this._focusables);
+  }
+
   setCurrentFocusable(focusable: IFocusable | null) {
     if (focusable) {
       this._currentIndex = this._focusables.indexOf(focusable);
@@ -198,6 +212,7 @@ export type FocusChangeDetail = { layer: string | number | null; focusable: IFoc
 export interface IFocusManagerPlugin extends IPlugin {
   readonly view: Container;
   readonly layerCount: number;
+  readonly currentLayer: IFocusLayer | undefined;
   readonly currentLayerId: string | number | null;
   readonly active: boolean;
   readonly layers: Map<string | number, IFocusLayer>;
@@ -238,6 +253,8 @@ export interface IFocusManagerPlugin extends IPlugin {
   clearFocus(): void;
 
   removeAllFocusLayers(): void;
+
+  sortFocusablesByPosition(): void;
 }
 
 export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
@@ -268,6 +285,13 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
     return this._currentLayerId;
   }
 
+  get currentLayer(): IFocusLayer | undefined {
+    if (!this._currentLayerId) {
+      return undefined;
+    }
+    return this._layers.get(this._currentLayerId);
+  }
+
   private _active: boolean = false;
 
   get active(): boolean {
@@ -286,6 +310,10 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
 
   public get layerCount(): number {
     return this._layers.size;
+  }
+
+  public sortFocusablesByPosition() {
+    this._getCurrentLayer()?.sortFocusablesByPosition();
   }
 
   public initialize(app: IApplication): void {
@@ -363,6 +391,9 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
         layer.removeFocusable(f);
       });
     });
+    if (this._focusTarget && focusable.includes(this._focusTarget)) {
+      this._setTarget(null);
+    }
   }
 
   public setLayerOrder(layerIds: (string | number)[]): void {
@@ -453,7 +484,7 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public postInitialize(_app: IApplication): Promise<void> | void {}
+  public postInitialize(_app: IApplication): Promise<void> | void { }
 
   public clearFocus() {
     this._setTarget(null);
@@ -503,8 +534,8 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
     if (!this._options.usePixiAccessibility) {
       // e.preventDefault();
       if (this._focusTarget && this._focusTarget.isFocused) {
-        this._focusTarget.emit('click', { type: 'click', originalEvent: e });
-        this._focusTarget.emit('pointerup', { type: 'pointerup', originalEvent: e });
+        this._focusTarget?.emit('click', { type: 'click', originalEvent: e });
+        this._focusTarget?.emit('pointerup', { type: 'pointerup', originalEvent: e });
       }
     }
   }

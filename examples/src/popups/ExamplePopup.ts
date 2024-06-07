@@ -1,7 +1,7 @@
-import { Container, Focusable, Interactive, IPopup, Popup } from 'dill-pixel';
+import { Container, Focusable, IPopup, Interactive, Popup } from 'dill-pixel';
+import { Graphics, Text } from 'pixi.js';
 
 import { gsap } from 'gsap';
-import { Graphics, Text } from 'pixi.js';
 
 const _Button = Focusable(Interactive(Container));
 
@@ -19,10 +19,11 @@ export class SimpleButton extends _Button {
   }
 }
 
-class FocusableText extends Focusable(Text) {}
+class FocusableText extends Focusable(Text) { }
 
 export class ExamplePopup extends Popup implements IPopup {
   window: Container;
+  windowBacking: Graphics;
   title: FocusableText;
   closeButton: SimpleButton;
 
@@ -30,7 +31,7 @@ export class ExamplePopup extends Popup implements IPopup {
 
   initialize() {
     this.window = this.view.add.container({ x: -300, y: -200 });
-    this.window.add.graphics().roundRect(0, 0, 600, 400, 10).fill({ color: 0x000fff });
+    this.windowBacking = this.window.add.graphics().roundRect(0, 0, Math.min(this.app.size.width - 40, 600), 400, 10).fill({ color: 0x000fff });
 
     this.title = this.window.add.existing(
       new FocusableText({
@@ -50,7 +51,7 @@ export class ExamplePopup extends Popup implements IPopup {
       },
     );
 
-    this.closeButton = this.window.add.existing(new SimpleButton(), { x: 530, y: 10 });
+    this.closeButton = this.window.add.existing(new SimpleButton(), { x: this.windowBacking.width - 70, y: 10 });
     this.closeButton.accessibleTitle = 'Close button';
     this.closeButton.accessibleHint = 'Click to close popup';
 
@@ -60,6 +61,7 @@ export class ExamplePopup extends Popup implements IPopup {
     if (this.backing) {
       this.backing.alpha = 0;
     }
+    this.window.x = -this.window.width * 0.5;
     this.window.alpha = 0;
     this.window.pivot.set(0, -10);
   }
@@ -82,5 +84,15 @@ export class ExamplePopup extends Popup implements IPopup {
   async hide() {
     this._showAnimation.timeScale(2);
     return this._showAnimation.reverse();
+  }
+
+  resize() {
+    super.resize()
+    if (this.windowBacking.width > this.app.size.width || (this.app.size.width > 600 && this.windowBacking.width < 600)) {
+      this.windowBacking.clear();
+      this.windowBacking.roundRect(0, 0, Math.min(this.app.size.width - 40, 600), 400, 10).fill({ color: 0x000fff });
+    }
+    this.closeButton.x = this.windowBacking.width - 70;
+    this.window.x = -this.window.width * 0.5;
   }
 }

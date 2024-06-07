@@ -30,7 +30,7 @@ const defaultOptions = {
     }
 }
 
-export class MatterPhysicsPlugin extends Plugin {
+export class MatterPhysicsPlugin extends Plugin implements IMatterPhysicPlugin { 
     private _options: MatterPhysicsPluginOptions;
     initialize(_app: IApplication, options?: Partial<MatterPhysicsPluginOptions>): void | Promise<void> {
         this._options = {

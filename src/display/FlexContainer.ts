@@ -1,12 +1,13 @@
-import type { DestroyOptions } from 'pixi.js';
-import { Container as PIXIContainer } from 'pixi.js';
-import { Application } from '../Application';
-import { FactoryContainer } from '../mixins/factory';
-import { WithSignals } from '../mixins';
-import { Signal } from '../signals';
 import type { ContainerLike, PointLike } from '../utils';
-import { bindAllMethods, Logger, resolvePointLike } from '../utils';
+import { Logger, bindAllMethods, resolvePointLike } from '../utils';
+
+import { Application } from '../Application';
 import type { Container } from './Container';
+import type { DestroyOptions } from 'pixi.js';
+import { FactoryContainer } from '../mixins/factory';
+import { Container as PIXIContainer } from 'pixi.js';
+import { Signal } from '../signals';
+import { WithSignals } from '../mixins';
 
 const _FlexContainer = WithSignals(FactoryContainer());
 
@@ -288,6 +289,30 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
     return children[0];
   }
 
+  public getChildByLabel(label: RegExp | string, deep: boolean = true): PIXIContainer | null {
+    for (let i = 0; i < this.flexChildren.length; i++) {
+      const child = this.flexChildren[i];
+      if (child.label) {
+        if (label instanceof RegExp) {
+          if (label.test(child.label)) {
+            return child;
+          }
+        } else {
+          if (child.label === label) {
+            return child;
+          }
+        }
+      }
+      if (deep) {
+        const foundChild = child.getChildByLabel(label, deep);
+        if (foundChild) {
+          return foundChild;
+        }
+      }
+    }
+    return null;
+  }
+
   /**
    * Public method to manually trigger a layout
    */
@@ -299,9 +324,9 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
     this.layout();
   }
 
-  update() {}
+  update() { }
 
-  added() {}
+  added() { }
 
   /**
    * Ensures we delete the child from the map when it's removed

@@ -1,16 +1,16 @@
-import { BitmapText, Container as PIXIContainer, Graphics, Sprite, Text } from 'pixi.js';
-import type { ButtonConfig, FlexContainerConfig, ISpineAnimation, UICanvasConfig } from '../../display';
+import { BitmapText, Graphics, Container as PIXIContainer, Sprite, Text } from 'pixi.js';
 import {
   Button,
   ButtonConfigKeys,
   Container,
+  ContainerConfigKeys,
   FlexContainer,
   FlexContainerConfigKeys,
   SpineAnimation,
   UICanvas,
   UICanvasConfigKeys,
 } from '../../display';
-import { omitKeys, pluck, resolvePointLike } from '../../utils';
+import type { ButtonConfig, ContainerConfig, FlexContainerConfig, ISpineAnimation, UICanvasConfig } from '../../display';
 import {
   ButtonProps,
   ContainerProps,
@@ -23,6 +23,7 @@ import {
   TextPropsKeys,
   UICanvasFactoryProps,
 } from './props';
+import { omitKeys, pluck, resolvePointLike } from '../../utils';
 import {
   resolveAnchor,
   resolvePivot,
@@ -44,9 +45,11 @@ export const defaultFactoryMethods = {
   },
   texture: resolveTexture,
   container: (props?: Partial<ContainerProps>) => {
-    const entity = new Container();
-    if (!props) return entity;
-    const { position, x, y, pivot, scale, scaleX, scaleY, ...rest } = props;
+    const config = pluck(props ?? {}, ContainerConfigKeys);
+    const otherProps = omitKeys<ContainerProps, keyof ContainerConfig>(ContainerConfigKeys, props ?? {});
+    const entity = new Container(config);
+    if (!otherProps) return entity;
+    const { position, x, y, pivot, scale, scaleX, scaleY, ...rest } = otherProps;
     resolvePosition({ position, x, y }, entity);
     resolveScale({ scale, scaleX, scaleY }, entity);
     resolvePivot(pivot, entity);
@@ -77,12 +80,12 @@ export const defaultFactoryMethods = {
   text: (props?: Partial<TextProps>) => {
     const options = props
       ? {
-          text: props.text,
-          roundPixels: props.roundPixels,
-          resolution: props.resolution,
-          style: props.style,
-          anchor: props.anchor ? resolvePointLike(props.anchor, true) : undefined,
-        }
+        text: props.text,
+        roundPixels: props.roundPixels,
+        resolution: props.resolution,
+        style: props.style,
+        anchor: props.anchor ? resolvePointLike(props.anchor, true) : undefined,
+      }
       : {};
     const entity = new Text(options);
     if (!props) return entity;

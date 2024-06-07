@@ -1,13 +1,3 @@
-import type { AssetInitOptions, AssetsManifest, DestroyOptions, Renderer, RendererDestroyOptions } from 'pixi.js';
-import { Application as PIXIPApplication, Assets, isMobile, Point } from 'pixi.js';
-import type {
-  IFocusManagerPlugin,
-  Ii18nPlugin,
-  IInputPlugin,
-  IKeyboardPlugin,
-  IPlugin,
-  IPopupManagerPlugin,
-} from './plugins';
 import {
   Action,
   ActionContext,
@@ -18,16 +8,27 @@ import {
   ISceneManagerPlugin,
   IWebEventsPlugin,
 } from './plugins';
-import { Signal } from './signals';
-import type { IStorageAdapter, IStore } from './store';
-import { Store } from './store';
-import type { ImportListItem, Size } from './utils';
-import { bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from './utils';
 import type { AppConfig, IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals } from './core';
+import type { AssetInitOptions, AssetsManifest, DestroyOptions, Renderer, RendererDestroyOptions } from 'pixi.js';
+import { Assets, Application as PIXIPApplication, Point, isMobile } from 'pixi.js';
+import type {
+  IFocusManagerPlugin,
+  IInputPlugin,
+  IKeyboardPlugin,
+  IPlugin,
+  IPopupManagerPlugin,
+  Ii18nPlugin,
+} from './plugins';
+import type { IStorageAdapter, IStore } from './store';
+import type { ImportListItem, Size } from './utils';
+import { Logger, bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise } from './utils';
 import { coreFunctionRegistry, coreSignalRegistry } from './core';
-import { defaultPlugins } from './plugins/defaults';
-import type { IVoiceOverPlugin } from './plugins/audio/VoiceOverPlugin';
+
 import type { ICaptionsPlugin } from './plugins/captions';
+import type { IVoiceOverPlugin } from './plugins/audio/VoiceOverPlugin';
+import { Signal } from './signals';
+import { Store } from './store';
+import { defaultPlugins } from './plugins/defaults';
 
 const defaultApplicationOptions: Partial<IApplicationOptions> = {
   antialias: false,
@@ -374,10 +375,6 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     void this._resize();
   }
 
-  public actions<T = any>(action: Action | string): ActionSignal<T> {
-    return this.input.actions(action);
-  }
-
   public getUnloadedPlugin(id: string): ImportListItem<IPlugin> | undefined {
     return this.config.plugins?.find((plugin) => plugin.id === id);
   }
@@ -398,8 +395,12 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return await this.registerPlugin(pluginInstance, opts);
   }
 
-  public sendAction(action: string, data?: any) {
-    this.input.sendAction(action, data);
+  public actions<TActionData = any>(action: Action | string): ActionSignal<TActionData> {
+    return this.input.actions<TActionData>(action);
+  }
+
+  public sendAction<TActionData = any>(action: string, data?: TActionData) {
+    this.input.sendAction<TActionData>(action, data);
   }
 
   /**
