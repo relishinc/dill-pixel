@@ -84,6 +84,12 @@ create(
     ],
     scenes: [
       {
+        id: 'ui',
+        debugLabel: 'UI',
+        namedExport: 'UIScene',
+        module: () => import('@/scenes/UIScene'),
+      },
+      {
         id: 'assets',
         debugLabel: 'Assets',
         namedExport: 'AssetScene',

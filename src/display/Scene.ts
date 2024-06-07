@@ -1,8 +1,9 @@
-import { Ticker } from 'pixi.js';
-import { Application } from '../Application';
 import type { AssetLoadingOptions, Size } from '../utils';
-import type { IContainer } from './Container';
+
+import { Application } from '../Application';
 import { Container } from './Container';
+import type { IContainer } from './Container';
+import { Ticker } from 'pixi.js';
 
 export type SceneAssets = Omit<AssetLoadingOptions, 'manifest' | 'initOptions' | 'assetPreferences'>;
 
@@ -59,7 +60,7 @@ export class Scene<T extends Application = Application> extends Container<T> imp
    * @returns {Promise<void> | void}
    */
   public initialize(): Promise<void> | void;
-  public async initialize(): Promise<void> {}
+  public async initialize(): Promise<void> { }
 
   /**
    * Called to animate the scene in
@@ -84,7 +85,7 @@ export class Scene<T extends Application = Application> extends Container<T> imp
    */
   public start(): Promise<void> | void;
 
-  public async start(): Promise<void> {}
+  public async start(): Promise<void> { }
 
   /**
    * Called every frame

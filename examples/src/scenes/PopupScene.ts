@@ -1,15 +1,15 @@
-import { ActionDetail, Button, Container, PopupConfig } from 'dill-pixel';
-import { ExamplePopup } from '@/popups/ExamplePopup';
+import { ActionDetail, Button, FlexContainer, PopupConfig } from 'dill-pixel';
 
 import { BaseScene } from './BaseScene';
+import { ExamplePopup } from '@/popups/ExamplePopup';
 
 export class PopupScene extends BaseScene {
   protected readonly title = 'Popups';
   protected readonly subtitle =
-    'Open a popup by clicking or tabbing to a button and pressing Enter or Space.\nThe' +
+    'Open a popup by clicking a button.\nThe' +
     ' different popups have different behaviors.';
   protected buttons: Button[] = [];
-  protected buttonContainer: Container;
+  protected buttonContainer: FlexContainer;
 
   public async initialize() {
     await super.initialize();
@@ -20,7 +20,7 @@ export class PopupScene extends BaseScene {
     this.app.popups.addPopup('two', ExamplePopup);
     this.app.popups.addPopup('three', ExamplePopup);
 
-    this.buttonContainer = this.add.container();
+    this.buttonContainer = this.add.flexContainer({ gap: 10, flexWrap: "wrap", justifyContent: 'center', alignItems: "center", width: this.app.size.width, x: -this.app.size.width * 0.5 })
 
     this.addButton('Popup 1', () => {
       this.app.sendAction('showPopup', {
@@ -45,7 +45,6 @@ export class PopupScene extends BaseScene {
     );
     this.addSignalConnection(
       this.app.actions('showPopup').connect(this._handleShowPopup),
-
       this.app.signal.onHidePopup.connect(() => {
         this.app.func.setActionContext('game');
       }),
@@ -53,22 +52,8 @@ export class PopupScene extends BaseScene {
   }
 
   public async start() {
-    this.buttons.forEach((btn, idx) => {
-      this.app.focus.add(btn, this.id, idx === 0);
-    });
+    this.app.focus.add(this.buttons, this.id, true);
   }
-
-  resize() {
-    super.resize();
-    this.buttons.forEach((btn, idx) => {
-      btn.x = idx * (btn.width + 10);
-    });
-    this.buttonContainer.position.set(
-      -this.buttonContainer.width * 0.5 + (this.buttonContainer.getChildAt(0)?.width * 0.5 || 0),
-      0,
-    );
-  }
-
   _handleShowPopup(action: ActionDetail<PopupConfig<{ title: string }>>) {
     if (action.context === 'popup') {
       return;
@@ -112,5 +97,11 @@ export class PopupScene extends BaseScene {
     },
   ) {
     void this.app.func.showPopup(popupId, config);
+  }
+
+  resize() {
+    super.resize();
+    this.buttonContainer.containerWidth = this.app.size.width;
+    this.buttonContainer.x = -this.app.size.width * 0.5;
   }
 }

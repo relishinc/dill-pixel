@@ -7,6 +7,7 @@ export * from './core';
 export * from './mixins';
 export * from './signals';
 export * from './display';
+export * from './ui';
 export * from './plugins';
 export * from './store';
 //

@@ -1,10 +1,11 @@
-import { IApplication } from '../../core';
-import { Signal } from '../../signals';
-import type { IPlugin } from '../Plugin';
-import { Plugin } from '../Plugin';
 import { Action, ActionContext } from './actions';
 import type { ActionDetail, ActionSignal, ActionsList } from './types';
+
+import { IApplication } from '../../core';
+import type { IPlugin } from '../Plugin';
 import { InputController } from './constants';
+import { Plugin } from '../Plugin';
+import { Signal } from '../../signals';
 
 export type InputManagerOptions = {
   actions?: ActionsList;
@@ -21,9 +22,9 @@ export interface IInputPlugin extends IPlugin {
   onContextChanged: Signal<(context: string | ActionContext) => void>;
   context: string | ActionContext;
 
-  actions(action: string): ActionSignal;
+  actions<TActionData = any>(action: string): ActionSignal<TActionData>;
 
-  sendAction(action: string, data?: any): void;
+  sendAction<TActionData = any>(action: string, data?: TActionData): void;
 
   isControllerActive(controller: InputController): boolean;
 
@@ -108,15 +109,15 @@ export class InputPlugin extends Plugin implements IInputPlugin {
     return this.activeGamepads.has(gamepad.id);
   }
 
-  actions<T = any>(action: string | number): ActionSignal<T> {
+  actions<TActionData = any>(action: string | number): ActionSignal<TActionData> {
     if (!this._actionSignals.has(action)) {
-      this._actionSignals.set(action, new Signal<(actionDetail: ActionDetail<T>) => void>());
+      this._actionSignals.set(action, new Signal<(actionDetail: ActionDetail<TActionData>) => void>());
     }
     return this._actionSignals.get(action)!;
   }
 
-  sendAction<T = any>(actionId: string | number, data?: T): void {
-    return this.actions<T>(actionId).emit({ id: actionId, context: this.context, data });
+  sendAction<TActionData = any>(actionId: string | number, data?: TActionData): void {
+    return this.actions<TActionData>(actionId).emit({ id: actionId, context: this.context, data });
   }
 
   setActionContext(context: string | ActionContext): string {
