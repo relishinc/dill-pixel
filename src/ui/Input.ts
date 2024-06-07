@@ -260,6 +260,9 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   resize() {
+    if (this.cloneOverlay) {
+
+    }
   }
 
   resetBg() {
@@ -735,6 +738,10 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     const w = this.cloneOverlay.options.minWidth;
     this.cloneOverlay.x = this.app.size.width * 0.5 - w * 0.5;
     this.cloneOverlay.y = this.options.focusOverlay?.marginTop || 20;
+    if (this.overlayBacking) {
+      this.overlayBacking.width = this.app.size.width;
+      this.overlayBacking.height = this.app.size.height;
+    }
   }
 
   private _removeCloneOverlay() {
