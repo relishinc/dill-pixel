@@ -10,7 +10,7 @@ import {
   Texture,
 } from 'pixi.js';
 import { Focusable, Interactive, WithSignals } from '../mixins';
-import { Padding, PointLike, ensurePadding, getNearestCharacterIndex, isAndroid, isIos, isMobile, isTouch } from '../utils';
+import { Logger, Padding, PointLike, ensurePadding, getNearestCharacterIndex, isAndroid, isIos, isMobile, isTouch } from '../utils';
 
 import { Container } from '../display';
 import { Signal } from '../signals';
@@ -139,7 +139,6 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   private _mask: Sprite;
   private _lastWidth: number = 0;
   private _lastHeight: number = 0;
-  private _disableCheck: any;
 
   constructor(
     options: Partial<InputProps>,
@@ -281,7 +280,8 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     if ((e?.originalEvent as unknown as KeyboardEvent)?.key) {
       return;
     }
-
+    clearTimeout(this._focusTimer);
+    clearTimeout(this._pointerDownTimer)
     const nearestCharacterIndex = e ? getNearestCharacterIndex(this.input, e) : this.input.text?.length ?? 0;
     this.createDomElement(nearestCharacterIndex);
     // this._focusDomElement(nearestCharacterIndex);
@@ -295,7 +295,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     if (isIos) {
       this._triggerFocusAndSelection(selection);
     } else {
-      clearTimeout(this._focusTimer);
+
       this._focusTimer = setTimeout(() => {
         this._triggerFocusAndSelection(selection);
       }, 100);
@@ -303,7 +303,6 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   _triggerFocusAndSelection(selection?: number) {
-    this._disableCheck = true;
     if (this.domElement) {
       this.domElement.focus();
       this.domElement.click()
@@ -459,6 +458,8 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   destroy() {
+    clearTimeout(this._focusTimer);
+    clearTimeout(this._pointerDownTimer)
     this.app.stage.off('pointerdown', this._checkPointerDownOutside);
     this.hideCursor();
     this.destroyDomElement();
@@ -513,11 +514,15 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   protected createDomElement(selection?: number) {
+
     if (this.isClone && this.clone?.domElement) {
       this.domElement = this.clone.domElement;
       this._addDomElementListeners();
       return;
     }
+    clearTimeout(this._focusTimer);
+    clearTimeout(this._pointerDownTimer)
+
     this.domElement = document.createElement('input');
     this.domElement.type = 'text';
     if (this.options.type && AVAILABLE_TYPES.includes(this.options.type)) {
@@ -536,6 +541,13 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     bounds.x = pos.x;
     bounds.y = pos.y
     bounds.width = this.width - this.options.padding.left;
+
+    /**
+     * Overlays an HTMLInputElement
+     * allows the keyboard to be used on mobile devices
+     * mostly taken from @pixi/ui
+     * @see https://github.com/pixijs/ui/blob/main/src/Input.ts
+     */
 
     this.domElement.style.position = 'fixed';
     this.domElement.style.border = 'none';
@@ -764,6 +776,8 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     if (this.isClone) {
       return;
     }
+    clearTimeout(this._focusTimer);
+    clearTimeout(this._pointerDownTimer)
     this.hideCursor();
     this._removeCloneOverlay();
     this.destroyDomElement();
@@ -784,6 +798,10 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   private _updateCaretAndSelection() {
+    if (!this.domElement) {
+      Logger.warn(this.label, 'No dom element');
+      return;
+    }
     const start = this.domElement.selectionStart || 0;
     const end = this.domElement.selectionEnd || -1;
     const direction = this.domElement.selectionDirection;
@@ -807,12 +825,15 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
 
   private _handleDomElementChange(e: Event) {
     const target = e.target as HTMLInputElement;
+    if (target && !this.domElement) {
+      this.domElement = target
+    }
     if (this.options.pattern !== '') {
       const filteredValue = target.value.replace(new RegExp(this.options.pattern, 'g'), '');
       target.value = filteredValue;
       this._value = filteredValue;
     } else {
-      this._value = this.domElement.value;
+      this._value = target.value;
     }
 
     this.input.text =
