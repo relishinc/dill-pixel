@@ -1,6 +1,6 @@
+import { FlexContainer, Input } from 'dill-pixel';
+
 import { BaseScene } from '@/scenes/BaseScene';
-import { FlexContainer } from 'dill-pixel';
-import { Input } from 'dill-pixel/ui';
 
 export class UIScene extends BaseScene {
   public title = 'UI';
@@ -35,8 +35,6 @@ export class UIScene extends BaseScene {
       }),
       { label: 'input' },
     );
-
-
 
     const tel = this.list.add.existing(
       new Input({
@@ -106,7 +104,7 @@ export class UIScene extends BaseScene {
         minWidth: 400,
         placeholder: { text: 'Touch overlay' },
         padding: [12, 15],
-        focusOverlay: { activeFilter: ['mobile', 'touch', 'desktop'], marginTop: 60, scale: 2.5, backing: { active: true, color: 0x0 } },
+        focusOverlay: { activeFilter: ['mobile', 'touch'], marginTop: 60, scale: 2.5, backing: { active: true, color: 0x0 } },
         bg: {
           radius: 10,
           stroke: {

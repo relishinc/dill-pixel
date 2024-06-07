@@ -261,7 +261,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
 
   resize() {
     if (this.cloneOverlay) {
-
+      this._positionCloneOverlay()
     }
   }
 
@@ -276,19 +276,19 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     }
   }
 
-  handleClick(e: FederatedEvent) {
+  handleClick(e?: FederatedEvent) {
     // check if this was a triggered event from the FocusMnagerPlugin
-    if ((e.originalEvent as unknown as KeyboardEvent)?.key) {
+    if ((e?.originalEvent as unknown as KeyboardEvent)?.key) {
       return;
     }
 
-    const nearestCharacterIndex = getNearestCharacterIndex(this.input, e);
+    const nearestCharacterIndex = e ? getNearestCharacterIndex(this.input, e) : this.input.text?.length ?? 0;
     this.createDomElement(nearestCharacterIndex);
     // this._focusDomElement(nearestCharacterIndex);
   }
 
   focusIn() {
-    this._focusDomElement();
+    this.handleClick()
   }
 
   _focusDomElement(selection?: number) {
