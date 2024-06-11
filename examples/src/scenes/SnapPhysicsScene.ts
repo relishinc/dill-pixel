@@ -1,4 +1,4 @@
-import { Camera, Container, UICanvas, delay } from 'dill-pixel';
+import { Camera, Container, delay, UICanvas } from 'dill-pixel';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
 import { Platform, PlatformMovementConfigOpts } from '@/entities/physics/Platform';
 
@@ -23,7 +23,7 @@ export class SnapPhysicsScene extends BaseScene {
   protected readonly subtitle = 'Arrows to move, up to jump';
   protected config = {
     useCamera: true,
-    zoom: 3,
+    zoom: 1,
     useSpatialHash: true,
     gridCellSize: 300,
     debug: true,
@@ -77,6 +77,7 @@ export class SnapPhysicsScene extends BaseScene {
   }
 
   destroy() {
+    this.app.ticker.maxFPS = 0;
     this.physics.destroy();
     super.destroy();
   }
@@ -84,6 +85,7 @@ export class SnapPhysicsScene extends BaseScene {
   async initialize() {
     await super.initialize();
 
+    this.app.exec.setActionContext('game');
     this.app.focus.addFocusLayer(this.id);
 
     this.level = this.add.container({
@@ -91,6 +93,7 @@ export class SnapPhysicsScene extends BaseScene {
       label: 'Level',
     });
 
+    this.app.ticker.maxFPS = 60;
     this.physics.system.initialize({
       gravity: 10,
       container: this.level,
@@ -111,7 +114,7 @@ export class SnapPhysicsScene extends BaseScene {
     this.addPlatforms(bottom);
     this.addDoors(bottom);
     this.addPortals(bottom);
-    this.addPlayer(true);
+    this.addPlayer();
     this.addControls();
 
     this.physics.system.enabled = true;
@@ -123,30 +126,18 @@ export class SnapPhysicsScene extends BaseScene {
     this.app.keyboard.onKeyDown('z').connect(this._toggleZoom);
   }
 
-  async start() { }
+  async start() {}
 
   physicsUpdate() {
     if (this._isPaused) return;
-    if (
-      this.app.keyboard.isKeyDown('ArrowUp') ||
-      this.app.keyboard.isKeyDown(' ') ||
-      this.app.keyboard.isKeyDown('w')
-    ) {
+    if (this.app.keyboard.isKeyDown('w')) {
       this.app.sendAction('jump');
     }
 
-    if (
-      this.app.keyboard.isKeyDown('ArrowLeft') ||
-      this.app.keyboard.isKeyDown('a') ||
-      this._joystick.direction.includes('left')
-    ) {
+    if (this._joystick.direction.includes('left')) {
       this.app.sendAction('move_left');
     }
-    if (
-      this.app.keyboard.isKeyDown('ArrowRight') ||
-      this.app.keyboard.isKeyDown('d') ||
-      this._joystick.direction.includes('right')
-    ) {
+    if (this._joystick.direction.includes('right')) {
       this.app.sendAction('move_right');
     }
   }
@@ -221,10 +212,10 @@ export class SnapPhysicsScene extends BaseScene {
   }
 
   addPortals(bottom: number) {
-    const portal0 = this.addPortal(400, bottom - 80);
+    const portal0 = this.addPortal(380, bottom - 80);
     portal0.debug = true;
     portal0.label = 'portal0';
-    const portal1 = this.addPortal(600, bottom - 80);
+    const portal1 = this.addPortal(620, bottom - 80);
     const portal2 = this.addPortal(1700, bottom - 580);
     const portal3 = this.addPortal(2000, bottom - 80);
 
@@ -240,7 +231,7 @@ export class SnapPhysicsScene extends BaseScene {
     return portal;
   }
 
-  addPlayer(first: boolean = false) {
+  addPlayer() {
     let delay = 0.5;
     if (!this.player) {
       delay = 1;
@@ -253,7 +244,7 @@ export class SnapPhysicsScene extends BaseScene {
     this.player.spawn(
       {
         x: this.doors[0].x,
-        y: this.doors[0].y + this.doors[0].getBoundingBox().height * 0.5 - (first ? 0 : 5),
+        y: this.doors[0].y + this.doors[0].getBoundingBox().height * 0.5 + 7,
       },
       delay,
     );

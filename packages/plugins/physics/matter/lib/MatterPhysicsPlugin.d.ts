@@ -20,7 +20,7 @@ export type MatterPhysicsPluginOptions = {
     engine: Partial<IEngineDefinition>;
     runner: Partial<IRunnerOptions>;
 };
-export declare class MatterPhysicsPlugin extends Plugin {
+export declare class MatterPhysicsPlugin extends Plugin implements IMatterPhysicPlugin {
     private _options;
     initialize(_app: IApplication, options?: Partial<MatterPhysicsPluginOptions>): void | Promise<void>;
     get system(): typeof System;

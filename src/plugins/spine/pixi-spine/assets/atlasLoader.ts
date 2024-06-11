@@ -27,20 +27,10 @@
  * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-import {
-  AssetExtension,
-  checkExtension,
-  DOMAdapter,
-  ExtensionType,
-  Loader,
-  LoaderParserPriority,
-  path,
-  ResolvedAsset,
-  Texture,
-  TextureSource,
-} from 'pixi.js';
+import type { AssetExtension, Loader, ResolvedAsset, Texture } from 'pixi.js';
+import { checkExtension, DOMAdapter, ExtensionType, LoaderParserPriority, path, TextureSource } from 'pixi.js';
 import { SpineTexture } from '../SpineTexture';
-import { TextureAtlas } from '../../spine-core';
+import { TextureAtlas } from '@esotericsoftware/spine-core';
 
 type RawAtlas = string;
 
@@ -129,8 +119,6 @@ export const spineTextureAtlasLoader: AssetExtension<RawAtlas | TextureAtlas, IS
     },
   },
 } as AssetExtension<RawAtlas | TextureAtlas, ISpineAtlasMetadata>;
-
-// extensions.add(spineTextureAtlasLoader);
 
 export interface ISpineAtlasMetadata {
   // If you are downloading an .atlas file, this metadata will go to the Texture loader

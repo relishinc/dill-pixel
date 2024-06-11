@@ -39,4 +39,4 @@ export * from './Spine';
 export * from './SpineDebugRenderer';
 export * from './SpinePipe';
 export * from './SpineTexture';
-export * from '../spine-core';
+export * from '@esotericsoftware/spine-core';

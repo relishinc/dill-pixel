@@ -250,12 +250,17 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   public set value(value: string) {
-    this.domElement.value = value;
-    const event = new Event('input', {
-      bubbles: true,
-      cancelable: true,
-    });
-    this.domElement.dispatchEvent(event);
+    if (this.domElement) {
+      this.domElement.value = value;
+      const event = new Event('input', {
+        bubbles: true,
+        cancelable: true,
+      });
+      this.domElement.dispatchEvent(event);
+    } else {
+      this._value = value;
+      this.input.text = value;
+    }
   }
 
   resize() {

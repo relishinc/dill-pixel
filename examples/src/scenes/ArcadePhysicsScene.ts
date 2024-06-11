@@ -27,19 +27,19 @@ class Player extends Entity {
     if (!this._cachedBounds) {
       this._cachedBounds = this.getLocalBounds();
       this._cachedBounds.width -= 20;
-      this._cachedBounds.height -= 20;
+      this._cachedBounds.height -= 10;
     }
     return this._cachedBounds;
   }
 
   create() {
     this.view = this.add.spineAnimation({
-      data: 'spine/xavier',
+      data: 'spine/spineboy-pro',
       animationName: 'idle',
       loop: true,
-      scale: 0.2,
+      scale: 0.25,
     });
-    this.offset.y = 60;
+    this.offset.y = 78;
     this.body.setCollideWorldBounds(true);
     this.body.bounce.y = 0.01;
     this.body.maxVelocity.y = 625;
@@ -56,7 +56,6 @@ class Player extends Entity {
     ) {
       this._jumping = true;
       this.body.velocity.y = -1000;
-      this.view.setAnimation('Jump');
     } else if (this.body.onFloor()) {
       this._jumping = false;
     }

@@ -1,4 +1,4 @@
-import { ActionDetail, ISpineAnimation, PointLike, resolvePointLike, Signal } from 'dill-pixel';
+import { ActionDetail, Logger, PointLike, resolvePointLike, Signal, SpineAnimation } from 'dill-pixel';
 
 import { gsap } from 'gsap';
 import { Bounds, Point, Rectangle } from 'pixi.js';
@@ -7,7 +7,7 @@ import { Platform } from './Platform';
 import { FX } from '@/entities/physics/FX';
 
 export class Player extends SnapActor {
-  declare view: ISpineAnimation;
+  declare view: SpineAnimation;
   type = 'Player';
   passThroughTypes = ['FX'];
   onKilled = new Signal();
@@ -39,7 +39,7 @@ export class Player extends SnapActor {
 
   get cachedBounds() {
     if (!this._cachedBounds || this._dirtyBounds) {
-      const bounds = new Rectangle(0, 0, 44, 90);
+      const bounds = new Rectangle(0, 0, 60, 120);
       this._cachedBounds = bounds;
     }
     return this._cachedBounds;
@@ -116,8 +116,8 @@ export class Player extends SnapActor {
   getWorldBounds(): Bounds | Rectangle {
     const pos = this.system.container.toLocal(this.getGlobalPosition());
     const bounds = this.cachedBounds;
-    bounds.x = pos.x - 22;
-    bounds.y = pos.y - 85;
+    bounds.x = this.view.spine.scale.x >= 1 ? pos.x - 22 : pos.x - 38;
+    bounds.y = pos.y - 122;
     return bounds;
   }
 
@@ -153,15 +153,18 @@ export class Player extends SnapActor {
 
   protected initialize() {
     this.view = this.add.spineAnimation({
-      data: 'spine/xavier',
+      data: 'spine/spineboy-pro',
       animationName: 'idle',
       loop: true,
     });
+    this.view.scale.set(0.2);
+    Logger.log(this.view.animationNames);
 
-    this.view.scale.set(0.15);
-    this.app.actions('move_left').connect(this._handleAction);
-    this.app.actions('move_right').connect(this._handleAction);
-    this.app.actions('jump').connect(this._handleAction);
+    this.addSignalConnection(
+      this.app.actions('move_left').connect(this._handleAction),
+      this.app.actions('move_right').connect(this._handleAction),
+      this.app.actions('jump').connect(this._handleAction),
+    );
   }
 
   private _disableJump() {
@@ -222,7 +225,7 @@ export class Player extends SnapActor {
         this._isMoving = true;
         break;
       case 'jump':
-        this.view.setAnimation('Jump');
+        // this.view.setAnimation('idle');
         this._jump();
         break;
     }

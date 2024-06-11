@@ -1,6 +1,12 @@
-export enum InputController {
+export enum InputControllerTypes {
   Keyboard = 'keyboard',
-  Gamepad = 'gamepad',
+  GamePad = 'gamepad',
   Mouse = 'mouse',
   Touch = 'touch',
 }
+
+export type InputController =
+  | InputControllerTypes.Keyboard
+  | InputControllerTypes.GamePad
+  | InputControllerTypes.Mouse
+  | InputControllerTypes.Touch;

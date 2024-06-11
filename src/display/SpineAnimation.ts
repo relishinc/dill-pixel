@@ -1,6 +1,5 @@
-import { FactoryContainer } from '../mixins/factory';
+import { FactoryContainer, WithSignals } from '../mixins';
 import type { SpineProps } from '../mixins/factory/props';
-import { WithSignals } from '../mixins';
 import type { Spine } from '../utils';
 
 const _SpineAnimation = WithSignals(FactoryContainer());

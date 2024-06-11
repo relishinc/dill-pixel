@@ -50,7 +50,7 @@ export class FirebaseAdapterScene extends BaseScene {
     // add a focus layer
     this.app.focus.addFocusLayer(this.id);
 
-    this.list = this.add.flexContainer({ gap: 50, flexDirection: "column", alignItems: "center" });
+    this.list = this.add.flexContainer({ gap: 50, flexDirection: 'column', alignItems: 'center' });
 
     // create inputs
     this.createInputs();
@@ -58,7 +58,7 @@ export class FirebaseAdapterScene extends BaseScene {
     // add a container for some buttons
     this.buttonContainer = this.list.add.flexContainer({
       gap: 10,
-      flexDirection: this.app.size.width < 600 ? 'column' : "row"
+      flexDirection: this.app.size.width < 600 ? 'column' : 'row',
     });
 
     // add a save button
@@ -109,7 +109,7 @@ export class FirebaseAdapterScene extends BaseScene {
       snapshot.docChanges().length && this.refreshScoreboard();
     });
 
-    this.app.focus.sortFocusablesByPosition()
+    this.app.focus.sortFocusablesByPosition();
   }
 
   private async _handleSave(action: ActionDetail) {
@@ -182,10 +182,8 @@ export class FirebaseAdapterScene extends BaseScene {
     // add a container for some inputs
     this.inputContainer = this.list.add.flexContainer({
       gap: 10,
-      flexDirection: "column"
+      flexDirection: 'column',
     });
-
-
 
     // add inputs
     this.usernameInput = this.createInput('Username');
@@ -194,9 +192,7 @@ export class FirebaseAdapterScene extends BaseScene {
     this.inputContainer.addChild(this.usernameInput);
     this.inputContainer.addChild(this.scoreInput);
 
-    this.addSignalConnection(
-      this.scoreInput.onEnter.connect(this._sendSaveScoreAction)
-    )
+    this.addSignalConnection(this.scoreInput.onEnter.connect(this._sendSaveScoreAction));
 
     this.app.focus.add([this.usernameInput, this.scoreInput], this.id, true);
   }
@@ -206,20 +202,20 @@ export class FirebaseAdapterScene extends BaseScene {
       minWidth: 375,
       fixed: true,
       padding: [10, 15],
-      bg: { radius: 20, stroke: { color: 0xDCB000, width: 3 } },
+      bg: { radius: 20, stroke: { color: 0xdcb000, width: 3 } },
       style: {
-        align: 'center', fill: '#728779',
+        align: 'center',
+        fill: '#728779',
         fontSize: 22,
         fontWeight: 'bold',
       },
       placeholder: {
-        text: placeholder
+        text: placeholder,
       },
     });
   }
 
   private createScoreboard() {
-
     const scoreboardContainer = this.list.add.flexContainer({ gap: 10, flexDirection: 'column' });
 
     // scoreboard heading
@@ -265,12 +261,12 @@ export class FirebaseAdapterScene extends BaseScene {
         duration: 0.3,
         onComplete: () => {
           // this.scoreboard.removeChildAt(index);
-          Logger.log('removing', scoreElement)
+          Logger.log('removing', scoreElement);
           this.scoreboard.removeChild(scoreElement);
           const btn = scoreElement.getChildByLabel('delete-button') as unknown as IFocusable;
           console.log(btn);
           if (btn) {
-            this.app.focus.remove(btn)
+            this.app.focus.remove(btn);
           }
           resolve();
         },
@@ -299,8 +295,8 @@ export class FirebaseAdapterScene extends BaseScene {
             if (idx === reversedChildren.length - 1) {
               const children = this.scoreboard.removeChildren();
               children.forEach((child) => {
-                this.app.focus.remove(child.getChildByLabel('delete-button') as unknown as IFocusable)
-              })
+                this.app.focus.remove(child.getChildByLabel('delete-button') as unknown as IFocusable);
+              });
               // clear scores
               this.scores = [];
               resolve();
@@ -368,7 +364,7 @@ export class FirebaseAdapterScene extends BaseScene {
       text: '✖',
       style: { fill: 0xffffff, align: 'center' },
     });
-    deleteButtonText.anchor = 0.5
+    deleteButtonText.anchor = 0.5;
     deleteButtonText.x = deleteButtonBg.width / 2;
     deleteButtonText.y = deleteButtonBg.height / 2;
     deleteButtonText.eventMode = 'none';
@@ -377,7 +373,7 @@ export class FirebaseAdapterScene extends BaseScene {
     deleteButton.addChild(deleteButtonText);
     scoreContainer.addChild(deleteButton);
 
-    this.app.focus.add(deleteButtonBg, this.id)
+    this.app.focus.add(deleteButtonBg, this.id);
 
     return scoreContainer;
   }

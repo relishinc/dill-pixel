@@ -1,17 +1,20 @@
 import { Action, ActionContext } from './actions';
 import type { ActionDetail, ActionSignal, ActionsList } from './types';
+import { Controls, ControlScheme } from './controls';
 
 import { IApplication } from '../../core';
 import type { IPlugin } from '../Plugin';
-import { InputController } from './constants';
 import { Plugin } from '../Plugin';
+import { InputController, InputControllerTypes } from './constants';
 import { Signal } from '../../signals';
 
 export type InputManagerOptions = {
   actions?: ActionsList;
+  controls?: ControlScheme;
 };
 
 export interface IInputPlugin extends IPlugin {
+  readonly controls: Controls;
   activeGamepads: Map<string, Gamepad>;
   activeControllers: Set<string>;
   options: InputManagerOptions;
@@ -26,23 +29,26 @@ export interface IInputPlugin extends IPlugin {
 
   sendAction<TActionData = any>(action: string, data?: TActionData): void;
 
+  setActionContext(context: string | ActionContext): string;
+
   isControllerActive(controller: InputController): boolean;
 
   isGamepadActive(gamepad: Gamepad): boolean;
 }
 
-const defaultActions = [
-  Action.Up,
-  Action.Down,
-  Action.Left,
-  Action.Right,
-  Action.Action,
-  Action.Pause,
-  Action.Unpause,
-  Action.Start,
-  Action.Menu,
-  Action.Back,
-  Action.Next,
+const defaultActions: Action[] = [
+  'up',
+  'down',
+  'left',
+  'right',
+  'action',
+  'pause',
+  'unpause',
+  'start',
+  'select',
+  'menu',
+  'back',
+  'next',
 ];
 
 const defaultOptions = {
@@ -51,6 +57,10 @@ const defaultOptions = {
 
 export class InputPlugin extends Plugin implements IInputPlugin {
   public readonly id = 'input';
+
+  // controls
+  public readonly controls = new Controls();
+
   // properties
   public activeGamepads = new Map<string, Gamepad>();
   public activeControllers = new Set<string>([]);
@@ -66,7 +76,7 @@ export class InputPlugin extends Plugin implements IInputPlugin {
   private _actionSignals: Map<string | number, ActionSignal> = new Map();
 
   // private properties
-  private _context: string | ActionContext = ActionContext.General;
+  private _context: string | ActionContext = 'general';
 
   get context(): string | ActionContext {
     return this._context;
@@ -82,12 +92,23 @@ export class InputPlugin extends Plugin implements IInputPlugin {
 
   async initialize(app: IApplication, options: InputManagerOptions = defaultOptions): Promise<void> {
     this.options = { ...defaultOptions, ...options };
+
     app.stage.eventMode = 'static';
     app.stage.on('touchstart', this._onTouchStart);
     app.stage.on('globalmousemove', this._onMouseMove);
     window.addEventListener('keydown', this._onKeyDown);
     window.addEventListener('gamepadconnected', this._onGamepadConnected);
     window.addEventListener('gamepaddisconnected', this._onGamepadDisconnected);
+
+    if (this.options.controls) {
+      this.controls.initialize(this.options.controls);
+    }
+  }
+
+  public postInitialize(): void {
+    if (this.controls) {
+      this.controls.connect();
+    }
   }
 
   destroy(): void {
@@ -109,14 +130,14 @@ export class InputPlugin extends Plugin implements IInputPlugin {
     return this.activeGamepads.has(gamepad.id);
   }
 
-  actions<TActionData = any>(action: string | number): ActionSignal<TActionData> {
+  actions<TActionData = any>(action: Action | number): ActionSignal<TActionData> {
     if (!this._actionSignals.has(action)) {
       this._actionSignals.set(action, new Signal<(actionDetail: ActionDetail<TActionData>) => void>());
     }
     return this._actionSignals.get(action)!;
   }
 
-  sendAction<TActionData = any>(actionId: string | number, data?: TActionData): void {
+  sendAction<TActionData = any>(actionId: Action | number, data?: TActionData): void {
     return this.actions<TActionData>(actionId).emit({ id: actionId, context: this.context, data });
   }
 
@@ -167,19 +188,19 @@ export class InputPlugin extends Plugin implements IInputPlugin {
   }
 
   private _onTouchStart(): void {
-    this._activateController(InputController.Touch);
+    this._activateController(InputControllerTypes.Touch);
   }
 
   private _onMouseMove(): void {
-    this._activateController(InputController.Mouse);
+    this._activateController(InputControllerTypes.Mouse);
   }
 
   private _onKeyDown(): void {
-    this._activateController(InputController.Keyboard);
+    this._activateController(InputControllerTypes.Keyboard);
   }
 
   private _onGamepadConnected(event: GamepadEvent): void {
-    this._activateController(InputController.Gamepad);
+    this._activateController(InputControllerTypes.GamePad);
     // add the gamepad id just in case we need it (?)
     this._activateController(event.gamepad.id);
     this._activateGamepad(event.gamepad);
@@ -192,14 +213,14 @@ export class InputPlugin extends Plugin implements IInputPlugin {
     this._deactivateGamepad(event.gamepad.id);
 
     // pause the game any time there is a controller disconnect
-    this.sendAction(Action.Pause);
+    this.sendAction('pause');
 
     // emit the gamepad disconnected signal
     this.onGamepadDisconnected.emit(event.gamepad);
 
     // check if all gamepads are disconnected
     if (this.activeGamepads.size === 0) {
-      this._deactivateController(InputController.Gamepad);
+      this._deactivateController(InputControllerTypes.GamePad);
     }
   }
 }

@@ -2,8 +2,9 @@ import { Application, create, LocalStorageAdapter } from 'dill-pixel';
 
 import EN from '@/locales/en';
 import { ExampleOutliner } from './ui/ExampleOutliner';
-import manifest from './assets.json';
 import { IFirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
+import { controls } from '@/controls';
+import manifest from './assets.json';
 
 export class V8Application extends Application {
   get firebase(): IFirebaseAdapter {
@@ -22,8 +23,11 @@ create(
     useSpine: true,
     showStats: true,
     showSceneDebugMenu: true,
-    focusOptions: {
+    focus: {
       outliner: ExampleOutliner,
+    },
+    input: {
+      controls,
     },
     assets: {
       manifest: manifest,
@@ -59,6 +63,11 @@ create(
         options: {
           debug: true,
         },
+        autoLoad: false,
+      },
+      {
+        id: 'rive',
+        module: () => import('@dill-pixel/plugin-rive'),
         autoLoad: false,
       },
     ],
@@ -182,6 +191,27 @@ create(
         assets: {
           preload: {
             bundles: ['spine', 'game'],
+          },
+        },
+      },
+      {
+        id: 'rive',
+        debugLabel: 'Rive',
+        namedExport: 'RiveScene',
+        module: () => import('@/scenes/RiveScene'),
+        plugins: ['rive'],
+        assets: {
+          preload: {
+            assets: [
+              {
+                alias: 'vehicles',
+                src: 'https://cdn.rive.app/animations/vehicles.riv',
+              },
+              { alias: 'reactions', src: 'static/reactions_v3.riv' },
+              { alias: 'skins', src: 'static/skins_demo.riv' },
+              { alias: 'cup', src: 'static/cup.riv' },
+              { alias: 'marty', src: 'static/marty.riv' },
+            ],
           },
         },
       },

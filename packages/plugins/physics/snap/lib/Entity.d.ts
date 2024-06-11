@@ -5,6 +5,7 @@ import { System } from './System';
 import { EntityType } from './types';
 
 export declare class Entity<T = any, A extends Application = Application> extends Container<A> implements ICollider {
+    view: PIXIContianer;
     isActor: boolean;
     isSolid: boolean;
     isSensor: boolean;
@@ -14,7 +15,6 @@ export declare class Entity<T = any, A extends Application = Application> extend
         outerBounds: number;
     };
     type: EntityType;
-    view: PIXIContianer;
     isCollideable: boolean;
     xRemainder: number;
     yRemainder: number;

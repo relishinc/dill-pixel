@@ -1,4 +1,3 @@
-import { Assets } from 'pixi.js';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
 import { Container, UICanvas } from 'dill-pixel';
 import { Platform, PlatformConfig, PlatformMovementConfigOpts } from '@/entities/physics/Platform';
@@ -63,16 +62,14 @@ export class EndlessRunnerScene extends BaseScene {
 
   async initialize() {
     await super.initialize();
-
-    await Assets.loadBundle('spine');
-
+    this.app.input.setActionContext('game');
     this.app.focus.addFocusLayer(this.id);
 
     this.level = this.add.container({
       label: 'Level',
       position: [-this.app.size.width * 0.5, -this.app.size.height * 0.5],
     });
-
+    this.app.ticker.maxFPS = 60;
     this.physics.system.initialize({
       gravity: 10,
       container: this.level,
@@ -101,37 +98,18 @@ export class EndlessRunnerScene extends BaseScene {
 
     this._handleDebugChanged();
 
-    this.addSignalConnection(
-      this.app.keyboard.onKeyDown('p').connect(() => {
-        this.app.sendAction('pause');
-      }),
-      this.app.actions('pause').connect(this._togglePause),
-    );
+    this.addSignalConnection(this.app.actions('pause').connect(this._togglePause));
     this.addControls();
   }
 
   physicsUpdate(deltaTime: number) {
     if (this._isPaused) return;
     EndlessRunner.update(deltaTime);
-    if (
-      this.app.keyboard.isKeyDown('ArrowUp') ||
-      this.app.keyboard.isKeyDown(' ') ||
-      this.app.keyboard.isKeyDown('w')
-    ) {
-      this.app.sendAction('jump');
-    }
-    if (
-      this.app.keyboard.isKeyDown('ArrowLeft') ||
-      this.app.keyboard.isKeyDown('a') ||
-      this._joystick.direction.includes('left')
-    ) {
+
+    if (this._joystick.direction.includes('left')) {
       this.app.sendAction('move_left');
     }
-    if (
-      this.app.keyboard.isKeyDown('ArrowRight') ||
-      this.app.keyboard.isKeyDown('d') ||
-      this._joystick.direction.includes('right')
-    ) {
+    if (this._joystick.direction.includes('right')) {
       this.app.sendAction('move_right');
     }
 
@@ -219,10 +197,10 @@ export class EndlessRunnerScene extends BaseScene {
 
     const segment5Config = {
       width: 300,
-      platforms: [this.getPlatFormConfig(150, bottom, 300, 20), this.getPlatFormConfig(150, bottom - 220, 30, 200)],
+      platforms: [this.getPlatFormConfig(150, bottom, 300, 20), this.getPlatFormConfig(150, bottom - 250, 30, 200)],
     };
 
-    return [segment0Config, segment1Config, segment2Config, segment3Config, segment4Config, segment5Config];
+    return [segment5Config];
     // return [segment0Config];
   }
 
@@ -310,6 +288,7 @@ export class EndlessRunnerScene extends BaseScene {
   }
 
   destroy() {
+    this.app.ticker.maxFPS = 0;
     this._isPaused = true;
     this.physics.destroy();
     EndlessRunner.destroy();

@@ -6,8 +6,7 @@ import { ExamplePopup } from '@/popups/ExamplePopup';
 export class PopupScene extends BaseScene {
   protected readonly title = 'Popups';
   protected readonly subtitle =
-    'Open a popup by clicking a button.\nThe' +
-    ' different popups have different behaviors.';
+    'Open a popup by clicking a button.\nThe' + ' different popups have different behaviors.';
   protected buttons: Button[] = [];
   protected buttonContainer: FlexContainer;
 
@@ -20,7 +19,14 @@ export class PopupScene extends BaseScene {
     this.app.popups.addPopup('two', ExamplePopup);
     this.app.popups.addPopup('three', ExamplePopup);
 
-    this.buttonContainer = this.add.flexContainer({ gap: 10, flexWrap: "wrap", justifyContent: 'center', alignItems: "center", width: this.app.size.width, x: -this.app.size.width * 0.5 })
+    this.buttonContainer = this.add.flexContainer({
+      gap: 10,
+      flexWrap: 'wrap',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: this.app.size.width,
+      x: -this.app.size.width * 0.5,
+    });
 
     this.addButton('Popup 1', () => {
       this.app.sendAction('showPopup', {

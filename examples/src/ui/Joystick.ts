@@ -88,37 +88,14 @@ export class Joystick extends Container {
       this.inner.anchor.set(0.5);
     }
 
-    this.addChild(this.outer);
-    this.addChild(this.inner);
+    this.add.existing(this.outer);
+    this.add.existing(this.inner);
 
     // this.outerRadius = this.containerJoystick.width / 2;
     this.outerRadius = this.width / 2.5;
     this.innerRadius = this.inner.width / 2;
 
     this.bindEvents();
-  }
-
-  protected handleDragStart(event: FederatedEvent) {
-    this.eventData = event.data;
-    this.startPosition = this.eventData.getLocalPosition(this);
-
-    this.dragging = true;
-    this.inner.alpha = 1;
-
-    this.onStart.emit();
-  }
-
-  protected handleDragEnd() {
-    this.direction = Direction.NONE;
-    if (this.dragging == false) {
-      return;
-    }
-    this.inner.position.set(0, 0);
-
-    this.dragging = false;
-    this.inner.alpha = this.innerAlphaStandby;
-
-    this.onEnd.emit();
   }
 
   handleDragMove(event: FederatedEvent) {
@@ -218,6 +195,29 @@ export class Joystick extends Container {
     this.direction = direction;
     this.inner.position.set(centerPoint.x, centerPoint.y);
     this.onChange.emit({ angle, direction, power: this.power });
+  }
+
+  protected handleDragStart(event: FederatedEvent) {
+    this.eventData = event.data;
+    this.startPosition = this.eventData.getLocalPosition(this);
+
+    this.dragging = true;
+    this.inner.alpha = 1;
+
+    this.onStart.emit();
+  }
+
+  protected handleDragEnd() {
+    this.direction = Direction.NONE;
+    if (this.dragging == false) {
+      return;
+    }
+    this.inner.position.set(0, 0);
+
+    this.dragging = false;
+    this.inner.alpha = this.innerAlphaStandby;
+
+    this.onEnd.emit();
   }
 
   protected bindEvents() {

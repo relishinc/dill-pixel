@@ -1,15 +1,17 @@
-import type { ApplicationOptions } from 'pixi.js';
 import type { AssetLoadingOptions, ImportList, LoggerMode, SceneImportList } from '../../utils';
-import type { IStorageAdapter } from '../../store';
 import type {
   FocusManagerPluginOptions,
-  i18nOptions,
   IPlugin,
+  InputManagerOptions,
   LoadSceneMethod,
   ResizerPluginOptions,
+  i18nOptions,
 } from '../../plugins';
-import type { IScene } from '../../display';
+
+import type { ApplicationOptions } from 'pixi.js';
 import type { CaptionsOptions } from '../../plugins/captions';
+import type { IScene } from '../../display';
+import type { IStorageAdapter } from '../../store';
 
 export interface IApplicationOptions extends ApplicationOptions {
   id: string;
@@ -23,7 +25,8 @@ export interface IApplicationOptions extends ApplicationOptions {
   plugins: ImportList<IPlugin>;
   assets: AssetLoadingOptions;
   scenes: SceneImportList<IScene>;
-  focusOptions: Partial<FocusManagerPluginOptions>;
+  input: Partial<InputManagerOptions>
+  focus: Partial<FocusManagerPluginOptions>;
   defaultScene: string;
   defaultSceneLoadMethod: LoadSceneMethod;
   showSceneDebugMenu: boolean;

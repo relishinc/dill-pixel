@@ -3,7 +3,7 @@ import { SpineAnimation } from 'dill-pixel';
 
 export class SpineScene extends BaseScene {
   protected readonly title = 'Spine';
-  protected readonly subtitle = 'Click to change the animation';
+  protected readonly subtitle = 'Click / Enter / Spacebar to change the animation';
   protected hero: SpineAnimation;
   protected animIndex = 0;
 

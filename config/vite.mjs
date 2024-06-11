@@ -4,6 +4,7 @@ import {mergeConfig} from 'vite';
 import {createHtmlPlugin} from 'vite-plugin-html';
 import {viteStaticCopy} from 'vite-plugin-static-copy'
 import topLevelAwait from 'vite-plugin-top-level-await';
+import wasm from "vite-plugin-wasm";
 
 const env = process.env.NODE_ENV;
 const cwd = process.cwd();
@@ -22,6 +23,7 @@ const defaultConfig = {
 		port: 8080,
 	},
 	plugins: [
+		wasm(),
 		topLevelAwait(),
 		createHtmlPlugin(),
 		viteStaticCopy({

@@ -35,8 +35,8 @@
     "@dill-pixel/plugin-arcade-physics": "file:../packages/plugins/physics/arcade",
     "@dill-pixel/plugin-snap-physics": "file:../packages/plugins/physics/snap",
     "@dill-pixel/plugin-matter-physics": "file:../packages/plugins/physics/matter",
+    "@dill-pixel/plugin-rive": "file:../packages/plugins/rive",
     "@dill-pixel/storage-adapter-firebase": "file:../packages/storage-adapters/firebase",
-    "@pixi/ui": "^2.1.1",
     "dat.gui": "^0.7.9",
     "dill-pixel": "file:..",
     "firebase": "file:../packages/storage-adapters/firebase/node_modules/firebase"

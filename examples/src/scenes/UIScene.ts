@@ -2,7 +2,12 @@ import { FlexContainer, Input } from 'dill-pixel';
 
 import { BaseScene } from '@/scenes/BaseScene';
 
-const overlaySettings = { activeFilter: ['mobile', 'touch'], marginTop: 60, scale: 2.5, backing: { active: true, color: 0x0 } };
+const overlaySettings = {
+  activeFilter: ['mobile', 'touch'],
+  marginTop: 60,
+  scale: 2.5,
+  backing: { active: true, color: 0x0 },
+};
 
 export class UIScene extends BaseScene {
   public title = 'UI';
@@ -10,13 +15,10 @@ export class UIScene extends BaseScene {
 
   protected list: FlexContainer;
 
-  public constructor() {
-    super();
-  }
-
   public async initialize() {
     await super.initialize();
 
+    this.app.func.setActionContext('menu');
     this.app.focus.addFocusLayer(this.id);
 
     this.list = this.add.flexContainer({
@@ -37,8 +39,6 @@ export class UIScene extends BaseScene {
       }),
       { label: 'input' },
     );
-
-
 
     const tel = this.list.add.existing(
       new Input({

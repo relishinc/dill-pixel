@@ -1,0 +1,35 @@
+{
+  "name": "@dill-pixel/plugin-rive",
+  "version": "8.7.12",
+  "description": "",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "main": "lib/dill-pixel-plugin-rive.mjs",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "default": "./lib/dill-pixel-plugin-rive.mjs",
+      "types": "./lib/index.d.ts"
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "dill-pixel": "8.7.8",
+    "vite-plugin-dts": "^3.9.1"
+  },
+  "peerDependencies": {
+    "dill-pixel": "^8.7.8"
+  },
+  "dependencies": {
+    "@rive-app/canvas-advanced-lite": "^2.17.3"
+  }
+}

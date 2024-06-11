@@ -30,7 +30,7 @@
 import { Spine } from './Spine';
 
 import type { Batch, BatchableObject, Batcher, IndexBufferArray, Texture } from 'pixi.js';
-import type { SkeletonClipping, Slot } from '../spine-core';
+import type { SkeletonClipping, Slot } from '@esotericsoftware/spine-core';
 
 export class BatchableClippedSpineSlot implements BatchableObject {
   indexStart: number;

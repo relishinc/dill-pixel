@@ -40,41 +40,39 @@ type SkeletonJsonAsset = any;
 type SkeletonBinaryAsset = Uint8Array;
 
 function isJson(resource: any): resource is SkeletonJsonAsset {
-	return Object.prototype.hasOwnProperty.call(resource, 'bones');
+  return Object.prototype.hasOwnProperty.call(resource, 'bones');
 }
 
 function isBuffer(resource: any): resource is SkeletonBinaryAsset {
-	return resource instanceof Uint8Array;
+  return resource instanceof Uint8Array;
 }
 
 export const spineLoaderExtension: AssetExtension<SkeletonJsonAsset | SkeletonBinaryAsset> = {
-	extension: ExtensionType.Asset,
-	
-	loader: {
-		extension: {
-			type: ExtensionType.LoadParser,
-			priority: LoaderParserPriority.Normal,
-			name: 'spineSkeletonLoader',
-		},
-		
-		test(url) {
-			return checkExtension(url, '.skel');
-		},
-		
-		async load(url: string): Promise<SkeletonBinaryAsset> {
-			const response = await DOMAdapter.get().fetch(url);
-			
-			const buffer = new Uint8Array(await response.arrayBuffer());
-			
-			return buffer;
-		},
-		testParse(asset: unknown, options: ResolvedAsset): Promise<boolean> {
-			const isJsonSpineModel = checkExtension(options.src!, '.json') && isJson(asset);
-			const isBinarySpineModel = checkExtension(options.src!, '.skel') && isBuffer(asset);
-			
-			return Promise.resolve(isJsonSpineModel || isBinarySpineModel);
-		},
-	},
-} as AssetExtension<SkeletonJsonAsset | SkeletonBinaryAsset>;
+  extension: ExtensionType.Asset,
 
-// extensions.add(spineLoaderExtension);
+  loader: {
+    extension: {
+      type: ExtensionType.LoadParser,
+      priority: LoaderParserPriority.Normal,
+      name: 'spineSkeletonLoader',
+    },
+
+    test(url) {
+      return checkExtension(url, '.skel');
+    },
+
+    async load(url: string): Promise<SkeletonBinaryAsset> {
+      const response = await DOMAdapter.get().fetch(url);
+
+      const buffer = new Uint8Array(await response.arrayBuffer());
+
+      return buffer;
+    },
+    testParse(asset: unknown, options: ResolvedAsset): Promise<boolean> {
+      const isJsonSpineModel = checkExtension(options.src!, '.json') && isJson(asset);
+      const isBinarySpineModel = checkExtension(options.src!, '.skel') && isBuffer(asset);
+
+      return Promise.resolve(isJsonSpineModel || isBinarySpineModel);
+    },
+  },
+} as AssetExtension<SkeletonJsonAsset | SkeletonBinaryAsset>;

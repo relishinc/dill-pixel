@@ -19,7 +19,7 @@ export class SimpleButton extends _Button {
   }
 }
 
-class FocusableText extends Focusable(Text) { }
+class FocusableText extends Focusable(Text) {}
 
 export class ExamplePopup extends Popup implements IPopup {
   window: Container;
@@ -31,7 +31,10 @@ export class ExamplePopup extends Popup implements IPopup {
 
   initialize() {
     this.window = this.view.add.container({ x: -300, y: -200 });
-    this.windowBacking = this.window.add.graphics().roundRect(0, 0, Math.min(this.app.size.width - 40, 600), 400, 10).fill({ color: 0x000fff });
+    this.windowBacking = this.window.add
+      .graphics()
+      .roundRect(0, 0, Math.min(this.app.size.width - 40, 600), 400, 10)
+      .fill({ color: 0x000fff });
 
     this.title = this.window.add.existing(
       new FocusableText({
@@ -87,8 +90,11 @@ export class ExamplePopup extends Popup implements IPopup {
   }
 
   resize() {
-    super.resize()
-    if (this.windowBacking.width > this.app.size.width || (this.app.size.width > 600 && this.windowBacking.width < 600)) {
+    super.resize();
+    if (
+      this.windowBacking.width > this.app.size.width ||
+      (this.app.size.width > 600 && this.windowBacking.width < 600)
+    ) {
       this.windowBacking.clear();
       this.windowBacking.roundRect(0, 0, Math.min(this.app.size.width - 40, 600), 400, 10).fill({ color: 0x000fff });
     }

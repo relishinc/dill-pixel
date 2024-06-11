@@ -1,10 +1,13 @@
-export enum ActionContext {
+export enum DefaultContexts {
+  Default = 'default',
   General = 'general',
   Menu = 'menu',
   Game = 'game',
 }
 
-export enum Action {
+export type ActionContext = DefaultContexts | string;
+
+export enum DefaultActions {
   Up = 'up',
   Down = 'down',
   Left = 'left',
@@ -15,5 +18,8 @@ export enum Action {
   Pause = 'pause',
   Unpause = 'unpause',
   Start = 'start',
+  Select = 'select',
   Menu = 'menu',
 }
+
+export type Action = DefaultActions | string;

@@ -1,4 +1,4 @@
-import { Container, Logger, UICanvas } from 'dill-pixel';
+import { Container, UICanvas } from 'dill-pixel';
 import { Entity, default as MatterPhysics } from '@dill-pixel/plugin-matter-physics';
 import { FederatedPointerEvent, Rectangle, Texture } from 'pixi.js';
 
@@ -28,8 +28,8 @@ export class MatterPhysicsScene extends BaseScene {
   }
 
   destroy() {
-    this.off('click', this._addEntity)
-    this.off('tap', this._addEntity)
+    this.off('click', this._addEntity);
+    this.off('tap', this._addEntity);
     this.physics.destroy();
     super.destroy();
   }
@@ -39,13 +39,11 @@ export class MatterPhysicsScene extends BaseScene {
     this.app.focus.addFocusLayer(this.id);
     this.level = this.add.container();
 
-
     this.eventMode = 'static';
 
     this.level.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
     this.ui = this.add.uiCanvas({ padding: 10, useAppSize: true });
     this.ui.zIndex = 100;
-
 
     this.physics.system.initialize({
       debug: true,
@@ -62,11 +60,9 @@ export class MatterPhysicsScene extends BaseScene {
     this.on('click', this._addEntity);
     this.on('tap', this._addEntity);
     this._handleDebugChanged();
-
   }
 
   private _addEntity(e: FederatedPointerEvent) {
-
     const isJar = Math.random() < 0.3;
 
     let entity: Entity;
@@ -87,13 +83,15 @@ export class MatterPhysicsScene extends BaseScene {
       entity = new Entity({
         bodyType: isCircle ? 'circle' : 'rectangle',
         bodyDefinition: { restitution: 0.1, friction: 0.5, angle: Math.random() * Math.PI },
-        view: isCircle ? this.make.graphics().circle(0, 0, size).fill({ color }) : this.make.sprite({
-          asset: Texture.WHITE,
-          width: 50 + Math.random() * 100,
-          height: 50 + Math.random() * 100,
-          anchor: 0.5,
-          tint: color
-        }),
+        view: isCircle
+          ? this.make.graphics().circle(0, 0, size).fill({ color })
+          : this.make.sprite({
+              asset: Texture.WHITE,
+              width: 50 + Math.random() * 100,
+              height: 50 + Math.random() * 100,
+              anchor: 0.5,
+              tint: color,
+            }),
       });
     }
 
@@ -101,8 +99,7 @@ export class MatterPhysicsScene extends BaseScene {
     this.level.add.existing(entity);
   }
 
-  update() {
-  }
+  update() {}
 
   resize() {
     super.resize();

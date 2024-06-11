@@ -87,7 +87,7 @@ class FocusLayer implements IFocusLayer {
   private _focusables: IFocusable[] = [];
   private _currentIndex: number = 0;
 
-  constructor(public id: string | number) { }
+  constructor(public id: string | number) {}
 
   private _current: boolean = false;
 
@@ -318,7 +318,7 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
 
   public initialize(app: IApplication): void {
     bindMethods(this, 'removeAllFocusLayers', '_handleGlobalMouseMove', '_handleGlobalPointerDown');
-    const options: Partial<FocusManagerPluginOptions> = app.config?.focusOptions || {};
+    const options: Partial<FocusManagerPluginOptions> = app.config?.focus || {};
     options.usePixiAccessibility = options.usePixiAccessibility ?? false;
     this._focusOutliner =
       typeof options?.outliner === 'function'
@@ -484,7 +484,7 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public postInitialize(_app: IApplication): Promise<void> | void { }
+  public postInitialize(_app: IApplication): Promise<void> | void {}
 
   public clearFocus() {
     this._setTarget(null);

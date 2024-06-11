@@ -27,7 +27,13 @@
  * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-import { type Bone, ClippingAttachment, MeshAttachment, RegionAttachment, type Skeleton } from '../spine-core';
+import {
+  type Bone,
+  ClippingAttachment,
+  MeshAttachment,
+  RegionAttachment,
+  type Skeleton,
+} from '@esotericsoftware/spine-core';
 
 import type { Bounds } from 'pixi.js';
 

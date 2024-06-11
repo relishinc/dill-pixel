@@ -1,7 +1,7 @@
 import { IApplication } from '../core';
-import { Signal } from '../signals';
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
+import { Signal } from '../signals';
 
 export type KeyboardEventType = 'keydown' | 'keyup';
 export type KeyboardEventDetail = { event: KeyboardEvent; key: string };
@@ -9,6 +9,7 @@ export type KeySignal = Signal<(detail: KeyboardEventDetail) => void>;
 
 export interface IKeyboardPlugin extends IPlugin {
   enabled: boolean;
+  readonly keysDown: Set<string>;
 
   onKeyDown(key?: string): KeySignal;
 
@@ -23,9 +24,15 @@ export class KeyboardPlugin extends Plugin implements IKeyboardPlugin {
   public onGlobalKeyDown: Signal<(detail: KeyboardEventDetail) => void> = new Signal();
   public onGlobalKeyUp: Signal<(detail: KeyboardEventDetail) => void> = new Signal();
 
-  private _keysDown: Set<string> = new Set();
+
   private _keyDownSignals: Map<string | undefined, KeySignal> = new Map();
   private _keyUpSignals: Map<string | undefined, KeySignal> = new Map();
+
+  private _keysDown: Set<string> = new Set();
+
+  get keysDown() {
+    return this._keysDown;
+  }
 
   private _enabled: boolean = true;
 
