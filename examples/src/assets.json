@@ -438,6 +438,92 @@
         },
         {
           "alias": [
+            "spine/hero.atlas",
+            "hero.atlas"
+          ],
+          "src": [
+            "spine/hero.atlas"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spine/hero.json",
+            "hero.json"
+          ],
+          "src": [
+            "spine/hero.json"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spine/hero.png",
+            "hero.png"
+          ],
+          "src": [
+            "spine/hero@1x.png",
+            "spine/hero@0.5x.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spine/heroes.atlas",
+            "heroes.atlas"
+          ],
+          "src": [
+            "spine/heroes.atlas"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spine/heroes.json",
+            "heroes.json"
+          ],
+          "src": [
+            "spine/heroes.json"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "spine/heroes.png",
+            "heroes.png"
+          ],
+          "src": [
+            "spine/heroes@1x.png",
+            "spine/heroes@0.5x.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "spine/spineboy-pro.atlas",
             "spineboy-pro.atlas"
           ],
