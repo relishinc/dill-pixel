@@ -4,11 +4,16 @@ import { Input } from '@pixi/ui';
 import { Graphics, Text } from 'pixi.js';
 import { SimpleButton } from '@/popups/ExamplePopup';
 import { gsap } from 'gsap';
+import { Tables } from '../supabase';
+import type { SaveMethod } from '@dill-pixel/storage-adapter-supabase';
 
-interface Score {
-  user_id: string;
-  username: string;
-  score: number;
+// user_id, username, and score are required fields
+type Score = Partial<Tables<'scores'>> & Pick<Tables<'scores'>, 'user_id' | 'username' | 'score'>;
+
+type SaveActionData = {
+  tableId: string;
+  data: Score;
+  method: SaveMethod
 }
 
 export class SupabaseAdapterScene extends BaseScene {
@@ -65,7 +70,7 @@ export class SupabaseAdapterScene extends BaseScene {
       const username = this.usernameInput.value;
       const scoreAsNum = parseInt(this.scoreInput.value, 10);
 
-      this.app.sendAction('save_to_supabase', {
+      this.app.sendAction<SaveActionData>('save_to_supabase', {
         tableId: 'scores',
         data: { user_id: this.user.id, username, score: scoreAsNum },
         method: 'insert',
@@ -194,15 +199,26 @@ export class SupabaseAdapterScene extends BaseScene {
     this.positionScoreboard();
   }
 
-  private async _handleSave(action: ActionDetail) {
+  private async _handleSave(action: ActionDetail<SaveActionData>) {
     this.errorText.text = '';
 
+    if (!action.data) {
+      // TODO: throw error here?
+      Logger.log('No data to save');
+      return;
+    }
+
     // Option 1: use the store
-    // const res = await this.app.store.save('supabase', action.data.tableId, action.data.data);
+    // const res = await this.app.store.save('supabase', action.data.tableId, action.data.data, action.data.method);
     // const { data, error } = res[0];
 
     // Option 2: use the adapter
-    const {data, error} = await this.app.supabase.save(action.data.tableId, action.data.data);
+    const {data, error} = await this.app.supabase.save<Score>(action.data.tableId, action.data.data, action.data.method);
+
+    if (!data) {
+      Logger.log('No data returned');
+      return;
+    }
 
     if (error) {
       console.error('Error saving data:', error);

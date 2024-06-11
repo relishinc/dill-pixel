@@ -5,7 +5,7 @@ import { ExampleOutliner } from './ui/ExampleOutliner';
 import manifest from './assets.json';
 import type { IFirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
 import { SupabaseAdapter } from '@dill-pixel/storage-adapter-supabase/SupabaseAdapter';
-import type { ISupabaseAdapter } from '@dill-pixel/storage-adapter-supabase';
+// import type { ISupabaseAdapter } from '@dill-pixel/storage-adapter-supabase';
 import type { Database } from './supabase';
 
 export class V8Application extends Application {
@@ -14,7 +14,7 @@ export class V8Application extends Application {
   }
 
   get supabase(): SupabaseAdapter<Database> {
-    return this.store.getAdapter('supabase') as unknown as ISupabaseAdapter;
+    return this.store.getAdapter('supabase') as unknown as SupabaseAdapter<Database>; // TODO: use ISupabaseAdapter??
   }
 }
 
