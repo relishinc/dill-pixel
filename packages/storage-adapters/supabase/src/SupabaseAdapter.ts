@@ -1,6 +1,6 @@
 import { StorageAdapter, Logger, IApplication, IStorageAdapter } from 'dill-pixel';
 import { createClient } from '@supabase/supabase-js';
-import type { PostgrestResponse, SupabaseClient } from '@supabase/supabase-js';
+import type { PostgrestResponse, PostgrestSingleResponse, SupabaseClient } from '@supabase/supabase-js';
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 
 export type SaveMethod = 'insert' | 'update' | 'upsert';
@@ -67,26 +67,30 @@ export class SupabaseAdapter<Database = any> extends StorageAdapter implements I
   /**
    * Saves data to a specified table in the Supabase database.
    * @param {string} tableId The table to save the data to.
-   * @param {Data | Data[]} data The data to save.
+   * @param {T | T[]} data The data to save.
    * @param {SaveMethod} method The method to use for saving the data.
-   * @returns {Promise<any>} The saved data.
+   * @returns {Promise<PostgrestSingleResponse<T[]>>} The saved data.
    *
    * @example
    * await this.app.supabase.save('scores', { username: 'relish', score: 50 })
    */
 
-  async save<T = any>(tableId: string, data: T | T[], method: SaveMethod = 'upsert'): Promise<PostgrestResponse<T>> {
+  async save<T = any>(
+    tableId: string,
+    data: T | T[],
+    method: SaveMethod = 'upsert',
+  ): Promise<PostgrestSingleResponse<T[]>> {
     const dataArray = Array.isArray(data) ? data : [data];
     const table = this.client.from(tableId);
 
     try {
       switch (method) {
         case 'insert':
-          return await table.insert(dataArray).select().returns<PostgrestResponse<T>>();
+          return await table.insert(dataArray).select(); // TODO: use .returns() method?
         case 'update':
-          return await table.update(dataArray).select().returns<PostgrestResponse<T>>();
+          return await table.update(dataArray).select();
         case 'upsert':
-          return await table.upsert(dataArray).select().returns<PostgrestResponse<T>>();
+          return await table.upsert(dataArray).select();
       }
     } catch (error) {
       throw new Error(`Error saving data: ${error}`);

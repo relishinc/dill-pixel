@@ -203,9 +203,7 @@ export class SupabaseAdapterScene extends BaseScene {
     this.errorText.text = '';
 
     if (!action.data) {
-      // TODO: throw error here?
-      Logger.log('No data to save');
-      return;
+      throw new Error('No data to save');
     }
 
     // Option 1: use the store
@@ -214,11 +212,6 @@ export class SupabaseAdapterScene extends BaseScene {
 
     // Option 2: use the adapter
     const {data, error} = await this.app.supabase.save<Score>(action.data.tableId, action.data.data, action.data.method);
-
-    if (!data) {
-      Logger.log('No data returned');
-      return;
-    }
 
     if (error) {
       console.error('Error saving data:', error);
