@@ -12,8 +12,13 @@ export default defineConfig({
       fileName: () => `dill-pixel-plugin-rive.mjs`,
     },
     rollupOptions: {
-      external: ['pixi.js', 'gsap', 'dill-pixel'], // External dependencies
+      external: ['dill-pixel', 'pixi.js'], // External dependencies
     },
   },
   plugins: [dts()],
+  resolve: {
+    alias: {
+      'dill-pixel': path.resolve(__dirname, '../../../src'),
+    },
+  },
 });

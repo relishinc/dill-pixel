@@ -1,7 +1,6 @@
 import { Cursor, Sprite } from 'pixi.js';
 
-import { FactoryContainer } from '../mixins/factory';
-import { Focusable, Interactive, WithSignals } from '../mixins';
+import { Factory, Focusable, Interactive, WithSignals } from '../mixins';
 import { Signal } from '../signals';
 import type { SpriteSheetLike, TextureLike } from '../utils';
 import { bindAllMethods } from '../utils';
@@ -53,7 +52,7 @@ export const ButtonConfigKeys: (keyof ButtonConfig)[] = [
 ];
 
 // Create a new class that extends Container and includes the Interactive and Focusable mixins.
-const _Button = Focusable(Interactive(WithSignals(FactoryContainer())));
+const _Button = Focusable(Interactive(WithSignals(Factory())));
 
 /**
  * @class

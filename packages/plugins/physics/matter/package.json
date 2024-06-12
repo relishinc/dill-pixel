@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-matter-physics",
-  "version": "8.7.8",
+  "version": "8.8.0",
   "description": "",
   "files": [
     "lib",
@@ -23,11 +23,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "dill-pixel": "8.7.8",
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
-    "dill-pixel": "^8.7.8"
+    "dill-pixel": "^8.8.0"
   },
   "dependencies": {
     "matter-js": "^0.19.0"

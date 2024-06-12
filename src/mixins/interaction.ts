@@ -2,7 +2,7 @@ import type { AllFederatedEventMap, DestroyOptions } from 'pixi.js';
 import { Container, FederatedEvent } from 'pixi.js';
 import { Signal } from '../signals';
 
-import { Logger, type Constructor } from '../utils';
+import { type Constructor } from '../utils';
 
 // gets all the event names from the PIXI event map
 type InteractionEventName = keyof AllFederatedEventMap;

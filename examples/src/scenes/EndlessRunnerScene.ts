@@ -200,7 +200,7 @@ export class EndlessRunnerScene extends BaseScene {
       platforms: [this.getPlatFormConfig(150, bottom, 300, 20), this.getPlatFormConfig(150, bottom - 250, 30, 200)],
     };
 
-    return [segment5Config];
+    return [segment0Config, segment1Config, segment2Config, segment3Config, segment4Config, segment5Config];
     // return [segment0Config];
   }
 

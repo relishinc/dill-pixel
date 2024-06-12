@@ -1,7 +1,6 @@
 import { Bounds, Container as PIXIContainer, Graphics, Rectangle } from 'pixi.js';
 import { Application } from '../Application';
-import { FactoryContainer } from '../mixins/factory';
-import { WithSignals } from '../mixins';
+import { Factory, WithSignals } from '../mixins';
 import type { Padding, PointLike, Size, SizeLike } from '../utils';
 import { bindAllMethods, ensurePadding, Logger, resolvePadding, resolveSizeLike } from '../utils';
 import { Container } from './Container';
@@ -52,7 +51,7 @@ export type UICanvasProps = {
   useAppSize?: boolean;
 };
 
-const _UICanvas = WithSignals(FactoryContainer());
+const _UICanvas = WithSignals(Factory());
 
 export class UICanvas<T extends Application = Application> extends _UICanvas {
   public config: UICanvasConfig;

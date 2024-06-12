@@ -1,14 +1,10 @@
-import { Animated, WithSignals } from '../mixins';
-import { DestroyOptions, Ticker } from 'pixi.js';
+import {Animated, Factory, WithSignals} from '../mixins';
+import {DestroyOptions, Ticker} from 'pixi.js';
 
-import { Application } from '../Application';
-import { FactoryContainer } from '../mixins/factory';
-import type { IApplication } from '../core';
-import type { Size } from '../utils';
-import { bindAllMethods } from '../utils';
-
-// Create a new class that extends PIXI.Container and includes the Animated and Factory mixins.
-const _Container = Animated(WithSignals(FactoryContainer()));
+import {Application} from '../Application';
+import type {IApplication} from '../core';
+import type {Size} from '../utils';
+import {bindAllMethods} from '../utils';
 
 /**
  * Interface for the Container class.
@@ -34,11 +30,7 @@ export type ContainerConfig = {
   priority: number;
 };
 
-export const ContainerConfigKeys: (keyof ContainerConfig)[] = [
-  'autoResize',
-  'autoUpdate',
-  'priority',
-];
+export const ContainerConfigKeys: (keyof ContainerConfig)[] = ['autoResize', 'autoUpdate', 'priority'];
 
 const defaultConfig: ContainerConfig = { autoResize: true, autoUpdate: false, priority: 0 };
 
@@ -46,7 +38,10 @@ const defaultConfig: ContainerConfig = { autoResize: true, autoUpdate: false, pr
  * The Container class extends the _Container class (which includes the Animated and Factory mixins) and implements the IContainer interface.
  * It represents a container for PIXI.js display objects.
  */
-export class Container<A extends Application = Application> extends _Container implements IContainer {
+export class Container<A extends Application = Application>
+  extends Animated(WithSignals(Factory()))
+  implements IContainer
+{
   __dill_pixel_method_binding_root = true;
   private __config: ContainerConfig;
 
@@ -90,7 +85,7 @@ export class Container<A extends Application = Application> extends _Container i
   /**
    * This method is called when the container is added to the stage. It is meant to be overridden by subclasses.
    */
-  public added() { }
+  public added() {}
 
   destroy(options?: DestroyOptions): void {
     if (this.__config.autoUpdate) {
@@ -99,7 +94,7 @@ export class Container<A extends Application = Application> extends _Container i
     super.destroy(options);
   }
 
-  public removed() { }
+  public removed() {}
 
   /**
    * This method is called when the container is added to the stage. It sets up auto-resizing and auto-updating if enabled.

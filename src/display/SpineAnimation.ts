@@ -1,8 +1,8 @@
-import { FactoryContainer, WithSignals } from '../mixins';
-import type { SpineProps } from '../mixins/factory/props';
+import type { SpineProps } from '../mixins';
+import { Factory, WithSignals } from '../mixins';
 import type { Spine } from '../utils';
 
-const _SpineAnimation = WithSignals(FactoryContainer());
+const _SpineAnimation = WithSignals(Factory());
 
 export interface ISpineAnimation extends InstanceType<typeof _SpineAnimation> {
   spine: Spine;

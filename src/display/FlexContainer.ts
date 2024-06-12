@@ -1,15 +1,14 @@
 import type { ContainerLike, PointLike } from '../utils';
-import { Logger, bindAllMethods, resolvePointLike } from '../utils';
+import { bindAllMethods, Logger, resolvePointLike } from '../utils';
 
 import { Application } from '../Application';
-import type { Container } from './Container';
+import { Container } from './Container';
 import type { DestroyOptions } from 'pixi.js';
-import { FactoryContainer } from '../mixins/factory';
 import { Container as PIXIContainer } from 'pixi.js';
+import { Factory, WithSignals } from '../mixins';
 import { Signal } from '../signals';
-import { WithSignals } from '../mixins';
 
-const _FlexContainer = WithSignals(FactoryContainer());
+const _FlexContainer = WithSignals(Factory());
 
 export interface FlexContainerConfig {
   width: number;
@@ -47,7 +46,7 @@ const defaultConfig = {
   padding: 0,
 };
 
-export interface IFlexContainer extends Container {
+export interface IFlexContainer {
   onLayoutComplete: Signal<() => void>;
   debug: boolean;
   config: FlexContainerConfig;
@@ -324,9 +323,9 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
     this.layout();
   }
 
-  update() { }
+  update() {}
 
-  added() { }
+  added() {}
 
   /**
    * Ensures we delete the child from the map when it's removed
