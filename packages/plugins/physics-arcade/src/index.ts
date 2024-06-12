@@ -8,4 +8,7 @@ export { Collider } from 'arcade-physics/lib/physics/arcade/Collider';
 export { Body, StaticBody } from './Body';
 export * as Constants from 'arcade-physics/lib/physics/arcade/const';
 export { Factory } from 'arcade-physics/lib/physics/arcade/Factory';
+
+export * from 'arcade-physics';
+
 export default ArcadePhysicsPlugin;

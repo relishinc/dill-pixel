@@ -1,6 +1,6 @@
 {
   "name": "dill-pixel-examples-v8",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Examples of Dill Pixel Features (V8)",
   "main": "index.html",
   "scripts": {
@@ -50,11 +50,11 @@
     "@dill-pixel/plugin-snap-physics": "workspace:*",
     "@dill-pixel/storage-adapter-firebase": "workspace:*",
     "dat.gui": "^0.7.9",
-    "dill-pixel": "workspace:*",
+    "dill-pixel": "^8.8.2",
     "firebase": "^10.12.1"
   },
   "peerDependencies": {
-    "pixi.js":"8.1.6",
-    "gsap":"^3.12.5"
+    "gsap": "^3.12.5",
+    "pixi.js": "8.1.6"
   }
 }

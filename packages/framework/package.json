@@ -1,6 +1,6 @@
 {
   "name": "dill-pixel",
-  "version": "8.8.1",
+  "version": "8.8.4",
   "title": "Dill Pixel V8",
   "description": "Relish framework for HTML games",
   "bin": {
@@ -14,8 +14,8 @@
     "config/vite.mjs",
     "config/assetpack.mjs",
     "config/tsconfig.json",
-    "packages/framework/extras/css/accessibility.css",
-    "packages/framework/extras/css/loader.css"
+    "extras/css/accessibility.css",
+    "extras/css/loader.css"
   ],
   "main": "lib/dill-pixel.mjs",
   "types": "lib/index.d.ts",

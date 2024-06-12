@@ -1,5 +1,5 @@
 import { Body, StaticBody } from './Body';
-import { Bounds, Container as PIXIContainer, Point } from 'pixi.js';
+import { Bounds, Container as PIXIContainer, Point, Ticker } from 'pixi.js';
 
 import { ArcadePhysics } from 'arcade-physics/lib/physics/arcade/ArcadePhysics';
 import { ArcadePhysicsPlugin } from './ArcadePhysicsPlugin';
@@ -10,6 +10,8 @@ export interface IEntity {
   readonly physics: ArcadePhysics;
   readonly world: World;
   body: Body | StaticBody;
+  update(ticker?: Ticker): void
+  updateBody(): void
 }
 
 export type EntityType = 'actor' | 'solid';
@@ -87,7 +89,7 @@ export class Entity extends Container implements IEntity {
     return this._cachedBounds;
   }
 
-  update() {
+  update(ticker?: Ticker) {
     if (!this.body || !this.view) {
       return;
     }
