@@ -1,0 +1,60 @@
+{
+  "name": "dill-pixel-examples-v8",
+  "version": "0.0.1",
+  "description": "Examples of Dill Pixel Features (V8)",
+  "main": "index.html",
+  "scripts": {
+    "clean": "rimraf dist .assetpack .cache",
+    "assets": "assetpack -c .assetpack.mjs",
+    "cache": "rimraf .cache",
+    "start": "run-s cache && vite",
+    "dev": "run-s cache assets && vite",
+    "prebuild": "run-s clean format lint",
+    "build": "vite build",
+    "types": "tsc",
+    "preview": "vite preview --open",
+    "lint": "eslint src --ext .ts",
+    "lint-fix": "eslint src --ext .ts --fix",
+    "visualize": "npx vite-bundle-visualizer -c vite.config.mjs",
+    "audio:vo:en": "texttospeech assets/audio{m}/vo/en --sheet-name=\"Intro EN\"",
+    "audio:vo:fr": "texttospeech assets/audio{m}/vo/fr --sheet-name=\"Intro FR\"",
+    "audio:captions:en": "node ../cli.mjs audio captions src/assets/audio/en assets/audio{m}/vo/en",
+    "audio:captions:fr": "node ../cli.mjs audio captions src/assets/audio/fr assets/audio{m}/vo/fr",
+    "vo:generate": "node ../cli.mjs vo generate",
+    "spritesheets": "node assets/images/export_spritesheets",
+    "format": "prettier --write src",
+    "format:check": "prettier --check src"
+  },
+  "author": "Relish Digital<dev@reli.sh>",
+  "license": "MIT",
+  "devDependencies": {
+    "@assetpack/cli": "^0.8.0",
+    "@assetpack/core": "^0.8.0",
+    "@assetpack/plugin-compress": "^0.8.0",
+    "@assetpack/plugin-ffmpeg": "^0.8.0",
+    "@assetpack/plugin-json": "^0.8.0",
+    "@assetpack/plugin-manifest": "^0.8.0",
+    "@assetpack/plugin-mipmap": "^0.8.0",
+    "@assetpack/plugin-texture-packer": "^0.8.0",
+    "@assetpack/plugin-webfont": "^0.8.0",
+    "@relishinc/text-to-speech": "^1.4.0",
+    "@types/dat.gui": "^0.7.13",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^5.0.5",
+    "vite": "^5.2.13"
+  },
+  "dependencies": {
+    "@dill-pixel/plugin-arcade-physics": "workspace:*",
+    "@dill-pixel/plugin-matter-physics": "workspace:*",
+    "@dill-pixel/plugin-rive": "workspace:*",
+    "@dill-pixel/plugin-snap-physics": "workspace:*",
+    "@dill-pixel/storage-adapter-firebase": "workspace:*",
+    "dat.gui": "^0.7.9",
+    "dill-pixel": "workspace:*",
+    "firebase": "^10.12.1"
+  },
+  "peerDependencies": {
+    "pixi.js":"8.1.6",
+    "gsap":"^3.12.5"
+  }
+}

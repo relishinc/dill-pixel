@@ -13,12 +13,15 @@ node_modules
 
 .npmrc
 npm-debug.log*
-examples/.cache
-examples/node_modules
+packages/examples/.cache
+packages/examples/node_modules
 
 #lib folders
 lib
-packages/plugins/physics/arcade/lib
-packages/plugins/physics/snap/lib
-packages/plugins/physics/matter/lib
+packages/plugins/physics-arcade/lib
+packages/plugins/physics-snap/lib
+packages/plugins/physics-matter/lib
+packages/plugins/rive/lib
 packages/storage-adapters/firebase/lib
+
+.turbo

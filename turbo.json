@@ -1,0 +1,15 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+        "inputs": ["packages/plugins/*","packages/storage-adapters/*", "packages/framework", "packages/examples"]
+    },
+    "build-examples": {
+       "dependsOn": ["^build"]
+    },
+    "dev": {
+      "persistent": true, 
+      "cache": false
+    }
+  }
+}

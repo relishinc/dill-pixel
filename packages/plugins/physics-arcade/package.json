@@ -1,16 +1,16 @@
 {
-  "name": "@dill-pixel/plugin-rive",
-  "version": "8.7.12",
+  "name": "@dill-pixel/plugin-arcade-physics",
+  "version": "8.7.8",
   "description": "",
   "files": [
     "lib",
     "src"
   ],
-  "main": "lib/dill-pixel-plugin-rive.mjs",
+  "main": "lib/dill-pixel-plugin-arcade-physics.mjs",
   "types": "lib/index.d.ts",
   "exports": {
     ".": {
-      "default": "./lib/dill-pixel-plugin-rive.mjs",
+      "default": "./lib/dill-pixel-plugin-arcade-physics.mjs",
       "types": "./lib/index.d.ts"
     }
   },
@@ -31,6 +31,6 @@
     "dill-pixel": "^8.8.0"
   },
   "dependencies": {
-    "@rive-app/canvas-advanced-lite": "^2.17.3"
+    "arcade-physics": "^0.1.0"
   }
 }

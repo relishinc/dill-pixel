@@ -1,16 +1,16 @@
 {
-  "name": "@dill-pixel/plugin-rive",
-  "version": "8.7.12",
+  "name": "@dill-pixel/plugin-snap-physics",
+  "version": "8.7.8",
   "description": "",
   "files": [
     "lib",
     "src"
   ],
-  "main": "lib/dill-pixel-plugin-rive.mjs",
+  "main": "lib/dill-pixel-plugin-snap-physics.mjs",
   "types": "lib/index.d.ts",
   "exports": {
     ".": {
-      "default": "./lib/dill-pixel-plugin-rive.mjs",
+      "default": "./lib/dill-pixel-plugin-snap-physics.mjs",
       "types": "./lib/index.d.ts"
     }
   },
@@ -27,10 +27,7 @@
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
-    "pixi.js": "8.1.6",
+   "pixi.js": "8.1.6",
     "dill-pixel": "^8.8.0"
-  },
-  "dependencies": {
-    "@rive-app/canvas-advanced-lite": "^2.17.3"
   }
 }

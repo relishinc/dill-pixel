@@ -23,12 +23,13 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.14.1",
+    "dill-pixel":"workspace:*",
     "vite-plugin-dts": "^3.9.1"
-  },
-  "dependencies": {
-    "firebase": "^10.12.1"
   },
   "peerDependencies": {
     "dill-pixel": "^8.8.0"
+  },
+  "dependencies": {
+    "firebase": "^10.12.1"
   }
 }
