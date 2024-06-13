@@ -36,6 +36,7 @@
     "@dill-pixel/plugin-snap-physics": "file:../packages/plugins/physics/snap",
     "@dill-pixel/plugin-matter-physics": "file:../packages/plugins/physics/matter",
     "@dill-pixel/plugin-rive": "file:../packages/plugins/rive",
+    "@dill-pixel/plugin-rollbar": "file:../packages/plugins/rollbar",
     "@dill-pixel/storage-adapter-firebase": "file:../packages/storage-adapters/firebase",
     "dat.gui": "^0.7.9",
     "dill-pixel": "file:..",

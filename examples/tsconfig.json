@@ -19,6 +19,12 @@
       "@dill-pixel/plugin-matter-physics/*": [
         "../packages/plugins/physics/matter/src/*"
       ],
+      "@dill-pixel/plugin-rive/*": [
+        "../packages/plugins/rive/src/*"
+      ],
+      "@dill-pixel/plugin-rollbar/*": [
+        "../packages/plugins/rollbar/src/*"
+      ],
       "@dill-pixel/storage-adapter-firebase/*": [
         "../packages/storage-adapters/firebase/src/*"
       ]
@@ -43,6 +49,9 @@
     },
     {
       "path": "../packages/plugins/rive"
+    },
+    {
+      "path": "../packages/plugins/rollbar"
     },
     {
       "path": "../packages/storage-adapters/firebase"

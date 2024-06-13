@@ -23,11 +23,47 @@
         },
         {
           "alias": [
+            "static/cup.riv",
+            "cup.riv"
+          ],
+          "src": [
+            "static/cup.riv"
+          ]
+        },
+        {
+          "alias": [
             "static/jar.png"
           ],
           "src": [
             "static/jar@1x.png",
             "static/jar@0.5x.png"
+          ]
+        },
+        {
+          "alias": [
+            "static/marty.riv",
+            "marty.riv"
+          ],
+          "src": [
+            "static/marty.riv"
+          ]
+        },
+        {
+          "alias": [
+            "static/reactions_v3.riv",
+            "reactions_v3.riv"
+          ],
+          "src": [
+            "static/reactions_v3.riv"
+          ]
+        },
+        {
+          "alias": [
+            "static/skins_demo.riv",
+            "skins_demo.riv"
+          ],
+          "src": [
+            "static/skins_demo.riv"
           ]
         }
       ]

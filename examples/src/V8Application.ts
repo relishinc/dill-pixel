@@ -5,10 +5,15 @@ import { ExampleOutliner } from './ui/ExampleOutliner';
 import { IFirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
 import { controls } from '@/controls';
 import manifest from './assets.json';
+import RollbarPlugin from '@dill-pixel/plugin-rollbar';
 
 export class V8Application extends Application {
   get firebase(): IFirebaseAdapter {
     return this.store.getAdapter('firebase') as unknown as IFirebaseAdapter;
+  }
+
+  get rollbar(){
+    return this.getPlugin<RollbarPlugin>('rollbar')?.rollbar;
   }
 }
 
@@ -70,6 +75,16 @@ create(
         module: () => import('@dill-pixel/plugin-rive'),
         autoLoad: false,
       },
+      {
+        id: 'rollbar',
+        module: () => import('@dill-pixel/plugin-rollbar'),
+        options: {
+          accessToken: '97582db01ae0482f80f235bd99b3b9fb', //* "post_client_item" token 
+          // isDev: import.meta.env.MODE === 'development',
+          isDev: false,
+          environment: import.meta.env.MODE,
+        },
+      }
     ],
     storageAdapters: [
       { id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } },
