@@ -12,6 +12,11 @@ type Score = {
   score: number;
 };
 
+type SaveScoreActionData = {
+  collection: string;
+  data: Omit<Score, 'id'> & { id?: string }; // id is optional when saving
+};
+
 export class FirebaseAdapterScene extends BaseScene {
   protected readonly title = 'Firebase Storage Adapter';
   protected readonly subtitle = 'Demonstrates custom adapter functionality';
@@ -39,9 +44,18 @@ export class FirebaseAdapterScene extends BaseScene {
   private _sendSaveScoreAction() {
     const username = this.usernameInput.value;
     const scoreAsNum = parseInt(this.scoreInput.value, 10);
-    this.app.sendAction('save_to_firebase', {
+
+    if (!username || !scoreAsNum) {
+      this.errorText.text = 'Please enter a username and a score';
+      return;
+    }
+
+    this.app.sendAction<SaveScoreActionData>('save_to_firebase', {
       collection: 'users',
-      data: { username, score: scoreAsNum },
+      data: { 
+        username, 
+        score: scoreAsNum
+      },
     });
   }
 
@@ -116,13 +130,18 @@ export class FirebaseAdapterScene extends BaseScene {
     this.errorText.text = '';
 
     try {
-      // await this.app.store.save('firebase', action.data.collection, action.data.data);
-      await this.app.firebase.save(action.data.collection, action.data.data);
+      // Option 1: save via store method
+      // await this.app.store.save('firebase', action.data.collection, action.data.data, action.data.id || null);
+
+      // Option 2: save via adapter method
+      await this.app.firebase.save(action.data.collection, action.data.data, action.data.id || null);
+
       this.usernameInput.value = '';
       this.scoreInput.value = '';
     } catch (error: any) {
-      console.error('Error saving data:', error);
-      this.errorText.text = error.message || 'An error occurred';
+      this.errorText.text = error.message || 'Error saving data';
+      this.app.rollbar.error('Testing... custom Rollbar error', error);
+      throw new Error(this.errorText.text, error);
     }
   }
 
@@ -136,8 +155,8 @@ export class FirebaseAdapterScene extends BaseScene {
       await this.app.firebase.deleteCollection(action.data.collection);
       // this.refreshScoreboard();
     } catch (error: any) {
-      console.error('Error clearing data:', error);
-      this.errorText.text = error.message || 'An error occurred';
+      this.errorText.text = error.message || 'Error clearing data';
+      throw new Error(this.errorText.text, error);
     }
   }
 
@@ -148,8 +167,8 @@ export class FirebaseAdapterScene extends BaseScene {
       await this.removeScoreFromScoreboard(action.data.data);
       await this.app.firebase.deleteDocumentById('users', action.data.data.id);
     } catch (error: any) {
-      console.error('Error deleting data:', error);
-      this.errorText.text = error.message || 'An error occurred';
+      this.errorText.text = error.message || 'Error deleting data';
+      throw new Error(this.errorText.text, error);
     }
   }
 
@@ -187,7 +206,7 @@ export class FirebaseAdapterScene extends BaseScene {
 
     // add inputs
     this.usernameInput = this.createInput('Username');
-    this.scoreInput = this.createInput('Score');
+    this.scoreInput = this.createInput('Score', 'number');
 
     this.inputContainer.addChild(this.usernameInput);
     this.inputContainer.addChild(this.scoreInput);
@@ -197,8 +216,9 @@ export class FirebaseAdapterScene extends BaseScene {
     this.app.focus.add([this.usernameInput, this.scoreInput], this.id, true);
   }
 
-  private createInput(placeholder: string) {
+  private createInput(placeholder: string, type: string = 'text') {
     return new Input({
+      type: type,
       minWidth: 375,
       fixed: true,
       padding: [10, 15],
@@ -212,6 +232,7 @@ export class FirebaseAdapterScene extends BaseScene {
       placeholder: {
         text: placeholder,
       },
+
     });
   }
 
@@ -396,8 +417,8 @@ export class FirebaseAdapterScene extends BaseScene {
         where('score', '>', 0),
       );
     } catch (error: any) {
-      console.error('Error loading data during scoreboard refresh:', error);
-      this.errorText.text = error.message || 'An error occurred';
+      this.errorText.text = error.message || 'Error loading data during scoreboard refresh';
+      throw new Error(this.errorText.text, error);
       return;
     }
 
