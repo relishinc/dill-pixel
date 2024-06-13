@@ -28,33 +28,40 @@
   "author": "Relish Digital<dev@reli.sh>",
   "license": "MIT",
   "devDependencies": {
-    "@assetpack/cli": "^0.8.0",
-    "@assetpack/core": "^0.8.0",
-    "@assetpack/plugin-compress": "^0.8.0",
-    "@assetpack/plugin-ffmpeg": "^0.8.0",
-    "@assetpack/plugin-json": "^0.8.0",
-    "@assetpack/plugin-manifest": "^0.8.0",
-    "@assetpack/plugin-mipmap": "^0.8.0",
-    "@assetpack/plugin-texture-packer": "^0.8.0",
-    "@assetpack/plugin-webfont": "^0.8.0",
     "@relishinc/text-to-speech": "^1.4.0",
-    "@types/dat.gui": "^0.7.13",
-    "npm-run-all": "^4.1.5",
-    "rimraf": "^5.0.5",
-    "vite": "^5.2.13"
+    "@types/dat.gui": "^0.7.13"
   },
   "dependencies": {
+    "@assetpack/cli": "0.8.0",
+    "@assetpack/core": "0.8.0",
+    "@assetpack/plugin-compress": "0.8.0",
+    "@assetpack/plugin-ffmpeg": "0.8.0",
+    "@assetpack/plugin-json": "0.8.0",
+    "@assetpack/plugin-manifest": "0.8.0",
+    "@assetpack/plugin-mipmap": "0.8.0",
+    "@assetpack/plugin-texture-packer": "0.8.0",
+    "@assetpack/plugin-webfont": "0.8.0",
     "@dill-pixel/plugin-arcade-physics": "workspace:*",
     "@dill-pixel/plugin-matter-physics": "workspace:*",
     "@dill-pixel/plugin-rive": "workspace:*",
     "@dill-pixel/plugin-snap-physics": "workspace:*",
     "@dill-pixel/storage-adapter-firebase": "workspace:*",
+    "@pixi/sound": "6.0.0",
     "dat.gui": "^0.7.9",
-    "dill-pixel": "^8.8.2",
-    "firebase": "^10.12.1"
+    "dill-pixel": "workspace:*",
+    "firebase": "^10.12.1",
+    "gsap": "3.12.5",
+    "npm-run-all": "4.1.5",
+    "pixi.js": "8.1.6",
+    "rimraf": "5.0.5",
+    "stats.js": "0.17.0",
+    "vite": "5.2.13",
+    "vite-bundle-visualizer": "1.1.0",
+    "vite-plugin-html": "3.2.2",
+    "vite-plugin-singlefile": "0.13.5",
+    "vite-plugin-static-copy": "1.0.3",
+    "vite-plugin-top-level-await": "1.4.1",
+    "vite-plugin-wasm": "3.3.0"
   },
-  "peerDependencies": {
-    "gsap": "^3.12.5",
-    "pixi.js": "8.1.6"
-  }
+  "packageManager": "pnpm@9.3.0"
 }

@@ -1,0 +1,172 @@
+---
+title: Focus management
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## KeyboardManager
+The `KeyboardManager` class is responsible for handling keyboard inputs in your game. It's part of
+ a system that includes focus management and input handling.
+
+It tracks the state of the keyboard and the application. The `_downKeys` set keeps track of which
+keys are currently being pressed.
+
+The `KeyboardManager` registers event listeners for various keyboard and mouse events. It also connects several methods
+ to signals, which are emitted when certain events occur.
+
+```ts
+// KeyboardManager.ts
+window.addEventListener(InputUtils.Events.KEY_DOWN, this.onKeyDown.bind(this), false);
+window.addEventListener(InputUtils.Events.POINTER_DOWN, this.onMouseDown.bind(this), false);
+window.addEventListener(InputUtils.Events.KEY_UP, this.onKeyUp.bind(this), false);
+window.addEventListener(InputUtils.Events.FOCUS, this.onBrowserFocus.bind(this));
+window.addEventListener(InputUtils.Events.BLUR, this.onBrowserBlur.bind(this));
+```
+
+The `onKeyDown` and `onKeyUp` methods handle the pressing and releasing of keys, respectively. They update the `_downKeys` set and perform actions based on the keys pressed.
+
+The `addKeyBinding` method allows your game to specify what action should be taken when a certain key is pressed. It
+takes a direction (which could be an actual direction like 'up' or 'down', or 'Enter' for the enter key), a key code, and optional modifiers (like whether the alt, shift, or ctrl keys should be held down).
+
+```ts
+public addKeyBinding(
+  pDirection: Direction | 'Enter',
+  pKeyCode: KeyCodes,
+  pModifiers?: Partial<{
+    altKey: boolean;
+    shiftKey: boolean;
+    ctrlKey: boolean;
+  }>,
+)
+```
+
+The `removeKeyBinding` and `removeAllKeyBindings` methods allow the application to remove these bindings.
+
+The `isKeyDown` method checks if a certain key or set of keys is currently being pressed.
+
+The `onDirectionPressed` method is called when a direction key is pressed. It steps through the current `KeyboardMap` in the given direction.
+
+## KeyboardFocusManager
+The `KeyboardFocusManager` class is responsible for displaying on-screen indicators for focused elements. It listens
+for changes in focus and updates the display accordingly. It's initialized with a type for rendering the focus indicator.
+
+By default, this is the `DefaultKeyboardFocusManagerSprite` class, which renders a simple rectangle around the focused element.
+
+The `KeyboardFocusManager` pools instances of the focus indicator class to avoid creating and destroying them constantly.
+
+```ts
+const focusManager = new KeyboardFocusManager<DefaultKeyboardFocusManagerSprite>(DefaultKeyboardFocusManagerSprite);
+```
+You can create your own focus indicator class by extending the `KeyboardFocusManagerSprite` class and overriding the
+`draw` method, or by implementing the `IKeyboardFocus` interface:
+
+```ts
+// IKeyboardFocus.ts
+IKeyboardFocus extends DisplayObject {
+	readonly target: IFocusable | undefined;
+	show(pFocusable: IFocusable): void;
+	hide(pOnComplete?: () => void, pInstantly?: boolean): void;
+	redraw(): void;
+}
+```
+You can also tweak the `DefaultKeyboardFocusManagerSprite` class by just changing it's static properties:
+
+```ts
+// DefaultKeyboardFocusManagerSprite.ts
+public static COLOR: number = 0xff0000;
+public static PADDING: number = 4;
+public static LINE_WIDTH: number = 2;
+```
+
+Like so:
+
+```ts
+// MyApplication.ts
+protected setup() {
+
+  // Change the color of the focus indicator
+
+  DefaultKeyboardFocusManagerSprite.COLOR = 0x00ff00;
+
+  // Change the padding around the focused element
+
+  DefaultKeyboardFocusManagerSprite.PADDING = 8;
+
+  // Change the width of the focus indicator
+
+  DefaultKeyboardFocusManagerSprite.LINE_WIDTH = 4;
+  
+}
+```
+
+## Focusable Elements
+Think of `KeyboardMap` as a layer of focusable elements. Each element has a `focusable` property, which is a boolean
+that determines whether the element can be focused on. Anything in your game can be a focusable element if it has a
+`focusable` property -- but for more granular control, make a custom class that extends Container, and implement the
+`IFocusable` interface.
+
+```ts
+// IFocusable.ts
+interface IFocusable {
+   onFocusBegin(): void;
+   onFocusEnd(): void;
+   onFocusActivated(): void;
+   getFocusPosition(): Point;
+   getFocusSize(): IPoint;
+   isFocusable?(): boolean;
+}
+```
+
+## KeyboardMap
+`KeyboardMap`s are used to manage keyboard focus for interactive elements in your game. It has several properties to
+track the state of the keyboard and the application, and holds a list of focusable elements and their neighbours. It
+also serves double-duty as a __*focus trap*__, preventing the user from navigating outside of the focusable elements.
+
+The `pushMapLayer` and `popMapLayer` methods are used to manage layers of `KeyboardMap` objects. When a new layer is pushed, it becomes the active layer and the previous layer is deactivated. When a layer is popped, it is removed and the next layer down becomes active.
+
+<Aside>
+  You can also use the global `addKeyboardLayer` and `removeKeyboardLayer` functions to manage layers of `KeyboardMap` objects.
+</Aside>
+
+```ts
+// MyGameState.ts
+import { addKeyboardLayer, removeKeyboardLayer, registerFocusables } from 'dill-pixel';
+
+init() {
+
+  // addKeyboardLayer() is usually called in the init method of your state
+
+  addKeyboardLayer(); 
+
+  // Create and register some focusable elements
+
+  const button1 = this.add.coloredSprite({ color: 0xff0000, width: 100, height: 100 });
+  const button2 = this.add.coloredSprite({ color: 0x00ff00, width: 100, height: 100 });
+  const button3 = this.add.coloredSprite({ color: 0x0000ff, width: 100, height: 100 });
+
+  button1.focusable = button2.focusable = button3.focusable = true;
+
+  registerFocusables(button1, button2, button3);
+}
+
+destroy() {
+  // Remove the keyboard layer
+  removeKeyboardLayer();
+
+  // Call the super method or your state will not be destroyed
+  super.destroy()
+}
+```
+
+### Popups
+When a popup is shown, it automatically adds its own `KeyboardMap` layer, and removes the layer when it's hidden.
+This allows the popup to handle keyboard inputs without interfering with the rest of the application.
+
+<Aside type="caution" title="Be careful!">
+  If you don't keep track of the layers you add and remove, you may end up with a layer that is never removed, which can cause unexpected behaviour.
+</Aside>
+
+## Examples
+To see examples of this in action, check out the [Button Example](https://dillpixel.io/examples/#ButtonExample), the
+[Focusables Example](https://dillpixel.io/examples/#FocusablesExample), or the [Popups Example](https://dillpixel.io/examples/#PopupExample) on the dill pixel
+website.

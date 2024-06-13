@@ -1,8 +1,12 @@
-import {extendConfig} from 'dill-pixel/config/vite';
-import path from 'node:path';
+import path, {dirname} from 'node:path';
 
+import {extendConfig} from 'dill-pixel/config/vite';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename); 
 export default extendConfig({
-	resolve: {
+	resolve: { 
 		alias: {
 			'dill-pixel': path.resolve(__dirname, '../framework'),
 			'@dill-pixel/plugin-snap-physics': path.resolve(__dirname, '../plugins/physics-snap'),

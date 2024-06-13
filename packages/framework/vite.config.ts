@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
-import path from 'path';
 import dts from 'vite-plugin-dts';
+import path from 'path';
 
 export default defineConfig({
   build: {
@@ -9,6 +9,7 @@ export default defineConfig({
     lib: {
       formats: ['es'],
       entry: path.resolve(__dirname, 'src/index.ts'),
+      fileName: () => `dill-pixel.mjs`,
     },
     rollupOptions: {
       external: ['pixi.js', 'gsap'],

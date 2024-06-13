@@ -7,6 +7,7 @@ import { create } from './cli/create.mjs';
 import fs from 'node:fs';
 import { generateCaptions } from './cli/audio/cc.mjs';
 import { generateVoiceoverCSV } from './cli/voiceover/index.mjs';
+import { installPeerDeps } from './cli/install-peerdeps.mjs';
 import process from 'node:process';
 import { update } from './cli/update.mjs';
 
@@ -38,18 +39,24 @@ if (args.length === 0) {
   process.exit(1);
 }
 
+let pkg, cwd, newVersion, voInputDir, voCSVDirectory, audioDirectory, captionsCSVDirectory, captionsOutputDirectory;
+
 switch (args[0]) {
+  case 'install':
+    await installPeerDeps();
+    break;
   case 'version':
     break;
   case 'create':
-    let cwd = args[1] || '.';
+    cwd = args[1] || '.';
     await create(cwd);
     break;
   case 'update':
     hr();
     console.log(bold(green(`Updating Dill Pixel to the latest version...`)));
     await update();
-    const { version: newVersion } = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf-8'));
+    pkg = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf-8'));
+    newVersion = pkg.version;
     console.log(`${bold(green(`Updated Dill Pixel to version ${newVersion}`))}`);
     hr();
     break;
@@ -58,8 +65,8 @@ switch (args[0]) {
     switch (args[1]) {
       case 'generate':
         console.log(bold(green(`Dill Pixel is generating a new voiceover file...`)));
-        const voInputDir = args[2] || './src/locales';
-        const voCSVDirectory = args[3] || './src/assets/audio/vo/csv';
+        voInputDir = args[2] || './src/locales';
+        voCSVDirectory = args[3] || './src/assets/audio/vo/csv';
         try {
           await generateVoiceoverCSV(voInputDir, voCSVDirectory);
           console.log(
@@ -80,7 +87,7 @@ switch (args[0]) {
     hr();
     switch (args[1]) {
       case 'compress':
-        const audioDirectory = args[2] || './src/assets/audio';
+        audioDirectory = args[2] || './src/assets/audio';
         console.log(bold(green(`Dill Pixel is compressing your audio files...`)));
         try {
           await compress(audioDirectory);
@@ -92,8 +99,8 @@ switch (args[0]) {
         );
         break;
       case 'captions':
-        const captionsCSVDirectory = args[2] || './src/assets/audio/captions';
-        const captionsOutputDirectory = args[3] || './src/assets/json';
+        captionsCSVDirectory = args[2] || './src/assets/audio/captions';
+        captionsOutputDirectory = args[3] || './src/assets/json';
         console.log(bold(green(`Dill Pixel is preparing your closed captioning files...`)));
         try {
           await generateCaptions(captionsCSVDirectory, captionsOutputDirectory);

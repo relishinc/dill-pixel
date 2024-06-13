@@ -1,0 +1,43 @@
+---
+title: Project Setup
+---
+
+import {FileTree, Code} from '@astrojs/starlight/components';
+import viteConfigJs from '../../../../examples/simple-game/vite.config.js?raw';
+
+## Organizing Files and Directories
+
+We recommend setting up your project directory as follows:
+
+<FileTree>
+- package.json
+- README.md
+- vite.config.js
+- tsconfig.json
+- index.html
+- **src**
+		- index.css	  
+	- index.ts
+	- Application.ts
+	- assets static assets like fonts, images, and audio
+		- …		
+	- states where your game states are stored
+      - SplashScreen.ts
+      - IntroScreen.ts
+      - GameScreen.ts
+      - HighScoresScreen.ts
+	- …		
+</FileTree>
+
+## Build Tools
+
+To develop your game locally and build it for production, you'll need to configure a 
+build process. We recommend using [Vite](https://vitejs.dev), a blazing fast build tool 
+that supports modern JavaScript features.
+
+Create a `vite.config.js` file in the root directory to configure the build process. The default Vite configuration
+is sufficient but for handling static assets we're using the [vite-plugin-static-copy](https://www.npmjs.com/package/vite-plugin-static-copy) 
+so that they can be loaded from within the game. You can configure the plugin
+however you like based on how you've organized your assets.
+
+<Code code={viteConfigJs} lang="js" title="vite.config.js" />

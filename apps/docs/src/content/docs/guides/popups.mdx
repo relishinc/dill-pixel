@@ -1,0 +1,102 @@
+---
+title: Popups
+---
+
+import {Aside} from '@astrojs/starlight/components';
+
+Popups are a great way to display information, menus, or other UI elements 
+in your game. They can be used to pause the game, show a message, or prompt 
+the player for input.
+
+## Creating a Popup
+
+To create a popup, you need to create a class that extends the `Popup` class. Using `gsap` lets
+us customize the `animateIn` and `animateOut` methods to create custom animations for the popup.
+
+```js
+// myPopup.ts
+import { Popup } from 'dill-pixel';
+import { gsap } from 'gsap';
+
+export default class MyPopup extends Popup {
+  static NAME: string = 'MyPopup';
+
+  // Initialize the popup
+
+  init(size: Point) {
+    super.init(size);
+
+    // Data passed to the popup is available in this._popupData
+
+    console.log(this._popupData.foo);
+
+    // Add UI elements to popup
+    ...
+
+    // To close the popup, call this.close()
+
+    this._button.on('pointerdown', this.close);
+  }
+
+  // Animate the popup in
+
+  async animateIn(pCallback: () => void): Promise<void> {
+    if (this.blackout) {
+      gsap.fromTo(this.blackout, { alpha: 0 }, { alpha: 1, visible: true, duration: 0.3 });
+    }
+    await gsap.fromTo(this, { alpha: 0 }, { alpha: 1, visible: true, duration: 0.4 });
+    pCallback();
+  }
+
+  // Animate the popup out
+
+  async animateOut(pCallback: () => void): Promise<void> {
+    if (this.blackout) {
+      await gsap.to(this.blackout, { alpha: 0, duration: 0.2, delay: 0.1 });
+    }
+    gsap.to(this, { alpha: 0, duration: 0.3 });
+    pCallback();
+  }
+
+}
+
+```
+
+## Launching a Popup
+
+To launch a popup, call dill pixel's `showPopup` method and pass the popup class 
+name, any data you want to pass to the popup, along with some additoinal options:
+
+- `callback`: a function that is called when the popup is closed
+- `backdrop`: whether to show a backdrop behind the popup
+
+```js
+// myGameState.ts
+
+import { showPopup } from 'dill-pixel';
+import { MyPopup } from './myPopup';
+
+...
+
+onClose = () => {
+  console.log('Popup closed');
+};
+
+myButton.on('pointerdown', () => {
+  showPopup({ 
+    id: MyPopup.NAME, 
+    data: { foo: 'bar' },    // data passed to the popup
+    callback: this.onClose,  // called when the popup is closed
+    backdrop: true,          // show an overlay behind the popup
+  });
+});
+
+```
+
+
+
+<Aside type="tip">
+  Check out the [popup example](https://dillpixel.io/examples/#PopupExample) for a demonstration.
+</Aside>
+
+
