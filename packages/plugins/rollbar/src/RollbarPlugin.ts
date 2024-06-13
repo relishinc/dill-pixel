@@ -3,14 +3,13 @@ import Rollbar from 'rollbar';
 
 // extends Rollbar.Configuration but accessToken is required
 export interface RollbarPluginOptions extends Rollbar.Configuration {
-  accessToken: string;
-  isDev: boolean;
+  isDev?: boolean;
 }
 
 export interface IRollbarPlugin extends IPlugin {}
 
 const defaultOptions = {
-  accessToken: '',
+  accessToken: process.env.VITE_ROLLBAR_ACCESS_TOKEN,
   isDev: false,
   enabled: true,
   captureUncaught: true,

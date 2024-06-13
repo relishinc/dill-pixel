@@ -79,9 +79,7 @@ create(
         id: 'rollbar',
         module: () => import('@dill-pixel/plugin-rollbar'),
         options: {
-          accessToken: '97582db01ae0482f80f235bd99b3b9fb', //* "post_client_item" token 
           // isDev: import.meta.env.MODE === 'development',
-          isDev: false,
           environment: import.meta.env.MODE,
         },
       }
