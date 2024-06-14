@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.0](https://github.com/relishinc/dill-pixel/compare/v3.3.0...v3.4.0) (2024-06-14)
+
+
+### Features
+
+* added logger, chore: cleaned up some examples ([b1f6f4f](https://github.com/relishinc/dill-pixel/commit/b1f6f4fdfa7718e1df745bfdd0f5fdd0e60f66a8))
+
 ## [3.3.0](https://github.com/relishinc/dill-pixel/compare/v3.2.6...v3.3.0) (2024-06-03)
 
 
