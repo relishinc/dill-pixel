@@ -79,7 +79,7 @@ create(
         id: 'rollbar',
         module: () => import('@dill-pixel/plugin-rollbar'),
         options: {
-          // isDev: import.meta.env.MODE === 'development',
+          isDev: import.meta.env.MODE === 'development',
           environment: import.meta.env.MODE,
         },
       }

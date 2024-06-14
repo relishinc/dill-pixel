@@ -17,13 +17,11 @@ const defaultOptions = {
 };
 
 export class RollbarPlugin extends Plugin implements IRollbarPlugin {
-  public static ID: string;
   private _options: RollbarPluginOptions;
   private _rollbar: Rollbar;
 
   async initialize(_app: IApplication, options: RollbarPluginOptions) {
     this._options = { ...defaultOptions, ...options };
-    RollbarPlugin.ID = this.id;
 
     // check if accessToken is set
     if (!this._options.accessToken) {
