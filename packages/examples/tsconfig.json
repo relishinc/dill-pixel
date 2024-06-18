@@ -1,0 +1,60 @@
+{
+  "extends": "../framework/config/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "dill-pixel/*": [
+        "../framwork/src/*"
+      ],
+      "@dill-pixel/plugin-snap-physics/*": [
+        "../plugins/physics-snap/src/*"
+      ],
+      "@dill-pixel/plugin-arcade-physics/*": [
+        "../plugins/physics-arcade/src/*"
+      ],
+      "@dill-pixel/plugin-matter-physics/*": [
+        "../plugins/physics-matter/src/*"
+      ],
+      "@dill-pixel/storage-adapter-firebase/*": [
+        "../storage-adapters/firebase/src/*"
+      ]
+    },
+    "types": [
+      "vite/client"
+    ]
+    // added this to resolve errors when using import.meta.env
+  },
+  "references": [
+    {
+      "path": "../framework"
+    },
+    {
+      "path": "../plugins/physics-snap"
+    },
+    {
+      "path": "../plugins/physics-arcade"
+    },
+    {
+      "path": "../plugins/physics-matter"
+    },
+    {
+      "path": "../plugins/rive"
+    },
+    {
+      "path": "../storage-adapters/firebase"
+    }
+  ],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.json",
+    "../**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

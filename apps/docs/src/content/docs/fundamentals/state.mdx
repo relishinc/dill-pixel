@@ -1,0 +1,51 @@
+---
+title: State Management
+---
+
+import {TabItem, Tabs, Aside, FileTree, Code, Steps} from '@astrojs/starlight/components';
+
+import baseStateTs from '../../../../examples/state/BaseState.ts?raw';
+import titleScreenTs from '../../../../examples/state/TitleScreen.ts?raw';
+import applicationTs from '../../../../examples/state/Application.ts?raw';
+
+dill pixel uses a simple state management system to manage the different states (or screens)
+in your game. For example, a simple game might have a `TitleScreen`, `GameScreen`, and `GameOverScreen`.
+Let's see how we would include those in our game and switch between them.
+
+## Creating a Base State
+
+To create a new state, create a new file in the `src/states` directory. For example, let's create a `BaseState`
+that all of our other game states will extend. This first state should extend dill pixel's [`State`](/api/classes/state) class
+and for now we'll just add custom `animateIn` and `animateOut` methods that will fade all of our states in and out:
+
+<Code code={baseStateTs} lang="ts" title="src/states/BaseState.ts" />
+
+## Creating a Screen
+
+Next, let's create a `TitleScreen` that extends our `BaseState`:
+
+<Code code={titleScreenTs} lang="ts" title="src/states/TitleScreen.ts" />
+
+## Registering States
+
+Once all of the states have been created, they need to be registered with the game. This is done in the 
+`src/Application.ts` file:
+
+<Code code={applicationTs} lang="ts" title="src/Application.ts" />
+
+## Switching Between States
+
+To switch between states, use the `transitionTo` method on the game instance:
+
+```ts
+
+// From within the Application.ts file
+
+this.state.transitionTo(TitleScreen.NAME) // reference by the class' NAME attribute
+this.state.transitionTo('TitleScreen') // reference by the NAME attribute as a string
+
+// From within a game state (e.g. TitleScreen.ts)
+
+this.app.state.transitionTo(GameScreen.NAME)
+
+```

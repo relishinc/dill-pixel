@@ -15,21 +15,21 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Cache dependencies
         uses: actions/cache@v2
         with:
-          path: ~/.npm
+          path: ~/.turbo
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
       - name: Install Dependencies
-        run: npm ci && cd ./docs && npm ci
+        run: pnpm ci && cd ./docs && pnpm ci
 
       - name: Build Docs
-        run: npm run docs
+        run: pnpm run docs
 
       - name: Deploy to Remote Host via SFTP
         uses: ticoraap/sftp-mirror@v1.6
@@ -38,5 +38,5 @@ jobs:
           user: ${{ secrets.DOCS_SFTP_USERNAME }}
           password: ${{ secrets.DOCS_SFTP_PASSWORD }}
           port: ${{ secrets.DOCS_SFTP_PORT }}
-          local: './docs/dist/'
+          local: './apps/docs/dist/'
           remote: '/'

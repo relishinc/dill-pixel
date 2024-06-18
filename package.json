@@ -1,128 +1,22 @@
 {
-  "name": "dill-pixel",
-  "version": "8.8.1",
-  "title": "Dill Pixel V8",
-  "description": "Relish framework for HTML games",
-  "bin": {
-    "dill-pixel": "./cli.mjs",
-    "create-dill-pixel": "./cli/create-dill-pixel.mjs"
-  },
-  "files": [
-    "lib",
-    "src",
-    "cli",
-    "config/vite.mjs",
-    "config/assetpack.mjs",
-    "config/tsconfig.json",
-    "extras/css/accessibility.css",
-    "extras/css/loader.css"
-  ],
-  "main": "lib/dill-pixel.mjs",
-  "types": "lib/index.d.ts",
-  "exports": {
-    ".": {
-      "default": "./lib/dill-pixel.mjs",
-      "types": "./lib/index.d.ts"
-    },
-    "./physics/snap": {
-      "default": "./lib/physics/snap.mjs"
-    },
-    "./config/assetpack": {
-      "default": "./config/assetpack.mjs"
-    },
-    "./config/vite": {
-      "default": "./config/vite.mjs"
-    },
-    "./config/tsconfig.json": {
-      "default": "./config/tsconfig.json"
-    },
-    "./extras/css/accessibility.css": {
-      "default": "./extras/css/accessibility.css"
-    },
-    "./extras/css/loader.css": {
-      "default": "./extras/css/loader.css"
-    }
-  },
-  "sideEffects": false,
+  "name": "dill-pixel-main",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "cd ./examples && npm run dev",
-    "start": "cd ./examples && npm run start",
-    "build": "npm run version && vite build",
-    "declaration": "tsc --project tsconfig.build.json",
-    "pixi-exports": "node ./scripts/pixi-exports.js",
-    "compile": "tsc --project ./tsconfig.build.json",
-    "build:examples": "cd ./examples && npm run build",
-    "visualize:examples": "cd ./examples && npx vite-bundle-visualizer",
-    "build:watch": "tsc --watch",
-    "lint": "eslint --ext .ts ./src/**/*",
-    "lint:fix": "eslint --ext .ts ./src/**/* --fix",
-    "docs": "npm run build:docs",
-    "build:docs": "cd ./docs && npm run build",
-    "dev:docs": "cd ./docs && npm run dev",
-    "typedoc": "npm run version && typedoc --out typedoc src",
-    "version": "node ./scripts/generate-version.js",
-    "clean": "node ./scripts/clean.mjs",
-    "update-package-deps": "node ./scripts/update-package-deps.mjs",
-    "build-packages": "node ./scripts/build-packages.mjs"
+    "build:framework": "turbo build --filter={./packages/framework}",
+    "publish:framework": "cd packages/framework && npm publish --tag next",
+    "update:packages": "node ./scripts/update-package-versions.mjs",
+    "build:packages": "sh ./scripts/build-packages.sh",
+    "publish:packages": "node ./scripts/publish-packages.mjs packages/plugins/*,packages/storage-adapters/*",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/relishinc/hlf.git"
-  },
-  "keywords": [
-    "game",
-    "framework",
-    "html"
-  ],
-  "author": "Relish Interactive",
-  "license": "MIT",
-  "homepage": "https://github.com/relishinc/dill-pixel#readme",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "@commitlint/cli": "^17.8.1",
-    "@commitlint/config-conventional": "^17.8.1",
-    "@types/matter-js": "^0.19.6",
-    "@types/stats.js": "^0.17.3",
-    "@typescript-eslint/eslint-plugin": "^7.3.1",
-    "@typescript-eslint/parser": "^7.3.1",
-    "eslint": "^8.57.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-simple-import-sort": "^12.1.0",
-    "husky": "^8.0.3",
-    "prettier": "^3.2.5",
-    "relishinc-prettier": "github:relishinc/prettier",
-    "standard-version": "^9.5.0",
-    "typedoc": "^0.25.13",
-    "typescript": "^5.4.3",
-    "vite-plugin-dts": "^3.9.1"
+    "turbo": "^2.0.3",
+    "glob": "^10.4.1"
   },
-  "dependencies": {
-    "@assetpack/cli": "^0.8.0",
-    "@assetpack/core": "^0.8.0",
-    "@assetpack/plugin-compress": "^0.8.0",
-    "@assetpack/plugin-ffmpeg": "^0.8.0",
-    "@assetpack/plugin-json": "^0.8.0",
-    "@assetpack/plugin-manifest": "^0.8.0",
-    "@assetpack/plugin-mipmap": "^0.8.0",
-    "@assetpack/plugin-texture-packer": "^0.8.0",
-    "@assetpack/plugin-webfont": "^0.8.0",
-    "@clack/prompts": "^0.7.0",
-    "@esotericsoftware/spine-core": "~4.1.50",
-    "@pixi/sound": "^6.0.0",
-    "csv-parse": "^5.5.5",
-    "gsap": "^3.12.5",
-    "kleur": "^4.1.5",
-    "matter-js": "^0.19.0",
-    "npm-run-all": "^4.1.5",
-    "pixi.js": "^8.1.6",
-    "rimraf": "^5.0.5",
-    "stats.js": "^0.17.0",
-    "typed-signals": "^2.5.0",
-    "vite": "^5.2.13",
-    "vite-bundle-visualizer": "^1.1.0",
-    "vite-plugin-html": "^3.2.2",
-    "vite-plugin-singlefile": "^0.13.5",
-    "vite-plugin-static-copy": "^1.0.3",
-    "vite-plugin-top-level-await": "^1.4.1",
-    "vite-plugin-wasm": "^3.3.0"
-  }
+  "packageManager": "pnpm@9.3.0"
 }

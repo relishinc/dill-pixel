@@ -1,0 +1,88 @@
+---
+title: Physics
+---
+
+dill pixel supports both the [matter.js](https://brm.io/matter-js/) and [Rapier](https://rapier.rs/) physics engines. 
+
+### Matter.js
+
+Matter.js is a 2D physics engine that allows you to simulate physics in your game. This can be 
+used to create realistic physics simulations, such as gravity, collisions, and more.
+
+### Rapier
+
+Rapier is a set of 2D and 3D physics engines written using the Rust programming language. 
+It targets applications requiring real-time physics like video games, animation, and robotics. 
+It is designed to be fast, stable, and optionally cross-platform deterministic. 
+
+## Adding Physics to Your Game
+
+```js
+import { 
+  AssetMapData, 
+  AssetType, 
+  TextureAsset, 
+  TextureAtlasAsset, 
+  PhysicsBodyType 
+} from 'dill-pixel';
+
+...
+
+// In your game state's init() method, add the physics engine and initialize it
+
+public async init(pSize: Point) {
+  await this.app.addPhysics('matter'); // or 'rapier'
+  this.app.physics.init(true);
+  this.app.physics.container = this;
+}
+
+// Load any textures you need for your physics objects
+
+public static get Assets(): AssetMapData[] {
+  return [ 
+    new TextureAsset('foo', AssetType.PNG), // static image
+    new TextureAtlasAsset('myspritesheet'), // spritesheet
+  ];
+}
+
+...
+
+// Create a physics object from a static image
+
+this.app.physics.add.physicsSprite({
+  asset: 'foo',
+  size: 100,
+  bodyType: PhysicsBodyType.RECTANGLE,
+  mass: 1,
+  position: [x, y]
+});
+
+// Create a physics object from a spritesheet texture
+
+this.app.physics.add.physicsSprite({
+  asset: 'bar',
+  sheet: 'myspritesheet',
+  size: 100,
+  bodyType: PhysicsBodyType.CIRCLE,
+  mass: 1,
+  position: [x, y]
+});
+
+// Create a physics object from a graphics object
+
+const gfx = this.make.graphics();
+gfx.beginFill(0xff0000);
+gfx.drawCircle(0, 0, 50); // Draw a circle with a radius of 50
+gfx.endFill();
+
+this.app.physics.add.physicsSprite({
+  asset: this.app.renderer.generateTexture(gfx),
+  size: 100,
+  bodyType: PhysicsBodyType.CIRCLE,
+  mass: 1,
+  position: [x, y]
+});
+
+```
+
+

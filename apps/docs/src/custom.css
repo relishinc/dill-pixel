@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap');
+
+:root {
+  --sl-font: 'DM Sans';
+  --sl-color-black: #17181c;
+  --sl-color-bg-sidebar: #1f2937;
+  --sl-color-bg-nav: #1f2937;
+
+  --sl-color-accent: #92cd3f;
+  --sl-color-accent-high: #89be40;
+  --sl-color-accent-low: #222;
+
+  --sl-text-h1: 2.25rem;
+  --sl-text-h2: 1.65rem;
+  --sl-text-h3: 1.25rem;
+  --sl-text-h4: 1.1rem;
+  --sl-text-xs: 0.9rem;
+}
+
+:root[data-theme='light'],
+[data-theme='light'] ::backdrop {
+  --sl-color-bg: white;
+  
+  --sl-color-accent: #6ea81d;
+  --sl-color-accent-high: #8AC733;
+  --sl-color-accent-low: #8AC733;
+}
+
+.action {
+  @apply font-bold;
+}
+
+.hero .tagline {
+  @apply font-semibold text-2xl;
+}

@@ -1,0 +1,6 @@
+packages:
+  - "packages/framework"
+  - "packages/examples"
+  - "packages/plugins/*"
+  - "packages/storage-adapters/*"
+  - "apps/*"
