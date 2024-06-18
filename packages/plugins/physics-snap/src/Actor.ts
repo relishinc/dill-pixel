@@ -4,6 +4,7 @@ import { Entity } from './Entity';
 import { System } from './System';
 import { Collision, EntityType } from './types';
 import { checkCollision } from './utils';
+import { gsap } from 'gsap';
 
 export class Actor<T = any, A extends Application = Application> extends Entity<T, A> {
   type = 'Actor';
@@ -43,6 +44,42 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   postUpdate() {
     // console.log('HIIHHIIH!', this.type);
     this.setAllRiding();
+  }
+
+  animateX(target: number, vars: gsap.TweenVars = {}, validationMethod?: (delta?: number) => boolean): gsap.core.Tween {
+    return this.animateTo('x', target, vars, validationMethod);
+  }
+
+  animateY(target: number, vars: gsap.TweenVars = {}, validationMethod?: (delta?: number) => boolean): gsap.core.Tween {
+    return this.animateTo('y', target, vars, validationMethod);
+  }
+
+  animateTo(
+    prop: 'x' | 'y',
+    target: number,
+    vars: gsap.TweenVars = {},
+    validationMethod?: (delta?: number) => boolean,
+  ): gsap.core.Tween {
+    const pos = this.position.clone();
+    const initialPosition = { [prop]: Math.round(pos[prop]) };
+    const tweenVars = Object.assign({ duration: 1, ease: 'linear.none' }, vars);
+    return gsap.to(initialPosition, {
+      [prop]: Math.round(target),
+      ...tweenVars,
+      onUpdate: () => {
+        const delta = initialPosition[prop] - this.position[prop];
+        if (validationMethod !== undefined && !validationMethod(delta)) {
+          return;
+        }
+        if (delta) {
+          if (prop === 'x') {
+            this.moveX(delta, null, null);
+          } else if (prop === 'y') {
+            this.moveY(delta, null, null);
+          }
+        }
+      },
+    });
   }
 
   moveX(

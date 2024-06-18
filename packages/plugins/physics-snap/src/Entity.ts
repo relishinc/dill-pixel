@@ -1,4 +1,4 @@
-import type { Container as PIXIContianer } from 'pixi.js';
+import type { Container as PIXIContianer, ObservablePoint, PointData } from 'pixi.js';
 import { Bounds, Rectangle, Sprite } from 'pixi.js';
 import { Application, Container } from 'dill-pixel';
 import { ICollider } from './ICollider';
@@ -39,6 +39,32 @@ export class Entity<T = any, A extends Application = Application> extends Contai
 
   set cachedBounds(value: Bounds) {
     this._cachedBounds = value;
+  }
+
+  get position(): ObservablePoint {
+    return super.position;
+  }
+
+  set position(value: PointData) {
+    value.x = Math.round(value.x);
+    value.y = Math.round(value.y);
+    super.position = value;
+  }
+
+  get x(): number {
+    return super.x;
+  }
+
+  set x(value: number) {
+    super.x = Math.round(value);
+  }
+
+  get y(): number {
+    return super.y;
+  }
+
+  set y(value: number) {
+    super.y = Math.round(value);
   }
 
   protected _dirtyBounds: boolean = true;

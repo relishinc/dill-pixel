@@ -2,6 +2,7 @@ import { Actor } from '@/entities/Actor';
 import { BaseScene } from '@/scenes/BaseScene';
 import { Button, FlexContainer, Logger } from 'dill-pixel';
 import { Text } from 'pixi.js';
+import { FONT_KUMBH_SANS } from '@/utils/Constants';
 
 export class FocusScene extends BaseScene {
   protected title = 'Focus Management';
@@ -24,8 +25,9 @@ export class FocusScene extends BaseScene {
 
     this._focusLayerLabel = this.add.text({
       text: 'Focus layer:',
-      style: { fill: 'white' },
-      x: -this.app.center.x + 100,
+      resolution: 2,
+      style: { fill: 'white', fontFamily: FONT_KUMBH_SANS },
+      x: -this.app.center.x + 30,
       y: this.app.center.y - 100,
     });
 

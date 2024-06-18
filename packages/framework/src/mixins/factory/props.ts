@@ -1,6 +1,6 @@
 import { PointLike, SpriteSheetLike, TextureLike, WithRequiredProps } from '../../utils/types';
 
-import { ButtonConfig } from '../../display/Button';
+import { ButtonConfig } from '../../ui/Button';
 import { ContainerConfig } from '../../display';
 import { FlexContainerConfig } from '../../display/FlexContainer';
 import { TextStyleOptions } from 'pixi.js';
@@ -36,12 +36,33 @@ export interface VisibilityProps {
   visible: boolean;
 }
 
-export interface ExistingProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps { }
+export interface ExistingProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {}
 
-export interface GraphicsProps extends AbstractProps, PositionProps, ScaleProps, PivotProps, VisibilityProps { }
+export interface GraphicsProps extends AbstractProps, PositionProps, ScaleProps, PivotProps, VisibilityProps {}
 
 export interface SpriteProps extends AbstractProps, TextureProps, ScaleProps, PositionProps, VisibilityProps {
   anchor: PointLike;
+}
+
+export interface AnimatedSpriteAnimationProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps {
+  texturePrefix: string;
+  sheet: SpriteSheetLike;
+  startIndex: number;
+  numFrames: number;
+  zeroPad: number;
+  autoUpdate: boolean;
+  updateAnchor: boolean;
+  loop: boolean;
+  animationSpeed: number;
+}
+
+export interface AnimatedSpriteProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps {
+  animations: { [animationName: string]: Omit<AnimatedSpriteAnimationProps, 'sheet' | 'autoUpdate'> };
+  autoPlay: boolean;
+  autoUpdate: boolean;
+  defaultAnimation: string;
+  reversible: boolean;
+  animationSpeed: number;
 }
 
 export interface TextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {
@@ -52,15 +73,21 @@ export interface TextProps extends AbstractProps, PositionProps, ScaleProps, Vis
   style: Partial<TextStyleOptions>;
 }
 
-export interface OmittedTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps { }
+export interface OmittedTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {}
 
 export const TextPropsKeys: (keyof TextProps)[] = ['text', 'anchor', 'resolution', 'roundPixels', 'style'];
 
-export interface ContainerProps extends AbstractProps, PositionProps, ScaleProps, PivotProps, VisibilityProps, ContainerConfig { }
+export interface ContainerProps
+  extends AbstractProps,
+    PositionProps,
+    ScaleProps,
+    PivotProps,
+    VisibilityProps,
+    ContainerConfig {}
 
-export interface FlexContainerProps extends ContainerProps, FlexContainerConfig { }
+export interface FlexContainerProps extends ContainerProps, FlexContainerConfig {}
 
-export interface UICanvasFactoryProps extends ContainerProps, UICanvasProps { }
+export interface UICanvasFactoryProps extends ContainerProps, UICanvasProps {}
 
 // spine
 type SpineData = {
@@ -74,8 +101,9 @@ export interface SpineProps extends AbstractProps, ScaleProps, PositionProps, Vi
   animationName: string;
   trackIndex: number;
   loop: boolean;
+  paused: boolean;
 }
 
-interface _ButtonProps extends AbstractProps, ScaleProps, PositionProps, PivotProps, VisibilityProps, ButtonConfig { }
+interface _ButtonProps extends AbstractProps, ScaleProps, PositionProps, PivotProps, VisibilityProps, ButtonConfig {}
 
 export type ButtonProps = WithRequiredProps<_ButtonProps, 'textures'>;

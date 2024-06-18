@@ -1,6 +1,7 @@
 import { ActionDetail, Button, ButtonAction, ButtonConfig, FlexContainer, SceneAssets } from 'dill-pixel';
 
 import { BaseScene } from './BaseScene';
+import { FONT_KUMBH_SANS } from '@/utils/Constants';
 
 export class AudioScene extends BaseScene {
   protected readonly title = 'Audio';
@@ -53,7 +54,11 @@ export class AudioScene extends BaseScene {
       alignItems: 'center',
     });
 
-    this.musicButtons.add.text({ text: 'MUSIC', style: { fill: 0xffffff, fontSize: 36, fontWeight: 'bold' } });
+    this.musicButtons.add.text({
+      text: 'MUSIC',
+      resolution: 2,
+      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontSize: 36, fontWeight: 'bold' },
+    });
     this.addButton(this.musicButtons, 'Cheer', {
       sounds: { hover: 'hover' },
       actions: {
@@ -92,9 +97,12 @@ export class AudioScene extends BaseScene {
       alignItems: 'center',
     });
 
-    this.sfxButtons.add.text({ text: 'SFX', style: { fill: 0xffffff, fontSize: 36, fontWeight: 'bold' } });
+    this.sfxButtons.add.text({
+      text: 'SFX',
+      resolution: 2,
+      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontSize: 36, fontWeight: 'bold' },
+    });
     this.addButton(this.sfxButtons, 'Click', { sounds: { hover: 'hover', click: 'click' } });
-
     this.addSignalConnection(
       this.app.actions('sfx').connect(this._handleSfx),
       this.app.actions('music').connect(this._handleMusic),
@@ -142,7 +150,8 @@ export class AudioScene extends BaseScene {
     btn.add.text({
       text: label,
       anchor: 0.5,
-      style: { fill: 0xffffff, fontWeight: 'bold', fontSize: 48, align: 'center' },
+      resolution: 2,
+      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
     });
 
     if (callback) {

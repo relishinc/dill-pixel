@@ -1,16 +1,16 @@
 import { AlignItems, clamp, FlexContainer, FlexDirection, FlexWrap, JustifyContent } from 'dill-pixel';
-import { Graphics, TextStyle } from 'pixi.js';
+import { Graphics, TextStyleOptions } from 'pixi.js';
 
 import { BaseScene } from './BaseScene';
 import { GUIController } from 'dat.gui';
+import { FONT_KUMBH_SANS } from '@/utils/Constants';
 
-const whiteTextStyle = (size: number) =>
-  new TextStyle({
-    fontFamily: 'Arial',
-    fontWeight: 'bold',
-    fill: 0xffffff,
-    fontSize: size ?? 24,
-  });
+const whiteTextStyle = (size: number): Partial<TextStyleOptions> => ({
+  fontFamily: FONT_KUMBH_SANS,
+  fontWeight: 'bold',
+  fill: 0xffffff,
+  fontSize: size ?? 24,
+});
 
 export class FlexContainerScene extends BaseScene {
   protected readonly title = 'Flex Container';
@@ -160,11 +160,12 @@ export class FlexContainerScene extends BaseScene {
           justifyContent: 'flex-start',
         });
         Array.from({ length: numItems }).forEach((_, n) => {
-          nested.add.text({ text: `Nested ${n + 1}`, style: whiteTextStyle(24) });
+          nested.add.text({ text: `Nested ${n + 1}`, resolution: 2, style: whiteTextStyle(24) });
         });
       }
       this.flexContainer.add.text({
         text: `Item ${i + 1}`,
+        resolution: 2,
         style: whiteTextStyle(varySizes ? clamp(Math.random() * 48 + 24, 24, 72) : 48),
       });
     });

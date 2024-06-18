@@ -1,11 +1,10 @@
-import { Camera, Container, delay, UICanvas } from 'dill-pixel';
+import { Button, Camera, Container, delay, Joystick, UICanvas } from 'dill-pixel';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
 import { Platform, PlatformMovementConfigOpts } from '@/entities/physics/Platform';
 
 import { BaseScene } from '@/scenes/BaseScene';
 import { Door } from '@/entities/physics/Door';
 import { GUIController } from 'dat.gui';
-import { Joystick } from '@/ui/Joystick';
 import { Player } from '@/entities/physics/Player';
 import { Portal } from '@/entities/physics/Portal';
 import { gsap } from 'gsap';
@@ -20,13 +19,13 @@ export class SnapPhysicsScene extends BaseScene {
   _isPaused: boolean = false;
   camera: Camera;
   protected readonly title = 'Snap Physics';
-  protected readonly subtitle = 'Arrows to move, up to jump';
+  protected readonly subtitle = 'Arrows to move, up to jump, "Q" for hoverboard';
   protected config = {
     useCamera: true,
     zoom: 1,
     useSpatialHash: true,
     gridCellSize: 300,
-    debug: true,
+    debug: false,
   };
   private _zoomController: GUIController;
 
@@ -106,7 +105,7 @@ export class SnapPhysicsScene extends BaseScene {
         height: this.app.size.height - 300,
         thickness: 20,
         padding: 0,
-        sides: ['bottom'],
+        sides: ['bottom', 'left', 'right'],
       },
       collisionResolver: this._resolveCollision,
     });
@@ -123,22 +122,20 @@ export class SnapPhysicsScene extends BaseScene {
     this._handleDebugChanged();
     this._handleUseCameraChanged();
 
-    this.app.keyboard.onKeyDown('z').connect(this._toggleZoom);
+    this.addSignalConnection(
+      this.app.keyboard.onKeyDown('z').connect(this._toggleZoom),
+      this.app.keyboard.onKeyDown('q').connect(() => {
+        this.app.input.sendAction('warp');
+      }),
+    );
   }
 
   async start() {}
 
   physicsUpdate() {
     if (this._isPaused) return;
-    if (this.app.keyboard.isKeyDown('w')) {
-      this.app.sendAction('jump');
-    }
-
-    if (this._joystick.direction.includes('left')) {
-      this.app.sendAction('move_left');
-    }
-    if (this._joystick.direction.includes('right')) {
-      this.app.sendAction('move_right');
+    if (this.player.y > this.app.size.height + 50) {
+      this.player.kill();
     }
   }
 
@@ -164,7 +161,7 @@ export class SnapPhysicsScene extends BaseScene {
     this.addPlatForm(1200, bottom - 175, 30, 330);
     this.addPlatForm(1265, bottom - 140, 100, 20, false);
     // vert
-    this.addPlatForm(1110, bottom - 200, 150, 20, false, true, {
+    this.addPlatForm(1110, bottom - 200, 150, 20, true, true, {
       speed: 1,
       startingDirection: { x: 0, y: 1 },
       range: [0, 150],
@@ -183,17 +180,17 @@ export class SnapPhysicsScene extends BaseScene {
     y: number,
     width: number,
     height = 15,
-    canJumpThroughBottom: boolean = false,
+    oneWay: boolean = false,
     moving: boolean = false,
     movementConfig?: PlatformMovementConfigOpts,
-    color: number = 0x00fff0,
+    color: number = oneWay ? 0xfff000 : 0x00fff0,
   ) {
     const platform = this.level.add.existing(
       new Platform({
         width,
         height,
         color,
-        canJumpThroughBottom,
+        oneWay,
         moving,
         movementConfig,
       }),
@@ -212,10 +209,10 @@ export class SnapPhysicsScene extends BaseScene {
   }
 
   addPortals(bottom: number) {
-    const portal0 = this.addPortal(380, bottom - 80);
+    const portal0 = this.addPortal(350, bottom - 80);
     portal0.debug = true;
     portal0.label = 'portal0';
-    const portal1 = this.addPortal(620, bottom - 80);
+    const portal1 = this.addPortal(680, bottom - 80);
     const portal2 = this.addPortal(1700, bottom - 580);
     const portal3 = this.addPortal(2000, bottom - 80);
 
@@ -244,7 +241,7 @@ export class SnapPhysicsScene extends BaseScene {
     this.player.spawn(
       {
         x: this.doors[0].x,
-        y: this.doors[0].y + this.doors[0].getBoundingBox().height * 0.5 + 7,
+        y: this.doors[0].y + this.doors[0].getBoundingBox().height * 0.5,
       },
       delay,
     );
@@ -254,23 +251,8 @@ export class SnapPhysicsScene extends BaseScene {
     this.ui = this.add.uiCanvas({ padding: 10, useAppSize: true });
     this.ui.zIndex = 100;
 
-    const jumpButton = this.make.button({
-      cursor: 'pointer',
-      scale: 0.5,
-      textures: {
-        default: 'btn_circle/up',
-        hover: 'btn_circle/over',
-        disabled: 'btn_circle/up',
-        active: 'btn_circle/down',
-      },
-      sheet: 'ui.json',
-      accessibleTitle: 'jump',
-      accessibleHint: `Press to jump`,
-    });
-
-    jumpButton.addIsDownCallback('jump', () => {
-      this.app.sendAction('jump');
-    });
+    const jumpButton = this._addButton('a', 'jump');
+    const warpButton = this._addButton('b', 'warp');
 
     this._joystick = new Joystick({
       inner: this.make.sprite({
@@ -284,12 +266,19 @@ export class SnapPhysicsScene extends BaseScene {
       innerScale: 0.7,
       outerScale: 0.7,
     });
-    this.ui.addElement(this._joystick, { align: 'bottom left', padding: { left: 20 } });
-    this.ui.addElement(jumpButton, { align: 'bottom right', padding: { bottom: 10, right: 20 } });
+
+    this.ui.addElement(this._joystick, { align: 'bottom left', padding: { left: 10, bottom: 110 } });
+    this.ui.addElement(jumpButton, { align: 'bottom right', padding: { bottom: 120, right: 100 } });
+    this.ui.addElement(warpButton, { align: 'bottom right', padding: { bottom: 220, right: 10 } });
+
+    this.app.controls.touch.addButton(jumpButton);
+    this.app.controls.touch.addButton(warpButton);
+    this.app.controls.touch.joystick = this._joystick;
 
     if (!this.app.isMobile) {
       this._joystick.visible = false;
       jumpButton.visible = false;
+      warpButton.visible = false;
     }
   }
 
@@ -346,6 +335,23 @@ export class SnapPhysicsScene extends BaseScene {
     }
   }
 
+  private _addButton(buttonId: string, action: string): Button {
+    return this.make.button({
+      cursor: 'pointer',
+      scale: 0.5,
+      textures: {
+        default: `btn_${buttonId}/up`,
+        hover: `btn_${buttonId}/over`,
+        disabled: `btn_${buttonId}/up`,
+        active: `btn_${buttonId}/down`,
+      },
+      sheet: 'ui.json',
+      accessibleTitle: action,
+      accessibleHint: `Press to ${action}`,
+      id: `${buttonId.toUpperCase()}`,
+    });
+  }
+
   private _adjustCollisionThreshold() {
     if (!this.camera) {
       return;
@@ -386,7 +392,7 @@ export class SnapPhysicsScene extends BaseScene {
         const platform: Platform = collision.entity2 as Platform;
         // eslint-disable-next-line no-case-declarations
         const player: Player = collision.entity1 as Player;
-        if (platform.canJumpThroughBottom) {
+        if (platform.oneWay) {
           if (collision.top) {
             player.setPassingThrough(platform);
           } else if (player.bottom <= platform.top) {

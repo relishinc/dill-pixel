@@ -24,15 +24,15 @@ export type PlatformConfig = {
   height: number;
   color: number;
   moving: boolean;
-  canJumpThroughBottom?: boolean;
+  oneWay?: boolean;
   movementConfig?: PlatformMovementConfig;
 };
 export type PlatformConfigOpts = {
-  width: number;
-  height: number;
+  width: number | (() => number);
+  height: number | (() => number);
   color: number;
   moving: boolean;
-  canJumpThroughBottom?: boolean;
+  oneWay?: boolean;
   movementConfig?: PlatformMovementConfigOpts;
   x: number;
   y: number;
@@ -44,7 +44,7 @@ const defaults: PlatformConfig = {
   width: 100,
   height: 10,
   color: 0x00ff00,
-  canJumpThroughBottom: false,
+  oneWay: false,
   moving: false,
 };
 
@@ -65,23 +65,27 @@ export class Platform extends SnapSolid<PlatformConfig> {
     return [...System.actors, ...System.sensors];
   }
 
-  get canJumpThroughBottom() {
-    return this.config.canJumpThroughBottom;
+  get oneWay() {
+    return this.config.oneWay;
   }
 
   get moving() {
     return this.config.moving;
   }
 
+  static resolveWidthOrHeight(widthOrHeight: number | (() => number)): number {
+    return typeof widthOrHeight === 'function' ? widthOrHeight() : widthOrHeight;
+  }
+
   static resolveConfig(config: Partial<PlatformConfigOpts>): PlatformConfig {
     return {
       x: config.x ?? 0,
       y: config.y ?? 0,
-      width: config.width ?? defaults.width,
-      height: config.height ?? defaults.height,
+      width: config.width ? Platform.resolveWidthOrHeight(config.width) : defaults.width,
+      height: config.height ? Platform.resolveWidthOrHeight(config.height) : defaults.height,
       color: config.color ?? defaults.color,
       moving: config.moving ?? defaults.moving,
-      canJumpThroughBottom: config?.canJumpThroughBottom === true,
+      oneWay: config?.oneWay === true,
       movementConfig: config.movementConfig
         ? {
             speed: resolvePointLike(config.movementConfig.speed, true),
@@ -132,12 +136,18 @@ export class Platform extends SnapSolid<PlatformConfig> {
 
     if (!this.config.moving || !this.config.movementConfig) return;
     if (this.x !== this._lastPos.x) {
-      if (Math.round(Math.abs(this.x - this._startPos.x)) >= Math.round(this.config.movementConfig.range.x * 0.5)) {
+      if (
+        Math.round(Math.abs(this.x - this._startPos.x)) >=
+        Math.round(Math.abs(this.config.movementConfig.range.x * 0.5 - this.config.movementConfig.speed.x))
+      ) {
         this.config.movementConfig.startingDirection.x *= -1;
       }
     }
     if (this.y !== this._lastPos.y) {
-      if (Math.round(Math.abs(this.y - this._startPos.y)) >= Math.round(this.config.movementConfig.range.y * 0.5)) {
+      if (
+        Math.round(Math.abs(this.y - this._startPos.y)) >=
+        Math.round(Math.abs(this.config.movementConfig.range.y * 0.5 - this.config.movementConfig.speed.y))
+      ) {
         this.config.movementConfig.startingDirection.y *= -1;
       }
     }
@@ -148,7 +158,7 @@ export class Platform extends SnapSolid<PlatformConfig> {
 
   protected initialize() {
     this.view = this.add
-      .graphics({ x: -this.config.width / 2, y: -this.config.height / 2 })
+      .graphics({ x: Math.round(-this.config.width / 2), y: Math.round(-this.config.height / 2) })
       .rect(0, 0, this.config.width, this.config.height)
       .fill({ color: this.config.color });
 

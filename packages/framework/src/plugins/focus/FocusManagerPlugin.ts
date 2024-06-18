@@ -1,4 +1,4 @@
-import { Bounds, Container, PointerEvents, Point } from 'pixi.js';
+import { Bounds, Container, Point, PointerEvents } from 'pixi.js';
 import { IApplication } from '../../core';
 import { Signal } from '../../signals';
 import type { Constructor, PointLike as DillPixelPointLike } from '../../utils';
@@ -85,7 +85,7 @@ class FocusLayer implements IFocusLayer {
   private _focusables: IFocusable[] = [];
   private _currentIndex: number = 0;
 
-  constructor(public id: string | number) { }
+  constructor(public id: string | number) {}
 
   private _current: boolean = false;
 
@@ -172,7 +172,6 @@ class FocusLayer implements IFocusLayer {
         return a.position.x - b.position.x;
       });
     }
-    Logger.log(this._focusables);
   }
 
   setCurrentFocusable(focusable: IFocusable | null) {
@@ -482,7 +481,7 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public postInitialize(_app: IApplication): Promise<void> | void { }
+  public postInitialize(_app: IApplication): Promise<void> | void {}
 
   public clearFocus() {
     this._setTarget(null);

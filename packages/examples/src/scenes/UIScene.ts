@@ -30,7 +30,7 @@ export class UIScene extends BaseScene {
 
     const input = this.list.add.existing(
       new Input({
-        style: { align: 'left', fontSize: 30 },
+        style: { align: 'left', fontSize: 32 },
         placeholder: { text: 'I am  huge', alpha: 0.5, color: 0x666666 },
         minWidth: 400,
         padding: [20, 30],

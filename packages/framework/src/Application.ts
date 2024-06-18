@@ -1,33 +1,34 @@
+import type {
+  IFocusManagerPlugin,
+  Ii18nPlugin,
+  IInputPlugin,
+  IKeyboardPlugin,
+  IPlugin,
+  IPopupManagerPlugin,
+} from './plugins';
 import {
   Action,
   ActionContext,
   ActionSignal,
   IAssetsPlugin,
   IAudioManagerPlugin,
+  IControls,
   IResizerPlugin,
   ISceneManagerPlugin,
   IWebEventsPlugin,
 } from './plugins';
 import type { AppConfig, IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals } from './core';
-import type { AssetInitOptions, AssetsManifest, DestroyOptions, Renderer, RendererDestroyOptions } from 'pixi.js';
-import { Assets, Application as PIXIPApplication, Point, isMobile } from 'pixi.js';
-import type {
-  IFocusManagerPlugin,
-  IInputPlugin,
-  IKeyboardPlugin,
-  IPlugin,
-  IPopupManagerPlugin,
-  Ii18nPlugin,
-} from './plugins';
-import type { IStorageAdapter, IStore } from './store';
-import type { ImportListItem, Size } from './utils';
-import { Logger, bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise } from './utils';
 import { coreFunctionRegistry, coreSignalRegistry } from './core';
+import type { AssetInitOptions, AssetsManifest, DestroyOptions, Renderer, RendererDestroyOptions } from 'pixi.js';
+import { Application as PIXIPApplication, Assets, isMobile, Point } from 'pixi.js';
+import type { IStorageAdapter, IStore } from './store';
+import { Store } from './store';
+import type { ImportListItem, Size } from './utils';
+import { bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from './utils';
 
 import type { ICaptionsPlugin } from './plugins/captions';
 import type { IVoiceOverPlugin } from './plugins/audio/VoiceOverPlugin';
 import { Signal } from './signals';
-import { Store } from './store';
 import { defaultPlugins } from './plugins/defaults';
 
 const defaultApplicationOptions: Partial<IApplicationOptions> = {
@@ -143,6 +144,14 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       this._input = this.getPlugin<IInputPlugin>('input');
     }
     return this._input;
+  }
+
+  // controls
+  public get controls(): IControls {
+    if (!this._input) {
+      this._input = this.getPlugin<IInputPlugin>('input');
+    }
+    return this._input.controls;
   }
 
   // store

@@ -1,18 +1,24 @@
 import { BaseScene } from '@/scenes/BaseScene';
-import { FederatedPointerEvent, Texture, Ticker } from 'pixi.js';
-import { ArcadePhysics, Body, default as ArcadePhysicsPlugin, Entity } from '@dill-pixel/plugin-arcade-physics';
-import { Camera, Container, SpineAnimation, UICanvas } from 'dill-pixel';
-import { Joystick } from '@/ui/Joystick';
+import { Texture, Ticker } from 'pixi.js';
+import {
+  ArcadePhysics,
+  Body,
+  default as ArcadePhysicsPlugin,
+  Entity,
+  StaticBody,
+} from '@dill-pixel/plugin-arcade-physics';
+import { Button, Camera, Container, Joystick, SpineAnimation, UICanvas } from 'dill-pixel';
 
 class Player extends Entity {
   private _jumpTimer: number = 0;
   private _time: number = 0;
+  private _jumping: boolean;
 
   constructor() {
     super();
   }
 
-  protected _view: SpineAnimation;
+  protected declare _view: SpineAnimation;
 
   get view(): SpineAnimation {
     return this._view;
@@ -47,26 +53,20 @@ class Player extends Entity {
 
   update(ticker: Ticker) {
     this.body.velocity.x = 0;
-    if (
-      (this.app.keyboard.isKeyDown('ArrowUp') ||
-        this.app.keyboard.isKeyDown(' ') ||
-        this.app.keyboard.isKeyDown('w')) &&
-      this.body.onFloor() &&
-      this._time > this._jumpTimer
-    ) {
+    if (this.app.controls.isActionActive('jump') && this.body.onFloor() && this._time > this._jumpTimer) {
       this._jumping = true;
       this.body.velocity.y = -1000;
     } else if (this.body.onFloor()) {
       this._jumping = false;
     }
 
-    if (this.app.keyboard.isKeyDown('ArrowLeft') || this.app.keyboard.isKeyDown('a')) {
+    if (this.app.controls.isActionActive('move_left')) {
       this.view.spine.scale.x = -1;
       this.body.velocity.x = -150;
       if (!this._jumping && this.view.getCurrentAnimation() !== 'run') {
         this.view.setAnimation('run', true);
       }
-    } else if (this.app.keyboard.isKeyDown('ArrowRight') || this.app.keyboard.isKeyDown('d')) {
+    } else if (this.app.controls.isActionActive('move_right')) {
       this.view.spine.scale.x = 1;
       this.body.velocity.x = 150;
       if (!this._jumping && this.view.getCurrentAnimation() !== 'run') {
@@ -175,7 +175,7 @@ export class ArcadePhysicsScene extends BaseScene {
   protected readonly subtitle = 'Arrows to move, up to jump';
   protected level: Container;
   protected actors: Box[] = [];
-  protected platforms: Box[] = [];
+  protected platforms: Platform[] = [];
   protected player: Player;
   protected config = {
     useCamera: true,
@@ -223,6 +223,7 @@ export class ArcadePhysicsScene extends BaseScene {
 
   async initialize() {
     await super.initialize();
+    this.app.input.setActionContext('game');
     this.app.focus.addFocusLayer(this.id);
     this.eventMode = 'static';
     // this.on('click', this._addBox);
@@ -255,23 +256,7 @@ export class ArcadePhysicsScene extends BaseScene {
     this.ui = this.add.uiCanvas({ padding: 10, useAppSize: true });
     this.ui.zIndex = 100;
 
-    const jumpButton = this.make.button({
-      cursor: 'pointer',
-      scale: 0.5,
-      textures: {
-        default: 'btn_circle/up',
-        hover: 'btn_circle/over',
-        disabled: 'btn_circle/up',
-        active: 'btn_circle/down',
-      },
-      sheet: 'ui.json',
-      accessibleTitle: 'jump',
-      accessibleHint: `Press to jump`,
-    });
-
-    jumpButton.addIsDownCallback('jump', () => {
-      this.app.sendAction('jump');
-    });
+    const jumpButton = this._addButton('a', 'jump');
 
     this._joystick = new Joystick({
       inner: this.make.sprite({
@@ -286,14 +271,15 @@ export class ArcadePhysicsScene extends BaseScene {
       outerScale: 0.7,
     });
 
-    this.ui.addElement(this._joystick, { align: 'bottom left', padding: { left: 20 } });
-    this.ui.addElement(jumpButton, { align: 'bottom right', padding: { bottom: 10, right: 20 } });
+    this.ui.addElement(this._joystick, { align: 'bottom left', padding: { left: 10, bottom: 110 } });
+    this.ui.addElement(jumpButton, { align: 'bottom right', padding: { bottom: 120, right: 10 } });
+
+    this.app.controls.touch.addButton(jumpButton);
+    this.app.controls.touch.joystick = this._joystick;
 
     if (!this.app.isMobile) {
-      if (!this.app.isMobile) {
-        this._joystick.visible = false;
-        jumpButton.visible = false;
-      }
+      this._joystick.visible = false;
+      jumpButton.visible = false;
     }
 
     this.physics.world.bounds.x -= this.app.size.width * 0.5;
@@ -358,10 +344,27 @@ export class ArcadePhysicsScene extends BaseScene {
     }
   }
 
-  private _squish(a: Body, b: Body) {
+  private _addButton(buttonId: string, action: string): Button {
+    return this.make.button({
+      cursor: 'pointer',
+      scale: 0.5,
+      textures: {
+        default: `btn_${buttonId}/up`,
+        hover: `btn_${buttonId}/over`,
+        disabled: `btn_${buttonId}/up`,
+        active: `btn_${buttonId}/down`,
+      },
+      sheet: 'ui.json',
+      accessibleTitle: action,
+      accessibleHint: `Press to ${action}`,
+      id: `${buttonId.toUpperCase()}`,
+    });
+  }
+
+  private _squish(a: Body | StaticBody, b: Body | StaticBody) {
     // logic to squish player
-    const platform = a;
-    const player = b;
+    const platform = a as StaticBody;
+    const player = b as Body;
     if (
       player.onFloor() &&
       platform.bottom > player.top + 1 &&
@@ -383,20 +386,5 @@ export class ArcadePhysicsScene extends BaseScene {
       });
     });
     this.level.add.existing(platform);
-  }
-
-  private _addBox(e: FederatedPointerEvent) {
-    const pos = this.level.toLocal(e.global);
-    const box = new Box(Math.random() > 0.5);
-    box.x = pos.x;
-    box.y = pos.y;
-    this.level.add.existing(box);
-    this.actors.forEach((b) => {
-      this.physics.add.collider(b.body, box.body);
-    });
-    this.platforms.forEach((b) => {
-      this.physics.add.collider(b.body, box.body);
-    });
-    this.actors.push(box);
   }
 }

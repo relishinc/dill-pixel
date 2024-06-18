@@ -34,13 +34,13 @@ export class EndlessRunner {
     EndlessRunner.cacheTotalWidth();
   }
 
-  static update(deltaTime: number) {
+  static update() {
     EndlessRunner.segments.forEach((segment) => {
       if (segment.x <= -segment.width) {
         EndlessRunner.removeSegment(segment);
         return;
       }
-      segment.update(deltaTime);
+      segment.update();
     });
     if (System.grid) {
       System.grid.updateAll();

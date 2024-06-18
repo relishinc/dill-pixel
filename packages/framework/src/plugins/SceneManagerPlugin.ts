@@ -4,7 +4,7 @@ import { Application } from '../Application';
 import type { IScene } from '../display';
 import { Signal } from '../signals';
 import type { Constructor, SceneImportList } from '../utils';
-import { bindAllMethods, createQueue, getDynamicModuleFromImportListItem, isDev, Logger, Queue } from '../utils';
+import { bindAllMethods, createQueue, getDynamicModuleFromImportListItem, isDev, Queue } from '../utils';
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
 
@@ -14,14 +14,18 @@ export interface ISceneManagerPlugin extends IPlugin {
   onSceneChangeComplete: Signal<(detail: { current: string }) => void>;
   loadScreen?: IScene;
   view: Container;
-  scenes: SceneImportList<IScene>;
+  list: SceneImportList<IScene>;
   currentScene: IScene;
+  readonly ids: string[];
+  readonly defaultScene: string;
 
   setDefaultLoadMethod(method: LoadSceneMethod): void;
 
   loadDefaultScene(): Promise<void>;
 
   loadScene(sceneIdOrLoadSceneConfig: LoadSceneConfig | string): Promise<void>;
+
+  getSceneFromHash(): string | null;
 }
 
 export type LoadSceneMethod =
@@ -53,7 +57,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
   public isFirstScene: boolean = true;
 
   // scene management
-  public scenes: SceneImportList<IScene> = [];
+  public list: SceneImportList<IScene> = [];
   public currentScene: IScene;
   public defaultScene: string;
   private _sceneModules: Map<string, Constructor<IScene>> = new Map();
@@ -65,6 +69,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
   // debug
   private _debugVisible: boolean = false;
   private _debugMenu: HTMLDivElement;
+  private _useHash: boolean = false;
 
   // debug
   private _sceneSelect: HTMLSelectElement;
@@ -72,6 +77,10 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
   constructor() {
     super();
     bindAllMethods(this);
+  }
+
+  get ids(): string[] {
+    return this.list.map((s) => s.id);
   }
 
   public setDefaultLoadMethod(method: LoadSceneMethod) {
@@ -83,17 +92,20 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
   public initialize(app: IApplication): Promise<void> {
     this._debugVisible =
       this.app.config?.showSceneDebugMenu === true || (isDev && this.app.config?.showSceneDebugMenu !== false);
+    this._useHash = app.config?.useHash === true || this._debugVisible;
     this.view.sortableChildren = true;
-    this.scenes = app.config?.scenes || [];
-    if (this._debugVisible) {
-      this.defaultScene = this._getSceneFromHash() || '';
+    this.list = app.config?.scenes || [];
+    if (this._debugVisible || this._useHash) {
+      this.defaultScene = this.getSceneFromHash() || '';
     }
-    this.defaultScene = this.defaultScene || app.config?.defaultScene || this.scenes?.[0]?.id;
+    this.defaultScene = this.defaultScene || app.config?.defaultScene || this.list?.[0]?.id;
     this._defaultLoadMethod = app.config.defaultSceneLoadMethod || 'immediate';
-    Logger.log('SceneManager initialize::', this.scenes);
 
     if (this._debugVisible) {
       this._createDebugMenu();
+    }
+    if (this._useHash) {
+      this._listenForHashChange();
     }
     return Promise.resolve(undefined);
   }
@@ -126,7 +138,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
     }
 
     // check if the scene item exists
-    const sceneItem = this.scenes.find((scene) => scene.id === newSceneId);
+    const sceneItem = this.list.find((scene) => scene.id === newSceneId);
     if (!sceneItem) {
       throw new Error(`Scene item not found  for id ${newSceneId}`);
     }
@@ -202,6 +214,21 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
     this._queue.start();
   }
 
+  public getSceneFromHash(): string | null {
+    let hash = window?.location?.hash;
+    if (hash) {
+      hash = hash.replace('#', '');
+      if (hash.length > 0) {
+        for (let i = 0; i < this.list.length; i++) {
+          if (this.list[i]?.id?.toLowerCase() === hash.toLowerCase()) {
+            return this.list[i].id;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   protected getCoreSignals(): string[] {
     return ['onSceneChangeStart', 'onSceneChangeComplete'];
   }
@@ -210,8 +237,17 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
     return ['loadScene'];
   }
 
+  private _listenForHashChange() {
+    window.addEventListener('hashchange', () => {
+      const sceneId = this.getSceneFromHash();
+      if (sceneId) {
+        this.loadScene(sceneId);
+      }
+    });
+  }
+
   private async _createCurrentScene() {
-    const sceneItem = this.scenes.find((scene) => scene.id === this._currentSceneId)!;
+    const sceneItem = this.list.find((scene) => scene.id === this._currentSceneId)!;
     let SceneClass: Constructor<IScene> | undefined = undefined;
 
     if (this._sceneModules.has(this._currentSceneId)) {
@@ -326,6 +362,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
 
   private _createDebugMenu() {
     this._debugMenu = document.createElement('div');
+    this._debugMenu.id = 'scene-debug';
     this._debugMenu.style.cssText =
       'position: absolute; bottom: 0; left:0; width:48px; height:48px; z-index: 1000; background-color:rgba(0,0,0,0.8); color:white; border-top-right-radius:8px;';
     const icon = document.createElement('i');
@@ -347,7 +384,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
 
     this._sceneSelect.appendChild(defaultOption);
 
-    this.scenes.forEach((value) => {
+    this.list.forEach((value) => {
       const option = document.createElement('option');
       option.value = value.id;
       option.innerHTML = value?.debugLabel || value.id;
@@ -371,13 +408,6 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
       }
     });
 
-    window.addEventListener('hashchange', () => {
-      const sceneId = this._getSceneFromHash();
-      if (sceneId) {
-        this.loadScene(sceneId);
-      }
-    });
-
     this.onSceneChangeStart.connect(this._disableDebugMenu);
     this.onSceneChangeComplete.connect(this._enableDebugMenu);
   }
@@ -388,20 +418,5 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
 
   private _disableDebugMenu() {
     this._debugMenu?.querySelector('select')?.setAttribute('disabled', 'disabled');
-  }
-
-  private _getSceneFromHash(): string | null {
-    let hash = window?.location?.hash;
-    if (hash) {
-      hash = hash.replace('#', '');
-      if (hash.length > 0) {
-        for (let i = 0; i < this.scenes.length; i++) {
-          if (this.scenes[i]?.id?.toLowerCase() === hash.toLowerCase()) {
-            return this.scenes[i].id;
-          }
-        }
-      }
-    }
-    return null;
   }
 }

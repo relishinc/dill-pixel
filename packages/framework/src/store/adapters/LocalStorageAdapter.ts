@@ -1,5 +1,4 @@
 import type {IApplication} from '../../core';
-import {Logger} from '../../utils';
 import {StorageAdapter} from './StorageAdapter';
 
 /**
@@ -44,7 +43,6 @@ export class LocalStorageAdapter extends StorageAdapter {
    * @param {Partial<ILocalStorageAdapterOptions>} options The options to initialize the adapter with.
    */
   public initialize(_app: IApplication, options?: Partial<ILocalStorageAdapterOptions>): void {
-    Logger.log('LocalStorageAdapter initialized');
     this.namespace = options?.namespace || '';
   }
 

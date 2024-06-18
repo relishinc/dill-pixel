@@ -1,4 +1,4 @@
-import { create, Logger } from 'dill-pixel';
+import { create } from 'dill-pixel';
 import { Application } from './Application';
 import { StartScene } from './scenes/StartScene';
 
@@ -9,5 +9,3 @@ const app = await create(Application, {
   defaultSceneLoadMethod: 'exitEnter',
   scenes: [{ id: 'start', module: StartScene }],
 });
-
-Logger.log('Dill Pixel Application created', app);

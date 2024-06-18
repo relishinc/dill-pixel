@@ -1,7 +1,8 @@
-import { Container, Focusable, IPopup, Interactive, Popup } from 'dill-pixel';
+import { Container, Focusable, Interactive, IPopup, Popup } from 'dill-pixel';
 import { Graphics, Text } from 'pixi.js';
 
 import { gsap } from 'gsap';
+import { FONT_KUMBH_SANS } from '@/utils/Constants';
 
 const _Button = Focusable(Interactive(Container));
 
@@ -39,10 +40,12 @@ export class ExamplePopup extends Popup implements IPopup {
     this.title = this.window.add.existing(
       new FocusableText({
         text: this.config.data?.title ?? 'Example Popup',
+        resolution: 2,
+        roundPixels: true,
         style: {
+          fontFamily: FONT_KUMBH_SANS,
           fill: 'white',
           fontWeight: 'bold',
-          fontFamily: 'Arial',
         },
       }),
       {

@@ -5,12 +5,15 @@ import {Application} from '../Application';
 import type {IApplication} from '../core';
 import type {Size} from '../utils';
 import {bindAllMethods} from '../utils';
+import {Signal} from '../signals';
 
 /**
  * Interface for the Container class.
  */
 export interface IContainer {
   app: IApplication;
+
+  onDestroy: Signal<() => void>;
 
   destroy(options?: DestroyOptions): void;
 
@@ -42,6 +45,7 @@ export class Container<A extends Application = Application>
   extends Animated(WithSignals(Factory()))
   implements IContainer
 {
+  onDestroy: Signal<() => void> = new Signal();
   __dill_pixel_method_binding_root = true;
   private __config: ContainerConfig;
 
@@ -91,6 +95,7 @@ export class Container<A extends Application = Application>
     if (this.__config.autoUpdate) {
       this.app.ticker.remove(this.update, this);
     }
+    this.onDestroy.emit();
     super.destroy(options);
   }
 

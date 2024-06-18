@@ -201,6 +201,16 @@
       "name": "platformer",
       "assets": [
         {
+          "alias": ["platformer/characters/characters.json", "characters.json"],
+          "src": ["platformer/characters/characters@1x.json", "platformer/characters/characters@0.5x.json"],
+          "data": {
+            "tags": {
+              "tps": true,
+              "m": true
+            }
+          }
+        },
+        {
           "alias": ["platformer/sheet/sheet.json"],
           "src": ["platformer/sheet/sheet@1x.json", "platformer/sheet/sheet@0.5x.json"],
           "data": {

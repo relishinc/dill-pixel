@@ -635,7 +635,6 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
         }
       }
     }
-    Logger.log(`Sound with id:${originalSoundId} is now mapped to id:${soundId}`);
     this._idMap.set(soundId, soundId);
     return soundId;
   }

@@ -1,10 +1,11 @@
-import { ActionDetail, Logger, PointLike, resolvePointLike, Signal, SpineAnimation } from 'dill-pixel';
+import { ActionDetail, PointLike, resolvePointLike, Signal, SpineAnimation } from 'dill-pixel';
 
 import { gsap } from 'gsap';
 import { Bounds, Point, Rectangle } from 'pixi.js';
 import { Actor as SnapActor, Collision, Entity } from '@dill-pixel/plugin-snap-physics';
 import { Platform } from './Platform';
 import { FX } from '@/entities/physics/FX';
+import { Portal, PortalEnterDetail } from '@/entities/physics/Portal';
 
 export class Player extends SnapActor {
   declare view: SpineAnimation;
@@ -19,8 +20,11 @@ export class Player extends SnapActor {
   private _jumpPower: number = 0;
   private _jumpTimeElapsed: number = 0;
   private _hitHead: boolean = false;
-  private _isMoving: boolean = false;
   private _inPlay: boolean = false;
+  private _moveAmount: number = 0;
+  private _warpAnimation: gsap.core.Tween;
+  private _isWarping: boolean = false;
+  private _paused: boolean = false;
 
   constructor() {
     super();
@@ -39,8 +43,7 @@ export class Player extends SnapActor {
 
   get cachedBounds() {
     if (!this._cachedBounds || this._dirtyBounds) {
-      const bounds = new Rectangle(0, 0, 60, 120);
-      this._cachedBounds = bounds;
+      this._cachedBounds = new Rectangle(0, 0, 60, 120);
     }
     return this._cachedBounds;
   }
@@ -61,39 +64,60 @@ export class Player extends SnapActor {
   }
 
   public update(deltaTime: number) {
-    if (!this._inPlay) {
+    if (!this._inPlay || !this.system.enabled) {
       return;
     }
 
     this._velocity.y = this.system.gravity - (this._velocity.y < 0 ? this._jumpPower : -this.system.gravity * 0.25);
 
-    if (this._isJumping) {
+    if (this._moveAmount === 0) {
+      if (!this._isWarping) {
+        if (this.view.getCurrentAnimation() !== 'idle') {
+          this.view.setAnimation('idle', true);
+        }
+      }
+    } else if (!this._isWarping) {
+      if (this.view.getCurrentAnimation() !== 'run') {
+        this.view.setAnimation('run', true);
+      }
+      if (this._checkConstraints()) {
+        this._moveAmount = 0;
+      } else {
+        this.view.spine.scale.x = Math.sign(this._moveAmount);
+        if (this._moveAmount !== 0) {
+          this.moveX(this._moveAmount, this._handleCollision);
+        }
+      }
+    }
+    if (this._isWarping) {
+      if (this.view.getCurrentAnimation() !== 'hoverboard') {
+        this.view.setAnimation('hoverboard', true);
+      }
+      this._velocity.y = 0;
+    } else if (this._isJumping) {
+      if (this.view.getCurrentAnimation() !== 'run') {
+        this.view.setAnimation('run', true);
+      }
       this._jumpTimeElapsed += deltaTime;
       this._jumpPower -= this._velocity.y < 0 ? 1 : 3;
     }
 
     this.moveY(this._velocity.y, this._handleCollision, this._disableJump);
 
-    if (!this._isJumping && !this._isMoving) {
-      if (this.view.getCurrentAnimation() !== 'idle') {
-        this.view.setAnimation('idle', true);
-      }
-    }
-
     if (this._hitHead && this._velocity.y < 0) {
       this._jumpPower = 0;
       this._hitHead = false;
     }
 
-    this._isMoving = false;
-
     if (this.mostRiding && this.mostRiding.type === 'Platform') {
       this.mostRiding.view.tint = 0x0;
     }
+
+    this._moveAmount = 0;
   }
 
   public squish(collision: Collision, pushingEntity: Entity, direction?: Point) {
-    if (collision.bottom && pushingEntity.type === 'Platform' && (pushingEntity as Platform).canJumpThroughBottom) {
+    if (collision.bottom && pushingEntity.type === 'Platform' && (pushingEntity as Platform).oneWay) {
       return;
     }
     let shouldKill = false;
@@ -143,12 +167,39 @@ export class Player extends SnapActor {
       return;
     }
     this._inPlay = false;
+    this._canJump = this._isJumping = false;
+    this._jumpPower = 0;
+    this._jumpTimeElapsed = 0;
+    this._isWarping = false;
+    this.cancelWarp();
+    this.view.setAnimation('idle');
     this._spawnFX();
     this.onKilled.emit();
   }
 
   public lookRight() {
     this.view.spine.scale.x = 1;
+  }
+
+  public cancelWarp() {
+    this._isWarping = false;
+    this._warpAnimation?.kill();
+  }
+
+  destroy() {
+    this.cancelWarp();
+    super.destroy();
+  }
+
+  _onEnterPortal({ entity }: PortalEnterDetail) {
+    if (entity && (entity as unknown as Player) === this) {
+      this.cancelWarp();
+    }
+  }
+
+  _handleTogglePause() {
+    this._paused = !this._paused;
+    this._warpAnimation?.paused(this._paused);
   }
 
   protected initialize() {
@@ -158,12 +209,21 @@ export class Player extends SnapActor {
       loop: true,
     });
     this.view.scale.set(0.2);
-    Logger.log(this.view.animationNames);
 
     this.addSignalConnection(
+      this.app.actions('toggle_pause').connect(this._handleTogglePause),
       this.app.actions('move_left').connect(this._handleAction),
       this.app.actions('move_right').connect(this._handleAction),
       this.app.actions('jump').connect(this._handleAction),
+      this.app.actions('warp').connect(this._handleAction),
+      Portal.onEnter.connect(this._onEnterPortal),
+    );
+  }
+
+  private _checkConstraints(dx = this._moveAmount) {
+    return (
+      (dx < 0 && this.constraints?.x?.min !== undefined && this.x - dx < this.constraints.x.min) ||
+      (dx > 0 && this.constraints?.x?.max !== undefined && this.x + dx > this.constraints.x.max)
     );
   }
 
@@ -195,44 +255,41 @@ export class Player extends SnapActor {
   }
 
   private _handleAction(actionDetail: ActionDetail) {
-    if (!this._inPlay) {
+    if (!this._inPlay || !this.system.enabled) {
       return;
     }
-    let amount;
     switch (actionDetail.id) {
       case 'move_left':
-        amount = -this.speed;
-        this.view.spine.scale.x = -1;
-        if (this.constraints?.x?.min !== undefined && this.x - amount < this.constraints.x.min) {
-          amount = 0;
-        }
-        this.moveX(amount, this._handleCollision);
-        if (this.view.getCurrentAnimation() !== 'run') {
-          this.view.setAnimation('run', true);
-        }
-        this._isMoving = true;
+        this._moveAmount = -this.speed;
         break;
       case 'move_right':
-        amount = this.speed;
-        this.view.spine.scale.x = 1;
-        if (this.constraints?.x?.max !== undefined && this.x + amount > this.constraints.x.max) {
-          amount = 0;
-        }
-        this.moveX(amount, this._handleCollision);
-        if (this.view.getCurrentAnimation() !== 'run') {
-          this.view.setAnimation('run', true);
-        }
-        this._isMoving = true;
+        this._moveAmount = this.speed;
         break;
       case 'jump':
-        // this.view.setAnimation('idle');
         this._jump();
         break;
+      case 'warp':
+        this._warp();
+        break;
+    }
+  }
+
+  private _warp() {
+    if (!this._isWarping) {
+      this._warpAnimation = this.animateX(this.x + 400 * this.view.spine.scale.x, {
+        duration: 1,
+        ease: 'power3.out',
+        onComplete: () => {
+          this._isWarping = false;
+        },
+      });
+      this._isWarping = true;
     }
   }
 
   private _jump() {
     if (!this._isJumping && this._canJump) {
+      this.cancelWarp();
       this._canJump = false;
       this._isJumping = true;
       this._jumpPower = this.system.gravity * 3;

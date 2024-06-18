@@ -1,5 +1,5 @@
 import { Collision, EntityType, Side, SpatialHashGridFilter } from './types';
-import { Container, Graphics, Point, Ticker } from 'pixi.js';
+import { Container, Graphics, Point, Rectangle, Ticker } from 'pixi.js';
 import { IApplication, ICamera, Logger, Signal } from 'dill-pixel';
 
 import { Actor } from './Actor';
@@ -62,7 +62,6 @@ export class System {
   static preUpdateHooks: Set<(deltaTime: number) => void> = new Set();
   static postUpdateHooks: Set<(deltaTime: number) => void> = new Set();
   private static gfx: Graphics;
-  private static _ticker: Ticker;
 
   private static _enabled: boolean = false;
 
@@ -73,19 +72,9 @@ export class System {
   static set enabled(value: boolean) {
     System._enabled = value;
     if (System._enabled) {
-      if (!System._ticker) {
-        System._ticker = new Ticker();
-      }
-      System._ticker.maxFPS = System.fps;
-      System._ticker.start();
-      System._ticker.add(System.update);
+      System.app.ticker.add(System.update);
     } else {
-      if (System._ticker) {
-        System._ticker.stop();
-        System._ticker.destroy();
-        // @ts-expect-error ticker can't be null
-        System._ticker = null;
-      }
+      System.app.ticker.remove(System.update);
     }
   }
 
@@ -229,6 +218,16 @@ export class System {
     });
   }
 
+  static roundBoundingBox(bb: Rectangle) {
+    // round everything
+    bb.x = Math.round(bb.x);
+    bb.y = Math.round(bb.y);
+    bb.width = Math.round(bb.width);
+    bb.height = Math.round(bb.height);
+
+    return bb;
+  }
+
   /**
    * @param entity1
    * @param entity2
@@ -236,6 +235,8 @@ export class System {
    * @param dy
    */
   static getRectangleIntersection(entity1: Entity, entity2: Entity, dx: number, dy: number): boolean {
+    // const bounds1 = System.roundBoundingBox(entity1.getBoundingBox());
+    // const bounds2 = System.roundBoundingBox(entity2.getBoundingBox().clone());
     const bounds1 = entity1.getBoundingBox();
     const bounds2 = entity2.getBoundingBox().clone();
     bounds2.x += dx;
@@ -337,7 +338,7 @@ export class System {
 
     if (sides.includes('right')) {
       wall = container.addChild(new Wall({ width: size, height }));
-      wall.position.set(pos.x + width + padding + size * 0.5, pos.y + height * 0.5);
+      wall.position.set(pos.x + width + padding - size * 0.5, pos.y + height * 0.5);
       System.worldBounds.push(wall);
     }
 

@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "publish:framework": "cd packages/framework && npm publish --tag next",
     "build:framework": "turbo build --filter={./packages/framework}",
-    "build:packages": "turbo build --filter={./packages/plugins/*,./packages/storage-adapters/*,./packages/framework}",
+    "publish:framework": "cd packages/framework && npm publish --tag next",
+    "build:packages": "turbo build --filter={./packages/plugins/*,./packages/storage-adapters/*}",
     "publish:packages": "node scripts/publish-packages.mjs packages/plugins/*,packages/storage-adapters/*",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

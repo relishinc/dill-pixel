@@ -1,11 +1,10 @@
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
-import { Container, UICanvas } from 'dill-pixel';
+import { Button, Container, Joystick, UICanvas } from 'dill-pixel';
 import { Platform, PlatformConfig, PlatformMovementConfigOpts } from '@/entities/physics/Platform';
 
 import { BaseScene } from '@/scenes/BaseScene';
 import { Door } from '@/entities/physics/Door';
 import { EndlessRunner } from '@/entities/physics/EndlessRunner';
-import { Joystick } from '@/ui/Joystick';
 import { Player } from '@/entities/physics/Player';
 import { Portal } from '@/entities/physics/Portal';
 import { SegmentConfig } from '@/entities/physics/Segment';
@@ -19,7 +18,7 @@ export class EndlessRunnerScene extends BaseScene {
   portals: Portal[] = [];
   _isPaused: boolean = false;
   protected readonly title = 'Snap Physics - Endless Runner';
-  protected readonly subtitle = 'Arrows, WASD to move, up / spacebar to jump, "P" to pause.';
+  protected readonly subtitle = 'Arrows to move, up to jump, "Q" for hoverboard, "P" to pause';
   protected config = {
     useSpatialHash: true,
     gridCellSize: 300,
@@ -88,7 +87,7 @@ export class EndlessRunnerScene extends BaseScene {
 
     EndlessRunner.initialize(this.app.size.width * 0.75, [1, 0], this.level);
 
-    while (!EndlessRunner.hasEnoughSegments) {
+    while (EndlessRunner.currentWidth < EndlessRunner.width * 0.75) {
       this.getEmptySegment(bottom);
     }
 
@@ -98,13 +97,18 @@ export class EndlessRunnerScene extends BaseScene {
 
     this._handleDebugChanged();
 
-    this.addSignalConnection(this.app.actions('pause').connect(this._togglePause));
+    this.addSignalConnection(
+      this.app.actions('toggle_pause').connect(this._togglePause),
+      this.app.keyboard.onKeyDown('q').connect(() => {
+        this.app.input.sendAction('warp');
+      }),
+    );
     this.addControls();
   }
 
-  physicsUpdate(deltaTime: number) {
+  physicsUpdate() {
     if (this._isPaused) return;
-    EndlessRunner.update(deltaTime);
+    EndlessRunner.update();
 
     if (this._joystick.direction.includes('left')) {
       this.app.sendAction('move_left');
@@ -152,7 +156,7 @@ export class EndlessRunnerScene extends BaseScene {
       platforms: [
         this.getPlatFormConfig(300, bottom - 50, 400, 20),
         this.getPlatFormConfig(250, bottom - 100, 30, 100),
-        this.getPlatFormConfig(370, bottom - 300, 200, 30),
+        this.getPlatFormConfig(385, bottom - 300, 200, 20),
       ],
     };
 
@@ -160,9 +164,9 @@ export class EndlessRunnerScene extends BaseScene {
       width: 500,
       platforms: [
         this.getPlatFormConfig(250, bottom, 500, 20),
-        this.getPlatFormConfig(250, bottom - 88, 30, 160),
-        this.getPlatFormConfig(205, bottom - 120, 60, 20, false),
-        this.getPlatFormConfig(295, bottom - 120, 60, 20, false),
+        this.getPlatFormConfig(250, bottom - 100, 30, 200),
+        this.getPlatFormConfig(205, bottom - 150, 60, 20, false),
+        this.getPlatFormConfig(295, bottom - 150, 60, 20, false),
       ],
     };
 
@@ -172,14 +176,10 @@ export class EndlessRunnerScene extends BaseScene {
     };
 
     const segment3Config = {
-      width: 500,
+      width: 800,
       platforms: [
-        this.getPlatFormConfig(250, bottom, 500, 20),
-        this.getPlatFormConfig(250, bottom - 240, 200, 20, false, true, {
-          speed: 1,
-          startingDirection: { x: 1, y: 0 },
-          range: [250, 0],
-        }),
+        this.getPlatFormConfig(400, bottom, 800, 20),
+        this.getPlatFormConfig(400, bottom - 200, 301, 20, false),
       ],
     };
 
@@ -200,16 +200,21 @@ export class EndlessRunnerScene extends BaseScene {
       platforms: [this.getPlatFormConfig(150, bottom, 300, 20), this.getPlatFormConfig(150, bottom - 250, 30, 200)],
     };
 
+    // const segmentTestConfig = {
+    //   width: 300,
+    //   platforms: [this.getPlatFormConfig(150, bottom, 300, 20), this.getPlatFormConfig(150, bottom - 250, 30, 500)],
+    // };
+
     return [segment0Config, segment1Config, segment2Config, segment3Config, segment4Config, segment5Config];
-    // return [segment0Config];
+    // return [segment3Config];
   }
 
   getPlatFormConfig(
     x: number,
     y: number,
-    width: number,
-    height = 15,
-    canJumpThroughBottom: boolean = false,
+    width: number | (() => number),
+    height: number | (() => number) = 15,
+    oneWay: boolean = false,
     moving: boolean = false,
     movementConfig?: PlatformMovementConfigOpts,
     color: number = 0x00fff0,
@@ -218,7 +223,7 @@ export class EndlessRunnerScene extends BaseScene {
       width,
       height,
       color,
-      canJumpThroughBottom,
+      oneWay,
       moving,
       movementConfig,
       x,
@@ -236,30 +241,12 @@ export class EndlessRunnerScene extends BaseScene {
     }
     this.player.lookRight();
     this.level.add.existing(this.player);
-    this.player.spawn({ x: this.app.size.width * 0.1, y: this.app.size.height * 0.3 }, delay);
+    this.player.spawn({ x: Math.round(this.app.size.width * 0.1), y: Math.round(this.app.size.height * 0.3) }, delay);
   }
 
   addControls() {
     this.ui = this.add.uiCanvas({ padding: 10, useAppSize: true });
     this.ui.zIndex = 100;
-
-    const jumpButton = this.make.button({
-      cursor: 'pointer',
-      scale: 0.5,
-      textures: {
-        default: 'btn_circle/up',
-        hover: 'btn_circle/over',
-        disabled: 'btn_circle/up',
-        active: 'btn_circle/down',
-      },
-      sheet: 'ui.json',
-      accessibleTitle: 'jump',
-      accessibleHint: `Press to jump`,
-    });
-
-    jumpButton.addIsDownCallback('jump', () => {
-      this.app.sendAction('jump');
-    });
 
     this._joystick = new Joystick({
       inner: this.make.sprite({
@@ -274,12 +261,21 @@ export class EndlessRunnerScene extends BaseScene {
       outerScale: 0.7,
     });
 
-    this.ui.addElement(this._joystick, { align: 'bottom left', padding: { left: 20 } });
-    this.ui.addElement(jumpButton, { align: 'bottom right', padding: { bottom: 10, right: 20 } });
+    const jumpButton = this._addButton('a', 'jump');
+    const warpButton = this._addButton('b', 'warp');
+
+    this.ui.addElement(this._joystick, { align: 'bottom left', padding: { left: 10, bottom: 110 } });
+    this.ui.addElement(jumpButton, { align: 'bottom right', padding: { bottom: 120, right: 100 } });
+    this.ui.addElement(warpButton, { align: 'bottom right', padding: { bottom: 220, right: 10 } });
+
+    this.app.controls.touch.addButton(jumpButton);
+    this.app.controls.touch.addButton(warpButton);
+    this.app.controls.touch.joystick = this._joystick;
 
     if (!this.app.isMobile) {
       this._joystick.visible = false;
       jumpButton.visible = false;
+      warpButton.visible = false;
     }
   }
 
@@ -301,8 +297,26 @@ export class EndlessRunnerScene extends BaseScene {
     this.physics.system.debug = debug;
   }
 
+  private _addButton(buttonId: string, action: string): Button {
+    return this.make.button({
+      cursor: 'pointer',
+      scale: 0.5,
+      textures: {
+        default: `btn_${buttonId}/up`,
+        hover: `btn_${buttonId}/over`,
+        disabled: `btn_${buttonId}/up`,
+        active: `btn_${buttonId}/down`,
+      },
+      sheet: 'ui.json',
+      accessibleTitle: action,
+      accessibleHint: `Press to ${action}`,
+      id: `${buttonId.toUpperCase()}`,
+    });
+  }
+
   private _togglePause() {
     this._isPaused = !this._isPaused;
+    this.physics.system.enabled = !this._isPaused;
   }
 
   private _handleSpatialHashChanged() {
@@ -325,7 +339,7 @@ export class EndlessRunnerScene extends BaseScene {
         const platform = collision.entity2 as Platform;
         // eslint-disable-next-line no-case-declarations
         const player = collision.entity1 as Player;
-        if (platform.canJumpThroughBottom) {
+        if (platform.oneWay) {
           if (collision.top) {
             player.setPassingThrough(platform);
           } else if (player.bottom <= platform.top) {

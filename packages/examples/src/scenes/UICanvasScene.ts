@@ -1,15 +1,15 @@
 import { BaseScene } from './BaseScene';
-import { TextStyle } from 'pixi.js';
 import { UICanvas } from 'dill-pixel';
+import { FONT_KUMBH_SANS } from '@/utils/Constants';
+import { TextStyleOptions } from 'pixi.js';
 
-const whiteTextStyle = (size: number) =>
-  new TextStyle({
-    fontFamily: 'Arial',
-    fontWeight: 'bold',
-    fill: 0xffffff,
-    fontSize: size ?? 24,
-    align: 'right',
-  });
+const whiteTextStyle = (size: number): Partial<TextStyleOptions> => ({
+  fontFamily: FONT_KUMBH_SANS,
+  fontWeight: 'bold',
+  fill: 0xffffff,
+  fontSize: size ?? 24,
+  align: 'right',
+});
 
 export class UICanvasScene extends BaseScene {
   protected readonly title = 'UI Canvas';
@@ -80,16 +80,44 @@ export class UICanvasScene extends BaseScene {
     this.ui.add.text({ text: 'top left', style: whiteTextStyle(24) });
 
     // adds elements the correct way
-    this.ui.addElement(this.make.text({ text: 'top center', style: whiteTextStyle(24) }), {
+    this.ui.addElement(this.make.text({ text: 'top center', resolution: 2, style: whiteTextStyle(24) }), {
       align: 'top',
     });
-    this.ui.addElement(this.make.text({ text: 'top right', style: whiteTextStyle(24) }), {
+    this.ui.addElement(this.make.text({ text: 'top right', resolution: 2, style: whiteTextStyle(24) }), {
       align: 'top right',
     });
-    this.ui.addElement(this.make.text({ text: 'right center', style: whiteTextStyle(24) }), { align: 'right' });
-    this.ui.addElement(this.make.text({ text: 'bottom left', style: whiteTextStyle(24) }), { align: 'bottom left' });
-    this.ui.addElement(this.make.text({ text: 'left center', style: whiteTextStyle(24) }), { align: 'left' });
-    this.ui.addElement(this.make.text({ text: 'bottom right', style: whiteTextStyle(24) }), { align: 'bottom right' });
+    this.ui.addElement(
+      this.make.text({
+        text: 'right center',
+        resolution: 2,
+        style: whiteTextStyle(24),
+      }),
+      { align: 'right' },
+    );
+    this.ui.addElement(
+      this.make.text({
+        text: 'bottom left',
+        resolution: 2,
+        style: whiteTextStyle(24),
+      }),
+      { align: 'bottom left' },
+    );
+    this.ui.addElement(
+      this.make.text({
+        text: 'left center',
+        resolution: 2,
+        style: whiteTextStyle(24),
+      }),
+      { align: 'left' },
+    );
+    this.ui.addElement(
+      this.make.text({
+        text: 'bottom right',
+        resolution: 2,
+        style: whiteTextStyle(24),
+      }),
+      { align: 'bottom right' },
+    );
 
     // probably want to add width / height to flexContainer
     // when doing any flex lignment

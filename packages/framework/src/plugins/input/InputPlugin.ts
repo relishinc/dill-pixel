@@ -1,6 +1,7 @@
 import { Action, ActionContext } from './actions';
 import type { ActionDetail, ActionSignal, ActionsList } from './types';
-import { Controls, ControlScheme } from './controls';
+import { Controls } from './Controls';
+import type { ControlScheme } from './interfaces';
 
 import { IApplication } from '../../core';
 import type { IPlugin } from '../Plugin';
@@ -34,6 +35,8 @@ export interface IInputPlugin extends IPlugin {
   isControllerActive(controller: InputController): boolean;
 
   isGamepadActive(gamepad: Gamepad): boolean;
+
+  isActionActive(action: Action): boolean;
 }
 
 const defaultActions: Action[] = [
@@ -88,6 +91,10 @@ export class InputPlugin extends Plugin implements IInputPlugin {
     }
     this._context = context;
     this.onContextChanged.emit(context);
+  }
+
+  isActionActive(action: Action): boolean {
+    return this.controls.isActionActive(action);
   }
 
   async initialize(app: IApplication, options: InputManagerOptions = defaultOptions): Promise<void> {

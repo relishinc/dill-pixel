@@ -37,18 +37,10 @@ export class RiveScene extends BaseScene {
       justifyContent: 'center',
     });
     this.reactionsList = this.mainContainer.add.flexContainer({
-      gap: 10,
+      gap: 0,
       flexDirection: 'column',
     });
 
-    /**
-     * "love"
-     * "mindblown"
-     * "onfire"
-     * "joy"
-     * "tada"
-     * "bullseye"
-     */
     this._addReaction('love');
     this._addReaction('mindblown');
     this._addReaction('onfire');
@@ -60,6 +52,7 @@ export class RiveScene extends BaseScene {
       autoPlay: true,
       cursor: 'pointer',
       anchor: 0,
+      scale: 0.9,
     });
 
     this.animation.onReady.connect(this._handleReady);
@@ -93,7 +86,6 @@ export class RiveScene extends BaseScene {
       animations: this.animation.getAvailableAnimations(),
       stateMachines: this.animation.getAvailableStateMachines(),
     });
-
     this.animation.off('click', this._changeAnimation);
     // this.animation.off('click', this._changeAnimation);
 
@@ -108,7 +100,6 @@ export class RiveScene extends BaseScene {
     }
     this.currentArtboardIndex = ab;
     const artboard = this.animation.getAvailableArtboards()[ab];
-    Logger.log(artboard);
     this.animation.loadArtboard(artboard);
   }
 
@@ -132,7 +123,7 @@ export class RiveScene extends BaseScene {
 
   resize() {
     super.resize();
-    this.mainContainer.size = [this.app.size.width, this.app.size.height];
-    this.mainContainer.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
+    this.mainContainer.size = [this.app.size.width, this.app.size.height - 130];
+    this.mainContainer.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5 + 110);
   }
 }

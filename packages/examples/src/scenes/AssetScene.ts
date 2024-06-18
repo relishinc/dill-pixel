@@ -3,7 +3,7 @@ import { FlexContainer, SceneAssets } from 'dill-pixel/display';
 
 export class AssetScene extends BaseScene {
   title = 'Asset Scene';
-  subtitle = 'This is a subtitle';
+  subtitle = 'Asset loading from different sources';
 
   container: FlexContainer;
 

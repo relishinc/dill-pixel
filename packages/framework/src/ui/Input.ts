@@ -1,20 +1,29 @@
 import {
   CanvasTextMetrics,
+  Container as PIXIContainer,
   FederatedEvent,
   FederatedPointerEvent,
   Graphics,
-  Container as PIXIContainer,
   Rectangle,
   Sprite,
   Text,
   Texture,
 } from 'pixi.js';
-import { Focusable, Interactive, WithSignals } from '../mixins';
-import { Logger, Padding, PointLike, ensurePadding, getNearestCharacterIndex, isAndroid, isIos, isMobile, isTouch } from '../utils';
+import { Focusable, Interactive, TextProps, WithSignals } from '../mixins';
+import {
+  ensurePadding,
+  getNearestCharacterIndex,
+  isAndroid,
+  isIos,
+  isMobile,
+  isTouch,
+  Logger,
+  Padding,
+  PointLike,
+} from '../utils';
 
 import { Container } from '../display';
 import { Signal } from '../signals';
-import { TextProps } from '../mixins/factory/props';
 import { gsap } from 'gsap';
 
 export type BgStyleOptions = {
@@ -25,7 +34,7 @@ export type BgStyleOptions = {
 
 export type ColorOptions = {
   color: number;
-  alpha: number
+  alpha: number;
 };
 
 export type PlaceholderOptions = {
@@ -41,8 +50,8 @@ export type FocusOverlayOptions = {
   marginTop: number;
   backing: {
     active: boolean;
-    options: Partial<ColorOptions>
-  }
+    options: Partial<ColorOptions>;
+  };
 };
 
 export interface InputOptions extends Partial<TextProps> {
@@ -54,7 +63,7 @@ export interface InputOptions extends Partial<TextProps> {
   minWidth: number;
   padding: Padding;
   maxLength?: number;
-  blurOnEnter: boolean,
+  blurOnEnter: boolean;
   regex?: RegExp;
   bg: Partial<BgStyleOptions>;
   placeholder: Partial<PlaceholderOptions & ColorOptions>;
@@ -64,7 +73,7 @@ export interface InputOptions extends Partial<TextProps> {
     input?: {
       fill?: number;
     };
-    bg?: Partial<Omit<BgStyleOptions, 'stroke'>>
+    bg?: Partial<Omit<BgStyleOptions, 'stroke'>>;
   };
   focusOverlay: Partial<FocusOverlayOptions>;
 }
@@ -89,6 +98,7 @@ const defaultOptions: InputOptions = {
   padding: { top: 0, left: 0, bottom: 0, right: 0 },
   blurOnEnter: true,
   style: {
+    fontFamily: 'Arial',
     fill: '#000000',
     fontSize: 20,
     fontWeight: 'bold',
@@ -136,7 +146,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   private _pointerDownTimer: any;
   private _inner: Container;
   private _inputContainer: Container;
-  private _mask: Sprite;
+  private _mask: Graphics;
   private _lastWidth: number = 0;
   private _lastHeight: number = 0;
 
@@ -168,7 +178,6 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     if (!this.options.placeholder) {
       this.options.placeholder = {
         color: Number(this.options.style?.fill) ?? 0x666666,
-        alpha: 1
       };
     }
 
@@ -186,24 +195,28 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     this.input.eventMode = this.placeholder.eventMode = 'none';
 
     if (isTouch) {
-      this.addSignalConnection(
-        this.onInteraction('pointertap').connect(this.handleClick, -1),
-      );
+      this.addSignalConnection(this.onInteraction('pointertap').connect(this.handleClick, -1));
     }
-    this.addSignalConnection(
-      this.onInteraction('click').connect(this.handleClick, -1)
-    )
-
+    this.addSignalConnection(this.onInteraction('click').connect(this.handleClick, -1));
 
     if (this.options.fixed) {
       const scale = this.isClone ? this.clone?.options?.focusOverlay?.scale ?? 1 : 1;
-      this._mask = this._inner.add.sprite({
-        asset: Texture.WHITE,
-        width: this.bg.width * scale - this.options.padding.left - this.options.padding.right,
-        height: this.bg.height * scale - this.options.padding.top - this.options.padding.bottom,
-        tint: 0xff0000,
-        alpha: 0.5,
-      });
+      // this._mask = this._inner.add.sprite({
+      //   asset: Texture.WHITE,
+      //   width: this.bg.width * scale - this.options.padding.left - this.options.padding.right,
+      //   height: this.bg.height * scale - this.options.padding.top - this.options.padding.bottom,
+      //   tint: 0x0,
+      //   alpha: 1,
+      // });
+      this._mask = this._inner.add
+        .graphics()
+        .rect(
+          0,
+          0,
+          this.bg.width * scale - this.options.padding.left - this.options.padding.right,
+          this.bg.height * scale - this.options.padding.top - this.options.padding.bottom,
+        )
+        .fill({ color: 0x0 });
       this._inputContainer.mask = this._mask;
     }
   }
@@ -265,7 +278,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
 
   resize() {
     if (this.cloneOverlay) {
-      this._positionCloneOverlay()
+      this._positionCloneOverlay();
     }
   }
 
@@ -274,7 +287,6 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   added() {
-
     if (this.isClone) {
       this.showCursor();
     }
@@ -286,21 +298,20 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
       return;
     }
     clearTimeout(this._focusTimer);
-    clearTimeout(this._pointerDownTimer)
+    clearTimeout(this._pointerDownTimer);
     const nearestCharacterIndex = e ? getNearestCharacterIndex(this.input, e) : this.input.text?.length ?? 0;
     this.createDomElement(nearestCharacterIndex);
     // this._focusDomElement(nearestCharacterIndex);
   }
 
   focusIn() {
-    this.handleClick()
+    this.handleClick();
   }
 
   _focusDomElement(selection?: number) {
     if (isIos) {
       this._triggerFocusAndSelection(selection);
     } else {
-
       this._focusTimer = setTimeout(() => {
         this._triggerFocusAndSelection(selection);
       }, 100);
@@ -310,7 +321,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   _triggerFocusAndSelection(selection?: number) {
     if (this.domElement) {
       this.domElement.focus();
-      this.domElement.click()
+      this.domElement.click();
       if (selection === undefined) {
         this.domElement.selectionStart = this.domElement.value?.length;
       } else {
@@ -413,9 +424,13 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
 
     if (this.options.fixed) {
       const scale = this.isClone ? this.options?.focusOverlay?.scale ?? 1 : 1;
-      this._mask.width = (bgWidth - this.options.padding.left - this.options.padding.right) * scale;
-      this._mask.height = bgHeight * scale;
-      this._mask.position.set(this.options.padding.left * scale, 0);
+      if (this._mask) {
+        this._mask
+          .clear()
+          .rect(0, 0, (bgWidth - this.options.padding.left - this.options.padding.right) * scale, bgHeight * scale)
+          .fill({ color: 0x0 });
+        this._mask.position.set(this.options.padding.left * scale, 0);
+      }
     }
 
     if (bgWidth !== this._lastWidth) {
@@ -427,7 +442,6 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     } else {
       this.selectionGraphics?.clear();
     }
-
 
     if (this.cloneOverlay) {
       this._positionCloneOverlay();
@@ -464,7 +478,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
 
   destroy() {
     clearTimeout(this._focusTimer);
-    clearTimeout(this._pointerDownTimer)
+    clearTimeout(this._pointerDownTimer);
     this.app.stage.off('pointerdown', this._checkPointerDownOutside);
     this.hideCursor();
     this.destroyDomElement();
@@ -500,6 +514,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
       text: this.options.value ?? '',
       label: 'input',
       resolution: 2,
+      roundPixels: true,
     });
   }
 
@@ -513,20 +528,20 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
       },
       resolution: 2,
       label: 'placeholder',
+      roundPixels: true,
     });
 
     this.placeholder.style.align = this.input.style.align;
   }
 
   protected createDomElement(selection?: number) {
-
     if (this.isClone && this.clone?.domElement) {
       this.domElement = this.clone.domElement;
       this._addDomElementListeners();
       return;
     }
     clearTimeout(this._focusTimer);
-    clearTimeout(this._pointerDownTimer)
+    clearTimeout(this._pointerDownTimer);
 
     this.domElement = document.createElement('input');
     this.domElement.type = 'text';
@@ -541,10 +556,10 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
       this._regex = this.options.regex;
     }
 
-    const pos = this.getGlobalPosition()
+    const pos = this.getGlobalPosition();
     const bounds = this.getBounds();
     bounds.x = pos.x;
-    bounds.y = pos.y
+    bounds.y = pos.y;
     bounds.width = this.width - this.options.padding.left;
 
     /**
@@ -576,7 +591,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     }
 
     this._addDomElementListeners();
-    this._focusDomElement(selection)
+    this._focusDomElement(selection);
   }
 
   protected destroyDomElement() {
@@ -674,9 +689,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
       }, 250);
 
       const hasOverlay = Boolean(this.options.focusOverlay.activeFilter);
-      if (
-        hasOverlay
-      ) {
+      if (hasOverlay) {
         // decide if we should show an overlay
         if (this.cloneOverlay) {
           this._removeCloneOverlay();
@@ -685,11 +698,15 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
         let shouldShow = false;
         if (isList) {
           const filterList = this.options.focusOverlay.activeFilter as ('mobile' | 'touch' | 'desktop')[];
-          if ((isMobile && filterList.includes('mobile')) || (isTouch && filterList.includes('touch')) || (!isMobile && !isTouch && filterList.includes('desktop'))) {
+          if (
+            (isMobile && filterList.includes('mobile')) ||
+            (isTouch && filterList.includes('touch')) ||
+            (!isMobile && !isTouch && filterList.includes('desktop'))
+          ) {
             shouldShow = true;
           }
         } else if (typeof this.options.focusOverlay.activeFilter === 'function') {
-          shouldShow = this.options.focusOverlay.activeFilter()
+          shouldShow = this.options.focusOverlay.activeFilter();
         } else {
           shouldShow = hasOverlay;
         }
@@ -725,7 +742,14 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
 
           // should we show backing?
           if (this.options.focusOverlay?.backing?.active) {
-            const backing = this.make.sprite({ asset: Texture.WHITE, tint: this.options.focusOverlay.backing.options?.color ?? 0x0, alpha: this.options.focusOverlay.backing.options?.alpha ?? 0.8, width: this.app.size.width, height: this.app.size.height, eventMode: "static" });
+            const backing = this.make.sprite({
+              asset: Texture.WHITE,
+              tint: this.options.focusOverlay.backing.options?.color ?? 0x0,
+              alpha: this.options.focusOverlay.backing.options?.alpha ?? 0.8,
+              width: this.app.size.width,
+              height: this.app.size.height,
+              eventMode: 'static',
+            });
             this.overlayBacking = this.app.stage.addChild(backing);
           }
 
@@ -782,7 +806,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
       return;
     }
     clearTimeout(this._focusTimer);
-    clearTimeout(this._pointerDownTimer)
+    clearTimeout(this._pointerDownTimer);
     this.hideCursor();
     this._removeCloneOverlay();
     this.destroyDomElement();
@@ -831,7 +855,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   private _handleDomElementChange(e: Event) {
     const target = e.target as HTMLInputElement;
     if (target && !this.domElement) {
-      this.domElement = target
+      this.domElement = target;
     }
     if (this.options.pattern !== '') {
       const filteredValue = target.value.replace(new RegExp(this.options.pattern, 'g'), '');
@@ -844,9 +868,9 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
     this.input.text =
       this.options.type === 'password'
         ? this._value
-          ?.split('')
-          .map(() => '*')
-          .join('')
+            ?.split('')
+            .map(() => '*')
+            .join('')
         : this._value;
 
     this._updateCaretAndSelection();

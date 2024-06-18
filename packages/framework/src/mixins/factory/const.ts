@@ -1,4 +1,5 @@
 import {
+  AnimatedSpriteProps,
   ButtonProps,
   ContainerProps,
   ExistingProps,
@@ -18,8 +19,9 @@ import {
   resolveTexture,
   resolveUnknownKeys,
 } from './utils';
-import { omitKeys, pluck, resolvePointLike } from '../../utils';
+import { omitKeys, pluck, resolvePointLike, Spine } from '../../utils';
 import {
+  AnimatedSprite,
   Button,
   type ButtonConfig,
   ButtonConfigKeys,
@@ -29,7 +31,6 @@ import {
   FlexContainer,
   type FlexContainerConfig,
   FlexContainerConfigKeys,
-  type ISpineAnimation,
   SpineAnimation,
   UICanvas,
   type UICanvasConfig,
@@ -47,7 +48,6 @@ export const defaultFactoryMethods = {
     resolveUnknownKeys(rest, entity);
     return entity;
   },
-  texture: resolveTexture,
   container: (props?: Partial<ContainerProps>) => {
     const config = pluck(props ?? {}, ContainerConfigKeys);
     const otherProps = omitKeys<ContainerProps, keyof ContainerConfig>(ContainerConfigKeys, props ?? {});
@@ -60,6 +60,7 @@ export const defaultFactoryMethods = {
     resolveUnknownKeys(rest, entity);
     return entity;
   },
+  texture: resolveTexture,
   sprite: (props?: Partial<SpriteProps>) => {
     const entity = new Sprite(props ? resolveTexture(props) : undefined);
     if (!props) return entity;
@@ -69,6 +70,24 @@ export const defaultFactoryMethods = {
     resolveAnchor(anchor, entity);
     resolvePivot(pivot, entity);
     resolveUnknownKeys(rest, entity);
+    return entity;
+  },
+  animatedSprite: (props?: Partial<AnimatedSpriteProps>): AnimatedSprite => {
+    const entity = new AnimatedSprite(props);
+    if (props?.position) {
+      resolvePosition({ position: props.position, x: props.x, y: props.y }, entity);
+    }
+    if (props?.scale) {
+      resolveScale({ scale: props.scale ?? 1, scaleX: props.scaleX, scaleY: props.scaleY }, entity);
+    }
+    if (props?.pivot) {
+      resolvePivot(props.pivot, entity);
+    }
+    const unknowns = omitKeys(
+      ['x', 'y', 'position', 'text', 'roundPixels', 'resolution', 'style', 'anchor', 'pivot'],
+      props ?? {},
+    );
+    resolveUnknownKeys(unknowns, entity);
     return entity;
   },
   graphics: (props?: Partial<GraphicsProps>) => {
@@ -160,7 +179,7 @@ export const defaultFactoryMethods = {
     resolveUnknownKeys(rest, entity);
     return entity;
   },
-  spine: (props?: Partial<SpineProps>): import('../../plugins/spine/pixi-spine').Spine => {
+  spine: (props?: Partial<SpineProps>): Spine => {
     let data = props?.data;
     if (typeof data === 'string') {
       // get the spine data from cache
@@ -169,7 +188,7 @@ export const defaultFactoryMethods = {
         data = { skeleton: data + '.json', atlas: data + '.atlas' };
       }
     }
-    const entity: import('../../plugins/spine/pixi-spine/Spine').Spine = (window as any).Spine.from(data);
+    const entity: Spine = (window as any).Spine.from(data);
     if (!props) return entity;
     if (props.autoUpdate !== undefined) entity.autoUpdate = props.autoUpdate;
     if (props.animationName) entity.state.setAnimation(props.trackIndex ?? 0, props.animationName, props.loop);
@@ -181,7 +200,7 @@ export const defaultFactoryMethods = {
     resolveUnknownKeys(rest, entity);
     return entity;
   },
-  spineAnimation: (props?: Partial<SpineProps>): ISpineAnimation => {
+  spineAnimation: (props?: Partial<SpineProps>): SpineAnimation => {
     const entity = new SpineAnimation(props);
     if (!props) return entity;
     const { position, x, y, anchor, pivot, scale, scaleX, scaleY, ...rest } = props;

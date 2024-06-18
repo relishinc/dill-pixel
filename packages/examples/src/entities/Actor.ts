@@ -49,7 +49,7 @@ export class Actor extends _Actor {
     this.accessibleType = 'div';
     this.accessibleChildren = true;
 
-    this._view = this.add.graphics().circle(0, 0, 50).fill('white');
+    this._view = this.add.graphics().circle(0, 0, 50).fill({ color: 'white' });
     this._view.tint = this.color;
 
     this.alpha = 0.5;

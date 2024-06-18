@@ -2,6 +2,7 @@ import { Application } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { System } from './System';
+import { gsap } from 'gsap';
 
 export class Solid<T = any, A extends Application = Application> extends Entity<T, A> {
   type = 'Solid';
@@ -51,19 +52,36 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
     });
   }
 
+  animatePosition(x?: number | null, y?: number | null, vars: gsap.TweenVars = {}): gsap.core.Tween {
+    const pos = this.position.clone();
+    const initialPosition = { x: Math.round(pos.x), y: Math.round(pos.y) };
+    const tweenVars = Object.assign({ duration: 1, ease: 'linear.none' }, vars);
+    if (x === undefined || isNaN(x as number)) {
+      x = initialPosition.x;
+    }
+    if (y === undefined || isNaN(y as number)) {
+      y = initialPosition.y;
+    }
+    return gsap.to(initialPosition, {
+      x: Math.round(x!),
+      y: Math.round(y!),
+      ...tweenVars,
+      onUpdate: () => {
+        const dx = initialPosition.x - this.position.x;
+        const dy = initialPosition.y - this.position.y;
+        this.move(dx, dy);
+      },
+    });
+  }
+
   public handleActorInteractions(
     deltaX: number,
     deltaY: number,
     ridingActors: Actor[] = this.getAllRidingActors(),
   ): void {
-    (this.collideables as Actor[]).forEach((actor) => {
-      if (ridingActors.includes(actor)) {
-        // Move riding actors along with this solid
-        if (actor.mostRiding === this) {
-          actor.moveY(deltaY);
-          actor.moveX(deltaX);
-        }
-      } else if (
+    for (let i = 0; i < this.collideables.length; i++) {
+      const actor = this.collideables[i] as Actor;
+      if (
         !actor.passThroughTypes.includes(this.type) &&
         !actor.isPassingThrough(this) &&
         this.collidesWith(actor, deltaX, deltaY)
@@ -90,8 +108,14 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
         if (overlapY !== 0) {
           actor.moveY(overlapY, actor.squish, null, this);
         }
+      } else if (ridingActors.includes(actor)) {
+        // Move riding actors along with this solid
+        if (actor.mostRiding === this) {
+          actor.moveY(deltaY);
+          actor.moveX(deltaX);
+        }
       }
-    });
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

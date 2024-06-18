@@ -1,38 +1,67 @@
-import { Graphics, Text } from 'pixi.js';
+import { Graphics, Sprite, Text, Texture } from 'pixi.js';
 
-import { COLOR_GREEN } from '@/utils/Constants';
+import { COLOR_SLATE, FONT_KUMBH_SANS } from '@/utils/Constants';
 import { GUI } from 'dat.gui';
-import { Scene } from 'dill-pixel';
+import { FlexContainer, Scene } from 'dill-pixel';
 import { V8Application } from '@/V8Application';
 
 export class BaseScene extends Scene<V8Application> {
   protected readonly title: string;
   protected readonly subtitle: string;
+  protected titleContainer: FlexContainer;
   protected gui: GUI;
   protected config: any;
   protected _bg: Graphics;
   protected _title: Text;
   protected _subtitle: Text;
+  protected _headerBg: Sprite;
 
   constructor() {
     super();
   }
 
+  get isMobile() {
+    return this.app.size.width < 1200;
+  }
+
   public async initialize() {
     this._bg = this.add.graphics();
-
-    this._title = this.add.text({
-      text: this.title ?? this.id,
-      style: { fill: 'white', fontWeight: 'bold', fontFamily: 'Arial', align: 'left' },
-      x: -this.app.size.width * 0.5 + this.app.size.width * 0.1,
-      y: -this.app.center.y + 50,
+    this._headerBg = this.add.sprite({
+      asset: Texture.WHITE,
+      tint: 0x0,
+      width: this.app.size.width,
+      height: 110,
+      alpha: 0.1,
+      anchor: 0,
+      x: -this.app.size.width * 0.5,
+      y: -this.app.size.height * 0.5,
     });
 
-    this._subtitle = this.add.text({
+    this.titleContainer = this.add.flexContainer({
+      flexDirection: 'column',
+      width: this.app.size.width,
+      height: 110,
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start',
+      x: -this.app.size.width * 0.5,
+      y: -this.app.size.height * 0.5,
+      label: 'header',
+    });
+
+    this._title = this.titleContainer.add.text({
+      text: this.title ?? this.id,
+      resolution: 2,
+      style: { fill: 'white', fontSize: 36, fontFamily: FONT_KUMBH_SANS },
+    });
+
+    this._subtitle = this.titleContainer.add.text({
       text: this.subtitle,
-      style: { fill: 'white', align: 'left', fontWeight: 'bold', fontFamily: 'Arial', fontSize: 14 },
-      x: this._title.x,
-      y: this._title.y + this._title.height + 10,
+      resolution: 2,
+      style: {
+        fill: 'white',
+        fontFamily: 'Kumbh Sans',
+        fontSize: 16,
+      },
     });
 
     if (this.config) {
@@ -63,14 +92,28 @@ export class BaseScene extends Scene<V8Application> {
       this._bg
         .rect(-this.app.size.width * 0.5, -this.app.size.height * 0.5, this.app.size.width, this.app.screen.height)
         .fill({
-          color: COLOR_GREEN,
+          color: COLOR_SLATE,
         });
     }
+
+    if (this.titleContainer) {
+      this.titleContainer.containerWidth = this.app.size.width;
+      this.titleContainer.x = -this.app.size.width * 0.5;
+      this.titleContainer.y = -this.app.size.height * 0.5 + 20;
+    }
+
     if (this._title) {
-      this._title.position.set(-this.app.center.x + Math.min(this.app.size.width * 0.1, 100), -this.app.center.y + 50);
+      this._title.x = this.isMobile ? 20 : 30;
     }
     if (this._subtitle) {
-      this._subtitle.position.set(this._title.x + 1, this._title.y + this._title.height + 10);
+      this._subtitle.x = this._title.x;
+    }
+
+    if (this._headerBg) {
+      this._headerBg.x = -this.app.size.width * 0.5;
+      this._headerBg.y = -this.app.size.height * 0.5;
+      this._headerBg.width = this.app.size.width;
+      this._headerBg.height = this.titleContainer.height + 45;
     }
   }
 

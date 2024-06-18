@@ -2,6 +2,7 @@ import { ActionDetail, Button, FlexContainer, PopupConfig } from 'dill-pixel';
 
 import { BaseScene } from './BaseScene';
 import { ExamplePopup } from '@/popups/ExamplePopup';
+import { FONT_KUMBH_SANS } from '@/utils/Constants';
 
 export class PopupScene extends BaseScene {
   protected readonly title = 'Popups';
@@ -60,6 +61,7 @@ export class PopupScene extends BaseScene {
   public async start() {
     this.app.focus.add(this.buttons, this.id, true);
   }
+
   _handleShowPopup(action: ActionDetail<PopupConfig<{ title: string }>>) {
     if (action.context === 'popup') {
       return;
@@ -83,7 +85,8 @@ export class PopupScene extends BaseScene {
     btn.add.text({
       text: label,
       anchor: 0.5,
-      style: { fill: 0xffffff, fontWeight: 'bold', fontSize: 48, align: 'center' },
+      resolution: 2,
+      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
     });
 
     this.addSignalConnection(btn.onClick.connect(callback));

@@ -1,5 +1,5 @@
 import { Container, UICanvas } from 'dill-pixel';
-import { Entity, default as MatterPhysics } from '@dill-pixel/plugin-matter-physics';
+import { default as MatterPhysics, Entity } from '@dill-pixel/plugin-matter-physics';
 import { FederatedPointerEvent, Rectangle, Texture } from 'pixi.js';
 
 import { BaseScene } from '@/scenes/BaseScene';
@@ -14,6 +14,10 @@ export class MatterPhysicsScene extends BaseScene {
     debug: true,
   };
 
+  protected get physics(): MatterPhysics {
+    return this.app.getPlugin('matter') as unknown as MatterPhysics;
+  }
+
   configureGUI() {
     this.gui
       .add(this.config, 'debug')
@@ -21,10 +25,6 @@ export class MatterPhysicsScene extends BaseScene {
         this._handleDebugChanged();
       })
       .name('Debug Physics');
-  }
-
-  protected get physics(): MatterPhysics {
-    return this.app.getPlugin('matter') as unknown as MatterPhysics;
   }
 
   destroy() {
@@ -62,6 +62,17 @@ export class MatterPhysicsScene extends BaseScene {
     this._handleDebugChanged();
   }
 
+  update() {}
+
+  resize() {
+    super.resize();
+  }
+
+  protected _handleDebugChanged() {
+    const { debug } = this.config;
+    this.physics.system.debug = debug;
+  }
+
   private _addEntity(e: FederatedPointerEvent) {
     const isJar = Math.random() < 0.3;
 
@@ -94,19 +105,8 @@ export class MatterPhysicsScene extends BaseScene {
             }),
       });
     }
-
-    entity.position.set(e.pageX, e.pageY);
+    const pos = this.level.toLocal(e.global);
+    entity.position.set(pos.x, pos.y);
     this.level.add.existing(entity);
-  }
-
-  update() {}
-
-  resize() {
-    super.resize();
-  }
-
-  protected _handleDebugChanged() {
-    const { debug } = this.config;
-    this.physics.system.debug = debug;
   }
 }

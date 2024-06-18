@@ -1,6 +1,7 @@
 import { Bounds } from 'pixi.js';
 import { checkCollision, Collision, Entity, Sensor, System } from '@dill-pixel/plugin-snap-physics';
 import { DoorConfig } from '@/entities/physics/Door';
+import { Signal } from 'dill-pixel';
 
 const defaults: DoorConfig = {
   width: 75,
@@ -8,7 +9,13 @@ const defaults: DoorConfig = {
   color: 0xfff000,
 };
 
+export type PortalEnterDetail = {
+  entity: Entity;
+  portal: Portal;
+};
+
 export class Portal extends Sensor<DoorConfig> {
+  static onEnter: Signal<(detail: PortalEnterDetail) => void> = new Signal<(detail: PortalEnterDetail) => void>();
   debug = false;
   type = 'Portal';
   enabled: boolean = true;
@@ -125,6 +132,7 @@ export class Portal extends Sensor<DoorConfig> {
 
   passThrough(entity: Entity) {
     if (!this.has(entity) && this.connectedPortal) {
+      Portal.onEnter.emit({ entity, portal: this });
       this.connectedPortal.addEntity(entity);
     }
   }

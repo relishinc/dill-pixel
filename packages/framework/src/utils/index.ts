@@ -10,5 +10,6 @@ export * from './bind';
 export * from './padding';
 export * from './platform';
 export * from './string';
+export * from './number';
 export * from './types';
 export * from './text';

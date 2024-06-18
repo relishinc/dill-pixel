@@ -1,5 +1,5 @@
 import { ActionDetail, Button, FlexContainer, IFocusable, Input, Logger } from 'dill-pixel';
-import { DocumentData, QuerySnapshot, collection, limit, onSnapshot, orderBy, where } from 'firebase/firestore';
+import { collection, DocumentData, limit, onSnapshot, orderBy, QuerySnapshot, where } from 'firebase/firestore';
 import { Graphics, Text } from 'pixi.js';
 
 import { BaseScene } from './BaseScene';
@@ -34,15 +34,6 @@ export class FirebaseAdapterScene extends BaseScene {
 
   constructor() {
     super();
-  }
-
-  private _sendSaveScoreAction() {
-    const username = this.usernameInput.value;
-    const scoreAsNum = parseInt(this.scoreInput.value, 10);
-    this.app.sendAction('save_to_firebase', {
-      collection: 'users',
-      data: { username, score: scoreAsNum },
-    });
   }
 
   public async initialize() {
@@ -110,6 +101,21 @@ export class FirebaseAdapterScene extends BaseScene {
     });
 
     this.app.focus.sortFocusablesByPosition();
+  }
+
+  resize() {
+    super.resize();
+    this.list.y = -this.app.size.height * 0.5 + 160;
+    this.buttonContainer.flexDirection = this.app.size.width < 600 ? 'column' : 'row';
+  }
+
+  private _sendSaveScoreAction() {
+    const username = this.usernameInput.value;
+    const scoreAsNum = parseInt(this.scoreInput.value, 10);
+    this.app.sendAction('save_to_firebase', {
+      collection: 'users',
+      data: { username, score: scoreAsNum },
+    });
   }
 
   private async _handleSave(action: ActionDetail) {
@@ -424,11 +430,5 @@ export class FirebaseAdapterScene extends BaseScene {
     } else {
       this.scoreboardMessage.text = 'No scores yet.';
     }
-  }
-
-  resize() {
-    super.resize();
-    this.list.y = this._subtitle.y + 60;
-    this.buttonContainer.flexDirection = this.app.size.width < 600 ? 'column' : 'row';
   }
 }

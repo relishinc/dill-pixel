@@ -5,7 +5,7 @@ import { Assets } from 'pixi.js';
 import type { IScene } from '../display';
 import { Signal } from '../signals';
 import { IApplication } from '../core';
-import { AssetLike, AssetLoadingOptions, AssetTypes, BundleTypes, isDev, Logger, SceneImportListItem } from '../utils';
+import { AssetLike, AssetLoadingOptions, AssetTypes, BundleTypes, isDev, SceneImportListItem } from '../utils';
 
 export interface IAssetsPlugin extends IPlugin {
   onLoadStart: Signal<() => void>;
@@ -87,7 +87,6 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
       this._background = options.background;
     }
     Assets.setPreferences({ ...detaultAssetPreferences, ...options?.assetPreferences });
-    Logger.log('AssetsPlugin initialized', _app, options, this._required);
   }
 
   public async loadRequired() {
@@ -187,7 +186,6 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
       if (scene.assets?.preload?.assets) {
         const assets = getAssetList(scene.assets.preload.assets);
         const filteredAssets = assets.filter((asset) => !this._isAssetLoaded(asset));
-        Logger.log('filteredAssets', filteredAssets);
         if (filteredAssets.length) {
           await Assets.load(filteredAssets, this._handleLoadProgress);
           this._markAssetsLoaded(assets);
@@ -257,18 +255,15 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
   }
 
   private _handleLoadStart() {
-    Logger.log('AssetsPlugin:: onLoadStart');
     this.onLoadStart.emit();
   }
 
   private _handleLoadProgress(progress: number) {
-    Logger.log('AssetsPlugin:: onLoadProgress', progress);
     this.onLoadProgress.emit(progress);
   }
 
   private _handleLoadComplete() {
     this._handleLoadProgress(1);
-    Logger.log('AssetsPlugin:: onLoadComplete');
     this.onLoadComplete.emit();
   }
 }

@@ -4,6 +4,7 @@ import type {
   ActionSignal,
   IAssetsPlugin,
   IAudioManagerPlugin,
+  IControls,
   IFocusManagerPlugin,
   Ii18nPlugin,
   IInputPlugin,
@@ -37,6 +38,7 @@ export interface IApplication extends PIXIPApplication {
   i18n: Ii18nPlugin;
   resizer: IResizerPlugin;
   input: IInputPlugin;
+  controls: IControls;
   store: IStore;
 
   actionContext: string | ActionContext;
