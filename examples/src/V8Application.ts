@@ -12,7 +12,7 @@ export class V8Application extends Application {
     return this.store.getAdapter('firebase') as unknown as IFirebaseAdapter;
   }
 
-  get rollbar(){
+  get rollbar() {
     return this.getPlugin<RollbarPlugin>('rollbar')?.rollbar;
   }
 }
@@ -82,7 +82,7 @@ create(
           isDev: import.meta.env.MODE === 'development',
           environment: import.meta.env.MODE,
         },
-      }
+      },
     ],
     storageAdapters: [
       { id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } },

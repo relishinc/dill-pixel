@@ -1,7 +1,6 @@
 import { IApplication, IPlugin, Logger, Plugin } from 'dill-pixel';
 import Rollbar from 'rollbar';
 
-// extends Rollbar.Configuration but accessToken is required
 export interface RollbarPluginOptions extends Rollbar.Configuration {
   isDev?: boolean;
 }
