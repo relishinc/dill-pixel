@@ -1,10 +1,10 @@
-import { StorageAdapter as i, Logger as n } from "dill-pixel";
-import { createClient as o } from "@supabase/supabase-js";
-const p = {
+import { StorageAdapter as i, Logger as o } from "dill-pixel";
+import { createClient as p } from "@supabase/supabase-js";
+const c = {
   supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
   anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY
 };
-class h extends i {
+class d extends i {
   /**
    * Returns the Supabase client.
    * @returns {SupabaseClient<Database>} The Supabase client.
@@ -18,37 +18,36 @@ class h extends i {
    * @param {ISupabaseAdapterOptions} options The options to initialize the adapter with.
    * @returns {void}
    */
-  initialize(t, e = {}) {
-    if (n.log("SupabaseAdapter initialized"), this._options = { ...p, ...e }, !this._options.supabaseUrl)
+  initialize(e, t = {}) {
+    if (o.log("SupabaseAdapter initialized"), this._options = { ...c, ...t }, !this._options.supabaseUrl)
       throw new Error("Supabase URL is not set");
     if (!this._options.anonKey)
       throw new Error("Supabase anon key is not set");
-    this._supabase = o(this._options.supabaseUrl, this._options.anonKey);
+    this._supabase = p(this._options.supabaseUrl, this._options.anonKey);
   }
   /**
    * Saves data to a specified table in the Supabase database.
    * @param {string} tableId The table to save the data to.
-   * @param {any} data The data to save.
+   * @param {T | T[]} data The data to save.
    * @param {SaveMethod} method The method to use for saving the data.
-   * @returns {Promise<any>} The saved data.
+   * @returns {Promise<PostgrestSingleResponse<T[]>>} The saved data.
    *
    * @example
    * await this.app.supabase.save('scores', { username: 'relish', score: 50 })
    */
-  async save(t, e, s = "upsert") {
-    Array.isArray(e) || (e = [e]);
-    const r = this.client.from(t);
+  async save(e, t, s = "upsert") {
+    const r = Array.isArray(t) ? t : [t], a = this.client.from(e);
     try {
       switch (s) {
         case "insert":
-          return await r.insert(e).select();
+          return await a.insert(r).select();
         case "update":
-          return await r.update(e).select();
+          return await a.update(r).select();
         case "upsert":
-          return await r.upsert(e).select();
+          return await a.upsert(r).select();
       }
-    } catch (a) {
-      throw new Error(`Error saving data: ${a}`);
+    } catch (n) {
+      throw new Error(`Error saving data: ${n}`);
     }
   }
   /**
@@ -61,29 +60,29 @@ class h extends i {
    * await this.app.supabase.load('scores', ['score', 'username']).order('score', { ascending: false }).limit(5)
    */
   // TODO: sort out type error
-  load(t, e) {
-    return this.client.from(t).select(e == null ? void 0 : e.join(","));
+  load(e, t) {
+    return this.client.from(e).select(t == null ? void 0 : t.join(","));
   }
   /**
    * Deletes data from a specified table in the Supabase database.
    * @param {string} tableId The table from which to load the data.
-   * @param {DeleteData} data The data to delete.
+   * @param {Data} data The data to delete.
    * @returns {Promise<any>} The deleted data.
    *
    * @example
    * await this.app.supabase.delete('scores', { username: 'relish', score: 50 })
    */
-  async delete(t, e) {
-    const s = Object.keys(e)[0], r = e[s];
+  async delete(e, t) {
+    const s = Object.keys(t)[0], r = t[s];
     try {
-      return await this.client.from(t).delete().eq(s, r).select();
+      return await this.client.from(e).delete().eq(s, r).select();
     } catch (a) {
       throw new Error(`Error deleting data: ${a}`);
     }
   }
 }
 export {
-  h as SupabaseAdapter,
-  h as default
+  d as SupabaseAdapter,
+  d as default
 };
 //# sourceMappingURL=dill-pixel-storage-adapter-supabase.mjs.map

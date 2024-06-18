@@ -1,6 +1,5 @@
-import { ActionDetail, Button, FlexContainer, Logger } from 'dill-pixel';
+import { ActionDetail, Button, FlexContainer, Logger, Input, IFocusable } from 'dill-pixel';
 import { BaseScene } from './BaseScene';
-import { Input } from '@pixi/ui';
 import { Graphics, Text } from 'pixi.js';
 import { SimpleButton } from '@/popups/ExamplePopup';
 import { gsap } from 'gsap';
@@ -13,8 +12,8 @@ type Score = Partial<Tables<'scores'>> & Pick<Tables<'scores'>, 'user_id' | 'use
 type SaveActionData = {
   tableId: string;
   data: Score;
-  method: SaveMethod
-}
+  method: SaveMethod;
+};
 
 export class SupabaseAdapterScene extends BaseScene {
   protected readonly title = 'Supabase Storage Adapter';
@@ -46,6 +45,16 @@ export class SupabaseAdapterScene extends BaseScene {
     super();
   }
 
+  private _sendSaveScoreAction() {
+    const username = this.usernameInput.value;
+    const scoreAsNum = parseInt(this.scoreInput.value, 10);
+    this.app.sendAction<SaveActionData>('save_to_supabase', {
+      tableId: 'scores',
+      data: { user_id: this.user.id, username, score: scoreAsNum },
+      method: 'insert',
+    });
+  }
+
   public async initialize() {
     await super.initialize();
 
@@ -66,16 +75,7 @@ export class SupabaseAdapterScene extends BaseScene {
     this.app.focus.addFocusLayer(this.id);
 
     // add a save button
-    const saveButton = this.createButton('Save', 'green', () => {
-      const username = this.usernameInput.value;
-      const scoreAsNum = parseInt(this.scoreInput.value, 10);
-
-      this.app.sendAction<SaveActionData>('save_to_supabase', {
-        tableId: 'scores',
-        data: { user_id: this.user.id, username, score: scoreAsNum },
-        method: 'insert',
-      });
-    });
+    const saveButton = this.createButton('Save', 'green', this._sendSaveScoreAction);
     this.buttonContainer.addChild(saveButton);
 
     // add a load button
@@ -136,6 +136,8 @@ export class SupabaseAdapterScene extends BaseScene {
 
     // refresh the scoreboard
     this.refreshScoreboard();
+
+    this.app.focus.sortFocusablesByPosition();
   }
 
   private async _handleSignIn() {
@@ -211,7 +213,11 @@ export class SupabaseAdapterScene extends BaseScene {
     // const { data, error } = res[0];
 
     // Option 2: use the adapter
-    const {data, error} = await this.app.supabase.save<Score>(action.data.tableId, action.data.data, action.data.method);
+    const { data, error } = await this.app.supabase.save<Score>(
+      action.data.tableId,
+      action.data.data,
+      action.data.method,
+    );
 
     if (error) {
       console.error('Error saving data:', error);
@@ -219,7 +225,7 @@ export class SupabaseAdapterScene extends BaseScene {
       if (error.code === '23505') {
         this.errorText.text = 'Username already exists. Please use a different one.';
       } else {
-      this.errorText.text = error.details || error.message || 'An error occurred';
+        this.errorText.text = error.details || error.message || 'An error occurred';
       }
     } else {
       Logger.log('Saved data:', data);
@@ -235,7 +241,7 @@ export class SupabaseAdapterScene extends BaseScene {
   }
 
   private async _handleLoad() {
-      this.refreshScoreboard();
+    this.refreshScoreboard();
   }
 
   private async _handleClear() {
@@ -266,7 +272,7 @@ export class SupabaseAdapterScene extends BaseScene {
     } else {
       Logger.log('Deleted data:', data);
       const scoreToDelete = data[0];
-      this.deleteScoreFromScoreboard({
+      this.removeScoreFromScoreboard({
         user_id: scoreToDelete.user_id,
         username: scoreToDelete.username,
         score: scoreToDelete.score,
@@ -314,26 +320,32 @@ export class SupabaseAdapterScene extends BaseScene {
 
     // add inputs
     this.usernameInput = this.createInput('Username');
-    this.scoreInput = this.createInput('Score');
+    this.scoreInput = this.createInput('Score', 'number');
 
     this.inputContainer.addChild(this.usernameInput);
     this.inputContainer.addChild(this.scoreInput);
+
+    this.addSignalConnection(this.scoreInput.onEnter.connect(this._sendSaveScoreAction));
+
+    this.app.focus.add([this.usernameInput, this.scoreInput], this.id, true);
   }
 
-  private createInput(placeholder: string) {
+  private createInput(placeholder: string, type: 'number' | 'text' = 'text') {
     return new Input({
-      bg: new Graphics()
-        .roundRect(0, 0, 320, 70, 11 + 5)
-        .fill('#DCB000')
-        .roundRect(5, 5, 320 - 5 * 2, 70 - 5 * 2, 11)
-        .fill('#FFFFFF'),
-      textStyle: {
+      type,
+      minWidth: 375,
+      fixed: true,
+      padding: [10, 15],
+      bg: { radius: 20, stroke: { color: 0xdcb000, width: 3 } },
+      style: {
+        align: 'center',
         fill: '#728779',
         fontSize: 22,
         fontWeight: 'bold',
       },
-      align: 'center',
-      placeholder,
+      placeholder: {
+        text: placeholder,
+      },
     });
   }
 
@@ -394,7 +406,7 @@ export class SupabaseAdapterScene extends BaseScene {
     gsap.fromTo(scoreUI, { alpha: 0, y: 10 }, { alpha: 1, y: 0, duration: 0.3 });
   }
 
-  private deleteScoreFromScoreboard(score: Score) {
+  private removeScoreFromScoreboard(score: Score) {
     // delete the score
     const scoreToDelete = this.scores.find((s) => {
       return s.user_id === score.user_id && s.username === score.username && s.score === score.score;
@@ -410,6 +422,10 @@ export class SupabaseAdapterScene extends BaseScene {
       duration: 0.3,
       onComplete: () => {
         this.scoreboard.removeChildAt(index);
+        const btn = scoreElement.getChildByLabel('delete-button') as unknown as IFocusable;
+        if (btn) {
+          this.app.focus.remove(btn);
+        }
         if (!this.scores.length) {
           this.scoreboardMessage.text = 'No scores yet.';
         }
@@ -436,15 +452,16 @@ export class SupabaseAdapterScene extends BaseScene {
           onComplete: () => {
             // resolve when the last child is removed
             if (idx === reversedChildren.length - 1) {
-              this.scoreboard.removeChildren();
+              const children = this.scoreboard.removeChildren();
+              children.forEach((child) => {
+                this.app.focus.remove(child.getChildByLabel('delete-button') as unknown as IFocusable);
+              });
+              this.scores = [];
               resolve();
             }
           },
         });
       });
-
-      // clear scores
-      this.scores = [];
     });
   }
 
@@ -481,12 +498,10 @@ export class SupabaseAdapterScene extends BaseScene {
       const deleteButton = this.make.container();
 
       const deleteButtonBg = new SimpleButton();
+      deleteButtonBg.label = 'delete-button';
       deleteButtonBg.accessibleTitle = 'Delete';
       deleteButtonBg.accessibleHint = 'Press to delete this score';
       deleteButtonBg.onInteraction('click').connect(() => {
-        // delete the score
-        Logger.log('DELETING SCORE...', score);
-
         // via the adapter:
         // await this.app.supabase.delete('scores', { username: score.username });
         // this.refreshScoreboard();
@@ -496,6 +511,8 @@ export class SupabaseAdapterScene extends BaseScene {
           tableId: 'scores',
           data: { username: score.username },
         });
+
+        this.app.focus.remove(deleteButtonBg);
       });
       deleteButton.scale = 0.7;
 
@@ -521,7 +538,7 @@ export class SupabaseAdapterScene extends BaseScene {
 
     // add scores
     const { data, error } = await this.app.supabase.load('scores').order('score', { ascending: false }).limit(5);
-    Logger.log("Loaded data: ", data);
+    Logger.log('Loaded data: ', data);
 
     if (error) {
       console.error('Error loading data during scoreboard refresh:', error);

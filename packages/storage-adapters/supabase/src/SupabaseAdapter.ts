@@ -1,6 +1,6 @@
 import { StorageAdapter, Logger, IApplication, IStorageAdapter } from 'dill-pixel';
 import { createClient } from '@supabase/supabase-js';
-import type { PostgrestResponse, PostgrestSingleResponse, SupabaseClient } from '@supabase/supabase-js';
+import type { PostgrestSingleResponse, SupabaseClient } from '@supabase/supabase-js';
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 
 export type SaveMethod = 'insert' | 'update' | 'upsert';
