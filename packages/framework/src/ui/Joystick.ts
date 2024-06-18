@@ -55,6 +55,8 @@ export class Joystick extends Container implements IJoystick {
   direction: JoystickDirection = JoystickDirection.None;
   threshold: number;
 
+  private _pointerId?: number;
+
   constructor(opts: Partial<JoystickSettings>) {
     super();
 
@@ -110,7 +112,7 @@ export class Joystick extends Container implements IJoystick {
   }
 
   handleDragMove(e: FederatedPointerEvent) {
-    if (!this.dragging) {
+    if (!this.dragging || e.pointerId !== this._pointerId) {
       return;
     }
     const newPosition = this.toLocal(e.global);
@@ -220,18 +222,26 @@ export class Joystick extends Container implements IJoystick {
   }
 
   protected handleDragStart(e: FederatedPointerEvent) {
+    if (this._pointerId !== undefined) {
+      return;
+    }
+    this._pointerId = e.pointerId;
     this.startPosition = this.toLocal(e.global);
     this.dragging = true;
     this.inner.alpha = 1;
     this.onStart.emit();
   }
 
-  protected handleDragEnd() {
+  protected handleDragEnd(e: FederatedPointerEvent | PointerEvent) {
+    if (this._pointerId !== e.pointerId) {
+      return;
+    }
     this.direction = JoystickDirection.None;
     this.inner.position.set(0, 0);
     this.dragging = false;
     this.inner.alpha = this.innerAlphaStandby;
     this.onEnd.emit();
+    this._pointerId = undefined;
   }
 
   protected bindEvents() {

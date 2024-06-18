@@ -7,7 +7,7 @@ import { type Constructor } from '../utils';
 // gets all the event names from the PIXI event map
 type InteractionEventName = keyof AllFederatedEventMap;
 
-type InteractionSignal = Signal<(event: FederatedEvent) => void>;
+export type InteractionSignal = Signal<(event: FederatedEvent) => void>;
 
 export interface IInteractive {
   onInteraction: (eventName: InteractionEventName) => InteractionSignal;

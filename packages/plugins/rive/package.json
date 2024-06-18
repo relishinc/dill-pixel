@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-rive",
-  "version": "8.9.0",
+  "version": "8.9.1",
   "description": "",
   "files": [
     "lib",
@@ -27,8 +27,8 @@
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
-    "dill-pixel": "8.9.0",
-    "pixi.js": "8.1.7"
+    "dill-pixel": "8.9.2",
+    "pixi.js": "8.1.8"
   },
   "dependencies": {
     "@rive-app/canvas-advanced-lite": "^2.17.3"

@@ -2,7 +2,6 @@ import { gsap } from 'gsap';
 import { BitmapText, Container as PIXIContainer, Sprite, Texture } from 'pixi.js';
 import { Container } from '../../display';
 import type { Size } from '../../utils';
-import { Logger } from '../../utils';
 import { CaptionsPlugin } from './CaptionsPlugin';
 
 export type CaptionLine = {
@@ -90,7 +89,6 @@ export class CaptionsRenderer extends Container implements ICaptionRenderer {
   }
 
   public stop(): void {
-    Logger.log('CaptionsRenderer', 'stop');
     gsap.killTweensOf([this._bg, this._text]);
     this.animate({ alpha: 0, visible: false, duration: 0.2 }, [this._bg, this._text]);
   }

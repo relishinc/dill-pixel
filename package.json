@@ -6,15 +6,17 @@
   "scripts": {
     "build:framework": "turbo build --filter={./packages/framework}",
     "publish:framework": "cd packages/framework && npm publish --tag next",
-    "build:packages": "turbo build --filter={./packages/plugins/*,./packages/storage-adapters/*}",
-    "publish:packages": "node scripts/publish-packages.mjs packages/plugins/*,packages/storage-adapters/*",
+    "update:packages": "node ./scripts/update-package-versions.mjs",
+    "build:packages": "sh ./scripts/build-packages.sh",
+    "publish:packages": "node ./scripts/publish-packages.mjs packages/plugins/*,packages/storage-adapters/*",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "turbo": "^2.0.3"
+    "turbo": "^2.0.3",
+    "glob": "^10.4.1"
   },
   "packageManager": "pnpm@9.3.0"
 }

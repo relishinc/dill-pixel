@@ -51,6 +51,7 @@ export class TouchControls extends WithSignals(AbstractControls) {
     this.addSignalConnection(
       button.onDown.connect(() => this._handleButtonDown(button)),
       button.onUp.connect(() => this._handleButtonUp(button)),
+      button.onUpOutside.connect(() => this._handleButtonUp(button)),
       button.onDestroy.connect(() => this.removeButton(button)),
     );
     this._buttons.add(button);
@@ -62,6 +63,7 @@ export class TouchControls extends WithSignals(AbstractControls) {
     }
     button.onDown.disconnect(() => this._handleButtonDown(button));
     button.onUp.disconnect(() => this._handleButtonUp(button));
+    button.onUpOutside.disconnect(() => this._handleButtonUp(button));
     button.onDestroy.disconnect(() => this.removeButton(button));
     this._buttons.delete(button);
   }

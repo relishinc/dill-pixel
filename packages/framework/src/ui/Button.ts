@@ -1,9 +1,8 @@
-import { Cursor, DestroyOptions, Sprite } from 'pixi.js';
+import { Cursor, DestroyOptions, FederatedEvent, FederatedPointerEvent, Sprite } from 'pixi.js';
 
 import { Factory, Focusable, Interactive, WithSignals } from '../mixins';
 import { Signal } from '../signals';
-import type { SpriteSheetLike, TextureLike } from '../utils';
-import { bindAllMethods } from '../utils';
+import { bindAllMethods, SpriteSheetLike, TextureLike } from '../utils';
 import type { IApplication } from '../core';
 import { Application } from '../Application';
 
@@ -105,6 +104,7 @@ export class Button extends _Button implements IButton {
   // a set of unique callbacks for when the button is down
   protected _isDownCallbacks: Map<string, () => void> = new Map();
   private _isDownListenerAdded: boolean = false;
+  private _pointerId?: number;
 
   /**
    * @constructor
@@ -255,7 +255,10 @@ export class Button extends _Button implements IButton {
    * @description Handles the pointer out event.
    * Sets the texture of the button to the default texture and emits the onOut event.
    */
-  protected handlePointerOut() {
+  protected handlePointerOut(e: FederatedEvent) {
+    if ((e as FederatedPointerEvent)?.pointerId !== this._pointerId) {
+      return;
+    }
     this.isOver = false;
     if (!this._enabled) {
       return;
@@ -271,15 +274,19 @@ export class Button extends _Button implements IButton {
    * @description Handles the pointer down event.
    * Sets the isDown property to true and changes the texture of the button.
    */
-  protected handlePointerDown() {
+  protected handlePointerDown(e: FederatedEvent) {
     if (!this._enabled && !this.isKeyDown) {
       return;
     }
-    if (!this.isDown) {
+    if (!this.isDown && this._pointerId === undefined) {
+      this._pointerId = (e as FederatedPointerEvent).pointerId;
+
       window.removeEventListener('pointerup', this.handlePointerUpOutside);
       this.off('pointerupoutside', this.handlePointerUpOutside);
+
       window.addEventListener('pointerup', this.handlePointerUpOutside);
       this.on('pointerupoutside', this.handlePointerUpOutside);
+
       this.isDown = true;
       this.view.texture = this.make.texture({
         asset: this.config.textures.active || this.config.textures.hover || this.config.textures.default,
@@ -301,8 +308,8 @@ export class Button extends _Button implements IButton {
    * @description Handles the pointer up event.
    * Removes the keyup event listener and emits the onPress and onUp events.
    */
-  protected handlePointerUp() {
-    if (!this._enabled || !this.isOver) {
+  protected handlePointerUp(e: FederatedEvent) {
+    if (!this._enabled || !this.isOver || (e as FederatedPointerEvent).pointerId !== this._pointerId) {
       return;
     }
     window.removeEventListener('pointerup', this.handlePointerUpOutside);
@@ -315,6 +322,7 @@ export class Button extends _Button implements IButton {
     if (this.config.actions?.up) {
       this._doAction(this.config.actions.up);
     }
+    this._pointerId = undefined;
   }
 
   protected handleClick() {
@@ -331,8 +339,8 @@ export class Button extends _Button implements IButton {
   /**
    * @description Handles the pointer up event.
    */
-  protected handlePointerUpOutside() {
-    if (!this._enabled) {
+  protected handlePointerUpOutside(e: PointerEvent) {
+    if (!this._enabled || e.pointerId !== this._pointerId) {
       return;
     }
     window.removeEventListener('pointerup', this.handlePointerUpOutside);
@@ -348,6 +356,7 @@ export class Button extends _Button implements IButton {
     if (this.config.actions?.up) {
       this._doAction(this.config.actions.up);
     }
+    this._pointerId = undefined;
   }
 
   private _doAction(action: ButtonActionOrCallback) {
