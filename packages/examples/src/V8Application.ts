@@ -72,6 +72,14 @@ async function boot() {
           module: () => import('@dill-pixel/plugin-rive'),
           autoLoad: false,
         },
+        {
+          id: 'rollbar',
+          module: () => import('@dill-pixel/plugin-rollbar'),
+          options: {
+            isDev: import.meta.env.MODE === 'development',
+            environment: import.meta.env.MODE,
+          },
+        },
       ],
       storageAdapters: [
         { id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } },

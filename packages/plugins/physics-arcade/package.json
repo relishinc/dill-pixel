@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-arcade-physics",
-  "version": "8.9.1",
+  "version": "8.9.2",
   "description": "",
   "files": [
     "lib",

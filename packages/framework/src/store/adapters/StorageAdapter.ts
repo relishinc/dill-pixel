@@ -23,8 +23,12 @@ export interface IStorageAdapter extends IPlugin {
    * @template T The type of the data to load.
    * @returns {Promise<T> | T | null} A promise that resolves with the loaded data, or the loaded data if the load operation is synchronous, or null if no data was found.
    * @param _key
+   * @param args
    */
-  load<TExpectedLoadResult = any>(_key: string): Promise<TExpectedLoadResult> | TExpectedLoadResult | null;
+  load<TExpectedLoadResult = any>(
+    _key: string,
+    ...args: any[]
+  ): Promise<TExpectedLoadResult> | TExpectedLoadResult | null;
 }
 
 /**
@@ -48,7 +52,7 @@ export class StorageAdapter<T extends Application = Application> extends Plugin<
    */
   load<TExpectedLoadResult = any>(_key: string): Promise<TExpectedLoadResult> | TExpectedLoadResult | null;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async load<TExpectedLoadResult = any>(_key: string): Promise<TExpectedLoadResult | null> {
+  async load<TExpectedLoadResult = any>(_key: string, ...args: any[]): Promise<TExpectedLoadResult | null> {
     return null;
   }
 

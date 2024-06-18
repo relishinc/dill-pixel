@@ -15,7 +15,9 @@ const {version: dillPixelVersion, dependencies: {'pixi.js': pixiJsVersion}} = fr
 // Function to update package.json files
 function updatePackageJson(packageJsonPath) {
 	const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
-
+	if (packageJson.version) {
+		packageJson.version = dillPixelVersion;
+	}
 	if (packageJson.dependencies) {
 		if (packageJson.dependencies['pixi.js'] && !packageJson.dependencies['pixi.js']?.includes('workspace')) {
 			packageJson.dependencies['pixi.js'] = pixiJsVersion;

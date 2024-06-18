@@ -1,15 +1,15 @@
-import { StorageAdapter as u, Logger as w } from "dill-pixel";
-import { initializeApp as f } from "firebase/app";
-import { getFirestore as p, doc as s, addDoc as b, collection as a, setDoc as m, getDoc as l, query as E, where as g, getDocs as c, deleteDoc as h } from "firebase/firestore";
-const y = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+import { StorageAdapter as p, Logger as u } from "dill-pixel";
+import { initializeApp as w } from "firebase/app";
+import { getFirestore as m, doc as s, addDoc as f, collection as a, setDoc as _, getDoc as l, query as E, where as I, getDocs as c, deleteDoc as h } from "firebase/firestore";
+const b = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || import.meta.env.FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || import.meta.env.FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || import.meta.env.FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || import.meta.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || import.meta.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || import.meta.env.FIREBASE_APP_ID
 };
-class D extends u {
+class R extends p {
   /**
    * Returns the Firebase app.
    * @returns {FirebaseApp} The Firebase app.
@@ -31,7 +31,7 @@ class D extends u {
    * @returns {void}
    */
   initialize(i, e = {}) {
-    w.log("FirebaseAdapter initialized"), this._options = { ...y, ...e }, this._firebaseApp = f(this._options), this._db = p(this._firebaseApp);
+    u.log("FirebaseAdapter initialized"), this._options = { ...b, ...e }, this._firebaseApp = w(this._options), this._db = m(this._firebaseApp);
   }
   /**
    * Save or update a document in a collection.
@@ -48,7 +48,7 @@ class D extends u {
       throw new Error("Firestore has not been initialized. Call initialize() first.");
     let t;
     try {
-      r ? t = s(this.db, i, r) : t = await b(a(this.db, i), e), await m(t, e, { merge: !0 });
+      r ? t = s(this.db, i, r) : t = await f(a(this.db, i), e), await _(t, e, { merge: !0 });
       const o = await l(t);
       return {
         id: o.id,
@@ -98,7 +98,7 @@ class D extends u {
     if (!this.db)
       throw new Error("Firestore has not been initialized. Call initialize() first.");
     try {
-      const t = a(this.db, i), o = E(t, g(e, "==", r)), d = await c(o);
+      const t = a(this.db, i), o = E(t, I(e, "==", r)), d = await c(o);
       if (d.empty)
         return null;
       {
@@ -218,7 +218,7 @@ class D extends u {
   }
 }
 export {
-  D as FirebaseAdapter,
-  D as default
+  R as FirebaseAdapter,
+  R as default
 };
 //# sourceMappingURL=dill-pixel-storage-adapter-firebase.mjs.map
