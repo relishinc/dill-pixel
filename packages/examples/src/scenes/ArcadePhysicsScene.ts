@@ -59,7 +59,6 @@ class Player extends Entity {
     } else if (this.body.onFloor()) {
       this._jumping = false;
     }
-
     if (this.app.controls.isActionActive('move_left')) {
       this.view.spine.scale.x = -1;
       this.body.velocity.x = -150;

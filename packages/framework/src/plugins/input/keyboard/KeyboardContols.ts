@@ -37,7 +37,10 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
       return false;
     }
     if (Array.isArray(controlsAction.input)) {
-      return this._keyCombinationsMap.has(controlsAction.input);
+      return (
+        this._keyCombinationsMap.has(controlsAction.input) ||
+        controlsAction.input.some((key) => this._singleDownKeys.has(key))
+      );
     } else {
       return this._singleDownKeys.has(controlsAction.input);
     }
@@ -65,14 +68,20 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
     const keys = Object.keys(this._keyDownMap);
     keys.forEach((key) => {
       const item = this._keyDownMap[key];
-      if (item.context !== '*' && item.context.includes(this.app.input.context)) {
+      if (item.context !== '*' && !item.context.includes(this.app.input.context)) {
         return;
       }
-      if (key.includes('+')) {
-        const combo = key.split('+');
-        this._keyCombinations.push(combo);
-        this._keyCombinationsMap.set(combo, key);
+      let input = item.input;
+      if (!Array.isArray(input)) {
+        input = [input];
       }
+      input.forEach((inputString) => {
+        if (inputString.includes('+')) {
+          const combo = inputString.split('+');
+          this._keyCombinations.push(combo);
+          this._keyCombinationsMap.set(combo, inputString);
+        }
+      });
     });
     // sort them from the largest to smallest
     this._keyCombinations.sort((a, b) => b.length - a.length);

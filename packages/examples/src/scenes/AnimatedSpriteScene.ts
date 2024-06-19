@@ -62,29 +62,24 @@ export class AnimatedSpriteScene extends BaseScene {
     });
 
     const sprite = charContainer.add.animatedSprite({
-      animationSpeed: 0.2,
-      animation: 'idle',
+      animationSpeed: 0.2, // default animation speed
+      animation: 'idle', // default
+      sheet: 'characters.json', // default spritesheet
+      texturePrefix: `${folderName}/${spriteName}_`, // default prefix
+      // zeroPad: 1, // optional default zero padding
       animations: {
         idle: {
-          texturePrefix: `${folderName}/${spriteName}_idle`,
           numFrames: 1,
-          sheet: 'characters.json',
         },
         walk: {
-          texturePrefix: `${folderName}/${spriteName}_walk`,
           numFrames: 8,
-          sheet: 'characters.json',
         },
         run: {
-          texturePrefix: `${folderName}/${spriteName}_run`,
           numFrames: 3,
-          sheet: 'characters.json',
         },
         climb: {
-          texturePrefix: `${folderName}/${spriteName}_climb`,
           numFrames: 2,
-          sheet: 'characters.json',
-          animationSpeed: 0.05,
+          animationSpeed: 0.05, // custom speed for this animation only
         },
       },
     });

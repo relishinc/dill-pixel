@@ -7,7 +7,7 @@ export const controls: ControlScheme = {
       move_right: { context: ['game'], input: ['ArrowRight', 'd'] },
       warp: { context: ['game'], input: ['q'] },
       jump: { context: ['game'], input: ['ArrowUp', ' '] },
-      test: { context: ['game'], input: 'Shift+l' },
+      combo: { context: '*', input: 'Shift+l' },
     },
     up: {
       toggle_pause: { context: '*', input: 'p' },

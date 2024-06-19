@@ -2,12 +2,11 @@ import { AbstractControlScheme, ControlsActionMap } from '../interfaces';
 import { bindAllMethods } from '../../../utils';
 
 import { AbstractControls } from '../AbstractControls';
-import { Action } from '../actions';
+import type { Action } from '../actions';
 import { Application } from '../../../Application';
 import { WithSignals } from '../../../mixins';
-import { ITouchControlScheme } from './interfaces';
-import { IJoystick } from '../../../ui';
-import { IButton } from '../../../ui/Button';
+import type { ITouchControlScheme } from './interfaces';
+import type { IButton, IJoystick } from '../../../ui';
 
 type TouchControlsActionData = {
   button?: string | string[];
@@ -107,14 +106,20 @@ export class TouchControls extends WithSignals(AbstractControls) {
     const buttons = Object.keys(this._buttonDownMap);
     buttons.forEach((key) => {
       const item = this._buttonDownMap[key];
-      if (item.context !== '*' && item.context.includes(this.app.input.context)) {
+      if (item.context !== '*' && !item.context.includes(this.app.input.context)) {
         return;
       }
-      if (key.includes('+')) {
-        const combo = key.split('+');
-        this._combinations.push(combo);
-        this._combinationsMap.set(combo, key);
+      let input = item.input;
+      if (!Array.isArray(input)) {
+        input = [input];
       }
+      input.forEach((inputString) => {
+        if (inputString.includes('+')) {
+          const combo = inputString.split('+');
+          this._combinations.push(combo);
+          this._combinationsMap.set(combo, inputString);
+        }
+      });
     });
     // sort them from the largest to smallest
     this._combinations.sort((a, b) => b.length - a.length);

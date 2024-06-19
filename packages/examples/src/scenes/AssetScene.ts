@@ -1,5 +1,5 @@
 import { BaseScene } from '@/scenes/BaseScene';
-import { FlexContainer, SceneAssets } from 'dill-pixel/display';
+import { FlexContainer, SceneAssets } from 'dill-pixel';
 
 export class AssetScene extends BaseScene {
   title = 'Asset Scene';

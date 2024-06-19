@@ -57,6 +57,9 @@ export interface AnimatedSpriteAnimationProps extends AbstractProps, ScaleProps,
 }
 
 export interface AnimatedSpriteProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps {
+  sheet: SpriteSheetLike;
+  texturePrefix: string;
+  zeroPad: number;
   animations: { [animationName: string]: Omit<AnimatedSpriteAnimationProps, 'sheet' | 'autoUpdate'> };
   autoPlay: boolean;
   autoUpdate: boolean;

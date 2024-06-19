@@ -7,6 +7,7 @@ import {
   getPreviousMapEntry,
   getZeroPaddedNumber,
   Logger,
+  SpriteSheetLike,
 } from '../utils';
 import { Signal } from '../signals';
 import { AnimatedSpriteProps, resolveTexture } from '../mixins';
@@ -18,8 +19,11 @@ export class AnimatedSprite extends PIXIAnimatedSprite {
   onAnimationLoop: Signal<() => void> = new Signal();
   onAnimationComplete: Signal<() => void> = new Signal();
   onAnimationFrameChange: Signal<() => void> = new Signal();
+  public defaultTexturePrefix: string = '';
+  public defaultSheet: string | undefined;
   public defaultAnimation: string;
   public defaultAnimationSpeed: number;
+  public defaultZeroPad: number | undefined;
   public autoPlay: boolean;
   public currentAnimation: string;
   protected _animations: Map<string, Texture[]>;
@@ -29,8 +33,24 @@ export class AnimatedSprite extends PIXIAnimatedSprite {
     const animations = config?.animations ?? {};
     const defaultAnimationName = config?.animation ?? Object.keys(animations)[0];
     const defaultAnimation = animations[defaultAnimationName as string];
-    super(AnimatedSprite.generateTexturesFromProps(defaultAnimation), config?.autoUpdate !== false);
+    const defaultSheet = config?.sheet;
+    const defaultTexturePrefix = config?.texturePrefix || '';
+    const defaultZeroPad = config?.zeroPad;
+
+    super(
+      AnimatedSprite.generateTexturesFromProps(
+        defaultAnimationName,
+        defaultAnimation,
+        defaultTexturePrefix,
+        defaultSheet,
+        defaultZeroPad,
+      ),
+      config?.autoUpdate !== false,
+    );
     bindAllMethods(this);
+    this.defaultSheet = defaultSheet;
+    this.defaultTexturePrefix = defaultTexturePrefix;
+    this.defaultZeroPad = defaultZeroPad;
     this._generateAnimations();
     this.currentAnimation = this.defaultAnimation = defaultAnimationName;
     this.autoPlay = config?.autoPlay ?? true;
@@ -64,27 +84,35 @@ export class AnimatedSprite extends PIXIAnimatedSprite {
     return this._isReversed;
   }
 
-  static generateTexturesFromProps(props?: Partial<AnimatedSpriteProps>): Texture[] {
+  static generateTexturesFromProps(
+    animationName: string,
+    props?: Partial<AnimatedSpriteProps>,
+    defaultTexturePrefix = '',
+    defaultSheet: SpriteSheetLike | undefined = undefined,
+    defaultZeroPad?: number,
+  ): Texture[] {
     const textures: Texture[] = [];
-    if (props?.texturePrefix) {
-      if (props?.numFrames > 1) {
-        const idx = props.startIndex ?? 0;
-        for (let i = idx; i < idx + props.numFrames; i++) {
-          textures.push(
-            resolveTexture({
-              asset: `${props.texturePrefix}${getZeroPaddedNumber(i, props?.zeroPad)}`,
-              sheet: props.sheet,
-            }),
-          );
-        }
-      } else {
+    let asset = '';
+    const sheet = props?.sheet ?? defaultSheet;
+    if (props?.numFrames > 1) {
+      const idx = props?.startIndex ?? 0;
+      for (let i = idx; i < idx + props?.numFrames; i++) {
+        asset = `${defaultTexturePrefix}${props?.texturePrefix ?? animationName}${getZeroPaddedNumber(i, props?.zeroPad ?? defaultZeroPad)}`;
         textures.push(
           resolveTexture({
-            asset: `${props.texturePrefix}`,
-            sheet: props.sheet,
+            asset,
+            sheet,
           }),
         );
       }
+    } else {
+      asset = `${defaultTexturePrefix}${props?.texturePrefix ?? animationName}`;
+      textures.push(
+        resolveTexture({
+          asset,
+          sheet,
+        }),
+      );
     }
     return textures;
   }
@@ -153,11 +181,26 @@ export class AnimatedSprite extends PIXIAnimatedSprite {
     const animations = this.config?.animations ?? {};
     if (animations) {
       for (const [key, value] of Object.entries(animations)) {
-        this._animations.set(key, AnimatedSprite.generateTexturesFromProps(value));
+        this._animations.set(
+          key,
+          AnimatedSprite.generateTexturesFromProps(
+            key,
+            value,
+            this.defaultTexturePrefix,
+            this.defaultSheet,
+            this.defaultZeroPad,
+          ),
+        );
       }
       if (this.config?.reversible) {
         for (const [key, value] of Object.entries(animations)) {
-          const textures = AnimatedSprite.generateTexturesFromProps(value);
+          const textures = AnimatedSprite.generateTexturesFromProps(
+            key,
+            value,
+            this.defaultTexturePrefix,
+            this.defaultSheet,
+            this.defaultZeroPad,
+          );
           textures.reverse();
           this._animations.set(`${key}_reverse`, textures);
         }

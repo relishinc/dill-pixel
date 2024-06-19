@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:framework": "turbo build --filter={./packages/framework}",
-    "publish:framework": "cd packages/framework && npm publish --tag next",
-    "update:packages": "node ./scripts/update-package-versions.mjs",
-    "build:packages": "sh ./scripts/build-packages.sh",
-    "publish:packages": "node ./scripts/publish-packages.mjs packages/plugins/*,packages/storage-adapters/*",
+    "framework:build": "turbo build --filter={./packages/framework}",
+    "framework:publish": "cd packages/framework && npm publish --tag next",
+    "packages:update": "node ./scripts/update-package-versions.mjs",
+    "packages:build": "sh ./scripts/build-packages.sh",
+    "packages:publish": "node ./scripts/publish-packages.mjs packages/plugins/*,packages/storage-adapters/*",
+    "build-publish-all": "pnpm framework:build && pnpm framework:publish && pnpm packages:update && pnpm packages:build && pnpm packages:publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
