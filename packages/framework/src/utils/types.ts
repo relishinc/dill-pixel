@@ -1,5 +1,5 @@
-import type { AssetInitOptions, AssetsManifest, AssetsPreferences, UnresolvedAsset } from 'pixi.js';
-import { Point, Texture } from 'pixi.js';
+import type {AssetInitOptions, AssetsManifest, AssetsPreferences, UnresolvedAsset} from 'pixi.js';
+import {Point, Texture} from 'pixi.js';
 
 /**
  * A generic constructor type.
@@ -110,6 +110,7 @@ export type AssetLoadingOptions = {
 
 type SceneItemOptions = {
   debugLabel?: string;
+  debugGroup?: string;
   plugins?: string[];
   assets?: AssetLoadingOptions;
   autoUnloadAssets?: boolean;
@@ -174,7 +175,6 @@ export type EaseString =
   | 'sine.in'
   | 'sine.out'
   | 'sine.inOut';
-
 
 export type KeyboardKey =
   | 'Backspace'
@@ -277,6 +277,6 @@ export type KeyboardKey =
   | 'IntlBackslash'
   | 'MetaLeft'
   | 'MetaRight'
-  | 'ContextMenu'
+  | 'ContextMenu';
 
 export type { Spine } from '../plugins/spine/pixi-spine';

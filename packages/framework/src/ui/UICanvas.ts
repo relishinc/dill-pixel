@@ -3,7 +3,7 @@ import { Application } from '../Application';
 import { Factory, WithSignals } from '../mixins';
 import type { Padding, PointLike, Size, SizeLike } from '../utils';
 import { bindAllMethods, ensurePadding, Logger, resolvePadding, resolveSizeLike } from '../utils';
-import { Container } from './Container';
+import { Container } from '../display/Container';
 import type { IFlexContainer } from './FlexContainer';
 
 export type UICanvasEdge =

@@ -2,7 +2,7 @@ import type { ContainerLike, PointLike } from '../utils';
 import { bindAllMethods, Logger, resolvePointLike } from '../utils';
 
 import { Application } from '../Application';
-import { Container } from './Container';
+import { Container } from '../display/Container';
 import type { DestroyOptions } from 'pixi.js';
 import { Container as PIXIContainer } from 'pixi.js';
 import { Factory, WithSignals } from '../mixins';

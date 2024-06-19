@@ -1,7 +1,5 @@
 import { Assets, Sprite, Spritesheet, Texture } from 'pixi.js';
-import { Logger } from '../../utils/console/Logger';
-import { resolvePointLike } from '../../utils/functions';
-import { PointLike } from '../../utils/types';
+import { Logger, PointLike, resolvePointLike } from '../../utils';
 
 import { PositionProps, ScaleProps, TextureProps } from './props';
 

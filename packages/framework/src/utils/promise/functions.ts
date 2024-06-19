@@ -6,6 +6,8 @@
 export const delay = (seconds: number = 0): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 
+export const wait = (seconds: number = 0): Promise<void> => delay(seconds);
+
 /**
  * Checks if the given value is a promise.
  * @param {any} value The value to check.

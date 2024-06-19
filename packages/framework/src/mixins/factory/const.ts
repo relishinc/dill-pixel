@@ -20,22 +20,18 @@ import {
   resolveUnknownKeys,
 } from './utils';
 import { omitKeys, pluck, resolvePointLike, Spine } from '../../utils';
+import type { ContainerConfig } from '../../display';
+import { AnimatedSprite, Container, ContainerConfigKeys, SpineAnimation } from '../../display';
+import type { ButtonConfig, FlexContainerConfig, UICanvasConfig } from '../../ui';
 import {
-  AnimatedSprite,
   Button,
-  type ButtonConfig,
   ButtonConfigKeys,
-  Container,
-  type ContainerConfig,
-  ContainerConfigKeys,
   FlexContainer,
-  type FlexContainerConfig,
   FlexContainerConfigKeys,
-  SpineAnimation,
   UICanvas,
-  type UICanvasConfig,
   UICanvasConfigKeys,
-} from '../../display';
+} from '../../ui';
+
 import { BitmapText, Graphics, Sprite, Text } from 'pixi.js';
 
 export const defaultFactoryMethods = {

@@ -256,9 +256,6 @@ export class Button extends _Button implements IButton {
    * Sets the texture of the button to the default texture and emits the onOut event.
    */
   protected handlePointerOut(e: FederatedEvent) {
-    if ((e as FederatedPointerEvent)?.pointerId !== this._pointerId) {
-      return;
-    }
     this.isOver = false;
     if (!this._enabled) {
       return;

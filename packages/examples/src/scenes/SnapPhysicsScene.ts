@@ -288,7 +288,7 @@ export class SnapPhysicsScene extends BaseScene {
     this.camera.follow(this.doors[0], [this.app.screen.width * 0.25, -1000]);
     await delay(1);
     this.addPlayer();
-    this.camera.follow(this.player, [this.app.screen.width * 0.25, -100]);
+    this.camera.follow(this.player, [this.app.screen.width * 0.25, -this.app.size.height * 0.25]);
     gsap.to(this.camera, { lerp: 0.1, duration: 0.75, ease: 'sine.out' });
   }
 
@@ -321,7 +321,7 @@ export class SnapPhysicsScene extends BaseScene {
       });
       this.physics.system.camera = this.camera;
       this.add.existing(this.camera);
-      this.camera.follow(this.player, [this.app.screen.width * 0.25, -100]);
+      this.camera.follow(this.player, [this.app.screen.width * 0.25, -this.app.size.height * 0.25]);
       this.camera.onZoom.connect(this._adjustCollisionThreshold);
       this.camera.onZoomComplete.connect(this._resetCollisionThreshold);
       this._handleCameraZoomChanged();

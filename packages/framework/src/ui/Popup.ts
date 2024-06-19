@@ -1,10 +1,10 @@
-import { ColorSource, DestroyOptions, Graphics, Sprite, Texture } from 'pixi.js';
+import {ColorSource, DestroyOptions, Graphics, Sprite, Texture} from 'pixi.js';
 
-import { Application } from '../Application';
-import { Container } from './Container';
-import type { IContainer } from './Container';
-import type { IFocusable } from '../plugins';
-import type { Size } from '../utils';
+import {Application} from '../Application';
+import type {IContainer} from '../display/Container';
+import {Container} from '../display/Container';
+import type {IFocusable} from '../plugins';
+import type {Size} from '../utils';
 
 /**
  * Interface for Popup
@@ -121,7 +121,7 @@ export class Popup<T = any> extends Container implements IPopup<T> {
     return backingWrapper;
   }
 
-  initialize() { }
+  initialize() {}
 
   public beforeHide() {
     this.app.focus.removeFocusLayer(this.id);
@@ -159,7 +159,7 @@ export class Popup<T = any> extends Container implements IPopup<T> {
    * Start the popup
    */
   start(): void | Promise<any>;
-  async start() { }
+  async start() {}
 
   afterShow() {
     if (this.firstFocusableEntity) {
@@ -171,11 +171,15 @@ export class Popup<T = any> extends Container implements IPopup<T> {
   /**
    * End the popup
    */
-  end() { }
+  end() {}
 
   close(): void | Promise<void>;
   async close(): Promise<void> {
     void this.app.popups.hidePopup(this.id, this.config.data);
+  }
+
+  resize() {
+    this.backing?.setSize(this.app.size.width, this.app.size.height);
   }
 
   /**
@@ -196,9 +200,5 @@ export class Popup<T = any> extends Container implements IPopup<T> {
 
     this.view = this.add.container();
     this.view.eventMode = 'static';
-  }
-
-  resize() {
-    this.backing?.setSize(this.app.size.width, this.app.size.height);
   }
 }

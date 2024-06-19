@@ -2,9 +2,9 @@ import { PointLike, SpriteSheetLike, TextureLike, WithRequiredProps } from '../.
 
 import { ButtonConfig } from '../../ui/Button';
 import { ContainerConfig } from '../../display';
-import { FlexContainerConfig } from '../../display/FlexContainer';
+import { FlexContainerConfig } from '../../ui/FlexContainer';
 import { TextStyleOptions } from 'pixi.js';
-import { UICanvasProps } from '../../display/UICanvas';
+import { UICanvasProps } from '../../ui/UICanvas';
 
 export interface AbstractProps {
   [key: string]: any;

@@ -1,4 +1,4 @@
-import type {IPopup, PopupConfig, PopupConstructor} from '../display';
+import type {IPopup, PopupConfig, PopupConstructor} from '../ui';
 import {Container} from '../display';
 import {Signal} from '../signals';
 import {bindAllMethods, getLastMapEntry} from '../utils';

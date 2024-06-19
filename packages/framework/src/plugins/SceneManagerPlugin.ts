@@ -381,8 +381,35 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
     const defaultOption = document.createElement('option');
     defaultOption.value = '';
     defaultOption.innerHTML = 'Select a scene';
-
+    defaultOption.setAttribute('disabled', 'disabled');
     this._sceneSelect.appendChild(defaultOption);
+
+    // create option groups
+    const groups = new Map<string, HTMLOptGroupElement>();
+
+    this.list.forEach((item) => {
+      if (item.debugGroup) {
+        if (!groups.has(item.debugGroup)) {
+          const group = document.createElement('optgroup');
+          group.label = item.debugGroup;
+          groups.set(item.debugGroup, group);
+          this._sceneSelect.appendChild(group);
+        }
+      }
+    });
+
+    if (groups.size > 0) {
+      const nogroups = this.list.filter((item) => !item.debugGroup);
+      if (nogroups.length) {
+        const group = document.createElement('optgroup');
+        group.label = 'Other';
+        groups.set('Other', group);
+        this._sceneSelect.appendChild(group);
+        nogroups.forEach((item) => {
+          item.debugGroup = 'Other';
+        });
+      }
+    }
 
     this.list.forEach((value) => {
       const option = document.createElement('option');
@@ -391,7 +418,11 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
       if (value.id === this.defaultScene) {
         option.selected = true;
       }
-      this._sceneSelect.appendChild(option);
+      if (value.debugGroup) {
+        groups.get(value.debugGroup)?.appendChild(option);
+      } else {
+        this._sceneSelect.appendChild(option);
+      }
     });
 
     this._debugMenu.appendChild(this._sceneSelect);

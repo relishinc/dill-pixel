@@ -1,6 +1,7 @@
 import type { ActionSignal, i18nTParams, IFocusable, IFocusLayer, KeySignal, LoadSceneConfig } from '../../plugins';
 import { ActionContext, InputController } from '../../plugins';
-import type { IPopup, IScene, PopupConfig, PopupConstructor } from '../../display';
+import type { IScene } from '../../display';
+import type { IPopup, PopupConfig, PopupConstructor } from '../../ui';
 
 export interface ICoreFunctions {
   // FocusManager;

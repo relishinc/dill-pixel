@@ -91,49 +91,64 @@ async function boot() {
       ],
       scenes: [
         {
-          id: 'ui',
-          debugLabel: 'UI',
-          namedExport: 'UIScene',
-          module: () => import('@/scenes/UIScene'),
-        },
-        {
           id: 'assets',
+          debugGroup: 'Framework',
           debugLabel: 'Assets',
           namedExport: 'AssetScene',
           module: () => import('@/scenes/AssetScene'),
         },
         {
           id: 'audio',
-          debugLabel: 'Audio',
+          debugGroup: 'Audio',
+          debugLabel: 'Music & SFX',
           namedExport: 'AudioScene',
           module: () => import('@/scenes/AudioScene'),
         },
         {
           id: 'voiceover',
-          debugLabel: 'Voiceover / Captions',
+          debugGroup: 'Audio',
+          debugLabel: 'Voiceover & Captions',
           namedExport: 'VoiceoverScene',
           module: () => import('@/scenes/VoiceoverScene'),
         },
         {
           id: 'focus',
+          debugGroup: 'Accessibility',
           debugLabel: 'Focus Management',
           namedExport: 'FocusScene',
           module: () => import('@/scenes/FocusScene'),
         },
         {
-          id: 'firebase',
-          debugLabel: 'Firebase Adapter',
-          namedExport: 'FirebaseAdapterScene',
-          module: () => import('@/scenes/FirebaseAdapterScene'),
+          id: 'ui-input',
+          debugGroup: 'UI',
+          debugLabel: 'Input',
+          namedExport: 'UIScene',
+          module: () => import('@/scenes/UIScene'),
         },
         {
-          id: 'popups',
-          debugLabel: 'Popup Management',
+          id: 'ui-flexContainer',
+          debugGroup: 'UI',
+          debugLabel: 'Flex Container',
+          namedExport: 'FlexContainerScene',
+          module: () => import('@/scenes/FlexContainerScene'),
+        },
+        {
+          id: 'ui-canvas',
+          debugGroup: 'UI',
+          debugLabel: 'UICanvas',
+          namedExport: 'UICanvasScene',
+          module: () => import('@/scenes/UICanvasScene'),
+        },
+        {
+          id: 'ui-popup',
+          debugGroup: 'UI',
+          debugLabel: 'Popups',
           namedExport: 'PopupScene',
           module: () => import('@/scenes/PopupScene'),
         },
         {
           id: 'animated-sprites',
+          debugGroup: 'Display',
           debugLabel: 'Animated Sprites',
           namedExport: 'AnimatedSpriteScene',
           module: () => import('@/scenes/AnimatedSpriteScene'),
@@ -145,7 +160,8 @@ async function boot() {
         },
         {
           id: 'spine',
-          debugLabel: 'Spine Testing',
+          debugGroup: 'Display',
+          debugLabel: 'Spine Animations',
           namedExport: 'SpineScene',
           assets: {
             preload: {
@@ -154,21 +170,18 @@ async function boot() {
           },
           module: () => import('@/scenes/SpineScene'),
         },
+
         {
-          id: 'flexContainer',
-          debugLabel: 'Flex Container',
-          namedExport: 'FlexContainerScene',
-          module: () => import('@/scenes/FlexContainerScene'),
-        },
-        {
-          id: 'uiCanvas',
-          debugLabel: 'UICanvas',
-          namedExport: 'UICanvasScene',
-          module: () => import('@/scenes/UICanvasScene'),
+          id: 'firebase',
+          debugGroup: 'Storage Adapters',
+          debugLabel: 'Firebase',
+          namedExport: 'FirebaseAdapterScene',
+          module: () => import('@/scenes/FirebaseAdapterScene'),
         },
         {
           id: 'snap-physics',
-          debugLabel: 'Snap Physics',
+          debugGroup: 'Physics',
+          debugLabel: 'Snap - Level & Camera',
           namedExport: 'SnapPhysicsScene',
           module: () => import('@/scenes/SnapPhysicsScene'),
           plugins: ['physics'],
@@ -180,7 +193,8 @@ async function boot() {
         },
         {
           id: 'snap-endless-runner',
-          debugLabel: 'Snap Physics - Endless Runner',
+          debugGroup: 'Physics',
+          debugLabel: 'Snap - Endless Runner',
           namedExport: 'EndlessRunnerScene',
           module: () => import('@/scenes/EndlessRunnerScene'),
           plugins: ['physics'],
@@ -192,7 +206,8 @@ async function boot() {
         },
         {
           id: 'arcade-physics',
-          debugLabel: 'Arcade Physics',
+          debugGroup: 'Physics',
+          debugLabel: 'Arcade',
           namedExport: 'ArcadePhysicsScene',
           module: () => import('@/scenes/ArcadePhysicsScene'),
           plugins: ['arcade'],
@@ -204,7 +219,8 @@ async function boot() {
         },
         {
           id: 'matter-physics',
-          debugLabel: 'Matter Physics',
+          debugGroup: 'Physics',
+          debugLabel: 'Matter JS',
           namedExport: 'MatterPhysicsScene',
           module: () => import('@/scenes/MatterPhysicsScene'),
           plugins: ['matter'],
@@ -216,7 +232,8 @@ async function boot() {
         },
         {
           id: 'rive',
-          debugLabel: 'Rive',
+          debugGroup: 'Rive',
+          debugLabel: 'Rive (Various)',
           namedExport: 'RiveScene',
           module: () => import('@/scenes/RiveScene'),
           plugins: ['rive'],
@@ -270,15 +287,47 @@ async function boot() {
 
   if (nav) {
     // add examples to sidebar nav
+    // get list groups
+    const groups: Set<string> = new Set();
+    const groupLists: Map<string, HTMLUListElement> = new Map();
+    scenes.forEach((scene) => {
+      const item = app.scenes.list.find((s) => s.id === scene);
+      const group = item?.debugGroup;
+      if (group) {
+        groups.add(group);
+      }
+    });
+    if (groups.has('Other')) {
+      // move 'Other' to the end of the set
+      groups.delete('Other');
+      groups.add('Other');
+    }
+    Array.from(groups).forEach((groupName) => {
+      const ul = document.createElement('ul');
+      ul.id = groupName;
+      groupLists.set(groupName, ul);
+      const li: HTMLLIElement = document.createElement('li');
+      const h3: HTMLHeadingElement = document.createElement('h3');
+      h3.innerHTML = groupName;
+      ul.appendChild(li);
+      li.appendChild(h3);
+      nav.appendChild(ul);
+    });
     scenes.forEach((scene: string) => {
       const a: HTMLAnchorElement = document.createElement('a') as HTMLAnchorElement;
       const item = app.scenes.list.find((s) => s.id === scene);
       if (!item) {
         return;
       }
-      a.innerText = item.debugLabel || item.id;
+      a.innerHTML = item.debugLabel || item.id;
       a.href = `#${scene}`;
-      nav.appendChild(a);
+      if (item.debugGroup && groupLists.has(item.debugGroup)) {
+        const li: HTMLLIElement = document.createElement('li');
+        li.appendChild(a);
+        groupLists.get(item.debugGroup)?.appendChild(li);
+      } else {
+        nav.appendChild(a);
+      }
       a.addEventListener('click', () => {
         if (a.classList.contains('active')) {
           return;

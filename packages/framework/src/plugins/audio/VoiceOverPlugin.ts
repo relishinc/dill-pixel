@@ -139,7 +139,7 @@ export class VoiceOverPlugin extends Plugin implements IVoiceOverPlugin {
       (mode === 'override' && priority >= this._queue[0].priority!) ||
       (mode === 'new' && priority > this._queue[0].priority!)
     ) {
-      void this.stopVO();
+      await this.stopVO();
       this.addToQueue(key, callback, priority);
       return this.playNext();
     } else if (mode === 'append') {
@@ -266,7 +266,7 @@ export class VoiceOverPlugin extends Plugin implements IVoiceOverPlugin {
         } else {
           Logger.log('📂 Loading VO %c%s%c', item.key);
         }
-        const instance = await this.app.audio.play(item.key, 'voiceover');
+        const instance = await this.app.audio.play(item.key, 'voiceover', { singleInstance: true });
         if (this.activeVO) {
           this.onVoiceOverStart.emit(this.activeVO);
         }
