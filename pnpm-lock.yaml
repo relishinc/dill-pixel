@@ -12,8 +12,8 @@ importers:
         specifier: ^10.4.1
         version: 10.4.1
       turbo:
-        specifier: ^2.0.3
-        version: 2.0.3
+        specifier: ^2.0.4
+        version: 2.0.4
 
   apps/docs:
     dependencies:
@@ -6349,8 +6349,18 @@ packages:
     cpu: [x64]
     os: [darwin]
 
+  turbo-darwin-64@2.0.4:
+    resolution: {integrity: sha512-x9mvmh4wudBstML8Z8IOmokLWglIhSfhQwnh2gBCSqabgVBKYvzl8Y+i+UCNPxheCGTgtsPepTcIaKBIyFIcvw==}
+    cpu: [x64]
+    os: [darwin]
+
   turbo-darwin-arm64@2.0.3:
     resolution: {integrity: sha512-LUcqvkV9Bxtng6QHbevp8IK8zzwbIxM6HMjCE7FEW6yJBN1KwvTtRtsGBwwmTxaaLO0wD1Jgl3vgkXAmQ4fqUw==}
+    cpu: [arm64]
+    os: [darwin]
+
+  turbo-darwin-arm64@2.0.4:
+    resolution: {integrity: sha512-/B1Ih8zPRGVw5vw4SlclOf3C/woJ/2T6ieH6u54KT4wypoaVyaiyMqBcziIXycdObIYr7jQ+raHO7q3mhay9/A==}
     cpu: [arm64]
     os: [darwin]
 
@@ -6359,8 +6369,18 @@ packages:
     cpu: [x64]
     os: [linux]
 
+  turbo-linux-64@2.0.4:
+    resolution: {integrity: sha512-6aG670e5zOWu6RczEYcB81nEl8EhiGJEvWhUrnAfNEUIMBEH1pR5SsMmG2ol5/m3PgiRM12r13dSqTxCLcHrVg==}
+    cpu: [x64]
+    os: [linux]
+
   turbo-linux-arm64@2.0.3:
     resolution: {integrity: sha512-MBACTcSR874L1FtLL7gkgbI4yYJWBUCqeBN/iE29D+8EFe0d3fAyviFlbQP4K/HaDYet1i26xkkOiWr0z7/V9A==}
+    cpu: [arm64]
+    os: [linux]
+
+  turbo-linux-arm64@2.0.4:
+    resolution: {integrity: sha512-AXfVOjst+mCtPDFT4tCu08Qrfv12Nj7NDd33AjGwV79NYN1Y1rcFY59UQ4nO3ij3rbcvV71Xc+TZJ4csEvRCSg==}
     cpu: [arm64]
     os: [linux]
 
@@ -6369,13 +6389,27 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  turbo-windows-64@2.0.4:
+    resolution: {integrity: sha512-QOnUR9hKl0T5gq5h1fAhVEqBSjpcBi/BbaO71YGQNgsr6pAnCQdbG8/r3MYXet53efM0KTdOhieWeO3KLNKybA==}
+    cpu: [x64]
+    os: [win32]
+
   turbo-windows-arm64@2.0.3:
     resolution: {integrity: sha512-wmed4kkenLvRbidi7gISB4PU77ujBuZfgVGDZ4DXTFslE/kYpINulwzkVwJIvNXsJtHqyOq0n6jL8Zwl3BrwDg==}
     cpu: [arm64]
     os: [win32]
 
+  turbo-windows-arm64@2.0.4:
+    resolution: {integrity: sha512-3v8WpdZy1AxZw0gha0q3caZmm+0gveBQ40OspD6mxDBIS+oBtO5CkxhIXkFJJW+jDKmDlM7wXDIGfMEq+QyNCQ==}
+    cpu: [arm64]
+    os: [win32]
+
   turbo@2.0.3:
     resolution: {integrity: sha512-jF1K0tTUyryEWmgqk1V0ALbSz3VdeZ8FXUo6B64WsPksCMCE48N5jUezGOH2MN0+epdaRMH8/WcPU0QQaVfeLA==}
+    hasBin: true
+
+  turbo@2.0.4:
+    resolution: {integrity: sha512-Ilme/2Q5kYw0AeRr+aw3s02+WrEYaY7U8vPnqSZU/jaDG/qd6jHVN6nRWyd/9KXvJGYM69vE6JImoGoyNjLwaw==}
     hasBin: true
 
   tweetnacl@0.14.5:
@@ -14475,19 +14509,37 @@ snapshots:
   turbo-darwin-64@2.0.3:
     optional: true
 
+  turbo-darwin-64@2.0.4:
+    optional: true
+
   turbo-darwin-arm64@2.0.3:
+    optional: true
+
+  turbo-darwin-arm64@2.0.4:
     optional: true
 
   turbo-linux-64@2.0.3:
     optional: true
 
+  turbo-linux-64@2.0.4:
+    optional: true
+
   turbo-linux-arm64@2.0.3:
+    optional: true
+
+  turbo-linux-arm64@2.0.4:
     optional: true
 
   turbo-windows-64@2.0.3:
     optional: true
 
+  turbo-windows-64@2.0.4:
+    optional: true
+
   turbo-windows-arm64@2.0.3:
+    optional: true
+
+  turbo-windows-arm64@2.0.4:
     optional: true
 
   turbo@2.0.3:
@@ -14498,6 +14550,15 @@ snapshots:
       turbo-linux-arm64: 2.0.3
       turbo-windows-64: 2.0.3
       turbo-windows-arm64: 2.0.3
+
+  turbo@2.0.4:
+    optionalDependencies:
+      turbo-darwin-64: 2.0.4
+      turbo-darwin-arm64: 2.0.4
+      turbo-linux-64: 2.0.4
+      turbo-linux-arm64: 2.0.4
+      turbo-windows-64: 2.0.4
+      turbo-windows-arm64: 2.0.4
 
   tweetnacl@0.14.5: {}
 
