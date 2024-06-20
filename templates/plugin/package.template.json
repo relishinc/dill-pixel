@@ -1,0 +1,33 @@
+{
+  "name": "@dill-pixel/plugin-@pluginName",
+  "version": "x.x.x",
+  "description": "",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "main": "lib/dill-pixel-plugin-@pluginName.mjs",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "default": "./lib/dill-pixel-plugin-@pluginName.mjs",
+      "types": "./lib/index.d.ts"
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "dill-pixel": "workspace:*",
+    "vite-plugin-dts": "^3.9.1"
+  },
+  "peerDependencies": {
+    "dill-pixel": "next"
+  },
+  "dependencies": {}
+}
