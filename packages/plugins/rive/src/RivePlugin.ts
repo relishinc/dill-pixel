@@ -1,7 +1,11 @@
-import { IApplication, IPlugin, Plugin } from 'dill-pixel';
-import Rive, { RiveCanvas } from '@rive-app/canvas-advanced-lite';
-import { BrowserAdapter, checkExtension, extensions, ExtensionType, LoaderParserPriority } from 'pixi.js';
+import {IApplication, IPlugin, Plugin} from 'dill-pixel';
+import Rive, {RiveCanvas} from '@rive-app/canvas-advanced-lite';
+import {BrowserAdapter, checkExtension, extensions, ExtensionType, LoaderParserPriority} from 'pixi.js';
 
+/**
+ * Defines the options for the Rive plugin.
+ * @property {string} wasmPath - The URL path to the Rive WASM file.
+ */
 export type RivePluginOptions = {
   wasmPath: string;
 };
@@ -11,7 +15,7 @@ export interface IRivePlugin extends IPlugin {
 }
 
 const defaultOptions = {
-  wasmPath: 'https://unpkg.com/@rive-app/canvas-advanced-lite@2.17.3/rive.wasm',
+  wasmPath: 'https://unpkg.com/@rive-app/canvas-advanced-lite@2.18.0/rive.wasm',
 };
 
 export class RivePlugin extends Plugin implements IRivePlugin {
