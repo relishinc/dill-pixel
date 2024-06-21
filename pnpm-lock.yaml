@@ -100,7 +100,7 @@ importers:
         version: link:../storage-adapters/firebase
       '@pixi/sound':
         specifier: 6.0.0
-        version: 6.0.0(pixi.js@8.1.8)
+        version: 6.0.0(pixi.js@8.2.0)
       dat.gui:
         specifier: ^0.7.9
         version: 0.7.9
@@ -117,8 +117,8 @@ importers:
         specifier: 4.1.5
         version: 4.1.5
       pixi.js:
-        specifier: 8.1.8
-        version: 8.1.8
+        specifier: 8.2.0
+        version: 8.2.0
       rimraf:
         specifier: 5.0.5
         version: 5.0.5
@@ -191,7 +191,7 @@ importers:
         version: 4.1.51
       '@pixi/sound':
         specifier: ^6.0.0
-        version: 6.0.0(pixi.js@8.1.8)
+        version: 6.0.0(pixi.js@8.2.0)
       csv-parse:
         specifier: ^5.5.5
         version: 5.5.6
@@ -205,8 +205,8 @@ importers:
         specifier: ^4.1.5
         version: 4.1.5
       pixi.js:
-        specifier: 8.1.8
-        version: 8.1.8
+        specifier: 8.2.0
+        version: 8.2.0
       rimraf:
         specifier: ^5.0.5
         version: 5.0.7
@@ -293,8 +293,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0
       pixi.js:
-        specifier: 8.1.8
-        version: 8.1.8
+        specifier: 8.2.0
+        version: 8.2.0
     devDependencies:
       dill-pixel:
         specifier: workspace:*
@@ -309,8 +309,8 @@ importers:
         specifier: ^0.19.0
         version: 0.19.0
       pixi.js:
-        specifier: 8.1.8
-        version: 8.1.8
+        specifier: 8.2.0
+        version: 8.2.0
     devDependencies:
       '@types/matter-js':
         specifier: ^0.19.6
@@ -328,8 +328,8 @@ importers:
         specifier: ^3.12.5
         version: 3.12.5
       pixi.js:
-        specifier: 8.1.8
-        version: 8.1.8
+        specifier: 8.2.0
+        version: 8.2.0
     devDependencies:
       dill-pixel:
         specifier: workspace:*
@@ -344,8 +344,8 @@ importers:
         specifier: ^2.17.3
         version: 2.17.3
       pixi.js:
-        specifier: 8.1.8
-        version: 8.1.8
+        specifier: 8.2.0
+        version: 8.2.0
     devDependencies:
       dill-pixel:
         specifier: workspace:*
@@ -5431,8 +5431,8 @@ packages:
     resolution: {integrity: sha512-J8B6xqiO37sU/gkcMglv6h5Jbd9xNER7aHzpfRdNmV4IbQBzBpe4l9XmbG+xPF/znacgu2jfEw+wHffaq/YkXA==}
     hasBin: true
 
-  pixi.js@8.1.8:
-    resolution: {integrity: sha512-P+RhNNq27Re3dPWJ2YXufAxah9gtr4YrYEmlaJs44EcaoM8HXsTLHC53ptX8+SLcsZcO/mbAEGJX7XZZc5YF4A==}
+  pixi.js@8.2.0:
+    resolution: {integrity: sha512-hwPZ3sBYNbgrTyRmYAjQUyqZehiTxc1Qy0SI9GGrHLwtC15AtY7JaAk3ZVjnUo04wz9b0BHLjpRYnEUuIOENMw==}
 
   pkg-dir@4.2.0:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}
@@ -8674,9 +8674,9 @@ snapshots:
 
   '@pixi/runner@7.4.2': {}
 
-  '@pixi/sound@6.0.0(pixi.js@8.1.8)':
+  '@pixi/sound@6.0.0(pixi.js@8.2.0)':
     dependencies:
-      pixi.js: 8.1.8
+      pixi.js: 8.2.0
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -13344,7 +13344,7 @@ snapshots:
     dependencies:
       pngjs: 3.4.0
 
-  pixi.js@8.1.8:
+  pixi.js@8.2.0:
     dependencies:
       '@pixi/colord': 2.9.6
       '@types/css-font-loading-module': 0.0.12

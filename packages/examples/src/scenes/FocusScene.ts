@@ -125,19 +125,6 @@ export class FocusScene extends BaseScene {
     this._updateFocusLayerLabel();
   }
 
-  async enter() {
-    return this.app.scenes.isFirstScene
-      ? this.animateFromTo(
-          { alpha: 0 },
-          {
-            alpha: 1,
-            duration: 1,
-            ease: 'sine.out',
-          },
-        )
-      : this.animateFrom({ y: -1000, duration: 2, ease: 'bounce.out' });
-  }
-
   update() {
     if (this.button.isDown) {
       console.log('button is down!');

@@ -17,6 +17,8 @@ export class RivePlugin extends Plugin implements IRivePlugin {
   public options: RivePluginOptions;
   public rive: RiveCanvas;
 
+  private _addedExtensions: boolean = false;
+
   async initialize(_app: IApplication, options: RivePluginOptions) {
     this.options = { ...defaultOptions, ...options };
     RivePlugin.ID = this.id;
@@ -26,20 +28,23 @@ export class RivePlugin extends Plugin implements IRivePlugin {
   }
 
   private _addLoaderExtensions() {
-    extensions.add({
-      name: 'loadRive',
-      extension: {
-        type: ExtensionType.LoadParser,
-        priority: LoaderParserPriority.High,
-      },
-      test(url: string) {
-        // checkDataUrl(url, 'mime/type');
-        return checkExtension(url, '.riv');
-      },
-      async load(url: string) {
-        const response = await BrowserAdapter.fetch(url);
-        return new Uint8Array(await response.arrayBuffer());
-      },
-    });
+    if (!this._addedExtensions) {
+      extensions.add({
+        name: 'loadRive',
+        extension: {
+          type: ExtensionType.LoadParser,
+          priority: LoaderParserPriority.High,
+        },
+        test(url: string) {
+          // checkDataUrl(url, 'mime/type');
+          return checkExtension(url, '.riv');
+        },
+        async load(url: string) {
+          const response = await BrowserAdapter.fetch(url);
+          return new Uint8Array(await response.arrayBuffer());
+        },
+      });
+      this._addedExtensions = true;
+    }
   }
 }

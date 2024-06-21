@@ -68,15 +68,16 @@ export class BaseScene extends Scene<V8Application> {
       await this.addGUI();
       this.configureGUI();
     }
+    // this.alpha = 0;
   }
 
   public async enter() {
-    this.alpha = 0;
-    return this.animate({ alpha: 1, duration: 0.6, ease: 'sine.out' });
+    // this.alpha = 0;
+    // return this.animate({ alpha: 1, duration: 0.6, ease: 'sine.out' });
   }
 
   public async exit() {
-    return this.animate({ alpha: 0, duration: 0.4, ease: 'sine.in' });
+    // return this.animate({ alpha: 0, duration: 0.4, ease: 'sine.in' });
   }
 
   public destroy() {

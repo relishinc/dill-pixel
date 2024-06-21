@@ -1,6 +1,6 @@
 {
   "name": "dill-pixel",
-  "version": "8.9.5",
+  "version": "8.10.0",
   "title": "Dill Pixel V8",
   "description": "Relish framework for HTML games",
   "bin": {
@@ -48,15 +48,15 @@
   "scripts": {
     "dev": "cd ./examples && pnpm dev",
     "start": "cd ./examples && pnpm start",
-    "build": "pnpm version && vite build",
+    "build": "pnpm generate-version && vite build",
     "visualize:examples": "cd ./examples && npx vite-bundle-visualizer",
     "lint": "eslint --ext .ts ./src/**/*",
     "lint:fix": "eslint --ext .ts ./src/**/* --fix",
     "docs": "pnpm build:docs",
     "build:docs": "cd ./docs && pnpm build",
     "dev:docs": "cd ./docs && pnpm dev",
-    "typedoc": "ppnpm version && typedoc --out typedoc src",
-    "version": "node ./scripts/generate-version.mjs",
+    "typedoc": "ppnpm generate-version && typedoc --out typedoc src",
+    "generate-version": "node ./scripts/generate-version.mjs",
     "clean": "node ./scripts/clean.mjs",
     "update-package-deps": "node ./scripts/update-package-deps.mjs",
     "build-packages": "node ./scripts/build-packages.mjs"
@@ -132,7 +132,7 @@
     "gsap": "^3.12.5",
     "kleur": "^4.1.5",
     "npm-run-all": "^4.1.5",
-    "pixi.js": "8.1.8",
+    "pixi.js": "8.2.0",
     "rimraf": "^5.0.5",
     "stats.js": "^0.17.0",
     "typed-signals": "^2.5.0",

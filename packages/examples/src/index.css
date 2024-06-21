@@ -48,9 +48,10 @@ body {
     position: relative;
     display: block;
     width: var(--sidebar-width);
+    height: 100%;
     border-radius: 1rem;
     background: #374151;
-    height: 100%;
+
     overflow: hidden;
 }
 
@@ -66,15 +67,16 @@ body {
     flex: 0 0 var(--sidebar-width);
     display: flex;
     flex-direction: column;
-    justify-content: start;
-    position: absolute;
+    position: relative;
     padding: 1rem;
+    background: #374151;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     height: 100%;
     overflow: auto;
+    scrollbar-gutter: stable;
 }
 
 #sidebar .inner::-webkit-scrollbar {

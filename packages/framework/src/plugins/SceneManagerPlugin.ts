@@ -1,10 +1,18 @@
 import { Container } from 'pixi.js';
 import type { IApplication } from '../core';
 import { Application } from '../Application';
-import type { IScene } from '../display';
+import type { IScene, ISceneTransition, SceneTransition } from '../display';
 import { Signal } from '../signals';
-import type { Constructor, SceneImportList } from '../utils';
-import { bindAllMethods, createQueue, getDynamicModuleFromImportListItem, isDev, Queue } from '../utils';
+import {
+  bindAllMethods,
+  Constructor,
+  createQueue,
+  getDynamicModuleFromImportListItem,
+  isDev,
+  Logger,
+  Queue,
+  SceneImportList,
+} from '../utils';
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
 
@@ -12,9 +20,11 @@ export interface ISceneManagerPlugin extends IPlugin {
   isFirstScene: boolean;
   onSceneChangeStart: Signal<(detail: { exiting: string | null; entering: string }) => void>;
   onSceneChangeComplete: Signal<(detail: { current: string }) => void>;
-  loadScreen?: IScene;
+
   view: Container;
   list: SceneImportList<IScene>;
+  splash: { view: ISceneTransition | null; hideWhen: SplashHideWhen; zOrder: SplashZOrder };
+  transition?: ISceneTransition;
   currentScene: IScene;
   readonly ids: string[];
   readonly defaultScene: string;
@@ -33,12 +43,27 @@ export type LoadSceneMethod =
   | 'exitEnter'
   | 'enterExit'
   | 'enterBehind'
-  | 'interStitialExitEnter'
-  | 'exitInterstitialEnter';
+  | 'transitionExitEnter'
+  | 'exitTransitionEnter';
+
+export type SplashHideWhen = 'firstSceneEnter' | 'requiredAssetsLoaded';
+export type SplashZOrder = 'top' | 'bottom';
+
+export type SplashOptions = {
+  view: ISceneTransition | typeof SceneTransition | null;
+  zOrder: SplashZOrder;
+  hideWhen: SplashHideWhen;
+};
 
 export type LoadSceneConfig = {
   id: string;
   method?: LoadSceneMethod;
+};
+
+const defaultSplashOptions: SplashOptions = {
+  view: null,
+  hideWhen: 'firstSceneEnter',
+  zOrder: 'top',
 };
 
 export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
@@ -49,8 +74,8 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
   public onSceneChangeComplete: Signal<(detail: { current: string }) => void> = new Signal<
     (detail: { current: string }) => void
   >();
-  // TODO: loadScreen is a special scene that can be used right after the application starts
-  public loadScreen?: IScene;
+  public splash: { view: ISceneTransition | null; hideWhen: SplashHideWhen; zOrder: SplashZOrder };
+  public transition?: ISceneTransition;
   // view container - gets added to the stage
   public view: Container = new Container();
   // maybe the user wants the enter animation to be different for the first scene
@@ -90,6 +115,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
   public destroy(): void {}
 
   public initialize(app: IApplication): Promise<void> {
+    Logger.log('SceneManager initialize');
     this._debugVisible =
       this.app.config?.showSceneDebugMenu === true || (isDev && this.app.config?.showSceneDebugMenu !== false);
     this._useHash = app.config?.useHash === true || this._debugVisible;
@@ -98,7 +124,22 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
     if (this._debugVisible || this._useHash) {
       this.defaultScene = this.getSceneFromHash() || '';
     }
+    if (!this.splash) {
+      this.splash = { view: null, hideWhen: 'firstSceneEnter', zOrder: 'top' };
+      const splash = { ...defaultSplashOptions, ...(app.config?.splash ?? {}) };
+      if (splash.view) {
+        this.splash.view =
+          typeof splash.view === 'function' ? new (splash.view as Constructor<ISceneTransition>)() : splash.view;
+      }
+    }
+
     this.defaultScene = this.defaultScene || app.config?.defaultScene || this.list?.[0]?.id;
+    if (!this.transition && app.config?.sceneTransition) {
+      this.transition =
+        typeof app.config.sceneTransition === 'function'
+          ? new (app.config.sceneTransition as Constructor<ISceneTransition>)()
+          : app.config.sceneTransition;
+    }
     this._defaultLoadMethod = app.config.defaultSceneLoadMethod || 'immediate';
 
     if (this._debugVisible) {
@@ -111,7 +152,13 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
   }
 
   public async loadDefaultScene(): Promise<void> {
+    if (this.splash) {
+      await this._showSplash();
+    }
     await this.app.assets.loadRequired();
+    if (this.splash.hideWhen === 'requiredAssetsLoaded') {
+      await this._hideSplash();
+    }
     return this.loadScene(this.defaultScene);
   }
 
@@ -196,6 +243,34 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
           this._startCurrentScene,
         );
         break;
+      case 'transitionExitEnter':
+        this._queue.add(
+          this._showTransition,
+          this._exitLastScene,
+          this._destroyLastScene,
+          this._unloadLastScene,
+          this._loadCurrentScene,
+          this._initializeCurrentScene,
+          this._addCurrentScene,
+          this._hideTransition,
+          this._enterCurrentScene,
+          this._startCurrentScene,
+        );
+        break;
+      case 'exitTransitionEnter':
+        this._queue.add(
+          this._exitLastScene,
+          this._showTransition,
+          this._destroyLastScene,
+          this._unloadLastScene,
+          this._loadCurrentScene,
+          this._initializeCurrentScene,
+          this._addCurrentScene,
+          this._hideTransition,
+          this._enterCurrentScene,
+          this._startCurrentScene,
+        );
+        break;
       case 'immediate':
       default:
         this._queue.add(
@@ -241,7 +316,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
     window.addEventListener('hashchange', () => {
       const sceneId = this.getSceneFromHash();
       if (sceneId) {
-        this.loadScene(sceneId);
+        void this.loadScene(sceneId);
       }
     });
   }
@@ -351,13 +426,54 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
   }
 
   private async _enterCurrentScene(): Promise<void> {
+    Logger.log('SceneManager', `Entering scene: ${this.currentScene.id}`);
     await this.currentScene.enter();
+    if (this.isFirstScene && this.splash.hideWhen === 'firstSceneEnter') {
+      await this._hideSplash();
+    }
     return Promise.resolve();
   }
 
   private async _startCurrentScene(): Promise<void> {
     void this.currentScene.start();
     return Promise.resolve();
+  }
+
+  private async _showTransition(): Promise<void> {
+    if (this.isFirstScene) {
+      return Promise.resolve();
+    }
+    if (this.transition) {
+      this.transition.active = true;
+      this.transition.renderable = true;
+      this.transition.visible = true;
+      this.transition.progress = 0;
+      await this.transition.enter();
+    }
+  }
+
+  private async _hideTransition(): Promise<void> {
+    if (this.isFirstScene) {
+      return Promise.resolve();
+    }
+    if (this.transition) {
+      await this.transition.exit();
+      this.transition.progress = 0;
+      this.transition.visible = false;
+      this.transition.renderable = false;
+      this.transition.active = false;
+    }
+  }
+
+  private async _showSplash() {
+    await this.splash.view?.enter();
+  }
+
+  private async _hideSplash(): Promise<void> {
+    await this.splash.view?.exit();
+    this.splash.view?.destroy();
+    this.splash.view?.parent?.removeChild(this.splash.view);
+    this.splash.view = null;
   }
 
   private _createDebugMenu() {

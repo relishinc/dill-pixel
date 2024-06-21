@@ -45,13 +45,11 @@ export class VoiceoverScene extends BaseScene {
 
   constructor() {
     super();
-    this.alpha = 0;
   }
 
   public async initialize() {
     await super.initialize();
     this.app.focus.addFocusLayer(this.id);
-
     this.app.audio.muted = this.config.muted;
 
     this.buttonContainer = this.add.flexContainer({ gap: 20, justifyContent: 'center' });

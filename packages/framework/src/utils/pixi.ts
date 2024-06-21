@@ -1,5 +1,5 @@
 import { Circle, Container, ContainerChild, Ellipse, Point, Polygon, Rectangle, RoundedRectangle } from 'pixi.js';
-import { PointLike } from './types';
+import { PointLike, Size } from './types';
 import { resolvePointLike } from './point';
 
 export type PixiSimpleShape = Rectangle | Circle | Ellipse | RoundedRectangle;
@@ -90,8 +90,13 @@ export function scaleToHeight(obj: Container, height: number) {
   scaleUniform(obj, height, 'height');
 }
 
-export function scaleToSize(obj: Container, size: PointLike, firstProp: 'width' | 'height' = 'width') {
-  const resolvedSize = resolvePointLike(size);
+export function scaleToSize(obj: Container, size: PointLike | Size, firstProp: 'width' | 'height' = 'width') {
+  let resolvedSize;
+  if ((size as Size)?.width && (size as Size)?.height) {
+    resolvedSize = { x: (size as Size).width, y: (size as Size).height };
+  } else {
+    resolvedSize = resolvePointLike(size as PointLike);
+  }
 
   if (firstProp === 'width') {
     scaleToWidth(obj, resolvedSize.x);

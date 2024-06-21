@@ -263,8 +263,20 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return coreFunctionRegistry;
   }
 
+  // views
+  protected _views: any[];
+
   private get views(): any[] {
-    return [this.scenes.view, this.popups.view, this.captions.view];
+    if (!this._views) {
+      this._views = [this.scenes.view, this.popups.view, this.captions.view];
+      if (this.scenes.splash.view) {
+        this._views.push(this.scenes.splash.view);
+      }
+      if (this.scenes.transition) {
+        this._views.push(this.scenes.transition);
+      }
+    }
+    return this._views;
   }
 
   public static getInstance<T extends Application = Application>(): T {
@@ -307,9 +319,11 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     await this.initAssets();
     // initialize the pixi application
     await this.init(this.config);
-
     // register the default plugins
     await this.registerDefaultPlugins();
+
+    // internal setup
+    await this._setup();
 
     if (this.config.plugins && this.config.plugins.length > 0) {
       for (let i = 0; i < this.config.plugins.length; i++) {
@@ -344,7 +358,6 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       await this.registerStorageAdapters();
     }
 
-    await this._setup(); // internal
     await this.setup();
     await this.loadDefaultScene();
 
@@ -568,13 +581,24 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     if (isDev) {
       (globalThis as any).__PIXI_APP__ = this;
     }
-
+    void this._resize();
     // connect onResize signal
     this.webEvents.onResize.connect(this._resize, -1);
 
+    if (this.scenes.splash?.view && this.scenes.splash.zOrder === 'bottom') {
+      this._addSplash();
+    }
     // scene manager
     this.scenes.view.label = 'SceneManager';
     this.stage.addChild(this.scenes.view);
+
+    if (this.scenes.splash?.view && this.scenes.splash.zOrder === 'top') {
+      this._addSplash();
+    }
+    if (this.scenes.transition) {
+      this.scenes.transition.label = 'SceneManager:: Transition';
+      this.stage.addChild(this.scenes.transition);
+    }
 
     // popup manager
     this.stage.addChild(this.popups.view);
@@ -583,8 +607,14 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     this.focus.view.label = 'FocusManager';
     this.stage.addChild(this.focus.view);
 
-    void this._resize();
     // is touch device
     return Promise.resolve();
+  }
+
+  private _addSplash() {
+    if (this.scenes.splash.view) {
+      this.scenes.splash.view.label = 'SceneManager:: Splash';
+      this.stage.addChild(this.scenes.splash.view);
+    }
   }
 }

@@ -19,7 +19,6 @@ export class AudioScene extends BaseScene {
 
   constructor() {
     super();
-    this.alpha = 0;
   }
 
   get assets(): SceneAssets {

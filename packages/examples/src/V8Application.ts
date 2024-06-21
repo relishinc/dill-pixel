@@ -5,6 +5,8 @@ import { ExampleOutliner } from './ui/ExampleOutliner';
 import { IFirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
 import { controls } from '@/controls';
 import manifest from './assets.json';
+import { Transition } from '@/Transition';
+import { Splash } from '@/Splash';
 
 export class V8Application extends Application {
   get firebase(): IFirebaseAdapter {
@@ -20,7 +22,12 @@ async function boot() {
       resizer: {
         minSize: { width: 500, height: 800 },
       },
-      defaultSceneLoadMethod: 'exitEnter',
+      splash: {
+        view: Splash,
+        hideWhen: 'firstSceneEnter',
+      },
+      sceneTransition: Transition,
+      defaultSceneLoadMethod: 'transitionExitEnter',
       useSpine: true,
       showStats: true,
       showSceneDebugMenu: true,
