@@ -12,7 +12,7 @@ export default defineConfig({
       fileName: () => `dill-pixel-plugin-rive.mjs`,
     },
     rollupOptions: {
-      external: ['dill-pixel', 'pixi.js'], // External dependencies
+      external: ['dill-pixel', 'pixi.js', '@rive-app/canvas-advanced-lite'], // External dependencies
     },
   },
   plugins: [dts()],

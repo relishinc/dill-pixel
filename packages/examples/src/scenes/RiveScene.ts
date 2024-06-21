@@ -1,5 +1,5 @@
 import { BaseScene } from '@/scenes/BaseScene';
-import { RiveEntity } from '@dill-pixel/plugin-rive';
+import { IRivePlugin, RiveEntity } from '@dill-pixel/plugin-rive';
 import { FlexContainer, Logger } from 'dill-pixel';
 import { DestroyOptions, FederatedEvent } from 'pixi.js';
 
@@ -104,6 +104,7 @@ export class RiveScene extends BaseScene {
   }
 
   destroy(options?: DestroyOptions) {
+    this.app.getPlugin<IRivePlugin>('rive').cleanup();
     super.destroy(options);
   }
 

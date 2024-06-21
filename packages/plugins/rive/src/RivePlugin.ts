@@ -6,7 +6,9 @@ export type RivePluginOptions = {
   wasmPath: string;
 };
 
-export interface IRivePlugin extends IPlugin {}
+export interface IRivePlugin extends IPlugin {
+  cleanup(): void;
+}
 
 const defaultOptions = {
   wasmPath: 'https://unpkg.com/@rive-app/canvas-advanced-lite@2.17.3/rive.wasm',
@@ -28,8 +30,12 @@ export class RivePlugin extends Plugin implements IRivePlugin {
     }
   }
 
-  destroy() {
+  cleanup() {
     this.rive.cleanup();
+  }
+
+  destroy() {
+    this.cleanup();
     super.destroy();
   }
 
