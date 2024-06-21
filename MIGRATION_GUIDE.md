@@ -1,27 +1,53 @@
-# Migrating to Dill Pixel
+# Migrating to Dill Pixel V8 from Dill Pixel
 
 ## Introduction
 
-HLF is changing! We are moving towards
+Pixi.js V8 introduces breaking changes to the Pixi.js API along with a slew of enhancements and improvements. This
+section of the migration guide covers the key changes developers should be aware of when upgrading from Pixi.js V7 to
+V8.
 
-- a new name for the framework (Dill Pixel!)
-- hosting on GitHub
-- open sourcing the framework
-- a new website / docs site / code examples
-- a new release / contribution process
-- new features and improvements
+We took this opportunity to overhaul the Dill Pixel structure. The new structure is more modular and (hopefully) easier
+to use, while maintaining the same core functionality we had before.
 
-## New name
+**Some key differences:**
 
-Dill Pixel
+### Leveraging ES6 and modularity
 
-## Hosting on GitHub
+Before, Dill Pixel was a bit of a monolithic framework. Everything was bundled into a single file, which could make your
+game file size quite large. With V8, like Pixi.js, we've embraced modularity as a core concept of the framework. All
+major pieces of your game can be imported separately if you desire. We'd recommend using [Vite](https://vitejs.dev/) to
+bundle your game for production (we use it for the framework and all plugins internally).
 
-We are moving to GitHub for hosting the framework. This will allow us to open source the framework and allow for easier contribution.
+### Plugins
+
+The new structure allows for plugins to be created and used to extend the framework.
+Plugins are first class citizens, and can be loaded during bootstrap. (see the [Plugins](#plugins) section below).
+
+### Store
+
+The store builds on the concept of saving / loading data. It uses adapters to save / load data to different sources.
+
+#### Storage Adapters
+
+Like plugins, storage adapters are first class citizens and can be loaded during bootstrap. (see
+the [Storage Adapters](#storage-adapters) section below).
+
+### Input Context, Actions, and Control Schemes
+
+### States are now Scenes
+
+We have renamed the `State` class to `Scene`, to better reflect the nature of the class.
+It still remains a core piece of the framework, and how we manage the different parts of a game.
+
+### No more Howler.js
+
+While Howler was a great library, we have decided to use as many core functionality from Pixi.js as possible, so we've
+migrated audio management to use [@pixi/sound](https://www.npmjs.com/package/@pixi/sound).
 
 ## Open sourcing the framework
 
-We are discussing an open source license and looking to move to open source so we might be able to accept contributions from the community and easier onboarding to the framework.
+We are discussing an open source license and looking to move to open source so we might be able to accept contributions
+from the community and easier onboarding to the framework.
 
 ## New website / docs site / code examples
 
@@ -36,7 +62,8 @@ We are moving to a new website and docs site.
 
 - We are now using release please to manage releases. This will allow us to automate the release process (and
   the [Changelog](./CHANGELOG.md). and make it easier.
-- Commits should follow the [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0/). This will allow us to automate the release process and generate the changelog.
+- Commits should follow the [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0/). This will
+  allow us to automate the release process and generate the changelog.
 
 ## New features and improvements
 
@@ -129,7 +156,8 @@ The goal is to redesign core UI elements to use PIXI UI, which will:
 ##### The API is being redesigned to be more intuitive and easier to use.
 
 - Where possible, we are trying to avoid breaking changes to the API unless absolutely necessary.
-- Mostly, we're trying to move away from the need to know about third party libraries being used under the hood, and adding a "convenience layer" to bridge the gap between the framework and third party libraries.
+- Mostly, we're trying to move away from the need to know about third party libraries being used under the hood, and
+  adding a "convenience layer" to bridge the gap between the framework and third party libraries.
 
 --- 
 
@@ -224,7 +252,8 @@ this.app.broadcast("SOME_EVENT_NAME", someData);
 
 ###### Example: Adding a new PIXI entity to a game state
 
-Factory methods serve to help with common tasks, such as adding a new PIXI entity to a game state. One method with parameters to set the initial state of the entity is used instead of multiple lines of code.
+Factory methods serve to help with common tasks, such as adding a new PIXI entity to a game state. One method with
+parameters to set the initial state of the entity is used instead of multiple lines of code.
 
 - Each state comes equipped with "add" and "make" methods to access factory methods.
 
