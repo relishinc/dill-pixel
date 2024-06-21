@@ -19,3 +19,4 @@ export * from './text';
 export * from './color';
 export * from './pixi';
 export * from './random';
+export * from './canvas';

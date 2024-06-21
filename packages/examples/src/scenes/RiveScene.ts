@@ -1,7 +1,7 @@
 import { BaseScene } from '@/scenes/BaseScene';
 import { RiveEntity } from '@dill-pixel/plugin-rive';
 import { FlexContainer, Logger } from 'dill-pixel';
-import { FederatedEvent } from 'pixi.js';
+import { DestroyOptions, FederatedEvent } from 'pixi.js';
 
 export class RiveScene extends BaseScene {
   public title = 'Rive';
@@ -101,6 +101,10 @@ export class RiveScene extends BaseScene {
     this.currentArtboardIndex = ab;
     const artboard = this.animation.getAvailableArtboards()[ab];
     this.animation.loadArtboard(artboard);
+  }
+
+  destroy(options?: DestroyOptions) {
+    super.destroy(options);
   }
 
   _changeAnimation() {

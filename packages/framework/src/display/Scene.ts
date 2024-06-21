@@ -1,9 +1,9 @@
-import type { AssetLoadingOptions, Size } from '../utils';
+import { AssetLoadingOptions, Logger, Size } from '../utils';
 
 import { Application } from '../Application';
 import type { IContainer } from './Container';
 import { Container } from './Container';
-import { Ticker } from 'pixi.js';
+import { DestroyOptions, Ticker } from 'pixi.js';
 
 export type SceneAssets = Omit<AssetLoadingOptions, 'manifest' | 'initOptions' | 'assetPreferences'>;
 
@@ -106,5 +106,14 @@ export class Scene<T extends Application = Application> extends Container<T> imp
    */
   public resize(size?: Size): void {
     void size;
+  }
+
+  public destroy(options?: DestroyOptions) {
+    Logger.log('Scene', `Destroying scene: ${this.id}`, options);
+    if (!options) {
+      options = { children: true };
+    }
+    this.app.ticker.remove(this.update);
+    super.destroy(options);
   }
 }

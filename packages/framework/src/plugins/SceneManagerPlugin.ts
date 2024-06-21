@@ -399,6 +399,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
 
   private async _unloadLastScene(): Promise<any> {
     if (this._lastScene && this._lastScene.autoUnloadAssets) {
+      Logger.log('unloading assets from', this._lastScene);
       return this.app.assets.unloadSceneAssets(this._lastScene);
     }
     return Promise.resolve();

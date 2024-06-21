@@ -244,6 +244,7 @@ async function boot() {
           namedExport: 'RiveScene',
           module: () => import('@/scenes/RiveScene'),
           plugins: ['rive'],
+          autoUnloadAssets: true,
           assets: {
             preload: {
               assets: [

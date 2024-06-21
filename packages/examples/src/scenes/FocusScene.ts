@@ -42,6 +42,7 @@ export class FocusScene extends BaseScene {
       accessibleTitle: 'Actor  1',
       accessibleHint: 'one',
     });
+
     this.actor2 = this.actorList.add.existing<Actor>(new Actor(0x00fff0), {
       accessibleTitle: 'Actor 2',
       accessibleHint: 'two',

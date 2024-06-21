@@ -1,4 +1,4 @@
-import { IApplication, IPlugin, Logger, Plugin } from 'dill-pixel';
+import { IApplication, IPlugin, Plugin } from 'dill-pixel';
 import Rive, { RiveCanvas } from '@rive-app/canvas-advanced-lite';
 import { BrowserAdapter, checkExtension, extensions, ExtensionType, LoaderParserPriority } from 'pixi.js';
 
@@ -23,8 +23,14 @@ export class RivePlugin extends Plugin implements IRivePlugin {
     this.options = { ...defaultOptions, ...options };
     RivePlugin.ID = this.id;
     this._addLoaderExtensions();
-    this.rive = await Rive({ locateFile: () => this.options.wasmPath });
-    Logger.log(`Rive plugin initialized`);
+    if (!this.rive) {
+      this.rive = await Rive({ locateFile: () => this.options.wasmPath });
+    }
+  }
+
+  destroy() {
+    this.rive.cleanup();
+    super.destroy();
   }
 
   private _addLoaderExtensions() {

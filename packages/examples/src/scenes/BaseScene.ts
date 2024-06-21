@@ -1,4 +1,4 @@
-import { Graphics, Sprite, Text, Texture } from 'pixi.js';
+import { DestroyOptions, Graphics, Sprite, Text, Texture } from 'pixi.js';
 
 import { COLOR_SLATE, FONT_KUMBH_SANS } from '@/utils/Constants';
 import { GUI } from 'dat.gui';
@@ -80,11 +80,11 @@ export class BaseScene extends Scene<V8Application> {
     // return this.animate({ alpha: 0, duration: 0.4, ease: 'sine.in' });
   }
 
-  public destroy() {
+  public destroy(options?: DestroyOptions) {
     if (this.gui) {
       this.gui.destroy();
     }
-    super.destroy();
+    super.destroy(options);
   }
 
   resize() {

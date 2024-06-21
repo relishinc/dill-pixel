@@ -14,7 +14,6 @@ const __dirname = dirname(__filename);
 
 const version = dillPixelPackageJson.version;
 const pixiVersion = pixiPackageJson.version;
-console.log('GENERATE VERSION', version, pixiVersion);
 const versionFileContent = `// This file is auto-generated during the build process.\nexport const version: string = '${version}';\nexport const pixiVersion: string = '${pixiVersion}';\n`;
 
 fs.writeFileSync(path.resolve(__dirname, '../src/version.ts'), versionFileContent);

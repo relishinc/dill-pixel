@@ -1,4 +1,4 @@
-import {Container, Logger, Signal, WithSignals} from 'dill-pixel';
+import {Container, destroyCanvas, Logger, Signal, WithSignals} from 'dill-pixel';
 import {
   Artboard,
   File,
@@ -10,7 +10,7 @@ import {
   WrappedRenderer,
 } from '@rive-app/canvas-advanced-lite';
 import {Alignment, Fit, RiveOptions} from './types';
-import {Assets, Sprite, Texture, Ticker} from 'pixi.js';
+import {Assets, FederatedPointerEvent, Sprite, Texture, Ticker} from 'pixi.js';
 import {RivePlugin} from './RivePlugin';
 
 /**
@@ -64,6 +64,7 @@ export class RiveEntity extends WithSignals(Container) {
   constructor(public options: RiveOptions) {
     super({ autoResize: false, autoUpdate: false, priority: -1 });
     this._debug = options.debug ?? false;
+
     this.initEvents(options!.interactive ?? false);
     if (options.autoInit !== false) {
       void this.initialize();
@@ -425,7 +426,7 @@ export class RiveEntity extends WithSignals(Container) {
   }
 
   public update(ticker: Ticker = this.app.ticker) {
-    if (this._paused || !this.artboard || !this._renderer) {
+    if (this._paused || !this.artboard || !this._renderer || !this.rive) {
       return;
     }
     const elapsedTime = ticker.elapsedMS / 1000;
@@ -445,8 +446,28 @@ export class RiveEntity extends WithSignals(Container) {
     this.rive.resolveAnimationFrame();
   }
 
+  protected handlePointerdown(e: FederatedPointerEvent) {
+    const point = this.translatePoint(e.global);
+    this.stateMachines.map((m) => m.pointerDown(...point));
+  }
+
+  protected handlePointerup(e: FederatedPointerEvent) {
+    const point = this.translatePoint(e.global);
+    this.stateMachines.map((m) => m.pointerUp(...point));
+  }
+
+  protected handlePointermove(e: FederatedPointerEvent) {
+    const point = this.translatePoint(e.global);
+    this.stateMachines.map((m) => m.pointerMove(...point));
+  }
+
   private _destroyInternals() {
+    Logger.log('riveEntity:: destroying internals');
     this.disable();
+    this.off('pointerdown', this.handlePointerdown);
+    this.off('pointerup', this.handlePointerup);
+    this.off('pointermove', this.handlePointermove);
+
     try {
       this.stateMachines.map((machine) => machine.delete());
     } catch (e) {
@@ -475,6 +496,10 @@ export class RiveEntity extends WithSignals(Container) {
     // @ts-expect-error view can't be null
     this._view = null;
 
+    if (this._canvas) {
+      destroyCanvas(this._canvas);
+      Logger.log(this._canvas);
+    }
     // @ts-expect-error canvas can't be null
     this._canvas = null;
   }
@@ -501,18 +526,9 @@ export class RiveEntity extends WithSignals(Container) {
       this.cursor = this.options.cursor;
     }
     this.eventMode = 'static';
-    this.onpointerdown = (e) => {
-      const point = this.translatePoint(e.global);
-      this.stateMachines.map((m) => m.pointerDown(...point));
-    };
-    this.onpointerup = (e) => {
-      const point = this.translatePoint(e.global);
-      this.stateMachines.map((m) => m.pointerUp(...point));
-    };
-    this.onpointermove = (e) => {
-      const point = this.translatePoint(e.global);
-      this.stateMachines.map((m) => m.pointerMove(...point));
-    };
+    this.on('pointerdown', this.handlePointerdown);
+    this.on('onpointerup', this.handlePointerup);
+    this.on('onpointermove', this.handlePointermove);
   }
 
   /**

@@ -36,7 +36,7 @@ export interface IAnimated {
 
   resumeAnimations(): void;
 
-  clearAnimations(): void;
+  destroyAnimations(): void;
 
   reverseAnimation(): void;
 
@@ -142,7 +142,7 @@ export function Animated<TBase extends Constructor>(Base: TBase): TBase & Constr
     /**
      * Clear animations method.
      */
-    public clearAnimations() {
+    public destroyAnimations() {
       this._activeTweens.forEach((tween) => tween.kill());
       this._activeTweens = [];
       this._activeTimeline?.clear();

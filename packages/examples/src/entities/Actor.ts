@@ -26,7 +26,7 @@ export class Actor extends _Actor {
 
   blur() {
     this._view.tint = this.color;
-    this.clearAnimations();
+    this.destroyAnimations();
     this.y = this._originalY;
   }
 
@@ -42,6 +42,11 @@ export class Actor extends _Actor {
     bounds.x -= 15;
     bounds.y -= 15;
     return bounds;
+  }
+
+  destroy() {
+    this.destroyAnimations();
+    super.destroy({ children: true });
   }
 
   added() {
