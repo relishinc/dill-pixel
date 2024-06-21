@@ -1,7 +1,7 @@
 import { BaseScene } from '@/scenes/BaseScene';
-import { IRivePlugin, RiveEntity } from '@dill-pixel/plugin-rive';
+import { RiveEntity } from '@dill-pixel/plugin-rive';
 import { FlexContainer, Logger } from 'dill-pixel';
-import { DestroyOptions, FederatedEvent } from 'pixi.js';
+import { FederatedEvent } from 'pixi.js';
 
 export class RiveScene extends BaseScene {
   public title = 'Rive';
@@ -103,10 +103,10 @@ export class RiveScene extends BaseScene {
     this.animation.loadArtboard(artboard);
   }
 
-  destroy(options?: DestroyOptions) {
-    this.app.getPlugin<IRivePlugin>('rive').cleanup();
-    super.destroy(options);
-  }
+  // destroy(options?: DestroyOptions) {
+  //      this.app.getPlugin<IRivePlugin>('rive').cleanup(); // causes extreme slowdown for some reason
+  //      super.destroy(options);
+  //    }
 
   _changeAnimation() {
     let anim = this.currentAnimationIndex + 1;

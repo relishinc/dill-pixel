@@ -1,235 +1,234 @@
 @import url('https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;600;700;800&display=swap');
 
 :root {
-    --app-width: 100dvw;
-    --app-height: 100dvh;
-    --sidebar-width: 250px;
-    --color-green: #8ac733;
-    --color-slate: #3e7b00;
-    --color-bg: #1f2937;
+  --app-width: 100dvw;
+  --app-height: 100dvh;
+  --sidebar-width: 250px;
+  --color-green: #8ac733;
+  --color-slate: #3e7b00;
+  --color-bg: #1f2937;
 }
 
 body,
 html {
-    position: fixed;
-    margin: 0;
-    padding: 0;
-    width: var(--app-width, 100%);
-    height: var(--app-height, 100%);
-    background-color: var(--color-bg);
-    overflow: hidden;
-    font-family: 'Kumbh Sans', 'sans-serif';
-    color: #fff;
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  width: var(--app-width, 100%);
+  height: var(--app-height, 100%);
+  background-color: var(--color-bg);
+  overflow: hidden;
+  font-family: 'Kumbh Sans', 'sans-serif';
+  color: #fff;
 }
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-    display: flex;
-    padding: 1rem;
-    height: var(--app-height, 100%);
-    gap: 1rem;
-    align-items: stretch;
+  display: flex;
+  padding: 1rem;
+  height: var(--app-height, 100%);
+  gap: 1rem;
+  align-items: stretch;
 }
 
 #dill-pixel-game-container {
-    position: relative;
-    display: block;
-    flex: auto;
-    overflow: hidden;
-    border-radius: 1rem;
-    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.5);
+  position: relative;
+  display: block;
+  flex: auto;
+  overflow: hidden;
+  border-radius: 1rem;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.5);
 }
 
 /* sidebar styles */
 #sidebar {
-    position: relative;
-    display: block;
-    width: var(--sidebar-width);
-    height: 100%;
-    border-radius: 1rem;
-    background: #374151;
+  position: relative;
+  display: block;
+  width: var(--sidebar-width);
+  height: 100%;
+  border-radius: 1rem;
+  background: #374151;
 
-    overflow: hidden;
+  overflow: hidden;
 }
 
 #sidebar h2 {
-    font-size: 1rem;
-    margin-top: 0;
-    margin-bottom: 7px;
-    text-transform: uppercase;
+  font-size: 1rem;
+  margin-top: 0;
+  margin-bottom: 7px;
+  text-transform: uppercase;
 }
 
 #sidebar .inner {
-    width: var(--sidebar-width);
-    flex: 0 0 var(--sidebar-width);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    padding: 1rem;
-    background: #374151;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    overflow: auto;
-    scrollbar-gutter: stable;
+  width: var(--sidebar-width);
+  flex: 0 0 var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 1rem;
+  background: #374151;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  overflow: auto;
+  scrollbar-gutter: stable;
 }
 
 #sidebar .inner::-webkit-scrollbar {
-    position: relative;
-    width: 0.85rem;
-    overflow: hidden;
+  position: relative;
+  width: 0.85rem;
+  overflow: hidden;
 }
 
 #sidebar .inner::-webkit-scrollbar-track {
-    background: #2A3444;
-    border-bottom-right-radius: 1rem;
-    border-top-right-radius: 1rem;
+  background: #2a3444;
+  border-bottom-right-radius: 1rem;
+  border-top-right-radius: 1rem;
 }
 
 #sidebar .inner::-webkit-scrollbar-thumb {
-    background-color: var(--color-slate); /* Color of the thumb */
+  background-color: var(--color-slate); /* Color of the thumb */
 }
 
 .header {
-    position: relative;
-    display: flex;
-    flex-shrink: 0;
-    align-items: center;
-    gap: 1rem;
-    height: 90px;
-    margin-top: -1rem;
-    text-decoration: none;
-    overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 1rem;
+  height: 90px;
+  margin-top: -1rem;
+  text-decoration: none;
+  overflow: hidden;
 }
 
-
 .header .logo {
-    width: 50px;
-    display: block;
+  width: 50px;
+  display: block;
 }
 
 .header h1 {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin: 0;
-    color: #fff;
-    position: relative;
-    display: inline-block;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  color: #fff;
+  position: relative;
+  display: inline-block;
 }
 
 .header h1 span {
-    font-size: 0.9rem;
-    font-weight: bold;
-    margin: 0;
-    color: #8ac733;
-    transform: rotate(25deg);
-    position: absolute;
-    top: 0;
-    right: -24px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin: 0;
+  color: #8ac733;
+  transform: rotate(25deg);
+  position: absolute;
+  top: 0;
+  right: -24px;
 }
 
 nav {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2em;
-    font-size: 0.85rem;
-    color: #aaa;
-    transition: 0.35s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+  font-size: 0.85rem;
+  color: #aaa;
+  transition: 0.35s;
 }
 
 nav ul {
-    padding: 0;
-    margin: 5px 0;
-    list-style: none;
+  padding: 0;
+  margin: 5px 0;
+  list-style: none;
 }
 
 nav h3 {
-    margin: 8px 0 5px;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    opacity: 0.6;
-    position: relative;
+  margin: 8px 0 5px;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  opacity: 0.6;
+  position: relative;
 }
 
 nav h3::before {
-    content: "/ ";
-    font-size: 0.8em;
+  content: '/ ';
+  font-size: 0.8em;
 }
 
 nav li a {
-    position: relative;
-    display: block;
-    padding: 2px 5px;
+  position: relative;
+  display: block;
+  padding: 2px 5px;
 }
 
 nav a {
-    color: currentColor;
-    text-decoration: none;
-    padding: 0.2em 0;
+  color: currentColor;
+  text-decoration: none;
+  padding: 0.2em 0;
 }
 
 nav a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 nav a.active {
-    color: #fff;
+  color: #fff;
 }
 
 nav.disabled {
-    opacity: 0.25;
-    pointer-events: none;
+  opacity: 0.25;
+  pointer-events: none;
 }
 
 @media (max-width: 767px) {
-    :root {
-        --sidebar-width: 200px;
-    }
+  :root {
+    --sidebar-width: 200px;
+  }
 }
 
 #dill-pixel-game-container #scene-debug {
-    display: none;
+  display: none;
 }
 
 @media (max-width: 480px) {
-    body {
-        padding: 0;
-    }
+  body {
+    padding: 0;
+  }
 
-    #sidebar {
-        display: none;
-    }
+  #sidebar {
+    display: none;
+  }
 
-    #dill-pixel-game-container #scene-debug {
-        display: block;
-    }
+  #dill-pixel-game-container #scene-debug {
+    display: block;
+  }
 
-    #dill-pixel-game-container {
-        border-radius: 0;
-        box-shadow: none;
-    }
+  #dill-pixel-game-container {
+    border-radius: 0;
+    box-shadow: none;
+  }
 }
 
 @media (max-height: 480px) {
-    #sidebar {
-        display: none;
-    }
+  #sidebar {
+    display: none;
+  }
 
-    #dill-pixel-game-container {
-        border-radius: 0;
-        box-shadow: none;
-    }
+  #dill-pixel-game-container {
+    border-radius: 0;
+    box-shadow: none;
+  }
 
-    body {
-        padding: 0;
-    }
+  body {
+    padding: 0;
+  }
 
-    #dill-pixel-game-container #scene-debug {
-        display: block;
-    }
+  #dill-pixel-game-container #scene-debug {
+    display: block;
+  }
 }

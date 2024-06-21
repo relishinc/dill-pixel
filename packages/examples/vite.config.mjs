@@ -5,6 +5,9 @@ import {fileURLToPath} from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 export default extendConfig({
+	define: {
+		'process.env': 'import.meta.env'
+	},
 	resolve: {
 		alias: {
 			'dill-pixel': path.resolve(__dirname, '../framework/src'),

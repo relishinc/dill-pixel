@@ -31,7 +31,8 @@ export class RivePlugin extends Plugin implements IRivePlugin {
   }
 
   cleanup() {
-    this.rive.cleanup();
+    // TODO investigate why this causes the browser to freeze
+    // this.rive.cleanup();
   }
 
   destroy() {
