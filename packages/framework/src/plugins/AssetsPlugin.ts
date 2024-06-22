@@ -32,13 +32,31 @@ const detaultAssetPreferences: Partial<AssetsPreferences> = {
 
 const imageExtensions = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'avif', 'svg'];
 
+function addParseAsGraphicsContext(asset: string | UnresolvedAsset): string | UnresolvedAsset {
+  if (typeof asset === 'string') {
+    if (!asset?.includes('.svg')) {
+      return asset;
+    }
+    asset = { src: asset };
+  } else {
+    if (Array.isArray(asset.src) || !asset.src?.includes('.svg')) {
+      return asset;
+    }
+  }
+  if (!asset.data) {
+    asset.data = {};
+  }
+  asset.data.parseAsGraphicsContext = true;
+  return asset;
+}
+
 function getAssetList(assets: AssetTypes): UnresolvedAsset[] | string[] {
   if (!Array.isArray(assets)) {
     assets = [assets];
   }
   return assets.map((asset: string | UnresolvedAsset | AssetLike) => {
     if (typeof asset === 'string') {
-      return asset;
+      return addParseAsGraphicsContext(asset);
     } else if (typeof asset === 'object') {
       let alias: string | string[] = (asset?.src as string | string[]) || [];
       if (!Array.isArray(alias)) {
@@ -61,6 +79,8 @@ function getAssetList(assets: AssetTypes): UnresolvedAsset[] | string[] {
           return `${src}.${asset.ext}`;
         });
         asset.alias = [...alias, ...(asset.src as string[])].filter(Boolean);
+      } else {
+        addParseAsGraphicsContext(asset);
       }
       return asset;
     }
@@ -124,7 +144,9 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
   }
 
   public async loadAssets(assets: AssetTypes) {
+    Logger.log('loadassets', assets);
     assets = getAssetList(assets);
+
     await Assets.load(assets, this._handleLoadProgress);
     this._markAssetsLoaded(assets as UnresolvedAsset[] | string[]);
     return Promise.resolve();
@@ -187,6 +209,7 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
       this._handleLoadProgress(0);
       if (scene.assets?.preload?.assets) {
         const assets = getAssetList(scene.assets.preload.assets);
+        console.log({ assets });
         const filteredAssets = assets.filter((asset) => !this._isAssetLoaded(asset));
         if (filteredAssets.length) {
           await Assets.load(filteredAssets, this._handleLoadProgress);

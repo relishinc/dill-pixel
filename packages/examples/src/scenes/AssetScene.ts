@@ -16,6 +16,10 @@ export class AssetScene extends BaseScene {
       preload: {
         assets: [
           {
+            alias: 'logo',
+            src: 'static/logo.svg',
+          },
+          {
             src: 'static/jar',
             ext: 'png',
           },
@@ -45,6 +49,7 @@ export class AssetScene extends BaseScene {
     });
     this.container.add.sprite({ asset: 'static/jar', anchor: 0.5, scale: 0.4 });
     this.container.add.sprite({ asset: 'zilla', anchor: 0.5 });
+    this.container.add.svg({ ctx: 'logo', scale: 0.5, resolution: 2 });
   }
 
   resize() {

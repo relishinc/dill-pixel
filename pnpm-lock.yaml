@@ -187,8 +187,8 @@ importers:
         specifier: ^0.7.0
         version: 0.7.0
       '@esotericsoftware/spine-core':
-        specifier: ~4.1.50
-        version: 4.1.51
+        specifier: ~4.2.45
+        version: 4.2.47
       '@pixi/sound':
         specifier: ^6.0.0
         version: 6.0.0(pixi.js@8.2.0)
@@ -1039,8 +1039,8 @@ packages:
     resolution: {integrity: sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@esotericsoftware/spine-core@4.1.51':
-    resolution: {integrity: sha512-dbw+QG6wu6XE2RqvHCfIa7VRrzgwl/QXpVWx/1Cx4wfGuqdC2J7ztEUWo4n4ik1yrlbbE16LxrNET19PcsCpjA==}
+  '@esotericsoftware/spine-core@4.2.47':
+    resolution: {integrity: sha512-jMU4FMTNMjmWC/bRMuplvyVBIXrs4steuiCg/tRaw5y6S215bvT+4pkpoEg9o3vdUQc6vSMEyajAi/i8s7M1rA==}
 
   '@expressive-code/core@0.35.3':
     resolution: {integrity: sha512-SYamcarAjufYhbuK/kfvJSvAXLsfnM7DKc78R7Dq4B73R5bKQK2m5zR0l57tXr4yp2C5Z8lu5xZncdwWxcmPdg==}
@@ -7764,7 +7764,7 @@ snapshots:
 
   '@eslint/js@8.57.0': {}
 
-  '@esotericsoftware/spine-core@4.1.51': {}
+  '@esotericsoftware/spine-core@4.2.47': {}
 
   '@expressive-code/core@0.35.3':
     dependencies:

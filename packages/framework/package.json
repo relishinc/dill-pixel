@@ -126,7 +126,7 @@
     "@assetpack/plugin-texture-packer": "^0.8.0",
     "@assetpack/plugin-webfont": "^0.8.0",
     "@clack/prompts": "^0.7.0",
-    "@esotericsoftware/spine-core": "~4.1.50",
+    "@esotericsoftware/spine-core": "~4.2.45",
     "@pixi/sound": "^6.0.0",
     "csv-parse": "^5.5.5",
     "gsap": "^3.12.5",

@@ -19,6 +19,7 @@ async function boot() {
     {
       id: 'V8Application',
       antialias: true,
+      autoDensity: true,
       resizer: {
         minSize: { width: 500, height: 800 },
       },

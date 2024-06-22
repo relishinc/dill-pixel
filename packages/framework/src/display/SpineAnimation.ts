@@ -27,9 +27,13 @@ export class SpineAnimation extends _SpineAnimation {
     if (typeof data === 'string') {
       // get the spine data from cache
       // check if '.json' is the last part of the asset string, and add it if not
-      if (data.slice(-5) !== '.json') {
-        data = { skeleton: data + '.json', atlas: data + '.atlas' };
+      let ext = data.slice(-5);
+      if (ext !== '.json' && ext !== '.skel') {
+        ext = '.json';
+      } else {
+        data = data.substring(0, data.length - 5);
       }
+      data = { skeleton: data + ext, atlas: data + '.atlas' };
     }
     this.spine = (window as any).Spine.from(data);
     this.add.existing(this.spine);

@@ -4,32 +4,76 @@
       "name": "default",
       "assets": [
         {
-          "alias": ["favicon.svg", "favicon.svg"],
-          "src": ["favicon.svg"]
+          "alias": [
+            "favicon.svg",
+            "favicon.svg"
+          ],
+          "src": [
+            "favicon.svg"
+          ]
         },
         {
-          "alias": ["locales/fr.json", "fr.json"],
-          "src": ["locales/fr.json"]
+          "alias": [
+            "locales/fr.json",
+            "fr.json"
+          ],
+          "src": [
+            "locales/fr.json"
+          ]
         },
         {
-          "alias": ["static/cup.riv", "cup.riv"],
-          "src": ["static/cup.riv"]
+          "alias": [
+            "static/cup.riv",
+            "cup.riv"
+          ],
+          "src": [
+            "static/cup.riv"
+          ]
         },
         {
-          "alias": ["static/jar.png"],
-          "src": ["static/jar@1x.png", "static/jar@0.5x.png"]
+          "alias": [
+            "static/jar.png"
+          ],
+          "src": [
+            "static/jar@1x.png",
+            "static/jar@0.5x.png"
+          ]
         },
         {
-          "alias": ["static/marty.riv", "marty.riv"],
-          "src": ["static/marty.riv"]
+          "alias": [
+            "static/logo.svg",
+            "logo.svg"
+          ],
+          "src": [
+            "static/logo.svg"
+          ]
         },
         {
-          "alias": ["static/reactions_v3.riv", "reactions_v3.riv"],
-          "src": ["static/reactions_v3.riv"]
+          "alias": [
+            "static/marty.riv",
+            "marty.riv"
+          ],
+          "src": [
+            "static/marty.riv"
+          ]
         },
         {
-          "alias": ["static/skins_demo.riv", "skins_demo.riv"],
-          "src": ["static/skins_demo.riv"]
+          "alias": [
+            "static/reactions_v3.riv",
+            "reactions_v3.riv"
+          ],
+          "src": [
+            "static/reactions_v3.riv"
+          ]
+        },
+        {
+          "alias": [
+            "static/skins_demo.riv",
+            "skins_demo.riv"
+          ],
+          "src": [
+            "static/skins_demo.riv"
+          ]
         }
       ]
     },
@@ -37,8 +81,14 @@
       "name": "audio",
       "assets": [
         {
-          "alias": ["audio/music/Cheerful Annoyance.ogg", "Cheerful Annoyance.ogg"],
-          "src": ["audio/music/Cheerful Annoyance.mp3", "audio/music/Cheerful Annoyance.ogg"],
+          "alias": [
+            "audio/music/Cheerful Annoyance.ogg",
+            "Cheerful Annoyance.ogg"
+          ],
+          "src": [
+            "audio/music/Cheerful Annoyance.mp3",
+            "audio/music/Cheerful Annoyance.ogg"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -46,8 +96,14 @@
           }
         },
         {
-          "alias": ["audio/music/Drumming Sticks.ogg", "Drumming Sticks.ogg"],
-          "src": ["audio/music/Drumming Sticks.mp3", "audio/music/Drumming Sticks.ogg"],
+          "alias": [
+            "audio/music/Drumming Sticks.ogg",
+            "Drumming Sticks.ogg"
+          ],
+          "src": [
+            "audio/music/Drumming Sticks.mp3",
+            "audio/music/Drumming Sticks.ogg"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -55,8 +111,14 @@
           }
         },
         {
-          "alias": ["audio/music/Game Over.ogg", "Game Over.ogg"],
-          "src": ["audio/music/Game Over.mp3", "audio/music/Game Over.ogg"],
+          "alias": [
+            "audio/music/Game Over.ogg",
+            "Game Over.ogg"
+          ],
+          "src": [
+            "audio/music/Game Over.mp3",
+            "audio/music/Game Over.ogg"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -64,8 +126,14 @@
           }
         },
         {
-          "alias": ["audio/music/Mishief Stroll.ogg", "Mishief Stroll.ogg"],
-          "src": ["audio/music/Mishief Stroll.mp3", "audio/music/Mishief Stroll.ogg"],
+          "alias": [
+            "audio/music/Mishief Stroll.ogg",
+            "Mishief Stroll.ogg"
+          ],
+          "src": [
+            "audio/music/Mishief Stroll.mp3",
+            "audio/music/Mishief Stroll.ogg"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -73,8 +141,14 @@
           }
         },
         {
-          "alias": ["audio/music/Night at the Beach.ogg", "Night at the Beach.ogg"],
-          "src": ["audio/music/Night at the Beach.mp3", "audio/music/Night at the Beach.ogg"],
+          "alias": [
+            "audio/music/Night at the Beach.ogg",
+            "Night at the Beach.ogg"
+          ],
+          "src": [
+            "audio/music/Night at the Beach.mp3",
+            "audio/music/Night at the Beach.ogg"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -82,8 +156,14 @@
           }
         },
         {
-          "alias": ["audio/sfx/click.ogg", "click.ogg"],
-          "src": ["audio/sfx/click.mp3", "audio/sfx/click.ogg"],
+          "alias": [
+            "audio/sfx/click.ogg",
+            "click.ogg"
+          ],
+          "src": [
+            "audio/sfx/click.mp3",
+            "audio/sfx/click.ogg"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -91,8 +171,14 @@
           }
         },
         {
-          "alias": ["audio/sfx/hover.ogg", "hover.ogg"],
-          "src": ["audio/sfx/hover.mp3", "audio/sfx/hover.ogg"],
+          "alias": [
+            "audio/sfx/hover.ogg",
+            "hover.ogg"
+          ],
+          "src": [
+            "audio/sfx/hover.mp3",
+            "audio/sfx/hover.ogg"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -100,8 +186,12 @@
           }
         },
         {
-          "alias": ["audio/vo/en/cc.json"],
-          "src": ["audio/vo/en/cc.json"],
+          "alias": [
+            "audio/vo/en/cc.json"
+          ],
+          "src": [
+            "audio/vo/en/cc.json"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -109,8 +199,14 @@
           }
         },
         {
-          "alias": ["audio/vo/en/vo_intro_0_en.mp3", "vo_intro_0_en.mp3"],
-          "src": ["audio/vo/en/vo_intro_0_en.mp3", "audio/vo/en/vo_intro_0_en.ogg"],
+          "alias": [
+            "audio/vo/en/vo_intro_0_en.mp3",
+            "vo_intro_0_en.mp3"
+          ],
+          "src": [
+            "audio/vo/en/vo_intro_0_en.mp3",
+            "audio/vo/en/vo_intro_0_en.ogg"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -118,8 +214,14 @@
           }
         },
         {
-          "alias": ["audio/vo/en/vo_intro_1_en.mp3", "vo_intro_1_en.mp3"],
-          "src": ["audio/vo/en/vo_intro_1_en.mp3", "audio/vo/en/vo_intro_1_en.ogg"],
+          "alias": [
+            "audio/vo/en/vo_intro_1_en.mp3",
+            "vo_intro_1_en.mp3"
+          ],
+          "src": [
+            "audio/vo/en/vo_intro_1_en.mp3",
+            "audio/vo/en/vo_intro_1_en.ogg"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -127,8 +229,14 @@
           }
         },
         {
-          "alias": ["audio/vo/en/vo_intro_2_en.mp3", "vo_intro_2_en.mp3"],
-          "src": ["audio/vo/en/vo_intro_2_en.mp3", "audio/vo/en/vo_intro_2_en.ogg"],
+          "alias": [
+            "audio/vo/en/vo_intro_2_en.mp3",
+            "vo_intro_2_en.mp3"
+          ],
+          "src": [
+            "audio/vo/en/vo_intro_2_en.mp3",
+            "audio/vo/en/vo_intro_2_en.ogg"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -136,8 +244,12 @@
           }
         },
         {
-          "alias": ["audio/vo/fr/cc.json"],
-          "src": ["audio/vo/fr/cc.json"],
+          "alias": [
+            "audio/vo/fr/cc.json"
+          ],
+          "src": [
+            "audio/vo/fr/cc.json"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -145,8 +257,14 @@
           }
         },
         {
-          "alias": ["audio/vo/fr/vo_intro_0_fr.mp3", "vo_intro_0_fr.mp3"],
-          "src": ["audio/vo/fr/vo_intro_0_fr.mp3", "audio/vo/fr/vo_intro_0_fr.ogg"],
+          "alias": [
+            "audio/vo/fr/vo_intro_0_fr.mp3",
+            "vo_intro_0_fr.mp3"
+          ],
+          "src": [
+            "audio/vo/fr/vo_intro_0_fr.mp3",
+            "audio/vo/fr/vo_intro_0_fr.ogg"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -154,8 +272,14 @@
           }
         },
         {
-          "alias": ["audio/vo/fr/vo_intro_1_fr.mp3", "vo_intro_1_fr.mp3"],
-          "src": ["audio/vo/fr/vo_intro_1_fr.mp3", "audio/vo/fr/vo_intro_1_fr.ogg"],
+          "alias": [
+            "audio/vo/fr/vo_intro_1_fr.mp3",
+            "vo_intro_1_fr.mp3"
+          ],
+          "src": [
+            "audio/vo/fr/vo_intro_1_fr.mp3",
+            "audio/vo/fr/vo_intro_1_fr.ogg"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -163,8 +287,14 @@
           }
         },
         {
-          "alias": ["audio/vo/fr/vo_intro_2_fr.mp3", "vo_intro_2_fr.mp3"],
-          "src": ["audio/vo/fr/vo_intro_2_fr.mp3", "audio/vo/fr/vo_intro_2_fr.ogg"],
+          "alias": [
+            "audio/vo/fr/vo_intro_2_fr.mp3",
+            "vo_intro_2_fr.mp3"
+          ],
+          "src": [
+            "audio/vo/fr/vo_intro_2_fr.mp3",
+            "audio/vo/fr/vo_intro_2_fr.ogg"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -177,8 +307,13 @@
       "name": "game",
       "assets": [
         {
-          "alias": ["game/sheet/sheet.json"],
-          "src": ["game/sheet/sheet@1x.json", "game/sheet/sheet@0.5x.json"],
+          "alias": [
+            "game/sheet/sheet.json"
+          ],
+          "src": [
+            "game/sheet/sheet@1x.json",
+            "game/sheet/sheet@0.5x.json"
+          ],
           "data": {
             "tags": {
               "tps": true,
@@ -187,8 +322,13 @@
           }
         },
         {
-          "alias": ["game/wordmark.svg", "wordmark.svg"],
-          "src": ["game/wordmark.svg"],
+          "alias": [
+            "game/wordmark.svg",
+            "wordmark.svg"
+          ],
+          "src": [
+            "game/wordmark.svg"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -201,8 +341,14 @@
       "name": "platformer",
       "assets": [
         {
-          "alias": ["platformer/characters/characters.json", "characters.json"],
-          "src": ["platformer/characters/characters@1x.json", "platformer/characters/characters@0.5x.json"],
+          "alias": [
+            "platformer/characters/characters.json",
+            "characters.json"
+          ],
+          "src": [
+            "platformer/characters/characters@1x.json",
+            "platformer/characters/characters@0.5x.json"
+          ],
           "data": {
             "tags": {
               "tps": true,
@@ -211,8 +357,13 @@
           }
         },
         {
-          "alias": ["platformer/sheet/sheet.json"],
-          "src": ["platformer/sheet/sheet@1x.json", "platformer/sheet/sheet@0.5x.json"],
+          "alias": [
+            "platformer/sheet/sheet.json"
+          ],
+          "src": [
+            "platformer/sheet/sheet@1x.json",
+            "platformer/sheet/sheet@0.5x.json"
+          ],
           "data": {
             "tags": {
               "tps": true,
@@ -226,8 +377,13 @@
       "name": "required",
       "assets": [
         {
-          "alias": ["required/jar.png"],
-          "src": ["required/jar@1x.png", "required/jar@0.5x.png"],
+          "alias": [
+            "required/jar.png"
+          ],
+          "src": [
+            "required/jar@1x.png",
+            "required/jar@0.5x.png"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -235,8 +391,14 @@
           }
         },
         {
-          "alias": ["required/ui/ui.json", "ui.json"],
-          "src": ["required/ui/ui@1x.json", "required/ui/ui@0.5x.json"],
+          "alias": [
+            "required/ui/ui.json",
+            "ui.json"
+          ],
+          "src": [
+            "required/ui/ui@1x.json",
+            "required/ui/ui@0.5x.json"
+          ],
           "data": {
             "tags": {
               "tps": true,
@@ -250,8 +412,13 @@
       "name": "spine",
       "assets": [
         {
-          "alias": ["spine/cauldron-skeleton.atlas", "cauldron-skeleton.atlas"],
-          "src": ["spine/cauldron-skeleton.atlas"],
+          "alias": [
+            "spine/cauldron-skeleton.atlas",
+            "cauldron-skeleton.atlas"
+          ],
+          "src": [
+            "spine/cauldron-skeleton.atlas"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -259,8 +426,13 @@
           }
         },
         {
-          "alias": ["spine/cauldron-skeleton.json", "cauldron-skeleton.json"],
-          "src": ["spine/cauldron-skeleton.json"],
+          "alias": [
+            "spine/cauldron-skeleton.json",
+            "cauldron-skeleton.json"
+          ],
+          "src": [
+            "spine/cauldron-skeleton.json"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -268,8 +440,14 @@
           }
         },
         {
-          "alias": ["spine/cauldron-skeleton.png", "cauldron-skeleton.png"],
-          "src": ["spine/cauldron-skeleton@1x.png", "spine/cauldron-skeleton@0.5x.png"],
+          "alias": [
+            "spine/cauldron-skeleton.png",
+            "cauldron-skeleton.png"
+          ],
+          "src": [
+            "spine/cauldron-skeleton@1x.png",
+            "spine/cauldron-skeleton@0.5x.png"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -277,8 +455,13 @@
           }
         },
         {
-          "alias": ["spine/dragon-skeleton.atlas", "dragon-skeleton.atlas"],
-          "src": ["spine/dragon-skeleton.atlas"],
+          "alias": [
+            "spine/dragon-skeleton.atlas",
+            "dragon-skeleton.atlas"
+          ],
+          "src": [
+            "spine/dragon-skeleton.atlas"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -286,8 +469,13 @@
           }
         },
         {
-          "alias": ["spine/dragon-skeleton.json", "dragon-skeleton.json"],
-          "src": ["spine/dragon-skeleton.json"],
+          "alias": [
+            "spine/dragon-skeleton.json",
+            "dragon-skeleton.json"
+          ],
+          "src": [
+            "spine/dragon-skeleton.json"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -295,8 +483,14 @@
           }
         },
         {
-          "alias": ["spine/dragon-skeleton.png", "dragon-skeleton.png"],
-          "src": ["spine/dragon-skeleton@1x.png", "spine/dragon-skeleton@0.5x.png"],
+          "alias": [
+            "spine/dragon-skeleton.png",
+            "dragon-skeleton.png"
+          ],
+          "src": [
+            "spine/dragon-skeleton@1x.png",
+            "spine/dragon-skeleton@0.5x.png"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -304,8 +498,13 @@
           }
         },
         {
-          "alias": ["spine/hero.atlas", "hero.atlas"],
-          "src": ["spine/hero.atlas"],
+          "alias": [
+            "spine/hero.atlas",
+            "hero.atlas"
+          ],
+          "src": [
+            "spine/hero.atlas"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -313,8 +512,13 @@
           }
         },
         {
-          "alias": ["spine/hero.json", "hero.json"],
-          "src": ["spine/hero.json"],
+          "alias": [
+            "spine/hero.json",
+            "hero.json"
+          ],
+          "src": [
+            "spine/hero.json"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -322,8 +526,14 @@
           }
         },
         {
-          "alias": ["spine/hero.png", "hero.png"],
-          "src": ["spine/hero@1x.png", "spine/hero@0.5x.png"],
+          "alias": [
+            "spine/hero.png",
+            "hero.png"
+          ],
+          "src": [
+            "spine/hero@1x.png",
+            "spine/hero@0.5x.png"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -331,8 +541,13 @@
           }
         },
         {
-          "alias": ["spine/heroes.atlas", "heroes.atlas"],
-          "src": ["spine/heroes.atlas"],
+          "alias": [
+            "spine/heroes.atlas",
+            "heroes.atlas"
+          ],
+          "src": [
+            "spine/heroes.atlas"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -340,8 +555,13 @@
           }
         },
         {
-          "alias": ["spine/heroes.json", "heroes.json"],
-          "src": ["spine/heroes.json"],
+          "alias": [
+            "spine/heroes.json",
+            "heroes.json"
+          ],
+          "src": [
+            "spine/heroes.json"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -349,8 +569,14 @@
           }
         },
         {
-          "alias": ["spine/heroes.png", "heroes.png"],
-          "src": ["spine/heroes@1x.png", "spine/heroes@0.5x.png"],
+          "alias": [
+            "spine/heroes.png",
+            "heroes.png"
+          ],
+          "src": [
+            "spine/heroes@1x.png",
+            "spine/heroes@0.5x.png"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -358,8 +584,13 @@
           }
         },
         {
-          "alias": ["spine/spineboy-pro.atlas", "spineboy-pro.atlas"],
-          "src": ["spine/spineboy-pro.atlas"],
+          "alias": [
+            "spine/spineboy-pro.atlas",
+            "spineboy-pro.atlas"
+          ],
+          "src": [
+            "spine/spineboy-pro.atlas"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -367,8 +598,14 @@
           }
         },
         {
-          "alias": ["spine/spineboy-pro.json", "spineboy-pro.json"],
-          "src": ["spine/spineboy-pro.json"],
+          "alias": [
+            "spine/spineboy-pro.png",
+            "spineboy-pro.png"
+          ],
+          "src": [
+            "spine/spineboy-pro@1x.png",
+            "spine/spineboy-pro@0.5x.png"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -376,8 +613,13 @@
           }
         },
         {
-          "alias": ["spine/spineboy-pro.png", "spineboy-pro.png"],
-          "src": ["spine/spineboy-pro@1x.png", "spine/spineboy-pro@0.5x.png"],
+          "alias": [
+            "spine/spineboy-pro.skel",
+            "spineboy-pro.skel"
+          ],
+          "src": [
+            "spine/spineboy-pro.skel"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -385,8 +627,13 @@
           }
         },
         {
-          "alias": ["spine/xavier.atlas", "xavier.atlas"],
-          "src": ["spine/xavier.atlas"],
+          "alias": [
+            "spine/xavier.atlas",
+            "xavier.atlas"
+          ],
+          "src": [
+            "spine/xavier.atlas"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -394,8 +641,13 @@
           }
         },
         {
-          "alias": ["spine/xavier.json", "xavier.json"],
-          "src": ["spine/xavier.json"],
+          "alias": [
+            "spine/xavier.json",
+            "xavier.json"
+          ],
+          "src": [
+            "spine/xavier.json"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -403,8 +655,14 @@
           }
         },
         {
-          "alias": ["spine/xavier.png", "xavier.png"],
-          "src": ["spine/xavier@1x.png", "spine/xavier@0.5x.png"],
+          "alias": [
+            "spine/xavier.png",
+            "xavier.png"
+          ],
+          "src": [
+            "spine/xavier@1x.png",
+            "spine/xavier@0.5x.png"
+          ],
           "data": {
             "tags": {
               "m": true
@@ -412,8 +670,14 @@
           }
         },
         {
-          "alias": ["spine/xavier2.png", "xavier2.png"],
-          "src": ["spine/xavier2@1x.png", "spine/xavier2@0.5x.png"],
+          "alias": [
+            "spine/xavier2.png",
+            "xavier2.png"
+          ],
+          "src": [
+            "spine/xavier2@1x.png",
+            "spine/xavier2@0.5x.png"
+          ],
           "data": {
             "tags": {
               "m": true

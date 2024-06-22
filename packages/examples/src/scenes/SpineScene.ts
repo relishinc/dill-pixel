@@ -11,7 +11,7 @@ export class SpineScene extends BaseScene {
     await super.initialize();
     this.app.func.setActionContext('general');
     this.hero = this.add.spineAnimation({
-      data: 'spine/spineboy-pro',
+      data: 'spine/spineboy-pro.skel',
       animationName: 'idle',
       loop: true,
       x: 0,

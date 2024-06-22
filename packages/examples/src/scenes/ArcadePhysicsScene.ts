@@ -40,7 +40,7 @@ class Player extends Entity {
 
   create() {
     this.view = this.add.spineAnimation({
-      data: 'spine/spineboy-pro',
+      data: 'spine/spineboy-pro.skel',
       animationName: 'idle',
       loop: true,
       scale: 0.25,

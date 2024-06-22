@@ -7,6 +7,7 @@ import {
   GraphicsProps,
   SpineProps,
   SpriteProps,
+  SvgProps,
   TextProps,
   TextPropsKeys,
   UICanvasFactoryProps,
@@ -19,9 +20,8 @@ import {
   resolveTexture,
   resolveUnknownKeys,
 } from './utils';
-import { omitKeys, pluck, resolvePointLike, Spine } from '../../utils';
-import type { ContainerConfig } from '../../display';
-import { AnimatedSprite, Container, ContainerConfigKeys, SpineAnimation } from '../../display';
+import { omitKeys, pluck, resolvePointLike, Spine, WithRequiredProps } from '../../utils';
+import { AnimatedSprite, Container, ContainerConfig, ContainerConfigKeys, SpineAnimation, Svg } from '../../display';
 import type { ButtonConfig, FlexContainerConfig, UICanvasConfig } from '../../ui';
 import {
   Button,
@@ -88,6 +88,16 @@ export const defaultFactoryMethods = {
   },
   graphics: (props?: Partial<GraphicsProps>) => {
     const entity = new Graphics();
+    if (!props) return entity;
+    const { position, x, y, pivot, scale, scaleX, scaleY, ...rest } = props;
+    resolvePosition({ position, x, y }, entity);
+    resolveScale({ scale, scaleX, scaleY }, entity);
+    resolvePivot(pivot, entity);
+    resolveUnknownKeys(rest, entity);
+    return entity;
+  },
+  svg(props: WithRequiredProps<SvgProps, 'ctx'>) {
+    const entity = new Svg(props.ctx);
     if (!props) return entity;
     const { position, x, y, pivot, scale, scaleX, scaleY, ...rest } = props;
     resolvePosition({ position, x, y }, entity);
@@ -177,12 +187,17 @@ export const defaultFactoryMethods = {
   },
   spine: (props?: Partial<SpineProps>): Spine => {
     let data = props?.data;
+
     if (typeof data === 'string') {
       // get the spine data from cache
       // check if '.json' is the last part of the asset string, and add it if not
-      if (data.slice(-5) !== '.json') {
-        data = { skeleton: data + '.json', atlas: data + '.atlas' };
+      let ext = data.slice(-5);
+      if (ext !== '.json' && ext !== '.skel') {
+        ext = '.json';
+      } else {
+        data = data.substring(0, data.length - 5);
       }
+      data = { skeleton: data + ext, atlas: data + '.atlas' };
     }
     const entity: Spine = (window as any).Spine.from(data);
     if (!props) return entity;

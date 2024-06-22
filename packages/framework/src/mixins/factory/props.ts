@@ -3,7 +3,7 @@ import { PointLike, SpriteSheetLike, TextureLike, WithRequiredProps } from '../.
 import { ButtonConfig } from '../../ui/Button';
 import { ContainerConfig } from '../../display';
 import { FlexContainerConfig } from '../../ui/FlexContainer';
-import { TextStyleOptions } from 'pixi.js';
+import { GraphicsContext, TextStyleOptions } from 'pixi.js';
 import { UICanvasProps } from '../../ui/UICanvas';
 
 export interface AbstractProps {
@@ -39,6 +39,10 @@ export interface VisibilityProps {
 export interface ExistingProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {}
 
 export interface GraphicsProps extends AbstractProps, PositionProps, ScaleProps, PivotProps, VisibilityProps {}
+
+export interface SvgProps extends GraphicsProps {
+  ctx: string | GraphicsContext;
+}
 
 export interface SpriteProps extends AbstractProps, TextureProps, ScaleProps, PositionProps, VisibilityProps {
   anchor: PointLike;
@@ -96,6 +100,7 @@ export interface UICanvasFactoryProps extends ContainerProps, UICanvasProps {}
 type SpineData = {
   skeleton: string;
   atlas: string;
+  skel?: boolean;
 };
 
 export interface SpineProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps {

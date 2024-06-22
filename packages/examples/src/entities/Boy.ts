@@ -13,7 +13,7 @@ export class Boy extends Interactive(Container) {
     super();
     this._container = this.add.container();
     this._spine = this._container.add.spine({
-      data: 'spine/spineboy-pro',
+      data: 'spine/spineboy-pro.skel',
       autoUpdate: true,
       loop: true,
     });

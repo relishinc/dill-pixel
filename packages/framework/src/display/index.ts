@@ -1,5 +1,6 @@
 // top level
 export * from './Container';
+export * from './Svg';
 export * from './Scene';
 export * from './SceneTransition';
 // utilities
