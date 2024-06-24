@@ -8,6 +8,7 @@ const app = await create(Application, {
   showStats: true,
   showStateDebugMenu: false,
   useHashChange: true,
+  resizeDebounce: 0.2,
   resizeOptions: {
     minSize: { width: 375, height: 700 },
   },
@@ -23,7 +24,6 @@ const states = app.state
 const defaultState = app.state.default;
 
 if (nav) {
-
   // add examples to sidebar nav
   states.forEach((state) => {
     const a = document.createElement('a');

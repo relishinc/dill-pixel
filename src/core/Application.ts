@@ -391,6 +391,16 @@ export class Application<T extends Application = any> extends PIXIApplication {
       await this.addSpine();
     }
     this.resizer.initialize(this._resizeOptions);
+    // Delayed to fix incorrect iOS resizing in WKWebView. See: https://bugs.webkit.org/show_bug.cgi?id=170595
+
+    this._webEventsManager.registerResizeCallback(() => this.onResize(this._resizeDebounce ?? 0));
+    this.onResize(0);
+
+    if (this._resizeDebounce) {
+      this.onResize(0);
+      this.onResize(this._resizeDebounce ?? 0);
+    }
+
     this.addToStage(this._stateManager);
     this.addToStage(this._popupManager);
     this.addToStage(this._loadManager);
@@ -412,9 +422,6 @@ export class Application<T extends Application = any> extends PIXIApplication {
 
     this.startSplashProcess(this.requiredAssets, this.onRequiredAssetsLoaded);
 
-    // Delayed to fix incorrect iOS resizing in WKWebView. See: https://bugs.webkit.org/show_bug.cgi?id=170595
-    this.onResize(this._resizeDebounce ?? 0);
-    this._webEventsManager.registerResizeCallback(() => this.onResize(this._resizeDebounce ?? 0));
     this._webEventsManager.registerVisibilityChangedCallback((visible: boolean) => {
       if (visible) {
         this.onResize(0);
