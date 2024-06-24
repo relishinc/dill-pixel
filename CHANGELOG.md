@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.1](https://github.com/relishinc/dill-pixel/compare/v3.4.0...v3.4.1) (2024-06-24)
+
+
+### Bug Fixes
+
+* potential error in registered popups when using a resize delay ([6480ec5](https://github.com/relishinc/dill-pixel/commit/6480ec5dc2ce1d3668496dfc90f1c574f47cec47))
+
 ## [3.4.0](https://github.com/relishinc/dill-pixel/compare/v3.3.0...v3.4.0) (2024-06-14)
 
 
