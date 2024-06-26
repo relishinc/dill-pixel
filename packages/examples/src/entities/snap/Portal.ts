@@ -1,6 +1,6 @@
-import { Bounds } from 'pixi.js';
+import { Bounds, Rectangle } from 'pixi.js';
 import { checkCollision, Collision, Entity, Sensor, System } from '@dill-pixel/plugin-snap-physics';
-import { DoorConfig } from '@/entities/physics/Door';
+import { DoorConfig } from '@/entities/snap/Door';
 import { Signal } from 'dill-pixel';
 
 const defaults: DoorConfig = {
@@ -78,7 +78,7 @@ export class Portal extends Sensor<DoorConfig> {
   }
 
   getBoundingBox() {
-    const rect = super.getBoundingBox();
+    const rect = super.getBoundingBox() as Rectangle;
     rect.x += this.config.width * 0.35;
     rect.y += rect.height * 0.25;
     rect.width = rect.width * 0.3;

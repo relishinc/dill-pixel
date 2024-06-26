@@ -1,15 +1,15 @@
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
 import { Button, Container, Joystick, UICanvas } from 'dill-pixel';
-import { Platform, PlatformConfig, PlatformMovementConfigOpts } from '@/entities/physics/Platform';
+import { Platform, PlatformConfig, PlatformMovementConfigOpts } from '@/entities/snap/Platform';
 
 import { BaseScene } from '@/scenes/BaseScene';
-import { Door } from '@/entities/physics/Door';
-import { EndlessRunner } from '@/entities/physics/EndlessRunner';
-import { Player } from '@/entities/physics/Player';
-import { Portal } from '@/entities/physics/Portal';
-import { SegmentConfig } from '@/entities/physics/Segment';
+import { Door } from '@/entities/snap/Door';
+import { EndlessRunner } from '@/entities/snap/EndlessRunner';
+import { Player } from '@/entities/snap/Player';
+import { Portal } from '@/entities/snap/Portal';
+import { SegmentConfig } from '@/entities/snap/Segment';
 
-export class EndlessRunnerScene extends BaseScene {
+export class SnapEndlessRunnerScene extends BaseScene {
   ui: UICanvas;
   level: Container;
   player: Player;

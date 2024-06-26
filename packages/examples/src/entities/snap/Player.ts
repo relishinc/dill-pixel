@@ -1,11 +1,11 @@
 import { ActionDetail, PointLike, resolvePointLike, Signal, SpineAnimation } from 'dill-pixel';
 
 import { gsap } from 'gsap';
-import { Bounds, Point, Rectangle } from 'pixi.js';
-import { Actor as SnapActor, Collision, Entity } from '@dill-pixel/plugin-snap-physics';
+import { Point, Rectangle } from 'pixi.js';
+import { Actor as SnapActor, Collision, Entity, SnapBoundary } from '@dill-pixel/plugin-snap-physics';
 import { Platform } from './Platform';
-import { FX } from '@/entities/physics/FX';
-import { Portal, PortalEnterDetail } from '@/entities/physics/Portal';
+import { FX } from '@/entities/snap/FX';
+import { Portal, PortalEnterDetail } from '@/entities/snap/Portal';
 
 export class Player extends SnapActor {
   declare view: SpineAnimation;
@@ -137,7 +137,7 @@ export class Player extends SnapActor {
     }
   }
 
-  getWorldBounds(): Bounds | Rectangle {
+  getWorldBounds(): SnapBoundary {
     const pos = this.system.container.toLocal(this.getGlobalPosition());
     const bounds = this.cachedBounds;
     bounds.x = this.view.spine.scale.x >= 1 ? pos.x - 22 : pos.x - 38;

@@ -1,12 +1,12 @@
 import { Button, Camera, Container, delay, Joystick, UICanvas } from 'dill-pixel';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
-import { Platform, PlatformMovementConfigOpts } from '@/entities/physics/Platform';
+import { Platform, PlatformMovementConfigOpts } from '@/entities/snap/Platform';
 
 import { BaseScene } from '@/scenes/BaseScene';
-import { Door } from '@/entities/physics/Door';
+import { Door } from '@/entities/snap/Door';
 import { GUIController } from 'dat.gui';
-import { Player } from '@/entities/physics/Player';
-import { Portal } from '@/entities/physics/Portal';
+import { Player } from '@/entities/snap/Player';
+import { Portal } from '@/entities/snap/Portal';
 import { gsap } from 'gsap';
 
 export class SnapPhysicsScene extends BaseScene {
@@ -25,7 +25,7 @@ export class SnapPhysicsScene extends BaseScene {
     zoom: 1,
     useSpatialHash: true,
     gridCellSize: 300,
-    debug: false,
+    debug: true,
   };
   private _zoomController: GUIController;
 
@@ -147,8 +147,8 @@ export class SnapPhysicsScene extends BaseScene {
 
   addPlatforms(bottom: number) {
     // first junction
-    this.addPlatForm(500, bottom - 90, 30, 160);
-    this.addPlatForm(500, bottom - 180, 150, 20, false);
+    this.addPlatForm(500, bottom - 80, 30, 160);
+    this.addPlatForm(500, bottom - 170, 150, 20, false);
 
     // hor
     this.addPlatForm(750, bottom - 300, 200, 20, false, true, {
@@ -158,7 +158,7 @@ export class SnapPhysicsScene extends BaseScene {
     });
 
     // second junction
-    this.addPlatForm(1200, bottom - 175, 30, 330);
+    this.addPlatForm(1200, bottom - 165, 30, 330);
     this.addPlatForm(1265, bottom - 140, 100, 20, false);
     // vert
     this.addPlatForm(1110, bottom - 200, 150, 20, true, true, {
@@ -241,7 +241,7 @@ export class SnapPhysicsScene extends BaseScene {
     this.player.spawn(
       {
         x: this.doors[0].x,
-        y: this.doors[0].y + this.doors[0].getBoundingBox().height * 0.5,
+        y: this.doors[0].y + this.doors[0].boundingRect.height * 0.5,
       },
       delay,
     );

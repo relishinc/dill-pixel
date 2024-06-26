@@ -6,7 +6,6 @@ import { IFirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
 import { controls } from '@/controls';
 import manifest from './assets.json';
 import { Transition } from '@/Transition';
-import { Splash } from '@/Splash';
 
 export class V8Application extends Application {
   get firebase(): IFirebaseAdapter {
@@ -20,13 +19,14 @@ async function boot() {
       id: 'V8Application',
       antialias: true,
       autoDensity: true,
+      useMathExtras: true,
       resizer: {
         minSize: { width: 500, height: 800 },
       },
-      splash: {
-        view: Splash,
-        hideWhen: 'firstSceneEnter',
-      },
+      // splash: {
+      //   view: Splash,
+      //   hideWhen: 'firstSceneEnter',
+      // },
       sceneTransition: Transition,
       defaultSceneLoadMethod: 'transitionExitEnter',
       useSpine: true,
@@ -200,11 +200,27 @@ async function boot() {
           },
         },
         {
+          id: 'snap-collisions',
+          debugGroup: 'Physics',
+          debugLabel: 'Snap - Body types & Collisions',
+          namedExport: 'SnapCollisionsScene',
+          module: () => import('@/scenes/SnapCollisionsScene'),
+          plugins: ['physics'],
+        },
+        {
+          id: 'snap-projectiles',
+          debugGroup: 'Physics',
+          debugLabel: 'Snap - Projectiles',
+          namedExport: 'SnapProjectileScene',
+          module: () => import('@/scenes/SnapProjectileScene'),
+          plugins: ['physics'],
+        },
+        {
           id: 'snap-endless-runner',
           debugGroup: 'Physics',
           debugLabel: 'Snap - Endless Runner',
-          namedExport: 'EndlessRunnerScene',
-          module: () => import('@/scenes/EndlessRunnerScene'),
+          namedExport: 'SnapEndlessRunnerScene',
+          module: () => import('@/scenes/SnapEndlessRunnerScene'),
           plugins: ['physics'],
           assets: {
             preload: {

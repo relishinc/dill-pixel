@@ -5,6 +5,7 @@ export const controls: ControlScheme = {
     down: {
       move_left: { context: ['game'], input: ['ArrowLeft', 'a'] },
       move_right: { context: ['game'], input: ['ArrowRight', 'd'] },
+      move_down: { context: ['game'], input: ['ArrowDown', 'd'] },
       warp: { context: ['game'], input: ['q'] },
       jump: { context: ['game'], input: ['ArrowUp', ' '] },
       combo: { context: '*', input: 'Shift+l' },

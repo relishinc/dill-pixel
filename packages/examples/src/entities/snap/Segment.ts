@@ -1,5 +1,5 @@
-import { Platform, PlatformConfig } from '@/entities/physics/Platform';
-import { EndlessRunner } from '@/entities/physics/EndlessRunner';
+import { Platform, PlatformConfig } from '@/entities/snap/Platform';
+import { EndlessRunner } from '@/entities/snap/EndlessRunner';
 import { Graphics, Point, Pool } from 'pixi.js';
 import { Application, Container, IApplication } from 'dill-pixel';
 import SnapPhysicsPlugin from '@dill-pixel/plugin-snap-physics';

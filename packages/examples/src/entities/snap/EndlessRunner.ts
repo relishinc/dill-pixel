@@ -1,4 +1,4 @@
-import { Segment, SegmentConfig } from '@/entities/physics/Segment';
+import { Segment, SegmentConfig } from '@/entities/snap/Segment';
 import { Point, Pool } from 'pixi.js';
 import { System } from '@dill-pixel/plugin-snap-physics';
 import { Container, PointLike, resolvePointLike } from 'dill-pixel';
