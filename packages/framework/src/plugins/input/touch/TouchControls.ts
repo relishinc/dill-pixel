@@ -89,7 +89,7 @@ export class TouchControls extends WithSignals(AbstractControls) {
       }
     } else {
       const joystickAction = this.scheme['joystick']?.[action] ?? null;
-      if (joystickAction) {
+      if (this._joystick && joystickAction) {
         if (Array.isArray(joystickAction.input)) {
           return joystickAction.input.includes(this._joystick.direction);
         } else {

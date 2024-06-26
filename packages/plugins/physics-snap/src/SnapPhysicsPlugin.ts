@@ -1,5 +1,7 @@
 import { IApplication, Plugin } from 'dill-pixel';
 import { System } from './System';
+import { Point } from 'pixi.js';
+import { pointExtras } from './extras';
 
 type SnapPhysicsPluginOptions = {
   useSpatialHashGrid: boolean;
@@ -58,6 +60,7 @@ export class SnapPhysicsPlugin extends Plugin {
   }
 
   public async initialize(app: IApplication, options?: Partial<SnapPhysicsPluginOptions>) {
+    this._addMathExtras();
     this.options = { ...defaultOptions, ...options };
     this.system.app = app;
     this.system.plugin = this;
@@ -68,5 +71,9 @@ export class SnapPhysicsPlugin extends Plugin {
     if (this.options.fps > 0) {
       System.fps = this.options.fps;
     }
+  }
+
+  private _addMathExtras() {
+    Object.assign(Point.prototype, pointExtras);
   }
 }

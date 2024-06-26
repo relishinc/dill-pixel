@@ -32,7 +32,7 @@ export class SpatialHashGrid {
   }
 
   insert(entity: Entity): void {
-    const bounds = entity.getBoundingBox();
+    const bounds = entity.boundingRect;
 
     const startX = Math.floor(bounds.x / this._cellSize);
     const startY = Math.floor(bounds.y / this._cellSize);

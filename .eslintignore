@@ -1,5 +1,5 @@
-src/plugins/spine/pixi-spine/
-src/plugins/spine/spine-core/
+packages/framework/src/plugins/spine/pixi-spine/
+packages/framework/src/plugins/spine/spine-core/
 templates/
 templates/*
 templates/*/*

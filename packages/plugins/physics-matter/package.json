@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-matter-physics",
-  "version": "8.10.5",
+  "version": "8.11.0",
   "description": "",
   "files": [
     "lib",
@@ -28,8 +28,8 @@
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
-    "dill-pixel": "8.10.5",
-    "pixi.js": "8.2.0"
+    "dill-pixel": "8.11.0",
+    "pixi.js": "8.2.1"
   },
   "dependencies": {
     "matter-js": "^0.19.0"

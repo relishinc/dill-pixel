@@ -21,6 +21,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   logger: LoggerMode;
   useStore: boolean;
   useSpine: boolean;
+  useMathExtras: boolean;
   useVoiceover: boolean;
   storageAdapters: ImportList<IStorageAdapter>;
   plugins: ImportList<IPlugin>;

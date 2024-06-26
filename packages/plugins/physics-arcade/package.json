@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-arcade-physics",
-  "version": "8.10.5",
+  "version": "8.11.0",
   "description": "",
   "files": [
     "lib",
@@ -27,8 +27,8 @@
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
-    "dill-pixel": "8.10.5",
-    "pixi.js": "8.2.0"
+    "dill-pixel": "8.11.0",
+    "pixi.js": "8.2.1"
   },
   "dependencies": {
     "arcade-physics": "^0.1.0"

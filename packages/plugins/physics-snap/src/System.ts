@@ -1,5 +1,5 @@
 import { Collision, EntityType, Side, SpatialHashGridFilter } from './types';
-import { Container, Graphics, Point, Rectangle, Ticker } from 'pixi.js';
+import { Circle, Container, Graphics, Point, Rectangle, Ticker } from 'pixi.js';
 import { IApplication, ICamera, Logger, Signal } from 'dill-pixel';
 
 import { Actor } from './Actor';
@@ -9,7 +9,11 @@ import { SnapPhysicsPlugin } from './SnapPhysicsPlugin';
 import { Solid } from './Solid';
 import { SpatialHashGrid } from './SpatialHashGrid';
 import { Wall } from './Wall';
-import { getIntersectionArea } from './utils';
+import {
+  getCircleToCircleIntersectionArea,
+  getRectToCircleIntersectionArea,
+  getRectToRectIntersectionArea,
+} from './utils';
 
 type SystemBoundary = {
   width: number;
@@ -203,7 +207,7 @@ export class System {
 
   static getNearbyEntities(entity: Entity, filter?: SpatialHashGridFilter | string[]): Entity[] {
     if (System.grid) {
-      const bounds = entity.getBoundingBox();
+      const bounds = entity.boundingRect;
       return System.grid.query(bounds, filter);
     }
     return System.all.filter((e: Entity) => {
@@ -235,13 +239,41 @@ export class System {
    * @param dy
    */
   static getRectangleIntersection(entity1: Entity, entity2: Entity, dx: number, dy: number): boolean {
-    // const bounds1 = System.roundBoundingBox(entity1.getBoundingBox());
-    // const bounds2 = System.roundBoundingBox(entity2.getBoundingBox().clone());
-    const bounds1 = entity1.getBoundingBox();
-    const bounds2 = entity2.getBoundingBox().clone();
+    const bounds1 = entity1.getBoundingBox() as Rectangle;
+    const bounds2 = entity2.getBoundingBox().clone() as Rectangle;
     bounds2.x += dx;
     bounds2.y += dy;
-    const intersection = getIntersectionArea(bounds1, bounds2);
+    const intersection = getRectToRectIntersectionArea(bounds1, bounds2);
+    return intersection.area > 0 && intersection.area > System.collisionThreshold;
+  }
+
+  /**
+   * @param entity1
+   * @param entity2
+   * @param dx
+   * @param dy
+   */
+  static getCircleToCircleIntersection(entity1: Entity, entity2: Entity, dx: number, dy: number): boolean {
+    const bounds1 = entity1.getBoundingBox() as Circle;
+    const bounds2 = entity2.getBoundingBox().clone() as Circle;
+    bounds2.x += dx;
+    bounds2.y += dy;
+    const intersection = getCircleToCircleIntersectionArea(bounds1, bounds2);
+    return intersection.area > 0 && intersection.area > System.collisionThreshold;
+  }
+
+  /**
+   * @param entity1
+   * @param entity2
+   * @param dx
+   * @param dy
+   */
+  static getRectToCircletIntersection(entity1: Entity, entity2: Entity, dx: number, dy: number): boolean {
+    const bounds1 = entity1.getBoundingBox() as Rectangle;
+    const bounds2 = entity2.getBoundingBox().clone() as Circle;
+    bounds2.x += dx;
+    bounds2.y += dy;
+    const intersection = getRectToCircleIntersectionArea(bounds1, bounds2);
     return intersection.area > 0 && intersection.area > System.collisionThreshold;
   }
 
@@ -260,7 +292,6 @@ export class System {
     if (System.updateHooks) {
       System.updateHooks.forEach((hook) => hook(deltaTime));
     }
-
     // Implement world step logic
     System.all.forEach((entity: Entity) => {
       entity.preUpdate();
@@ -321,24 +352,24 @@ export class System {
     let wall: Wall;
     if (sides.includes('bottom')) {
       wall = container.addChild(new Wall({ width, height: size }));
-      wall.position.set(pos.x + width * 0.5, pos.y + height + padding);
+      wall.position.set(pos.x + width * 0.5, pos.y + height + size * 0.5 - padding);
       System.worldBounds.push(wall);
     }
     if (sides.includes('top')) {
       wall = container.addChild(new Wall({ width, height: size }));
-      wall.position.set(pos.x + width * 0.5, pos.y + size * 0.5);
+      wall.position.set(pos.x + width * 0.5, pos.y - size * 0.5 + padding);
       System.worldBounds.push(wall);
     }
 
     if (sides.includes('left')) {
       wall = container.addChild(new Wall({ width: size, height }));
-      wall.position.set(pos.x - size * 0.5 - padding, pos.y + height * 0.5 + size * 0.5);
+      wall.position.set(pos.x - size * 0.5 + padding, pos.y + height * 0.5);
       System.worldBounds.push(wall);
     }
 
     if (sides.includes('right')) {
       wall = container.addChild(new Wall({ width: size, height }));
-      wall.position.set(pos.x + width + padding - size * 0.5, pos.y + height * 0.5);
+      wall.position.set(pos.x + width - padding + size * 0.5, pos.y + height * 0.5);
       System.worldBounds.push(wall);
     }
 
@@ -371,14 +402,39 @@ export class System {
     [...System.actors, ...System.solids, ...System.sensors].forEach((entity: Entity) => {
       const bounds = entity.getBoundingBox();
       const outerBounds = entity.getOuterBoundingBox();
-      System.gfx
-        .rect(bounds.x, bounds.y, bounds.width, bounds.height)
-        .stroke({ width: 1, color: entity.debugColors.bounds, alignment: 0.5 });
-
-      if (outerBounds) {
+      if (entity.isCircle) {
+        const circBounds = bounds as Circle;
         System.gfx
-          .rect(outerBounds.x, outerBounds.y, outerBounds.width, outerBounds.height)
-          .stroke({ width: 1, color: entity.debugColors.outerBounds, alignment: 0.5 });
+          .circle(circBounds.x, circBounds.y, circBounds.radius)
+          .stroke({ width: 1, color: entity.debugColors.bounds, alignment: 0.5 });
+
+        // const bds = entity.boundingRect;
+        // System.gfx
+        //   .rect(bds.x, bds.y, bds.width, bds.height)
+        //   .stroke({ width: 1, color: entity.debugColors.bounds, alignment: 0.5 });
+
+        if (outerBounds) {
+          const outerCircBounds = outerBounds as Circle;
+          System.gfx
+            .circle(
+              outerCircBounds.x + outerCircBounds.radius,
+              outerCircBounds.y + outerCircBounds.radius,
+              outerCircBounds.radius,
+            )
+            .stroke({ width: 1, color: entity.debugColors.outerBounds, alignment: 0.5 });
+        }
+      } else {
+        const rectBounds = bounds as Rectangle;
+        System.gfx
+          .rect(rectBounds.x, rectBounds.y, rectBounds.width, rectBounds.height)
+          .stroke({ width: 1, color: entity.debugColors.bounds, alignment: 0.5 });
+
+        if (outerBounds) {
+          const outerRectBounds = outerBounds as Rectangle;
+          System.gfx
+            .rect(outerRectBounds.x, outerRectBounds.y, outerRectBounds.width, outerRectBounds.height)
+            .stroke({ width: 1, color: entity.debugColors.outerBounds, alignment: 0.5 });
+        }
       }
     });
 

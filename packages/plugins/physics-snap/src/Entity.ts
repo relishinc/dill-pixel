@@ -1,9 +1,8 @@
-import type { Container as PIXIContianer, ObservablePoint, PointData } from 'pixi.js';
-import { Bounds, Rectangle, Sprite } from 'pixi.js';
+import { Bounds, Circle, Container as PIXIContianer, ObservablePoint, PointData, Rectangle, Sprite } from 'pixi.js';
 import { Application, Container } from 'dill-pixel';
 import { ICollider } from './ICollider';
 import { System } from './System';
-import { EntityType } from './types';
+import { EntityType, SnapBoundary } from './types';
 
 export class Entity<T = any, A extends Application = Application> extends Container<A> implements ICollider {
   view: PIXIContianer;
@@ -16,6 +15,7 @@ export class Entity<T = any, A extends Application = Application> extends Contai
     outerBounds: 0x00ff00,
   };
   type: EntityType = 'Solid';
+  isCircle: boolean = false;
   isCollideable: boolean = true;
   xRemainder: number = 0;
   yRemainder: number = 0;
@@ -26,15 +26,24 @@ export class Entity<T = any, A extends Application = Application> extends Contai
     this.config = config as T;
   }
 
-  protected _cachedBounds: Bounds | Rectangle | null = null;
+  protected _cachedBounds: SnapBoundary | null = null;
 
-  get cachedBounds(): Bounds | Rectangle {
+  get cachedBounds(): SnapBoundary {
     if (!this._cachedBounds || this._dirtyBounds) {
       const bounds = this.view.getBounds();
       bounds.scale(1 / this.system.container.worldTransform.d);
-      this._cachedBounds = bounds;
+      if (this.isCircle) {
+        bounds.width = bounds.height = Math.max(bounds.width, bounds.height);
+        this._cachedBounds = new Circle(
+          bounds.x + bounds.width * 0.5,
+          bounds.y * bounds.width * 0.5,
+          bounds.width * 0.5,
+        );
+      } else {
+        this._cachedBounds = bounds;
+      }
     }
-    return this._cachedBounds || new Rectangle();
+    return this._cachedBounds ?? (this.isCircle ? new Circle() : new Rectangle());
   }
 
   set cachedBounds(value: Bounds) {
@@ -77,20 +86,29 @@ export class Entity<T = any, A extends Application = Application> extends Contai
     this._dirtyBounds = value;
   }
 
+  get boundingRect(): Rectangle {
+    const bb = this.getBoundingBox();
+    if (this.isCircle) {
+      const rect = bb.getBounds();
+      return rect;
+    }
+    return bb as Rectangle;
+  }
+
   get top(): number {
-    return this.getBoundingBox().top;
+    return this.boundingRect.top;
   }
 
   get bottom(): number {
-    return this.getBoundingBox().bottom;
+    return this.boundingRect.bottom;
   }
 
   get left(): number {
-    return this.getBoundingBox().left;
+    return this.boundingRect.left;
   }
 
   get right(): number {
-    return this.getBoundingBox().right;
+    return this.boundingRect.right;
   }
 
   get system(): typeof System {
@@ -109,26 +127,27 @@ export class Entity<T = any, A extends Application = Application> extends Contai
 
   postUpdate() {}
 
-  getWorldBounds(): Bounds | Rectangle {
+  getWorldBounds(): SnapBoundary {
     const pos = this.system.container.toLocal(this.view.getGlobalPosition());
     const bounds = this.cachedBounds;
     bounds.x = pos.x;
     bounds.y = pos.y;
 
     if (this.view instanceof Sprite && this.view.anchor) {
-      bounds.x -= this.view.width * this.view.anchor.x;
-      bounds.y -= this.view.height * this.view.anchor.y;
+      if (!this.isCircle) {
+        bounds.x -= this.view.width * this.view.anchor.x;
+        bounds.y -= this.view.height * this.view.anchor.y;
+      }
     }
-
     return bounds;
   }
 
-  getBoundingBox(): Rectangle {
+  getBoundingBox(): Rectangle | Circle {
     const bounds = this.getWorldBounds();
     return bounds instanceof Bounds ? bounds.rectangle : bounds;
   }
 
-  getOuterBoundingBox(): Rectangle | null {
+  getOuterBoundingBox(): Rectangle | Circle | null {
     return null;
   }
 
@@ -137,8 +156,20 @@ export class Entity<T = any, A extends Application = Application> extends Contai
     if (!entity) {
       return false;
     }
+    if (this.isCircle) {
+      if (entity.isCircle) {
+        return System.getCircleToCircleIntersection(entity, this, dx, dy);
+      } else {
+        return System.getRectToCircletIntersection(entity, this, dx, dy);
+      }
+    }
+    if (entity.isCircle) {
+      return System.getRectToCircletIntersection(this, entity, dx, dy);
+    }
     return System.getRectangleIntersection(entity, this, dx, dy);
   }
 
-  protected initialize() {}
+  protected initialize() {
+    // noop
+  }
 }

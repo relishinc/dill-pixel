@@ -90,8 +90,8 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
         const overlapX =
           deltaX !== 0
             ? deltaX > 0
-              ? this.getBoundingBox().right - actor.getBoundingBox().left
-              : this.getBoundingBox().left - actor.getBoundingBox().right
+              ? this.boundingRect.right - actor.boundingRect.left
+              : this.boundingRect.left - actor.boundingRect.right
             : 0;
 
         if (overlapX !== 0) {
@@ -101,8 +101,8 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
         const overlapY =
           deltaY !== 0
             ? deltaY > 0
-              ? this.getBoundingBox().bottom - actor.getBoundingBox().top
-              : this.getBoundingBox().top - actor.getBoundingBox().bottom
+              ? this.boundingRect.bottom - actor.boundingRect.top
+              : this.boundingRect.top - actor.boundingRect.bottom
             : 0;
 
         if (overlapY !== 0) {

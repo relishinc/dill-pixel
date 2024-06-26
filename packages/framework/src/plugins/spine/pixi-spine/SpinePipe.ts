@@ -88,7 +88,7 @@ export class SpinePipe implements RenderPipe<Spine> {
 				const cacheData = spine._getCachedData(slot, attachment);
 				const batchableSpineSlot = gpuSpine.slotBatches[cacheData.id] ||= new BatchableSpineSlot();
 				
-				if (!cacheData.clipped || (cacheData.clipped && cacheData.clippedData.vertices.length > 0)) {
+				if (!cacheData.clipped || (cacheData.clipped && cacheData.clippedData!.vertices.length > 0)) {
 					batchableSpineSlot.setData(
 						spine,
 						cacheData,

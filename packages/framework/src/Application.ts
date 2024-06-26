@@ -19,8 +19,18 @@ import {
 } from './plugins';
 import type { AppConfig, IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals } from './core';
 import { coreFunctionRegistry, coreSignalRegistry } from './core';
-import type { AssetInitOptions, AssetsManifest, DestroyOptions, Renderer, RendererDestroyOptions } from 'pixi.js';
-import { Application as PIXIPApplication, Assets, isMobile, Point } from 'pixi.js';
+
+import {
+  Application as PIXIPApplication,
+  AssetInitOptions,
+  Assets,
+  AssetsManifest,
+  DestroyOptions,
+  isMobile,
+  Point,
+  Renderer,
+  RendererDestroyOptions,
+} from 'pixi.js';
 import type { IStorageAdapter, IStore } from './store';
 import { Store } from './store';
 import type { ImportListItem, Size } from './utils';
@@ -53,6 +63,7 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   // dill pixel options
   useStore: true,
   useSpine: false,
+  useMathExtras: false,
   useVoiceover: true,
   storageAdapters: [],
   plugins: [],
@@ -564,6 +575,9 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     this._center.set(this.size.width * 0.5, this.size.height * 0.5);
     this.ticker.addOnce(() => {
       this.views.forEach((view) => {
+        if (!view || !view.position) {
+          return;
+        }
         view.position.set(this._center.x, this._center.y);
       });
       this.onResize.emit(this.size);

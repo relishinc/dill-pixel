@@ -1,4 +1,4 @@
-import { Application, Logger } from 'dill-pixel';
+import { Application } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { System } from './System';
@@ -67,7 +67,7 @@ export class Sensor<T = any, A extends Application = Application> extends Actor<
   getOuterCollisions(collideables = this.collideables) {
     const outerBoundingBox = this.getOuterBoundingBox();
     if (!outerBoundingBox) {
-      Logger.error(this.type, 'has no outer bounding box. Returning empty array.');
+      // Logger.error(this.type, 'has no outer bounding box. Returning empty array.');
       return [];
     }
     const collisions: Collision[] = [];

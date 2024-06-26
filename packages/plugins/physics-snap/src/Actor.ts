@@ -1,4 +1,4 @@
-import { Point, Rectangle } from 'pixi.js';
+import { Circle, Point, Rectangle } from 'pixi.js';
 import { Application } from 'dill-pixel';
 import { Entity } from './Entity';
 import { System } from './System';
@@ -42,7 +42,6 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   squish(_collision?: Collision, _pushingEntity?: Entity, _direction?: Point) {}
 
   postUpdate() {
-    // console.log('HIIHHIIH!', this.type);
     this.setAllRiding();
   }
 
@@ -171,10 +170,13 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   collideAt(
     x: number,
     y: number,
-    box: Rectangle,
+    box: Rectangle | Circle,
     sides?: ('top' | 'right' | 'bottom' | 'left')[],
   ): Collision[] | false {
-    const nextPosition = new Rectangle(box.x + x, box.y + y, box.width, box.height);
+    const nextPosition = this.isCircle
+      ? new Circle(box.x + x, box.y + y, (box as Circle).radius)
+      : new Rectangle(box.x + x, box.y + y, (box as Rectangle).width, (box as Rectangle).height);
+
     const collisions = [];
     // Iterate through all solids in the level to check for collisions
     for (const entity of this.collideables) {
@@ -205,8 +207,8 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   }
 
   isRiding(solid: Entity): boolean {
-    const thisBounds = this.getBoundingBox();
-    const solidBounds = solid.getBoundingBox();
+    const thisBounds = this.boundingRect;
+    const solidBounds = solid.boundingRect;
     const withinTolerance = Math.abs(thisBounds.bottom - solidBounds.top) <= 1;
     return withinTolerance && thisBounds.left < solidBounds.right && thisBounds.right > solidBounds.left;
   }

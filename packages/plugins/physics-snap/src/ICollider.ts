@@ -10,6 +10,7 @@ export interface ICollider {
   bottom: number;
   left: number;
   right: number;
+  isCircle: boolean;
 
   preUpdate(): void;
 
