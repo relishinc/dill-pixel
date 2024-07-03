@@ -54,7 +54,7 @@ export class Segment {
   }
 
   init(config: SegmentConfig) {
-    this._container = config.container ?? this.app.scenes.currentScene;
+    this._container = config.container ?? (this.app.scenes.currentScene as unknown as Container);
     this._config = config;
     this._config.platforms.forEach((platformConfig) => {
       const pl = Segment.pool.get(platformConfig);
@@ -65,12 +65,12 @@ export class Segment {
   }
 
   setPosition(x: number, y: number = 0) {
-    this.x = x;
-    this.y = y;
+    this.x = Math.round(x);
+    this.y = Math.round(y);
 
     this._platforms.forEach((platform) => {
-      platform.x += x;
-      platform.y += y;
+      platform.x = Math.round(platform.x + x);
+      platform.y = Math.round(platform.y + y);
     });
   }
 
@@ -88,8 +88,8 @@ export class Segment {
   update() {
     if (!this._canUpdate) return;
     if (EndlessRunner.movement.x !== 0 || EndlessRunner.movement.y !== 0) {
-      this.x -= EndlessRunner.movement.x;
-      this.y -= EndlessRunner.movement.y;
+      this.x -= Math.round(EndlessRunner.movement.x);
+      this.y -= Math.round(EndlessRunner.movement.y);
 
       this._platforms.forEach((platform) => {
         platform.move(-EndlessRunner.movement.x, -EndlessRunner.movement.y);

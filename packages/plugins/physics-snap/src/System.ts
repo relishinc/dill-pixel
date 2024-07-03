@@ -201,25 +201,39 @@ export class System {
     }
   }
 
-  static getNearbyEntities(entity: Entity, onlyTypes?: string[]): Entity[];
-
-  static getNearbyEntities(entity: Entity, filter?: SpatialHashGridFilter): Entity[];
-
-  static getNearbyEntities(entity: Entity, filter?: SpatialHashGridFilter | string[]): Entity[] {
+  static getNearbyEntities<T extends Entity = Entity>(
+    entity: Entity,
+    filter?: SpatialHashGridFilter,
+    dx: number = 0,
+    dy: number = 0,
+    debug?: boolean,
+  ): Set<T> {
     if (System.grid) {
       const bounds = entity.boundingRect;
-      return System.grid.query(bounds, filter);
+      return System.grid.query<T>(bounds, filter, dx, dy, debug);
     }
-    return System.all.filter((e: Entity) => {
+    const filtered = System.all.filter((e: Entity) => {
       if (filter) {
-        if (Array.isArray(filter)) {
-          return filter.includes(e.type);
-        } else {
-          return filter(e);
+        switch (typeof filter) {
+          case 'string':
+            return (
+              filter === e.type ||
+              (filter === 'solid' && e.isSolid) ||
+              (filter === 'actor' && e.isActor) ||
+              (filter === 'sensor' && e.isSensor)
+            );
+          case 'object':
+            return Array.isArray(filter) && filter.includes(e.type);
+          case 'function':
+            return filter(e);
+          default:
+            return false;
         }
       }
       return true;
     });
+
+    return new Set<T>(filtered as T[]);
   }
 
   static roundBoundingBox(bb: Rectangle) {
@@ -289,6 +303,7 @@ export class System {
     if (System.preUpdateHooks) {
       System.preUpdateHooks.forEach((hook) => hook(deltaTime));
     }
+
     if (System.updateHooks) {
       System.updateHooks.forEach((hook) => hook(deltaTime));
     }
@@ -498,6 +513,7 @@ export class System {
     System.postUpdateHooks.clear();
     System.preUpdateHooks.clear();
     System.updateHooks.clear();
+
     if (System.worldBounds) {
       System.worldBounds.forEach((wall: Wall) => {
         wall.parent.removeChild(wall);

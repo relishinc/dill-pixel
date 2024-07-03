@@ -89,8 +89,7 @@ export class Entity<T = any, A extends Application = Application> extends Contai
   get boundingRect(): Rectangle {
     const bb = this.getBoundingBox();
     if (this.isCircle) {
-      const rect = bb.getBounds();
-      return rect;
+      return bb.getBounds();
     }
     return bb as Rectangle;
   }
@@ -115,8 +114,10 @@ export class Entity<T = any, A extends Application = Application> extends Contai
     return System;
   }
 
-  get collideables(): Entity[] {
-    return [];
+  getCollideables<T extends Entity = Entity>(dx: number = 0, dy: number = 0): Set<T> {
+    void dx;
+    void dy;
+    return new Set<T>();
   }
 
   preUpdate() {}

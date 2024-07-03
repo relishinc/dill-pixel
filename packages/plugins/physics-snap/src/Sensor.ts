@@ -18,8 +18,8 @@ export class Sensor<T = any, A extends Application = Application> extends Actor<
    */
   passThroughTypes: EntityType[] = ['Actor', 'Player'];
 
-  get collideables(): Entity[] {
-    return System.actors;
+  getCollideables<T extends Entity = Entity>(): Set<T> {
+    return System.getNearbyEntities<T>(this, 'actor') as Set<T>;
   }
 
   added() {
@@ -43,7 +43,7 @@ export class Sensor<T = any, A extends Application = Application> extends Actor<
   resolveAllCollisions(): null | Collision[] {
     const collisions = [];
     // Iterate through all solids in the level to check for collisions
-    for (const entity of this.collideables) {
+    for (const entity of this.getCollideables()) {
       if (!entity.isCollideable) {
         continue;
       }
@@ -64,7 +64,7 @@ export class Sensor<T = any, A extends Application = Application> extends Actor<
     return collisions.length ? collisions : null;
   }
 
-  getOuterCollisions(collideables = this.collideables) {
+  getOuterCollisions(collideables = this.getCollideables()) {
     const outerBoundingBox = this.getOuterBoundingBox();
     if (!outerBoundingBox) {
       // Logger.error(this.type, 'has no outer bounding box. Returning empty array.');

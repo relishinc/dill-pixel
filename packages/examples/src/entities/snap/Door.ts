@@ -1,5 +1,5 @@
 import { Texture } from 'pixi.js';
-import { Entity, Sensor, System } from '@dill-pixel/plugin-snap-physics';
+import { Actor, Entity, Sensor, Solid, System } from '@dill-pixel/plugin-snap-physics';
 
 export type DoorConfig = {
   width: number;
@@ -22,14 +22,16 @@ export class Door extends Sensor<DoorConfig> {
     this.initialize();
   }
 
-  get collideables(): Entity[] {
-    return System.getNearbyEntities(this, (entity) => !entity.isSensor);
+  getCollideables<T extends Entity = Entity>(): Set<T> {
+    return System.getNearbyEntities<T>(this, (entity) => !entity.isSensor);
   }
 
   update(deltaTime: number) {
     super.update(deltaTime);
     this.moveY(System.gravity * deltaTime, null);
-    const player = System.getNearbyEntities(this, (entity) => entity.type === 'Player')[0];
+    const player = System.getNearbyEntities<Actor | Solid>(this, (entity) => entity.type === 'Player')
+      .values()
+      .next().value;
     if (this.collidesWith(player)) {
       this.view.tint = 0x0;
     } else {

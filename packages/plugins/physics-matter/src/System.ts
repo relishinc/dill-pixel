@@ -13,6 +13,7 @@ export class System {
   private static _options: Partial<MatterPhysicsPluginOptions>;
   private static _objects: Set<IMatterPhysicsObject> = new Set();
   private static _debugGraphics: Graphics | null = null;
+  private static _walls: Body[];
 
   private static _debug: boolean = false;
 
@@ -78,6 +79,9 @@ export class System {
 
   static destroy() {
     this.enabled = false;
+    World.clear(System._engine.world, false);
+    Engine.clear(System._engine);
+    Runner.stop(System._runner);
   }
 
   static initialize(options: Partial<MatterPhysicsPluginOptions>) {
@@ -113,19 +117,19 @@ export class System {
       }
       if (System._options.createWalls.left) {
         walls.push(
-          Bodies.rectangle(-width / 2 - thickness / 2, -thickness / 2, thickness, height + thickness, {
+          Bodies.rectangle(-thickness / 2, height / 2, thickness, height + thickness, {
             isStatic: true,
           }),
         );
       }
       if (System._options.createWalls.right) {
         walls.push(
-          Bodies.rectangle(width / 2 + thickness / 2, -thickness / 2, thickness, height + thickness, {
+          Bodies.rectangle(width + thickness / 2, height / 2, thickness, height + thickness, {
             isStatic: true,
           }),
         );
       }
-
+      System._walls = walls;
       System.addToWorld(...walls);
     }
   }
@@ -182,6 +186,19 @@ export class System {
 
         System._debugGraphics.lineTo(vertices[0].x, vertices[0].y);
         System._debugGraphics.fill({ color, alpha: 0.25 });
+        System._debugGraphics.stroke({ color: 0xff0000, alignment: 0.5 });
+      }
+    });
+    System._walls?.forEach((wall) => {
+      const body = wall as Body;
+      const vertices = body.vertices;
+      if (System._debugGraphics && vertices.length > 0) {
+        System._debugGraphics.moveTo(vertices[0].x, vertices[0].y);
+        for (let j = 1; j < vertices.length; j++) {
+          System._debugGraphics.lineTo(vertices[j].x, vertices[j].y);
+        }
+        System._debugGraphics.lineTo(vertices[0].x, vertices[0].y);
+        System._debugGraphics.fill({ color: 0x00ff00, alpha: 1 });
         System._debugGraphics.stroke({ color: 0xff0000, alignment: 0.5 });
       }
     });

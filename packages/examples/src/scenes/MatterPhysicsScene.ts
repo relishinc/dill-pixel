@@ -1,17 +1,20 @@
 import { Container, UICanvas } from 'dill-pixel';
 import { default as MatterPhysics, Entity } from '@dill-pixel/plugin-matter-physics';
-import { FederatedPointerEvent, Rectangle, Texture } from 'pixi.js';
+import { FederatedPointerEvent, Rectangle, Text, Texture } from 'pixi.js';
 
 import { BaseScene } from '@/scenes/BaseScene';
+import { FONT_KUMBH_SANS } from '@/utils/Constants';
 
 export class MatterPhysicsScene extends BaseScene {
   ui: UICanvas;
+  countText: Text;
   protected readonly title = 'Matter Physics';
   protected readonly subtitle = 'Click to add an object';
   protected level: Container;
-
+  protected _entities: Entity[] = [];
   protected config = {
     debug: true,
+    numToAdd: 1,
   };
 
   protected get physics(): MatterPhysics {
@@ -25,6 +28,8 @@ export class MatterPhysicsScene extends BaseScene {
         this._handleDebugChanged();
       })
       .name('Debug Physics');
+
+    this.gui.add(this.config, 'numToAdd', 1, 50, 1).name('Objects to add');
   }
 
   destroy() {
@@ -39,6 +44,12 @@ export class MatterPhysicsScene extends BaseScene {
     this.app.focus.addFocusLayer(this.id);
     this.level = this.add.container();
 
+    this.countText = this.add.text({
+      style: { fontFamily: FONT_KUMBH_SANS, fill: 'white', fontSize: 18 },
+      x: -this.app.size.width * 0.5 + 30,
+      y: -this.app.size.height * 0.5 + 120,
+    });
+
     this.eventMode = 'static';
 
     this.level.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
@@ -51,18 +62,19 @@ export class MatterPhysicsScene extends BaseScene {
       engine: {
         gravity: { y: 0.98 },
       },
-      createWalls: { thickness: 10, bottom: true },
-      worldBounds: new Rectangle(0, 0, this.app.size.width, this.app.size.height),
+      createWalls: { thickness: 10, bottom: true, left: true, right: true },
+      worldBounds: new Rectangle(0, 0, this.app.size.width, this.app.size.height - 20),
     });
 
     this.physics.system.enabled = true;
 
-    this.on('click', this._addEntity);
-    this.on('tap', this._addEntity);
+    this.on('pointerup', this._addEntity);
     this._handleDebugChanged();
   }
 
-  update() {}
+  update() {
+    this.countText.text = `Entities: ${this._entities.length}`;
+  }
 
   resize() {
     super.resize();
@@ -74,39 +86,43 @@ export class MatterPhysicsScene extends BaseScene {
   }
 
   private _addEntity(e: FederatedPointerEvent) {
-    const isJar = Math.random() < 0.3;
-
-    let entity: Entity;
-    if (isJar) {
-      entity = new Entity({
-        bodyType: 'circle',
-        view: this.make.sprite({
-          asset: 'jar',
-          sheet: 'game/sheet/sheet.json',
-          scale: 0.1 + Math.random() * 0.2,
-          anchor: 0.5,
-        }),
-      });
-    } else {
-      const isCircle = Math.random() < 0.5;
-      const size = Math.random() * 50 + 50;
-      const color = Math.random() * 0xffffff;
-      entity = new Entity({
-        bodyType: isCircle ? 'circle' : 'rectangle',
-        bodyDefinition: { restitution: 0.1, friction: 0.5, angle: Math.random() * Math.PI },
-        view: isCircle
-          ? this.make.graphics().circle(0, 0, size).fill({ color })
-          : this.make.sprite({
-              asset: Texture.WHITE,
-              width: 50 + Math.random() * 100,
-              height: 50 + Math.random() * 100,
-              anchor: 0.5,
-              tint: color,
-            }),
-      });
-    }
     const pos = this.level.toLocal(e.global);
-    entity.position.set(pos.x, pos.y);
-    this.level.add.existing(entity);
+
+    for (let i = 0; i < this.config.numToAdd; i++) {
+      const isJar = Math.random() < 0.3;
+      let entity: Entity;
+      if (isJar) {
+        entity = new Entity({
+          bodyType: 'circle',
+          view: this.make.sprite({
+            asset: 'jar',
+            sheet: 'game/sheet/sheet.json',
+            scale: 0.1 + Math.random() * 0.1,
+            anchor: 0.5,
+          }),
+        });
+      } else {
+        const isCircle = Math.random() < 0.5;
+        const size = Math.random() * 25 + 25;
+        const color = Math.random() * 0xffffff;
+        entity = new Entity({
+          bodyType: isCircle ? 'circle' : 'rectangle',
+          bodyDefinition: { restitution: 0.1, friction: 0.5, angle: Math.random() * Math.PI },
+          view: isCircle
+            ? this.make.graphics().circle(0, 0, size).fill({ color })
+            : this.make.sprite({
+                asset: Texture.WHITE,
+                width: 25 + Math.random() * 25,
+                height: 25 + Math.random() * 25,
+                anchor: 0.5,
+                tint: color,
+              }),
+        });
+      }
+
+      entity.position.set(pos.x, pos.y);
+      this.level.add.existing(entity);
+      this._entities.push(entity);
+    }
   }
 }

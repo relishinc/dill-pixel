@@ -41,7 +41,7 @@ export class SpatialHashGrid {
 
     for (let x = startX; x <= endX; x++) {
       for (let y = startY; y <= endY; y++) {
-        const key = this.getGridKey(x * this._cellSize, y * this._cellSize); // Use actual world coordinates
+        const key = this.getGridKey(x, y); // Use cell coordinates directly
         if (!this.cells.has(key)) {
           this.cells.set(key, new Set());
         }
@@ -57,40 +57,65 @@ export class SpatialHashGrid {
     });
   }
 
-  query(range: Rectangle, filter?: SpatialHashGridFilter | string[]): Entity[] {
-    const foundEntities = new Set<Entity>();
+  query<T extends Entity = Entity>(
+    range: Rectangle,
+    filter?: SpatialHashGridFilter,
+    dx: number = 0,
+    dy: number = 0,
+    debug?: boolean,
+  ): Set<T> {
+    void debug;
+    const expandedRange = new Rectangle(
+      range.x - Math.abs(dx),
+      range.y - Math.abs(dy),
+      range.width + 2 * Math.abs(dx),
+      range.height + 2 * Math.abs(dy),
+    );
+    const foundEntities = new Set<T>();
 
     // Ensure we handle negative or reverse ranges appropriately
-    const startX = Math.floor(Math.min(range.x, range.x + range.width) / this._cellSize);
-    const startY = Math.floor(Math.min(range.y, range.y + range.height) / this._cellSize);
-    const endX = Math.floor(Math.max(range.x, range.x + range.width) / this._cellSize);
-    const endY = Math.floor(Math.max(range.y, range.y + range.height) / this._cellSize);
+    const startX = Math.floor(Math.min(expandedRange.x, expandedRange.x + expandedRange.width) / this._cellSize);
+    const startY = Math.floor(Math.min(expandedRange.y, expandedRange.y + expandedRange.height) / this._cellSize);
+    const endX = Math.floor(Math.max(expandedRange.x, expandedRange.x + expandedRange.width) / this._cellSize);
+    const endY = Math.floor(Math.max(expandedRange.y, expandedRange.y + expandedRange.height) / this._cellSize);
 
     for (let x = startX; x <= endX; x++) {
       for (let y = startY; y <= endY; y++) {
-        const key = this.getGridKey(x * this._cellSize, y * this._cellSize);
-
+        const key = this.getGridKey(x, y); // Use cell coordinates directly
         const cellEntities = this.cells.get(key);
         if (cellEntities) {
           cellEntities.forEach((entity) => {
-            if (filter !== undefined) {
-              if (Array.isArray(filter)) {
-                if (filter.includes(entity.type)) {
-                  foundEntities.add(entity);
-                }
-              } else {
-                if (filter(entity)) {
-                  foundEntities.add(entity);
-                }
-              }
+            if (filter === undefined) {
+              foundEntities.add(entity as T);
             } else {
-              foundEntities.add(entity);
+              switch (typeof filter) {
+                case 'string':
+                  if (
+                    filter === entity.type ||
+                    (filter === 'solid' && entity.isSolid) ||
+                    (filter === 'actor' && entity.isActor) ||
+                    (filter === 'sensor' && entity.isSensor)
+                  ) {
+                    foundEntities.add(entity as T);
+                  }
+                  break;
+                case 'object':
+                  if (Array.isArray(filter) && filter.includes(entity.type)) {
+                    foundEntities.add(entity as T);
+                  }
+                  break;
+                case 'function':
+                  if (filter(entity)) {
+                    foundEntities.add(entity as T);
+                  }
+                  break;
+              }
             }
           });
         }
       }
     }
-    return [...foundEntities];
+    return foundEntities;
   }
 
   updateAll() {
@@ -124,9 +149,7 @@ export class SpatialHashGrid {
     return rects;
   }
 
-  private getGridKey(x: number, y: number): GridKey {
-    const cellX = Math.floor(x / this._cellSize);
-    const cellY = Math.floor(y / this._cellSize);
+  private getGridKey(cellX: number, cellY: number): GridKey {
     return `${cellX}:${cellY}`;
   }
 }

@@ -11,7 +11,7 @@ class Ball extends Projectile {
   update(deltaTime: number) {
     super.update(deltaTime);
     if (this.velocity.y < this.system.gravity) {
-      this.velocity.y += this.velocity.y < 0 ? 0.25 : 0.1;
+      this.velocity.y += this.velocity.y < 0 ? 1 : 0.5;
       this.velocity.y = Math.min(this.system.gravity, this.velocity.y);
     }
   }
@@ -29,10 +29,10 @@ export class SnapProjectileScene extends BaseScene {
 
   protected config = {
     mode: 'ball',
-    numToAdd: 5,
+    numToAdd: 10,
     useSpatialHash: true,
-    gridCellSize: 150,
-    debug: false,
+    gridCellSize: 200,
+    debug: true,
   };
 
   private _mode: 'ball' | 'bullet' = 'ball';
@@ -43,6 +43,8 @@ export class SnapProjectileScene extends BaseScene {
   private _balls: Projectile[] = [];
   private _bullets: Projectile[] = [];
   private _obstacles: (CircSolid | RectSolid)[] = [];
+  private obstacleRect: RectSolid;
+  private obstacleCirc: CircSolid;
 
   protected get physics(): SnapPhysics {
     return this.app.getPlugin('physics') as unknown as SnapPhysics;
@@ -51,6 +53,8 @@ export class SnapProjectileScene extends BaseScene {
   update() {
     this.countText.text = `Balls: ${this._balls.length}\nBullets: ${this._bullets.length}`;
   }
+
+  physicsUpdate() {}
 
   configureGUI() {
     this.gui
@@ -106,7 +110,7 @@ export class SnapProjectileScene extends BaseScene {
 
     this.app.ticker.maxFPS = 60;
     this.physics.system.initialize({
-      gravity: 10,
+      gravity: 30,
       container: this.level,
       debug: this.config.debug,
       useSpatialHashGrid: this.config.useSpatialHash,
@@ -120,24 +124,38 @@ export class SnapProjectileScene extends BaseScene {
         width: this.app.size.width,
       },
     });
+    this.physics.system.postUpdateHooks.add(this.physicsUpdate);
     this.physics.system.enabled = true;
 
     // solids
-    let obstacle: RectSolid | CircSolid;
-    obstacle = this.level.add.existing(
+    this.obstacleRect = this.level.add.existing(
       new RectSolid({
         size: { width: 400, height: 32 },
       }),
-      { position: [this.app.size.width * 0.5, this.app.size.height * 0.5 + 150] },
+      { position: [this.app.size.width * 0.5 + 200, this.app.size.height * 0.5 + 150] },
     );
 
-    this._obstacles.push(obstacle);
+    this._obstacles.push(this.obstacleRect);
 
-    obstacle = this.level.add.existing(new CircSolid({ radius: 40 }), {
-      position: [this.app.size.width * 0.5, this.app.size.height * 0.5],
+    this.obstacleCirc = this.level.add.existing(new CircSolid({ radius: 40 }), {
+      position: [this.app.size.width * 0.5 - 150, this.app.size.height * 0.5],
     });
 
-    this._obstacles.push(obstacle);
+    this._obstacles.push(this.obstacleCirc);
+
+    this.obstacleRect.animatePosition(this.obstacleRect.x, this.obstacleRect.y + 200, {
+      duration: 3,
+      repeat: -1,
+      yoyo: true,
+      ease: 'none',
+    });
+    //
+    // this.obstacleCirc.animatePosition(this.obstacleCirc.x + 300, this.obstacleCirc.y, {
+    //   duration: 3,
+    //   repeat: -1,
+    //   yoyo: true,
+    //   ease: 'none',
+    // });
 
     this.eventMode = 'static';
     this.on('pointerup', this._handlePointerUp);
@@ -180,6 +198,7 @@ export class SnapProjectileScene extends BaseScene {
     const b = this.ballPool.get({ color: 0x000fff, radius: 20 });
     const dirX = Math.random() > 0.5 ? -1 : 1;
     b.velocity.set(Math.random() * 5 * dirX, this.physics.system.gravity);
+    // b.velocity.set(0, 2);
     this.level.add.existing(b, {
       position: pos,
     });
@@ -192,6 +211,7 @@ export class SnapProjectileScene extends BaseScene {
     const dirX = Math.random() > 0.5 ? -1 : 1;
     const dirY = Math.random() > 0.5 ? -1 : 1;
     b.velocity.set((Math.random() * 10 + 5) * dirX, (Math.random() * 10 + 5) * dirY);
+
     this.level.add.existing(b, {
       position: pos,
     });

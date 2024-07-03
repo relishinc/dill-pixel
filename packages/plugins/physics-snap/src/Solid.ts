@@ -1,4 +1,4 @@
-import { Application } from 'dill-pixel';
+import { Application, filterSet } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { System } from './System';
@@ -7,9 +7,11 @@ import { gsap } from 'gsap';
 export class Solid<T = any, A extends Application = Application> extends Entity<T, A> {
   type = 'Solid';
   isSolid = true;
+  riding: Set<Actor> = new Set();
+  protected _animations: Set<gsap.core.Tween | gsap.core.Timeline> = new Set<gsap.core.Tween | gsap.core.Timeline>();
 
-  get collideables(): Entity[] {
-    return System.getNearbyEntities(this, (entity) => entity.isActor);
+  getCollideables<T extends Entity = Entity>(dx: number = 0, dy: number = 0): Set<T> {
+    return System.getNearbyEntities<T>(this, 'actor', dx, dy) as Set<T>;
   }
 
   added() {
@@ -18,6 +20,16 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
 
   removed() {
     System.removeSolid(this);
+    if (this._animations) {
+      this._animations.forEach((animation) => animation?.kill());
+    }
+  }
+
+  getAllRiding(dx: number = 0, dy: number = 0) {
+    return filterSet<Actor>(
+      this.getCollideables(dx, dy),
+      (entity: Actor) => entity.isActor && entity.isRiding(this),
+    ) as Set<Actor>;
   }
 
   move(x: number, y: number): void {
@@ -25,7 +37,8 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
     this.yRemainder += y;
     const moveX = Math.round(this.xRemainder);
     const moveY = Math.round(this.yRemainder);
-    const ridingActors = this.getAllRidingActors();
+    const ridingActors = this.getAllRiding(moveX, moveY);
+
     if (moveX !== 0 || moveY !== 0) {
       // Temporarily make this solid non-collidable
       this.isCollideable = false;
@@ -45,13 +58,6 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
     System.updateEntity(this);
   }
 
-  getAllRidingActors(): Actor[] {
-    // Implement logic to get all actors riding this solid
-    return (this.collideables as Actor[]).filter((actor: Actor) => {
-      return actor.riding.has(this);
-    });
-  }
-
   animatePosition(x?: number | null, y?: number | null, vars: gsap.TweenVars = {}): gsap.core.Tween {
     const pos = this.position.clone();
     const initialPosition = { x: Math.round(pos.x), y: Math.round(pos.y) };
@@ -62,7 +68,7 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
     if (y === undefined || isNaN(y as number)) {
       y = initialPosition.y;
     }
-    return gsap.to(initialPosition, {
+    const anim = gsap.to(initialPosition, {
       x: Math.round(x!),
       y: Math.round(y!),
       ...tweenVars,
@@ -72,15 +78,15 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
         this.move(dx, dy);
       },
     });
+
+    this._animations.add(anim);
+
+    return anim;
   }
 
-  public handleActorInteractions(
-    deltaX: number,
-    deltaY: number,
-    ridingActors: Actor[] = this.getAllRidingActors(),
-  ): void {
-    for (let i = 0; i < this.collideables.length; i++) {
-      const actor = this.collideables[i] as Actor;
+  public handleActorInteractions(deltaX: number, deltaY: number, ridingActors = this.getAllRiding()): void {
+    const collideables = this.getCollideables<Actor>(deltaX, deltaY);
+    for (const actor of collideables) {
       if (
         !actor.passThroughTypes.includes(this.type) &&
         !actor.isPassingThrough(this) &&
@@ -108,7 +114,7 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
         if (overlapY !== 0) {
           actor.moveY(overlapY, actor.squish, null, this);
         }
-      } else if (ridingActors.includes(actor)) {
+      } else if (ridingActors.has(actor)) {
         // Move riding actors along with this solid
         if (actor.mostRiding === this) {
           actor.moveY(deltaY);

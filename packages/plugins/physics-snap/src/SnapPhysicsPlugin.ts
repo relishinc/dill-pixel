@@ -1,4 +1,4 @@
-import { IApplication, Plugin } from 'dill-pixel';
+import { IApplication, Logger, Plugin } from 'dill-pixel';
 import { System } from './System';
 import { Point } from 'pixi.js';
 import { pointExtras } from './extras';
@@ -54,6 +54,7 @@ export class SnapPhysicsPlugin extends Plugin {
   }
 
   destroy() {
+    Logger.log('SnapPhysicsPlugin:: destroy');
     this.system.enabled = false;
     System.cleanup();
     super.destroy();

@@ -24,4 +24,4 @@ export type Collision = {
 
 export type SnapBoundary = Bounds | Rectangle | Circle;
 
-export type SpatialHashGridFilter = (entity: Entity) => boolean;
+export type SpatialHashGridFilter = ((entity: Entity) => boolean) | string[] | 'solid' | 'actor' | 'sensor';

@@ -36,7 +36,6 @@ export class BasicActor<T extends BasicActorConfig = BasicActorConfig> extends A
     if (this._active) {
       BasicActor.onActivated.emit(this);
     }
-
     this.setColor();
   }
 
@@ -75,7 +74,7 @@ export class BasicActor<T extends BasicActorConfig = BasicActorConfig> extends A
   }
 
   setColor() {
-    this.view.tint = this._active ? this.config.activeColor : this.config.color;
+    this.view.tint = this._active ? this.config.activeColor ?? this.config.color : this.config.color;
   }
 
   protected _setActive() {
@@ -89,6 +88,8 @@ export class BasicSolid<T extends BasicSolidConfig = BasicSolidConfig> extends S
   constructor(config?: Partial<T>) {
     super(config);
     this.initialize();
+    this.eventMode = 'none';
+    this.interactiveChildren = false;
   }
 
   added() {
@@ -140,6 +141,7 @@ export class CircActor extends BasicActor<CircActorConfig> {
       anchor: 0.5,
       width: this.config.radius * 2,
       height: this.config.radius * 2,
+      tint: this.config.color,
     });
   }
 
@@ -149,6 +151,12 @@ export class CircActor extends BasicActor<CircActorConfig> {
       this.removeChild(this.view);
     }
     this.initialize();
+  }
+
+  reset() {
+    this.active = false;
+    this.x = 0;
+    this.y = 0;
   }
 }
 
@@ -172,6 +180,20 @@ export class RectActor extends BasicActor<RectActorConfig> {
       .fill({ color: 0xffffff });
 
     this.view = this.add.sprite({ asset: this.app.renderer.generateTexture(gfx), anchor: 0.5 });
+  }
+
+  init(config?: Partial<RectActorConfig>) {
+    this.config = { ...RectActor.defaults, ...(config ?? {}) };
+    if (this.view) {
+      this.removeChild(this.view);
+    }
+    this.initialize();
+  }
+
+  reset() {
+    this.active = false;
+    this.x = 0;
+    this.y = 0;
   }
 }
 
@@ -216,4 +238,15 @@ export class CircSolid extends BasicSolid<CircSolidConfig> {
 
 export class Projectile extends WithVelocity(CircActor) {
   type = 'Projectile';
+
+  initialize() {
+    super.initialize();
+    this.eventMode = 'none';
+    this.interactiveChildren = false;
+  }
+
+  update(deltaTime: number) {
+    super.update(deltaTime);
+    this.moveByVelocity(deltaTime);
+  }
 }

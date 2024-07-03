@@ -13,7 +13,10 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   passingThrough: Set<Entity> = new Set();
   riding: Set<Entity> = new Set();
   mostRiding: Entity | null = null;
+
+  protected _animations: Set<gsap.core.Tween | gsap.core.Timeline> = new Set<gsap.core.Tween | gsap.core.Timeline>();
   protected _activeCollisions: Collision[];
+
   get activeCollisions() {
     return this._activeCollisions;
   }
@@ -26,8 +29,8 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
     return true;
   }
 
-  get collideables(): Entity[] {
-    return System.getNearbyEntities(this, (e) => e.isSolid);
+  getCollideables<T extends Entity = Entity>(dx: number = 0, dy: number = 0): Set<T> {
+    return System.getNearbyEntities<T>(this, 'solid', dx, dy) as Set<T>;
   }
 
   added() {
@@ -35,15 +38,14 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   }
 
   removed() {
+    if (this._animations) {
+      this._animations.forEach((animation) => animation?.kill());
+    }
     System.removeActor(this);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   squish(_collision?: Collision, _pushingEntity?: Entity, _direction?: Point) {}
-
-  postUpdate() {
-    this.setAllRiding();
-  }
 
   animateX(target: number, vars: gsap.TweenVars = {}, validationMethod?: (delta?: number) => boolean): gsap.core.Tween {
     return this.animateTo('x', target, vars, validationMethod);
@@ -51,6 +53,10 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
 
   animateY(target: number, vars: gsap.TweenVars = {}, validationMethod?: (delta?: number) => boolean): gsap.core.Tween {
     return this.animateTo('y', target, vars, validationMethod);
+  }
+
+  postUpdate() {
+    this.setAllRiding();
   }
 
   animateTo(
@@ -62,7 +68,7 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
     const pos = this.position.clone();
     const initialPosition = { [prop]: Math.round(pos[prop]) };
     const tweenVars = Object.assign({ duration: 1, ease: 'linear.none' }, vars);
-    return gsap.to(initialPosition, {
+    const result = gsap.to(initialPosition, {
       [prop]: Math.round(target),
       ...tweenVars,
       onUpdate: () => {
@@ -79,6 +85,8 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
         }
       },
     });
+    this._animations.add(result);
+    return result;
   }
 
   moveX(
@@ -159,8 +167,9 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
           onNoCollisions();
         }
       }
+      System.updateEntity(this);
     }
-    System.updateEntity(this);
+
     if (pushingEntity) {
       pushingEntity.isCollideable = true;
     }
@@ -179,7 +188,7 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
 
     const collisions = [];
     // Iterate through all solids in the level to check for collisions
-    for (const entity of this.collideables) {
+    for (const entity of this.getCollideables()) {
       if (!entity.isCollideable || this.passThroughTypes.includes(entity.type)) {
         continue;
       }
@@ -206,11 +215,12 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
     return collisions.length ? collisions : false;
   }
 
-  isRiding(solid: Entity): boolean {
+  isRiding(solid: Entity, dx: number = 0, dy: number = 0): boolean {
     const thisBounds = this.boundingRect;
     const solidBounds = solid.boundingRect;
-    const withinTolerance = Math.abs(thisBounds.bottom - solidBounds.top) <= 1;
-    return withinTolerance && thisBounds.left < solidBounds.right && thisBounds.right > solidBounds.left;
+    const withinTolerance =
+      thisBounds.bottom <= solidBounds.top + dy + 1 && Math.abs(thisBounds.bottom - solidBounds.top + dy) <= 1;
+    return withinTolerance && thisBounds.left < solidBounds.right + dx && thisBounds.right > solidBounds.left + dx;
   }
 
   setPassingThrough(entity: Entity) {
@@ -227,12 +237,15 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
 
   private clearAllRiding() {
     this.mostRiding = null;
+    // this.riding.forEach((entity) => {
+    //   (entity as Solid).riding.delete(this);
+    // });
     this.riding.clear();
   }
 
-  private setAllRiding() {
+  private setAllRiding(dx: number = 0, dy: number = 0) {
     this.clearAllRiding();
-    this.collideables.forEach((entity) => {
+    this.getCollideables(dx, dy).forEach((entity) => {
       if (this.isRiding(entity)) {
         this.riding.add(entity);
       }

@@ -8,6 +8,7 @@ import { EndlessRunner } from '@/entities/snap/EndlessRunner';
 import { Player } from '@/entities/snap/Player';
 import { Portal } from '@/entities/snap/Portal';
 import { SegmentConfig } from '@/entities/snap/Segment';
+import { gsap } from 'gsap';
 
 export class SnapEndlessRunnerScene extends BaseScene {
   ui: UICanvas;
@@ -20,6 +21,7 @@ export class SnapEndlessRunnerScene extends BaseScene {
   protected readonly title = 'Snap Physics - Endless Runner';
   protected readonly subtitle = 'Arrows to move, up to jump, "Q" for hoverboard, "P" to pause';
   protected config = {
+    speed: 1,
     useSpatialHash: true,
     gridCellSize: 300,
     debug: false,
@@ -34,6 +36,12 @@ export class SnapEndlessRunnerScene extends BaseScene {
   }
 
   configureGUI() {
+    this.gui
+      .add(this.config, 'speed', 1, 5, 1)
+      .onChange(() => {
+        this._speedChanged();
+      })
+      .name('Speed');
     const spatialHashFolder = this.gui.addFolder('Spatial Hash Collisions');
     spatialHashFolder.open();
 
@@ -317,6 +325,11 @@ export class SnapEndlessRunnerScene extends BaseScene {
   private _togglePause() {
     this._isPaused = !this._isPaused;
     this.physics.system.enabled = !this._isPaused;
+  }
+
+  private _speedChanged() {
+    gsap.to(EndlessRunner.movement, { x: this.config.speed, duration: 1 });
+    // EndlessRunner.movement.x = this.config.speed;
   }
 
   private _handleSpatialHashChanged() {

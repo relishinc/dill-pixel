@@ -67,14 +67,14 @@ export class Portal extends Sensor<DoorConfig> {
     }
   }
 
-  get collideables(): Entity[] {
-    return System.getNearbyEntities(this, ['Player', 'FX', 'Platform', 'Wall']);
-  }
-
   get hasOuterCollisions() {
     const outerCollideables = this.system.getNearbyEntities(this, ['Player']);
     const outerCollisions = this.getOuterCollisions(outerCollideables);
     return outerCollisions.length > 0;
+  }
+
+  getCollideables<T extends Entity = Entity>(): Set<T> {
+    return System.getNearbyEntities(this, ['Player', 'FX', 'Platform', 'Wall']);
   }
 
   getBoundingBox() {

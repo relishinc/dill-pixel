@@ -24,7 +24,7 @@ export class SnapPhysicsScene extends BaseScene {
     useCamera: true,
     zoom: 1,
     useSpatialHash: true,
-    gridCellSize: 300,
+    gridCellSize: 400,
     debug: true,
   };
   private _zoomController: GUIController;
@@ -44,7 +44,7 @@ export class SnapPhysicsScene extends BaseScene {
       .name('Use Camera');
 
     this._zoomController = this.gui
-      .add(this.config, 'zoom', 0.25, 3, 0.05)
+      .add(this.config, 'zoom', 0.25, 3, 0.25)
       .onChange(() => {
         this._handleCameraZoomChanged();
       })
@@ -161,11 +161,19 @@ export class SnapPhysicsScene extends BaseScene {
     this.addPlatForm(1200, bottom - 165, 30, 330);
     this.addPlatForm(1265, bottom - 140, 100, 20, false);
     // vert
-    this.addPlatForm(1110, bottom - 200, 150, 20, true, true, {
-      speed: 1,
-      startingDirection: { x: 0, y: 1 },
-      range: [0, 150],
+    const animPlatform = this.addPlatForm(1110, bottom - 225, 150, 20, true);
+    animPlatform.animatePosition(undefined, animPlatform.y + 150, {
+      ease: 'none',
+      duration: 3,
+      repeat: -1,
+      yoyo: true,
     });
+
+    /*this.addPlatForm(1110, bottom - 200, 150, 20, true, true, {
+								  speed: 1,
+								  startingDirection: { x: 0, y: 1 },
+								  range: [0, 150],
+								});*/
 
     // holds portal
     this.addPlatForm(1700, bottom - 500, 200, 20, false, true, {
@@ -197,6 +205,7 @@ export class SnapPhysicsScene extends BaseScene {
       { x, y },
     );
     this.platforms.push(platform);
+    return platform;
   }
 
   addDoors(bottom: number) {

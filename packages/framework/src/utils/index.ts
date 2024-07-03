@@ -20,3 +20,4 @@ export * from './color';
 export * from './pixi';
 export * from './random';
 export * from './canvas';
+export * from './set';

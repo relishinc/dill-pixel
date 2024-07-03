@@ -10,12 +10,6 @@ import { Point } from 'pixi.js';
 export const WithVelocity = <TBase extends Constructor<Actor> | Constructor<Solid>>(Base: TBase) => {
   return class extends Base {
     public velocity: Point = new Point(0, 0);
-    public ricochetAngle: number = Math.PI;
-
-    update(deltaTime: number) {
-      super.update(deltaTime);
-      this.moveByVelocity(deltaTime);
-    }
 
     moveByVelocity(
       deltaTime: number,
