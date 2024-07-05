@@ -7,7 +7,7 @@ import { FONT_KUMBH_SANS } from '@/utils/Constants';
 export class FocusScene extends BaseScene {
   protected title = 'Focus Management';
   protected subtitle =
-    'Tab to changed focus. Enter or space to make the circles move.\nF to change focus layer.\nNotice only one item is focusable on layer  two"?';
+    'Tab to changed focus. Enter or space to make the circles move.\nF to change focus layer.\nNotice only one item is focusable on layer two?';
   private _focusLayerLabel: Text;
   private actor1: Actor;
   private actor2: Actor;
@@ -123,6 +123,7 @@ export class FocusScene extends BaseScene {
       }),
     );
 
+    // load another scene
     this._updateFocusLayerLabel();
   }
 

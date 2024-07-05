@@ -296,6 +296,7 @@ export class System {
       return;
     }
     const deltaTime = ticker.deltaTime;
+
     if (!System.container) {
       Logger.error('SnapPhysicsPlugin: World container not set!');
     }

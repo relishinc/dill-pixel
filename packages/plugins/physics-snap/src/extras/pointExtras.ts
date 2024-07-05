@@ -27,8 +27,8 @@ export const pointExtras = {
     if (!outPoint) {
       outPoint = new Point();
     }
-    outPoint.x = (this as Point).x + other.x;
-    outPoint.y = (this as Point).y + other.y;
+    outPoint.x = (this as unknown as Point).x + other.x;
+    outPoint.y = (this as unknown as Point).y + other.y;
     return outPoint;
   },
   /**
@@ -57,8 +57,8 @@ export const pointExtras = {
     if (!outPoint) {
       outPoint = new Point();
     }
-    outPoint.x = (this as Point).x - other.x;
-    outPoint.y = (this as Point).y - other.y;
+    outPoint.x = (this as unknown as Point).x - other.x;
+    outPoint.y = (this as unknown as Point).y - other.y;
     return outPoint;
   },
   /**
@@ -87,8 +87,8 @@ export const pointExtras = {
     if (!outPoint) {
       outPoint = new Point();
     }
-    outPoint.x = (this as Point).x * other.x;
-    outPoint.y = (this as Point).y * other.y;
+    outPoint.x = (this as unknown as Point).x * other.x;
+    outPoint.y = (this as unknown as Point).y * other.y;
     return outPoint;
   },
   /**
@@ -117,8 +117,8 @@ export const pointExtras = {
     if (!outPoint) {
       outPoint = new Point();
     }
-    outPoint.x = (this as Point).x * scalar;
-    outPoint.y = (this as Point).y * scalar;
+    outPoint.x = (this as unknown as Point).x * scalar;
+    outPoint.y = (this as unknown as Point).y * scalar;
     return outPoint;
   },
   /**
@@ -142,7 +142,7 @@ export const pointExtras = {
    * @returns {number} The result of the dot product. This is an scalar value.
    */
   dot(other: PointData) {
-    return (this as Point).x * other.x + (this as Point).y * other.y;
+    return (this as unknown as Point).x * other.x + (this as unknown as Point).y * other.y;
   },
   /**
    * Computes the cross product of `other` with `this` point.
@@ -175,7 +175,7 @@ export const pointExtras = {
    * @returns {number} The z component of the result of the cross product.
    */
   cross(other: PointData) {
-    return (this as Point).x * other.y - (this as Point).y * other.x;
+    return (this as unknown as Point).x * other.y - (this as unknown as Point).y * other.x;
   },
   /**
    * Computes a normalized version of `this` point.
@@ -205,9 +205,12 @@ export const pointExtras = {
     if (!outPoint) {
       outPoint = new Point();
     }
-    const magnitude = Math.sqrt((this as Point).x * (this as Point).x + (this as Point).y * (this as Point).y);
-    outPoint.x = (this as Point).x / magnitude;
-    outPoint.y = (this as Point).y / magnitude;
+    const magnitude = Math.sqrt(
+      (this as unknown as Point).x * (this as unknown as Point).x +
+        (this as unknown as Point).y * (this as unknown as Point).y,
+    );
+    outPoint.x = (this as unknown as Point).x / magnitude;
+    outPoint.y = (this as unknown as Point).y / magnitude;
     return outPoint;
   },
   /**
@@ -231,7 +234,10 @@ export const pointExtras = {
    * @returns {number} The magnitude (length) of the vector.
    */
   magnitude() {
-    return Math.sqrt((this as Point).x * (this as Point).x + (this as Point).y * (this as Point).y);
+    return Math.sqrt(
+      (this as unknown as Point).x * (this as unknown as Point).x +
+        (this as unknown as Point).y * (this as unknown as Point).y,
+    );
   },
   /**
    * Computes the square magnitude of this point.
@@ -258,14 +264,17 @@ export const pointExtras = {
    * @returns {number} The magnitude squared (length squared) of the vector.
    */
   magnitudeSquared() {
-    return (this as Point).x * (this as Point).x + (this as Point).y * (this as Point).y;
+    return (
+      (this as unknown as Point).x * (this as unknown as Point).x +
+      (this as unknown as Point).y * (this as unknown as Point).y
+    );
   },
   /**
    * Computes vector projection of `this` on `onto`.
    *
    * Imagine a light source, parallel to `onto`, above `this`.
    * The light would cast rays perpendicular to `onto`.
-   * `(this as Point).project(onto)` is the shadow cast by `this` on the line defined by `onto` .
+   * `(this as unknown as Point).project(onto)` is the shadow cast by `this` on the line defined by `onto` .
    *
    * _Note: Only available with **pixi.js/math-extras**._
    * @method project
@@ -280,7 +289,7 @@ export const pointExtras = {
    *
    * Imagine a light source, parallel to `onto`, above `this`.
    * The light would cast rays perpendicular to `onto`.
-   * `(this as Point).project(onto)` is the shadow cast by `this` on the line defined by `onto` .
+   * `(this as unknown as Point).project(onto)` is the shadow cast by `this` on the line defined by `onto` .
    *
    * _Note: Only available with **pixi.js/math-extras**._
    * @method project
@@ -295,7 +304,8 @@ export const pointExtras = {
       outPoint = new Point();
     }
     const normalizedScalarProjection =
-      ((this as Point).x * onto.x + (this as Point).y * onto.y) / (onto.x * onto.x + onto.y * onto.y);
+      ((this as unknown as Point).x * onto.x + (this as unknown as Point).y * onto.y) /
+      (onto.x * onto.x + onto.y * onto.y);
     outPoint.x = onto.x * normalizedScalarProjection;
     outPoint.y = onto.y * normalizedScalarProjection;
     return outPoint;
@@ -306,7 +316,7 @@ export const pointExtras = {
    *
    * Imagine a light source bouncing onto a mirror.
    * `this` vector is the light and `normal` is a vector perpendicular to the mirror.
-   * `(this as Point).reflect(normal)` is the reflection of `this` on that mirror.
+   * `(this as unknown as Point).reflect(normal)` is the reflection of `this` on that mirror.
    *
    * _Note: Only available with **pixi.js/math-extras**._
    * @method reflect
@@ -322,7 +332,7 @@ export const pointExtras = {
    *
    * Imagine a light source bouncing onto a mirror.
    * `this` vector is the light and `normal` is a vector perpendicular to the mirror.
-   * `(this as Point).reflect(normal)` is the reflection of `this` on that mirror.
+   * `(this as unknown as Point).reflect(normal)` is the reflection of `this` on that mirror.
    *
    * _Note: Only available with **pixi.js/math-extras**._
    * @method reflect
@@ -336,26 +346,29 @@ export const pointExtras = {
     if (!outPoint) {
       outPoint = new Point();
     }
-    const dotProduct = (this as Point).x * normal.x + (this as Point).y * normal.y;
-    outPoint.x = (this as Point).x - 2 * dotProduct * normal.x;
-    outPoint.y = (this as Point).y - 2 * dotProduct * normal.y;
+    const dotProduct = (this as unknown as Point).x * normal.x + (this as unknown as Point).y * normal.y;
+    outPoint.x = (this as unknown as Point).x - 2 * dotProduct * normal.x;
+    outPoint.y = (this as unknown as Point).y - 2 * dotProduct * normal.y;
     return outPoint;
   },
 
-  rotate(angle: number, outPoint: PointData): Point {
+  rotate(angle: number, outPoint: Point): Point {
     if (!outPoint) {
       outPoint = new Point();
     }
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
-    const newX = (this as Point).x * cos - (this as Point).y * sin;
-    const newY = (this as Point).x * sin + (this as Point).y * cos;
+    const newX = (this as unknown as Point).x * cos - (this as unknown as Point).y * sin;
+    const newY = (this as unknown as Point).x * sin + (this as unknown as Point).y * cos;
     outPoint.x = newX;
     outPoint.y = newY;
 
     return outPoint;
   },
   length(): number {
-    return Math.sqrt((this as Point).x * (this as Point).x + (this as Point).y * (this as Point).y);
+    return Math.sqrt(
+      (this as unknown as Point).x * (this as unknown as Point).x +
+        (this as unknown as Point).y * (this as unknown as Point).y,
+    );
   },
 };

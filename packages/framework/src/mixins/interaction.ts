@@ -9,10 +9,19 @@ type InteractionEventName = keyof AllFederatedEventMap;
 
 export type InteractionSignal = Signal<(event: FederatedEvent) => void>;
 
+/**
+ * Represents an interactive element.
+ */
 export interface IInteractive {
   onInteraction: (eventName: InteractionEventName) => InteractionSignal;
 }
 
+/**
+ * Adds interactive functionality to a container.
+ *
+ * @param {Constructor<Container>} Base - The base container class.
+ * @returns {Constructor<IInteractive>} - The extended container class with interactive functionality.
+ */
 export function Interactive<TBase extends Constructor<Container>>(Base: TBase): TBase & Constructor<IInteractive> {
   return class extends Base implements IInteractive {
     private _signals: Map<InteractionEventName, InteractionSignal> = new Map();
@@ -23,6 +32,12 @@ export function Interactive<TBase extends Constructor<Container>>(Base: TBase): 
       this.eventMode = 'static';
     }
 
+    /**
+     * Handles interaction events and returns the corresponding signal.
+     *
+     * @param {InteractionEventName} eventName - The name of the interaction event.
+     * @return {InteractionSignal} The signal associated with the interaction event.
+     */
     public onInteraction(eventName: InteractionEventName) {
       if (!this._signals.has(eventName)) {
         const signal = new Signal<(event: FederatedEvent) => void>();
@@ -40,6 +55,13 @@ export function Interactive<TBase extends Constructor<Container>>(Base: TBase): 
       super.destroy(options);
     }
 
+    /**
+     * Emits a signal with the given event.
+     *
+     * @param {FederatedEvent} event - The event to emit.
+     *
+     * @return {void}
+     */
     private _emitSignal(event: FederatedEvent) {
       const signalName = event.type as InteractionEventName;
       const signal = this._signals.get(signalName);

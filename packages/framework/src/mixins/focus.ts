@@ -1,11 +1,18 @@
-import type { Constructor, PointLike } from '../utils';
-import { Container, FederatedEvent } from 'pixi.js';
-import type { DestroyOptions, PointerEvents } from 'pixi.js';
+import type {Constructor, PointLike} from '../utils';
+import type {DestroyOptions, PointerEvents} from 'pixi.js';
+import {Container, FederatedEvent} from 'pixi.js';
 
-import { Application } from '../Application';
-import type { IFocusable } from '../plugins';
-import { Signal } from '../signals';
+import {Application} from '../Application';
+import type {IFocusable} from '../plugins';
+import {Signal} from '../signals';
 
+/**
+ * The Focusable function is a higher-order function that adds focus-related functionality to a given class.
+ *
+ * @param {TBase extends Constructor<Container>} Base - The base class to add focus functionality to.
+ *
+ * @returns {TBase & Constructor<IFocusable>} The modified class with focus functionality.
+ */
 export function Focusable<TBase extends Constructor<Container>>(Base: TBase): TBase & Constructor<IFocusable> {
   return class extends Base implements IFocusable {
     _accessibleDiv: HTMLElement;
@@ -72,7 +79,7 @@ export function Focusable<TBase extends Constructor<Container>>(Base: TBase): TB
       }
     }
 
-    public click() { }
+    public click() {}
 
     public getFocusPosition() {
       return null;
@@ -101,7 +108,7 @@ export function Focusable<TBase extends Constructor<Container>>(Base: TBase): TB
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected _handleKeyUp(_e: KeyboardEvent) { }
+    protected _handleKeyUp(_e: KeyboardEvent) {}
 
     private _maybeEmit(type: string, e: FederatedEvent) {
       if (this._eventsDisabled || e.type) {

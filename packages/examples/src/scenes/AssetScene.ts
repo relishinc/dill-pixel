@@ -1,5 +1,5 @@
 import { BaseScene } from '@/scenes/BaseScene';
-import { FlexContainer, SceneAssets } from 'dill-pixel';
+import { FlexContainer, Logger, scaleToHeight, SceneAssets } from 'dill-pixel';
 
 export class AssetScene extends BaseScene {
   title = 'Asset Scene';
@@ -39,22 +39,34 @@ export class AssetScene extends BaseScene {
       gap: 50,
       justifyContent: 'center',
       alignItems: 'center',
-      width: this.app.size.width,
       flexWrap: 'wrap',
-      x: -this.app.size.width * 0.5,
     });
     this.container.add.sprite({
       asset: 'https://reli.sh/wp-content/uploads/2023/10/tech-pickle-300x300.webp',
-      anchor: 0.5,
     });
-    this.container.add.sprite({ asset: 'static/jar', anchor: 0.5, scale: 0.4 });
-    this.container.add.sprite({ asset: 'zilla', anchor: 0.5 });
+    this.container.add.sprite({ asset: 'static/jar', scale: 0.4 });
+    this.container.add.sprite({ asset: 'zilla' });
     this.container.add.svg({ ctx: 'logo', scale: 0.5, resolution: 2 });
+
+    Logger.log('AssetScene:: initialize');
   }
 
   resize() {
     super.resize();
-    this.container.containerWidth = this.app.size.width;
-    this.container.x = -this.app.size.width * 0.5;
+    this.container.size = [this.app.size.width, this.app.size.height - 110];
+    this.container.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5 + 110);
+
+    if (this.app.size.width >= this.app.size.height) {
+      this.container.scale.set(1);
+      this.container.flexDirection = 'row';
+      this.container.flexWrap = 'wrap';
+    } else {
+      this.container.flexDirection = 'column';
+      this.container.flexWrap = 'nowrap';
+      scaleToHeight(this.container, this.app.size.height - 130);
+      this.container.position.set(-this.container.width * 0.5, -this.container.height * 0.5 + 180);
+    }
+
+    Logger.log('AssetScene:: resize');
   }
 }

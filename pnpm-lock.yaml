@@ -100,7 +100,7 @@ importers:
         version: link:../storage-adapters/firebase
       '@pixi/sound':
         specifier: 6.0.0
-        version: 6.0.0(pixi.js@8.2.1)
+        version: 6.0.0(pixi.js@8.2.2)
       dat.gui:
         specifier: ^0.7.9
         version: 0.7.9
@@ -117,8 +117,8 @@ importers:
         specifier: 4.1.5
         version: 4.1.5
       pixi.js:
-        specifier: 8.2.1
-        version: 8.2.1
+        specifier: 8.2.2
+        version: 8.2.2
       rimraf:
         specifier: 5.0.5
         version: 5.0.5
@@ -191,7 +191,7 @@ importers:
         version: 4.2.47
       '@pixi/sound':
         specifier: ^6.0.0
-        version: 6.0.0(pixi.js@8.2.1)
+        version: 6.0.0(pixi.js@8.2.2)
       csv-parse:
         specifier: ^5.5.5
         version: 5.5.6
@@ -205,8 +205,8 @@ importers:
         specifier: ^4.1.5
         version: 4.1.5
       pixi.js:
-        specifier: 8.2.1
-        version: 8.2.1
+        specifier: 8.2.2
+        version: 8.2.2
       rimraf:
         specifier: ^5.0.5
         version: 5.0.7
@@ -293,8 +293,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0
       pixi.js:
-        specifier: 8.2.1
-        version: 8.2.1
+        specifier: 8.2.2
+        version: 8.2.2
     devDependencies:
       dill-pixel:
         specifier: workspace:*
@@ -309,8 +309,8 @@ importers:
         specifier: ^0.19.0
         version: 0.19.0
       pixi.js:
-        specifier: 8.2.1
-        version: 8.2.1
+        specifier: 8.2.2
+        version: 8.2.2
     devDependencies:
       '@types/matter-js':
         specifier: ^0.19.6
@@ -328,8 +328,8 @@ importers:
         specifier: ^3.12.5
         version: 3.12.5
       pixi.js:
-        specifier: 8.2.1
-        version: 8.2.1
+        specifier: 8.2.2
+        version: 8.2.2
     devDependencies:
       dill-pixel:
         specifier: workspace:*
@@ -344,8 +344,8 @@ importers:
         specifier: ^2.18.0
         version: 2.18.0
       pixi.js:
-        specifier: 8.2.1
-        version: 8.2.1
+        specifier: 8.2.2
+        version: 8.2.2
     devDependencies:
       dill-pixel:
         specifier: workspace:*
@@ -2216,8 +2216,8 @@ packages:
   '@vue/shared@3.4.27':
     resolution: {integrity: sha512-DL3NmY2OFlqmYYrzp39yi3LDkKxa5vZVwxWdQ3rG0ekuWscHraeIbnI8t+aZK7qhYqEqWKTUdijadunb9pnrgA==}
 
-  '@webgpu/types@0.1.42':
-    resolution: {integrity: sha512-uvJtt4OD1Vjdebrrz3kNLgpOicYbikwnM8WPG6YD2lkCOHDtPdEtCINJFIFtbOCtPfA8SreR/vKyUNbAt92IwQ==}
+  '@webgpu/types@0.1.43':
+    resolution: {integrity: sha512-HoP+d+m+Kuq8CsE63BZ3+BYBKAemrqbHUNrCalxrUju5XW+q/094Q3oeIa+2pTraEbO8ckJmGpibzyGT4OV4YQ==}
 
   '@xmldom/xmldom@0.7.13':
     resolution: {integrity: sha512-lm2GW5PkosIzccsaZIz7tp8cPADSIlIHWDFTR1N0SzfinhhYgeIQjFMz4rYzanCScr3DqQLeomUDArp6MWKm+g==}
@@ -5431,8 +5431,8 @@ packages:
     resolution: {integrity: sha512-J8B6xqiO37sU/gkcMglv6h5Jbd9xNER7aHzpfRdNmV4IbQBzBpe4l9XmbG+xPF/znacgu2jfEw+wHffaq/YkXA==}
     hasBin: true
 
-  pixi.js@8.2.1:
-    resolution: {integrity: sha512-aywwPFJe6+Q10+K+paXB/GBJB7QAXM2ICgEKVIONNLYJQ4byC/pETshfIucTIQr5L56VUZedBAj96D72Bxqskg==}
+  pixi.js@8.2.2:
+    resolution: {integrity: sha512-L/EmsJ74bYyFIZoF4RdaU0yOuWGR179/QMLnptCVjRhhhg4tgW7ABs7uvp2Z0psOKvpNanaRF/kIliD8Rm5dVw==}
 
   pkg-dir@4.2.0:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}
@@ -8674,9 +8674,9 @@ snapshots:
 
   '@pixi/runner@7.4.2': {}
 
-  '@pixi/sound@6.0.0(pixi.js@8.2.1)':
+  '@pixi/sound@6.0.0(pixi.js@8.2.2)':
     dependencies:
-      pixi.js: 8.2.1
+      pixi.js: 8.2.2
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -9295,7 +9295,7 @@ snapshots:
 
   '@vue/shared@3.4.27': {}
 
-  '@webgpu/types@0.1.42': {}
+  '@webgpu/types@0.1.43': {}
 
   '@xmldom/xmldom@0.7.13': {}
 
@@ -13344,12 +13344,12 @@ snapshots:
     dependencies:
       pngjs: 3.4.0
 
-  pixi.js@8.2.1:
+  pixi.js@8.2.2:
     dependencies:
       '@pixi/colord': 2.9.6
       '@types/css-font-loading-module': 0.0.12
       '@types/earcut': 2.1.4
-      '@webgpu/types': 0.1.42
+      '@webgpu/types': 0.1.43
       '@xmldom/xmldom': 0.8.10
       earcut: 2.2.4
       eventemitter3: 5.0.1

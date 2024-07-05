@@ -63,6 +63,7 @@ export class SnapProjectileScene extends BaseScene {
       .onChange(() => {
         this._mode = this.config.mode as 'ball' | 'bullet';
       });
+
     this.gui.add(this.config, 'numToAdd', 1, 50, 1).name('Projectiles to add');
     const spatialHashFolder = this.gui.addFolder('Spatial Hash Collisions');
     spatialHashFolder.open();

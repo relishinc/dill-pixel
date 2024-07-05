@@ -20,9 +20,7 @@ async function boot() {
       antialias: true,
       autoDensity: true,
       useMathExtras: true,
-      resizer: {
-        minSize: { width: 500, height: 800 },
-      },
+
       // splash: {
       //   view: Splash,
       //   hideWhen: 'firstSceneEnter',

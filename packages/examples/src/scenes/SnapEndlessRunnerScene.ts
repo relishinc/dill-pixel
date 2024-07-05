@@ -8,7 +8,6 @@ import { EndlessRunner } from '@/entities/snap/EndlessRunner';
 import { Player } from '@/entities/snap/Player';
 import { Portal } from '@/entities/snap/Portal';
 import { SegmentConfig } from '@/entities/snap/Segment';
-import { gsap } from 'gsap';
 
 export class SnapEndlessRunnerScene extends BaseScene {
   ui: UICanvas;
@@ -36,35 +35,19 @@ export class SnapEndlessRunnerScene extends BaseScene {
   }
 
   configureGUI() {
-    this.gui
-      .add(this.config, 'speed', 1, 5, 1)
-      .onChange(() => {
-        this._speedChanged();
-      })
-      .name('Speed');
+    this.gui.add(this.config, 'speed', 1, 10, 1).onChange(this._speedChanged).name('Speed');
+
     const spatialHashFolder = this.gui.addFolder('Spatial Hash Collisions');
     spatialHashFolder.open();
 
-    spatialHashFolder
-      .add(this.config, 'useSpatialHash')
-      .onChange(() => {
-        this._handleSpatialHashChanged();
-      })
-      .name('Active');
+    spatialHashFolder.add(this.config, 'useSpatialHash').onChange(this._handleSpatialHashChanged).name('Active');
 
     spatialHashFolder
       .add(this.config, 'gridCellSize', 50, 800, 50)
-      .onChange(() => {
-        this._handleGridCellSizeChange();
-      })
+      .onChange(this._handleGridCellSizeChange)
       .name('Cell Size');
 
-    this.gui
-      .add(this.config, 'debug')
-      .onChange(() => {
-        this._handleDebugChanged();
-      })
-      .name('Debug Physics');
+    this.gui.add(this.config, 'debug').onChange(this._handleDebugChanged).name('Debug Physics');
   }
 
   async initialize() {
@@ -76,7 +59,9 @@ export class SnapEndlessRunnerScene extends BaseScene {
       label: 'Level',
       position: [-this.app.size.width * 0.5, -this.app.size.height * 0.5],
     });
+
     this.app.ticker.maxFPS = 60;
+
     this.physics.system.initialize({
       gravity: 10,
       container: this.level,
@@ -328,8 +313,8 @@ export class SnapEndlessRunnerScene extends BaseScene {
   }
 
   private _speedChanged() {
-    gsap.to(EndlessRunner.movement, { x: this.config.speed, duration: 1 });
-    // EndlessRunner.movement.x = this.config.speed;
+    // gsap.to(EndlessRunner.movement, { x: this.config.speed, duration: 1 });
+    EndlessRunner.movement.x = this.config.speed;
   }
 
   private _handleSpatialHashChanged() {
