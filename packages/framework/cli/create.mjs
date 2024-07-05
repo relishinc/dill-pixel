@@ -3,7 +3,7 @@ import * as p from '@clack/prompts';
 import {bold, cyan} from 'kleur/colors';
 import fs from 'node:fs';
 import path from 'node:path';
-import {copy, dist, mkdirp, package_manager} from './utils.mjs';
+import {copy, dist, mkdirp, package_manager, rimraf} from './utils.mjs';
 
 async function write(cwd, options) {
 	mkdirp(cwd);
@@ -35,6 +35,7 @@ function getFiles(dirPath) {
 function write_template_files(template, name, cwd) {
 	const dir = dist(`templates/${template}`);
 	copy(`${dir}/package.template.json`, `${cwd}/package.json`);
+	rimraf(`${dir}/package.template.json`);
 
 	const dirPath = `${dir}`;
 	const files = getFiles(dirPath);
@@ -43,16 +44,24 @@ function write_template_files(template, name, cwd) {
 		copy(file.name, dest);
 	});
 
-	const pkg = fs.readFileSync(`${cwd}/package.json`, 'utf-8');
-	fs.writeFileSync(`${cwd}/package.json`, pkg.replace(/~TODO~/g, name));
+	let pkg = fs.readFileSync(`${cwd}/package.json`, 'utf-8');
+	let mgr = package_manager;
+	if (mgr.indexOf('npm') === 0) {
+		mgr = 'npm run'
+	}
+	pkg = pkg.replace(/~NAME~/g, name)
+	pkg = pkg.replace(/~PACKAGE_MANAGER~/g, mgr)
+	fs.writeFileSync(`${cwd}/package.json`, pkg);
 	try {
 		fs.rmSync(`${cwd}/.meta.json`);
 	} catch (e) {}
 }
 
 export async function create(cwd) {
-	p.intro('This utility will walk you through creating a new Dill Pixel project.');
-	
+	const dir = dist(``);
+	const pkg = JSON.parse(fs.readFileSync(`${dir}/package.json`, 'utf-8'))
+	p.intro(`Dill Pixel Create (v${pkg.version}) - This utility will walk you through creating a new Dill Pixel project.`);
+
 	if (cwd === '.') {
 		const dir = await p.text({
 			message: 'Where should we create your project?',
@@ -88,6 +97,9 @@ export async function create(cwd) {
 				message: 'Which template?',
 				// @ts-expect-error i have no idea what is going on here
 				options: fs.readdirSync(dist('templates')).map((dir) => {
+					if (dir.indexOf('app-') !== 0) {
+						return null;
+					}
 					const meta_file = dist(`templates/${dir}/.meta.json`);
 					const {title, description} = JSON.parse(fs.readFileSync(meta_file, 'utf8'));
 
@@ -96,7 +108,7 @@ export async function create(cwd) {
 						hint: description,
 						value: dir,
 					};
-				}),
+				}).filter(Boolean),
 			}),
 	});
 

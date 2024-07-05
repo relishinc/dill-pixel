@@ -99,7 +99,7 @@ rl.question('Enter storage adapter name: ', async (pluginName) => {
 		fs.mkdirSync(pluginPath, {recursive: true});
 	}
 
-	copyAndRenameFiles(path.join(cwd, './templates/storage-adapter'), pluginPath, pluginName);
+	copyAndRenameFiles(path.join(cwd, './packages/framework/templates/storage-adapter'), pluginPath, pluginName);
 	replacePlaceholders(pluginPath, pluginName);
 
 	rl.close();

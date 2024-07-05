@@ -26,8 +26,9 @@ export default {
 			},
 		}),
 		manifest: pixiManifest({
-			output: path.resolve(cwd, './public/assets.json'),
+			output: path.resolve(cwd, './src/assets.json'),
 			createShortcuts: true,
+			
 		}),
 		mipmap: mipmap(),
 		spine: spineAtlasMipmap(),

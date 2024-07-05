@@ -5,7 +5,7 @@ import { Assets } from 'pixi.js';
 import type { IScene } from '../display';
 import { Signal } from '../signals';
 import { IApplication } from '../core';
-import { AssetLike, AssetLoadingOptions, AssetTypes, BundleTypes, isDev, Logger, SceneImportListItem } from '../utils';
+import { AssetLike, AssetLoadingOptions, AssetTypes, BundleTypes, isDev, SceneImportListItem } from '../utils';
 
 export interface IAssetsPlugin extends IPlugin {
   onLoadStart: Signal<() => void>;
@@ -144,7 +144,6 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
   }
 
   public async loadAssets(assets: AssetTypes) {
-    Logger.log('loadassets', assets);
     assets = getAssetList(assets);
 
     await Assets.load(assets, this._handleLoadProgress);
@@ -161,9 +160,8 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
   public async unloadSceneAssets(scene: IScene | SceneImportListItem<any>) {
     if (scene.assets?.preload?.assets) {
       const assets = getAssetList(scene.assets.preload.assets);
-      Logger.log('unloadSceneAssets', assets);
       Assets.unload(assets as ResolvedAsset[] | string[]).then(() => {
-        Logger.log('assets unloaded');
+        // Logger.log('assets unloaded');
         this._markAssetsUnloaded(assets);
       });
     }

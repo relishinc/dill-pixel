@@ -1,11 +1,33 @@
 import {Animated, Factory, WithSignals} from '../mixins';
-import {DestroyOptions, Ticker} from 'pixi.js';
+import {DestroyOptions, Sprite, Texture, Ticker} from 'pixi.js';
 
 import {Application} from '../Application';
 import type {IApplication} from '../core';
-import type {Size} from '../utils';
+import type {PointLike, Size} from '../utils';
 import {bindAllMethods} from '../utils';
 import {Signal} from '../signals';
+
+/**
+ * Configuration for the Container class.
+ */
+export type ContainerConfig = {
+  autoResize: boolean;
+  autoUpdate: boolean;
+  priority: number;
+};
+
+export const ContainerConfigKeys: (keyof ContainerConfig)[] = ['autoResize', 'autoUpdate', 'priority'];
+
+const defaultConfig: ContainerConfig = { autoResize: true, autoUpdate: false, priority: 0 };
+
+export type BackgroundConfig = {
+  color: number;
+  alpha: number;
+  width: number;
+  height: number;
+  anchor: PointLike;
+  autoResize: boolean;
+};
 
 /**
  * Interface for the Container class.
@@ -22,20 +44,9 @@ export interface IContainer {
   resize(size?: Size): void;
 
   update(ticker?: Ticker | number): void;
+
+  addColoredBackground(colorOrConfig?: number | Partial<BackgroundConfig>, alpha?: number): Sprite;
 }
-
-/**
- * Configuration for the Container class.
- */
-export type ContainerConfig = {
-  autoResize: boolean;
-  autoUpdate: boolean;
-  priority: number;
-};
-
-export const ContainerConfigKeys: (keyof ContainerConfig)[] = ['autoResize', 'autoUpdate', 'priority'];
-
-const defaultConfig: ContainerConfig = { autoResize: true, autoUpdate: false, priority: 0 };
 
 /**
  * The Container class extends the _Container class (which includes the Animated and Factory mixins) and implements the IContainer interface.
@@ -47,6 +58,7 @@ export class Container<A extends Application = Application>
 {
   onDestroy: Signal<() => void> = new Signal();
   __dill_pixel_method_binding_root = true;
+  protected __background: Sprite;
   private __config: ContainerConfig;
 
   /**
@@ -68,6 +80,46 @@ export class Container<A extends Application = Application>
    */
   public get app(): A {
     return Application.getInstance() as A;
+  }
+
+  addColoredBackground(color?: number, alpha?: number): Sprite;
+  addColoredBackground(colorOrConfig: number | Partial<BackgroundConfig> = 0x0, alpha: number = 1): Sprite {
+    const defaultConfig = {
+      color: 0x0,
+      width: this.app.size.width,
+      height: this.app.size.height,
+      anchor: 0.5,
+      alpha: 1,
+      autoResize: true,
+    };
+
+    const opts: BackgroundConfig = Object.assign(
+      defaultConfig,
+      typeof colorOrConfig === 'number'
+        ? {
+            color: colorOrConfig,
+            alpha: alpha,
+          }
+        : colorOrConfig,
+    );
+
+    this.__background = this.add.sprite({
+      asset: Texture.WHITE,
+      width: opts.width,
+      height: opts.height,
+      anchor: opts.anchor,
+      tint: opts.color,
+      alpha: opts.alpha,
+      resolution: 2,
+    });
+
+    this.setChildIndex(this.__background, 0);
+
+    if (opts.autoResize) {
+      this.addSignalConnection(this.app.signal.onResize.connect(this.__resizeBackground));
+    }
+
+    return this.__background;
   }
 
   /**
@@ -100,6 +152,11 @@ export class Container<A extends Application = Application>
   }
 
   public removed() {}
+
+  protected __resizeBackground() {
+    this.__background.width = this.app.size.width;
+    this.__background.height = this.app.size.height;
+  }
 
   /**
    * This method is called when the container is added to the stage. It sets up auto-resizing and auto-updating if enabled.

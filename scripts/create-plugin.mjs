@@ -99,7 +99,7 @@ rl.question('Enter plugin name: ', async (pluginName) => {
 		fs.mkdirSync(pluginPath, {recursive: true});
 	}
 
-	copyAndRenameFiles(path.join(cwd, './templates/plugin'), pluginPath, pluginName);
+	copyAndRenameFiles(path.join(cwd, './packages/framework/templates/plugin'), pluginPath, pluginName);
 	replacePlaceholders(pluginPath, pluginName);
 
 	rl.close();

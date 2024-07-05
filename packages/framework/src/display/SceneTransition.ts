@@ -1,4 +1,5 @@
 import { Container } from './Container';
+import { Sprite } from 'pixi.js';
 
 export interface ISceneTransition extends Container {
   progress: number;
@@ -10,6 +11,8 @@ export interface ISceneTransition extends Container {
 }
 
 export class SceneTransition extends Container {
+  protected __background: Sprite;
+
   constructor(autoUpdate: boolean = false) {
     super({ autoResize: true, autoUpdate, priority: -9999 });
     this.addSignalConnection(

@@ -98,6 +98,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   protected _voiceoverPlugin: IVoiceOverPlugin;
   protected _captionsPlugin: ICaptionsPlugin;
   protected _actions: ActionSignal;
+  protected _isBooting: boolean = true;
 
   constructor() {
     super();
@@ -242,14 +243,17 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
   public get voiceover(): IVoiceOverPlugin {
     if (!this._voiceoverPlugin) {
-      this._voiceoverPlugin = this.getPlugin<IVoiceOverPlugin>('voiceover');
+      this._voiceoverPlugin = this.getPlugin<IVoiceOverPlugin>(
+        'voiceover',
+        this._isBooting || this.config.useVoiceover,
+      );
     }
     return this._voiceoverPlugin;
   }
 
   public get captions(): ICaptionsPlugin {
     if (!this._captionsPlugin) {
-      this._captionsPlugin = this.getPlugin<ICaptionsPlugin>('captions');
+      this._captionsPlugin = this.getPlugin<ICaptionsPlugin>('captions', this._isBooting || this.config.useVoiceover);
     }
     return this._captionsPlugin;
   }
@@ -279,12 +283,15 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
   private get views(): any[] {
     if (!this._views) {
-      this._views = [this.scenes.view, this.popups.view, this.captions.view];
+      this._views = [this.scenes.view, this.popups.view];
       if (this.scenes.splash.view) {
         this._views.push(this.scenes.splash.view);
       }
       if (this.scenes.transition) {
         this._views.push(this.scenes.transition);
+      }
+      if (this.captions?.view) {
+        this._views.push(this.captions.view);
       }
     }
     return this._views;
@@ -379,13 +386,14 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       this.config.container.classList.add('loaded');
     }
 
+    this._isBooting = false;
     // return the Application instance to the create method, if needed
     return Application.instance;
   }
 
-  public getPlugin<T extends IPlugin>(pluginName: string): T {
+  public getPlugin<T extends IPlugin>(pluginName: string, debug: boolean = false): T {
     const plugin = this._plugins.get(pluginName) as T;
-    if (!plugin) {
+    if (!plugin && debug) {
       Logger.error(`Plugin with name "${pluginName}" not found.`);
     }
     return plugin;

@@ -9,7 +9,6 @@ import {
   createQueue,
   getDynamicModuleFromImportListItem,
   isDev,
-  Logger,
   Queue,
   SceneImportList,
 } from '../utils';
@@ -115,7 +114,6 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
   public destroy(): void {}
 
   public initialize(app: IApplication): Promise<void> {
-    Logger.log('SceneManager initialize');
     this._debugVisible =
       this.app.config?.showSceneDebugMenu === true || (isDev && this.app.config?.showSceneDebugMenu !== false);
     this._useHash = app.config?.useHash === true || this._debugVisible;
@@ -399,7 +397,6 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
 
   private async _unloadLastScene(): Promise<any> {
     if (this._lastScene && this._lastScene.autoUnloadAssets) {
-      Logger.log('unloading assets from', this._lastScene);
       return this.app.assets.unloadSceneAssets(this._lastScene);
     }
     return Promise.resolve();
@@ -427,7 +424,6 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
   }
 
   private async _enterCurrentScene(): Promise<void> {
-    Logger.log('SceneManager', `Entering scene: ${this.currentScene.id}`);
     await this.currentScene.enter();
     if (this.isFirstScene && this.splash.hideWhen === 'firstSceneEnter') {
       await this._hideSplash();

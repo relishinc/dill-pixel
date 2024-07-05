@@ -1,6 +1,6 @@
 {
   "name": "dill-pixel",
-  "version": "8.12.3",
+  "version": "8.13.8",
   "title": "Dill Pixel V8",
   "description": "Relish framework for HTML games",
   "bin": {
@@ -16,7 +16,8 @@
     "config/assetpack.mjs",
     "config/tsconfig.json",
     "extras/css/accessibility.css",
-    "extras/css/loader.css"
+    "extras/css/loader.css",
+    "templates"
   ],
   "main": "lib/dill-pixel.mjs",
   "types": "lib/index.d.ts",
@@ -104,6 +105,7 @@
     "@pixi/sound": "^6.0.0",
     "gsap": "^3.12.5",
     "npm-run-all": "^4.1.5",
+    "pixi.js": "8.2.2",
     "rimraf": "^5.0.5",
     "stats.js": "^0.17.0",
     "vite": "^5.2.13",

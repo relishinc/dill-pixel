@@ -23,7 +23,7 @@ export interface IScene extends IContainer {
 
 export class Scene<T extends Application = Application> extends Container<T> implements IScene {
   public readonly id: string;
-  autoUnloadAssets: boolean = false;
+  public autoUnloadAssets: boolean = false;
 
   constructor() {
     super({ autoResize: true, autoUpdate: true, priority: -9999 });
@@ -64,6 +64,7 @@ export class Scene<T extends Application = Application> extends Container<T> imp
    * @returns {Promise<void> | void}
    */
   public initialize(): Promise<void> | void;
+
   public async initialize(): Promise<void> {}
 
   /**
