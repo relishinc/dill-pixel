@@ -18,11 +18,15 @@ export declare class ResizeManagerNew extends ResizeManager {
     private _size;
     private _screenSize;
     private _scale;
+    private _scaleX;
+    private _scaleY;
     get options(): ResizeManagerOptions;
     set options(value: ResizeManagerOptions);
     get size(): Point;
     get screenSize(): Point;
     get scale(): number;
+    get scaleX(): number;
+    get scaleY(): number;
     /**
      * Initializes the Resizer module.
      */
