@@ -1,5 +1,5 @@
-import {Point} from 'pixi.js';
-import {ResizeManager} from './ResizeManager';
+import { Point } from 'pixi.js';
+import { ResizeManager } from './ResizeManager';
 
 /**
  * Type definition for ResizeManager options.
@@ -27,6 +27,8 @@ export class ResizeManagerNew extends ResizeManager {
   private _size: Point = new Point();
   private _screenSize: Point = new Point();
   private _scale: number;
+  private _scaleX: number;
+  private _scaleY: number;
 
   get options(): ResizeManagerOptions {
     return this._options;
@@ -47,6 +49,14 @@ export class ResizeManagerNew extends ResizeManager {
 
   get scale() {
     return this._scale;
+  }
+
+  get scaleX() {
+    return this._scaleX;
+  }
+
+  get scaleY() {
+    return this._scaleY;
   }
 
   /**
@@ -78,6 +88,8 @@ export class ResizeManagerNew extends ResizeManager {
     const scaleY = screenHeight < minHeight ? minHeight / screenHeight : 1;
     const scale = scaleX > scaleY ? scaleX : scaleY;
 
+    this._scaleX = scaleX;
+    this._scaleY = scaleY;
     this._scale = scale;
     const width = screenWidth * scale;
     const height = screenHeight * scale;
