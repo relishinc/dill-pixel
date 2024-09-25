@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.4.2](https://github.com/relishinc/dill-pixel/compare/v3.4.1...v3.4.2) (2024-09-25)
+
+
+### Bug Fixes
+
+* return scaleX and scaleY from ResizeManagerNew ([776e92f](https://github.com/relishinc/dill-pixel/commit/776e92faefaca225b292d44bebc2722039195d75))
+* return scaleX and scaleY from ResizeManagerNew ([041cca1](https://github.com/relishinc/dill-pixel/commit/041cca1bf3f07b027227dedec99d14af5101b605))
+* return scaleX and scaleY from ResizeManagerNew ([44a4b67](https://github.com/relishinc/dill-pixel/commit/44a4b677ab364dadac411022318280c06f1e4406))
+* return scaleX and scaleY from ResizeManagerNew ([07725e6](https://github.com/relishinc/dill-pixel/commit/07725e66c9b039894c51ba4623654f5cc32371db))
+
 ## [3.4.1](https://github.com/relishinc/dill-pixel/compare/v3.4.0...v3.4.1) (2024-06-24)
 
 
