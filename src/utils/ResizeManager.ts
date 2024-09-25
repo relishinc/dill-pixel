@@ -83,6 +83,7 @@ export class ResizeManager implements IResizeManager {
     console.warn(
       "ResizeManager: this is the old ResizeManager - scaleY isn't implemented.  Probably use getStageScale() instead",
     );
+
     return 1;
   }
 
