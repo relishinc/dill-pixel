@@ -69,6 +69,7 @@ export class ResizeManager implements IResizeManager {
     console.warn(
       "ResizeManager: this is the old ResizeManager - scale isn't implemented.  Probably use getStageScale() instead",
     );
+
     return 1;
   }
 
@@ -76,6 +77,7 @@ export class ResizeManager implements IResizeManager {
     console.warn(
       "ResizeManager: this is the old ResizeManager - scaleX isn't implemented.  Probably use getStageScale() instead",
     );
+
     return 1;
   }
 
