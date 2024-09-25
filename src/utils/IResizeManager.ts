@@ -1,5 +1,5 @@
-import {Point} from 'pixi.js';
-import {ResizeManagerOptions} from './ResizeManagerNew';
+import { Point } from 'pixi.js';
+import { ResizeManagerOptions } from './ResizeManagerNew';
 
 /**
  * Interface for managing resizing.
@@ -29,6 +29,9 @@ export interface IResizeManager {
    * The scale of the ResizeManager.
    */
   scale: number;
+
+  scaleX: number;
+  scaleY: number;
 
   /**
    * Initializes the ResizeManager with given options.

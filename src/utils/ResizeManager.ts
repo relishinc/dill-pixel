@@ -72,6 +72,20 @@ export class ResizeManager implements IResizeManager {
     return 1;
   }
 
+  get scaleX() {
+    console.warn(
+      "ResizeManager: this is the old ResizeManager - scaleX isn't implemented.  Probably use getStageScale() instead",
+    );
+    return 1;
+  }
+
+  get scaleY() {
+    console.warn(
+      "ResizeManager: this is the old ResizeManager - scaleY isn't implemented.  Probably use getStageScale() instead",
+    );
+    return 1;
+  }
+
   public get useAspectRatio(): boolean {
     return this._useAspectRatio;
   }
