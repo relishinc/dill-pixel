@@ -16,6 +16,8 @@ export declare class ResizeManager implements IResizeManager {
     get size(): Point;
     get screenSize(): Point;
     get scale(): number;
+    get scaleX(): number;
+    get scaleY(): number;
     get useAspectRatio(): boolean;
     set sizeMin(pSize: Point);
     set sizeMax(pSize: Point);

@@ -24,6 +24,8 @@ export interface IResizeManager {
      * The scale of the ResizeManager.
      */
     scale: number;
+    scaleX: number;
+    scaleY: number;
     /**
      * Initializes the ResizeManager with given options.
      * @param {Partial<ResizeManagerOptions>} options - The options for the ResizeManager.
