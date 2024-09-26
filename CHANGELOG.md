@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.3](https://github.com/relishinc/dill-pixel/compare/v3.4.2...v3.4.3) (2024-09-26)
+
+
+### Bug Fixes
+
+* added 'cursor' field to Button configuration ([0d7c911](https://github.com/relishinc/dill-pixel/commit/0d7c911196674696278f15c24c6520b248f7fd19))
+
 ## [3.4.2](https://github.com/relishinc/dill-pixel/compare/v3.4.1...v3.4.2) (2024-09-25)
 
 
