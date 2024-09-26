@@ -1,4 +1,4 @@
-import { Point, Sprite } from 'pixi.js';
+import { Cursor, Point, Sprite } from 'pixi.js';
 import { IFocusable } from '../input';
 import { Signal } from '../signals';
 import { SpritesheetLike, TextureLike } from '../utils';
@@ -13,6 +13,7 @@ type ButtonConfig = {
     sheet: SpritesheetLike;
     enabled: boolean;
     focusable: boolean;
+    cursor: Cursor | string;
 };
 /**
  * @class
