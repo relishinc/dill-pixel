@@ -1,4 +1,3 @@
-/// <reference types="matter-js" />
 import { Container, Sprite, Texture } from 'pixi.js';
 import { Application } from '../../../core';
 import { SpritesheetLike } from '../../../utils';

@@ -1,8 +1,9 @@
-import { Point, Sprite } from 'pixi.js';
+import { Cursor, Point, Sprite } from 'pixi.js';
 import { IFocusable } from '../input';
 import { Signal } from '../signals';
 import { SpritesheetLike, TextureLike } from '../utils';
 import { Container } from './Container';
+type ButtonCursor = Cursor | string;
 type ButtonConfig = {
     textures: {
         default: TextureLike;
@@ -13,6 +14,7 @@ type ButtonConfig = {
     sheet: SpritesheetLike;
     enabled: boolean;
     focusable: boolean;
+    cursor: ButtonCursor;
 };
 /**
  * @class
@@ -30,16 +32,31 @@ export declare class Button extends Container implements IFocusable {
     isDown: boolean;
     protected config: ButtonConfig;
     protected _enabled: boolean;
+    protected _cursor: ButtonCursor;
     /**
      * @constructor
      * @param {Partial<ButtonConfig>} config - The configuration for the button.
      */
     constructor(config: Partial<ButtonConfig>);
     /**
+     * @description Adds the button to the stage.
+     */
+    protected _added(): void;
+    /**
      * @description Sets the enabled state of the button.
      * @param {boolean} enabled - Whether the button is enabled.
      */
     set enabled(enabled: boolean);
+    /**
+     * @description Sets the cursor of the button.
+     * @param {ButtonCursor} cursor - The cursor of the button.
+     */
+    set cursor(cursor: ButtonCursor | string);
+    /**
+     * @description Gets the cursor of the button.
+     * @returns {ButtonCursor} The cursor of the button.
+     */
+    get cursor(): ButtonCursor | string;
     /**
      * @description Handles the focus begin event.
      */

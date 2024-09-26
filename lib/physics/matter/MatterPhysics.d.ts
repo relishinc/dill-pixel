@@ -1,4 +1,3 @@
-/// <reference types="matter-js" />
 import { Application } from '../../core';
 import { PhysicsBase } from '../PhysicsBase';
 import { IMatterPhysicsObject } from './interfaces';

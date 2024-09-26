@@ -89,8 +89,6 @@ export class ButtonExample extends BaseState {
     );
     button.name = name;
     const label = button.add.text({ value: name, anchor: 0.5, style: buttonStyle });
-    button.eventMode = 'static';
-    button.cursor = 'pointer';
 
     registerFocusables(button);
 

@@ -4,6 +4,8 @@ import { Signal } from '../signals';
 import { SpritesheetLike, TextureLike } from '../utils';
 import { Container } from './Container';
 
+type ButtonCursor = Cursor | string;
+
 type ButtonConfig = {
   textures: {
     default: TextureLike;
@@ -14,7 +16,17 @@ type ButtonConfig = {
   sheet: SpritesheetLike;
   enabled: boolean;
   focusable: boolean;
-  cursor: Cursor | string;
+  cursor: ButtonCursor;
+};
+
+const defaultConfig: ButtonConfig = {
+  textures: {
+    default: '',
+  },
+  sheet: undefined,
+  enabled: true,
+  focusable: true,
+  cursor: 'default',
 };
 
 /**
@@ -43,16 +55,16 @@ export class Button extends Container implements IFocusable {
   // enabled state
   protected _enabled: boolean;
 
+  // cursor
+  protected _cursor: ButtonCursor;
+
   /**
    * @constructor
    * @param {Partial<ButtonConfig>} config - The configuration for the button.
    */
   constructor(config: Partial<ButtonConfig>) {
     super();
-    this.config = Object.assign(
-      { textures: { default: '' }, sheet: undefined, enabled: true, focusable: true, cursor: 'default' },
-      config,
-    );
+    this.config = Object.assign({ ...defaultConfig }, config);
 
     // Create a sprite with the default texture and add it to the container.
     this.view = this.add.sprite({ asset: this.config.textures.default, sheet: this.config.sheet });
@@ -60,7 +72,16 @@ export class Button extends Container implements IFocusable {
 
     this.enabled = config.enabled !== false;
     this._focusable = config.focusable !== false;
-    this.cursor = config.cursor ?? 'default';
+    this._cursor = config.cursor ?? 'default';
+
+    this.on('added', this._added);
+  }
+
+  /**
+   * @description Adds the button to the stage.
+   */
+  protected _added() {
+    this.cursor = this._cursor;
   }
 
   /**
@@ -78,6 +99,7 @@ export class Button extends Container implements IFocusable {
         asset: this.config.textures.default,
         sheet: this.config.sheet,
       });
+      this.cursor = this.config.cursor;
     } else {
       this.removeListeners();
       this.eventMode = 'none';
@@ -85,7 +107,25 @@ export class Button extends Container implements IFocusable {
         asset: this.config.textures.disabled || this.config.textures.default,
         sheet: this.config.sheet,
       });
+      this.cursor = 'default';
     }
+  }
+
+  /**
+   * @description Sets the cursor of the button.
+   * @param {ButtonCursor} cursor - The cursor of the button.
+   */
+  public set cursor(cursor: ButtonCursor | string) {
+    this._cursor = cursor;
+    this.view.cursor = cursor;
+  }
+
+  /**
+   * @description Gets the cursor of the button.
+   * @returns {ButtonCursor} The cursor of the button.
+   */
+  public get cursor(): ButtonCursor | string {
+    return this.view.cursor;
   }
 
   /**
