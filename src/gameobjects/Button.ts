@@ -1,4 +1,4 @@
-import { Point, Sprite } from 'pixi.js';
+import { Cursor, Point, Sprite } from 'pixi.js';
 import { IFocusable } from '../input';
 import { Signal } from '../signals';
 import { SpritesheetLike, TextureLike } from '../utils';
@@ -14,6 +14,7 @@ type ButtonConfig = {
   sheet: SpritesheetLike;
   enabled: boolean;
   focusable: boolean;
+  cursor: Cursor | string;
 };
 
 /**
@@ -49,7 +50,7 @@ export class Button extends Container implements IFocusable {
   constructor(config: Partial<ButtonConfig>) {
     super();
     this.config = Object.assign(
-      { textures: { default: '' }, sheet: undefined, enabled: true, focusable: true },
+      { textures: { default: '' }, sheet: undefined, enabled: true, focusable: true, cursor: 'default' },
       config,
     );
 
@@ -59,6 +60,7 @@ export class Button extends Container implements IFocusable {
 
     this.enabled = config.enabled !== false;
     this._focusable = config.focusable !== false;
+    this.cursor = config.cursor ?? 'default';
   }
 
   /**
