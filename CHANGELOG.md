@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.4.4](https://github.com/relishinc/dill-pixel/compare/v3.4.3...v3.4.4) (2024-09-26)
+
+
+### Bug Fixes
+
+* button cursor ([ac71824](https://github.com/relishinc/dill-pixel/commit/ac71824944e60f02eb4c8d08562a0e7bd876c3ee))
+* button cursor ([d9af9bd](https://github.com/relishinc/dill-pixel/commit/d9af9bdf41ff2e058ebd0977fac906c9cc8aeae7))
+
 ## [3.4.3](https://github.com/relishinc/dill-pixel/compare/v3.4.2...v3.4.3) (2024-09-26)
 
 
