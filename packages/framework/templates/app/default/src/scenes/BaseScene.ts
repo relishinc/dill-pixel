@@ -1,8 +1,8 @@
-import { DillPixelApplication } from '@/MyApplication';
+import { MyApplication } from '@/MyApplication';
 import { COLOR_SLATE } from '@/utils/Constants';
 import { Scene } from 'dill-pixel';
 
-export class BaseScene extends Scene<DillPixelApplication> {
+export class BaseScene extends Scene<MyApplication> {
   constructor() {
     super();
     this.alpha = 0;

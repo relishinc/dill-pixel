@@ -29,3 +29,17 @@ export const controls: ControlScheme = {
     },
   },
 };
+
+type ControlType = typeof controls;
+type InputType = keyof ControlType;
+type ActionType<T extends InputType> = keyof ControlType[T];
+type SubActionType<T extends InputType, U extends ActionType<T>> = keyof ControlType[T][U];
+
+// New type to get all action names
+export type ActionName = {
+  [T in InputType]: {
+    [U in ActionType<T>]: {
+      [V in SubActionType<T, U>]: V;
+    }[SubActionType<T, U>];
+  }[ActionType<T>];
+}[InputType];

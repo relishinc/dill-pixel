@@ -1,8 +1,15 @@
-import { create, isDev, LocalStorageAdapter } from 'dill-pixel';
+import { Application, create, isDev, LocalStorageAdapter } from 'dill-pixel';
 
 // import { Splash } from '@/Splash';
-import { controls } from '@/controls';
+import { ActionName, controls } from '@/controls';
 import manifest from './assets.json';
+
+export class MyApplication extends Application {
+  // strongly type actions (wip)
+  actions(name: ActionName) {
+    return super.actions(name);
+  }
+}
 
 async function boot() {
   await create({
