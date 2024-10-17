@@ -1,5 +1,5 @@
+import { Entity, default as MatterPhysics } from '@dill-pixel/plugin-matter-physics';
 import { Container, UICanvas } from 'dill-pixel';
-import { default as MatterPhysics, Entity } from '@dill-pixel/plugin-matter-physics';
 import { FederatedPointerEvent, Rectangle, Text, Texture } from 'pixi.js';
 
 import { BaseScene } from '@/scenes/BaseScene';
@@ -36,6 +36,7 @@ export class MatterPhysicsScene extends BaseScene {
     this.off('click', this._addEntity);
     this.off('tap', this._addEntity);
     this.physics.destroy();
+
     super.destroy();
   }
 
@@ -76,10 +77,6 @@ export class MatterPhysicsScene extends BaseScene {
     this.countText.text = `Entities: ${this._entities.length}`;
   }
 
-  resize() {
-    super.resize();
-  }
-
   protected _handleDebugChanged() {
     const { debug } = this.config;
     this.physics.system.debug = debug;
@@ -96,7 +93,7 @@ export class MatterPhysicsScene extends BaseScene {
           bodyType: 'circle',
           view: this.make.sprite({
             asset: 'jar',
-            sheet: 'game/sheet/sheet.json',
+            sheet: 'game/sheet',
             scale: 0.1 + Math.random() * 0.1,
             anchor: 0.5,
           }),

@@ -1,12 +1,12 @@
-import { Button, Camera, Container, delay, Joystick, UICanvas } from 'dill-pixel';
-import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
 import { Platform, PlatformMovementConfigOpts } from '@/entities/snap/Platform';
+import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
+import { Button, Camera, Container, delay, Joystick, UICanvas } from 'dill-pixel';
 
-import { BaseScene } from '@/scenes/BaseScene';
 import { Door } from '@/entities/snap/Door';
-import { GUIController } from 'dat.gui';
 import { Player } from '@/entities/snap/Player';
 import { Portal } from '@/entities/snap/Portal';
+import { BaseScene } from '@/scenes/BaseScene';
+import { GUIController } from 'dat.gui';
 import { gsap } from 'gsap';
 
 export class SnapPhysicsScene extends BaseScene {
@@ -266,11 +266,11 @@ export class SnapPhysicsScene extends BaseScene {
     this._joystick = new Joystick({
       inner: this.make.sprite({
         asset: 'joystick/handle',
-        sheet: 'ui.json',
+        sheet: 'ui',
       }),
       outer: this.make.sprite({
         asset: 'joystick/base',
-        sheet: 'ui.json',
+        sheet: 'ui',
       }),
       innerScale: 0.7,
       outerScale: 0.7,
@@ -354,7 +354,7 @@ export class SnapPhysicsScene extends BaseScene {
         disabled: `btn_${buttonId}/up`,
         active: `btn_${buttonId}/down`,
       },
-      sheet: 'ui.json',
+      sheet: 'ui',
       accessibleTitle: action,
       accessibleHint: `Press to ${action}`,
       id: `${buttonId.toUpperCase()}`,

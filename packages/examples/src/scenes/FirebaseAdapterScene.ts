@@ -2,9 +2,9 @@ import { ActionDetail, Button, FlexContainer, IFocusable, Input, Logger } from '
 import { collection, DocumentData, limit, onSnapshot, orderBy, QuerySnapshot, where } from 'firebase/firestore';
 import { Graphics, Text } from 'pixi.js';
 
-import { BaseScene } from './BaseScene';
 import { SimpleButton } from '@/popups/ExamplePopup';
 import { gsap } from 'gsap';
+import { BaseScene } from './BaseScene';
 
 type Score = {
   id: string;
@@ -164,7 +164,7 @@ export class FirebaseAdapterScene extends BaseScene {
       scale: 0.4,
       cursor: 'pointer',
       textures: { default: `btn/${color}`, hover: 'btn/yellow', disabled: 'btn/grey', active: 'btn/red' },
-      sheet: 'ui.json',
+      sheet: 'ui',
       accessibleTitle: label,
       accessibleHint: `Press me to play a sound`,
     });

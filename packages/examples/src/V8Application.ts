@@ -1,26 +1,29 @@
 import { Application, create, LocalStorageAdapter } from 'dill-pixel';
 
+import { ActionName, controls } from '@/controls';
 import EN from '@/locales/en';
-import { ExampleOutliner } from './ui/ExampleOutliner';
-import { IFirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
-import { controls } from '@/controls';
-import manifest from './assets.json';
 import { Transition } from '@/Transition';
+import { IFirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
+import manifest from './assets.json';
+import { ExampleOutliner } from './ui/ExampleOutliner';
 
 export class V8Application extends Application {
   get firebase(): IFirebaseAdapter {
     return this.store.getAdapter('firebase') as unknown as IFirebaseAdapter;
   }
+
+  actions(name: ActionName) {
+    return super.actions(name);
+  }
 }
 
 async function boot() {
-  const app = await create(
+  const app = await create<V8Application>(
     {
       id: 'V8Application',
       antialias: true,
-      autoDensity: true,
+      autoDensity: false,
       useMathExtras: true,
-
       // splash: {
       //   view: Splash,
       //   hideWhen: 'firstSceneEnter',
@@ -285,7 +288,6 @@ async function boot() {
           { id: 'fr-json', json: '/locales/fr.json' },
         ],
       },
-
       captions: {
         files: [
           { id: 'en', json: 'audio/vo/en/cc.json' },
@@ -300,93 +302,96 @@ async function boot() {
     V8Application,
   );
 
-  // populate sidebar
-  const sidebar = document.getElementById('sidebar');
-  const nav = sidebar?.querySelector('nav');
+  function populateSidebar() {
+    // populate sidebar
+    const sidebar = document.getElementById('sidebar');
+    const nav = sidebar?.querySelector('nav');
 
-  const scenes = app.scenes.ids.filter((scene: string) => scene !== 'Interstitial');
+    const scenes = app.scenes.ids.filter((scene: string) => scene !== 'Interstitial');
 
-  const defaultScene = app.scenes.defaultScene;
+    const defaultScene = app.scenes.defaultScene;
 
-  if (nav) {
-    // add examples to sidebar nav
-    // get list groups
-    const groups: Set<string> = new Set();
-    const groupLists: Map<string, HTMLUListElement> = new Map();
-    scenes.forEach((scene) => {
-      const item = app.scenes.list.find((s) => s.id === scene);
-      const group = item?.debugGroup;
-      if (group) {
-        groups.add(group);
+    if (nav) {
+      // add examples to sidebar nav
+      // get list groups
+      const groups: Set<string> = new Set();
+      const groupLists: Map<string, HTMLUListElement> = new Map();
+      scenes.forEach((scene) => {
+        const item = app.scenes.list.find((s) => s.id === scene);
+        const group = item?.debugGroup;
+        if (group) {
+          groups.add(group);
+        }
+      });
+      if (groups.has('Other')) {
+        // move 'Other' to the end of the set
+        groups.delete('Other');
+        groups.add('Other');
       }
-    });
-    if (groups.has('Other')) {
-      // move 'Other' to the end of the set
-      groups.delete('Other');
-      groups.add('Other');
-    }
-    Array.from(groups).forEach((groupName) => {
-      const ul = document.createElement('ul');
-      ul.id = groupName;
-      groupLists.set(groupName, ul);
-      const li: HTMLLIElement = document.createElement('li');
-      const h3: HTMLHeadingElement = document.createElement('h3');
-      h3.innerHTML = groupName;
-      ul.appendChild(li);
-      li.appendChild(h3);
-      nav.appendChild(ul);
-    });
-    scenes.forEach((scene: string) => {
-      const a: HTMLAnchorElement = document.createElement('a') as HTMLAnchorElement;
-      const item = app.scenes.list.find((s) => s.id === scene);
-      if (!item) {
-        return;
-      }
-      a.innerHTML = item.debugLabel || item.id;
-      a.href = `#${scene}`;
-      if (item.debugGroup && groupLists.has(item.debugGroup)) {
+      Array.from(groups).forEach((groupName) => {
+        const ul = document.createElement('ul');
+        ul.id = groupName;
+        groupLists.set(groupName, ul);
         const li: HTMLLIElement = document.createElement('li');
-        li.appendChild(a);
-        groupLists.get(item.debugGroup)?.appendChild(li);
-      } else {
-        nav.appendChild(a);
-      }
-      a.addEventListener('click', () => {
-        if (a.classList.contains('active')) {
+        const h3: HTMLHeadingElement = document.createElement('h3');
+        h3.innerHTML = groupName;
+        ul.appendChild(li);
+        li.appendChild(h3);
+        nav.appendChild(ul);
+      });
+      scenes.forEach((scene: string) => {
+        const a: HTMLAnchorElement = document.createElement('a') as HTMLAnchorElement;
+        const item = app.scenes.list.find((s) => s.id === scene);
+        if (!item) {
           return;
         }
-        nav.classList.add('disabled');
+        a.innerHTML = item.debugLabel || item.id;
+        a.href = `#${scene}`;
+        if (item.debugGroup && groupLists.has(item.debugGroup)) {
+          const li: HTMLLIElement = document.createElement('li');
+          li.appendChild(a);
+          groupLists.get(item.debugGroup)?.appendChild(li);
+        } else {
+          nav.appendChild(a);
+        }
+        a.addEventListener('click', () => {
+          if (a.classList.contains('active')) {
+            return;
+          }
+          nav.classList.add('disabled');
+        });
       });
-    });
 
-    // update active nav item
-    const setActiveNavItem = (state: string | undefined) => {
-      const active = nav?.querySelector('.active');
-      if (active) {
-        active.classList.remove('active');
-      }
+      // update active nav item
+      const setActiveNavItem = (state: string | undefined) => {
+        const active = nav?.querySelector('.active');
+        if (active) {
+          active.classList.remove('active');
+        }
 
-      const a = nav?.querySelector(`a[href="#${state}"]`);
-      if (a) {
-        a.classList.add('active');
-      }
-    };
+        const a = nav?.querySelector(`a[href="#${state}"]`);
+        if (a) {
+          a.classList.add('active');
+        }
+      };
 
-    // check hash for active example and update nav
-    const checkHash = () => {
-      const scene = app.scenes.getSceneFromHash();
-      setActiveNavItem(scene ?? defaultScene);
-    };
-    window.addEventListener('hashchange', checkHash);
+      // check hash for active example and update nav
+      const checkHash = () => {
+        const scene = app.scenes.getSceneFromHash();
+        setActiveNavItem(scene ?? defaultScene);
+      };
+      window.addEventListener('hashchange', checkHash);
 
-    // disable nav initially
-    nav.classList.add('disabled');
+      // disable nav initially
+      nav.classList.add('disabled');
 
-    app.signal.onSceneChangeComplete.connect(() => {
-      nav?.classList.remove('disabled');
-    });
-    checkHash();
+      app.signal.onSceneChangeComplete.connect(() => {
+        nav?.classList.remove('disabled');
+      });
+      checkHash();
+    }
   }
+  populateSidebar();
 }
 
 void boot();

@@ -1,0 +1,19 @@
+# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv
+.turbo
+.husky
+.git
+.github
+.vscode
+.DS_Store
+.idea
+.idea/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/inspectionProfiles/
+./**/dist/
+./packages/framework/lib/
+./packages/framework/lib/
+./packages/plugins/*/lib/
+./packages/storage-adapters/*/lib/
+!./packages/framework/noder_modules/pixi.js/
+!./packages/framework/noder_modules/@pixi/

@@ -1,3 +1,5 @@
+import type { AppConfig, IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals } from './core';
+import { coreFunctionRegistry, coreSignalRegistry } from './core';
 import type {
   IFocusManagerPlugin,
   Ii18nPlugin,
@@ -17,16 +19,14 @@ import {
   ISceneManagerPlugin,
   IWebEventsPlugin,
 } from './plugins';
-import type { AppConfig, IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals } from './core';
-import { coreFunctionRegistry, coreSignalRegistry } from './core';
 
 import {
-  Application as PIXIPApplication,
   AssetInitOptions,
   Assets,
   AssetsManifest,
   DestroyOptions,
   isMobile,
+  Application as PIXIPApplication,
   Point,
   Renderer,
   RendererDestroyOptions,
@@ -36,10 +36,10 @@ import { Store } from './store';
 import type { ImportListItem, Size } from './utils';
 import { bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from './utils';
 
-import type { ICaptionsPlugin } from './plugins/captions';
 import type { IVoiceOverPlugin } from './plugins/audio/VoiceOverPlugin';
-import { Signal } from './signals';
+import type { ICaptionsPlugin } from './plugins/captions';
 import { defaultPlugins } from './plugins/defaults';
+import { Signal } from './signals';
 
 const defaultApplicationOptions: Partial<IApplicationOptions> = {
   antialias: false,
@@ -59,7 +59,7 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   sharedTicker: true,
   view: undefined,
   autoDensity: false,
-  resolution: window.devicePixelRatio > 1.5 ? 2 : 1,
+  resolution: Math.max(window.devicePixelRatio, 2),
   // dill pixel options
   useStore: true,
   useSpine: false,
@@ -77,7 +77,7 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
 export class Application<R extends Renderer = Renderer> extends PIXIPApplication<R> implements IApplication {
   public static containerElement: HTMLElement;
   protected static instance: IApplication;
-  __dill_pixel_method_binding_root = true;
+  public __dill_pixel_method_binding_root = true;
   // config
   public config: Partial<IApplicationOptions>;
   public manifest: string | AssetsManifest | undefined;
@@ -571,6 +571,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
       opts.manifest = manifest;
     }
     this.manifest = opts.manifest;
+
     await Assets.init(opts);
   }
 

@@ -1,13 +1,13 @@
+import { Platform, PlatformConfig, PlatformMovementConfigOpts } from '@/entities/snap/Platform';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
 import { Button, Container, Joystick, UICanvas } from 'dill-pixel';
-import { Platform, PlatformConfig, PlatformMovementConfigOpts } from '@/entities/snap/Platform';
 
-import { BaseScene } from '@/scenes/BaseScene';
 import { Door } from '@/entities/snap/Door';
 import { EndlessRunner } from '@/entities/snap/EndlessRunner';
 import { Player } from '@/entities/snap/Player';
 import { Portal } from '@/entities/snap/Portal';
 import { SegmentConfig } from '@/entities/snap/Segment';
+import { BaseScene } from '@/scenes/BaseScene';
 
 export class SnapEndlessRunnerScene extends BaseScene {
   ui: UICanvas;
@@ -244,11 +244,11 @@ export class SnapEndlessRunnerScene extends BaseScene {
     this._joystick = new Joystick({
       inner: this.make.sprite({
         asset: 'joystick/handle',
-        sheet: 'ui.json',
+        sheet: 'ui',
       }),
       outer: this.make.sprite({
         asset: 'joystick/base',
-        sheet: 'ui.json',
+        sheet: 'ui',
       }),
       innerScale: 0.7,
       outerScale: 0.7,
@@ -300,7 +300,7 @@ export class SnapEndlessRunnerScene extends BaseScene {
         disabled: `btn_${buttonId}/up`,
         active: `btn_${buttonId}/down`,
       },
-      sheet: 'ui.json',
+      sheet: 'ui',
       accessibleTitle: action,
       accessibleHint: `Press to ${action}`,
       id: `${buttonId.toUpperCase()}`,

@@ -1,7 +1,7 @@
 import { ActionDetail, Button, ButtonAction, ButtonConfig, FlexContainer, SceneAssets } from 'dill-pixel';
 
-import { BaseScene } from './BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
+import { BaseScene } from './BaseScene';
 
 export class AudioScene extends BaseScene {
   protected readonly title = 'Audio';
@@ -140,7 +140,7 @@ export class AudioScene extends BaseScene {
         disabled: 'btn/grey',
         active: 'btn/red',
       },
-      sheet: 'ui.json',
+      sheet: 'required/ui',
       accessibleTitle: label,
       accessibleHint: `Press me to play a sound`,
       ...config,

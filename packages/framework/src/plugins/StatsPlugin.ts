@@ -1,7 +1,7 @@
 import { Ticker, UPDATE_PRIORITY } from 'pixi.js';
+import Stats from 'stats.js';
 import { Application } from '../Application';
 import { Plugin } from './Plugin';
-import Stats from 'stats.js';
 
 export class StatsPlugin extends Plugin {
   public readonly id = 'StatsPlugin';

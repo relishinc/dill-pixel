@@ -3,8 +3,8 @@ import { Bodies, Body, Engine, Runner, World } from 'matter-js';
 import { Container, Graphics, Rectangle, Ticker } from 'pixi.js';
 
 import { IMatterPhysicsObject } from './interfaces';
-import { MatterBodyLike } from './types';
 import { MatterPhysicsPluginOptions } from './MatterPhysicsPlugin';
+import { MatterBodyLike } from './types';
 
 export class System {
   public static pluginOptions: Partial<MatterPhysicsPluginOptions>;
@@ -78,10 +78,14 @@ export class System {
   }
 
   static destroy() {
-    this.enabled = false;
+    System.enabled = false;
+
     World.clear(System._engine.world, false);
     Engine.clear(System._engine);
     Runner.stop(System._runner);
+    System._debugGraphics?.destroy();
+    System._debugGraphics = null;
+    System._objects.clear();
   }
 
   static initialize(options: Partial<MatterPhysicsPluginOptions>) {
@@ -164,6 +168,9 @@ export class System {
   }
 
   static drawDebug() {
+    if (!System.enabled) {
+      return;
+    }
     if (!System._debugGraphics) {
       System._debugGraphics = new Graphics();
       System._debugGraphics.zIndex = 1000;

@@ -1,9 +1,9 @@
-import { DestroyOptions, Graphics, Sprite, Text, Texture } from 'pixi.js';
+import { Graphics, Sprite, Text, Texture } from 'pixi.js';
 
 import { COLOR_SLATE, FONT_KUMBH_SANS } from '@/utils/Constants';
+import { V8Application } from '@/V8Application';
 import { GUI } from 'dat.gui';
 import { FlexContainer, Scene } from 'dill-pixel';
-import { V8Application } from '@/V8Application';
 
 export class BaseScene extends Scene<V8Application> {
   protected readonly title: string;
@@ -80,11 +80,11 @@ export class BaseScene extends Scene<V8Application> {
     // return this.animate({ alpha: 0, duration: 0.4, ease: 'sine.in' });
   }
 
-  public destroy(options?: DestroyOptions) {
+  public destroy() {
     if (this.gui) {
       this.gui.destroy();
     }
-    super.destroy(options);
+    super.destroy();
   }
 
   resize() {

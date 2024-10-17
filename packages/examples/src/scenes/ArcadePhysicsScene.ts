@@ -1,13 +1,13 @@
 import { BaseScene } from '@/scenes/BaseScene';
-import { Texture, Ticker } from 'pixi.js';
 import {
   ArcadePhysics,
-  Body,
   default as ArcadePhysicsPlugin,
+  Body,
   Entity,
   StaticBody,
 } from '@dill-pixel/plugin-arcade-physics';
 import { Button, Camera, Container, Joystick, SpineAnimation, UICanvas } from 'dill-pixel';
+import { Texture, Ticker } from 'pixi.js';
 
 class Player extends Entity {
   private _jumpTimer: number = 0;
@@ -90,7 +90,7 @@ class Box extends Entity {
   create() {
     this.view = this.add.sprite({
       asset: 'jar',
-      sheet: 'game/sheet/sheet.json',
+      sheet: 'game/sheet',
       scale: 0.25,
       anchor: 0.5,
     });
@@ -260,11 +260,11 @@ export class ArcadePhysicsScene extends BaseScene {
     this._joystick = new Joystick({
       inner: this.make.sprite({
         asset: 'joystick/handle',
-        sheet: 'ui.json',
+        sheet: 'ui',
       }),
       outer: this.make.sprite({
         asset: 'joystick/base',
-        sheet: 'ui.json',
+        sheet: 'ui',
       }),
       innerScale: 0.7,
       outerScale: 0.7,
@@ -353,7 +353,7 @@ export class ArcadePhysicsScene extends BaseScene {
         disabled: `btn_${buttonId}/up`,
         active: `btn_${buttonId}/down`,
       },
-      sheet: 'ui.json',
+      sheet: 'ui',
       accessibleTitle: action,
       accessibleHint: `Press to ${action}`,
       id: `${buttonId.toUpperCase()}`,

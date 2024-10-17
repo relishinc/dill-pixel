@@ -1,13 +1,4 @@
-import {pixiManifest} from '@assetpack/plugin-manifest';
 import assetPack from 'dill-pixel/config/assetpack';
+console.log(JSON.stringify(assetPack, null, 2));
 
-const config = {
-	...assetPack, plugins: {
-		...assetPack.plugins, manifest: pixiManifest({
-			output: './src/assets.json',
-			createShortcuts: true,
-		}),
-	},
-};
-
-export default config;
+export default assetPack;

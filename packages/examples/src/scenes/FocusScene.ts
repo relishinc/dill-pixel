@@ -1,8 +1,8 @@
 import { Actor } from '@/entities/Actor';
 import { BaseScene } from '@/scenes/BaseScene';
+import { FONT_KUMBH_SANS } from '@/utils/Constants';
 import { Button, FlexContainer, Logger } from 'dill-pixel';
 import { Text } from 'pixi.js';
-import { FONT_KUMBH_SANS } from '@/utils/Constants';
 
 export class FocusScene extends BaseScene {
   protected title = 'Focus Management';
@@ -68,19 +68,19 @@ export class FocusScene extends BaseScene {
     });
     this.list.add.sprite({
       asset: 'jar',
-      sheet: 'game/sheet/sheet.json',
+      sheet: 'game/sheet',
       scale: 0.5,
     });
     this.list.add.sprite({
       asset: 'jar2',
-      sheet: 'game/sheet/sheet.json',
+      sheet: 'game/sheet',
       scale: 0.5,
     });
 
     this.button = this.list.add.button({
       scale: 0.5,
       textures: { default: 'jar', hover: 'jar2' },
-      sheet: 'game/sheet/sheet.json',
+      sheet: 'game/sheet',
       cursor: 'pointer',
       accessible: true,
       accessibleTitle: 'Button',

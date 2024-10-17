@@ -53,18 +53,19 @@ export class AssetScene extends BaseScene {
 
   resize() {
     super.resize();
-    this.container.size = [this.app.size.width, this.app.size.height - 110];
-    this.container.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5 + 110);
 
     if (this.app.size.width >= this.app.size.height) {
+      this.container.size = [this.app.size.width, this.app.size.height - 110];
+      this.container.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5 + 110);
       this.container.scale.set(1);
       this.container.flexDirection = 'row';
       this.container.flexWrap = 'wrap';
     } else {
+      this.container.size = [0, this.app.size.height - 110];
       this.container.flexDirection = 'column';
       this.container.flexWrap = 'nowrap';
       scaleToHeight(this.container, this.app.size.height - 130);
-      this.container.position.set(-this.container.width * 0.5, -this.container.height * 0.5 + 180);
+      this.container.position.set(0, -this.container.height * 0.5 + 100);
     }
 
     Logger.log('AssetScene:: resize');

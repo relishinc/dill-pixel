@@ -1,12 +1,12 @@
-import { Action, ActionContext } from './actions';
 import { KeyboardKey } from '../../utils';
+import { Action, ActionContext } from './actions';
 import { IKeyboardControlScheme, KeyboardControls } from './keyboard';
 import { ITouchControlScheme, TouchControls } from './touch';
 
 export type KeyboardSchemaKey = KeyboardKey | string;
 
 export interface ControlsAction {
-  context: ActionContext[] | '*';
+  context: ActionContext[] | '*' | string;
   input: string | string[];
 }
 

@@ -1,0 +1,20 @@
+{
+  "name": "~NAME~",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.html",
+  "scripts": {
+    "clean": "rimraf .cache",
+    "start": "~PACKAGE_MANAGER~ clean && vite",
+    "dev": "~PACKAGE_MANAGER~ clean && ~PACKAGE_MANAGER~ assets && vite",
+    "prepreview": "vite build",
+    "preview": "vite preview",
+    "prebuild": "~PACKAGE_MANAGER~ assets",
+    "build": "~PACKAGE_MANAGER~ clean && vite build",
+    "assets": "assetpack -c .assetpack.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dill-pixel": "next"
+  }
+}

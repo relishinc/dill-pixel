@@ -1,11 +1,11 @@
-import type { IPlugin } from './Plugin';
-import { Plugin } from './Plugin';
 import type { AssetsPreferences, ResolvedAsset, UnresolvedAsset } from 'pixi.js';
 import { Assets } from 'pixi.js';
+import { IApplication } from '../core';
 import type { IScene } from '../display';
 import { Signal } from '../signals';
-import { IApplication } from '../core';
-import { AssetLike, AssetLoadingOptions, AssetTypes, BundleTypes, isDev, SceneImportListItem } from '../utils';
+import { AssetLike, AssetLoadingOptions, AssetTypes, BundleTypes, isDev, Logger, SceneImportListItem } from '../utils';
+import type { IPlugin } from './Plugin';
+import { Plugin } from './Plugin';
 
 export interface IAssetsPlugin extends IPlugin {
   onLoadStart: Signal<() => void>;
@@ -65,15 +65,7 @@ function getAssetList(assets: AssetTypes): UnresolvedAsset[] | string[] {
       if (asset.ext) {
         if (asset.src && !Array.isArray(asset.src)) {
           alias.push(asset.src as string);
-          if (
-            imageExtensions.includes(asset.ext) &&
-            asset?.src?.indexOf('@1x') === -1 &&
-            asset?.src?.indexOf('0.5x') === -1
-          ) {
-            asset.src = [`${asset.src}@0.5x`, `${asset.src}@1x`, asset.src];
-          } else {
-            asset.src = [asset.src];
-          }
+          asset.src = [asset.src];
         }
         asset.src = (asset.src as string[]).map((src: string) => {
           return `${src}.${asset.ext}`;
@@ -207,7 +199,6 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
       this._handleLoadProgress(0);
       if (scene.assets?.preload?.assets) {
         const assets = getAssetList(scene.assets.preload.assets);
-        console.log({ assets });
         const filteredAssets = assets.filter((asset) => !this._isAssetLoaded(asset));
         if (filteredAssets.length) {
           await Assets.load(filteredAssets, this._handleLoadProgress);
@@ -220,6 +211,7 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
           : [scene.assets.preload.bundles];
         bundles = bundles.filter((bundle) => !this._isBundleLoaded(bundle));
         if (bundles.length) {
+          Logger.log('loading bundles', bundles);
           await Assets.loadBundle(bundles, this._handleLoadProgress);
           this._markBundlesLoaded(bundles);
         }

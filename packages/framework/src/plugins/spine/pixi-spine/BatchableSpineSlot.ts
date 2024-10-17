@@ -29,70 +29,48 @@
 
 import { AttachmentCacheData, Spine } from './Spine';
 
-import type { Batch, BatchableObject, Batcher, BLEND_MODES, IndexBufferArray, Texture } from 'pixi.js';
+import type { Batch, Batcher, BLEND_MODES, DefaultBatchableMeshElement, Matrix, Texture } from 'pixi.js';
 
-export class BatchableSpineSlot implements BatchableObject {
-  indexStart: number;
-  textureId: number;
-  texture: Texture;
-  location: number;
-  batcher: Batcher;
-  batch: Batch;
-  renderable: Spine;
-
-  vertices: Float32Array;
-  indices: number[] | Uint16Array;
-  uvs: Float32Array;
+export class BatchableSpineSlot implements DefaultBatchableMeshElement {
+  indexOffset = 0;
+  attributeOffset = 0;
 
   indexSize: number;
-  vertexSize: number;
+  attributeSize: number;
+
+  batcherName = 'darkTint';
+
+  readonly packAsQuad = false;
+
+  renderable: Spine;
+
+  positions: Float32Array;
+  indices: number[] | Uint16Array;
+  uvs: Float32Array;
 
   roundPixels: 0 | 1;
   data: AttachmentCacheData;
   blendMode: BLEND_MODES;
 
-  setData(renderable: Spine, data: AttachmentCacheData, texture: Texture, blendMode: BLEND_MODES, roundPixels: 0 | 1) {
-    this.renderable = renderable;
-    this.data = data;
+  darkTint: number;
 
-    if (data.clipped) {
-      const clippedData = data.clippedData!;
+  texture: Texture;
 
-      this.indexSize = clippedData.indicesCount;
-      this.vertexSize = clippedData.vertexCount;
-      this.vertices = clippedData.vertices;
-      this.indices = clippedData.indices;
-      this.uvs = clippedData.uvs;
-    } else {
-      this.indexSize = data.indices.length;
-      this.vertexSize = data.vertices.length / 2;
-      this.vertices = data.vertices;
-      this.indices = data.indices;
-      this.uvs = data.uvs;
-    }
+  transform: Matrix;
 
-    this.texture = texture;
-    this.roundPixels = roundPixels;
+  // used internally by batcher specific..
+  // stored for efficient updating..
+  _textureId: number;
+  _attributeStart: number;
+  _indexStart: number;
+  _batcher: Batcher;
+  _batch: Batch;
 
-    this.blendMode = blendMode;
-  }
-
-  packIndex(indexBuffer: IndexBufferArray, index: number, indicesOffset: number) {
-    const indices = this.indices;
-
-    for (let i = 0; i < indices.length; i++) {
-      indexBuffer[index++] = indices[i] + indicesOffset;
-    }
-  }
-
-  packAttributes(float32View: Float32Array, uint32View: Uint32Array, index: number, textureId: number) {
-    const { uvs, vertices, vertexSize } = this;
-
+  get color() {
     const slotColor = this.data.color;
 
     const parentColor: number = this.renderable.groupColor;
     const parentAlpha: number = this.renderable.groupAlpha;
-
     let abgr: number;
 
     const mixedA = slotColor.a * parentAlpha * 255;
@@ -102,42 +80,54 @@ export class BatchableSpineSlot implements BatchableObject {
       const parentG = (parentColor >> 8) & 0xff;
       const parentR = parentColor & 0xff;
 
-      const mixedR = slotColor.r * parentR * 255;
-      const mixedG = slotColor.g * parentG * 255;
-      const mixedB = slotColor.b * parentB * 255;
+      const mixedR = slotColor.r * parentR;
+      const mixedG = slotColor.g * parentG;
+      const mixedB = slotColor.b * parentB;
 
       abgr = (mixedA << 24) | (mixedB << 16) | (mixedG << 8) | mixedR;
     } else {
       abgr = (mixedA << 24) | ((slotColor.b * 255) << 16) | ((slotColor.g * 255) << 8) | (slotColor.r * 255);
     }
 
-    const matrix = this.renderable.groupTransform;
+    return abgr;
+  }
 
-    const a = matrix.a;
-    const b = matrix.b;
-    const c = matrix.c;
-    const d = matrix.d;
-    const tx = matrix.tx;
-    const ty = matrix.ty;
+  get darkColor() {
+    const darkColor = this.data.darkColor!;
 
-    const textureIdAndRound = (textureId << 16) | (this.roundPixels & 0xffff);
+    return ((darkColor.b * 255) << 16) | ((darkColor.g * 255) << 8) | (darkColor.r * 255);
+  }
 
-    for (let i = 0; i < vertexSize; i++) {
-      const x = vertices[i * 2];
-      const y = vertices[i * 2 + 1];
+  get groupTransform() {
+    return this.renderable.groupTransform;
+  }
 
-      float32View[index++] = a * x + c * y + tx;
-      float32View[index++] = b * x + d * y + ty;
+  setData(renderable: Spine, data: AttachmentCacheData, blendMode: BLEND_MODES, roundPixels: 0 | 1) {
+    this.renderable = renderable;
+    this.transform = renderable.groupTransform;
+    this.data = data;
 
-      // uv
-      float32View[index++] = uvs[i * 2];
-      float32View[index++] = uvs[i * 2 + 1];
+    if (data.clipped) {
+      const clippedData = data.clippedData!;
 
-      // color
-      uint32View[index++] = abgr;
-
-      // texture id
-      uint32View[index++] = textureIdAndRound;
+      this.indexSize = clippedData.indicesCount;
+      this.attributeSize = clippedData.vertexCount;
+      this.positions = clippedData.vertices;
+      this.indices = clippedData.indices;
+      this.uvs = clippedData.uvs;
+    } else {
+      this.indexSize = data.indices.length;
+      this.attributeSize = data.vertices.length / 2;
+      this.positions = data.vertices;
+      this.indices = data.indices;
+      this.uvs = data.uvs;
     }
+
+    this.texture = data.texture;
+    this.roundPixels = roundPixels;
+
+    this.blendMode = blendMode;
+
+    this.batcherName = data.darkTint ? 'darkTint' : 'default';
   }
 }

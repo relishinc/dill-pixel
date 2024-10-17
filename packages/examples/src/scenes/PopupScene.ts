@@ -1,8 +1,8 @@
 import { ActionDetail, Button, FlexContainer, PopupConfig } from 'dill-pixel';
 
-import { BaseScene } from './BaseScene';
 import { ExamplePopup } from '@/popups/ExamplePopup';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
+import { BaseScene } from './BaseScene';
 
 export class PopupScene extends BaseScene {
   protected readonly title = 'Popups';
@@ -77,7 +77,7 @@ export class PopupScene extends BaseScene {
       scale: 0.5,
       cursor: 'pointer',
       textures: { default: 'btn/blue', hover: 'btn/yellow', disabled: 'btn/grey', active: 'btn/red' },
-      sheet: 'ui.json',
+      sheet: 'ui',
       accessibleTitle: label,
       accessibleHint: `Press me to show a popup`,
     });

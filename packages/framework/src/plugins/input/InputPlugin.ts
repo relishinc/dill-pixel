@@ -1,13 +1,13 @@
 import { Action, ActionContext } from './actions';
-import type { ActionDetail, ActionSignal, ActionsList } from './types';
 import { Controls } from './Controls';
 import type { ControlScheme } from './interfaces';
+import type { ActionDetail, ActionSignal, ActionsList } from './types';
 
 import { IApplication } from '../../core';
+import { Signal } from '../../signals';
 import type { IPlugin } from '../Plugin';
 import { Plugin } from '../Plugin';
 import { InputController, InputControllerTypes } from './constants';
-import { Signal } from '../../signals';
 
 export type InputManagerOptions = {
   actions?: ActionsList;

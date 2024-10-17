@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
+import { fileURLToPath } from 'node:url';
 
 /** @param {string} dir */
 export function mkdirp(dir) {
@@ -63,6 +63,13 @@ export const package_manager = get_package_manager() || 'npm';
  * Thanks to https://github.com/zkochan/packages/tree/main/which-pm-runs for this code!
  */
 function get_package_manager() {
+  // add clauses for --use-pnpm and --use-yarn
+  if (process.argv.includes('--use-pnpm')) {
+    return 'pnpm';
+  }
+  if (process.argv.includes('--use-yarn')) {
+    return 'yarn';
+  }
   if (!process.env.npm_config_user_agent) {
     return undefined;
   }

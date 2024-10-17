@@ -2,14 +2,14 @@
 
 import { bgRed, bold, green, red, white } from 'kleur/colors';
 
+import fs from 'node:fs';
+import process from 'node:process';
+import { generateCaptions } from './cli/audio/cc.mjs';
 import { compress } from './cli/audio/index.mjs';
 import { create } from './cli/create.mjs';
-import fs from 'node:fs';
-import { generateCaptions } from './cli/audio/cc.mjs';
-import { generateVoiceoverCSV } from './cli/voiceover/index.mjs';
 import { installPeerDeps } from './cli/install-peerdeps.mjs';
-import process from 'node:process';
 import { update } from './cli/update.mjs';
+import { generateVoiceoverCSV } from './cli/voiceover/index.mjs';
 
 const currentVersion = process.versions.node;
 const requiredMajorVersion = parseInt(currentVersion.split('.')[0], 10);
@@ -47,10 +47,23 @@ switch (args[0]) {
     break;
   case 'version':
     break;
-  case 'create':
-    cwd = args[1] || '.';
-    await create(cwd);
+  case 'create': {
+    let packageManager = 'npm'; // Default to npm
+    let projectPath = '.'; // Default to current directory
+
+    // Parse arguments
+    for (let i = 1; i < args.length; i++) {
+      if (args[i] === '--use-yarn') {
+        packageManager = 'yarn';
+      } else if (args[i] === '--use-pnpm') {
+        packageManager = 'pnpm';
+      } else if (!args[i].startsWith('--')) {
+        projectPath = args[i];
+      }
+    }
+    await create(projectPath, packageManager);
     break;
+  }
   case 'update':
     hr();
     console.log(bold(green(`Updating Dill Pixel to the latest version...`)));

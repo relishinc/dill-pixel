@@ -1,6 +1,6 @@
 import { BaseScene } from '@/scenes/BaseScene';
-import { AnimatedSprite, capitalize, FlexContainer } from 'dill-pixel';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
+import { AnimatedSprite, capitalize, FlexContainer } from 'dill-pixel';
 
 export class AnimatedSpriteScene extends BaseScene {
   protected readonly title = 'Animated Sprite';
@@ -64,7 +64,7 @@ export class AnimatedSpriteScene extends BaseScene {
     const sprite = charContainer.add.animatedSprite({
       animationSpeed: 0.2, // default animation speed
       animation: 'idle', // default
-      sheet: 'characters.json', // default spritesheet
+      sheet: 'characters', // default spritesheet
       texturePrefix: `${folderName}/${spriteName}_`, // default prefix
       // zeroPad: 1, // optional default zero padding
       animations: {

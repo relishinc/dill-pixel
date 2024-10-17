@@ -1,11 +1,11 @@
 import { ActionDetail, PointLike, resolvePointLike, Signal, SpineAnimation } from 'dill-pixel';
 
-import { gsap } from 'gsap';
-import { Point, Rectangle } from 'pixi.js';
-import { Actor as SnapActor, Collision, Entity, SnapBoundary } from '@dill-pixel/plugin-snap-physics';
-import { Platform } from './Platform';
 import { FX } from '@/entities/snap/FX';
 import { Portal, PortalEnterDetail } from '@/entities/snap/Portal';
+import { Collision, Entity, Actor as SnapActor, SnapBoundary } from '@dill-pixel/plugin-snap-physics';
+import { gsap } from 'gsap';
+import { Point, Rectangle } from 'pixi.js';
+import { Platform } from './Platform';
 
 export class Player extends SnapActor {
   declare view: SpineAnimation;
