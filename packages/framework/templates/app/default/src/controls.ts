@@ -1,6 +1,6 @@
-import { ControlScheme } from 'dill-pixel';
+import { ActionNames, ControlScheme } from 'dill-pixel';
 
-export const controls: ControlScheme = {
+export const controls = {
   keyboard: {
     down: {
       move_left: { context: ['game'], input: ['ArrowLeft', 'a'] },
@@ -28,18 +28,7 @@ export const controls: ControlScheme = {
       move_right: { context: ['game'], input: ['right', 'bottom_right', 'top_right'] },
     },
   },
-};
+} as const satisfies ControlScheme;
 
-type ControlType = typeof controls;
-type InputType = keyof ControlType;
-type ActionType<T extends InputType> = keyof ControlType[T];
-type SubActionType<T extends InputType, U extends ActionType<T>> = keyof ControlType[T][U];
-
-// New type to get all action names
-export type ActionName = {
-  [T in InputType]: {
-    [U in ActionType<T>]: {
-      [V in SubActionType<T, U>]: V;
-    }[SubActionType<T, U>];
-  }[ActionType<T>];
-}[InputType];
+// New type to get all action names - don't touch this - it allows for strongly typed actions
+export type ActionName = ActionNames<typeof controls>;

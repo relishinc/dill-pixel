@@ -23,3 +23,9 @@ export enum DefaultActions {
 }
 
 export type Action = DefaultActions | string;
+
+export type ActionNames<T> = {
+  [K in keyof T]: {
+    [A in keyof T[K]]: keyof T[K][A];
+  }[keyof T[K]];
+}[keyof T];
