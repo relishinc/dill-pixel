@@ -1,7 +1,7 @@
 import { Actor } from '@dill-pixel/plugin-snap-physics/Actor';
-import { Signal, Size } from 'dill-pixel';
 import { Solid } from '@dill-pixel/plugin-snap-physics/Solid';
 import { WithVelocity } from '@dill-pixel/plugin-snap-physics/mixins';
+import { Signal, Size } from 'dill-pixel';
 import { Texture } from 'pixi.js';
 
 type BasicSolidConfig = {

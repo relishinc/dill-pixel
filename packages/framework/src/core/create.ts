@@ -1,5 +1,6 @@
 import { Application } from '../Application';
 import { sayHello } from '../hello';
+import { IDataSchema } from '../store';
 import { delay } from '../utils';
 import { IApplication } from './interfaces';
 import { AppConfig } from './types';
@@ -13,8 +14,8 @@ export function createContainer(id: string) {
   return container;
 }
 
-export async function create<T extends IApplication = Application>(
-  config: AppConfig = { id: 'DillPixelApplication' },
+export async function create<T extends IApplication = Application, D extends IDataSchema = IDataSchema>(
+  config: AppConfig<T, D> = { id: 'DillPixelApplication' },
   ApplicationClass: new () => IApplication = Application,
   domElement: string | Window | HTMLElement = DEFAULT_GAME_CONTAINER_ID,
   speak: boolean = true,
@@ -57,6 +58,6 @@ export async function create<T extends IApplication = Application>(
   // call postInitialize on the instance
   await instance.postInitialize();
 
-  // return th app instance
-  return instance as unknown as IApplication;
+  // return the app instance
+  return instance as T;
 }

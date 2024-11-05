@@ -1,8 +1,15 @@
-import { MatterBodyLike } from "./types";
+import { MatterBodyLike } from './types';
 
 export interface IMatterPhysicsObject {
-    body: MatterBodyLike;
-    debugColor: number;
+  body: MatterBodyLike;
+  debugColor: number;
 
-    update(): void;
+  update(): void;
+}
+
+export interface IMatterCompositeObject {
+  bodies: MatterBodyLike[];
+  debugColor: number;
+
+  update(): void;
 }

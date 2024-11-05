@@ -1,6 +1,6 @@
 {
   "name": "dill-pixel-examples-v8",
-  "version": "8.16.3",
+  "version": "8.16.6",
   "description": "Examples of Dill Pixel Features (V8)",
   "main": "index.html",
   "scripts": {
@@ -10,9 +10,9 @@
     "start": "run-s cache && vite",
     "dev": "run-s cache assets && vite --open",
     "prebuild": "run-s clean format lint",
-    "build": "vite build",
+    "build": "vite build --mode production",
     "types": "tsc",
-    "preview": "vite preview --open",
+    "preview": "pnpm run clean && pnpm run build && vite preview --open",
     "lint": "eslint src --ext .ts",
     "lint-fix": "eslint src --ext .ts --fix",
     "visualize": "npx vite-bundle-visualizer -c vite.config.mjs",
@@ -45,7 +45,7 @@
     "firebase": "^10.12.2",
     "gsap": "3.12.5",
     "npm-run-all": "4.1.5",
-    "pixi.js": "8.5.1",
+    "pixi.js": "8.5.2",
     "rimraf": "5.0.5",
     "stats.js": "0.17.0",
     "vite": "5.4.9",

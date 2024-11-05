@@ -1,12 +1,12 @@
 import { Graphics, Rectangle } from 'pixi.js';
 import { Entity } from './Entity';
-import { SpatialHashGridFilter } from './types';
 import { System } from './System';
+import { SpatialHashGridFilter } from './types';
 
 type GridKey = string;
 
 export class SpatialHashGrid {
-  private cells: Map<GridKey, Set<Entity>> = new Map();
+  private cells: Map<GridKey, Entity[]> = new Map();
 
   constructor(cellSize: number, insertEntities: boolean = false) {
     this._cellSize = cellSize;
@@ -41,20 +41,31 @@ export class SpatialHashGrid {
 
     for (let x = startX; x <= endX; x++) {
       for (let y = startY; y <= endY; y++) {
-        const key = this.getGridKey(x, y); // Use cell coordinates directly
+        const key = this.getGridKey(x, y);
         if (!this.cells.has(key)) {
-          this.cells.set(key, new Set());
+          this.cells.set(key, []);
         }
 
-        this.cells.get(key)?.add(entity);
+        const cellEntities = this.cells.get(key)!;
+        if (!cellEntities.includes(entity)) {
+          cellEntities.push(entity);
+        }
       }
     }
   }
 
   remove(entity: Entity): void {
-    this.cells.forEach((entities) => {
-      entities.delete(entity);
+    const keysToRemove: GridKey[] = [];
+    this.cells.forEach((entities, key) => {
+      const index = entities.indexOf(entity);
+      if (index !== -1) {
+        entities.splice(index, 1);
+        if (entities.length === 0) {
+          keysToRemove.push(key);
+        }
+      }
     });
+    keysToRemove.forEach((key) => this.cells.delete(key));
   }
 
   query<T extends Entity = Entity>(
@@ -62,8 +73,17 @@ export class SpatialHashGrid {
     filter?: SpatialHashGridFilter,
     dx: number = 0,
     dy: number = 0,
+    exclude?: Entity | Entity[],
     debug?: boolean,
   ): Set<T> {
+    let uidsToExclude: number[] = [];
+    if (exclude) {
+      if (Array.isArray(exclude)) {
+        uidsToExclude = exclude.map((e) => e.uid);
+      } else {
+        uidsToExclude = [exclude.uid];
+      }
+    }
     void debug;
     const expandedRange = new Rectangle(
       range.x - Math.abs(dx),
@@ -73,7 +93,6 @@ export class SpatialHashGrid {
     );
     const foundEntities = new Set<T>();
 
-    // Ensure we handle negative or reverse ranges appropriately
     const startX = Math.floor(Math.min(expandedRange.x, expandedRange.x + expandedRange.width) / this._cellSize);
     const startY = Math.floor(Math.min(expandedRange.y, expandedRange.y + expandedRange.height) / this._cellSize);
     const endX = Math.floor(Math.max(expandedRange.x, expandedRange.x + expandedRange.width) / this._cellSize);
@@ -81,34 +100,13 @@ export class SpatialHashGrid {
 
     for (let x = startX; x <= endX; x++) {
       for (let y = startY; y <= endY; y++) {
-        const key = this.getGridKey(x, y); // Use cell coordinates directly
+        const key = this.getGridKey(x, y);
         const cellEntities = this.cells.get(key);
         if (cellEntities) {
           cellEntities.forEach((entity) => {
-            if (filter === undefined) {
-              foundEntities.add(entity as T);
-            } else {
-              switch (typeof filter) {
-                case 'string':
-                  if (
-                    filter === entity.type ||
-                    (filter === 'solid' && entity.isSolid) ||
-                    (filter === 'actor' && entity.isActor) ||
-                    (filter === 'sensor' && entity.isSensor)
-                  ) {
-                    foundEntities.add(entity as T);
-                  }
-                  break;
-                case 'object':
-                  if (Array.isArray(filter) && filter.includes(entity.type)) {
-                    foundEntities.add(entity as T);
-                  }
-                  break;
-                case 'function':
-                  if (filter(entity)) {
-                    foundEntities.add(entity as T);
-                  }
-                  break;
+            if (!uidsToExclude.includes(entity.uid)) {
+              if (filter === undefined || this.matchesFilter(entity, filter)) {
+                foundEntities.add(entity as T);
               }
             }
           });
@@ -118,15 +116,30 @@ export class SpatialHashGrid {
     return foundEntities;
   }
 
+  private matchesFilter(entity: Entity, filter: SpatialHashGridFilter): boolean {
+    switch (typeof filter) {
+      case 'string':
+        return (
+          filter === entity.type ||
+          (filter === 'solid' && entity.isSolid) ||
+          (filter === 'actor' && entity.isActor) ||
+          (filter === 'sensor' && entity.isSensor)
+        );
+      case 'object':
+        return Array.isArray(filter) && filter.includes(entity.type);
+      case 'function':
+        return filter(entity);
+      default:
+        return false;
+    }
+  }
+
   updateAll() {
     System.all.forEach((entity) => this.updateEntity(entity));
   }
 
   updateEntity(entity: Entity): void {
-    // Remove the entity from its current cell
     this.remove(entity);
-
-    // Re-insert the entity into the grid based on its new position
     this.insert(entity);
   }
 
@@ -142,7 +155,7 @@ export class SpatialHashGrid {
     const rects: Rectangle[] = [];
     this.cells.forEach((_cell, key) => {
       const [x, y] = key.split(':').map(Number);
-      if (_cell.size) {
+      if (_cell.length) {
         rects.push(new Rectangle(x * this._cellSize, y * this._cellSize, this._cellSize, this._cellSize));
       }
     });

@@ -85,6 +85,10 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
   public onLoadProgress: Signal<(progress: number) => void> = new Signal();
   public onLoadComplete: Signal<() => void> = new Signal();
 
+  public onBackgroundLoadStart: Signal<() => void> = new Signal();
+  public onBackgroundAssetLoaded: Signal<(asset: string) => void> = new Signal();
+  public onBackgroundBundlesLoaded: Signal<() => void> = new Signal();
+
   private _loadedBundles: Set<string> = new Set();
   private _loadedAssets: Set<string | UnresolvedAsset> = new Set();
 
@@ -117,20 +121,26 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
   }
 
   public loadBackground() {
+    this.onBackgroundLoadStart.emit();
     if (this._background) {
       if (this._background.assets) {
-        getAssetList(this._background.assets).forEach((asset) => {
+        const list = getAssetList(this._background.assets);
+        list.forEach((asset) => {
           if ((asset as UnresolvedAsset)?.src) {
             const src = (asset as UnresolvedAsset).src as string[];
             if (src) {
               return Assets.backgroundLoad(src);
             }
           }
-          return Assets.backgroundLoad(asset as string);
+          return Assets.backgroundLoad(asset as string).then(() => {
+            this.onBackgroundAssetLoaded.emit(asset as string);
+          });
         });
       }
       if (this._background.bundles) {
-        void Assets.backgroundLoadBundle(this._background.bundles);
+        void Assets.backgroundLoadBundle(this._background.bundles).then(() => {
+          this.onBackgroundBundlesLoaded.emit();
+        });
       }
     }
   }
@@ -225,7 +235,14 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
   }
 
   protected getCoreSignals(): string[] {
-    return ['onLoadStart', 'onLoadProgress', 'onLoadComplete'];
+    return [
+      'onLoadStart',
+      'onLoadProgress',
+      'onLoadComplete',
+      'onBackgroundLoadStart',
+      'onBackgroundAssetLoaded',
+      'onBackgroundBundlesLoaded',
+    ];
   }
 
   private _isAssetLoaded(alias: string | UnresolvedAsset) {

@@ -1,9 +1,9 @@
+import { CircSolid, Projectile, RectSolid } from '@/entities/snap/entities';
 import { BaseScene } from '@/scenes/BaseScene';
+import { FONT_KUMBH_SANS } from '@/utils/Constants';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
 import { Container } from 'dill-pixel';
-import { CircSolid, Projectile, RectSolid } from '@/entities/snap/entities';
 import { FederatedPointerEvent, Point, Pool, Text } from 'pixi.js';
-import { FONT_KUMBH_SANS } from '@/utils/Constants';
 
 class Ball extends Projectile {
   type = 'Ball';

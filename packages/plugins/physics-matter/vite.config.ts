@@ -1,6 +1,6 @@
+import path from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
-import path from 'path';
 
 export default defineConfig({
   build: {

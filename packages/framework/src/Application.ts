@@ -31,8 +31,8 @@ import {
   Renderer,
   RendererDestroyOptions,
 } from 'pixi.js';
-import type { IStorageAdapter, IStore } from './store';
-import { Store } from './store';
+import type { IDataSchema, IStorageAdapter, IStore } from './store';
+import { DataAdapter, Store } from './store';
 import type { ImportListItem, Size } from './utils';
 import { bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from './utils';
 
@@ -74,12 +74,15 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   },
 };
 
-export class Application<R extends Renderer = Renderer> extends PIXIPApplication<R> implements IApplication {
+export class Application<D extends IDataSchema = IDataSchema, C = Action, R extends Renderer = Renderer>
+  extends PIXIPApplication<R>
+  implements IApplication
+{
   public static containerElement: HTMLElement;
   protected static instance: IApplication;
   public __dill_pixel_method_binding_root = true;
   // config
-  public config: Partial<IApplicationOptions>;
+  public config: Partial<IApplicationOptions<D>>;
   public manifest: string | AssetsManifest | undefined;
   public onPause = new Signal<() => void>();
   public onResume = new Signal<() => void>();
@@ -325,8 +328,9 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     if (Application.instance) {
       throw new Error('Application is already initialized');
     }
-    Application.instance = this;
-    this.config = Object.assign({ ...defaultApplicationOptions }, config);
+    Application.instance = this as IApplication;
+    this.config = Object.assign({ ...defaultApplicationOptions }, config as Partial<IApplicationOptions<D>>);
+
     if (config.container) {
       Application.containerElement = config.container;
     }
@@ -357,9 +361,6 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
 
     // add the store if it's enabled
     if (this.config.useStore) {
-      this._store = new Store();
-      this._store.initialize(this);
-
       // register any storage adapters passed through the config
       if (this.config.storageAdapters && this.config.storageAdapters.length > 0) {
         for (let i = 0; i < this.config.storageAdapters.length; i++) {
@@ -436,12 +437,12 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
     return await this.registerPlugin(pluginInstance, opts);
   }
 
-  public actions<TActionData = any>(action: Action | string): ActionSignal<TActionData> {
-    return this.input.actions<TActionData>(action);
+  public actions<TActionData = any>(action: C): ActionSignal<TActionData> {
+    return this.input.actions<TActionData>(action as Action);
   }
 
-  public sendAction<TActionData = any>(action: string, data?: TActionData) {
-    this.input.sendAction<TActionData>(action, data);
+  public sendAction<TActionData = any>(action: C, data?: TActionData) {
+    this.input.sendAction<TActionData>(action as Action, data);
   }
 
   /**
@@ -454,6 +455,14 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
   }
 
   /**
+   * Get a storage adapter by id
+   * @param {string} adapterId
+   * @returns {IStorageAdapter}
+   */
+  public get data(): DataAdapter<D> {
+    return this.store.getAdapter<DataAdapter<D>>('data');
+  }
+  /**
    * app hasn't been initialized yet
    * @protected
    * @example boot(){
@@ -461,9 +470,9 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
    * }
    * returns {Promise<void> | void}
    */
-  protected boot(config?: Partial<IApplicationOptions>): Promise<void> | void;
+  protected boot(config?: Partial<IApplicationOptions<D>>): Promise<void> | void;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected async boot(config?: Partial<IApplicationOptions>): Promise<void> {
+  protected async boot(config?: Partial<IApplicationOptions<D>>): Promise<void> {
     console.log(
       `%c App info - %c${this.appName} | %cv${this.appVersion} `,
       `background: rgba(31, 41, 55, 1); color: #74b64c`,
@@ -480,7 +489,7 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
    * @returns {Promise<void>}
    * @protected
    */
-  protected async preInitialize(config: Partial<IApplicationOptions>): Promise<void> {
+  protected async preInitialize(config: Partial<IApplicationOptions<D>>): Promise<void> {
     if (config.useSpine) {
       await this.loadPlugin({
         id: 'SpinePlugin',
@@ -488,18 +497,24 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
         namedExport: 'SpinePlugin',
       });
     }
+
+    if (this.config.useStore) {
+      this._store = new Store();
+      this._store.initialize(this);
+      this.registerDefaultStorageAdapters();
+    }
   }
 
   // plugins
   protected async registerPlugin(plugin: IPlugin, options?: any) {
     if (this._plugins.has(plugin.id)) {
       Logger.error(`Plugin with id "${plugin.id}" already registered. Not registering.`);
-      return plugin.initialize(this, options);
+      return plugin.initialize(this as IApplication, options);
     }
     plugin.registerCoreFunctions();
     plugin.registerCoreSignals();
     this._plugins.set(plugin.id, plugin);
-    return plugin.initialize(this, options);
+    return plugin.initialize(this as IApplication, options);
   }
 
   protected async registerDefaultPlugins() {
@@ -529,6 +544,11 @@ export class Application<R extends Renderer = Renderer> extends PIXIPApplication
         options: this.config['captions' as keyof IApplicationOptions] || undefined,
       });
     }
+  }
+
+  protected async registerDefaultStorageAdapters() {
+    const dataAdapter = new DataAdapter();
+    await this.registerStorageAdapter(dataAdapter, { data: this.config.data });
   }
 
   protected async registerPlugins() {

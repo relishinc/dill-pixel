@@ -1,9 +1,68 @@
 import { Entity, default as MatterPhysics } from '@dill-pixel/plugin-matter-physics';
-import { Container, UICanvas } from 'dill-pixel';
-import { FederatedPointerEvent, Rectangle, Text, Texture } from 'pixi.js';
+import { Container, ParticleContainer, UICanvas } from 'dill-pixel';
+import { FederatedPointerEvent, Particle, ParticleOptions, Rectangle, Text, Texture } from 'pixi.js';
 
 import { BaseScene } from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
+
+class FlourishParticle extends Particle {
+  direction: number;
+  speed: number;
+  renderCount: number;
+  constructor(options: ParticleOptions & { direction: number }) {
+    super(options);
+    this.renderCount = 0;
+    this.direction = options.direction;
+    this.speed = Math.random() * 5 - 10;
+  }
+}
+
+class Particles extends ParticleContainer {
+  constructor() {
+    super({ dynamicProperties: { alpha: true, position: true } });
+  }
+  addFlourish(pos: { x: number; y: number }, numParticles: number = 50) {
+    for (let i = 0; i < numParticles; i++) {
+      this.addParticle(
+        new FlourishParticle({
+          x: pos.x,
+          y: pos.y,
+          texture: Texture.WHITE,
+          scaleX: 4,
+          scaleY: 4,
+          anchorX: 0.5,
+          anchorY: 0.5,
+          rotation: 0,
+          alpha: 1,
+          direction: 20 + Math.random() * Math.PI * 10,
+        }),
+      );
+    }
+  }
+
+  updateParticles() {
+    this.particleChildren.forEach((child) => {
+      const p = child as FlourishParticle;
+      p.y += p.speed;
+      p.x += Math.cos(p.direction) * 1;
+      if (p.speed < 10) {
+        p.speed += 0.25;
+      }
+      if (p.alpha > 0) {
+        p.alpha -= 0.1; // doesn't seem to work
+      }
+      p.renderCount++;
+      if (p.renderCount > 200) {
+        this.removeParticle(p);
+      }
+    });
+  }
+
+  update() {
+    this.updateParticles();
+    super.update();
+  }
+}
 
 export class MatterPhysicsScene extends BaseScene {
   ui: UICanvas;
@@ -12,6 +71,7 @@ export class MatterPhysicsScene extends BaseScene {
   protected readonly subtitle = 'Click to add an object';
   protected level: Container;
   protected _entities: Entity[] = [];
+  protected _particles: Particles;
   protected config = {
     debug: true,
     numToAdd: 1,
@@ -69,6 +129,8 @@ export class MatterPhysicsScene extends BaseScene {
 
     this.physics.system.enabled = true;
 
+    this._particles = this.level.add.existing(new Particles());
+
     this.on('pointerup', this._addEntity);
     this._handleDebugChanged();
   }
@@ -120,6 +182,8 @@ export class MatterPhysicsScene extends BaseScene {
       entity.position.set(pos.x, pos.y);
       this.level.add.existing(entity);
       this._entities.push(entity);
+
+      this._particles.addFlourish(pos);
     }
   }
 }

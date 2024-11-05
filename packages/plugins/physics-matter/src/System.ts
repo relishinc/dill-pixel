@@ -1,5 +1,5 @@
 import { Application, IApplication } from 'dill-pixel';
-import { Bodies, Body, Engine, Runner, World } from 'matter-js';
+import Matter, { Bodies, Body, Engine, Runner, World } from 'matter-js';
 import { Container, Graphics, Rectangle, Ticker } from 'pixi.js';
 
 import { IMatterPhysicsObject } from './interfaces';
@@ -52,6 +52,30 @@ export class System {
   }
 
   private static _runner: Runner;
+
+  static get world() {
+    return World;
+  }
+
+  static get api() {
+    return {
+      axes: Matter.Axes,
+      bodies: Matter.Bodies,
+      body: Matter.Body,
+      common: Matter.Common,
+      composite: Matter.Composite,
+      composites: Matter.Composites,
+      constraint: Matter.Constraint,
+      contact: Matter.Contact,
+      engine: Matter.Engine,
+      events: Matter.Events,
+      runner: Matter.Runner,
+      sleeping: Matter.Sleeping,
+      vector: Matter.Vector,
+      vertices: Matter.Vertices,
+      world: Matter.World,
+    };
+  }
 
   static get runner() {
     return System._runner;

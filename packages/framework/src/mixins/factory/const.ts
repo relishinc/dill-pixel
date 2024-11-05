@@ -1,3 +1,14 @@
+import { AnimatedSprite, Container, ContainerConfig, ContainerConfigKeys, SpineAnimation, Svg } from '../../display';
+import type { ButtonConfig, FlexContainerConfig, UICanvasConfig } from '../../ui';
+import {
+  Button,
+  ButtonConfigKeys,
+  FlexContainer,
+  FlexContainerConfigKeys,
+  UICanvas,
+  UICanvasConfigKeys,
+} from '../../ui';
+import { omitKeys, pluck, resolvePointLike, Spine, WithRequiredProps } from '../../utils';
 import {
   AnimatedSpriteProps,
   ButtonProps,
@@ -5,6 +16,7 @@ import {
   ExistingProps,
   FlexContainerProps,
   GraphicsProps,
+  ParticleContainerProps,
   SpineProps,
   SpriteProps,
   SvgProps,
@@ -20,19 +32,13 @@ import {
   resolveTexture,
   resolveUnknownKeys,
 } from './utils';
-import { omitKeys, pluck, resolvePointLike, Spine, WithRequiredProps } from '../../utils';
-import { AnimatedSprite, Container, ContainerConfig, ContainerConfigKeys, SpineAnimation, Svg } from '../../display';
-import type { ButtonConfig, FlexContainerConfig, UICanvasConfig } from '../../ui';
-import {
-  Button,
-  ButtonConfigKeys,
-  FlexContainer,
-  FlexContainerConfigKeys,
-  UICanvas,
-  UICanvasConfigKeys,
-} from '../../ui';
 
 import { BitmapText, Graphics, Sprite, Text } from 'pixi.js';
+import {
+  ParticleContainer,
+  ParticleContainerConfig,
+  ParticleContainerConfigKeys,
+} from '../../display/ParticleContainer';
 
 export const defaultFactoryMethods = {
   existing: <TEntity>(entity: TEntity, props?: Partial<ExistingProps>): TEntity => {
@@ -52,6 +58,21 @@ export const defaultFactoryMethods = {
     const { position, x, y, pivot, scale, scaleX, scaleY, ...rest } = otherProps;
     resolvePosition({ position, x, y }, entity);
     resolveScale({ scale, scaleX, scaleY }, entity);
+    resolvePivot(pivot, entity);
+    resolveUnknownKeys(rest, entity);
+    return entity;
+  },
+  particleContainer: (props?: Partial<ParticleContainerProps>) => {
+    const config = pluck(props ?? {}, ParticleContainerConfigKeys);
+    const otherProps = omitKeys<ParticleContainerProps, keyof ParticleContainerConfig>(
+      ParticleContainerConfigKeys,
+      props ?? {},
+    );
+    const entity = new ParticleContainer(config);
+    if (!otherProps) return entity;
+    const { position, x, y, pivot, scale, ...rest } = otherProps;
+    resolvePosition({ position, x, y }, entity);
+    resolveScale({ scale }, entity);
     resolvePivot(pivot, entity);
     resolveUnknownKeys(rest, entity);
     return entity;

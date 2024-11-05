@@ -1,5 +1,4 @@
-import { Application as PIXIPApplication, AssetsManifest, Point } from 'pixi.js';
-import type { Size } from '../../utils';
+import { AssetsManifest, Application as PIXIPApplication, Point } from 'pixi.js';
 import type {
   ActionSignal,
   IAssetsPlugin,
@@ -16,12 +15,13 @@ import type {
   IWebEventsPlugin,
 } from '../../plugins';
 import { ActionContext } from '../../plugins';
-import type { IStore } from '../../store';
 import { Signal } from '../../signals';
-import type { IApplicationOptions } from './IApplicationOptions';
+import type { IStore } from '../../store';
+import type { Size } from '../../utils';
 import type { AppConfig } from '../types';
-import { ICoreSignals } from './ICoreSignals';
+import type { IApplicationOptions } from './IApplicationOptions';
 import type { ICoreFunctions } from './ICoreFunctions';
+import { ICoreSignals } from './ICoreSignals';
 
 export interface IApplication extends PIXIPApplication {
   config: Partial<IApplicationOptions>;
@@ -51,7 +51,7 @@ export interface IApplication extends PIXIPApplication {
   func: ICoreFunctions;
   exec: ICoreFunctions;
 
-  actions(action: string): ActionSignal;
+  actions(action: any): ActionSignal;
 
   initialize(config: AppConfig): Promise<IApplication>;
 

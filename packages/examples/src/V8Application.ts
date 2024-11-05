@@ -1,19 +1,24 @@
 import { Application, create, LocalStorageAdapter } from 'dill-pixel';
 
-import { ActionName, controls } from '@/controls';
+import { Actions, controls } from '@/controls';
 import EN from '@/locales/en';
 import { Transition } from '@/Transition';
 import { IFirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
 import manifest from './assets.json';
 import { ExampleOutliner } from './ui/ExampleOutliner';
 
-export class V8Application extends Application {
-  get firebase(): IFirebaseAdapter {
-    return this.store.getAdapter('firebase') as unknown as IFirebaseAdapter;
-  }
+type DataSchema = {
+  foo?: string;
+  bar?: number;
+  baz?: {
+    qux?: boolean;
+    quux?: string[];
+  };
+};
 
-  actions(name: ActionName) {
-    return super.actions(name);
+export class V8Application extends Application<DataSchema, Actions> {
+  get firebase(): IFirebaseAdapter {
+    return this.store.getAdapter<IFirebaseAdapter>('firebase');
   }
 }
 
@@ -21,7 +26,7 @@ async function boot() {
   const app = await create<V8Application>(
     {
       id: 'V8Application',
-      antialias: true,
+      antialias: false,
       autoDensity: false,
       useMathExtras: true,
       // splash: {
@@ -34,6 +39,12 @@ async function boot() {
       showStats: true,
       showSceneDebugMenu: true,
       useHash: true,
+      data: {
+        foo: 'boo',
+        baz: {
+          qux: true,
+        },
+      } satisfies DataSchema,
       focus: {
         outliner: ExampleOutliner,
       },
@@ -301,6 +312,13 @@ async function boot() {
     },
     V8Application,
   );
+
+  // test data adapter
+  console.log('data', JSON.stringify(app.data.get(), null, 2));
+  app.data.set({ baz: { quux: ['a', 'b', 'c'] } });
+  console.log('data', JSON.stringify(app.data.get(), null, 2));
+  app.data.clear('baz');
+  console.log('data', JSON.stringify(app.data.get(), null, 2));
 
   function populateSidebar() {
     // populate sidebar

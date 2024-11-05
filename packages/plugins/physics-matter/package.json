@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-matter-physics",
-  "version": "8.16.3",
+  "version": "8.16.6",
   "description": "",
   "files": [
     "lib",
@@ -16,22 +16,23 @@
   },
   "sideEffects": false,
   "scripts": {
-    "build": "vite build",
+    "build": "pnpm run version && vite build",
+    "version": "node generateVersion.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/matter-js": "^0.19.6",
     "dill-pixel": "workspace:*",
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
-    "dill-pixel": "8.16.3",
-    "pixi.js": "8.5.1"
+    "dill-pixel": "8.16.6",
+    "pixi.js": "8.5.2"
   },
   "dependencies": {
-    "matter-js": "^0.19.0"
+    "@types/matter-js": "^0.19.7",
+    "matter-js": "^0.20.0"
   }
 }

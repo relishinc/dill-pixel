@@ -1,9 +1,8 @@
-import { Container, Rectangle } from 'pixi.js';
 import { IApplication, IPlugin, Plugin } from 'dill-pixel';
 import { IEngineDefinition, IRunnerOptions } from 'matter-js';
-
+import { Container, Rectangle } from 'pixi.js';
 import { System } from './System';
-
+import { matterVersion, version } from './version';
 export interface IMatterPhysicPlugin extends IPlugin {}
 
 export type MatterPhysicsPluginOptions = {
@@ -34,6 +33,15 @@ export class MatterPhysicsPlugin extends Plugin implements IMatterPhysicPlugin {
     return System;
   }
 
+  hello() {
+    const hello = `%c Dill Pixel Matter Physics Plugin v${version} | %cMatter.js v${matterVersion}`;
+    console.log(
+      hello,
+      'background: rgba(31, 41, 55, 1);color: #74b64c',
+      'background: rgba(31, 41, 55, 1);color: #e91e63',
+    );
+  }
+
   initialize(_app: IApplication, options?: Partial<MatterPhysicsPluginOptions>): void | Promise<void> {
     this._options = {
       ...defaultOptions,
@@ -41,6 +49,9 @@ export class MatterPhysicsPlugin extends Plugin implements IMatterPhysicPlugin {
       runner: { ...defaultOptions.runner, ...options?.runner },
       engine: { ...defaultOptions.engine, ...options?.engine },
     };
+
+    this.hello();
+
     if (this._options.autoInit) {
       System.initialize(this._options);
     }

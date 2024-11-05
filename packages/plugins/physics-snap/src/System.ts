@@ -1,6 +1,6 @@
-import { Collision, EntityType, Side, SpatialHashGridFilter } from './types';
-import { Circle, Container, Graphics, Point, Rectangle, Ticker } from 'pixi.js';
 import { IApplication, ICamera, Logger, Signal } from 'dill-pixel';
+import { Circle, Container, Graphics, Point, Rectangle, Ticker } from 'pixi.js';
+import { Collision, EntityType, Side, SpatialHashGridFilter } from './types';
 
 import { Actor } from './Actor';
 import { Entity } from './Entity';
@@ -210,9 +210,12 @@ export class System {
   ): Set<T> {
     if (System.grid) {
       const bounds = entity.boundingRect;
-      return System.grid.query<T>(bounds, filter, dx, dy, debug);
+      return System.grid.query<T>(bounds, filter, dx, dy, entity, debug);
     }
     const filtered = System.all.filter((e: Entity) => {
+      if (e.uid === entity.uid) {
+        return false;
+      }
       if (filter) {
         switch (typeof filter) {
           case 'string':

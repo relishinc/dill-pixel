@@ -1,7 +1,8 @@
-import type { PointLike, SpriteSheetLike, TextureLike, WithRequiredProps } from '../../utils';
-import { ButtonConfig, FlexContainerConfig, UICanvasProps } from '../../ui';
-import { ContainerConfig } from '../../display';
 import { GraphicsContext, TextStyleOptions } from 'pixi.js';
+import { ContainerConfig } from '../../display';
+import { ParticleContainerConfig } from '../../display/ParticleContainer';
+import { ButtonConfig, FlexContainerConfig, UICanvasProps } from '../../ui';
+import type { PointLike, SpriteSheetLike, TextureLike, WithRequiredProps } from '../../utils';
 
 export interface AbstractProps {
   [key: string]: any;
@@ -88,6 +89,8 @@ export interface ContainerProps
     PivotProps,
     VisibilityProps,
     ContainerConfig {}
+
+export interface ParticleContainerProps extends AbstractProps, ParticleContainerConfig {}
 
 export interface FlexContainerProps extends ContainerProps, FlexContainerConfig {}
 

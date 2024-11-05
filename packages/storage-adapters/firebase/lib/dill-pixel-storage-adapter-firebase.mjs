@@ -73,8 +73,7 @@ class R extends p {
     const r = s(this.db, i, e);
     try {
       const t = await l(r);
-      if (!t.exists())
-        return null;
+      if (!t.exists()) return null;
       const o = {
         id: t.id,
         ...t.data()
@@ -166,8 +165,7 @@ class R extends p {
       throw new Error("Firestore has not been initialized. Call initialize() first.");
     try {
       const t = await this.getDocumentWhere(i, e, r);
-      if (!t)
-        return null;
+      if (!t) return null;
       const o = s(this.db, i, t.id);
       return await h(o), t;
     } catch (t) {

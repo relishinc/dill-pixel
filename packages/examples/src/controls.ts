@@ -30,4 +30,4 @@ export const controls = {
   },
 } as const satisfies ControlScheme;
 
-export type ActionName = ActionNames<typeof controls>;
+export type Actions = ActionNames<typeof controls>;

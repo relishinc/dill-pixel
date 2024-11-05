@@ -1,4 +1,3 @@
-import type { AssetLoadingOptions, ImportList, LoggerMode, SceneImportList } from '../../utils';
 import {
   FocusManagerPluginOptions,
   i18nOptions,
@@ -8,13 +7,14 @@ import {
   ResizerPluginOptions,
   SplashOptions,
 } from '../../plugins';
+import type { AssetLoadingOptions, ImportList, LoggerMode, SceneImportList } from '../../utils';
 
 import type { ApplicationOptions } from 'pixi.js';
-import type { CaptionsOptions } from '../../plugins/captions';
 import type { IScene, ISceneTransition, SceneTransition } from '../../display';
-import type { IStorageAdapter } from '../../store';
+import type { CaptionsOptions } from '../../plugins/captions';
+import type { IDataSchema, IStorageAdapter } from '../../store';
 
-export interface IApplicationOptions extends ApplicationOptions {
+export interface IApplicationOptions<D extends IDataSchema = IDataSchema> extends ApplicationOptions {
   id: string;
   resizeToContainer: boolean;
   container: HTMLElement;
@@ -24,6 +24,7 @@ export interface IApplicationOptions extends ApplicationOptions {
   useMathExtras: boolean;
   useVoiceover: boolean;
   storageAdapters: ImportList<IStorageAdapter>;
+  data: Partial<D>;
   plugins: ImportList<IPlugin>;
   assets: AssetLoadingOptions;
   scenes: SceneImportList<IScene>;
