@@ -1,7 +1,7 @@
-import { IApplication, IStorageAdapter, Logger, StorageAdapter } from 'dill-pixel';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import { GenericSchema } from '@supabase/supabase-js/dist/module/lib/types';
+import { IApplication, IStorageAdapter, Logger, StorageAdapter } from 'dill-pixel';
 
 type SaveMethod = 'insert' | 'update' | 'upsert';
 
@@ -19,15 +19,14 @@ const defaultConfig: ISupabaseAdapterOptions = {
   anonKey: process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY,
 };
 
-// TODO: fix type error
-export interface ISupabaseAdapter extends IStorageAdapter {
-  // client: SupabaseClient<Database>; // TODO: get this to work
+export interface ISupabaseAdapter<Database extends GenericSchema = any> extends IStorageAdapter {
+  client: SupabaseClient<Database>;
 
   initialize(app: IApplication, options?: Partial<ISupabaseAdapterOptions>): void;
 
   save(tableId: string, data: any, method?: SaveMethod): Promise<any>;
 
-  load<TExpectedResult = any>(tableId: string, selectors: string[]): TExpectedResult;
+  load<T = any>(tableId: string, selectors?: string[]): Promise<T>;
 
   delete(tableId: string, data: DeleteData): Promise<any>;
 }
@@ -35,7 +34,10 @@ export interface ISupabaseAdapter extends IStorageAdapter {
 /**
  * A class representing a storage adapter that uses Supabase.
  */
-export class SupabaseAdapter<Database = any> extends StorageAdapter implements ISupabaseAdapter {
+export class SupabaseAdapter<Database extends GenericSchema = any>
+  extends StorageAdapter
+  implements ISupabaseAdapter<Database>
+{
   private _options: ISupabaseAdapterOptions;
   private _supabase: SupabaseClient<Database>;
 
@@ -101,8 +103,11 @@ export class SupabaseAdapter<Database = any> extends StorageAdapter implements I
    * @example
    * await this.app.supabase.load('scores', ['score', 'username']).order('score', { ascending: false }).limit(5)
    */
-  load(tableId: string, selectors?: string[]): PostgrestFilterBuilder<any, any, any> {
-    return this.client.from(tableId).select(selectors?.join(',')) as PostgrestFilterBuilder<any, any, any>;
+  async load<TExpectedLoadResult = any>(tableId: string, selectors?: string[]): Promise<TExpectedLoadResult> {
+    const query = this.client.from(tableId).select(selectors?.join(','));
+    const { data, error } = await query;
+    if (error) throw error;
+    return data as TExpectedLoadResult;
   }
 
   /**

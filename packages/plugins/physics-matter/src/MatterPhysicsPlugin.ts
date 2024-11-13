@@ -5,6 +5,10 @@ import { System } from './System';
 import { matterVersion, version } from './version';
 export interface IMatterPhysicPlugin extends IPlugin {}
 
+export interface IMatterPhysicsPlugin extends IMatterPhysicPlugin {
+  get system(): typeof System;
+}
+
 export type MatterPhysicsPluginOptions = {
   debug: boolean;
   autoInit: boolean;
@@ -33,7 +37,7 @@ export class MatterPhysicsPlugin extends Plugin implements IMatterPhysicPlugin {
     return System;
   }
 
-  hello() {
+  private hello() {
     const hello = `%c Dill Pixel Matter Physics Plugin v${version} | %cMatter.js v${matterVersion}`;
     console.log(
       hello,

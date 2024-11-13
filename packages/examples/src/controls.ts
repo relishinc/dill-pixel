@@ -1,4 +1,4 @@
-import { ActionNames, ControlScheme } from 'dill-pixel';
+import { ActionNames, ControlScheme, GenericActionNames } from 'dill-pixel';
 
 export const controls = {
   keyboard: {
@@ -30,4 +30,14 @@ export const controls = {
   },
 } as const satisfies ControlScheme;
 
-export type Actions = ActionNames<typeof controls>;
+const firebaseActions = {
+  save_to_firebase: { context: '*' },
+  load_from_firebase: { context: '*' },
+  clear_firebase: { context: '*' },
+  delete_from_firebase: { context: '*' },
+} as const;
+
+export type ControlActions = ActionNames<typeof controls>;
+export type FirebaseActions = GenericActionNames<typeof firebaseActions>;
+
+export type Actions = ControlActions | FirebaseActions;

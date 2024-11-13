@@ -1,5 +1,5 @@
-import type {Application} from '../../Application';
-import {IPlugin, Plugin} from '../../plugins';
+import type { Application } from '../../Application';
+import { IPlugin, Plugin } from '../../plugins';
 
 /**
  * Interface for a storage adapter module.

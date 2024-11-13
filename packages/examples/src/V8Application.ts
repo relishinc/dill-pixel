@@ -1,34 +1,45 @@
-import { Application, create, LocalStorageAdapter } from 'dill-pixel';
+import { Application, create, DataSchema } from 'dill-pixel';
 
 import { Actions, controls } from '@/controls';
 import EN from '@/locales/en';
 import { Transition } from '@/Transition';
+import { IGoogleAnalyticsPlugin } from '@dill-pixel/plugin-google-analytics/GoogleAnalyticsPlugin';
 import { IFirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
 import manifest from './assets.json';
 import { ExampleOutliner } from './ui/ExampleOutliner';
 
-type DataSchema = {
+interface MyDataSchema extends DataSchema {
   foo?: string;
   bar?: number;
+  saved?: string;
   baz?: {
     qux?: boolean;
     quux?: string[];
   };
+}
+
+type MyEvents = {
+  foo: { bar: string; baz: number; qux: boolean };
 };
 
-export class V8Application extends Application<DataSchema, Actions> {
+// interface MyEvents extends GAEvents {
+//   foo: { bar: string; baz: number; qux: boolean };
+// }
+
+export class V8Application extends Application<MyDataSchema, Actions> {
   get firebase(): IFirebaseAdapter {
-    return this.store.getAdapter<IFirebaseAdapter>('firebase');
+    return this.store.getAdapter('firebase') as IFirebaseAdapter;
+  }
+
+  get analytics(): IGoogleAnalyticsPlugin<MyEvents> {
+    return this.getPlugin('analytics') as IGoogleAnalyticsPlugin<MyEvents>;
   }
 }
 
 async function boot() {
-  const app = await create<V8Application>(
+  const app = await create<V8Application, MyDataSchema>(
     {
       id: 'V8Application',
-      antialias: false,
-      autoDensity: false,
-      useMathExtras: true,
       // splash: {
       //   view: Splash,
       //   hideWhen: 'firstSceneEnter',
@@ -39,12 +50,13 @@ async function boot() {
       showStats: true,
       showSceneDebugMenu: true,
       useHash: true,
+      useVoiceover: true,
       data: {
-        foo: 'boo',
-        baz: {
-          qux: true,
+        initial: {
+          saved: 'QUX',
         },
-      } satisfies DataSchema,
+        backupKeys: ['saved'],
+      },
       focus: {
         outliner: ExampleOutliner,
       },
@@ -61,6 +73,14 @@ async function boot() {
         },
       },
       plugins: [
+        {
+          id: 'analytics',
+          module: () => import('@dill-pixel/plugin-google-analytics'),
+        },
+        {
+          id: 'springroll',
+          module: () => import('@dill-pixel/plugin-springroll'),
+        },
         {
           id: 'physics',
           module: () => import('@dill-pixel/plugin-snap-physics'),
@@ -102,7 +122,6 @@ async function boot() {
         },
       ],
       storageAdapters: [
-        { id: 'local', module: LocalStorageAdapter, options: { namespace: 'v8app' } },
         {
           id: 'firebase',
           namedExport: 'FirebaseAdapter',
@@ -319,6 +338,10 @@ async function boot() {
   console.log('data', JSON.stringify(app.data.get(), null, 2));
   app.data.clear('baz');
   console.log('data', JSON.stringify(app.data.get(), null, 2));
+  app.data.save('saved', 'FOOBARBAZ');
+  console.log('data', JSON.stringify(app.data.get(), null, 2));
+
+  app.analytics.trackEvent('foo', { bar: 'baz', baz: 1, qux: true });
 
   function populateSidebar() {
     // populate sidebar

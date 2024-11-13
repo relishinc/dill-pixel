@@ -29,3 +29,5 @@ export type ActionNames<T> = {
     [A in keyof T[K]]: keyof T[K][A];
   }[keyof T[K]];
 }[keyof T];
+
+export type GenericActionNames<T> = keyof T;

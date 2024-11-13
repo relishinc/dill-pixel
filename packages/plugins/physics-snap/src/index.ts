@@ -1,14 +1,16 @@
 import { SnapPhysicsPlugin } from './SnapPhysicsPlugin';
 
-export { Entity } from './Entity';
 export { Actor } from './Actor';
-export { Solid } from './Solid';
-export { Wall } from './Wall';
-export { System } from './System';
-export { Sensor } from './Sensor';
+export { Entity } from './Entity';
 export type { ICollider } from './ICollider';
-export type { Collision, CollisionDirection, Side, EntityType, SnapBoundary, SpatialHashGridFilter } from './types';
-export { checkPointIntersection, checkCollision } from './utils';
 export * from './mixins';
+export { Sensor } from './Sensor';
+export { Solid } from './Solid';
+export { System } from './System';
+export type { Collision, CollisionDirection, EntityType, Side, SnapBoundary, SpatialHashGridFilter } from './types';
+export { checkCollision, checkPointIntersection } from './utils';
+export { Wall } from './Wall';
+
+export type { ISnapPhysicsPlugin } from './SnapPhysicsPlugin';
 
 export default SnapPhysicsPlugin;

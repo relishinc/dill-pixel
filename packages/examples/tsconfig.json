@@ -19,6 +19,12 @@
       "@dill-pixel/plugin-matter-physics/*": [
         "../plugins/physics-matter/src/*"
       ],
+      "@dill-pixel/plugin-springroll/*": [
+        "../plugins/springroll/src/*"
+      ],
+      "@dill-pixel/plugin-google-analytics/*": [
+        "../plugins/google-analytics/src/*"
+      ],
       "@dill-pixel/storage-adapter-firebase/*": [
         "../storage-adapters/firebase/src/*"
       ]
@@ -45,8 +51,14 @@
       "path": "../plugins/rive"
     },
     {
+      "path": "../plugins/springroll"
+    },
+    {
+      "path": "../plugins/google-analytics"
+    },
+    {
       "path": "../storage-adapters/firebase"
-    }
+    },
   ],
   "include": [
     "src/**/*.ts",

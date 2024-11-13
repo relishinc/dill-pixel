@@ -31,7 +31,7 @@ import {
   Renderer,
   RendererDestroyOptions,
 } from 'pixi.js';
-import type { IDataSchema, IStorageAdapter, IStore } from './store';
+import type { DataSchema, IStorageAdapter, IStore } from './store';
 import { DataAdapter, Store } from './store';
 import type { ImportListItem, Size } from './utils';
 import { bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from './utils';
@@ -61,10 +61,12 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   autoDensity: false,
   resolution: Math.max(window.devicePixelRatio, 2),
   // dill pixel options
+  useHash: isDev,
+  showSceneDebugMenu: isDev,
+  showStats: isDev,
   useStore: true,
   useSpine: false,
-  useMathExtras: false,
-  useVoiceover: true,
+  useVoiceover: false,
   storageAdapters: [],
   plugins: [],
   scenes: [],
@@ -74,12 +76,12 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   },
 };
 
-export class Application<D extends IDataSchema = IDataSchema, C = Action, R extends Renderer = Renderer>
+export class Application<D extends DataSchema = DataSchema, C = Action, R extends Renderer = Renderer>
   extends PIXIPApplication<R>
-  implements IApplication
+  implements IApplication<D>
 {
   public static containerElement: HTMLElement;
-  protected static instance: IApplication;
+  protected static instance: IApplication<DataSchema>;
   public __dill_pixel_method_binding_root = true;
   // config
   public config: Partial<IApplicationOptions<D>>;
@@ -324,11 +326,11 @@ export class Application<D extends IDataSchema = IDataSchema, C = Action, R exte
     }
   }
 
-  public async initialize(config: AppConfig): Promise<IApplication> {
+  public async initialize(config: AppConfig<D>): Promise<IApplication<D>> {
     if (Application.instance) {
       throw new Error('Application is already initialized');
     }
-    Application.instance = this as IApplication;
+    Application.instance = this as unknown as IApplication<DataSchema>;
     this.config = Object.assign({ ...defaultApplicationOptions }, config as Partial<IApplicationOptions<D>>);
 
     if (config.container) {
@@ -389,7 +391,7 @@ export class Application<D extends IDataSchema = IDataSchema, C = Action, R exte
 
     this._isBooting = false;
     // return the Application instance to the create method, if needed
-    return Application.instance;
+    return Application.instance as unknown as IApplication<D>;
   }
 
   public getPlugin<T extends IPlugin>(pluginName: string, debug: boolean = false): T {
@@ -403,7 +405,7 @@ export class Application<D extends IDataSchema = IDataSchema, C = Action, R exte
   async postInitialize(): Promise<void> {
     (globalThis as any).__PIXI_APP__ = this;
     this._plugins.forEach((plugin) => {
-      plugin.postInitialize(this);
+      plugin.postInitialize(this as unknown as IApplication<DataSchema>);
     });
 
     this.webEvents.onVisibilityChanged.connect((visible) => {
@@ -500,7 +502,7 @@ export class Application<D extends IDataSchema = IDataSchema, C = Action, R exte
 
     if (this.config.useStore) {
       this._store = new Store();
-      this._store.initialize(this);
+      this._store.initialize(this as unknown as IApplication<DataSchema>);
       this.registerDefaultStorageAdapters();
     }
   }
@@ -509,12 +511,12 @@ export class Application<D extends IDataSchema = IDataSchema, C = Action, R exte
   protected async registerPlugin(plugin: IPlugin, options?: any) {
     if (this._plugins.has(plugin.id)) {
       Logger.error(`Plugin with id "${plugin.id}" already registered. Not registering.`);
-      return plugin.initialize(this as IApplication, options);
+      return plugin.initialize(this as unknown as IApplication<DataSchema>, options);
     }
     plugin.registerCoreFunctions();
     plugin.registerCoreSignals();
     this._plugins.set(plugin.id, plugin);
-    return plugin.initialize(this as IApplication, options);
+    return plugin.initialize(this as unknown as IApplication<DataSchema>, options);
   }
 
   protected async registerDefaultPlugins() {
@@ -548,7 +550,7 @@ export class Application<D extends IDataSchema = IDataSchema, C = Action, R exte
 
   protected async registerDefaultStorageAdapters() {
     const dataAdapter = new DataAdapter();
-    await this.registerStorageAdapter(dataAdapter, { data: this.config.data });
+    await this.registerStorageAdapter(dataAdapter, this.config.data);
   }
 
   protected async registerPlugins() {

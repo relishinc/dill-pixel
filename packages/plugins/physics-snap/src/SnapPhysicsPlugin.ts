@@ -1,7 +1,17 @@
 import { IApplication, Logger, Plugin } from 'dill-pixel';
-import { System } from './System';
 import { Point } from 'pixi.js';
 import { pointExtras } from './extras';
+import { System } from './System';
+
+export interface ISnapPhysicsPlugin extends Plugin {
+  get system(): typeof System;
+  get gridCellSize(): number;
+  set gridCellSize(value: number);
+  get useSpatialHashGrid(): boolean;
+  set useSpatialHashGrid(value: boolean);
+  get fps(): number;
+  set fps(value: number);
+}
 
 type SnapPhysicsPluginOptions = {
   useSpatialHashGrid: boolean;

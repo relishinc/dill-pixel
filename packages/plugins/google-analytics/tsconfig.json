@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "rootDir": "./src",
+    "outDir": "./lib",
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "useDefineForClassFields": false,
+    "strictPropertyInitialization": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowJs": true,
+    "composite": true,
+    "paths": {
+      "dill-pixel/*": [
+        "../../../src/*"
+      ]
+    }
+  },
+  "typeRoots": [
+    "./node_modules/@types"
+  ],
+  "include": [
+    "./src/**/*.ts",
+    "../../src/**/*.ts"
+  ],
+  "exclude": [
+    "./lib",
+    "./node_modules"
+  ]
+}

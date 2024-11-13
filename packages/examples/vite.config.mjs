@@ -14,6 +14,8 @@ export default extendConfig({
       '@dill-pixel/plugin-snap-physics': path.resolve(__dirname, '../plugins/physics-snap/src'),
       '@dill-pixel/plugin-arcade-physics': path.resolve(__dirname, '../plugins/physics-arcade/src'),
       '@dill-pixel/plugin-matter-physics': path.resolve(__dirname, '../plugins/physics-matter/src'),
+      '@dill-pixel/plugin-springroll': path.resolve(__dirname, '../plugins/springroll/src'),
+      '@dill-pixel/plugin-google-analytics': path.resolve(__dirname, '../plugins/google-analytics/src'),
       '@dill-pixel/plugin-rive': path.resolve(__dirname, '../plugins/rive/src'),
       '@dill-pixel/storage-adapter-firebase': path.resolve(__dirname, '../storage-adapters/firebase/src'),
     },

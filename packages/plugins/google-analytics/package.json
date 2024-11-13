@@ -1,0 +1,36 @@
+{
+  "name": "@dill-pixel/plugin-google-analytics",
+  "version": "8.16.7",
+  "description": "",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "main": "lib/dill-pixel-plugin-google-analytics.mjs",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "default": "./lib/dill-pixel-plugin-google-analytics.mjs",
+      "types": "./lib/index.d.ts"
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "pnpm run version && vite build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "version": "node generateVersion.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "dill-pixel": "workspace:*",
+    "vite-plugin-dts": "^3.9.1"
+  },
+  "peerDependencies": {
+    "dill-pixel": "8.16.7"
+  },
+  "dependencies": {
+    "@types/gtag.js": "^0.0.20"
+  }
+}

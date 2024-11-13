@@ -1,4 +1,3 @@
-import { Signal } from '../../signals';
 import type {
   ChannelVolumeDetail,
   FocusChangeDetail,
@@ -8,6 +7,7 @@ import type {
   SoundDetail,
 } from '../../plugins';
 import { ActionContext } from '../../plugins';
+import { Signal } from '../../signals';
 import type { Size } from '../../utils';
 
 export interface ICoreSignals {
@@ -51,4 +51,5 @@ export interface ICoreSignals {
   // AssetPlugin
   onLoadProgress: Signal<(progress: number) => void>;
   onLoadComplete: Signal<() => void>;
+  onError: Signal<(error: Error) => void>;
 }

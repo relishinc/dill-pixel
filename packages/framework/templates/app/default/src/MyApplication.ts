@@ -1,18 +1,17 @@
-import { Application, create, isDev, LocalStorageAdapter } from 'dill-pixel';
+import { Application, create, DataSchema, isDev } from 'dill-pixel';
 
 // import { Splash } from '@/Splash';
-import { ActionName, controls } from '@/controls';
+import { Actions, controls } from '@/controls';
 import manifest from './assets.json';
 
-export class MyApplication extends Application {
-  // strongly type actions (wip)
-  actions(name: ActionName) {
-    return super.actions(name);
-  }
+interface DataSchema extends DataSchema {
+  dill?: string;
 }
 
+export class MyApplication extends Application<DataSchema, Actions> {}
+
 async function boot() {
-  await create(
+  await create<MyApplication, DataSchema>(
     {
       id: 'MyApplication',
       // splash: {
@@ -25,6 +24,13 @@ async function boot() {
       useSpine: false,
       useVoiceover: false,
       defaultSceneLoadMethod: 'immediate',
+      data: {
+        initial: {
+          dill: 'pixel',
+        },
+        //backupAll: true,
+        //backupKeys: ['dill'],
+      },
       input: {
         controls,
       },
@@ -38,7 +44,6 @@ async function boot() {
         },
       },
       plugins: [],
-      storageAdapters: [{ id: 'local', module: LocalStorageAdapter, options: { namespace: 'myDillPixelApp' } }],
       scenes: [
         {
           id: 'start',

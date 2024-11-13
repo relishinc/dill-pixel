@@ -8,4 +8,6 @@ export * from './interfaces';
 export * from './System';
 export * from './types';
 
+export type { IMatterPhysicsPlugin } from './MatterPhysicsPlugin';
+
 export default MatterPhysicsPlugin;

@@ -3,16 +3,16 @@ import { gsap } from 'gsap';
 import { Signal } from '../../signals';
 import { bindAllMethods } from '../../utils';
 import { IAudioChannel } from './AudioChannel';
-import { IAudioManagerPlugin } from './AudioManagerPlugin';
+import { ChannelName, IAudioManagerPlugin } from './AudioManagerPlugin';
 
-export interface IAudioInstance {
+export interface IAudioInstance<C extends ChannelName = ChannelName> {
   volume: number;
   storedVolume: number;
   media: IMediaInstance;
   channel: IAudioChannel;
   muted: boolean;
   id: string;
-  manager: IAudioManagerPlugin;
+  manager: IAudioManagerPlugin<C>;
   onStart: Signal<(instance: IAudioInstance) => void>;
   onStop: Signal<(instance: IAudioInstance) => void>;
   onEnd: Signal<(instance: IAudioInstance) => void>;
@@ -41,7 +41,7 @@ export interface IAudioInstance {
   resume(): void;
 }
 
-export class AudioInstance implements IAudioInstance {
+export class AudioInstance<C extends ChannelName = ChannelName> implements IAudioInstance {
   public storedVolume: number;
   public onStart: Signal<(instance: IAudioInstance) => void> = new Signal<(instance: IAudioInstance) => void>();
   public onStop: Signal<(instance: IAudioInstance) => void> = new Signal<(instance: IAudioInstance) => void>();

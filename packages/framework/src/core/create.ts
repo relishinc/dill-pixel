@@ -1,6 +1,6 @@
 import { Application } from '../Application';
 import { sayHello } from '../hello';
-import { IDataSchema } from '../store';
+import { DataSchema } from '../store';
 import { delay } from '../utils';
 import { IApplication } from './interfaces';
 import { AppConfig } from './types';
@@ -14,8 +14,8 @@ export function createContainer(id: string) {
   return container;
 }
 
-export async function create<T extends IApplication = Application, D extends IDataSchema = IDataSchema>(
-  config: AppConfig<T, D> = { id: 'DillPixelApplication' },
+export async function create<T extends IApplication = Application, D extends DataSchema = DataSchema>(
+  config: AppConfig<D> = { id: 'DillPixelApplication' },
   ApplicationClass: new () => IApplication = Application,
   domElement: string | Window | HTMLElement = DEFAULT_GAME_CONTAINER_ID,
   speak: boolean = true,
@@ -45,7 +45,7 @@ export async function create<T extends IApplication = Application, D extends IDa
   }
   config.container = el;
   const instance = new ApplicationClass();
-  await instance.initialize(config);
+  await instance.initialize(config as AppConfig<DataSchema>);
   if (el) {
     el.appendChild(instance.canvas as HTMLCanvasElement);
     instance.setContainer(el);

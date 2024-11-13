@@ -1,5 +1,5 @@
 import { IAudioInstance } from './AudioInstance';
-import { IAudioManagerPlugin } from './AudioManagerPlugin';
+import { ChannelName, IAudioManagerPlugin } from './AudioManagerPlugin';
 
 export interface IAudioChannel {
   name: string;
@@ -18,12 +18,12 @@ export interface IAudioChannel {
   destroy(): void;
 }
 
-export class AudioChannel {
+export class AudioChannel<C extends ChannelName = ChannelName> {
   private _sounds: Map<string, IAudioInstance> = new Map<string, IAudioInstance>();
 
   constructor(
-    public name: string,
-    public manager: IAudioManagerPlugin,
+    public name: C,
+    public manager: IAudioManagerPlugin<C>,
   ) {
     this.muted = this.manager.muted;
   }

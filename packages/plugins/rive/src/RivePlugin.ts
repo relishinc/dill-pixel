@@ -1,6 +1,11 @@
-import {IApplication, IPlugin, Plugin} from 'dill-pixel';
-import Rive, {RiveCanvas} from '@rive-app/canvas-advanced-lite';
-import {BrowserAdapter, checkExtension, extensions, ExtensionType, LoaderParserPriority} from 'pixi.js';
+import Rive, { RiveCanvas } from '@rive-app/canvas-advanced-lite';
+import { IApplication, IPlugin, Plugin } from 'dill-pixel';
+import { BrowserAdapter, checkExtension, extensions, ExtensionType, LoaderParserPriority } from 'pixi.js';
+
+export interface IRivePlugin extends IPlugin {
+  rive: RiveCanvas;
+  cleanup(): void;
+}
 
 /**
  * Defines the options for the Rive plugin.

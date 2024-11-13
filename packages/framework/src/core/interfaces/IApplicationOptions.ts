@@ -12,19 +12,18 @@ import type { AssetLoadingOptions, ImportList, LoggerMode, SceneImportList } fro
 import type { ApplicationOptions } from 'pixi.js';
 import type { IScene, ISceneTransition, SceneTransition } from '../../display';
 import type { CaptionsOptions } from '../../plugins/captions';
-import type { IDataSchema, IStorageAdapter } from '../../store';
+import type { DataSchema, IDataAdapterOptions, IStorageAdapter } from '../../store';
 
-export interface IApplicationOptions<D extends IDataSchema = IDataSchema> extends ApplicationOptions {
+export interface IApplicationOptions<D extends DataSchema = DataSchema> extends ApplicationOptions {
   id: string;
   resizeToContainer: boolean;
   container: HTMLElement;
   logger: LoggerMode;
   useStore: boolean;
   useSpine: boolean;
-  useMathExtras: boolean;
   useVoiceover: boolean;
   storageAdapters: ImportList<IStorageAdapter>;
-  data: Partial<D>;
+  data: Partial<IDataAdapterOptions<D>>;
   plugins: ImportList<IPlugin>;
   assets: AssetLoadingOptions;
   scenes: SceneImportList<IScene>;

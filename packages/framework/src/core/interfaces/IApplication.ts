@@ -16,15 +16,15 @@ import type {
 } from '../../plugins';
 import { ActionContext } from '../../plugins';
 import { Signal } from '../../signals';
-import type { IStore } from '../../store';
+import type { DataSchema, IDataAdapter, IStore } from '../../store';
 import type { Size } from '../../utils';
 import type { AppConfig } from '../types';
 import type { IApplicationOptions } from './IApplicationOptions';
 import type { ICoreFunctions } from './ICoreFunctions';
 import { ICoreSignals } from './ICoreSignals';
 
-export interface IApplication extends PIXIPApplication {
-  config: Partial<IApplicationOptions>;
+export interface IApplication<D extends DataSchema = DataSchema> extends PIXIPApplication {
+  config: Partial<IApplicationOptions<D>>;
   readonly size: Size;
   readonly center: Point;
   manifest: AssetsManifest | string | undefined;
@@ -40,6 +40,7 @@ export interface IApplication extends PIXIPApplication {
   input: IInputPlugin;
   controls: IControls;
   store: IStore;
+  data: IDataAdapter<D>;
 
   actionContext: string | ActionContext;
   onPause: Signal<() => void>;
@@ -53,7 +54,7 @@ export interface IApplication extends PIXIPApplication {
 
   actions(action: any): ActionSignal;
 
-  initialize(config: AppConfig): Promise<IApplication>;
+  initialize(config: AppConfig<D>): Promise<IApplication<D>>;
 
   postInitialize(): Promise<void>;
 

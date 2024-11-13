@@ -31,4 +31,4 @@ export const controls = {
 } as const satisfies ControlScheme;
 
 // New type to get all action names - don't touch this - it allows for strongly typed actions
-export type ActionName = ActionNames<typeof controls>;
+export type Actions = ActionNames<typeof controls>;

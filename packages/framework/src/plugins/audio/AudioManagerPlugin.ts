@@ -6,16 +6,16 @@ import { Logger } from '../../utils';
 import type { IPlugin } from '../Plugin';
 import { Plugin } from '../Plugin';
 
+import { IApplication } from '../../core';
 import { AudioChannel, IAudioChannel } from './AudioChannel';
 import { AudioInstance, IAudioInstance } from './AudioInstance';
-import { IApplication } from '../../core';
 import TweenVars = gsap.TweenVars;
 
 export type SoundDetail = { id: string; instance: IAudioInstance; channelName: string };
 export type ChannelVolumeDetail = { channel: IAudioChannel; volume: number };
-export type ChannelName = 'music' | 'sfx' | 'voiceover' | string;
+export type ChannelName = 'music' | 'sfx' | 'voiceover' | (string & {});
 
-export interface IAudioManagerPlugin extends IPlugin {
+export interface IAudioManagerPlugin<C extends ChannelName = ChannelName> extends IPlugin {
   onSoundStarted: Signal<(detail: SoundDetail) => void>;
   onSoundEnded: Signal<(detail: SoundDetail) => void>;
   onMasterVolumeChanged: Signal<(volume: number) => void>;
@@ -32,17 +32,17 @@ export interface IAudioManagerPlugin extends IPlugin {
 
   createChannel(name: string): void;
 
-  play(soundId: string, channelName: ChannelName, options?: PlayOptions): Promise<IAudioInstance>;
+  play(soundId: string, channelName: C, options?: PlayOptions): Promise<IAudioInstance>;
 
-  isPlaying(soundId: string, channelName: ChannelName): boolean;
+  isPlaying(soundId: string, channelName: C): boolean;
 
-  load(soundId: string | string[], channelName: ChannelName, options?: PlayOptions): void;
+  load(soundId: string | string[], channelName: C, options?: PlayOptions): void;
 
-  stop(soundId: string, channelName: ChannelName): IAudioInstance | undefined;
+  stop(soundId: string, channelName: C): IAudioInstance | undefined;
 
-  setChannelVolume(channelName: ChannelName | ChannelName[], volume: number): void;
+  setChannelVolume(channelName: C | C[], volume: number): void;
 
-  getChannel(name: ChannelName): IAudioChannel | undefined;
+  getChannel(name: C): IAudioChannel | undefined;
 
   addAllFromManifest(manifest: AssetsManifest): void;
 
@@ -50,18 +50,13 @@ export interface IAudioManagerPlugin extends IPlugin {
 
   add(soundAsset: UnresolvedAsset): void;
 
-  fade(soundId: string, channelName: ChannelName, props?: gsap.TweenVars): Promise<gsap.core.Tween | null>;
+  fade(soundId: string, channelName: C, props?: gsap.TweenVars): Promise<gsap.core.Tween | null>;
 
-  fadeIn(soundId: string, channelName: ChannelName, props?: gsap.TweenVars): Promise<gsap.core.Tween | null>;
+  fadeIn(soundId: string, channelName: C, props?: gsap.TweenVars): Promise<gsap.core.Tween | null>;
 
-  fadeOut(soundId: string, channelName: ChannelName, props?: gsap.TweenVars): Promise<gsap.core.Tween | null>;
+  fadeOut(soundId: string, channelName: C, props?: gsap.TweenVars): Promise<gsap.core.Tween | null>;
 
-  crossFade(
-    outSoundId: string,
-    inSoundId: string,
-    channelName: ChannelName,
-    duration?: number,
-  ): Promise<gsap.core.Tween | null>;
+  crossFade(outSoundId: string, inSoundId: string, channelName: C, duration?: number): Promise<gsap.core.Tween | null>;
 
   mute(): void;
 
@@ -75,7 +70,7 @@ export interface IAudioManagerPlugin extends IPlugin {
 
   restore(): Promise<void>;
 
-  getAudioInstance(soundId: string, channelName: string): IAudioInstance | undefined;
+  getAudioInstance(soundId: string, channelName: C): IAudioInstance | undefined;
 
   stopAll(fade?: boolean, duration?: number, props?: TweenVars): void;
 }
@@ -89,7 +84,7 @@ export interface IAudioManagerPlugin extends IPlugin {
  * const audioManager = new AudioManager();
  * audioManager.play('soundId', 'music');
  */
-export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
+export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plugin implements IAudioManagerPlugin<C> {
   // signals
   /**
    * Signal that is emitted when a sound starts playing.
@@ -171,7 +166,7 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
     this._setMuted();
   }
 
-  private _channels: Map<string, IAudioChannel> = new Map();
+  private _channels: Map<C, IAudioChannel> = new Map();
 
   /**
    * Gets the map of audio channels.
@@ -182,19 +177,19 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
   }
 
   get music(): IAudioChannel {
-    return this._channels.get('music')!;
+    return this._channels.get('music' as C)!;
   }
 
   get sfx(): IAudioChannel {
-    return this._channels.get('sfx')!;
+    return this._channels.get('sfx' as C)!;
   }
 
   get voiceover(): IAudioChannel {
-    return this._channels.get('voiceover')!;
+    return this._channels.get('voiceover' as C)!;
   }
 
   get vo(): IAudioChannel {
-    return this._channels.get('voiceover')!;
+    return this._channels.get('voiceover' as C)!;
   }
 
   public destroy(): void {
@@ -228,31 +223,31 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
    * @param {string} name
    */
   public createChannel(name: string): void {
-    if (this._channels.has(name)) {
+    if (this._channels.has(name as C)) {
       throw new Error(`Channel with name ${name} already exists.`);
     }
-    const channel = new AudioChannel(name, this);
-    this._channels.set(name, channel);
+    const channel = new AudioChannel<C>(name as C, this);
+    this._channels.set(name as C, channel);
   }
 
   /**
    * Sets the volume of the specified channel.
-   * @param {ChannelName | ChannelName[]} channelName
+   * @param {ChannelName|ChannelName[]} channelName
    * @param {number} volume
    */
-  public setChannelVolume(channelName: ChannelName | ChannelName[], volume: number): void {
+  public setChannelVolume(channelName: C | C[], volume: number): void {
     if (!Array.isArray(channelName)) {
       channelName = [channelName];
     }
-    channelName.forEach((name) => this._setChannelVolume(name, volume));
+    channelName.forEach((name) => this._setChannelVolume(name as C, volume));
   }
 
   /**
    * Gets the audio channel with the specified name.
-   * @param {ChannelName} name
+   * @param {C} name
    * @returns {IAudioChannel | undefined}
    */
-  public getChannel(name: ChannelName): IAudioChannel | undefined {
+  public getChannel(name: C): IAudioChannel | undefined {
     return this._channels.get(name);
   }
 
@@ -352,7 +347,7 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
     }
   }
 
-  isPlaying(soundId: string, channelName: ChannelName): boolean {
+  isPlaying(soundId: string, channelName: C): boolean {
     const channel = this._channels.get(channelName);
     if (channel) {
       return channel.get(soundId)?.isPlaying === true;
@@ -363,18 +358,21 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
   /**
    * Plays a sound with the specified ID in the specified channel.
    * @param {string} soundId
-   * @param {ChannelName} channelName
+   * @param {C} channelName
    * @param {PlayOptions} options
    * @returns {Promise<IAudioInstance>}
    */
-  public async play(soundId: string, channelName: ChannelName = 'sfx', options?: PlayOptions): Promise<IAudioInstance> {
+  public async play(soundId: string, channelName: C = 'sfx' as C, options?: PlayOptions): Promise<IAudioInstance> {
     if (this._idMap.has(soundId)) {
       soundId = this._idMap.get(soundId) as string;
     }
     const channel = this._channels.get(channelName);
     if (channel) {
       soundId = this._verifySoundId(soundId);
-      const audioInstance = channel.add(soundId, new AudioInstance(soundId, channel, this));
+      const audioInstance = channel.add(
+        soundId,
+        new AudioInstance<C>(soundId, channel, this as IAudioManagerPlugin<C>),
+      );
       const mediaInstance = await sound.play(soundId, options);
       audioInstance.media = mediaInstance;
       if (options?.volume !== undefined) {
@@ -397,10 +395,10 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
   /**
    * Stops a sound with the specified ID in the specified channel.
    * @param {string} soundId
-   * @param {ChannelName} channelName
+   * @param {C} channelName
    * @returns {IAudioInstance | undefined}
    */
-  public stop(soundId: string, channelName: ChannelName = 'sfx'): IAudioInstance | undefined {
+  public stop(soundId: string, channelName: C = 'sfx' as C): IAudioInstance | undefined {
     const channel = this._channels.get(channelName);
     if (channel) {
       return channel.remove(soundId);
@@ -412,13 +410,13 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
   /**
    * Fades in a sound with the specified ID in the specified channel.
    * @param {string} soundId
-   * @param {ChannelName} channelName
+   * @param {C} channelName
    * @param {gsap.TweenVars} props
    * @returns {Promise<gsap.core.Tween | null>}
    */
   public async fadeIn(
     soundId: string,
-    channelName: ChannelName = 'music',
+    channelName: C = 'music' as C,
     props: gsap.TweenVars,
   ): Promise<gsap.core.Tween | null> {
     const channel = this._channels.get(channelName);
@@ -438,13 +436,13 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
   /**
    * Fades out a sound with the specified ID in the specified channel.
    * @param {string} soundId
-   * @param {ChannelName} channelName
+   * @param {C} channelName
    * @param {Partial<gsap.TweenVars>} props
    * @returns {Promise<gsap.core.Tween | null>}
    */
   public async fadeOut(
     soundId: string,
-    channelName: ChannelName = 'music',
+    channelName: C = 'music' as C,
     props: Partial<gsap.TweenVars> = { volume: 0 },
   ): Promise<gsap.core.Tween | null> {
     if (!props) {
@@ -475,8 +473,8 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
     duration: number = 2,
   ): Promise<gsap.core.Tween | null> {
     const crossFadeProps = { duration, ease: 'linear.easeNone' };
-    void this.fadeOut(outSoundId, channelName, crossFadeProps);
-    return this.fadeIn(inSoundId, channelName, crossFadeProps);
+    void this.fadeOut(outSoundId, channelName as C, crossFadeProps);
+    return this.fadeIn(inSoundId, channelName as C, crossFadeProps);
   }
 
   /**
@@ -493,7 +491,7 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
     props: gsap.TweenVars,
     stopOnComplete: boolean = false,
   ): Promise<gsap.core.Tween | null> {
-    const channel = this._channels.get(channelName);
+    const channel = this._channels.get(channelName as C);
     if (channel) {
       soundId = this._verifySoundId(soundId);
     }
@@ -502,7 +500,7 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
       const tween = gsap.to(soundInstance, props);
       tween.eventCallback('onComplete', () => {
         if (stopOnComplete) {
-          this.stop(soundId, channelName);
+          this.stop(soundId, channelName as C);
         }
       });
       return tween;
@@ -534,7 +532,7 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
     this.pause();
   }
 
-  public getAudioInstance(soundId: string, channelName: string = 'sfx'): IAudioInstance | undefined {
+  public getAudioInstance(soundId: string, channelName: C = 'sfx' as C): IAudioInstance | undefined {
     const channel = this._channels.get(channelName);
     soundId = this._verifySoundId(soundId);
     if (channel) {
@@ -544,7 +542,7 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
     }
   }
 
-  public load(soundId: string | string[], channelName: ChannelName = 'sfx', options?: PlayOptions): void {
+  public load(soundId: string | string[], channelName: C = 'sfx' as C, options?: PlayOptions): void {
     if (!Array.isArray(soundId)) {
       soundId = [soundId];
     }
@@ -558,7 +556,7 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
         // const audioInstance = new AudioInstance(id, channel, this);
         const soundInstance = sound.find(id);
         soundInstance.options = { ...options, autoPlay: false };
-        const audioInstance = channel.add(id, new AudioInstance(id, channel, this));
+        const audioInstance = channel.add(id, new AudioInstance<C>(id, channel, this as IAudioManagerPlugin<C>));
         audioInstance.media = soundInstance.instances[0];
         audioInstance.pause();
       } else {
@@ -706,11 +704,11 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
 
   /**
    * Sets the volume of the specified channel.
-   * @param {ChannelName} channelName
+   * @param {C} channelName
    * @param {number} volume
    * @private
    */
-  private _setChannelVolume(channelName: ChannelName, volume: number): void {
+  private _setChannelVolume(channelName: C, volume: number): void {
     const channel = this._channels.get(channelName);
     if (channel) {
       channel.volume = volume;
@@ -723,10 +721,10 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
    * Sound started event handler. Emit the onSoundStarted signal.
    * @param {string} id
    * @param {IAudioInstance} instance
-   * @param {ChannelName} channelName
+   * @param {C} channelName
    * @private
    */
-  private _soundStarted(id: string, instance: IAudioInstance, channelName: ChannelName): void {
+  private _soundStarted(id: string, instance: IAudioInstance, channelName: C): void {
     // Logger.log(`${id} started in ${channelName} channel`);
     this.onSoundStarted.emit({ id, instance, channelName });
   }
@@ -735,10 +733,10 @@ export class AudioManagerPlugin extends Plugin implements IAudioManagerPlugin {
    * Sound ended event handler. Emit the onSoundEnded signal.
    * @param {string} id
    * @param {IAudioInstance} instance
-   * @param {ChannelName} channelName
+   * @param {C} channelName
    * @private
    */
-  private _soundEnded(id: string, instance: IAudioInstance, channelName: ChannelName): void {
+  private _soundEnded(id: string, instance: IAudioInstance, channelName: C): void {
     // Logger.log(`${id} ended in ${channelName} channel`);
     this.onSoundEnded.emit({ id, instance, channelName });
   }
