@@ -62,6 +62,7 @@
   ],
   "include": [
     "src/**/*.ts",
+    "src/**/*.d.ts",
     "src/**/*.json",
     "../**/*.ts"
   ],

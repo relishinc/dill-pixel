@@ -1,17 +1,17 @@
 import { KeyboardKey } from '../../utils';
-import { Action, ActionContext } from './actions';
+import { Action, ActionContext, ActionMap, UserActions } from '../actions';
 import { IKeyboardControlScheme, KeyboardControls } from './keyboard';
-import { ITouchControlScheme, TouchControls } from './touch';
+import { ITouchControlScheme, JoystickInput, TouchControls } from './touch';
 
-export type KeyboardSchemaKey = KeyboardKey | string;
+export type KeyboardSchemaKey = KeyboardKey;
 
 export interface ControlsAction {
-  context: ActionContext[] | '*' | string;
+  context: ActionContext[] | '*' | (string & {});
   input: string | string[];
 }
 
 export type ControlsActionMap = {
-  [actionName: Action]: ControlsAction;
+  [actionName: Action | string]: ControlsAction;
 };
 
 export type AbstractControlScheme<T extends string = string> = {
@@ -36,7 +36,35 @@ export interface IControls {
 
   isActionActive(action: string): boolean;
 
-  initialize(scheme: ControlScheme): void;
+  initialize(scheme: ControlScheme, actions: ActionMap): void;
 
   destroy(): void;
+}
+
+// Helper type for key combinations
+type KeyCombination = `${KeyboardSchemaKey}+${KeyboardSchemaKey}`;
+
+export type KeyboardControlsMap<U extends UserActions = UserActions> = {
+  down?: Partial<{
+    [K in KeyboardSchemaKey | KeyCombination]: keyof U;
+  }>;
+  up?: Partial<{
+    [K in KeyboardSchemaKey | KeyCombination]: keyof U;
+  }>;
+};
+
+export type TouchControlsMap<U extends UserActions = UserActions> = {
+  [K in JoystickInput]: keyof U;
+};
+
+export interface UserControls<U extends UserActions = UserActions> {
+  keyboard: Partial<KeyboardControlsMap<U>>;
+  touch: Partial<TouchControlsMap<U>>;
+}
+
+export function defineControls<U extends UserActions = UserActions>(
+  actions: U,
+  controls: UserControls<U>,
+): UserControls<U> {
+  return controls;
 }

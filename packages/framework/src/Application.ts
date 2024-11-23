@@ -31,11 +31,12 @@ import {
   Renderer,
   RendererDestroyOptions,
 } from 'pixi.js';
-import type { DataSchema, IStorageAdapter, IStore } from './store';
+import type { DataSchema, IDataAdapter, IStorageAdapter, IStore } from './store';
 import { DataAdapter, Store } from './store';
 import type { ImportListItem, Size } from './utils';
 import { bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from './utils';
 
+import { IActionsPlugin } from './plugins/actions';
 import type { IVoiceOverPlugin } from './plugins/audio/VoiceOverPlugin';
 import type { ICaptionsPlugin } from './plugins/captions';
 import { defaultPlugins } from './plugins/defaults';
@@ -153,6 +154,16 @@ export class Application<D extends DataSchema = DataSchema, C = Action, R extend
     return this._resizer;
   }
 
+  // actions
+  protected _actionsPlugin: IActionsPlugin;
+
+  public get actionsPlugin(): IActionsPlugin {
+    if (!this._actionsPlugin) {
+      this._actionsPlugin = this.getPlugin<IActionsPlugin>('actions');
+    }
+    return this._actionsPlugin;
+  }
+
   // input
   protected _input: IInputPlugin;
 
@@ -239,11 +250,11 @@ export class Application<D extends DataSchema = DataSchema, C = Action, R extend
   }
 
   public get actionContext(): string | ActionContext {
-    return this.input.context;
+    return this.actionsPlugin.context;
   }
 
   public set actionContext(context: string | ActionContext) {
-    this.input.context = context;
+    this.actionsPlugin.context = context;
   }
 
   public get voiceover(): IVoiceOverPlugin {
@@ -440,11 +451,11 @@ export class Application<D extends DataSchema = DataSchema, C = Action, R extend
   }
 
   public actions<TActionData = any>(action: C): ActionSignal<TActionData> {
-    return this.input.actions<TActionData>(action as Action);
+    return this.actionsPlugin.getAction<TActionData>(action as Action);
   }
 
   public sendAction<TActionData = any>(action: C, data?: TActionData) {
-    this.input.sendAction<TActionData>(action as Action, data);
+    this.actionsPlugin.sendAction<TActionData>(action as Action, data);
   }
 
   /**
@@ -461,8 +472,8 @@ export class Application<D extends DataSchema = DataSchema, C = Action, R extend
    * @param {string} adapterId
    * @returns {IStorageAdapter}
    */
-  public get data(): DataAdapter<D> {
-    return this.store.getAdapter<DataAdapter<D>>('data');
+  public get data(): IDataAdapter<D> {
+    return this.store.getAdapter('data') as unknown as IDataAdapter<D>;
   }
   /**
    * app hasn't been initialized yet

@@ -1,15 +1,16 @@
 import type { ImportList } from '../utils';
-import type { IPlugin } from './Plugin';
 import { AssetsPlugin } from './AssetsPlugin';
-import { WebEventsPlugin } from './WebEventsPlugin';
-import { SceneManagerPlugin } from './SceneManagerPlugin';
-import { InputPlugin } from './input';
 import { KeyboardPlugin } from './KeyboardPlugin';
-import { FocusManagerPlugin } from './focus';
+import type { IPlugin } from './Plugin';
 import { PopupManagerPlugin } from './PopupManagerPlugin';
-import { AudioManagerPlugin } from './audio';
-import { i18nPlugin } from './i18nPlugin';
 import { ResizerPlugin } from './ResizerPlugin';
+import { SceneManagerPlugin } from './SceneManagerPlugin';
+import { WebEventsPlugin } from './WebEventsPlugin';
+import { ActionsPlugin } from './actions';
+import { AudioManagerPlugin } from './audio';
+import { FocusManagerPlugin } from './focus';
+import { i18nPlugin } from './i18nPlugin';
+import { InputPlugin } from './input';
 
 export const defaultPlugins: ImportList<IPlugin> = [
   {
@@ -26,6 +27,11 @@ export const defaultPlugins: ImportList<IPlugin> = [
     id: 'scenes',
     module: SceneManagerPlugin,
     namedExport: 'SceneManagerPlugin',
+  },
+  {
+    id: 'actions',
+    module: ActionsPlugin,
+    namedExport: 'ActionsPlugin',
   },
   {
     id: 'input',

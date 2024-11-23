@@ -1,12 +1,12 @@
-import { AbstractControlScheme, ControlsActionMap } from '../interfaces';
 import { bindAllMethods } from '../../../utils';
+import { ControlsActionMap } from '../interfaces';
 
-import { AbstractControls } from '../AbstractControls';
-import type { Action } from '../actions';
 import { Application } from '../../../Application';
 import { WithSignals } from '../../../mixins';
-import type { ITouchControlScheme } from './interfaces';
 import type { IButton, IJoystick } from '../../../ui';
+import type { Action, ActionMap } from '../../actions';
+import { AbstractControls } from '../AbstractControls';
+import type { ITouchControlScheme } from './interfaces';
 
 type TouchControlsActionData = {
   button?: string | string[];
@@ -15,7 +15,7 @@ type TouchControlsActionData = {
 };
 
 export class TouchControls extends WithSignals(AbstractControls) {
-  declare scheme: AbstractControlScheme<'down' | 'up' | 'joystick'>;
+  protected scheme: ITouchControlScheme;
   private _buttons: Set<IButton> = new Set();
   private _joystickMap: ControlsActionMap;
   private _buttonDownMap: ControlsActionMap;
@@ -67,8 +67,8 @@ export class TouchControls extends WithSignals(AbstractControls) {
     this._buttons.delete(button);
   }
 
-  public initialize(scheme: ITouchControlScheme): void {
-    super.initialize(scheme);
+  public initialize(scheme: ITouchControlScheme, actions: ActionMap): void {
+    super.initialize(scheme, actions);
     this._buttonDownMap = scheme.down || {};
     this._buttonUpMap = scheme.up || {};
     this._joystickMap = scheme.joystick || {};
@@ -106,7 +106,7 @@ export class TouchControls extends WithSignals(AbstractControls) {
     const buttons = Object.keys(this._buttonDownMap);
     buttons.forEach((key) => {
       const item = this._buttonDownMap[key];
-      if (item.context !== '*' && !item.context.includes(this.app.input.context)) {
+      if (item.context !== '*' && !item.context.includes(this.app.actionContext)) {
         return;
       }
       let input = item.input;
@@ -197,7 +197,7 @@ export class TouchControls extends WithSignals(AbstractControls) {
   }
 
   private _findAction(actionKey: string, actionMap: ControlsActionMap): Action | string | null {
-    const context = this.app.input.context;
+    const context = this.app.actionContext;
     for (const key in actionMap) {
       const item = actionMap[key];
       const inputMatch = item.input === actionKey || (Array.isArray(item.input) && item.input.includes(actionKey));

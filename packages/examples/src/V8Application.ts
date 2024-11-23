@@ -1,38 +1,38 @@
-import { Application, create, DataSchema } from 'dill-pixel';
+import { Application, create } from 'dill-pixel';
 
 import { Actions, controls } from '@/controls';
 import EN from '@/locales/en';
 import { Transition } from '@/Transition';
 import { IGoogleAnalyticsPlugin } from '@dill-pixel/plugin-google-analytics/GoogleAnalyticsPlugin';
 import { IFirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
+import * as userDefinedActions from './actions';
 import manifest from './assets.json';
 import { ExampleOutliner } from './ui/ExampleOutliner';
 
-interface MyDataSchema extends DataSchema {
-  foo?: string;
-  bar?: number;
-  saved?: string;
-  baz?: {
-    qux?: boolean;
-    quux?: string[];
+// so we can mess with this.
+void userDefinedActions;
+
+interface MyDataSchema {
+  foo: string;
+  bar: number;
+  saved: string;
+  baz: {
+    qux: boolean;
+    quux: string[];
   };
 }
 
-type MyEvents = {
+type MyAnalyticsEvents = {
   foo: { bar: string; baz: number; qux: boolean };
 };
-
-// interface MyEvents extends GAEvents {
-//   foo: { bar: string; baz: number; qux: boolean };
-// }
 
 export class V8Application extends Application<MyDataSchema, Actions> {
   get firebase(): IFirebaseAdapter {
     return this.store.getAdapter('firebase') as IFirebaseAdapter;
   }
 
-  get analytics(): IGoogleAnalyticsPlugin<MyEvents> {
-    return this.getPlugin('analytics') as IGoogleAnalyticsPlugin<MyEvents>;
+  get analytics(): IGoogleAnalyticsPlugin<MyAnalyticsEvents> {
+    return this.getPlugin('analytics') as IGoogleAnalyticsPlugin<MyAnalyticsEvents>;
   }
 }
 
@@ -340,6 +340,7 @@ async function boot() {
   console.log('data', JSON.stringify(app.data.get(), null, 2));
   app.data.save('saved', 'FOOBARBAZ');
   console.log('data', JSON.stringify(app.data.get(), null, 2));
+  app.data.load('bar');
 
   app.analytics.trackEvent('foo', { bar: 'baz', baz: 1, qux: true });
 

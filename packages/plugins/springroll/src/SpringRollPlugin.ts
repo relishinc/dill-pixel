@@ -8,6 +8,7 @@ export interface SpringRollPluginOptions extends springroll.ApplicationConfig {}
 
 export interface ISpringRollPlugin extends IPlugin {
   // signals
+  onPause: Signal<(result: boolean) => void>;
   onCaptionsMuted: Signal<(result: boolean) => void>;
   onSoundVolume: Signal<(result: number) => void>;
   onVoVolume: Signal<(result: number) => void>;
@@ -52,6 +53,7 @@ export class SpringRollPlugin extends Plugin implements ISpringRollPlugin {
   private _springrollApplication: springroll.Application;
 
   // signals
+  onPause: Signal<(result: boolean) => void> = new Signal();
   onCaptionsMuted: Signal<(result: boolean) => void> = new Signal();
   onSoundVolume: Signal<(result: number) => void> = new Signal();
   onVoVolume: Signal<(result: number) => void> = new Signal();
@@ -85,9 +87,10 @@ export class SpringRollPlugin extends Plugin implements ISpringRollPlugin {
       hintPlayer: this._options.hintPlayer,
     });
 
+    this._subscribeToSpringrollFeatures();
+
     await new Promise<void>((resolve) => {
       this._springrollApplication.state.ready.subscribe(() => {
-        this._handleReady();
         resolve();
       });
     });
@@ -111,7 +114,7 @@ export class SpringRollPlugin extends Plugin implements ISpringRollPlugin {
     }
   }
 
-  private _handleReady() {
+  private _subscribeToSpringrollFeatures() {
     if (this._options.features?.captions) {
       this._springrollApplication.state.captionsMuted.subscribe(this._handleCaptionsMuted);
     }
@@ -175,6 +178,7 @@ export class SpringRollPlugin extends Plugin implements ISpringRollPlugin {
     if (this._options.features?.fullScreen) {
       this._springrollApplication.state.fullScreen.subscribe(this._handleFullScreen);
     }
+    this._springrollApplication.state.pause.subscribe(this._handlePause);
   }
 
   private _handleCaptionsMuted(result: boolean) {
@@ -285,5 +289,10 @@ export class SpringRollPlugin extends Plugin implements ISpringRollPlugin {
   private _handleFullScreen(result: boolean) {
     console.log('Full screen', result);
     this.onFullScreen.emit(result);
+  }
+
+  private _handlePause(result: boolean) {
+    console.log('Pause', result);
+    this.onPause.emit(result);
   }
 }

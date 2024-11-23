@@ -1,8 +1,9 @@
 import { Application } from '../../Application';
-import { ControlScheme, IControls } from './interfaces';
 import { IApplication } from '../../core';
-import { KeyboardControls } from './keyboard';
 import { bindAllMethods } from '../../utils';
+import { Action, ActionMap } from '../actions';
+import { ControlScheme, IControls } from './interfaces';
+import { KeyboardControls } from './keyboard';
 import { TouchControls } from './touch';
 
 export class Controls implements IControls {
@@ -26,20 +27,19 @@ export class Controls implements IControls {
     }
   }
 
-  isActionActive(action: string): boolean {
-    return this.keyboard?.isActionActive(action) || this.touch?.isActionActive(action);
+  isActionActive(action: Action): boolean {
+    return this.keyboard?.isActionActive(action) || this.touch?.isActionActive(action) || false;
   }
 
-  initialize(scheme: ControlScheme) {
-    for (const type in scheme) {
-      if (type === 'keyboard') {
-        this.keyboard = new KeyboardControls();
-        this.keyboard.initialize(scheme[type]!);
-      }
-      if (type === 'touch') {
-        this.touch = new TouchControls();
-        this.touch.initialize(scheme[type]!);
-      }
+  initialize(scheme: ControlScheme, actions: ActionMap) {
+    if (scheme.keyboard) {
+      this.keyboard = new KeyboardControls();
+      this.keyboard.initialize(scheme.keyboard, actions);
+    }
+
+    if (scheme.touch) {
+      this.touch = new TouchControls();
+      this.touch.initialize(scheme.touch, actions);
     }
   }
 

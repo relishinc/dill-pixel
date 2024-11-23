@@ -16,7 +16,7 @@ export interface IStorageAdapter extends IPlugin {
     _key: string,
     _data: any,
     ..._rest: any[]
-  ): Promise<TExpectedSaveResult> | TExpectedSaveResult | null;
+  ): Promise<TExpectedSaveResult> | TExpectedSaveResult | any;
 
   /**
    * Loads data from a specified key.
@@ -28,7 +28,7 @@ export interface IStorageAdapter extends IPlugin {
   load<TExpectedLoadResult = any>(
     _key: string,
     ...args: any[]
-  ): Promise<TExpectedLoadResult> | TExpectedLoadResult | null;
+  ): Promise<TExpectedLoadResult> | TExpectedLoadResult | undefined;
 }
 
 /**
@@ -50,10 +50,10 @@ export class StorageAdapter<T extends Application = Application> extends Plugin<
    * @param {string} _key The key from which to load the data.
    * @returns {Promise<T> | T | null} A promise that resolves with the loaded data, or the loaded data if the load operation is synchronous, or null if no data was found.
    */
-  load<TExpectedLoadResult = any>(_key: string): Promise<TExpectedLoadResult> | TExpectedLoadResult | null;
+  load<TExpectedLoadResult = any>(_key: string): Promise<TExpectedLoadResult> | TExpectedLoadResult | undefined;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async load<TExpectedLoadResult = any>(_key: string, ...args: any[]): Promise<TExpectedLoadResult | null> {
-    return null;
+  async load<TExpectedLoadResult = any>(_key: string, ...args: any[]): Promise<TExpectedLoadResult | undefined> {
+    return undefined;
   }
 
   /**
@@ -68,16 +68,12 @@ export class StorageAdapter<T extends Application = Application> extends Plugin<
     _key: string,
     _data: any,
     ..._rest: any[]
-  ): Promise<TExpectedSaveResult> | TExpectedSaveResult | null;
+  ): Promise<TExpectedSaveResult> | TExpectedSaveResult | any;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async save<TExpectedSaveResult = any>(
-    _key: string,
-    _data: any,
-    ..._rest: any[]
-  ): Promise<TExpectedSaveResult | null> {
+  async save<TExpectedSaveResult = any>(_key: string, _data: any, ..._rest: any[]): Promise<TExpectedSaveResult | any> {
     void _key;
     void _data;
     void _rest;
-    return null;
+    return undefined;
   }
 }

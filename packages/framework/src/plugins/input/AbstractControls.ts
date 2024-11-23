@@ -1,15 +1,25 @@
-import { AbstractControlScheme } from './interfaces';
 import { Application } from '../../Application';
 import { IApplication } from '../../core';
+import { ActionMap } from '../actions';
+import { AbstractControlScheme } from './interfaces';
 
 export class AbstractControls {
-  public scheme: AbstractControlScheme;
+  protected scheme: AbstractControlScheme;
+  protected actions: ActionMap;
 
   get app(): IApplication {
     return Application.getInstance();
   }
 
-  initialize<T extends string = string>(scheme: AbstractControlScheme<T>) {
+  initialize(scheme: AbstractControlScheme, actions: ActionMap) {
     this.scheme = scheme;
+    this.actions = actions;
+  }
+
+  protected isActionValidForContext(actionName: string, context: string): boolean {
+    const actionDef = this.actions[actionName];
+    if (!actionDef) return false;
+
+    return actionDef.context === '*' || (Array.isArray(actionDef.context) && actionDef.context.includes(context));
   }
 }

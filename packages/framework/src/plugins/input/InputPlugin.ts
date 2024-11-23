@@ -1,7 +1,7 @@
-import { Action, ActionContext } from './actions';
+import type { ActionsList, IActionsPlugin } from '../actions';
+import { Action } from '../actions';
 import { Controls } from './Controls';
 import type { ControlScheme } from './interfaces';
-import type { ActionDetail, ActionSignal, ActionsList } from './types';
 
 import { IApplication } from '../../core';
 import { Signal } from '../../signals';
@@ -23,14 +23,6 @@ export interface IInputPlugin extends IPlugin {
   onGamepadDisconnected: Signal<(gamepad: Gamepad) => void>;
   onControllerActivated: Signal<(controller: string) => void>;
   onControllerDeactivated: Signal<(controller: string) => void>;
-  onContextChanged: Signal<(context: string | ActionContext) => void>;
-  context: string | ActionContext;
-
-  actions<TActionData = any>(action: string): ActionSignal<TActionData>;
-
-  sendAction<TActionData = any>(action: string, data?: TActionData): void;
-
-  setActionContext(context: string | ActionContext): string;
 
   isControllerActive(controller: InputController): boolean;
 
@@ -39,7 +31,7 @@ export interface IInputPlugin extends IPlugin {
   isActionActive(action: Action): boolean;
 }
 
-const defaultActions: Action[] = [
+const defaultInputActions: Action[] = [
   'up',
   'down',
   'left',
@@ -55,7 +47,7 @@ const defaultActions: Action[] = [
 ];
 
 const defaultOptions = {
-  actions: defaultActions,
+  actions: defaultInputActions,
 };
 
 export class InputPlugin extends Plugin implements IInputPlugin {
@@ -73,25 +65,6 @@ export class InputPlugin extends Plugin implements IInputPlugin {
   public onGamepadDisconnected: Signal<(gamepad: Gamepad) => void> = new Signal<(gamepad: Gamepad) => void>();
   public onControllerActivated: Signal<(controller: string) => void> = new Signal<(controller: string) => void>();
   public onControllerDeactivated: Signal<(controller: string) => void> = new Signal<(controller: string) => void>();
-  public onContextChanged: Signal<(context: string | ActionContext) => void> = new Signal<
-    (context: string | ActionContext) => void
-  >();
-  private _actionSignals: Map<string | number, ActionSignal> = new Map();
-
-  // private properties
-  private _context: string | ActionContext = 'general';
-
-  get context(): string | ActionContext {
-    return this._context;
-  }
-
-  set context(context: string | ActionContext) {
-    if (this._context === context) {
-      return;
-    }
-    this._context = context;
-    this.onContextChanged.emit(context);
-  }
 
   isActionActive(action: Action): boolean {
     return this.controls.isActionActive(action);
@@ -137,34 +110,8 @@ export class InputPlugin extends Plugin implements IInputPlugin {
     return this.activeGamepads.has(gamepad.id);
   }
 
-  actions<TActionData = any>(action: Action | number): ActionSignal<TActionData> {
-    if (!this._actionSignals.has(action)) {
-      this._actionSignals.set(action, new Signal<(actionDetail: ActionDetail<TActionData>) => void>());
-    }
-    return this._actionSignals.get(action)!;
-  }
-
-  sendAction<TActionData = any>(actionId: Action | number, data?: TActionData): void {
-    return this.actions<TActionData>(actionId).emit({ id: actionId, context: this.context, data });
-  }
-
-  setActionContext(context: string | ActionContext): string {
-    this.context = context;
-    return context;
-  }
-
-  protected getCoreFunctions(): string[] {
-    return ['setActionContext', 'sendAction', 'actions'];
-  }
-
   protected getCoreSignals(): string[] {
-    return [
-      'onGamepadConnected',
-      'onGamepadDisconnected',
-      'onControllerActivated',
-      'onControllerDeactivated',
-      'onContextChanged',
-    ];
+    return ['onGamepadConnected', 'onGamepadDisconnected', 'onControllerActivated', 'onControllerDeactivated'];
   }
 
   private _activateController(inputController: string): void {
@@ -220,7 +167,7 @@ export class InputPlugin extends Plugin implements IInputPlugin {
     this._deactivateGamepad(event.gamepad.id);
 
     // pause the game any time there is a controller disconnect
-    this.sendAction('pause');
+    this.actionsPlugin.sendAction('pause');
 
     // emit the gamepad disconnected signal
     this.onGamepadDisconnected.emit(event.gamepad);
@@ -229,5 +176,9 @@ export class InputPlugin extends Plugin implements IInputPlugin {
     if (this.activeGamepads.size === 0) {
       this._deactivateController(InputControllerTypes.GamePad);
     }
+  }
+
+  get actionsPlugin(): IActionsPlugin {
+    return this.app.getPlugin('actions') as IActionsPlugin;
   }
 }

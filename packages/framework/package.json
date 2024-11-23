@@ -1,6 +1,6 @@
 {
   "name": "dill-pixel",
-  "version": "8.16.7",
+  "version": "8.16.12",
   "title": "Dill Pixel V8",
   "description": "Relish framework for HTML games",
   "bin": {
@@ -17,14 +17,18 @@
     "config/tsconfig.json",
     "extras/css/accessibility.css",
     "extras/css/loader.css",
-    "templates"
+    "templates",
+    "types"
   ],
   "main": "lib/dill-pixel.mjs",
   "types": "lib/index.d.ts",
   "exports": {
     ".": {
       "default": "./lib/dill-pixel.mjs",
-      "types": "./lib/index.d.ts"
+      "types": [
+        "./lib/index.d.ts",
+        "./src/dillpixel.d.ts"
+      ]
     },
     "./physics/snap": {
       "default": "./lib/physics/snap.mjs"

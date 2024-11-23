@@ -5,7 +5,7 @@ import { version } from './version';
 type ConfigParams = Gtag.ConfigParams & Gtag.ControlParams & Gtag.EventParams & Gtag.ConfigParams & Gtag.CustomParams;
 
 export type GoogleAnalyticsPluginOptions = ConfigParams & {
-  trackingId?: string;
+  trackingId?: string | string[];
   dataLayerName?: string;
 };
 
@@ -13,6 +13,7 @@ export type GAEvents = Record<string, unknown>;
 
 export interface IGoogleAnalyticsPlugin<E extends GAEvents = GAEvents> extends IPlugin {
   initialize(app: IApplication, options?: Partial<GoogleAnalyticsPluginOptions>): void;
+  gtag(...args: any[]): void;
   trackEvent<K extends keyof E>(eventName: K, eventData?: E[K]): void;
 }
 
@@ -24,6 +25,7 @@ const defaultOptions: Partial<GoogleAnalyticsPluginOptions> = {
 
 export class GoogleAnalyticsPlugin<E extends GAEvents = GAEvents> extends Plugin implements IGoogleAnalyticsPlugin<E> {
   private _options: GoogleAnalyticsPluginOptions;
+  private _dataLayer: { push: (args: any) => void };
 
   async initialize(_app: IApplication, options: Partial<GoogleAnalyticsPluginOptions>) {
     this._options = { ...defaultOptions, ...options };
@@ -48,6 +50,7 @@ export class GoogleAnalyticsPlugin<E extends GAEvents = GAEvents> extends Plugin
     const windowAsAny = window as any;
     const dlName = this._options.dataLayerName || 'dataLayer';
     windowAsAny[dlName] = windowAsAny[dlName] || [];
+    this._dataLayer = windowAsAny[dlName];
   }
 
   private install() {
@@ -70,12 +73,23 @@ export class GoogleAnalyticsPlugin<E extends GAEvents = GAEvents> extends Plugin
 
     this.initDataLayer();
 
-    gtag('js', new Date());
-    gtag('config', this._options.trackingId, omitKeys(['trackingId'], this._options));
+    this.gtag('js', new Date());
+
+    if (!Array.isArray(this._options.trackingId)) {
+      this._options.trackingId = [this._options.trackingId];
+    }
+
+    this._options.trackingId.forEach((trackingId) => {
+      this.gtag('config', trackingId, omitKeys(['trackingId'], this._options));
+    });
+  }
+
+  public gtag(...args: any[]) {
+    Logger.log(`gtag(${args.join(', ')})`);
+    this._dataLayer.push(args);
   }
 
   public trackEvent<K extends keyof E>(eventName: K, eventData?: E[K]) {
-    Logger.log(`Tracking event: ${eventName as string}`, eventData);
-    gtag('event', eventName as string, eventData || {});
+    this.gtag('event', eventName as string, eventData || {});
   }
 }

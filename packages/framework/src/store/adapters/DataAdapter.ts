@@ -1,7 +1,13 @@
 import type { IApplication } from '../../core';
-import { IStorageAdapter, StorageAdapter } from './StorageAdapter';
+import { StorageAdapter } from './StorageAdapter';
 
-export type DataSchema = Record<string, any>;
+export type DataSchema = {
+  [key: string]: any;
+};
+
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
 /**
  * Interface for the options of the LocalStorageAdapter.
  */
@@ -9,17 +15,17 @@ export interface IDataAdapterOptions<D extends DataSchema = DataSchema> {
   /**
    * The namespace to use for the keys in the local storage.
    */
-  initial: D;
+  initial: Partial<D>;
   namespace: string;
   overrideWithLocalStorage: boolean;
   backupAll: boolean;
   backupKeys: Array<keyof D>;
 }
 
-export interface IDataAdapter<D extends DataSchema = DataSchema> extends IStorageAdapter {
-  load<K extends keyof D>(key: K): D[K];
-  save<K extends keyof D>(key: K, data: D[K]): D[K];
-  set(data: Partial<D>, merge: boolean): void;
+export interface IDataAdapter<D extends DataSchema = DataSchema> {
+  load<K extends keyof D>(key: K): D[K] | undefined;
+  save<K extends keyof D>(key: K, data: D[K]): D;
+  set(data: DeepPartial<D>, merge?: boolean): D;
   get(): D;
   clear<K extends keyof D>(key: K): void;
 }
@@ -27,7 +33,7 @@ export interface IDataAdapter<D extends DataSchema = DataSchema> extends IStorag
 /**
  * A class representing a storage adapter that uses the local storage.
  */
-export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapter {
+export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapter implements IDataAdapter<D> {
   /**
    * The namespace to use for the keys in the local storage.
    */
@@ -72,7 +78,7 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
    * @param {any} data The data to save.
    * @returns {any} The saved data.
    */
-  save<K extends keyof D>(key: K, data: D[K]): D[K] {
+  save<K extends keyof D>(key: K, data: D[K]): D {
     this.data[key] = data;
     if (this.backupAll || this.backupKeys.includes(key)) {
       this.backupToLocalStorage([key]);
@@ -86,11 +92,11 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
    * @param {string} key The key from which to load the data.
    * @returns {T} The loaded data.
    */
-  load<K extends keyof D>(key: K): D[K] {
+  load<K extends keyof D>(key: K): D[K] | undefined {
     return this.data[key];
   }
 
-  set(data: Partial<D>, merge: boolean = true) {
+  set(data: DeepPartial<D>, merge: boolean = true): D {
     if (merge) {
       this.data = deepMerge({ ...this.data }, data);
     } else {
@@ -99,6 +105,7 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
     if (this.backupAll || this.backupKeys.length > 0) {
       this.backupToLocalStorage(this.backupKeys);
     }
+    return this.data;
   }
 
   get(): D {
@@ -141,7 +148,7 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
   }
 }
 
-function deepMerge<T extends Record<string, any>>(target: T, source: Partial<T>): T {
+function deepMerge<T extends Record<string, any>>(target: T, source: DeepPartial<T>): T {
   for (const key in source) {
     if (
       source[key] !== undefined &&

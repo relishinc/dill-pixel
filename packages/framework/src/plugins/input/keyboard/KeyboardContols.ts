@@ -1,12 +1,12 @@
-import { AbstractControlScheme, ControlsActionMap } from '../interfaces';
-import { IKeyboardControlScheme } from './interfaces';
 import { bindAllMethods } from '../../../utils';
+import { ControlsActionMap } from '../interfaces';
+import { IKeyboardControlScheme } from './interfaces';
 
-import { AbstractControls } from '../AbstractControls';
-import { Action } from '../actions';
 import { Application } from '../../../Application';
-import { KeyboardEventDetail } from '../../KeyboardPlugin';
 import { WithSignals } from '../../../mixins';
+import { Action, ActionMap } from '../../actions';
+import { KeyboardEventDetail } from '../../KeyboardPlugin';
+import { AbstractControls } from '../AbstractControls';
 
 type KeyboardControlsActionData = {
   key: string | string[];
@@ -15,7 +15,7 @@ type KeyboardControlsActionData = {
 };
 
 export class KeyboardControls extends WithSignals(AbstractControls) {
-  declare scheme: AbstractControlScheme<'down' | 'up'>;
+  protected scheme: IKeyboardControlScheme;
   private _keyDownMap: ControlsActionMap;
   private _keyUpMap: ControlsActionMap;
   private _keyCombinations: string[][] = [];
@@ -46,8 +46,8 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
     }
   }
 
-  public initialize(scheme: IKeyboardControlScheme): void {
-    super.initialize(scheme);
+  public initialize(scheme: IKeyboardControlScheme, actions: ActionMap): void {
+    super.initialize(scheme, actions);
     this._keyDownMap = scheme.down || {};
     this._keyUpMap = scheme.up || {};
     this._sortKeysIntoCombinationsAndSingles();
@@ -55,7 +55,7 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
 
   public connect() {
     this.addSignalConnection(
-      this.app.input.onContextChanged.connect(this._handleContextChanged),
+      this.app.actionsPlugin.onActionContextChanged.connect(this._handleContextChanged),
       this.app.keyboard.onKeyDown().connect(this._handleKeyDown),
       this.app.keyboard.onKeyUp().connect(this._handleKeyUp),
     );
@@ -68,7 +68,7 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
     const keys = Object.keys(this._keyDownMap);
     keys.forEach((key) => {
       const item = this._keyDownMap[key];
-      if (item.context !== '*' && !item.context.includes(this.app.input.context)) {
+      if (item.context !== '*' && !item.context.includes(this.app.actionContext)) {
         return;
       }
       let input = item.input;
@@ -145,7 +145,7 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
   }
 
   private _findAction(actionKey: string, actionMap: ControlsActionMap): Action | string | null {
-    const context = this.app.input.context;
+    const context = this.app.actionContext;
     for (const key in actionMap) {
       const item = actionMap[key];
       const inputMatch = item.input === actionKey || (Array.isArray(item.input) && item.input.includes(actionKey));

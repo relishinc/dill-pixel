@@ -25,7 +25,7 @@ export const controls = {
     },
     joystick: {
       move_left: { context: ['game'], input: ['left', 'bottom_left', 'top_left'] },
-      move_right: { context: ['game'], input: ['right', 'bottom_right', 'top_right'] },
+      move_right: { context: ['game'], input: ['right', 'bottom_right', 'blah'] },
     },
   },
 } as const satisfies ControlScheme;
@@ -37,7 +37,7 @@ const firebaseActions = {
   delete_from_firebase: { context: '*' },
 } as const;
 
-export type ControlActions = ActionNames<typeof controls>;
+export type InputActions = ActionNames<typeof controls>;
 export type FirebaseActions = GenericActionNames<typeof firebaseActions>;
 
-export type Actions = ControlActions | FirebaseActions;
+export type Actions = InputActions | FirebaseActions;
