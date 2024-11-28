@@ -338,7 +338,6 @@ async function boot() {
   app.data.save('saved', 'FOOBARBAZ');
   console.log('data', JSON.stringify(app.data.get(), null, 2));
   app.data.load('bar');
-
   app.analytics.trackEvent('foo', { bar: 'baz', baz: 1, qux: true });
 
   app.actions('toggle_pause').connect(() => {
