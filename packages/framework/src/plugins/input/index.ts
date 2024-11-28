@@ -3,5 +3,7 @@ export * from './Controls';
 export * from './InputPlugin';
 export * from './interfaces';
 export * from './keyboard';
+export * from './methods';
 export * from './touch';
+export * from './types';
 export * from './utils';

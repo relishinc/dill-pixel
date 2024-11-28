@@ -1,4 +1,4 @@
-import { DefaultActionContexts } from './constants';
+import { DefaultActionContexts, defaultActionsList } from './constants';
 import { type UserActions, type UserButtons, type UserContexts } from './types';
 
 export function defineContexts<C extends UserContexts = UserContexts>(contexts?: C): C {
@@ -8,7 +8,11 @@ export function defineContexts<C extends UserContexts = UserContexts>(contexts?:
 export function defineActions<C extends UserContexts = UserContexts, U extends UserActions = UserActions<C>>(
   contexts: C,
   actions: U,
+  useDefaultActions: boolean = true,
 ): U {
+  if (useDefaultActions) {
+    actions = { ...defaultActionsList, ...actions };
+  }
   return actions;
 }
 

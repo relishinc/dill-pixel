@@ -1,6 +1,6 @@
+import type { ControlsActionMap } from '../..';
 import { Application } from '../../Application';
 import { IApplication } from '../../core';
-import { ControlsActionMap } from './interfaces';
 
 export class AbstractControls {
   protected scheme: any;

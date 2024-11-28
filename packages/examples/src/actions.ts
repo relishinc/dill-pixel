@@ -17,6 +17,11 @@ const actions = defineActions(contexts, {
   next: { context: ['menu'] },
   select: { context: ['menu', 'general'] },
   show_popup: { context: '*' },
+  // firebase
+  save_to_firebase: { context: '*' },
+  load_from_firebase: { context: '*' },
+  clear_firebase: { context: '*' },
+  delete_from_firebase: { context: '*' },
 });
 
 type ActionTypes = keyof typeof actions;

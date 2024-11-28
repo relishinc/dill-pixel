@@ -1,5 +1,5 @@
 import type { ActionsList, IActionsPlugin } from '../actions';
-import { Action } from '../actions';
+import { Action, DefaultActions } from '../actions';
 import { Controls } from './Controls';
 
 import { IApplication } from '../../core';
@@ -31,23 +31,8 @@ export interface IInputPlugin extends IPlugin {
   isActionActive(action: Action): boolean;
 }
 
-const defaultInputActions: Action[] = [
-  'up',
-  'down',
-  'left',
-  'right',
-  'action',
-  'pause',
-  'unpause',
-  'start',
-  'select',
-  'menu',
-  'back',
-  'next',
-];
-
 const defaultOptions = {
-  actions: defaultInputActions,
+  actions: DefaultActions,
 };
 
 export class InputPlugin extends Plugin implements IInputPlugin {

@@ -1,6 +1,6 @@
 import { KeyboardKey } from '../../../utils';
 import { Action, ActionContext } from '../../actions';
-import { AbstractControlScheme, ControlsActionMap } from '../interfaces';
+import { AbstractControlScheme, ControlsActionMap } from '../types';
 
 // Define a type for single keyboard input
 type KeyboardInput = (string & {}) | KeyboardKey | `${KeyboardKey}+${KeyboardKey}` | `${KeyboardKey}*`;

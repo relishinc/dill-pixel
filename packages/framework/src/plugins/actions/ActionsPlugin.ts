@@ -12,6 +12,7 @@ export interface IActionsPlugin extends IPlugin {
   getActions(): ActionMap;
   sendAction<TActionData = any>(actionId: Action | string, data?: TActionData): void;
   setActionContext(context: string | ActionContext): string;
+  debug: boolean;
 }
 
 export interface IActionsPluginOptions {
@@ -29,6 +30,13 @@ export class ActionsPlugin extends Plugin implements IActionsPlugin {
   private _context: string | ActionContext = 'general';
   private _signals: Map<string | number, ActionSignal> = new Map();
   private _actions: Partial<ActionMap> = {};
+  private _debug: boolean = false;
+  set debug(debug: boolean) {
+    this._debug = debug;
+  }
+  get debug(): boolean {
+    return this._debug;
+  }
 
   // getter / setter
   get context(): string | ActionContext {
@@ -62,7 +70,9 @@ export class ActionsPlugin extends Plugin implements IActionsPlugin {
   sendAction<TActionData = any>(actionId: Action | string, data?: TActionData): void {
     // check if action is defined
     if (!this._actions[actionId]) {
-      Logger.warn(`Action ${actionId} is not defined`);
+      if (this._debug) {
+        Logger.warn(`Action ${actionId} is not defined`);
+      }
       return;
     }
 
@@ -77,7 +87,9 @@ export class ActionsPlugin extends Plugin implements IActionsPlugin {
     }
 
     // the action wasn't allowed
-    Logger.warn(`Action ${actionId} is not allowed for context ${this.context}`);
+    if (this._debug) {
+      Logger.warn(`Action ${actionId} is not allowed for context ${this.context}`);
+    }
   }
 
   setActionContext(context: string | ActionContext): string {

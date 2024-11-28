@@ -1,11 +1,10 @@
-import { bindAllMethods } from '../../../utils';
-import { ControlsActionMap, KeyboardControlsMap, KeyboardControlsScheme } from '../interfaces';
-
 import { Application } from '../../../Application';
 import { WithSignals } from '../../../mixins';
-import { Action } from '../../actions';
-import { KeyboardEventDetail } from '../../KeyboardPlugin';
+import { bindAllMethods } from '../../../utils';
+import type { Action } from '../../actions';
+import type { KeyboardEventDetail } from '../../KeyboardPlugin';
 import { AbstractControls } from '../AbstractControls';
+import type { ControlsActionMap, KeyboardControlsMap, KeyboardControlsScheme } from '../types';
 
 export class KeyboardControls extends WithSignals(AbstractControls) {
   protected scheme: Partial<KeyboardControlsMap>;
@@ -79,7 +78,7 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
         if (!Array.isArray(input)) {
           input = [input];
         }
-        input.forEach((inputString) => {
+        input.forEach((inputString: string) => {
           if (inputString.includes('+')) {
             const combo = inputString.split('+');
             this._keyCombinations.push(combo);
@@ -101,7 +100,7 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
         if (!Array.isArray(input)) {
           input = [input];
         }
-        input.forEach((inputString) => {
+        input.forEach((inputString: string) => {
           this._activeUpKeys.set(inputString, key as Action);
         });
       }

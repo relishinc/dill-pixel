@@ -1,5 +1,5 @@
 import { bindAllMethods } from '../../../utils';
-import { ControlsActionMap, JoystickControlsScheme, TouchControlsMap, TouchControlsScheme } from '../interfaces';
+import type { ControlsActionMap, JoystickControlsScheme, TouchControlsMap, TouchControlsScheme } from '../types';
 
 import { JoystickDirection } from '..';
 import { Application } from '../../../Application';
@@ -75,6 +75,27 @@ export class TouchControls extends WithSignals(AbstractControls) {
 
   public connect() {
     this.app.ticker.add(this._update);
+  }
+
+  isActionActive(action: Action): boolean {
+    const buttonAction = this.scheme['down']?.[action] ?? null;
+    if (buttonAction) {
+      if (Array.isArray(buttonAction)) {
+        return this._combinationsMap.has(buttonAction);
+      } else {
+        return this._singleDownButtons.has(buttonAction);
+      }
+    } else {
+      const joystickAction = this.scheme['joystick']?.[action] ?? null;
+      if (this._joystick && joystickAction) {
+        if (Array.isArray(joystickAction)) {
+          return joystickAction.includes(this._joystick.direction);
+        } else {
+          return joystickAction === this._joystick?.direction;
+        }
+      }
+    }
+    return false;
   }
 
   private _sortActions() {

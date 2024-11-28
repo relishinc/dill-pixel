@@ -1,5 +1,5 @@
-import { ActionContext } from '../../actions';
-import { AbstractControlScheme } from '../interfaces';
+import { type ActionContext } from '../../actions';
+import { type AbstractControlScheme } from '../types';
 import { JoystickDirection } from './constants';
 
 type JoystickCombination = `${JoystickDirection}+${JoystickDirection}`;

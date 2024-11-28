@@ -1,5 +1,5 @@
-import { BaseScene } from './BaseScene';
 import { SpineAnimation } from 'dill-pixel';
+import { BaseScene } from './BaseScene';
 
 export class SpineScene extends BaseScene {
   protected readonly title = 'Spine';
@@ -9,7 +9,7 @@ export class SpineScene extends BaseScene {
 
   public async initialize() {
     await super.initialize();
-    this.app.func.setActionContext('general');
+    this.app.exec.setActionContext('general');
     this.hero = this.add.spineAnimation({
       data: 'spine/spineboy-pro.skel',
       animationName: 'idle',
