@@ -52,7 +52,7 @@ export class SnapEndlessRunnerScene extends BaseScene {
 
   async initialize() {
     await super.initialize();
-    this.app.input.setActionContext('game');
+    this.app.actionContext = 'game';
     this.app.focus.addFocusLayer(this.id);
 
     this.level = this.add.container({
@@ -93,7 +93,7 @@ export class SnapEndlessRunnerScene extends BaseScene {
     this.addSignalConnection(
       this.app.actions('toggle_pause').connect(this._togglePause),
       this.app.keyboard.onKeyDown('q').connect(() => {
-        this.app.input.sendAction('warp');
+        this.app.sendAction('warp');
       }),
     );
     this.addControls();

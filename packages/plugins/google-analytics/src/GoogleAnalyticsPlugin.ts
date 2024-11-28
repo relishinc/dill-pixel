@@ -26,6 +26,7 @@ const defaultOptions: Partial<GoogleAnalyticsPluginOptions> = {
 export class GoogleAnalyticsPlugin<E extends GAEvents = GAEvents> extends Plugin implements IGoogleAnalyticsPlugin<E> {
   private _options: GoogleAnalyticsPluginOptions;
   private _dataLayer: { push: (args: any) => void };
+  private _queue: any[] = [];
 
   async initialize(_app: IApplication, options: Partial<GoogleAnalyticsPluginOptions>) {
     this._options = { ...defaultOptions, ...options };
@@ -51,6 +52,15 @@ export class GoogleAnalyticsPlugin<E extends GAEvents = GAEvents> extends Plugin
     const dlName = this._options.dataLayerName || 'dataLayer';
     windowAsAny[dlName] = windowAsAny[dlName] || [];
     this._dataLayer = windowAsAny[dlName];
+
+    this.drainQueue();
+  }
+
+  private drainQueue() {
+    while (this._queue.length > 0) {
+      const args = this._queue.shift();
+      this._dataLayer.push(args);
+    }
   }
 
   private install() {
@@ -85,7 +95,13 @@ export class GoogleAnalyticsPlugin<E extends GAEvents = GAEvents> extends Plugin
   }
 
   public gtag(...args: any[]) {
-    Logger.log(`gtag(${args.join(', ')})`);
+    Logger.log(`gtag(${JSON.stringify(args)})`);
+
+    if (!this._dataLayer) {
+      this._queue.push(args);
+      return;
+    }
+
     this._dataLayer.push(args);
   }
 

@@ -30,12 +30,13 @@ export interface ICoreSignals {
   onFocusChange: Signal<(detail: FocusChangeDetail) => void>;
   // i18nPlugin;
   onLocaleChanged: Signal<(locale: string) => void>;
+  // actionsPlugin;
+  onActionContextChanged: Signal<(context: string | ActionContext) => void>;
   // InputManager;
   onGamepadConnected: Signal<(gamepad: Gamepad) => void>;
   onGamepadDisconnected: Signal<(gamepad: Gamepad) => void>;
   onControllerActivated: Signal<(controller: string) => void>;
   onControllerDeactivated: Signal<(controller: string) => void>;
-  onContextChanged: Signal<(context: string | ActionContext) => void>;
   // KeyboardManager;
   onGlobalKeyDown: Signal<(detail: KeyboardEventDetail) => void>;
   onGlobalKeyUp: Signal<(detail: KeyboardEventDetail) => void>;

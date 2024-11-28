@@ -1,17 +1,17 @@
 import type { ActionsList, IActionsPlugin } from '../actions';
 import { Action } from '../actions';
 import { Controls } from './Controls';
-import type { ControlScheme } from './interfaces';
 
 import { IApplication } from '../../core';
 import { Signal } from '../../signals';
 import type { IPlugin } from '../Plugin';
 import { Plugin } from '../Plugin';
 import { InputController, InputControllerTypes } from './constants';
+import { UserControls } from './interfaces';
 
 export type InputManagerOptions = {
   actions?: ActionsList;
-  controls?: ControlScheme;
+  controls?: UserControls;
 };
 
 export interface IInputPlugin extends IPlugin {

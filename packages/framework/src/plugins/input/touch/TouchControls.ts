@@ -1,28 +1,25 @@
 import { bindAllMethods } from '../../../utils';
-import { ControlsActionMap } from '../interfaces';
+import { ControlsActionMap, JoystickControlsScheme, TouchControlsMap, TouchControlsScheme } from '../interfaces';
 
+import { JoystickDirection } from '..';
 import { Application } from '../../../Application';
 import { WithSignals } from '../../../mixins';
-import type { IButton, IJoystick } from '../../../ui';
-import type { Action, ActionMap } from '../../actions';
+import { type IButton, type IJoystick } from '../../../ui';
+import type { Action } from '../../actions';
 import { AbstractControls } from '../AbstractControls';
-import type { ITouchControlScheme } from './interfaces';
-
-type TouchControlsActionData = {
-  button?: string | string[];
-  combination?: boolean;
-  inputState?: 'up' | 'down' | 'joystick';
-};
 
 export class TouchControls extends WithSignals(AbstractControls) {
-  protected scheme: ITouchControlScheme;
+  protected scheme: Partial<TouchControlsMap>;
   private _buttons: Set<IButton> = new Set();
-  private _joystickMap: ControlsActionMap;
-  private _buttonDownMap: ControlsActionMap;
-  private _buttonUpMap: ControlsActionMap;
+  private _joystickMap: Partial<JoystickControlsScheme>;
+  private _buttonDownMap: Partial<TouchControlsScheme>;
+  private _buttonUpMap: Partial<TouchControlsScheme>;
   private _combinations: string[][] = [];
   private _singleDownButtons: Set<string> = new Set();
-  private _combinationsMap: Map<string[], string> = new Map();
+  private _activeJoystickDirections: Map<JoystickDirection, Action> = new Map();
+  private _activeButtonDownIds: Map<string, Action> = new Map();
+  private _activeButtonUpIds: Map<string, Action> = new Map();
+  private _combinationsMap: Map<string[], Action> = new Map();
 
   constructor() {
     super();
@@ -67,70 +64,85 @@ export class TouchControls extends WithSignals(AbstractControls) {
     this._buttons.delete(button);
   }
 
-  public initialize(scheme: ITouchControlScheme, actions: ActionMap): void {
-    super.initialize(scheme, actions);
+  public initialize(scheme: Partial<TouchControlsMap>): void {
+    super.initialize(scheme as Partial<ControlsActionMap>);
     this._buttonDownMap = scheme.down || {};
     this._buttonUpMap = scheme.up || {};
     this._joystickMap = scheme.joystick || {};
-    this._sortCombinations();
+    this.app.signal.onActionContextChanged.connect(this._sortActions);
+    this._sortActions();
   }
 
   public connect() {
     this.app.ticker.add(this._update);
   }
 
-  isActionActive(action: Action): boolean {
-    const buttonAction = this.scheme['down']?.[action] ?? null;
-    if (buttonAction) {
-      if (Array.isArray(buttonAction.input)) {
-        return this._combinationsMap.has(buttonAction.input);
-      } else {
-        return this._singleDownButtons.has(buttonAction.input);
-      }
-    } else {
-      const joystickAction = this.scheme['joystick']?.[action] ?? null;
-      if (this._joystick && joystickAction) {
-        if (Array.isArray(joystickAction.input)) {
-          return joystickAction.input.includes(this._joystick.direction);
-        } else {
-          return joystickAction?.input === this._joystick?.direction;
-        }
-      }
-    }
-    return false;
-  }
-
-  private _sortCombinations() {
+  private _sortActions() {
+    const actions = this.app.actionsPlugin.getActions();
     this._combinations = [];
     this._combinationsMap.clear();
-    const buttons = Object.keys(this._buttonDownMap);
+    this._activeJoystickDirections.clear();
+    this._activeButtonDownIds.clear();
+    this._activeButtonUpIds.clear();
+
+    let buttons = Object.keys(this._buttonDownMap);
     buttons.forEach((key) => {
       const item = this._buttonDownMap[key];
-      if (item.context !== '*' && !item.context.includes(this.app.actionContext)) {
+      const action = actions[key];
+      if (
+        action.context !== '*' &&
+        action.context !== this.app.actionContext &&
+        !action.context.includes(this.app.actionContext)
+      ) {
         return;
       }
-      let input = item.input;
-      if (!Array.isArray(input)) {
-        input = [input];
-      }
-      input.forEach((inputString) => {
-        if (inputString.includes('+')) {
-          const combo = inputString.split('+');
-          this._combinations.push(combo);
-          this._combinationsMap.set(combo, inputString);
+      let input = item;
+      if (input) {
+        if (!Array.isArray(input)) {
+          input = [input];
         }
-      });
+        input.forEach((inputString) => {
+          if (inputString.includes('+')) {
+            const combo = inputString.split('+');
+            this._combinations.push(combo);
+            this._combinationsMap.set(combo, key as Action);
+          } else {
+            this._activeButtonDownIds.set(inputString, key as Action);
+          }
+        });
+      }
     });
+
     // sort them from the largest to smallest
     this._combinations.sort((a, b) => b.length - a.length);
-  }
 
-  private _handleContextChanged() {
-    this._getPossibleActions();
-  }
+    buttons = Object.keys(this._buttonUpMap);
+    buttons.forEach((key) => {
+      const item = this._buttonUpMap[key];
+      const action = actions[key];
+      if (
+        action.context !== '*' &&
+        action.context !== this.app.actionContext &&
+        !action.context.includes(this.app.actionContext)
+      ) {
+        return;
+      }
+      this._activeButtonUpIds.set(item as string, key as Action);
+    });
 
-  private _getPossibleActions() {
-    this._sortCombinations();
+    const joystickActions = Object.keys(this._joystickMap);
+    joystickActions.forEach((key) => {
+      const item = this._joystickMap[key];
+      let input = item;
+      if (input) {
+        if (!Array.isArray(input)) {
+          input = [input];
+        }
+        input.forEach((inputString) => {
+          this._activeJoystickDirections.set(inputString as JoystickDirection, key as Action);
+        });
+      }
+    });
   }
 
   private _handleButtonDown(button: IButton): void {
@@ -139,17 +151,17 @@ export class TouchControls extends WithSignals(AbstractControls) {
 
   private _handleButtonUp(button: IButton): void {
     this._singleDownButtons.delete(button.id!);
-    this._maybeTriggerAction(button.id!, this._buttonUpMap, {
-      combination: false,
-      inputState: 'up',
-      button: button.id!,
-    });
+    const action = this._activeButtonUpIds.get(button.id!);
+    if (action) {
+      this.app.sendAction(action, {
+        combination: false,
+        inputState: 'up',
+        button: button.id!,
+      });
+    }
   }
 
   private _update() {
-    if (!this.app.keyboard) {
-      return;
-    }
     const joystickDirection = this._joystick?.direction ?? null;
     const buttonsDown = this._singleDownButtons;
     const eliminated = new Set<string>();
@@ -165,7 +177,7 @@ export class TouchControls extends WithSignals(AbstractControls) {
         // send the action
         const action = this._combinationsMap.get(combination);
         if (action) {
-          this._maybeTriggerAction(action, this._buttonDownMap, {
+          this.app.sendAction(action, {
             button: combination,
             combination: true,
             inputState: 'down',
@@ -180,40 +192,25 @@ export class TouchControls extends WithSignals(AbstractControls) {
         return;
       }
       if (buttonsDown.has(id)) {
-        this._maybeTriggerAction(id, this._buttonDownMap, {
-          button: id,
-          combination: false,
-          inputState: 'down',
-        });
+        const action = this._activeButtonDownIds.get(id);
+        if (action) {
+          this.app.sendAction(action, {
+            button: id,
+            combination: false,
+            inputState: 'down',
+          });
+        }
       }
     });
 
     // joustick dir
     if (joystickDirection) {
-      this._maybeTriggerAction(joystickDirection, this._joystickMap, {
-        inputState: 'joystick',
-      });
-    }
-  }
-
-  private _findAction(actionKey: string, actionMap: ControlsActionMap): Action | string | null {
-    const context = this.app.actionContext;
-    for (const key in actionMap) {
-      const item = actionMap[key];
-      const inputMatch = item.input === actionKey || (Array.isArray(item.input) && item.input.includes(actionKey));
-      if (item.context === '*' && inputMatch) {
-        return key;
-      } else if (item.context.includes(context) && inputMatch) {
-        return key;
+      const action = this._activeJoystickDirections.get(joystickDirection);
+      if (action) {
+        this.app.sendAction(action, {
+          inputState: 'joystick',
+        });
       }
-    }
-    return null;
-  }
-
-  private _maybeTriggerAction(actionKey: string, actionMap: ControlsActionMap, data: TouchControlsActionData): void {
-    const action = this._findAction(actionKey, actionMap);
-    if (action) {
-      this.app.exec.sendAction(action, data);
     }
   }
 }

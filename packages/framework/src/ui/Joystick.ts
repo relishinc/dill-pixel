@@ -1,7 +1,7 @@
 import { DestroyOptions, FederatedPointerEvent, Graphics, Point, Sprite } from 'pixi.js';
 import { Container } from '../display';
-import { Signal } from '../signals';
 import { JoystickDirection } from '../plugins';
+import { Signal } from '../signals';
 
 export interface IJoystick {
   onChange: Signal<(detail: JoystickSignalDetail) => void>;

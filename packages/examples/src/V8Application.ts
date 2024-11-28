@@ -1,18 +1,14 @@
 import { Application, create } from 'dill-pixel';
 
-import { Actions, controls } from '@/controls';
 import EN from '@/locales/en';
 import { Transition } from '@/Transition';
 import { IGoogleAnalyticsPlugin } from '@dill-pixel/plugin-google-analytics/GoogleAnalyticsPlugin';
 import { IFirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
-import * as userDefinedActions from './actions';
+import { actions, type ActionTypes, controls } from './actions';
 import manifest from './assets.json';
 import { ExampleOutliner } from './ui/ExampleOutliner';
 
-// so we can mess with this.
-void userDefinedActions;
-
-interface MyDataSchema {
+type MyDataSchema = {
   foo: string;
   bar: number;
   saved: string;
@@ -20,13 +16,13 @@ interface MyDataSchema {
     qux: boolean;
     quux: string[];
   };
-}
+};
 
 type MyAnalyticsEvents = {
   foo: { bar: string; baz: number; qux: boolean };
 };
 
-export class V8Application extends Application<MyDataSchema, Actions> {
+export class V8Application extends Application<MyDataSchema, ActionTypes> {
   get firebase(): IFirebaseAdapter {
     return this.store.getAdapter('firebase') as IFirebaseAdapter;
   }
@@ -60,6 +56,7 @@ async function boot() {
       focus: {
         outliner: ExampleOutliner,
       },
+      actions,
       input: {
         controls,
       },
@@ -343,6 +340,13 @@ async function boot() {
   app.data.load('bar');
 
   app.analytics.trackEvent('foo', { bar: 'baz', baz: 1, qux: true });
+
+  app.actions('toggle_pause').connect(() => {
+    console.log('toggle_pause action');
+  });
+  app.actions('close').connect(() => {
+    console.log('close action');
+  });
 
   function populateSidebar() {
     // populate sidebar

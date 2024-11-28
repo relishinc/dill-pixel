@@ -222,7 +222,7 @@ export class ArcadePhysicsScene extends BaseScene {
 
   async initialize() {
     await super.initialize();
-    this.app.input.setActionContext('game');
+    this.app.exec.setActionContext('game');
     this.app.focus.addFocusLayer(this.id);
     this.eventMode = 'static';
     // this.on('click', this._addBox);

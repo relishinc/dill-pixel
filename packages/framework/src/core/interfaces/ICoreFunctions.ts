@@ -1,5 +1,13 @@
 import type { IScene } from '../../display';
-import type { ActionSignal, i18nTParams, IFocusable, IFocusLayer, KeySignal, LoadSceneConfig } from '../../plugins';
+import type {
+  ActionMap,
+  ActionSignal,
+  i18nTParams,
+  IFocusable,
+  IFocusLayer,
+  KeySignal,
+  LoadSceneConfig,
+} from '../../plugins';
 import { ActionContext, InputController } from '../../plugins';
 import type { IPopup, PopupConfig, PopupConstructor } from '../../ui';
 
@@ -29,6 +37,7 @@ export interface ICoreFunctions {
 
   // ActionsPlugin;
   getAction<T = any>(action: string): ActionSignal<T>;
+  getActions(): ActionMap;
   sendAction<T = any>(actionId: string | number, data?: T): void;
   setActionContext(context: string | ActionContext): string; // in Application.ts
   actions<T = any>(action: string): ActionSignal<T>; // in Application.ts

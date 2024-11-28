@@ -1,4 +1,5 @@
 import {
+  ActionMap,
   FocusManagerPluginOptions,
   i18nOptions,
   InputManagerOptions,
@@ -27,6 +28,7 @@ export interface IApplicationOptions<D extends DataSchema = DataSchema> extends 
   plugins: ImportList<IPlugin>;
   assets: AssetLoadingOptions;
   scenes: SceneImportList<IScene>;
+  actions: Partial<ActionMap>;
   input: Partial<InputManagerOptions>;
   focus: Partial<FocusManagerPluginOptions>;
   splash: Partial<SplashOptions>;

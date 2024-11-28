@@ -1,5 +1,5 @@
 import { KeyboardKey } from '../../utils';
-import { Action, ActionContext, ActionMap, UserActions } from '../actions';
+import { Action, ActionContext, ActionMap, ExtractButtonId, UserActions, UserButtons } from '../actions';
 import { IKeyboardControlScheme, KeyboardControls } from './keyboard';
 import { ITouchControlScheme, JoystickInput, TouchControls } from './touch';
 
@@ -36,7 +36,7 @@ export interface IControls {
 
   isActionActive(action: string): boolean;
 
-  initialize(scheme: ControlScheme, actions: ActionMap): void;
+  initialize(scheme: UserControls, actions: ActionMap): void;
 
   destroy(): void;
 }
@@ -44,27 +44,41 @@ export interface IControls {
 // Helper type for key combinations
 type KeyCombination = `${KeyboardSchemaKey}+${KeyboardSchemaKey}`;
 
+export type KeyboardControlsScheme<U extends UserActions = UserActions> = {
+  [key in keyof U]: KeyboardSchemaKey | KeyCombination | (KeyboardSchemaKey | KeyCombination)[];
+};
+
 export type KeyboardControlsMap<U extends UserActions = UserActions> = {
-  down?: Partial<{
-    [K in KeyboardSchemaKey | KeyCombination]: keyof U;
-  }>;
-  up?: Partial<{
-    [K in KeyboardSchemaKey | KeyCombination]: keyof U;
-  }>;
+  down?: Partial<KeyboardControlsScheme<U>>;
+  up?: Partial<KeyboardControlsScheme<U>>;
 };
 
-export type TouchControlsMap<U extends UserActions = UserActions> = {
-  [K in JoystickInput]: keyof U;
+export type TouchControlsScheme<U extends UserActions = UserActions, B extends UserButtons = UserButtons> = {
+  [key in keyof U]:
+    | ExtractButtonId<B>
+    | `${ExtractButtonId<B>}+${ExtractButtonId<B>}`
+    | (ExtractButtonId<B> | `${ExtractButtonId<B>}+${ExtractButtonId<B>}`)[];
 };
 
-export interface UserControls<U extends UserActions = UserActions> {
+export type JoystickControlsScheme<U extends UserActions = UserActions> = {
+  [key in keyof U]: JoystickInput | JoystickInput[];
+};
+
+export type TouchControlsMap<U extends UserActions = UserActions, B extends UserButtons = UserButtons> = {
+  joystick?: Partial<JoystickControlsScheme<U>>;
+  up?: Partial<TouchControlsScheme<U, B>>;
+  down?: Partial<TouchControlsScheme<U, B>>;
+};
+
+export interface UserControls<U extends UserActions = UserActions, B extends UserButtons = UserButtons> {
   keyboard: Partial<KeyboardControlsMap<U>>;
-  touch: Partial<TouchControlsMap<U>>;
+  touch: Partial<TouchControlsMap<U, B>>;
 }
 
-export function defineControls<U extends UserActions = UserActions>(
+export function defineControls<U extends UserActions = UserActions, B extends UserButtons = UserButtons>(
   actions: U,
-  controls: UserControls<U>,
-): UserControls<U> {
+  buttons: B,
+  controls: UserControls<U, B>,
+): UserControls<U, B> {
   return controls;
 }

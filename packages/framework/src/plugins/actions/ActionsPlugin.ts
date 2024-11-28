@@ -1,6 +1,7 @@
-import { Action, ActionContext, ActionDetail, ActionSignal } from '.';
+import { Action, ActionContext, ActionDetail, ActionMap, ActionSignal } from '.';
 import { IApplication } from '../../core';
 import { Signal } from '../../signals';
+import { Logger } from '../../utils';
 import { IPlugin, Plugin } from '../Plugin';
 
 export interface IActionsPlugin extends IPlugin {
@@ -8,7 +9,13 @@ export interface IActionsPlugin extends IPlugin {
   onActionContextChanged: Signal<(context: string | ActionContext) => void>;
   initialize(app: IApplication): void;
   getAction<TActionData = any>(action: Action | string): ActionSignal<TActionData>;
+  getActions(): ActionMap;
   sendAction<TActionData = any>(actionId: Action | string, data?: TActionData): void;
+  setActionContext(context: string | ActionContext): string;
+}
+
+export interface IActionsPluginOptions {
+  actions: Partial<ActionMap>;
 }
 
 export class ActionsPlugin extends Plugin implements IActionsPlugin {
@@ -21,6 +28,7 @@ export class ActionsPlugin extends Plugin implements IActionsPlugin {
   // private properties
   private _context: string | ActionContext = 'general';
   private _signals: Map<string | number, ActionSignal> = new Map();
+  private _actions: Partial<ActionMap> = {};
 
   // getter / setter
   get context(): string | ActionContext {
@@ -36,6 +44,7 @@ export class ActionsPlugin extends Plugin implements IActionsPlugin {
   }
 
   initialize(app: IApplication): void {
+    this._actions = app?.config?.actions ? app.config.actions || {} : {};
     console.log('ActionsPlugin initialized');
   }
 
@@ -46,12 +55,38 @@ export class ActionsPlugin extends Plugin implements IActionsPlugin {
     return this._signals.get(action)!;
   }
 
+  getActions(): ActionMap {
+    return this._actions as ActionMap;
+  }
+
   sendAction<TActionData = any>(actionId: Action | string, data?: TActionData): void {
-    return this.getAction<TActionData>(actionId).emit({ id: actionId, context: this.context, data });
+    // check if action is defined
+    if (!this._actions[actionId]) {
+      Logger.warn(`Action ${actionId} is not defined`);
+      return;
+    }
+
+    // check if action is allowed for current context
+    // send action if allowed
+    if (
+      this._actions[actionId].context === '*' ||
+      this._actions[actionId].context === this.context ||
+      this._actions[actionId].context.includes(this.context)
+    ) {
+      return this.getAction<TActionData>(actionId).emit({ id: actionId, context: this.context, data });
+    }
+
+    // the action wasn't allowed
+    Logger.warn(`Action ${actionId} is not allowed for context ${this.context}`);
+  }
+
+  setActionContext(context: string | ActionContext): string {
+    this.context = context;
+    return this.context;
   }
 
   protected getCoreFunctions(): string[] {
-    return ['getAction', 'sendAction'];
+    return ['getAction', 'sendAction', 'setActionContext', 'getActions'];
   }
 
   protected getCoreSignals(): string[] {

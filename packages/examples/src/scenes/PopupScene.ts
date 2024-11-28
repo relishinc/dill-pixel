@@ -30,20 +30,20 @@ export class PopupScene extends BaseScene {
     });
 
     this.addButton('Popup 1', () => {
-      this.app.sendAction('showPopup', {
+      this.app.sendAction('show_popup', {
         id: 'one',
         data: { title: `Example Popup 1` },
       });
     });
     this.addButton('Popup 2', () =>
-      this.app.sendAction('showPopup', {
+      this.app.sendAction('show_popup', {
         id: 'two',
         data: { title: `Example Popup 2:\nWon't close on ESC` },
         closeOnEscape: false,
       }),
     );
     this.addButton('Popup 3', () =>
-      this.app.sendAction('showPopup', {
+      this.app.sendAction('show_popup', {
         id: 'one',
         data: { title: "Example Popup 3:\nWon't close on click outside" },
         closeOnPointerDownOutside: false,
@@ -51,7 +51,7 @@ export class PopupScene extends BaseScene {
       }),
     );
     this.addSignalConnection(
-      this.app.actions('showPopup').connect(this._handleShowPopup),
+      this.app.actions('show_popup').connect(this._handleShowPopup),
       this.app.signal.onHidePopup.connect(() => {
         this.app.func.setActionContext('game');
       }),
