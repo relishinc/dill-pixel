@@ -1,7 +1,8 @@
 import { IApplication } from '../core';
+import { Signal } from '../signals';
+import { KeyboardKey } from '../utils';
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
-import { Signal } from '../signals';
 
 export type KeyboardEventType = 'keydown' | 'keyup';
 export type KeyboardEventDetail = { event: KeyboardEvent; key: string };
@@ -11,11 +12,22 @@ export interface IKeyboardPlugin extends IPlugin {
   enabled: boolean;
   readonly keysDown: Set<string>;
 
-  onKeyDown(key?: string): KeySignal;
+  onKeyDown(key?: KeyboardKey): KeySignal;
 
-  onKeyUp(key?: string): KeySignal;
+  onKeyUp(key?: KeyboardKey): KeySignal;
 
   isKeyDown(key: string): boolean;
+}
+
+export function normalizeKey(key: string | undefined): string {
+  if (key === undefined) {
+    key = '*undefined*';
+  } else if (key === ' ') {
+    key = 'Space';
+  } else if (key.length === 1) {
+    key = key.toUpperCase();
+  }
+  return key;
 }
 
 export class KeyboardPlugin extends Plugin implements IKeyboardPlugin {
@@ -23,7 +35,6 @@ export class KeyboardPlugin extends Plugin implements IKeyboardPlugin {
   // global signals
   public onGlobalKeyDown: Signal<(detail: KeyboardEventDetail) => void> = new Signal();
   public onGlobalKeyUp: Signal<(detail: KeyboardEventDetail) => void> = new Signal();
-
 
   private _keyDownSignals: Map<string | undefined, KeySignal> = new Map();
   private _keyUpSignals: Map<string | undefined, KeySignal> = new Map();
@@ -59,15 +70,15 @@ export class KeyboardPlugin extends Plugin implements IKeyboardPlugin {
     document.addEventListener('keyup', this._handleKeyUp);
   }
 
-  public onKeyDown(key?: string): KeySignal {
-    return this._checkAndAddSignal(key?.toLowerCase() || undefined, 'keydown');
+  public onKeyDown(key?: KeyboardKey): KeySignal {
+    return this._checkAndAddSignal(key || undefined, 'keydown');
   }
 
-  public onKeyUp(key?: string): KeySignal {
-    return this._checkAndAddSignal(key?.toLowerCase() || undefined, 'keyup');
+  public onKeyUp(key?: KeyboardKey): KeySignal {
+    return this._checkAndAddSignal(key || undefined, 'keyup');
   }
 
-  public isKeyDown(key: string): boolean {
+  public isKeyDown(key: KeyboardKey): boolean {
     return this._keysDown.has(key);
   }
 
@@ -84,12 +95,14 @@ export class KeyboardPlugin extends Plugin implements IKeyboardPlugin {
   }
 
   private _handleKeyDown(e: KeyboardEvent): void {
-    this._keysDown.add(e.key);
+    const key = normalizeKey(e.key);
+    this._keysDown.add(key);
     this.onGlobalKeyDown.emit({ event: e, key: e.key });
   }
 
   private _handleKeyUp(e: KeyboardEvent): void {
-    this._keysDown.delete(e.key);
+    const key = normalizeKey(e.key);
+    this._keysDown.delete(key);
     this.onGlobalKeyUp.emit({ event: e, key: e.key });
   }
 
@@ -108,9 +121,7 @@ export class KeyboardPlugin extends Plugin implements IKeyboardPlugin {
       this._listen(eventType);
     }
 
-    if (key === undefined) {
-      key = '*undefined*';
-    }
+    key = normalizeKey(key);
 
     if (!signalMap.has(key)) {
       signalMap.set(key, new Signal<(detail: KeyboardEventDetail) => void>());
@@ -128,7 +139,8 @@ export class KeyboardPlugin extends Plugin implements IKeyboardPlugin {
       return;
     }
     const signalMap = event.type === 'keydown' ? this._keyDownSignals : this._keyUpSignals;
-    signalMap.get('*undefined*')?.emit({ event, key: event.key.toLowerCase() });
-    signalMap.get(event.key.toLowerCase())?.emit({ event, key: event.key });
+    const key = normalizeKey(event.key);
+    signalMap.get('*undefined*')?.emit({ event, key });
+    signalMap.get(key)?.emit({ event, key });
   }
 }

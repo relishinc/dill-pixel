@@ -45,6 +45,9 @@ export interface IApplication<D extends DataSchema = DataSchema> extends PIXIPAp
   actionContext: string | ActionContext;
   onPause: Signal<() => void>;
   onResume: Signal<() => void>;
+  pause(): void;
+  resume(): void;
+  paused: boolean;
 
   readonly appName: string;
   readonly appVersion: string | number;

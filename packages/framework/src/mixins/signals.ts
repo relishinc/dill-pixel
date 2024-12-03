@@ -1,6 +1,6 @@
-import {DestroyOptions} from 'pixi.js';
-import {SignalConnection, SignalConnections} from '../signals';
-import type {Constructor} from '../utils';
+import { DestroyOptions } from 'pixi.js';
+import { SignalConnection, SignalConnections } from '../signals';
+import type { Constructor } from '../utils';
 
 /**
  * Interface for animated entities.
@@ -11,6 +11,8 @@ export interface ISignalContainer {
   destroy(options?: DestroyOptions): void;
 
   addSignalConnection(...args: SignalConnection[]): void;
+  connectSignal(...args: SignalConnection[]): void;
+  connectAction(...args: SignalConnection[]): void;
 }
 
 export function WithSignals<TBase extends Constructor<any>>(Base: TBase): TBase & Constructor<ISignalContainer> {
@@ -22,6 +24,18 @@ export function WithSignals<TBase extends Constructor<any>>(Base: TBase): TBase 
      * @param args - The signal connections to add.
      */
     public addSignalConnection(...args: SignalConnection[]) {
+      for (const connection of args) {
+        this.signalConnections.add(connection);
+      }
+    }
+
+    public connectSignal(...args: SignalConnection[]) {
+      for (const connection of args) {
+        this.signalConnections.add(connection);
+      }
+    }
+
+    public connectAction(...args: SignalConnection[]) {
       for (const connection of args) {
         this.signalConnections.add(connection);
       }

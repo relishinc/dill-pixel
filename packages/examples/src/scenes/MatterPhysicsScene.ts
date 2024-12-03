@@ -102,6 +102,10 @@ export class MatterPhysicsScene extends BaseScene {
 
   async initialize() {
     await super.initialize();
+
+    // needed for the drop action to work
+    this.app.actionContext = 'game';
+
     this.app.focus.addFocusLayer(this.id);
     this.level = this.add.container();
 
@@ -131,7 +135,14 @@ export class MatterPhysicsScene extends BaseScene {
 
     this._particles = this.level.add.existing(new Particles());
 
-    this.on('pointerup', this._addEntity);
+    this.on('pointerup', (e) => {
+      this.app.sendAction('drop', e);
+    });
+
+    this.app.actions('drop').connect((e) => {
+      this._addEntity(e.data!);
+    });
+
     this._handleDebugChanged();
   }
 

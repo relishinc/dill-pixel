@@ -1,39 +1,25 @@
-import { Application, create } from 'dill-pixel';
+import { Application, create, DataSchema } from 'dill-pixel';
 
 import EN from '@/locales/en';
 import { Transition } from '@/Transition';
 import { IGoogleAnalyticsPlugin } from '@dill-pixel/plugin-google-analytics/GoogleAnalyticsPlugin';
 import { IFirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
-import { actions, type ActionTypes, controls } from './actions';
 import manifest from './assets.json';
+import { actions, controls, type ActionTypes, type AnalyticsEvents, type Contexts } from './definitions';
 import { ExampleOutliner } from './ui/ExampleOutliner';
 
-type MyDataSchema = {
-  foo: string;
-  bar: number;
-  saved: string;
-  baz: {
-    qux: boolean;
-    quux: string[];
-  };
-};
-
-type MyAnalyticsEvents = {
-  foo: { bar: string; baz: number; qux: boolean };
-};
-
-export class V8Application extends Application<MyDataSchema, ActionTypes> {
+export class V8Application extends Application<DataSchema, Contexts, ActionTypes> {
   get firebase(): IFirebaseAdapter {
     return this.store.getAdapter('firebase') as IFirebaseAdapter;
   }
 
-  get analytics(): IGoogleAnalyticsPlugin<MyAnalyticsEvents> {
-    return this.getPlugin('analytics') as IGoogleAnalyticsPlugin<MyAnalyticsEvents>;
+  get analytics(): IGoogleAnalyticsPlugin<AnalyticsEvents> {
+    return this.getPlugin('analytics') as IGoogleAnalyticsPlugin<AnalyticsEvents>;
   }
 }
 
 async function boot() {
-  const app = await create<V8Application, MyDataSchema>(
+  const app = await create<V8Application, DataSchema>(
     {
       id: 'V8Application',
       // splash: {
@@ -346,6 +332,11 @@ async function boot() {
   app.actions('close').connect(() => {
     console.log('close action');
   });
+  app.actions('combo').connect(() => {
+    console.log('combo action');
+  });
+
+  app.actions('toggle_pause').connect(app.togglePause, 'highest');
 
   function populateSidebar() {
     // populate sidebar

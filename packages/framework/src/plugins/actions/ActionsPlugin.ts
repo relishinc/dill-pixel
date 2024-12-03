@@ -4,14 +4,14 @@ import { Signal } from '../../signals';
 import { Logger } from '../../utils';
 import { IPlugin, Plugin } from '../Plugin';
 
-export interface IActionsPlugin extends IPlugin {
-  context: string | ActionContext;
-  onActionContextChanged: Signal<(context: string | ActionContext) => void>;
+export interface IActionsPlugin<C extends ActionContext = ActionContext> extends IPlugin {
+  context: C;
+  onActionContextChanged: Signal<(context: C) => void>;
   initialize(app: IApplication): void;
   getAction<TActionData = any>(action: Action | string): ActionSignal<TActionData>;
   getActions(): ActionMap;
   sendAction<TActionData = any>(actionId: Action | string, data?: TActionData): void;
-  setActionContext(context: string | ActionContext): string;
+  setActionContext(context: C): string;
   debug: boolean;
 }
 

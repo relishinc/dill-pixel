@@ -9,6 +9,8 @@ export const DefaultActionContexts = {
   general: 'general',
 };
 
+export const DefaultActionContextsArray = ['default', 'game', 'menu', 'pause', 'popup', 'general'];
+
 export const DefaultActions: Action[] = [
   'up',
   'down',

@@ -128,6 +128,7 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
   private backupToLocalStorage(keys?: Array<keyof D>): void {
     const dataToBackup =
       keys && keys?.length > 0 ? Object.fromEntries(keys.map((key) => [key, this.data[key]])) : this.data;
+    
     for (const key in dataToBackup) {
       localStorage.setItem(`${this.namespace}-${key}`, JSON.stringify(dataToBackup[key]));
     }

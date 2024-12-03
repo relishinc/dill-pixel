@@ -1,6 +1,7 @@
 import { defineActions, defineButtons, defineContexts, defineControls } from 'dill-pixel';
 
-const contexts = defineContexts(['default', 'game', 'menu', 'popup']);
+const contexts = defineContexts(['general', 'game', 'menu', 'popup']);
+export type Contexts = (typeof contexts)[number];
 
 const actions = defineActions(contexts, {
   // keyboard down actions
@@ -22,6 +23,8 @@ const actions = defineActions(contexts, {
   load_from_firebase: { context: '*' },
   clear_firebase: { context: '*' },
   delete_from_firebase: { context: '*' },
+  // physics
+  drop: { context: ['game'] },
 });
 
 type ActionTypes = keyof typeof actions;
@@ -31,15 +34,15 @@ const buttons = defineButtons(['A', 'B']);
 const controls = defineControls(actions, buttons, {
   keyboard: {
     down: {
-      move_left: ['ArrowLeft', 'a'],
-      move_right: ['ArrowRight', 'd'],
-      move_down: ['ArrowDown', 's'],
-      warp: 'q',
-      jump: ['ArrowUp', 'Space'],
-      combo: 'Shift+l',
+      move_left: ['ArrowLeft', 'A'],
+      move_right: ['ArrowRight', 'D'],
+      move_down: ['ArrowDown', 'S'],
+      warp: 'Q',
+      jump: ['ArrowUp', 'Space', 'W'],
+      combo: 'Shift+L',
     },
     up: {
-      toggle_pause: 'p',
+      toggle_pause: 'P',
       close: 'Escape',
       back: 'ArrowLeft',
       next: 'ArrowRight',
@@ -53,10 +56,24 @@ const controls = defineControls(actions, buttons, {
     },
     joystick: {
       move_left: ['left', 'bottom_left', 'top_left'],
-      move_right: ['right', 'bottom_right'],
+      move_right: ['right', 'bottom_right', 'top_right'],
     },
   },
 });
+
+export type DataSchema = {
+  foo: string;
+  bar: number;
+  saved: string;
+  baz: {
+    qux: boolean;
+    quux: string[];
+  };
+};
+
+export type AnalyticsEvents = {
+  foo: { bar: string; baz: number; qux: boolean };
+};
 
 export { actions, contexts, controls };
 export type { ActionTypes };

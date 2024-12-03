@@ -1,11 +1,11 @@
-import {Animated, Factory, WithSignals} from '../mixins';
-import {DestroyOptions, Sprite, Texture, Ticker} from 'pixi.js';
+import { DestroyOptions, Sprite, Texture, Ticker } from 'pixi.js';
+import { Animated, Factory, WithSignals } from '../mixins';
 
-import {Application} from '../Application';
-import type {IApplication} from '../core';
-import type {PointLike, Size} from '../utils';
-import {bindAllMethods} from '../utils';
-import {Signal} from '../signals';
+import { Application } from '../Application';
+import type { IApplication } from '../core';
+import { Signal } from '../signals';
+import type { PointLike, Size } from '../utils';
+import { bindAllMethods } from '../utils';
 
 /**
  * Configuration for the Container class.

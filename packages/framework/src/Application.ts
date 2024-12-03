@@ -77,7 +77,12 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   },
 };
 
-export class Application<D extends DataSchema = DataSchema, C = Action, R extends Renderer = Renderer>
+export class Application<
+    D extends DataSchema = DataSchema,
+    C extends ActionContext = ActionContext,
+    A extends Action = Action,
+    R extends Renderer = Renderer,
+  >
   extends PIXIPApplication<R>
   implements IApplication<D>
 {
@@ -105,6 +110,32 @@ export class Application<D extends DataSchema = DataSchema, C = Action, R extend
   protected _captionsPlugin: ICaptionsPlugin;
   protected _actions: ActionSignal;
   protected _isBooting: boolean = true;
+
+  protected _paused: boolean = false;
+  public get paused(): boolean {
+    return this._paused;
+  }
+
+  public set paused(paused: boolean) {
+    this._paused = paused;
+    if (this._paused) {
+      this.onPause.emit();
+    } else {
+      this.onResume.emit();
+    }
+  }
+
+  public resume() {
+    this.paused = false;
+  }
+
+  public pause() {
+    this._paused = true;
+  }
+
+  public togglePause() {
+    this._paused = !this._paused;
+  }
 
   constructor() {
     super();
@@ -155,11 +186,11 @@ export class Application<D extends DataSchema = DataSchema, C = Action, R extend
   }
 
   // actions
-  protected _actionsPlugin: IActionsPlugin;
+  protected _actionsPlugin: IActionsPlugin<C>;
 
-  public get actionsPlugin(): IActionsPlugin {
+  public get actionsPlugin(): IActionsPlugin<C> {
     if (!this._actionsPlugin) {
-      this._actionsPlugin = this.getPlugin<IActionsPlugin>('actions');
+      this._actionsPlugin = this.getPlugin<IActionsPlugin<C>>('actions');
     }
     return this._actionsPlugin;
   }
@@ -249,11 +280,11 @@ export class Application<D extends DataSchema = DataSchema, C = Action, R extend
     return this._audioManager;
   }
 
-  public get actionContext(): string | ActionContext {
+  public get actionContext(): C {
     return this.actionsPlugin.context;
   }
 
-  public set actionContext(context: string | ActionContext) {
+  public set actionContext(context: C) {
     this.actionsPlugin.context = context;
   }
 
@@ -450,11 +481,11 @@ export class Application<D extends DataSchema = DataSchema, C = Action, R extend
     return await this.registerPlugin(pluginInstance, opts);
   }
 
-  public actions<TActionData = any>(action: C): ActionSignal<TActionData> {
+  public actions<TActionData = any>(action: A): ActionSignal<TActionData> {
     return this.actionsPlugin.getAction<TActionData>(action as Action);
   }
 
-  public sendAction<TActionData = any>(action: C, data?: TActionData) {
+  public sendAction<TActionData = any>(action: A, data?: TActionData) {
     this.actionsPlugin.sendAction<TActionData>(action as Action, data);
   }
 

@@ -104,22 +104,29 @@ export class FocusScene extends BaseScene {
     this.app.focus.addFocusLayer('two', false, this.actor2);
     this.app.focus.setFocusLayer('one');
 
-    this.addSignalConnection(this.app.focus.onFocusManagerActivated.connect(this._updateFocusLayerLabel));
-    this.addSignalConnection(this.app.focus.onFocusManagerDeactivated.connect(this._updateFocusLayerLabel));
-    this.addSignalConnection(this.app.focus.onFocusLayerChange.connect(this._updateFocusLayerLabel));
-    this.addSignalConnection(
-      this.app.keyboard.onKeyUp('a').connect(() => {
+    this.connectSignal(
+      this.app.focus.onFocusManagerActivated.connect(this._updateFocusLayerLabel),
+      this.app.focus.onFocusManagerDeactivated.connect(this._updateFocusLayerLabel),
+      this.app.focus.onFocusLayerChange.connect(this._updateFocusLayerLabel),
+      this.app.keyboard.onKeyUp('A').connect(() => {
         this.actor1.setTint(Math.random() * 0xffffff);
       }),
-    );
-    this.addSignalConnection(
-      this.app.keyboard.onKeyUp('f').connect(() => {
+      this.app.keyboard.onKeyUp('F').connect(() => {
         this.app.focus.setFocusLayer(this.app.focus.currentLayerId === 'one' ? 'two' : 'one');
       }),
-    );
-    this.addSignalConnection(
-      this.app.keyboard.onKeyUp('s').connect(() => {
+      this.app.keyboard.onKeyUp('S').connect(() => {
         void this.app.scenes.loadScene({ id: 'TestScene2' });
+      }),
+    );
+
+    this.connectAction(
+      this.app.actions('toggle_pause').connect(() => {
+        console.log(this.app.paused);
+        if (this.app.paused) {
+          this.actor1.pauseAnimations();
+        } else {
+          this.actor1.resumeAnimations();
+        }
       }),
     );
 

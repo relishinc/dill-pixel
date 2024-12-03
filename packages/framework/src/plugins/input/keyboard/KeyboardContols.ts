@@ -2,7 +2,7 @@ import { Application } from '../../../Application';
 import { WithSignals } from '../../../mixins';
 import { bindAllMethods } from '../../../utils';
 import type { Action } from '../../actions';
-import type { KeyboardEventDetail } from '../../KeyboardPlugin';
+import { normalizeKey, type KeyboardEventDetail } from '../../KeyboardPlugin';
 import { AbstractControls } from '../AbstractControls';
 import type { ControlsActionMap, KeyboardControlsMap, KeyboardControlsScheme } from '../types';
 
@@ -89,6 +89,7 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
         });
       }
     });
+
     // sort them from the largest to smallest
     this._keyCombinations.sort((a, b) => b.length - a.length);
 
@@ -105,6 +106,9 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
         });
       }
     });
+
+    //Logger.log('keyDownMap', this._keyDownMap, 'activeDownKeys', this._activeDownKeys);
+    //Logger.log('keyUpMap', this._keyUpMap, 'activeUpKeys', this._activeUpKeys);
   }
 
   private _handleContextChanged() {
@@ -116,12 +120,12 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
   }
 
   private _handleKeyDown(detail: KeyboardEventDetail): void {
-    const key = detail.event.key;
+    const key = normalizeKey(detail.event.key);
     this._singleDownKeys.add(key);
   }
 
   private _handleKeyUp(detail: KeyboardEventDetail): void {
-    const key = detail.event.key;
+    const key = normalizeKey(detail.event.key);
     const action = this._activeUpKeys.get(key);
     if (action) {
       this.app.sendAction(action, { combination: false, inputState: 'up', key });
@@ -133,6 +137,9 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
       return;
     }
     const keysDown = this.app.keyboard.keysDown;
+    if (keysDown.size === 0) {
+      return;
+    }
     const eliminated = new Set<string>();
     // this._keyCombinations is already sorted from largest to smallest
     for (let i = 0; i < this._keyCombinations.length; i++) {

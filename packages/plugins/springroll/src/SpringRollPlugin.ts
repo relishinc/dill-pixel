@@ -1,10 +1,12 @@
 import type { IApplication, IPlugin } from 'dill-pixel';
 
-import { Plugin, Signal } from 'dill-pixel';
+import { isDev, Logger, Plugin, Signal } from 'dill-pixel';
 import * as springroll from 'springroll';
 import { pluginVersion, version } from './version';
 
-export interface SpringRollPluginOptions extends springroll.ApplicationConfig {}
+export interface SpringRollPluginOptions extends springroll.ApplicationConfig {
+  debug?: boolean;
+}
 
 export interface ISpringRollPlugin extends IPlugin {
   // signals
@@ -46,6 +48,7 @@ const defaultOptions: Partial<SpringRollPluginOptions> = {
     musicVolume: true,
     sfxVolume: true,
   },
+  debug: isDev,
 };
 
 export class SpringRollPlugin extends Plugin implements ISpringRollPlugin {
@@ -80,6 +83,7 @@ export class SpringRollPlugin extends Plugin implements ISpringRollPlugin {
     this._options = {
       features: { ...defaultOptions.features, ...(options?.features ?? {}) },
       hintPlayer: options?.hintPlayer ?? defaultOptions.hintPlayer,
+      debug: options?.debug ?? defaultOptions.debug,
     };
 
     this._springrollApplication = new springroll.Application({
@@ -182,117 +186,123 @@ export class SpringRollPlugin extends Plugin implements ISpringRollPlugin {
   }
 
   private _handleCaptionsMuted(result: boolean) {
-    console.log('Are captions muted?', result);
+    this._debug('Are captions muted?', result);
     this.app.captions.enabled = !result;
     this.onCaptionsMuted.emit(result);
   }
 
   private _handleSoundVolume(result: number) {
-    console.log('Sound volume', result);
+    this._debug('Sound volume', result);
     this.app.audio.masterVolume = result;
     this.onSoundVolume.emit(result);
   }
 
   private _handleVoVolume(result: number) {
-    console.log('Vo volume', result);
+    this._debug('Vo volume', result);
     this.app.audio.setChannelVolume('voiceover', result);
     this.onVoVolume.emit(result);
   }
 
   private _handleMusicVolume(result: number) {
-    console.log('Music volume', result);
+    this._debug('Music volume', result);
     this.app.audio.setChannelVolume('music', result);
     this.onMusicVolume.emit(result);
   }
 
   private _handleSfxVolume(result: number) {
-    console.log('Sfx volume', result);
+    this._debug('Sfx volume', result);
     this.app.audio.setChannelVolume('sfx', result);
     this.onSfxVolume.emit(result);
   }
 
   private _handlePointerSize(result: number) {
-    console.log('Pointer size', result);
+    this._debug('Pointer size', result);
     this.onPointerSize.emit(result);
   }
 
   private _handleButtonSize(result: number) {
-    console.log('Button size', result);
+    this._debug('Button size', result);
     this.onButtonSize.emit(result);
   }
 
   private _handleControlSensitivity(result: number) {
-    console.log('Control sensitivity', result);
+    this._debug('Control sensitivity', result);
     this.onControlSensitivity.emit(result);
   }
 
   private _handleRemovableLayers(result: number) {
-    console.log('Removable layers', result);
+    this._debug('Removable layers', result);
     this.onRemovableLayers.emit(result);
   }
 
   private _handleHudPosition(result: string) {
-    console.log('Hud position', result);
+    this._debug('Hud position', result);
     this.onHudPosition.emit(result);
   }
 
   private _handleHitAreaScale(result: number) {
-    console.log('Hit area scale', result);
+    this._debug('Hit area scale', result);
     this.onHitAreaScale.emit(result);
   }
 
   private _handleDragThresholdScale(result: number) {
-    console.log('Drag threshold scale', result);
+    this._debug('Drag threshold scale', result);
     this.onDragThresholdScale.emit(result);
   }
 
   private _handleHealth(result: number) {
-    console.log('Health', result);
+    this._debug('Health', result);
     this.onHealth.emit(result);
   }
 
   private _handleObjectCount(result: number) {
-    console.log('Object count', result);
+    this._debug('Object count', result);
     this.onObjectCount.emit(result);
   }
 
   private _handleCompletionPercentage(result: number) {
-    console.log('Completion percentage', result);
+    this._debug('Completion percentage', result);
     this.onCompletionPercentage.emit(result);
   }
 
   private _handleSpeedScale(result: number) {
-    console.log('Speed scale', result);
+    this._debug('Speed scale', result);
     this.onSpeedScale.emit(result);
   }
 
   private _handleTimersScale(result: number) {
-    console.log('Timers scale', result);
+    this._debug('Timers scale', result);
     this.onTimersScale.emit(result);
   }
 
   private _handleInputCount(result: number) {
-    console.log('Input count', result);
+    this._debug('Input count', result);
     this.onInputCount.emit(result);
   }
 
   private _handleKeyBinding(result: object) {
-    console.log('Key binding', result);
+    this._debug('Key binding', result);
     this.onKeyBinding.emit(result);
   }
 
   private _handleColorVision(result: string) {
-    console.log('Color vision', result);
+    this._debug('Color vision', result);
     this.onColorVision.emit(result);
   }
 
   private _handleFullScreen(result: boolean) {
-    console.log('Full screen', result);
+    this._debug('Full screen', result);
     this.onFullScreen.emit(result);
   }
 
   private _handlePause(result: boolean) {
-    console.log('Pause', result);
+    this._debug('Pause', result);
     this.onPause.emit(result);
+  }
+
+  private _debug(...message: any[]) {
+    if (this._options.debug) {
+      Logger.log(...message);
+    }
   }
 }

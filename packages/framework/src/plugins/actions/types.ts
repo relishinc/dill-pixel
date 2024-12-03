@@ -33,7 +33,7 @@ export type ActionMap<C extends UserContexts = UserContexts> = {
 
 export type UserActions<C extends UserContexts = UserContexts> = Partial<ActionMap<C>>;
 
-type ExtractContext<C extends readonly ActionContext[]> = C[number];
+export type ExtractContext<C extends readonly ActionContext[]> = C[number];
 export type UserContexts = ActionContext[];
 
 export interface ActionDefinition<C extends UserContexts = UserContexts> {

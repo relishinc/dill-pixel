@@ -52,7 +52,7 @@ export class SnapEndlessRunnerScene extends BaseScene {
 
   async initialize() {
     await super.initialize();
-    this.app.actionContext = 'game';
+
     this.app.focus.addFocusLayer(this.id);
 
     this.level = this.add.container({
@@ -90,25 +90,14 @@ export class SnapEndlessRunnerScene extends BaseScene {
 
     this._handleDebugChanged();
 
-    this.addSignalConnection(
-      this.app.actions('toggle_pause').connect(this._togglePause),
-      this.app.keyboard.onKeyDown('q').connect(() => {
-        this.app.sendAction('warp');
-      }),
-    );
+    this.addSignalConnection(this.app.actions('toggle_pause').connect(this._togglePause));
     this.addControls();
+    this.app.actionContext = 'game';
   }
 
   physicsUpdate() {
     if (this._isPaused) return;
     EndlessRunner.update();
-
-    if (this._joystick.direction.includes('left')) {
-      this.app.sendAction('move_left');
-    }
-    if (this._joystick.direction.includes('right')) {
-      this.app.sendAction('move_right');
-    }
 
     // add more segments if needed
     if (!EndlessRunner.hasEnoughSegments) {
@@ -193,13 +182,7 @@ export class SnapEndlessRunnerScene extends BaseScene {
       platforms: [this.getPlatFormConfig(150, bottom, 300, 20), this.getPlatFormConfig(150, bottom - 250, 30, 200)],
     };
 
-    // const segmentTestConfig = {
-    //   width: 300,
-    //   platforms: [this.getPlatFormConfig(150, bottom, 300, 20), this.getPlatFormConfig(150, bottom - 250, 30, 500)],
-    // };
-
     return [segment0Config, segment1Config, segment2Config, segment3Config, segment4Config, segment5Config];
-    // return [segment3Config];
   }
 
   getPlatFormConfig(
