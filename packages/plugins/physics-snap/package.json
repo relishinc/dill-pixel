@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-snap-physics",
-  "version": "8.17.1",
+  "version": "8.17.2",
   "description": "",
   "files": [
     "lib",
@@ -27,7 +27,7 @@
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
-    "dill-pixel": "8.17.1",
+    "dill-pixel": "8.17.2",
     "gsap": "^3.12.5",
     "pixi.js": "8.6.3"
   }

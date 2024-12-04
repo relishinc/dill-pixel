@@ -2,11 +2,10 @@ import { Action } from '../..';
 
 export const DefaultActionContexts = {
   default: 'default',
-  game: 'game',
   menu: 'menu',
   pause: 'pause',
   popup: 'popup',
-  default: 'default',
+  game: 'game',
 };
 
 export const DefaultActionContextsArray = ['default', 'menu', 'pause', 'popup', 'game'];
