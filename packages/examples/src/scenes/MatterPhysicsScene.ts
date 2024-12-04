@@ -49,7 +49,7 @@ class Particles extends ParticleContainer {
         p.speed += 0.25;
       }
       if (p.alpha > 0) {
-        p.alpha -= 0.1; // doesn't seem to work
+        p.alpha -= 0.005; // doesn't seem to work
       }
       p.renderCount++;
       if (p.renderCount > 200) {
@@ -136,7 +136,7 @@ export class MatterPhysicsScene extends BaseScene {
     this._particles = this.level.add.existing(new Particles());
 
     this.on('pointerup', (e) => {
-      this.app.sendAction('drop', e);
+      this.app.action('drop', e);
     });
 
     this.app.actions('drop').connect((e) => {

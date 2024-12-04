@@ -30,20 +30,20 @@ export class PopupScene extends BaseScene {
     });
 
     this.addButton('Popup 1', () => {
-      this.app.sendAction('show_popup', {
+      this.app.action('show_popup', {
         id: 'one',
         data: { title: `Example Popup 1` },
       });
     });
     this.addButton('Popup 2', () =>
-      this.app.sendAction('show_popup', {
+      this.app.action('show_popup', {
         id: 'two',
         data: { title: `Example Popup 2:\nWon't close on ESC` },
         closeOnEscape: false,
       }),
     );
     this.addButton('Popup 3', () =>
-      this.app.sendAction('show_popup', {
+      this.app.action('show_popup', {
         id: 'one',
         data: { title: "Example Popup 3:\nWon't close on click outside" },
         closeOnPointerDownOutside: false,

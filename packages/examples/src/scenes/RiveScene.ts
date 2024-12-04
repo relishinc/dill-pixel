@@ -17,7 +17,7 @@ export class RiveScene extends BaseScene {
 
   async initialize(): Promise<void> {
     await super.initialize();
-    this.app.func.setActionContext('general');
+    this.app.actionContext = 'default';
     this.app.actions('toggle_pause').connect(() => {
       this._paused = !this._paused;
       if (this._paused) {

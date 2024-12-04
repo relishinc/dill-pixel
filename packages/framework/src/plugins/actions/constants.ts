@@ -6,10 +6,10 @@ export const DefaultActionContexts = {
   menu: 'menu',
   pause: 'pause',
   popup: 'popup',
-  general: 'general',
+  default: 'default',
 };
 
-export const DefaultActionContextsArray = ['default', 'game', 'menu', 'pause', 'popup', 'general'];
+export const DefaultActionContextsArray = ['default', 'menu', 'pause', 'popup', 'game'];
 
 export const DefaultActions: Action[] = [
   'up',
@@ -28,13 +28,13 @@ export const DefaultActions: Action[] = [
 
 export const defaultActionsList = {
   action: { context: '*' },
-  back: { context: ['menu', 'general', 'popup'] },
-  next: { context: ['menu', 'general', 'popup'] },
-  select: { context: ['menu', 'general', 'popup'] },
-  menu: { context: ['general'] },
-  down: { context: ['menu', 'general', 'popup'] },
-  up: { context: ['menu', 'general', 'popup'] },
-  left: { context: ['menu', 'general', 'popup'] },
+  back: { context: ['menu', 'default', 'popup'] },
+  next: { context: ['menu', 'default', 'popup'] },
+  select: { context: ['menu', 'default', 'popup'] },
+  menu: { context: ['default'] },
+  down: { context: ['menu', 'default', 'popup'] },
+  up: { context: ['menu', 'default', 'popup'] },
+  left: { context: ['menu', 'default', 'popup'] },
   right: { context: '*' },
   pause: { context: '*' },
   unpause: { context: '*' },

@@ -1,3 +1,4 @@
+import { V8Application } from '@/V8Application';
 import { Actor } from '@dill-pixel/plugin-snap-physics/Actor';
 import { Solid } from '@dill-pixel/plugin-snap-physics/Solid';
 import { WithVelocity } from '@dill-pixel/plugin-snap-physics/mixins';
@@ -13,7 +14,7 @@ type BasicActorConfig = {
   activeColor: number;
 };
 
-export class BasicActor<T extends BasicActorConfig = BasicActorConfig> extends Actor<T> {
+export class BasicActor<T extends BasicActorConfig = BasicActorConfig> extends Actor<T, V8Application> {
   static speed: number = 5;
   static onActivated = new Signal<(actor: BasicActor) => void>();
 
@@ -59,16 +60,16 @@ export class BasicActor<T extends BasicActorConfig = BasicActorConfig> extends A
     if (!this._active) {
       return;
     }
-    if (this.app.input.controls.isActionActive('move_left')) {
+    if (this.app.isActionActive('move_left')) {
       this.moveX(-BasicActor.speed);
     }
-    if (this.app.input.controls.isActionActive('move_right')) {
+    if (this.app.isActionActive('move_right')) {
       this.moveX(BasicActor.speed);
     }
-    if (this.app.input.controls.isActionActive('jump')) {
+    if (this.app.isActionActive('jump')) {
       this.moveY(-BasicActor.speed);
     }
-    if (this.app.input.controls.isActionActive('move_down')) {
+    if (this.app.isActionActive('move_down')) {
       this.moveY(BasicActor.speed);
     }
   }

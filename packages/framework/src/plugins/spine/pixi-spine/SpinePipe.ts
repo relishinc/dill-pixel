@@ -28,179 +28,170 @@
  *****************************************************************************/
 
 import {
-    collectAllRenderables,
-    extensions, ExtensionType,
-    InstructionSet,
-    type Renderer,
-    type RenderPipe,
+	collectAllRenderables,
+	extensions, ExtensionType,
+	InstructionSet,
+	type BLEND_MODES,
+	type Container,
+	type Renderer,
+	type RenderPipe,
 } from 'pixi.js';
-import { BatchableSpineSlot } from './BatchableSpineSlot';
-import { Spine } from './Spine';
-import { MeshAttachment, RegionAttachment, SkeletonClipping } from '@esotericsoftware/spine-core';
+import { BatchableSpineSlot } from './BatchableSpineSlot.js';
+import { Spine } from './Spine.js';
+import { MeshAttachment, RegionAttachment } from '@esotericsoftware/spine-core';
 
-const clipper = new SkeletonClipping();
-
-const spineBlendModeMap = {
-    0: 'normal',
-    1: 'add',
-    2: 'multiply',
-    3: 'screen'
+const spineBlendModeMap: Record<number, BLEND_MODES> = {
+	0: 'normal',
+	1: 'add',
+	2: 'multiply',
+	3: 'screen'
 };
 
+type GpuSpineDataElement = { slotBatches: Record<string, BatchableSpineSlot> };
+
 // eslint-disable-next-line max-len
-export class SpinePipe implements RenderPipe<Spine>
-{
-    /** @ignore */
-    static extension = {
-        type: [
-            ExtensionType.WebGLPipes,
-            ExtensionType.WebGPUPipes,
-            ExtensionType.CanvasPipes,
-        ],
-        name: 'spine',
-    } as const;
+export class SpinePipe implements RenderPipe<Spine> {
+	/** @ignore */
+	static extension = {
+		type: [
+			ExtensionType.WebGLPipes,
+			ExtensionType.WebGPUPipes,
+			ExtensionType.CanvasPipes,
+		],
+		name: 'spine',
+	} as const;
 
-    renderer: Renderer;
+	renderer: Renderer;
 
-    private gpuSpineData:Record<string, any> = {};
+	private gpuSpineData: Record<string, GpuSpineDataElement> = {};
+	private readonly _destroyRenderableBound = this.destroyRenderable.bind(this) as (renderable: Container) => void;
 
-    constructor(renderer: Renderer)
-    {
-        this.renderer = renderer;
-    }
+	constructor (renderer: Renderer) {
+		this.renderer = renderer;
+	}
 
-    validateRenderable(spine: Spine): boolean
-    {
-        spine._applyState();
+	validateRenderable (spine: Spine): boolean {
+		spine._validateAndTransformAttachments();
 
-        // if pine attachments have changed, we need to rebuild the batch!
-        if (spine.spineAttachmentsDirty)
-        {
-            return true;
-        }
-        // if the textures have changed, we need to rebuild the batch, but only if the texture is not already in the batch
-        else if (spine.spineTexturesDirty)
-        {
-            // loop through and see if the textures have changed..
-            const drawOrder = spine.skeleton.drawOrder;
-            const gpuSpine = this.gpuSpineData[spine.uid];
+		// if spine attachments have changed or destroyed, we need to rebuild the batch!
+		if (spine.spineAttachmentsDirty) {
+			return true;
+		}
 
-            for (let i = 0, n = drawOrder.length; i < n; i++)
-            {
-                const slot = drawOrder[i];
-                const attachment = slot.getAttachment();
+		// if the textures have changed, we need to rebuild the batch, but only if the texture is not already in the batch
+		else if (spine.spineTexturesDirty) {
+			// loop through and see if the textures have changed..
+			const drawOrder = spine.skeleton.drawOrder;
+			const gpuSpine = this.gpuSpineData[spine.uid];
 
-                if (attachment instanceof RegionAttachment || attachment instanceof MeshAttachment)
-                {
-                    const cacheData = spine._getCachedData(slot, attachment);
-                    const batchableSpineSlot = gpuSpine.slotBatches[cacheData.id];
+			for (let i = 0, n = drawOrder.length; i < n; i++) {
+				const slot = drawOrder[i];
+				const attachment = slot.getAttachment();
 
-                    const texture = cacheData.texture;
+				if (attachment instanceof RegionAttachment || attachment instanceof MeshAttachment) {
+					const cacheData = spine._getCachedData(slot, attachment);
+					const batchableSpineSlot = gpuSpine.slotBatches[cacheData.id];
 
-                    if (texture !== batchableSpineSlot.texture)
-                    {
-                        if (!batchableSpineSlot._batcher.checkAndUpdateTexture(batchableSpineSlot, texture))
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
+					const texture = cacheData.texture;
 
-        return false;
-    }
+					if (texture !== batchableSpineSlot.texture) {
+						if (!batchableSpineSlot._batcher.checkAndUpdateTexture(batchableSpineSlot, texture)) {
+							return true;
+						}
+					}
+				}
+			}
+		}
 
-    addRenderable(spine: Spine, instructionSet:InstructionSet)
-    {
-        const gpuSpine = this.gpuSpineData[spine.uid] ||= { slotBatches: {} };
+		return false;
+	}
 
-        const batcher = this.renderer.renderPipes.batch;
+	addRenderable (spine: Spine, instructionSet: InstructionSet) {
+		const gpuSpine = this._getSpineData(spine);
 
-        const drawOrder = spine.skeleton.drawOrder;
+		const batcher = this.renderer.renderPipes.batch;
 
-        const roundPixels = (this.renderer._roundPixels | spine._roundPixels) as 0 | 1;
+		const drawOrder = spine.skeleton.drawOrder;
 
-        spine._applyState();
+		const roundPixels = (this.renderer._roundPixels | spine._roundPixels) as 0 | 1;
 
-        for (let i = 0, n = drawOrder.length; i < n; i++)
-        {
-            const slot = drawOrder[i];
-            const attachment = slot.getAttachment();
-            const blendMode = spineBlendModeMap[slot.data.blendMode];
+		spine._validateAndTransformAttachments();
 
-            if (attachment instanceof RegionAttachment || attachment instanceof MeshAttachment)
-            {
-                const cacheData = spine._getCachedData(slot, attachment);
-                const batchableSpineSlot = gpuSpine.slotBatches[cacheData.id] ||= new BatchableSpineSlot();
+		for (let i = 0, n = drawOrder.length; i < n; i++) {
+			const slot = drawOrder[i];
+			const attachment = slot.getAttachment();
+			const blendMode = spineBlendModeMap[slot.data.blendMode];
 
-                batchableSpineSlot.setData(
-                    spine,
-                    cacheData,
-                    blendMode,
-                    roundPixels
-                );
+			if (attachment instanceof RegionAttachment || attachment instanceof MeshAttachment) {
+				const cacheData = spine._getCachedData(slot, attachment);
+				const batchableSpineSlot = gpuSpine.slotBatches[cacheData.id] ||= new BatchableSpineSlot();
 
-                if (!cacheData.skipRender)
-                {
-                    batcher.addToBatch(batchableSpineSlot, instructionSet);
-                }
-            }
+				batchableSpineSlot.setData(
+					spine,
+					cacheData,
+					blendMode,
+					roundPixels
+				);
 
-            const containerAttachment = spine._slotsObject[slot.data.name];
+				if (!cacheData.skipRender) {
+					batcher.addToBatch(batchableSpineSlot, instructionSet);
+				}
+			}
 
-            if (containerAttachment)
-            {
-                const container = containerAttachment.container;
+			const containerAttachment = spine._slotsObject[slot.data.name];
 
-                container.includeInBuild = true;
-                collectAllRenderables(container, instructionSet, this.renderer);
-                container.includeInBuild = false;
-            }
-        }
+			if (containerAttachment) {
+				const container = containerAttachment.container;
 
-        clipper.clipEnd();
-    }
+				container.includeInBuild = true;
+				collectAllRenderables(container, instructionSet, this.renderer);
+				container.includeInBuild = false;
+			}
+		}
+	}
 
-    updateRenderable(spine: Spine)
-    {
-        // we assume that spine will always change its verts size..
-        const gpuSpine = this.gpuSpineData[spine.uid];
+	updateRenderable (spine: Spine) {
+		const gpuSpine = this.gpuSpineData[spine.uid];
 
-        spine._applyState();
+		spine._validateAndTransformAttachments();
 
-        const drawOrder = spine.skeleton.drawOrder;
+		const drawOrder = spine.skeleton.drawOrder;
 
-        for (let i = 0, n = drawOrder.length; i < n; i++)
-        {
-            const slot = drawOrder[i];
-            const attachment = slot.getAttachment();
+		for (let i = 0, n = drawOrder.length; i < n; i++) {
+			const slot = drawOrder[i];
+			const attachment = slot.getAttachment();
 
-            if (attachment instanceof RegionAttachment || attachment instanceof MeshAttachment)
-            {
-                const cacheData = spine._getCachedData(slot, attachment);
+			if (attachment instanceof RegionAttachment || attachment instanceof MeshAttachment) {
+				const cacheData = spine._getCachedData(slot, attachment);
 
-                if (!cacheData.skipRender)
-                {
-                    const batchableSpineSlot = gpuSpine.slotBatches[spine._getCachedData(slot, attachment).id];
+				if (!cacheData.skipRender) {
+					const batchableSpineSlot = gpuSpine.slotBatches[spine._getCachedData(slot, attachment).id];
 
-                    batchableSpineSlot._batcher?.updateElement(batchableSpineSlot);
-                }
-            }
-        }
-    }
+					batchableSpineSlot._batcher?.updateElement(batchableSpineSlot);
+				}
+			}
+		}
+	}
 
-    destroyRenderable(spine: Spine)
-    {
-        // TODO remove the renderable from the batcher
-        this.gpuSpineData[spine.uid] = null as any;
-    }
+	destroyRenderable (spine: Spine) {
+		this.gpuSpineData[spine.uid] = null as any;
+		spine.off('destroyed', this._destroyRenderableBound);
+	}
 
-    destroy()
-    {
-        this.gpuSpineData = null as any;
-        this.renderer = null as any;
-    }
+	destroy () {
+		this.gpuSpineData = null as any;
+		this.renderer = null as any;
+	}
+
+	private _getSpineData (spine: Spine): GpuSpineDataElement {
+		return this.gpuSpineData[spine.uid] || this._initMeshData(spine);
+	}
+
+	private _initMeshData (spine: Spine): GpuSpineDataElement {
+		this.gpuSpineData[spine.uid] = { slotBatches: {} };
+		spine.on('destroyed', this._destroyRenderableBound);
+		return this.gpuSpineData[spine.uid];
+	}
 }
 
 extensions.add(SpinePipe);

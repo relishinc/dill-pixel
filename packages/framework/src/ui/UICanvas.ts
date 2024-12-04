@@ -1,9 +1,9 @@
-import { Bounds, Container as PIXIContainer, Graphics, Rectangle } from 'pixi.js';
+import { Bounds, Graphics, Container as PIXIContainer, Rectangle } from 'pixi.js';
 import { Application } from '../Application';
+import { Container } from '../display/Container';
 import { Factory, WithSignals } from '../mixins';
 import type { Padding, PointLike, Size, SizeLike } from '../utils';
 import { bindAllMethods, ensurePadding, Logger, resolvePadding, resolveSizeLike } from '../utils';
-import { Container } from '../display/Container';
 import type { IFlexContainer } from './FlexContainer';
 
 export type UICanvasEdge =
@@ -390,12 +390,14 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
         width: 1,
         color: 0xff0000,
         alpha: 0.5,
+        pixelLine: true,
       })
       .rect(-this.config.padding.left, -this.config.padding.top, this._outerBounds.width, this._outerBounds.height)
       .stroke({
         width: 1,
         color: 0xff0000,
         alpha: 0.5,
+        pixelLine: true,
       })
       .moveTo(this._displayBounds.width / 2, this._displayBounds.height / 2 - 10)
       .lineTo(this._displayBounds.width / 2, this._displayBounds.height / 2 + 10)
@@ -403,6 +405,7 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
         width: 1,
         color: 0xff0000,
         alpha: 0.5,
+        pixelLine: true,
       })
       .moveTo(this._displayBounds.width / 2 - 10, this._displayBounds.height / 2)
       .lineTo(this._displayBounds.width / 2 + 10, this._displayBounds.height / 2)
@@ -410,6 +413,7 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
         width: 1,
         color: 0xff0000,
         alpha: 0.5,
+        pixelLine: true,
       });
   }
 }

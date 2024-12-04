@@ -84,10 +84,10 @@ export class Application<
     R extends Renderer = Renderer,
   >
   extends PIXIPApplication<R>
-  implements IApplication<D>
+  implements IApplication<D, C, A>
 {
   public static containerElement: HTMLElement;
-  protected static instance: IApplication<DataSchema>;
+  protected static instance: IApplication<DataSchema, ActionContext, Action>;
   public __dill_pixel_method_binding_root = true;
   // config
   public config: Partial<IApplicationOptions<D>>;
@@ -368,11 +368,11 @@ export class Application<
     }
   }
 
-  public async initialize(config: AppConfig<D>): Promise<IApplication<D>> {
+  public async initialize(config: AppConfig<D>): Promise<IApplication<D, C, A>> {
     if (Application.instance) {
       throw new Error('Application is already initialized');
     }
-    Application.instance = this as unknown as IApplication<DataSchema>;
+    Application.instance = this as unknown as IApplication<DataSchema, ActionContext, Action>;
     this.config = Object.assign({ ...defaultApplicationOptions }, config as Partial<IApplicationOptions<D>>);
 
     if (config.container) {
@@ -433,7 +433,7 @@ export class Application<
 
     this._isBooting = false;
     // return the Application instance to the create method, if needed
-    return Application.instance as unknown as IApplication<D>;
+    return Application.instance as unknown as IApplication<D, C, A>;
   }
 
   public getPlugin<T extends IPlugin>(pluginName: string, debug: boolean = false): T {
@@ -481,12 +481,60 @@ export class Application<
     return await this.registerPlugin(pluginInstance, opts);
   }
 
+  /**
+   * Gets an ActionSignal for the specified action type
+   * @template TActionData - The type of data associated with the action
+   * @param {A} action - The action to get the signal for
+   * @returns {ActionSignal<TActionData>} A signal that can be used to listen for the action
+   * @example
+   * // Listen for a 'jump' action
+   * app.actions('jump').connect((data) => {
+   *   player.jump(data.power);
+   * });
+   */
   public actions<TActionData = any>(action: A): ActionSignal<TActionData> {
     return this.actionsPlugin.getAction<TActionData>(action as Action);
   }
 
+  /**
+   * Dispatches an action with optional data
+   * @template TActionData - The type of data to send with the action
+   * @param {A} action - The action to dispatch
+   * @param {TActionData} [data] - Optional data to send with the action
+   * @example
+   * // Send a 'jump' action with power data
+   * app.sendAction('jump', { power: 100 });
+   */
   public sendAction<TActionData = any>(action: A, data?: TActionData) {
     this.actionsPlugin.sendAction<TActionData>(action as Action, data);
+  }
+
+  /**
+   * Dispatches an action with optional data
+   * alias for sendAction
+   * @template TActionData - The type of data to send with the action
+   * @param {A} action - The action to dispatch
+   * @param {TActionData} [data] - Optional data to send with the action
+   * @example
+   * // Send a 'jump' action with power data
+   * app.action('jump', { power: 100 });
+   */
+  public action<TActionData = any>(action: A, data?: TActionData) {
+    this.actionsPlugin.sendAction<TActionData>(action as Action, data);
+  }
+
+  /**
+   * Checks if an action is currently active
+   * @param {A} action - The action to check
+   * @returns {boolean} True if the action is active, false otherwise
+   * @example
+   * // Check if the 'run' action is active
+   * if (app.isActionActive('run')) {
+   *   player.updateSpeed(runningSpeed);
+   * }
+   */
+  public isActionActive(action: A): boolean {
+    return this.input.controls.isActionActive(action);
   }
 
   /**

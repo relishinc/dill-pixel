@@ -28,7 +28,8 @@ export class Controls implements IControls {
   }
 
   isActionActive(action: Action): boolean {
-    return this.keyboard?.isActionActive(action) || this.touch?.isActionActive(action) || false;
+    const isActive = this.keyboard?.isActionActive(action) || this.touch?.isActionActive(action) || false;
+    return isActive;
   }
 
   initialize(scheme: UserControls) {

@@ -126,9 +126,11 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
 
   private _handleKeyUp(detail: KeyboardEventDetail): void {
     const key = normalizeKey(detail.event.key);
+    this._singleDownKeys.delete(key);
+
     const action = this._activeUpKeys.get(key);
     if (action) {
-      this.app.sendAction(action, { combination: false, inputState: 'up', key });
+      this.app.action(action, { combination: false, inputState: 'up', key });
     }
   }
 
@@ -153,7 +155,7 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
         // send the action
         const action = this._keyCombinationsMap.get(combination);
         if (action) {
-          this.app.sendAction(action, {
+          this.app.action(action, {
             key: combination,
             combination: true,
             inputState: 'down',
@@ -170,7 +172,7 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
       if (keysDown.has(key)) {
         const action = this._activeDownKeys.get(key);
         if (action) {
-          this.app.sendAction(action, { key, combination: false, inputState: 'down' });
+          this.app.action(action, { key, combination: false, inputState: 'down' });
         }
       }
     });

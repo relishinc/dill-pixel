@@ -425,7 +425,7 @@ export class System {
         const circBounds = bounds as Circle;
         System.gfx
           .circle(circBounds.x, circBounds.y, circBounds.radius)
-          .stroke({ width: 1, color: entity.debugColors.bounds, alignment: 0.5 });
+          .stroke({ width: 1, color: entity.debugColors.bounds, alignment: 0.5, pixelLine: true });
 
         // const bds = entity.boundingRect;
         // System.gfx
@@ -440,7 +440,7 @@ export class System {
               outerCircBounds.y + outerCircBounds.radius,
               outerCircBounds.radius,
             )
-            .stroke({ width: 1, color: entity.debugColors.outerBounds, alignment: 0.5 });
+            .stroke({ width: 1, color: entity.debugColors.outerBounds, alignment: 0.5, pixelLine: true });
         }
       } else {
         const rectBounds = bounds as Rectangle;
@@ -452,7 +452,7 @@ export class System {
           const outerRectBounds = outerBounds as Rectangle;
           System.gfx
             .rect(outerRectBounds.x, outerRectBounds.y, outerRectBounds.width, outerRectBounds.height)
-            .stroke({ width: 1, color: entity.debugColors.outerBounds, alignment: 0.5 });
+            .stroke({ width: 1, color: entity.debugColors.outerBounds, alignment: 0.5, pixelLine: true });
         }
       }
     });

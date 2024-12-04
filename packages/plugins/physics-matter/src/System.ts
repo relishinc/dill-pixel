@@ -217,7 +217,7 @@ export class System {
 
         System._debugGraphics.lineTo(vertices[0].x, vertices[0].y);
         System._debugGraphics.fill({ color, alpha: 0.25 });
-        System._debugGraphics.stroke({ color: 0xff0000, alignment: 0.5 });
+        System._debugGraphics.stroke({ color: 0xff0000, pixelLine: true });
       }
     });
     System._walls?.forEach((wall) => {
@@ -230,7 +230,7 @@ export class System {
         }
         System._debugGraphics.lineTo(vertices[0].x, vertices[0].y);
         System._debugGraphics.fill({ color: 0x00ff00, alpha: 1 });
-        System._debugGraphics.stroke({ color: 0xff0000, alignment: 0.5 });
+        System._debugGraphics.stroke({ color: 0xff0000, pixelLine: true });
       }
     });
   }

@@ -1,8 +1,8 @@
-import { Platform, PlatformConfig } from '@/entities/snap/Platform';
 import { EndlessRunner } from '@/entities/snap/EndlessRunner';
-import { Graphics, Point, Pool } from 'pixi.js';
-import { Application, Container, IApplication } from 'dill-pixel';
+import { Platform, PlatformConfig } from '@/entities/snap/Platform';
 import SnapPhysicsPlugin from '@dill-pixel/plugin-snap-physics';
+import { Application, Container, IApplication } from 'dill-pixel';
+import { Graphics, Point, Pool } from 'pixi.js';
 
 export type SegmentConfig = {
   width: number;
@@ -116,7 +116,7 @@ export class Segment {
       this._gfx.clear();
       this._gfx.rect(this.x, this.app.size.height - 100, this.width, this.height ?? 10);
       this._gfx.rect(this.x, this.app.size.height - 120, 1, 20);
-      this._gfx.stroke({ color: 0xff0000, width: 1 });
+      this._gfx.stroke({ color: 0xff0000, width: 1, pixelLine: true });
     }
   }
 }

@@ -1,14 +1,14 @@
-import { Application, create, DataSchema } from 'dill-pixel';
+import { Application, create } from 'dill-pixel';
 
 import EN from '@/locales/en';
 import { Transition } from '@/Transition';
 import { IGoogleAnalyticsPlugin } from '@dill-pixel/plugin-google-analytics/GoogleAnalyticsPlugin';
 import { IFirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
 import manifest from './assets.json';
-import { actions, controls, type ActionTypes, type AnalyticsEvents, type Contexts } from './definitions';
+import { actions, controls, type ActionTypes, type AnalyticsEvents, type Contexts, type Data } from './definitions';
 import { ExampleOutliner } from './ui/ExampleOutliner';
 
-export class V8Application extends Application<DataSchema, Contexts, ActionTypes> {
+export class V8Application extends Application<Data, Contexts, ActionTypes> {
   get firebase(): IFirebaseAdapter {
     return this.store.getAdapter('firebase') as IFirebaseAdapter;
   }
@@ -19,7 +19,7 @@ export class V8Application extends Application<DataSchema, Contexts, ActionTypes
 }
 
 async function boot() {
-  const app = await create<V8Application, DataSchema>(
+  const app = await create<V8Application, Data>(
     {
       id: 'V8Application',
       // splash: {

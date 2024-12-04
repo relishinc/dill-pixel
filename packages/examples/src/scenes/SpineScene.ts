@@ -9,7 +9,7 @@ export class SpineScene extends BaseScene {
 
   public async initialize() {
     await super.initialize();
-    this.app.exec.setActionContext('general');
+    this.app.actionContext = 'default';
     this.hero = this.add.spineAnimation({
       data: 'spine/spineboy-pro.skel',
       animationName: 'idle',

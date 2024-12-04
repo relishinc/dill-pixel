@@ -16,7 +16,7 @@ export type Action =
   | 'start'
   | 'select'
   | 'menu'
-  | (string & {});
+  | ((string | number) & {});
 
 export type ActionDetail<T = any> = {
   id: string | number;

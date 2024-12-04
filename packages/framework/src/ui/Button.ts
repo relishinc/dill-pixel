@@ -1,10 +1,10 @@
 import { Cursor, DestroyOptions, FederatedEvent, FederatedPointerEvent, Sprite } from 'pixi.js';
 
+import { Application } from '../Application';
+import type { IApplication } from '../core';
 import { Factory, Focusable, Interactive, WithSignals } from '../mixins';
 import { Signal } from '../signals';
 import { bindAllMethods, SpriteSheetLike, TextureLike } from '../utils';
-import type { IApplication } from '../core';
-import { Application } from '../Application';
 
 export type ButtonCallback = (() => void) | (() => Promise<void>);
 export type ButtonAction = { id: string | number; data?: any };
@@ -363,7 +363,7 @@ export class Button extends _Button implements IButton {
       if (!action.data.button) {
         action.data.button = this;
       }
-      this.app.exec.sendAction(action.id, action.data);
+      this.app.action(action.id, action.data);
     }
   }
 

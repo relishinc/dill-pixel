@@ -1,7 +1,7 @@
+import { BasicActor, CircActor, CircSolid, Projectile, RectActor, RectSolid } from '@/entities/snap/entities';
 import { BaseScene } from '@/scenes/BaseScene';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
 import { Container } from 'dill-pixel';
-import { BasicActor, CircActor, CircSolid, Projectile, RectActor, RectSolid } from '@/entities/snap/entities';
 
 export class SnapCollisionsScene extends BaseScene {
   title = 'Snap Circle Collisions';
@@ -50,7 +50,7 @@ export class SnapCollisionsScene extends BaseScene {
 
   async initialize() {
     await super.initialize();
-    this.app.exec.setActionContext('game');
+    this.app.actionContext = 'game';
     this.app.focus.addFocusLayer(this.id);
 
     this.level = this.add.container({

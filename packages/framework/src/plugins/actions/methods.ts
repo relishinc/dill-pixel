@@ -4,7 +4,7 @@ import { ActionContext, type UserActions, type UserButtons, type UserContexts } 
 /**
  * Define the contexts for the actions.
  * @param contexts - The contexts to define.
- * @default ['default', 'game', 'menu', 'pause', 'popup', 'general']
+ * @default ['default', 'game', 'menu', 'pause', 'popup', 'default']
  * @returns {ActionContext[]}
  */
 

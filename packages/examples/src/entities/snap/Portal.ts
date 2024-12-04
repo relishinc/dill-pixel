@@ -1,7 +1,7 @@
-import { Bounds, Rectangle } from 'pixi.js';
-import { checkCollision, Collision, Entity, Sensor, System } from '@dill-pixel/plugin-snap-physics';
 import { DoorConfig } from '@/entities/snap/Door';
+import { checkCollision, Collision, Entity, Sensor, System } from '@dill-pixel/plugin-snap-physics';
 import { Signal } from 'dill-pixel';
+import { Bounds, Rectangle } from 'pixi.js';
 
 const defaults: DoorConfig = {
   width: 75,

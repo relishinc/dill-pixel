@@ -1,9 +1,9 @@
 import { defineActions, defineButtons, defineContexts, defineControls } from 'dill-pixel';
 
-const contexts = defineContexts(['general', 'game', 'menu', 'popup']);
-export type Contexts = (typeof contexts)[number];
+/* Default template*/
+export const contexts = defineContexts(['default', 'game', 'menu', 'popup']);
 
-const actions = defineActions(contexts, {
+export const actions = defineActions(contexts, {
   // keyboard down actions
   move_left: { context: ['game'] },
   move_right: { context: ['game'] },
@@ -16,7 +16,7 @@ const actions = defineActions(contexts, {
   close: { context: ['menu', 'popup'] },
   back: { context: ['menu'] },
   next: { context: ['menu'] },
-  select: { context: ['menu', 'general'] },
+  select: { context: ['menu', 'default'] },
   show_popup: { context: '*' },
   // firebase
   save_to_firebase: { context: '*' },
@@ -25,20 +25,23 @@ const actions = defineActions(contexts, {
   delete_from_firebase: { context: '*' },
   // physics
   drop: { context: ['game'] },
+  // voiceover
+  vo: { context: ['game'] },
+  pause_vo: { context: ['game'] },
+  stop_vo: { context: ['game'] },
+  caption_theme: { context: ['game'] },
 });
 
-type ActionTypes = keyof typeof actions;
+export const buttons = defineButtons(['A', 'B']);
 
-const buttons = defineButtons(['A', 'B']);
-
-const controls = defineControls(actions, buttons, {
+export const controls = defineControls(actions, buttons, {
   keyboard: {
     down: {
       move_left: ['ArrowLeft', 'A'],
       move_right: ['ArrowRight', 'D'],
       move_down: ['ArrowDown', 'S'],
+      jump: ['ArrowUp', 'Space'],
       warp: 'Q',
-      jump: ['ArrowUp', 'Space', 'W'],
       combo: 'Shift+L',
     },
     up: {
@@ -61,7 +64,15 @@ const controls = defineControls(actions, buttons, {
   },
 });
 
-export type DataSchema = {
+/** Don't touch */
+export type Contexts = (typeof contexts)[number];
+export type ActionTypes = keyof typeof actions;
+/** Don't touch */
+
+/* End of Default Template */
+
+/* User definitions */
+export type Data = {
   foo: string;
   bar: number;
   saved: string;
@@ -74,6 +85,4 @@ export type DataSchema = {
 export type AnalyticsEvents = {
   foo: { bar: string; baz: number; qux: boolean };
 };
-
-export { actions, contexts, controls };
-export type { ActionTypes };
+/* End of user definitions */

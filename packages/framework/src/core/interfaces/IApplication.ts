@@ -1,5 +1,6 @@
 import { AssetsManifest, Application as PIXIPApplication, Point } from 'pixi.js';
 import type {
+  Action,
   ActionSignal,
   IAssetsPlugin,
   IAudioManagerPlugin,
@@ -23,7 +24,11 @@ import type { IApplicationOptions } from './IApplicationOptions';
 import type { ICoreFunctions } from './ICoreFunctions';
 import { ICoreSignals } from './ICoreSignals';
 
-export interface IApplication<D extends DataSchema = DataSchema> extends PIXIPApplication {
+export interface IApplication<
+  D extends DataSchema = DataSchema,
+  C extends ActionContext = ActionContext,
+  A extends Action = Action,
+> extends PIXIPApplication {
   config: Partial<IApplicationOptions<D>>;
   readonly size: Size;
   readonly center: Point;
@@ -41,8 +46,7 @@ export interface IApplication<D extends DataSchema = DataSchema> extends PIXIPAp
   controls: IControls;
   store: IStore;
   data: IDataAdapter<D>;
-
-  actionContext: string | ActionContext;
+  actionContext: C;
   onPause: Signal<() => void>;
   onResume: Signal<() => void>;
   pause(): void;
@@ -55,9 +59,13 @@ export interface IApplication<D extends DataSchema = DataSchema> extends PIXIPAp
   func: ICoreFunctions;
   exec: ICoreFunctions;
 
-  actions(action: any): ActionSignal;
+  actions(action: A): ActionSignal;
 
-  initialize(config: AppConfig<D>): Promise<IApplication<D>>;
+  action(action: A, data?: any): void;
+  sendAction(action: A, data?: any): void;
+  isActionActive(action: A): boolean;
+
+  initialize(config: AppConfig<D>): Promise<IApplication<D, C, A>>;
 
   postInitialize(): Promise<void>;
 

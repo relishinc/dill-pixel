@@ -1,17 +1,11 @@
-import { Application, create, DataSchema, isDev } from 'dill-pixel';
+import { Application, create, isDev } from 'dill-pixel';
 
 // import { Splash } from '@/Splash';
-import { Actions, controls } from '@/controls';
 import manifest from './assets.json';
-
-interface DataSchema extends DataSchema {
-  dill?: string;
-}
-
-export class MyApplication extends Application<DataSchema, Actions> {}
-
+import { actions, controls, type ActionTypes, type Contexts, type Data } from './definitions';
+export class MyApplication extends Application<Data, Contexts, ActionTypes> {}
 async function boot() {
-  await create<MyApplication, DataSchema>(
+  await create<MyApplication, Data>(
     {
       id: 'MyApplication',
       // splash: {
@@ -28,9 +22,10 @@ async function boot() {
         initial: {
           dill: 'pixel',
         },
-        //backupAll: true,
-        //backupKeys: ['dill'],
+        // backupKeys: ['dill'],
+        backupAll: false,
       },
+      actions,
       input: {
         controls,
       },

@@ -49,6 +49,7 @@ export class VoiceoverScene extends BaseScene {
 
   public async initialize() {
     await super.initialize();
+    this.app.actionContext = 'default';
     this.app.focus.addFocusLayer(this.id);
     this.app.audio.muted = this.config.muted;
 
@@ -81,29 +82,29 @@ export class VoiceoverScene extends BaseScene {
     });
 
     this.addButton(this.voButtons, 'Play', () => {
-      this.app.sendAction('vo', {
+      this.app.action('vo', {
         ids: ['vo_intro_0', 'vo_intro_1', 'vo_intro_2'],
       });
     });
 
     this._voPauseButton = this.addButton(this.voButtons, 'Pause', () => {
-      this.app.sendAction('pause_vo');
+      this.app.action('pause_vo');
       this._updatePauseButton();
     });
 
     this.addButton(this.voButtons, 'Stop', () => {
-      this.app.sendAction('stop_vo');
+      this.app.action('stop_vo');
     });
 
     this.addButton(this.captionsButtons, 'Light Mode', () => {
-      this.app.sendAction('caption_theme', {
+      this.app.action('caption_theme', {
         backgroundColor: [255, 255, 255],
         backgroundAlpha: 0.5,
         textColor: [0, 0, 0],
       });
     });
     this.addButton(this.captionsButtons, 'Dark Mode', () => {
-      this.app.sendAction('caption_theme', {
+      this.app.action('caption_theme', {
         backgroundColor: [0, 0, 0],
         backgroundAlpha: 0.5,
         textColor: [255, 255, 255],

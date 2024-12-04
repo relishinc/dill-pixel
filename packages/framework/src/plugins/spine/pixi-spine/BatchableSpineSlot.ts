@@ -27,107 +27,112 @@
  * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-import { AttachmentCacheData, Spine } from './Spine';
+import { AttachmentCacheData, Spine } from './Spine.js';
 
-import type { Batch, Batcher, BLEND_MODES, DefaultBatchableMeshElement, Matrix, Texture } from 'pixi.js';
+import type { Batch, Batcher, BLEND_MODES, DefaultBatchableMeshElement, Matrix, Texture, Topology } from 'pixi.js';
 
 export class BatchableSpineSlot implements DefaultBatchableMeshElement {
-  indexOffset = 0;
-  attributeOffset = 0;
+	indexOffset = 0;
+	attributeOffset = 0;
 
-  indexSize: number;
-  attributeSize: number;
+	indexSize!: number;
+	attributeSize!: number;
 
-  batcherName = 'darkTint';
+	batcherName = 'darkTint';
 
-  readonly packAsQuad = false;
+	topology: Topology = 'triangle-list';
 
-  renderable: Spine;
+	readonly packAsQuad = false;
 
-  positions: Float32Array;
-  indices: number[] | Uint16Array;
-  uvs: Float32Array;
+	renderable!: Spine;
 
-  roundPixels: 0 | 1;
-  data: AttachmentCacheData;
-  blendMode: BLEND_MODES;
+	positions!: Float32Array;
+	indices!: number[] | Uint16Array;
+	uvs!: Float32Array;
 
-  darkTint: number;
+	roundPixels!: 0 | 1;
+	data!: AttachmentCacheData;
+	blendMode!: BLEND_MODES;
 
-  texture: Texture;
+	darkTint!: number;
 
-  transform: Matrix;
+	texture!: Texture;
 
-  // used internally by batcher specific..
-  // stored for efficient updating..
-  _textureId: number;
-  _attributeStart: number;
-  _indexStart: number;
-  _batcher: Batcher;
-  _batch: Batch;
+	transform!: Matrix;
 
-  get color() {
-    const slotColor = this.data.color;
+	// used internally by batcher specific. Stored for efficient updating.
+	_textureId!: number;
+	_attributeStart!: number;
+	_indexStart!: number;
+	_batcher!: Batcher;
+	_batch!: Batch;
 
-    const parentColor: number = this.renderable.groupColor;
-    const parentAlpha: number = this.renderable.groupAlpha;
-    let abgr: number;
 
-    const mixedA = slotColor.a * parentAlpha * 255;
+	get color () {
+		const slotColor = this.data.color;
 
-    if (parentColor !== 0xffffff) {
-      const parentB = (parentColor >> 16) & 0xff;
-      const parentG = (parentColor >> 8) & 0xff;
-      const parentR = parentColor & 0xff;
+		const parentColor: number = this.renderable.groupColor;
+		const parentAlpha: number = this.renderable.groupAlpha;
+		let abgr: number;
 
-      const mixedR = slotColor.r * parentR;
-      const mixedG = slotColor.g * parentG;
-      const mixedB = slotColor.b * parentB;
+		const mixedA = (slotColor.a * parentAlpha) * 255;
 
-      abgr = (mixedA << 24) | (mixedB << 16) | (mixedG << 8) | mixedR;
-    } else {
-      abgr = (mixedA << 24) | ((slotColor.b * 255) << 16) | ((slotColor.g * 255) << 8) | (slotColor.r * 255);
-    }
+		if (parentColor !== 0xFFFFFF) {
+			const parentB = (parentColor >> 16) & 0xFF;
+			const parentG = (parentColor >> 8) & 0xFF;
+			const parentR = parentColor & 0xFF;
 
-    return abgr;
-  }
+			const mixedR = (slotColor.r * parentR);
+			const mixedG = (slotColor.g * parentG);
+			const mixedB = (slotColor.b * parentB);
 
-  get darkColor() {
-    const darkColor = this.data.darkColor!;
+			abgr = ((mixedA) << 24) | (mixedB << 16) | (mixedG << 8) | mixedR;
+		}
+		else {
+			abgr = ((mixedA) << 24) | ((slotColor.b * 255) << 16) | ((slotColor.g * 255) << 8) | (slotColor.r * 255);
+		}
 
-    return ((darkColor.b * 255) << 16) | ((darkColor.g * 255) << 8) | (darkColor.r * 255);
-  }
+		return abgr;
+	}
 
-  get groupTransform() {
-    return this.renderable.groupTransform;
-  }
+	get darkColor () {
+		const darkColor = this.data.darkColor;
+		return ((darkColor.b * 255) << 16) | ((darkColor.g * 255) << 8) | (darkColor.r * 255);
+	}
 
-  setData(renderable: Spine, data: AttachmentCacheData, blendMode: BLEND_MODES, roundPixels: 0 | 1) {
-    this.renderable = renderable;
-    this.transform = renderable.groupTransform;
-    this.data = data;
+	get groupTransform () { return this.renderable.groupTransform; }
 
-    if (data.clipped) {
-      const clippedData = data.clippedData!;
+	setData (
+		renderable: Spine,
+		data: AttachmentCacheData,
+		blendMode: BLEND_MODES,
+		roundPixels: 0 | 1) {
+		this.renderable = renderable;
+		this.transform = renderable.groupTransform;
+		this.data = data;
 
-      this.indexSize = clippedData.indicesCount;
-      this.attributeSize = clippedData.vertexCount;
-      this.positions = clippedData.vertices;
-      this.indices = clippedData.indices;
-      this.uvs = clippedData.uvs;
-    } else {
-      this.indexSize = data.indices.length;
-      this.attributeSize = data.vertices.length / 2;
-      this.positions = data.vertices;
-      this.indices = data.indices;
-      this.uvs = data.uvs;
-    }
+		if (data.clipped) {
+			const clippedData = data.clippedData;
 
-    this.texture = data.texture;
-    this.roundPixels = roundPixels;
+			this.indexSize = clippedData!.indicesCount;
+			this.attributeSize = clippedData!.vertexCount;
+			this.positions = clippedData!.vertices;
+			this.indices = clippedData!.indices;
+			this.uvs = clippedData!.uvs;
+		}
+		else {
+			this.indexSize = data.indices.length;
+			this.attributeSize = data.vertices.length / 2;
+			this.positions = data.vertices;
+			this.indices = data.indices;
+			this.uvs = data.uvs;
+		}
 
-    this.blendMode = blendMode;
+		this.texture = data.texture;
+		this.roundPixels = roundPixels;
 
-    this.batcherName = data.darkTint ? 'darkTint' : 'default';
-  }
+		this.blendMode = blendMode;
+
+		this.batcherName = data.darkTint ? 'darkTint' : 'default';
+	}
 }

@@ -27,7 +27,7 @@ export class ActionsPlugin extends Plugin implements IActionsPlugin {
   >();
 
   // private properties
-  private _context: string | ActionContext = 'general';
+  private _context: ActionContext = 'default';
   private _signals: Map<string | number, ActionSignal> = new Map();
   private _actions: Partial<ActionMap> = {};
   private _debug: boolean = false;
@@ -79,9 +79,9 @@ export class ActionsPlugin extends Plugin implements IActionsPlugin {
     // check if action is allowed for current context
     // send action if allowed
     if (
-      this._actions[actionId].context === '*' ||
-      this._actions[actionId].context === this.context ||
-      this._actions[actionId].context.includes(this.context)
+      this._actions[actionId]?.context === '*' ||
+      this._actions[actionId]?.context === this.context ||
+      this._actions[actionId]?.context?.includes(this.context)
     ) {
       return this.getAction<TActionData>(actionId).emit({ id: actionId, context: this.context, data });
     }

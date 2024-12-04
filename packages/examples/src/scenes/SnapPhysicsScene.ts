@@ -121,13 +121,6 @@ export class SnapPhysicsScene extends BaseScene {
 
     this._handleDebugChanged();
     this._handleUseCameraChanged();
-
-    this.addSignalConnection(
-      this.app.keyboard.onKeyDown('z').connect(this._toggleZoom),
-      this.app.keyboard.onKeyDown('q').connect(() => {
-        this.app.input.sendAction('warp');
-      }),
-    );
   }
 
   async start() {}
@@ -371,14 +364,6 @@ export class SnapPhysicsScene extends BaseScene {
 
   private _resetCollisionThreshold() {
     this.physics.system.collisionThreshold = this.physics.system.DEFAULT_COLLISION_THRESHOLD;
-  }
-
-  private _toggleZoom() {
-    if (this._zoomController.getValue() > 1) {
-      this._zoomController.setValue(1);
-    } else {
-      this._zoomController.setValue(2);
-    }
   }
 
   private _handleSpatialHashChanged() {

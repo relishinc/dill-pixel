@@ -174,7 +174,7 @@ export class TouchControls extends WithSignals(AbstractControls) {
     this._singleDownButtons.delete(button.id!);
     const action = this._activeButtonUpIds.get(button.id!);
     if (action) {
-      this.app.sendAction(action, {
+      this.app.action(action, {
         combination: false,
         inputState: 'up',
         button: button.id!,
@@ -198,7 +198,7 @@ export class TouchControls extends WithSignals(AbstractControls) {
         // send the action
         const action = this._combinationsMap.get(combination);
         if (action) {
-          this.app.sendAction(action, {
+          this.app.action(action, {
             button: combination,
             combination: true,
             inputState: 'down',
@@ -215,7 +215,7 @@ export class TouchControls extends WithSignals(AbstractControls) {
       if (buttonsDown.has(id)) {
         const action = this._activeButtonDownIds.get(id);
         if (action) {
-          this.app.sendAction(action, {
+          this.app.action(action, {
             button: id,
             combination: false,
             inputState: 'down',
@@ -228,7 +228,7 @@ export class TouchControls extends WithSignals(AbstractControls) {
     if (joystickDirection) {
       const action = this._activeJoystickDirections.get(joystickDirection);
       if (action) {
-        this.app.sendAction(action, {
+        this.app.action(action, {
           inputState: 'joystick',
         });
       }

@@ -28,15 +28,36 @@
  *****************************************************************************/
 
 import { TextureAtlas } from '@esotericsoftware/spine-core';
-import { checkExtension, DOMAdapter, ExtensionType, LoaderParserPriority, path, TextureSource } from 'pixi.js';
-import { SpineTexture } from '../SpineTexture';
+import {
+  checkExtension,
+  DOMAdapter,
+  ExtensionType,
+  LoaderParserPriority,
+  path,
+  Resolver,
+  TextureSource,
+} from 'pixi.js';
+import { SpineTexture } from '../SpineTexture.js';
 
-import type { AssetExtension, Loader, ResolvedAsset, Texture } from 'pixi.js';
+import type { AssetExtension, Loader, ResolvedAsset, Texture, UnresolvedAsset } from 'pixi.js';
 
 type RawAtlas = string;
 
 export const spineTextureAtlasLoader: AssetExtension<RawAtlas | TextureAtlas, ISpineAtlasMetadata> = {
   extension: ExtensionType.Asset,
+
+  resolver: {
+    test: (value: string): boolean => checkExtension(value, '.atlas'),
+    parse: (value: string): UnresolvedAsset => {
+      const split = value.split('.');
+
+      return {
+        resolution: parseFloat(Resolver.RETINA_PREFIX?.exec(value)?.[1] ?? '1'),
+        format: split[split.length - 2],
+        src: value,
+      };
+    },
+  },
 
   loader: {
     extension: {

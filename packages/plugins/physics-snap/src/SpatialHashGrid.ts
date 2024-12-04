@@ -147,7 +147,7 @@ export class SpatialHashGrid {
     const rects = this._getDebugRects();
     rects.forEach((rect) => {
       gfx.rect(rect.left, rect.top, rect.width, rect.height);
-      gfx.stroke({ color: 0x00ff00 });
+      gfx.stroke({ color: 0x00ff00, pixelLine: true });
     });
   }
 

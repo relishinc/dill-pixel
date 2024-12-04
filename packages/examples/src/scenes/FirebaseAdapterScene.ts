@@ -58,13 +58,13 @@ export class FirebaseAdapterScene extends BaseScene {
 
     // add a load button
     const loadButton = this.createButton('Reload', 'blue', () => {
-      this.app.sendAction('load_from_firebase');
+      this.app.action('load_from_firebase');
     });
     this.buttonContainer.addChild(loadButton);
 
     // add a clear button
     const clearButton = this.createButton('Clear', 'red', () => {
-      this.app.sendAction('clear_firebase', {
+      this.app.action('clear_firebase', {
         collection: 'users',
       });
     });
@@ -112,7 +112,7 @@ export class FirebaseAdapterScene extends BaseScene {
   private _sendSaveScoreAction() {
     const username = this.usernameInput.value;
     const scoreAsNum = parseInt(this.scoreInput.value, 10);
-    this.app.sendAction('save_to_firebase', {
+    this.app.action('save_to_firebase', {
       collection: 'users',
       data: { username, score: scoreAsNum },
     });
@@ -270,7 +270,6 @@ export class FirebaseAdapterScene extends BaseScene {
           Logger.log('removing', scoreElement);
           this.scoreboard.removeChild(scoreElement);
           const btn = scoreElement.getChildByLabel('delete-button') as unknown as IFocusable;
-          console.log(btn);
           if (btn) {
             this.app.focus.remove(btn);
           }
@@ -358,7 +357,7 @@ export class FirebaseAdapterScene extends BaseScene {
       // await this.app.firebase.deleteDocumentById('users', 'id-here');
 
       // 2. via the action:
-      // this.app.sendAction('delete_from_firebase', {
+      // this.app.action('delete_from_firebase', {
       //   collection: 'users',
       //   data: score,
       // });
