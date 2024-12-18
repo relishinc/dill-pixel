@@ -1,4 +1,3 @@
-import assetPack from 'dill-pixel/config/assetpack';
-console.log(JSON.stringify(assetPack, null, 2));
+import assetpack from 'dill-pixel/config/assetpack';
 
-export default assetPack;
+export default assetpack();

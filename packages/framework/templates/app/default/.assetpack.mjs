@@ -1,6 +1,5 @@
 // import {pixiManifest} from '@assetpack/plugin-manifest';
-import assetPack from 'dill-pixel/config/assetpack';
-
+import assetpack from 'dill-pixel/config/assetpack';
 /*
  const config = {
  ...assetPack,
@@ -14,4 +13,4 @@ import assetPack from 'dill-pixel/config/assetpack';
  };
  */
 
-export default assetPack;
+export default assetpack();

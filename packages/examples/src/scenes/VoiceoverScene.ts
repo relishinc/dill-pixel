@@ -1,12 +1,18 @@
+import BaseScene from '@/scenes/BaseScene';
 import { ActionDetail, Button, FlexContainer } from 'dill-pixel';
 import { Text } from 'pixi.js';
-import { BaseScene } from './BaseScene';
+
+export const id = 'voiceover';
+export const debug = {
+  group: 'Audio',
+  label: 'Voiceovers & Captions',
+};
 
 function outputColor(value: number[]) {
   return (value[0] << 16) + (value[1] << 8) + value[2];
 }
 
-export class VoiceoverScene extends BaseScene {
+export default class VoiceoverScene extends BaseScene {
   protected readonly title = 'Voiceovers / Captions';
   protected readonly subtitle = 'Demonstrates VO / Captioning.';
 

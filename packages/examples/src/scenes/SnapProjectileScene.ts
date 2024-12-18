@@ -1,9 +1,17 @@
 import { CircSolid, Projectile, RectSolid } from '@/entities/snap/entities';
-import { BaseScene } from '@/scenes/BaseScene';
+import BaseScene from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
 import { Container } from 'dill-pixel';
 import { FederatedPointerEvent, Point, Pool, Text } from 'pixi.js';
+
+export const id = 'snap-projectiles';
+export const debug = {
+  group: 'Physics',
+  label: 'Snap - Projectiles',
+};
+
+export const plugins = ['physics'];
 
 class Ball extends Projectile {
   type = 'Ball';
@@ -21,7 +29,7 @@ class Bullet extends Projectile {
   type = 'Bullet';
 }
 
-export class SnapProjectileScene extends BaseScene {
+export default class SnapProjectileScene extends BaseScene {
   title = 'Snap Projectiles';
   subtitle = 'Change the projectile mode in settings, then, click anywhere to add projectiles';
   level: Container;

@@ -3,17 +3,16 @@ import {
   FocusManagerPluginOptions,
   i18nOptions,
   InputManagerOptions,
-  IPlugin,
   LoadSceneMethod,
   ResizerPluginOptions,
   SplashOptions,
 } from '../../plugins';
-import type { AssetLoadingOptions, ImportList, LoggerMode, SceneImportList } from '../../utils';
+import type { AssetLoadingOptions, LoggerMode, SceneImportList } from '../../utils';
 
 import type { ApplicationOptions } from 'pixi.js';
 import type { IScene, ISceneTransition, SceneTransition } from '../../display';
 import type { CaptionsOptions } from '../../plugins/captions';
-import type { DataSchema, IDataAdapterOptions, IStorageAdapter } from '../../store';
+import type { DataSchema, IDataAdapterOptions } from '../../store';
 
 export interface IApplicationOptions<D extends DataSchema = DataSchema> extends ApplicationOptions {
   id: string;
@@ -23,11 +22,14 @@ export interface IApplicationOptions<D extends DataSchema = DataSchema> extends 
   useStore: boolean;
   useSpine: boolean;
   useVoiceover: boolean;
-  storageAdapters: ImportList<IStorageAdapter>;
+  //storageAdapters: ImportList<IStorageAdapter>;
+  storageAdapters: (string | [string, { autoLoad?: boolean; options?: any }])[];
   data: Partial<IDataAdapterOptions<D>>;
-  plugins: ImportList<IPlugin>;
+  // plugins: ImportList<IPlugin>;
+  plugins: (string | [string, { autoLoad?: boolean; options?: any }])[];
   assets: AssetLoadingOptions;
   scenes: SceneImportList<IScene>;
+  scenesLocation: string;
   actions: Partial<ActionMap>;
   input: Partial<InputManagerOptions>;
   focus: Partial<FocusManagerPluginOptions>;

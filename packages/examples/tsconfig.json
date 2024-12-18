@@ -8,7 +8,7 @@
         "src/*"
       ],
       "dill-pixel/*": [
-        "../framwork/src/*"
+        "../framework/src/*"
       ],
       "@dill-pixel/plugin-snap-physics/*": [
         "../plugins/physics-snap/src/*"

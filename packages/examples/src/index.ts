@@ -1,1 +1,1 @@
-import('@/V8Application');
+import('@/bootstrap');

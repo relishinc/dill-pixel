@@ -10,7 +10,6 @@ export interface IRollbarPlugin extends IPlugin {
 }
 
 const defaultOptions = {
-  accessToken: process.env.VITE_ROLLBAR_ACCESS_TOKEN || process.env.ROLLBAR_ACCESS_TOKEN,
   isDev: false,
   enabled: true,
   captureUncaught: true,
@@ -26,7 +25,11 @@ export class RollbarPlugin extends Plugin implements IRollbarPlugin {
   }
 
   async initialize(_app: IApplication, options: RollbarPluginOptions) {
-    this._options = { ...defaultOptions, ...options };
+    this._options = {
+      accessToken: _app.env.VITE_ROLLBAR_ACCESS_TOKEN || _app.env.ROLLBAR_ACCESS_TOKEN,
+      ...defaultOptions,
+      ...options,
+    };
 
     // check if accessToken is set
     if (!this._options.accessToken) {

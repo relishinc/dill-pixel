@@ -1,9 +1,15 @@
 import { AlignItems, clamp, FlexContainer, FlexDirection, FlexWrap, JustifyContent } from 'dill-pixel';
 import { Graphics, TextStyleOptions } from 'pixi.js';
 
-import { BaseScene } from './BaseScene';
-import { GUIController } from 'dat.gui';
+import BaseScene from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
+import { GUIController } from 'dat.gui';
+
+export const id = 'flex-container';
+export const debug = {
+  group: 'UI',
+  label: 'Flex Container',
+};
 
 const whiteTextStyle = (size: number): Partial<TextStyleOptions> => ({
   fontFamily: FONT_KUMBH_SANS,
@@ -12,7 +18,7 @@ const whiteTextStyle = (size: number): Partial<TextStyleOptions> => ({
   fontSize: size ?? 24,
 });
 
-export class FlexContainerScene extends BaseScene {
+export default class FlexContainerScene extends BaseScene {
   protected readonly title = 'Flex Container';
   protected readonly subtitle = 'Demonstrates the FlexContainer layout.';
   protected config = {

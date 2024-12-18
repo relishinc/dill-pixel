@@ -5,11 +5,24 @@ import { Button, Camera, Container, delay, Joystick, UICanvas } from 'dill-pixel
 import { Door } from '@/entities/snap/Door';
 import { Player } from '@/entities/snap/Player';
 import { Portal } from '@/entities/snap/Portal';
-import { BaseScene } from '@/scenes/BaseScene';
+import BaseScene from '@/scenes/BaseScene';
 import { GUIController } from 'dat.gui';
 import { gsap } from 'gsap';
 
-export class SnapPhysicsScene extends BaseScene {
+export const id = 'snap-physics';
+export const debug = {
+  group: 'Physics',
+  label: 'Snap - Level & Camera',
+};
+
+export const plugins = ['physics'];
+export const assets = {
+  preload: {
+    bundles: ['spine'],
+  },
+};
+
+export default class SnapPhysicsScene extends BaseScene {
   ui: UICanvas;
   level: Container;
   player: Player;

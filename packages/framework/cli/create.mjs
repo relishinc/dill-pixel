@@ -1,16 +1,37 @@
 #!/usr/bin/env node
 import * as p from '@clack/prompts';
 import { bold, cyan } from 'kleur/colors';
-import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { promisify } from 'node:util';
+import shell from 'shelljs';
 import { copy, dist, mkdirp, package_manager } from './utils.mjs';
-
 let packageManager = package_manager;
 
+const animateEllipsis = () => {
+  const frames = [
+    'Installing dependencies   ',
+    'Installing dependencies.  ',
+    'Installing dependencies.. ',
+    'Installing dependencies...',
+  ];
+  let i = 0;
+
+  return setInterval(() => {
+    process.stdout.write('\r' + frames[i]);
+    i = (i + 1) % frames.length;
+  }, 300);
+};
+
 async function write(cwd, options) {
-  mkdirp(cwd);
-  write_template_files(options.template, options.name, cwd);
+  await mkdirp(cwd);
+  await write_template_files(
+    options.template,
+    options.applicationNameForPkg,
+    options.name,
+    options.applicationName,
+    cwd,
+  );
 }
 
 function getFiles(dirPath) {
@@ -35,7 +56,7 @@ function getFiles(dirPath) {
  * @param {string} name
  * @param {string} cwd
  */
-function write_template_files(template, name, cwd) {
+function write_template_files(template, applicationNameForPkg, name, applicationName, cwd) {
   const dir = dist(`templates/${template}`);
   copy(`${dir}/package.template.json`, `${cwd}/package.json`);
 
@@ -51,9 +72,23 @@ function write_template_files(template, name, cwd) {
   if (mgr.indexOf('npm') === 0) {
     mgr = 'npm run';
   }
-  pkg = pkg.replace(/~NAME~/g, name);
+  pkg = pkg.replace(/~NAME~/g, applicationNameForPkg);
   pkg = pkg.replace(/~PACKAGE_MANAGER~/g, mgr);
   fs.writeFileSync(`${cwd}/package.json`, pkg);
+
+  // find __APPLICATION_NAME__.ts and replace it with the application name, then delete ~Application.ts
+  const app_file = `${cwd}/src/__APPLICATION_NAME__.ts`;
+  const app_contents = fs.readFileSync(app_file, 'utf-8');
+  fs.writeFileSync(`${cwd}/src/${applicationName}.ts`, app_contents, 'utf-8');
+  fs.rmSync(app_file);
+
+  // recursively loop through all the .ts files in the src directory and replace __APPLICATION_NAME__ with the application name
+  const tsFiles = getFiles(`${cwd}/src`);
+  tsFiles.forEach((file) => {
+    const contents = fs.readFileSync(file.name, 'utf-8');
+    fs.writeFileSync(file.name, contents.replace(/__APPLICATION_NAME__/g, applicationName));
+  });
+
   try {
     fs.rmSync(`${cwd}/.meta.json`);
     fs.rmSync(`${cwd}/package.template.json`);
@@ -63,7 +98,7 @@ function write_template_files(template, name, cwd) {
   } catch (e) {}
 }
 
-export async function create(cwd, packageManagerOverride) {
+export async function create(cwd = '.', packageManagerOverride) {
   if (packageManagerOverride) {
     packageManager = packageManagerOverride;
   }
@@ -76,7 +111,7 @@ export async function create(cwd, packageManagerOverride) {
   if (cwd === '.') {
     const dir = await p.text({
       message: 'Where should we create your project?',
-      placeholder: '  (hit Enter to use current directory)',
+      placeholder: '(Enter to use current directory)',
     });
 
     if (p.isCancel(dir)) {
@@ -123,31 +158,61 @@ export async function create(cwd, packageManagerOverride) {
       }),
   });
 
+  // get a name from the cwd provided
+  const name = path.basename(path.resolve(cwd));
+
+  const defaultName = name
+    .replace(/\s+/g, '-')
+    .replace('_', '-')
+    .toLowerCase()
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join('');
+
+  // ask for a name if the user used "." or didn't provide one
+  let appName = await p.text({
+    message: 'What should we call your project?',
+    placeholder: `(Enter to use '${defaultName}')`,
+  });
+
+  if (!appName) {
+    appName = name;
+  }
+
+  // derive an application name from the project name by camel casing it
+  const applicationNameForPkg = appName.replace(/\s+/g, '-').replace('_', '-').toLowerCase();
+
+  const applicationName = applicationNameForPkg
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join('');
+
   await write(cwd, {
-    name: path.basename(path.resolve(cwd)),
+    name,
+    applicationNameForPkg,
+    applicationName,
     template: /** @type {'default' | 'react'} */ (options.template),
   });
 
-  // try to install the dependencies
-  try {
-    execSync(`${packageManager} install`, { cwd });
-  } catch (e) {
-    console.error(e);
-  }
+  const s = p.spinner();
+  s.start('Installing dependencies...');
+  const exec = promisify(shell.exec);
+  const command = await exec(`${packageManager} install`, { silent: true, cwd }).catch(() => ({ code: 1 }));
+  // const message = command.code === 0 ? 'Installtion successful' : 'Installation failed';
+  s.stop('Installation complete!');
 
-  p.outro('Your project is ready with your dependencies installed!');
-
-  console.log('\nNext steps:');
+  let msg = `Next steps:`;
   let i = 1;
 
   const relative = path.relative(process.cwd(), cwd);
   if (relative !== '') {
-    console.log(`  ${i++}: ${bold(cyan(`cd ${relative}`))}`);
+    msg = `${msg}\n  ${i++}: ${bold(cyan(`cd ${relative}`))}`;
   }
 
   // prettier-ignore
-  console.log(`  ${i++}: ${bold(cyan('git init && git add -A && git commit -m "Initial commit"'))} (optional)`);
-  console.log(`  ${i++}: ${bold(cyan(`${package_manager} run dev`))}`);
+  msg = `${msg}\n  ${i++}: ${bold(cyan('git init && git add -A && git commit -m "Initial commit"'))} (optional)`;
+  msg = `${msg}\n  ${i++}: ${bold(cyan(`${package_manager} run dev`))}`;
+  msg = `${msg}\n  To close the dev server, hit ${bold(cyan('Ctrl-C'))}`;
 
-  console.log(`\nTo close the dev server, hit ${bold(cyan('Ctrl-C'))}`);
+  p.outro(msg);
 }

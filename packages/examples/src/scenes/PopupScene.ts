@@ -1,10 +1,16 @@
 import { ActionDetail, Button, FlexContainer, PopupConfig } from 'dill-pixel';
 
 import { ExamplePopup } from '@/popups/ExamplePopup';
+import BaseScene from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
-import { BaseScene } from './BaseScene';
 
-export class PopupScene extends BaseScene {
+export const id = 'ui-popup';
+export const debug = {
+  group: 'UI',
+  label: 'Popups',
+};
+
+export default class PopupScene extends BaseScene {
   protected readonly title = 'Popups';
   protected readonly subtitle =
     'Open a popup by clicking a button.\nThe' + ' different popups have different behaviors.';

@@ -1,9 +1,18 @@
 import { BasicActor, CircActor, CircSolid, Projectile, RectActor, RectSolid } from '@/entities/snap/entities';
-import { BaseScene } from '@/scenes/BaseScene';
+import BaseScene from '@/scenes/BaseScene';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
 import { Container } from 'dill-pixel';
 
-export class SnapCollisionsScene extends BaseScene {
+export const id = 'snap-collisions';
+
+export const debug = {
+  group: 'Physics',
+  label: 'Snap - Body types & Collisions',
+};
+
+export const plugins = ['physics'];
+
+export default class SnapCollisionsScene extends BaseScene {
   title = 'Snap Circle Collisions';
   subtitle =
     'Click a blue shape actor to activate it, then use the arrows to move it.\nActors will collide with the green solids, not with each other.';

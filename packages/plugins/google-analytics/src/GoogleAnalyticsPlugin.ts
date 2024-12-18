@@ -17,19 +17,16 @@ export interface IGoogleAnalyticsPlugin<E extends GAEvents = GAEvents> extends I
   trackEvent<K extends keyof E>(eventName: K, eventData?: E[K]): void;
 }
 
-const trackingId = process.env.VITE_GOOGLE_ANALYTICS_TRACKING_ID || process.env.GOOGLE_ANALYTICS_TRACKING_ID;
-
-const defaultOptions: Partial<GoogleAnalyticsPluginOptions> = {
-  trackingId,
-};
-
 export class GoogleAnalyticsPlugin<E extends GAEvents = GAEvents> extends Plugin implements IGoogleAnalyticsPlugin<E> {
   private _options: GoogleAnalyticsPluginOptions;
   private _dataLayer: { push: (args: any) => void };
   private _queue: any[] = [];
 
   async initialize(_app: IApplication, options: Partial<GoogleAnalyticsPluginOptions>) {
-    this._options = { ...defaultOptions, ...options };
+    this._options = {
+      trackingId: _app.env.VITE_GOOGLE_ANALYTICS_TRACKING_ID || _app.env.GOOGLE_ANALYTICS_TRACKING_ID,
+      ...options,
+    };
     this.install();
 
     this.hello();

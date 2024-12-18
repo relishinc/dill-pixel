@@ -7,9 +7,23 @@ import { EndlessRunner } from '@/entities/snap/EndlessRunner';
 import { Player } from '@/entities/snap/Player';
 import { Portal } from '@/entities/snap/Portal';
 import { SegmentConfig } from '@/entities/snap/Segment';
-import { BaseScene } from '@/scenes/BaseScene';
+import BaseScene from '@/scenes/BaseScene';
 
-export class SnapEndlessRunnerScene extends BaseScene {
+export const id = 'snap-endless-runner';
+export const debug = {
+  group: 'Physics',
+  label: 'Snap - Endless Runner',
+};
+
+export const plugins = ['physics'];
+
+export const assets = {
+  preload: {
+    bundles: ['spine'],
+  },
+};
+
+export default class SnapEndlessRunnerScene extends BaseScene {
   ui: UICanvas;
   level: Container;
   player: Player;

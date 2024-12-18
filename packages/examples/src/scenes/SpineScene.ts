@@ -1,7 +1,19 @@
+import BaseScene from '@/scenes/BaseScene';
 import { SpineAnimation } from 'dill-pixel';
-import { BaseScene } from './BaseScene';
 
-export class SpineScene extends BaseScene {
+export const id = 'spine';
+export const debug = {
+  group: 'Display',
+  label: 'Spine Animations',
+};
+
+export const assets = {
+  preload: {
+    bundles: ['spine'],
+  },
+};
+
+export default class SpineScene extends BaseScene {
   protected readonly title = 'Spine';
   protected readonly subtitle = 'Click / Enter / Spacebar to change the animation';
   protected hero: SpineAnimation;

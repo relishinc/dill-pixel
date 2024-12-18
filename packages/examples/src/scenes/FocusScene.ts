@@ -1,10 +1,16 @@
 import { Actor } from '@/entities/Actor';
-import { BaseScene } from '@/scenes/BaseScene';
+import BaseScene from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
 import { Button, FlexContainer, Logger } from 'dill-pixel';
 import { Text } from 'pixi.js';
 
-export class FocusScene extends BaseScene {
+export const id = 'focus';
+export const debug = {
+  group: 'Accessibility',
+  label: 'Focus Management',
+};
+
+export default class FocusScene extends BaseScene {
   protected title = 'Focus Management';
   protected subtitle =
     'Tab to changed focus. Enter or space to make the circles move.\nF to change focus layer.\nNotice only one item is focusable on layer two?';

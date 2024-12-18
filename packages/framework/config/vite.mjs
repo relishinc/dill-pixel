@@ -5,6 +5,7 @@ import { createHtmlPlugin } from 'vite-plugin-html';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import topLevelAwait from 'vite-plugin-top-level-await';
 import wasm from 'vite-plugin-wasm';
+import { pluginListPlugin, sceneListPlugin, storageAdapterListPlugin } from './vite/vite-dill-pixel-plugins.mjs';
 
 const env = process.env.NODE_ENV;
 const cwd = process.cwd();
@@ -35,6 +36,11 @@ const defaultConfig = {
         },
       ],
     }),
+    // dill pixel plugins
+    // from ./vite/vite-dill-pixel-plugins.mjs
+    storageAdapterListPlugin(),
+    pluginListPlugin(),
+    sceneListPlugin(),
     // assetpackPlugin(),
   ],
   resolve: {
@@ -43,7 +49,6 @@ const defaultConfig = {
     },
   },
   define: {
-    'process.env': 'import.meta.env',
     __DILL_PIXEL_APP_NAME: JSON.stringify(process.env.npm_package_name),
     __DILL_PIXEL_APP_VERSION: JSON.stringify(process.env.npm_package_version),
   },

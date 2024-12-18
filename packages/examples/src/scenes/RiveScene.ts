@@ -1,9 +1,34 @@
-import { BaseScene } from '@/scenes/BaseScene';
+import BaseScene from '@/scenes/BaseScene';
 import { RiveEntity } from '@dill-pixel/plugin-rive';
 import { FlexContainer, Logger } from 'dill-pixel';
 import { FederatedEvent } from 'pixi.js';
 
-export class RiveScene extends BaseScene {
+export const id = 'rive';
+
+export const debug = {
+  group: 'Rive',
+  label: 'Rive (Various)',
+};
+
+export const assets = {
+  preload: {
+    assets: [
+      {
+        alias: 'vehicles',
+        src: 'https://cdn.rive.app/animations/vehicles.riv',
+      },
+      { alias: 'reactions', src: 'static/reactions_v3.riv' },
+      { alias: 'skins', src: 'static/skins_demo.riv' },
+      { alias: 'cup', src: 'static/cup.riv' },
+      { alias: 'marty', src: 'static/marty.riv' },
+    ],
+  },
+  autoUnload: true,
+};
+
+export const plugins = ['rive'];
+
+export default class RiveScene extends BaseScene {
   public title = 'Rive';
   public subtitle = 'Rive animations';
 

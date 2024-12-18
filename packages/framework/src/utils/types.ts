@@ -95,7 +95,7 @@ export type BundleTypes = string | string[];
 export type AssetTypes = string | string[] | UnresolvedAsset | UnresolvedAsset[] | AssetLike | AssetLike[];
 
 export type AssetLoadingOptions = {
-  manifest?: AssetsManifest | Promise<AssetsManifest> | string;
+  manifest?: AssetsManifest | Promise<AssetsManifest> | string | (() => Promise<any>);
   initOptions?: Partial<AssetInitOptions>;
   assetPreferences?: Partial<AssetsPreferences>;
   preload?: {
@@ -109,6 +109,7 @@ export type AssetLoadingOptions = {
 };
 
 type SceneItemOptions = {
+  active?: boolean;
   debugLabel?: string;
   debugGroup?: string;
   plugins?: string[];

@@ -1,9 +1,8 @@
-import { AssetLoadingOptions, Size } from '../utils';
-
+import { Ticker } from 'pixi.js';
 import { Application } from '../Application';
+import { AssetLoadingOptions, Size } from '../utils';
 import type { IContainer } from './Container';
 import { Container } from './Container';
-import { Ticker } from 'pixi.js';
 
 export type SceneAssets = Omit<AssetLoadingOptions, 'manifest' | 'initOptions' | 'assetPreferences'>;
 

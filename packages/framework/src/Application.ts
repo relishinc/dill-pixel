@@ -1,46 +1,41 @@
 import type { AppConfig, IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals } from './core';
 import { coreFunctionRegistry, coreSignalRegistry } from './core';
 import type {
-  IFocusManagerPlugin,
-  Ii18nPlugin,
-  IInputPlugin,
-  IKeyboardPlugin,
-  IPlugin,
-  IPopupManagerPlugin,
-} from './plugins';
-import {
   Action,
   ActionContext,
   ActionSignal,
   IAssetsPlugin,
   IAudioManagerPlugin,
   IControls,
+  IFocusManagerPlugin,
+  Ii18nPlugin,
+  IInputPlugin,
+  IKeyboardPlugin,
+  IPlugin,
+  IPopupManagerPlugin,
   IResizerPlugin,
   ISceneManagerPlugin,
   IWebEventsPlugin,
 } from './plugins';
 
-import {
-  AssetInitOptions,
-  Assets,
-  AssetsManifest,
-  DestroyOptions,
-  isMobile,
-  Application as PIXIPApplication,
-  Point,
-  Renderer,
-  RendererDestroyOptions,
-} from 'pixi.js';
+import type { AssetInitOptions, AssetsManifest, DestroyOptions, Renderer, RendererDestroyOptions } from 'pixi.js';
+import { Assets, isMobile, Application as PIXIPApplication, Point } from 'pixi.js';
 import type { DataSchema, IDataAdapter, IStorageAdapter, IStore } from './store';
 import { DataAdapter, Store } from './store';
 import type { ImportListItem, Size } from './utils';
 import { bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from './utils';
 
-import { IActionsPlugin } from './plugins/actions';
+import type { IActionsPlugin } from './plugins/actions';
 import type { IVoiceOverPlugin } from './plugins/audio/VoiceOverPlugin';
 import type { ICaptionsPlugin } from './plugins/captions';
 import { defaultPlugins } from './plugins/defaults';
 import { Signal } from './signals';
+
+// log virtual modules
+import { pluginsList } from 'virtual:dill-pixel-plugins';
+import { storageAdaptersList } from 'virtual:dill-pixel-storage-adapters';
+
+console.log({ pluginsList, storageAdaptersList });
 
 const defaultApplicationOptions: Partial<IApplicationOptions> = {
   antialias: false,
@@ -110,6 +105,12 @@ export class Application<
   protected _captionsPlugin: ICaptionsPlugin;
   protected _actions: ActionSignal;
   protected _isBooting: boolean = true;
+
+  protected _env: Record<string, string> = (import.meta as any).env || {};
+
+  get env() {
+    return this._env;
+  }
 
   protected _paused: boolean = false;
   public get paused(): boolean {
@@ -677,10 +678,12 @@ export class Application<
     const opts: Partial<AssetInitOptions> = this.config.assets?.initOptions || {};
     if (this.config.assets?.manifest) {
       let manifest = this.config.assets.manifest || opts.manifest;
+      console.log(manifest, isPromise(manifest));
       if (isPromise(manifest)) {
         manifest = await manifest;
+        console.log(manifest);
       }
-      opts.manifest = manifest;
+      opts.manifest = manifest as AssetsManifest;
     }
     this.manifest = opts.manifest;
 

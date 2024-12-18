@@ -1,8 +1,8 @@
-import type { IApplication, IPlugin } from 'dill-pixel';
-import { Logger, Plugin } from 'dill-pixel';
+import { Schema } from '@colyseus/schema';
 import * as Colyseus from 'colyseus.js';
 import { Room } from 'colyseus.js';
-import { Schema } from '@colyseus/schema';
+import type { IApplication, IPlugin } from 'dill-pixel';
+import { Logger, Plugin } from 'dill-pixel';
 
 export type SchemaConstructor<T = Schema> = new (...args: any[]) => T;
 
@@ -28,10 +28,6 @@ export interface IColyseusPlugin extends IPlugin {
   joinById<T>(roomId: string, options?: Colyseus.JoinOptions, rootSchema?: SchemaConstructor<T>): Promise<Room<T>>;
 }
 
-const defaultOptions = {
-  port: process.env.VITE_COLYSEUS_PORT || process.env.VITE_COLYSEUS_PORT || '2567',
-};
-
 export class ColyseusPlugin extends Plugin implements IColyseusPlugin {
   private _options: ColyseusPluginOptions;
 
@@ -42,7 +38,10 @@ export class ColyseusPlugin extends Plugin implements IColyseusPlugin {
   }
 
   async initialize(_app: IApplication, options: Partial<ColyseusPluginOptions>) {
-    this._options = { ...defaultOptions, ...options };
+    this._options = {
+      port: _app.env.VITE_COLYSEUS_PORT || _app.env.COLYSEUS_PORT || '2567',
+      ...options,
+    };
     Logger.log(`Colyseus plugin initialized`);
 
     if (!this._client) {

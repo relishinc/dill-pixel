@@ -1,6 +1,6 @@
 import { Container } from 'pixi.js';
-import type { IApplication } from '../core';
 import { Application } from '../Application';
+import type { IApplication } from '../core';
 import type { IScene, ISceneTransition, SceneTransition } from '../display';
 import { Signal } from '../signals';
 import {
@@ -11,10 +11,14 @@ import {
   isDev,
   Queue,
   SceneImportList,
+  SceneImportListItem,
 } from '../utils';
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
 
+import { sceneList } from 'virtual:dill-pixel-scenes';
+
+// console.log({ sceneList });
 export interface ISceneManagerPlugin extends IPlugin {
   isFirstScene: boolean;
   onSceneChangeStart: Signal<(detail: { exiting: string | null; entering: string }) => void>;
@@ -118,7 +122,9 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
       this.app.config?.showSceneDebugMenu === true || (isDev && this.app.config?.showSceneDebugMenu !== false);
     this._useHash = app.config?.useHash === true || this._debugVisible;
     this.view.sortableChildren = true;
-    this.list = app.config?.scenes || [];
+    this.list = sceneList as unknown as SceneImportListItem<IScene>[];
+    this.list = this.list.filter((scene) => scene.active !== false);
+
     if (this._debugVisible || this._useHash) {
       this.defaultScene = this.getSceneFromHash() || '';
     }

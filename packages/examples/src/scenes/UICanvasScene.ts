@@ -1,7 +1,13 @@
-import { BaseScene } from './BaseScene';
-import { UICanvas } from 'dill-pixel';
+import BaseScene from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
+import { UICanvas } from 'dill-pixel';
 import { TextStyleOptions } from 'pixi.js';
+
+export const id = 'ui-canvas';
+export const debug = {
+  group: 'UI',
+  label: 'UI Canvas',
+};
 
 const whiteTextStyle = (size: number): Partial<TextStyleOptions> => ({
   fontFamily: FONT_KUMBH_SANS,
@@ -11,7 +17,7 @@ const whiteTextStyle = (size: number): Partial<TextStyleOptions> => ({
   align: 'right',
 });
 
-export class UICanvasScene extends BaseScene {
+export default class UICanvasScene extends BaseScene {
   protected readonly title = 'UI Canvas';
   protected readonly subtitle =
     "Demonstrates the UI Canvas's alignment options.\nInitially, size is bound to the size of the" +

@@ -1,6 +1,12 @@
 import { FlexContainer, Input } from 'dill-pixel';
 
-import { BaseScene } from '@/scenes/BaseScene';
+import BaseScene from '@/scenes/BaseScene';
+
+export const id = 'ui-input';
+export const debug = {
+  group: 'UI',
+  label: 'Input',
+};
 
 const overlaySettings = {
   activeFilter: ['mobile', 'touch'],
@@ -9,7 +15,7 @@ const overlaySettings = {
   backing: { active: true, color: 0x0 },
 };
 
-export class UIScene extends BaseScene {
+export default class UIScene extends BaseScene {
   public title = 'UI';
   public subtitle = 'UI components';
 

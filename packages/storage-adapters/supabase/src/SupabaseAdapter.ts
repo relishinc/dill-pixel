@@ -14,11 +14,6 @@ interface ISupabaseAdapterOptions {
   anonKey?: string;
 }
 
-const defaultConfig: ISupabaseAdapterOptions = {
-  supabaseUrl: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL,
-  anonKey: process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY,
-};
-
 export interface ISupabaseAdapter<Database extends GenericSchema = any> extends IStorageAdapter {
   client: SupabaseClient<Database>;
 
@@ -57,6 +52,10 @@ export class SupabaseAdapter<Database extends GenericSchema = any>
    */
   public initialize(_app: IApplication, options: Partial<ISupabaseAdapterOptions> = {}): void {
     Logger.log('SupabaseAdapter initialized');
+    const defaultConfig: ISupabaseAdapterOptions = {
+      supabaseUrl: _app.env.VITE_SUPABASE_URL || _app.env.SUPABASE_URL,
+      anonKey: _app.env.VITE_SUPABASE_ANON_KEY || _app.env.SUPABASE_ANON_KEY,
+    };
     this._options = { ...defaultConfig, ...options };
 
     if (!this._options.supabaseUrl) {

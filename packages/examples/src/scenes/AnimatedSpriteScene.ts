@@ -1,8 +1,20 @@
-import { BaseScene } from '@/scenes/BaseScene';
+import BaseScene from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
 import { AnimatedSprite, capitalize, FlexContainer } from 'dill-pixel';
 
-export class AnimatedSpriteScene extends BaseScene {
+export const id = 'animated-sprites';
+export const debug = {
+  group: 'Display',
+  label: 'Animated Sprites',
+};
+
+export const assets = {
+  preload: {
+    bundles: ['platformer'],
+  },
+};
+
+export default class AnimatedSpriteScene extends BaseScene {
   protected readonly title = 'Animated Sprite';
   protected readonly subtitle = 'Click to change animations';
   protected config = {

@@ -1,4 +1,4 @@
-import { BaseScene } from '@/scenes/BaseScene';
+import BaseScene from '@/scenes/BaseScene';
 import {
   ArcadePhysics,
   default as ArcadePhysicsPlugin,
@@ -8,6 +8,19 @@ import {
 } from '@dill-pixel/plugin-arcade-physics';
 import { Button, Camera, Container, Joystick, SpineAnimation, UICanvas } from 'dill-pixel';
 import { Texture, Ticker } from 'pixi.js';
+
+export const id = 'arcade-physics';
+export const debug = {
+  group: 'Physics',
+  label: 'Arcade',
+};
+
+export const plugins = ['arcade'];
+export const assets = {
+  preload: {
+    bundles: ['spine', 'game'],
+  },
+};
 
 class Player extends Entity {
   private _jumpTimer: number = 0;
@@ -168,7 +181,7 @@ class Platform extends Entity {
   }
 }
 
-export class ArcadePhysicsScene extends BaseScene {
+export default class ArcadePhysicsScene extends BaseScene {
   ui: UICanvas;
   protected readonly title = 'Arcade Physics';
   protected readonly subtitle = 'Arrows to move, up to jump';

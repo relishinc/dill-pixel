@@ -1,10 +1,16 @@
-import { ActionDetail, Button, FlexContainer, IFocusable, Input, Logger } from 'dill-pixel';
+import { Button, FlexContainer, IFocusable, Input, Logger } from 'dill-pixel';
 import { collection, DocumentData, limit, onSnapshot, orderBy, QuerySnapshot, where } from 'firebase/firestore';
 import { Graphics, Text } from 'pixi.js';
 
 import { SimpleButton } from '@/popups/ExamplePopup';
+import BaseScene from '@/scenes/BaseScene';
 import { gsap } from 'gsap';
-import { BaseScene } from './BaseScene';
+
+export const id = 'firebase-adapter';
+export const debug = {
+  group: 'Storage Adapters',
+  label: 'Firebase',
+};
 
 type Score = {
   id: string;
@@ -12,7 +18,7 @@ type Score = {
   score: number;
 };
 
-export class FirebaseAdapterScene extends BaseScene {
+export default class FirebaseAdapterScene extends BaseScene {
   protected readonly title = 'Firebase Storage Adapter';
   protected readonly subtitle = 'Demonstrates custom adapter functionality';
 

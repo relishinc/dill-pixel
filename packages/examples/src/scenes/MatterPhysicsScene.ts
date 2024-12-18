@@ -1,9 +1,14 @@
+import BaseScene from '@/scenes/BaseScene';
+import { FONT_KUMBH_SANS } from '@/utils/Constants';
 import { Entity, default as MatterPhysics } from '@dill-pixel/plugin-matter-physics';
 import { Container, ParticleContainer, UICanvas } from 'dill-pixel';
 import { FederatedPointerEvent, Particle, ParticleOptions, Rectangle, Text, Texture } from 'pixi.js';
 
-import { BaseScene } from '@/scenes/BaseScene';
-import { FONT_KUMBH_SANS } from '@/utils/Constants';
+export const id = 'matter-physics';
+export const debug = {
+  group: 'Physics',
+  label: 'Matter',
+};
 
 class FlourishParticle extends Particle {
   direction: number;
@@ -64,7 +69,7 @@ class Particles extends ParticleContainer {
   }
 }
 
-export class MatterPhysicsScene extends BaseScene {
+export default class MatterPhysicsScene extends BaseScene {
   ui: UICanvas;
   countText: Text;
   protected readonly title = 'Matter Physics';

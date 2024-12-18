@@ -1,9 +1,15 @@
 import { ActionDetail, Button, ButtonAction, ButtonConfig, FlexContainer, SceneAssets } from 'dill-pixel';
 
+import BaseScene from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
-import { BaseScene } from './BaseScene';
 
-export class AudioScene extends BaseScene {
+export const id = 'audio';
+export const debug = {
+  group: 'Audio',
+  label: 'Music & SFX',
+};
+
+export default class AudioScene extends BaseScene {
   protected readonly title = 'Audio';
   protected readonly subtitle = 'Demonstrates audio channels and volume control.';
   protected config = {

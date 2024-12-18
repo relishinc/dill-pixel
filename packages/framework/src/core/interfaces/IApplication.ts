@@ -30,6 +30,7 @@ export interface IApplication<
   A extends Action = Action,
 > extends PIXIPApplication {
   config: Partial<IApplicationOptions<D>>;
+  readonly env: Record<string, string>;
   readonly size: Size;
   readonly center: Point;
   manifest: AssetsManifest | string | undefined;

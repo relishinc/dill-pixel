@@ -1,1 +1,1 @@
-import('@/MyApplication');
+import('@/bootstrap');

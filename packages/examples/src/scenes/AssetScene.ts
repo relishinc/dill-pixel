@@ -1,15 +1,16 @@
-import { BaseScene } from '@/scenes/BaseScene';
+import BaseScene from '@/scenes/BaseScene';
 import { FlexContainer, Logger, scaleToHeight, SceneAssets } from 'dill-pixel';
 
-export class AssetScene extends BaseScene {
+export const id = 'assets';
+export const debug = {
+  group: 'Framework',
+  label: 'Assets',
+};
+
+export default class AssetScene extends BaseScene {
   title = 'Asset Scene';
   subtitle = 'Asset loading from different sources';
-
   container: FlexContainer;
-
-  constructor() {
-    super();
-  }
 
   public get assets(): SceneAssets {
     return {

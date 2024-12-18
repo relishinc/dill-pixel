@@ -1,6 +1,6 @@
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
 
-import { BaseScene } from '@/scenes/BaseScene';
+import BaseScene from '@/scenes/BaseScene';
 import { FlexContainer } from 'dill-pixel';
 
 export class StartScene extends BaseScene {

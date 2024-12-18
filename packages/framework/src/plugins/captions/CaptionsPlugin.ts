@@ -253,21 +253,24 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
    * @param options The i18n options.
    * @returns Promise<void>
    */
-  public async initialize(_app: IApplication, options: Partial<CaptionsOptions>): Promise<void> {
+  public async initialize(_app: IApplication, options: Partial<CaptionsOptions> = {}): Promise<void> {
     this._options = {
       ...defaultOptions,
       ...options,
     } as CaptionsOptions;
 
-    if (options.padding) {
+    if (options?.padding) {
       this._options.padding = ensurePadding(options.padding);
     }
 
     this._locale = this.app.i18n.locale;
     this._locales = this.app.i18n.locales;
-    await Assets.load(this._options.fontFile);
 
-    if (this._options.files.length > 0) {
+    if (this._options.fontFile) {
+      await Assets.load(this._options.fontFile);
+    }
+
+    if (this._options?.files?.length > 0) {
       const files = this._options.files.filter((file) => this._locales.includes(file.id));
       for (const file of files) {
         await this.loadLocale(file.id);

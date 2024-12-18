@@ -17,18 +17,8 @@ import {
 
 interface DocumentResult extends DocumentData {
   id: string;
-
   [key: string]: unknown;
 }
-
-const defaultConfig: FirebaseOptions = {
-  apiKey: process.env.VITE_FIREBASE_API_KEY || process.env.FIREBASE_API_KEY,
-  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN || process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.VITE_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET || process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.VITE_FIREBASE_APP_ID || process.env.FIREBASE_APP_ID,
-};
 
 export interface IFirebaseAdapter extends IStorageAdapter {
   db: Firestore;
@@ -88,7 +78,14 @@ export class FirebaseAdapter extends StorageAdapter implements IFirebaseAdapter 
    */
   public initialize(_app: IApplication, options: Partial<FirebaseOptions> = {}): void {
     Logger.log('FirebaseAdapter initialized');
-
+    const defaultConfig: FirebaseOptions = {
+      apiKey: _app.env.VITE_FIREBASE_API_KEY || _app.env.FIREBASE_API_KEY,
+      authDomain: _app.env.VITE_FIREBASE_AUTH_DOMAIN || _app.env.FIREBASE_AUTH_DOMAIN,
+      projectId: _app.env.VITE_FIREBASE_PROJECT_ID || _app.env.FIREBASE_PROJECT_ID,
+      storageBucket: _app.env.VITE_FIREBASE_STORAGE_BUCKET || _app.env.FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: _app.env.VITE_FIREBASE_MESSAGING_SENDER_ID || _app.env.FIREBASE_MESSAGING_SENDER_ID,
+      appId: _app.env.VITE_FIREBASE_APP_ID || _app.env.FIREBASE_APP_ID,
+    };
     this._options = { ...defaultConfig, ...options };
     this._firebaseApp = initializeApp(this._options);
     this._db = getFirestore(this._firebaseApp); // initialize Firestore and get a reference to the database
