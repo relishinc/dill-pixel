@@ -4,9 +4,9 @@ import { Animated, Factory, WithSignals } from '../mixins';
 import { Application } from '../Application';
 import type { IApplication } from '../core';
 import { Signal } from '../signals';
+import { SignalOrder } from '../signals/Signal';
 import type { PointLike, Size } from '../utils';
 import { bindAllMethods } from '../utils';
-import { SignalOrder } from '../signals/Signal';
 
 /**
  * Configuration for the Container class.

@@ -1,9 +1,9 @@
 import {
   CanvasTextMetrics,
-  Container as PIXIContainer,
   FederatedEvent,
   FederatedPointerEvent,
   Graphics,
+  Container as PIXIContainer,
   Rectangle,
   Sprite,
   Text,
@@ -22,9 +22,9 @@ import {
   PointLike,
 } from '../utils';
 
+import { gsap } from 'gsap';
 import { Container } from '../display';
 import { Signal } from '../signals';
-import { gsap } from 'gsap';
 
 export type BgStyleOptions = {
   radius: number;
@@ -277,6 +277,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   resize() {
+    super.resize();
     if (this.cloneOverlay) {
       this._positionCloneOverlay();
     }
@@ -287,6 +288,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
   }
 
   added() {
+    super.added();
     if (this.isClone) {
       this.showCursor();
     }

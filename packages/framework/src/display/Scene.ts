@@ -1,6 +1,6 @@
 import { Ticker } from 'pixi.js';
 import { Application } from '../Application';
-import { AssetLoadingOptions, Size } from '../utils';
+import { AssetLoadingOptions, Logger, Size } from '../utils';
 import type { IContainer } from './Container';
 import { Container } from './Container';
 
@@ -119,6 +119,7 @@ export class Scene<T extends Application = Application> extends Container<T> imp
    */
   public resize(size?: Size): void {
     void size;
+    Logger.log('Scene.resize', this, size);
   }
 
   public destroy() {

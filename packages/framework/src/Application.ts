@@ -1,5 +1,5 @@
 import type { AppConfig, IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals } from './core';
-import { coreFunctionRegistry, coreSignalRegistry, generatePluginList,  generateAdapterList} from './core';
+import { coreFunctionRegistry, coreSignalRegistry, generateAdapterList, generatePluginList } from './core';
 import type {
   Action,
   ActionContext,
@@ -691,8 +691,11 @@ export class Application<
 
   private async _resize() {
     this.resizer.resize();
-    this._center.set(this.size.width * 0.5, this.size.height * 0.5);
+    
+    console.log('Application._resize', this.size);
+    
     this.ticker.addOnce(() => {
+      this._center.set(this.size.width * 0.5, this.size.height * 0.5);
       this.views.forEach((view) => {
         if (!view || !view.position) {
           return;

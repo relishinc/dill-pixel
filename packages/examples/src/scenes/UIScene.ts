@@ -1,4 +1,4 @@
-import { FlexContainer, Input } from 'dill-pixel';
+import { FlexContainer, Input, wait } from 'dill-pixel';
 
 import BaseScene from '@/scenes/BaseScene';
 
@@ -32,7 +32,9 @@ export default class UIScene extends BaseScene {
       gap: 20,
       justifyContent: 'center',
       alignItems: 'center',
+      visible:false
     });
+
 
     const input = this.list.add.existing(
       new Input({
@@ -130,5 +132,11 @@ export default class UIScene extends BaseScene {
     );
 
     this.app.focus.add([input, tel, input2, input3, input4, input5, withOverlay], this.id);
+    
+    await wait(0.01);
+
+    this.list.layout();
+    this.list.visible = true;
   }
 }
+

@@ -3,7 +3,7 @@ import { Graphics, Sprite, Text, Texture } from 'pixi.js';
 import { COLOR_SLATE, FONT_KUMBH_SANS } from '@/utils/Constants';
 import { V8Application } from '@/V8Application';
 import { GUI } from 'dat.gui';
-import { FlexContainer, Scene } from 'dill-pixel';
+import { FlexContainer, Scene, Size } from 'dill-pixel';
 
 export const dynamic = false;
 export const active = false;
@@ -85,8 +85,9 @@ export default class BaseScene extends Scene<V8Application> {
     super.destroy();
   }
 
-  resize() {
-    super.resize();
+  resize(size?: Size) {
+    super.resize(size);
+    console.log('BaseScene.resize', size, this.app.size);
     if (this._bg) {
       this._bg.clear();
       this._bg

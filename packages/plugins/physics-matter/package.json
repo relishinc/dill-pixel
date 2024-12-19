@@ -29,7 +29,7 @@
   },
   "peerDependencies": {
     "dill-pixel": "8.17.4",
-    "pixi.js": "8.6.3"
+    "pixi.js": "8.6.6"
   },
   "dependencies": {
     "@types/matter-js": "^0.19.7",
