@@ -59,7 +59,7 @@ export default class VoiceoverScene extends BaseScene {
     this.app.focus.addFocusLayer(this.id);
     this.app.audio.muted = this.config.muted;
 
-    this.buttonContainer = this.add.flexContainer({ gap: 20, justifyContent: 'center' });
+    this.buttonContainer = this.add.flexContainer({ gap: 30, justifyContent: 'center' });
     this.buttonContainer.debug = true;
     this.buttonContainer.label = 'ButtonContainer';
 
@@ -122,6 +122,8 @@ export default class VoiceoverScene extends BaseScene {
     this.app.actions('stop_vo').connect(this._handleStopVo);
     this.app.actions('caption_theme').connect(this._handlCaptionThemeChanged);
 
+    this._handleCaptionsFloatingChanged(this.config.captions.enabled);
+
     this.app.captions.options = {
       ...this.config.captions,
       maxWidth: this.config.captions.maxWidth * this.app.size.width,
@@ -131,7 +133,9 @@ export default class VoiceoverScene extends BaseScene {
     };
   }
 
-  public async start() {}
+  public async start() {
+    this.app.captions.enabled = true;
+  }
 
   public destroy() {
     super.destroy();
@@ -219,7 +223,7 @@ export default class VoiceoverScene extends BaseScene {
   }
 
   protected configureGUI() {
-    this.gui.open();
+    // this.gui.open();
     const voFolder = this.gui.addFolder('Voiceover');
     voFolder.open();
     voFolder.add(this.config, 'volume', 0, 5, 0.001).name('Volume').onChange(this._handleVOVolumeChanged);

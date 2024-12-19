@@ -86,6 +86,7 @@ export default class BaseScene extends Scene<V8Application> {
   }
 
   resize() {
+    super.resize();
     if (this._bg) {
       this._bg.clear();
       this._bg

@@ -11,7 +11,7 @@ export const debug = {
   label: 'Snap - Projectiles',
 };
 
-export const plugins = ['physics'];
+export const plugins = ['snap-physics'];
 
 class Ball extends Projectile {
   type = 'Ball';
@@ -55,7 +55,7 @@ export default class SnapProjectileScene extends BaseScene {
   private obstacleCirc: CircSolid;
 
   protected get physics(): SnapPhysics {
-    return this.app.getPlugin('physics') as unknown as SnapPhysics;
+    return this.app.getPlugin('snap-physics') as unknown as SnapPhysics;
   }
 
   update() {

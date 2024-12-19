@@ -15,7 +15,7 @@ export const debug = {
   label: 'Snap - Level & Camera',
 };
 
-export const plugins = ['physics'];
+export const plugins = ['snap-physics'];
 export const assets = {
   preload: {
     bundles: ['spine'],
@@ -45,7 +45,7 @@ export default class SnapPhysicsScene extends BaseScene {
   private _joystick: Joystick;
 
   protected get physics(): SnapPhysics {
-    return this.app.getPlugin('physics') as unknown as SnapPhysics;
+    return this.app.getPlugin('snap-physics') as unknown as SnapPhysics;
   }
 
   configureGUI() {

@@ -26,7 +26,7 @@ export class Segment {
   }
 
   get system() {
-    return (this.app.getPlugin('physics') as unknown as SnapPhysicsPlugin).system;
+    return (this.app.getPlugin('snap-physics') as unknown as SnapPhysicsPlugin).system;
   }
 
   get x(): number {

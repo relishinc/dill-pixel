@@ -15,7 +15,7 @@ export const debug = {
   label: 'Arcade',
 };
 
-export const plugins = ['arcade'];
+export const plugins = ['arcade-physics'];
 export const assets = {
   preload: {
     bundles: ['spine', 'game'],
@@ -198,7 +198,7 @@ export default class ArcadePhysicsScene extends BaseScene {
   private _camera: Camera;
 
   protected get physicsPlugin(): ArcadePhysicsPlugin {
-    return this.app.getPlugin('arcade') as unknown as ArcadePhysicsPlugin;
+    return this.app.getPlugin('arcade-physics') as unknown as ArcadePhysicsPlugin;
   }
 
   protected get physics(): ArcadePhysics {

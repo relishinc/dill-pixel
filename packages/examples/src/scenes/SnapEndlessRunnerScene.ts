@@ -15,7 +15,7 @@ export const debug = {
   label: 'Snap - Endless Runner',
 };
 
-export const plugins = ['physics'];
+export const plugins = ['snap-physics'];
 
 export const assets = {
   preload: {
@@ -45,7 +45,7 @@ export default class SnapEndlessRunnerScene extends BaseScene {
   // private _debugGfx = new Graphics();
 
   protected get physics(): SnapPhysics {
-    return this.app.getPlugin('physics') as unknown as SnapPhysics;
+    return this.app.getPlugin('snap-physics') as unknown as SnapPhysics;
   }
 
   configureGUI() {

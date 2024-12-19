@@ -10,7 +10,7 @@ export const debug = {
   label: 'Snap - Body types & Collisions',
 };
 
-export const plugins = ['physics'];
+export const plugins = ['snap-physics'];
 
 export default class SnapCollisionsScene extends BaseScene {
   title = 'Snap Circle Collisions';
@@ -27,7 +27,7 @@ export default class SnapCollisionsScene extends BaseScene {
   private actors: BasicActor[] = [];
 
   protected get physics(): SnapPhysics {
-    return this.app.getPlugin('physics') as unknown as SnapPhysics;
+    return this.app.getPlugin('snap-physics') as unknown as SnapPhysics;
   }
 
   configureGUI() {

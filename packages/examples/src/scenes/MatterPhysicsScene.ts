@@ -10,6 +10,8 @@ export const debug = {
   label: 'Matter',
 };
 
+export const plugins = ['matter-physics'];
+
 class FlourishParticle extends Particle {
   direction: number;
   speed: number;
@@ -83,7 +85,7 @@ export default class MatterPhysicsScene extends BaseScene {
   };
 
   protected get physics(): MatterPhysics {
-    return this.app.getPlugin('matter') as unknown as MatterPhysics;
+    return this.app.getPlugin('matter-physics') as unknown as MatterPhysics;
   }
 
   configureGUI() {

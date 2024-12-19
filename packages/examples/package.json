@@ -17,9 +17,9 @@
     "visualize": "npx vite-bundle-visualizer -c vite.config.mjs",
     "audio:vo:en": "texttospeech assets/audio{m}/vo/en --sheet-name=\"Intro EN\"",
     "audio:vo:fr": "texttospeech assets/audio{m}/vo/fr --sheet-name=\"Intro FR\"",
-    "audio:captions:en": "node ../cli.mjs audio captions src/assets/audio/en assets/audio{m}/vo/en",
-    "audio:captions:fr": "node ../cli.mjs audio captions src/assets/audio/fr assets/audio{m}/vo/fr",
-    "vo:generate": "node ../cli.mjs vo generate",
+    "audio:captions:en": "node ../framework/cli.mjs audio captions src/assets/audio/en assets/audio{m}/vo/en",
+    "audio:captions:fr": "node ../framework/cli.mjs audio captions src/assets/audio/fr assets/audio{m}/vo/fr",
+    "vo:generate": "node ../framework/cli.mjs vo generate",
     "spritesheets": "node assets/images/export_spritesheets",
     "format": "prettier --write src",
     "format:check": "prettier --check src"

@@ -29,10 +29,12 @@ export const actions = defineActions(contexts, {
   // physics
   drop: { context: ['game'] },
   // voiceover
-  vo: { context: ['game'] },
-  pause_vo: { context: ['game'] },
-  stop_vo: { context: ['game'] },
-  caption_theme: { context: ['game'] },
+  vo: { context: "*" }, 
+  pause_vo: { context:  "*"  },
+  stop_vo: { context:  "*"  },
+  caption_theme: { context: "*"  },
+  music: { context: '*' },
+  sfx: { context: '*' },
 });
 
 /** Don't touch */
@@ -120,7 +122,8 @@ export const config = defineConfig<Data>({
     },
   },
   plugins: [
-    'analytics',
+    'test',
+    'google-analytics',
     'springroll',
     [
       'snap-physics',
@@ -133,7 +136,7 @@ export const config = defineConfig<Data>({
       },
     ],
     [
-      'arcade',
+      'arcade-physics',
       {
         autoLoad: false,
         options: {
@@ -143,7 +146,7 @@ export const config = defineConfig<Data>({
       },
     ],
     [
-      'matter',
+      'matter-physics',
       {
         autoLoad: false,
         options: {
