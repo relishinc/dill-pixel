@@ -31,6 +31,12 @@ export interface IStorageAdapter extends IPlugin {
   ): Promise<TExpectedLoadResult> | TExpectedLoadResult | undefined;
 }
 
+export interface StorageAdapterListItem {
+  id: string;
+  path: string;
+  storageAdapter: () => Promise<new () => IStorageAdapter> | IStorageAdapter;
+}
+
 /**
  * A class representing a storage adapter module.
  * @template T The type of the application that the module belongs to.

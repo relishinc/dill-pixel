@@ -20,12 +20,25 @@ export interface IScene extends IContainer {
   start(): Promise<void> | void;
 }
 
+export interface SceneListItem {
+  id: string;
+  path: string;
+  scene: () => Promise<new () => IScene> | IScene;
+  debug?: {
+    label?: string;
+    group?: string;
+  };
+  assets?: string[];
+  plugins?: string[];
+  autoUnloadAssets: boolean;
+}
+
 export class Scene<T extends Application = Application> extends Container<T> implements IScene {
   public readonly id: string;
   public autoUnloadAssets: boolean = false;
 
   constructor() {
-    super({ autoResize: true, autoUpdate: true, priority: -9999 });
+    super({ autoResize: true, autoUpdate: true, priority: 'highest' });
   }
 
   /**

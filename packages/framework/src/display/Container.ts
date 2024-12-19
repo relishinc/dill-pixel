@@ -6,6 +6,7 @@ import type { IApplication } from '../core';
 import { Signal } from '../signals';
 import type { PointLike, Size } from '../utils';
 import { bindAllMethods } from '../utils';
+import { SignalOrder } from '../signals/Signal';
 
 /**
  * Configuration for the Container class.
@@ -13,7 +14,7 @@ import { bindAllMethods } from '../utils';
 export type ContainerConfig = {
   autoResize: boolean;
   autoUpdate: boolean;
-  priority: number;
+  priority: SignalOrder;
 };
 
 export const ContainerConfigKeys: (keyof ContainerConfig)[] = ['autoResize', 'autoUpdate', 'priority'];
@@ -163,11 +164,11 @@ export class Container<A extends Application = Application>
    */
   private _added() {
     if (this.__config.autoResize) {
-      this.addSignalConnection(this.app.onResize.connect(this.resize, this.__config.priority));
+      this.addSignalConnection(this.app.onResize.connect( this.resize,this.__config.priority ?? 'highest'));
     }
 
     if (this.__config.autoUpdate) {
-      this.app.ticker.add(this.update, this, this.__config.priority);
+      this.app.ticker.add(this.update, this, -999999);
     }
     this.added();
   }

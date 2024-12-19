@@ -7,12 +7,13 @@ import {
   ResizerPluginOptions,
   SplashOptions,
 } from '../../plugins';
-import type { AssetLoadingOptions, LoggerMode, SceneImportList } from '../../utils';
+import type { AssetLoadingOptions, LoggerMode, SceneImportList, SceneImportListItem } from '../../utils';
 
 import type { ApplicationOptions } from 'pixi.js';
 import type { IScene, ISceneTransition, SceneTransition } from '../../display';
 import type { CaptionsOptions } from '../../plugins/captions';
 import type { DataSchema, IDataAdapterOptions } from '../../store';
+import type { PluginOrAdapterConfig } from '../config';
 
 export interface IApplicationOptions<D extends DataSchema = DataSchema> extends ApplicationOptions {
   id: string;
@@ -22,12 +23,11 @@ export interface IApplicationOptions<D extends DataSchema = DataSchema> extends 
   useStore: boolean;
   useSpine: boolean;
   useVoiceover: boolean;
-  //storageAdapters: ImportList<IStorageAdapter>;
-  storageAdapters: (string | [string, { autoLoad?: boolean; options?: any }])[];
+  storageAdapters: PluginOrAdapterConfig[];
   data: Partial<IDataAdapterOptions<D>>;
-  // plugins: ImportList<IPlugin>;
-  plugins: (string | [string, { autoLoad?: boolean; options?: any }])[];
+  plugins: PluginOrAdapterConfig[];
   assets: AssetLoadingOptions;
+  sceneImportList: SceneImportListItem<IScene>[]
   scenes: SceneImportList<IScene>;
   scenesLocation: string;
   actions: Partial<ActionMap>;

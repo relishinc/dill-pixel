@@ -3,25 +3,12 @@ import * as p from '@clack/prompts';
 import { bold, cyan } from 'kleur/colors';
 import fs from 'node:fs';
 import path from 'node:path';
+import process from 'node:process';
 import { promisify } from 'node:util';
 import shell from 'shelljs';
 import { copy, dist, mkdirp, package_manager } from './utils.mjs';
+
 let packageManager = package_manager;
-
-const animateEllipsis = () => {
-  const frames = [
-    'Installing dependencies   ',
-    'Installing dependencies.  ',
-    'Installing dependencies.. ',
-    'Installing dependencies...',
-  ];
-  let i = 0;
-
-  return setInterval(() => {
-    process.stdout.write('\r' + frames[i]);
-    i = (i + 1) % frames.length;
-  }, 300);
-};
 
 async function write(cwd, options) {
   await mkdirp(cwd);
@@ -95,7 +82,9 @@ function write_template_files(template, applicationNameForPkg, name, application
     // create an .npmrc file with the following content:
     // shamefully-hoist=true
     fs.writeFileSync(`${cwd}/.npmrc`, 'shamefully-hoist=true');
-  } catch (e) {}
+  } catch (e) {
+    console.log('Failed to remove .meta.json and package.template.json due to:', e);
+  }
 }
 
 export async function create(cwd = '.', packageManagerOverride) {
@@ -197,7 +186,7 @@ export async function create(cwd = '.', packageManagerOverride) {
   const s = p.spinner();
   s.start('Installing dependencies...');
   const exec = promisify(shell.exec);
-  const command = await exec(`${packageManager} install`, { silent: true, cwd }).catch(() => ({ code: 1 }));
+  await exec(`${packageManager} install`, { silent: true, cwd }).catch(() => ({ code: 1 }));
   // const message = command.code === 0 ? 'Installtion successful' : 'Installation failed';
   s.stop('Installation complete!');
 

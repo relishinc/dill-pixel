@@ -1,5 +1,5 @@
 import type { AppConfig, IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals } from './core';
-import { coreFunctionRegistry, coreSignalRegistry } from './core';
+import { coreFunctionRegistry, coreSignalRegistry, generatePluginList,  generateAdapterList} from './core';
 import type {
   Action,
   ActionContext,
@@ -22,7 +22,7 @@ import type { AssetInitOptions, AssetsManifest, DestroyOptions, Renderer, Render
 import { Assets, isMobile, Application as PIXIPApplication, Point } from 'pixi.js';
 import type { DataSchema, IDataAdapter, IStorageAdapter, IStore } from './store';
 import { DataAdapter, Store } from './store';
-import type { ImportListItem, Size } from './utils';
+import type { ImportList, ImportListItem, Size } from './utils';
 import { bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from './utils';
 
 import type { IActionsPlugin } from './plugins/actions';
@@ -31,11 +31,6 @@ import type { ICaptionsPlugin } from './plugins/captions';
 import { defaultPlugins } from './plugins/defaults';
 import { Signal } from './signals';
 
-// log virtual modules
-import { pluginsList } from 'virtual:dill-pixel-plugins';
-import { storageAdaptersList } from 'virtual:dill-pixel-storage-adapters';
-
-console.log({ pluginsList, storageAdaptersList });
 
 const defaultApplicationOptions: Partial<IApplicationOptions> = {
   antialias: false,
@@ -86,6 +81,8 @@ export class Application<
   public __dill_pixel_method_binding_root = true;
   // config
   public config: Partial<IApplicationOptions<D>>;
+  public plugins: ImportList<IPlugin>;
+  public storageAdapters: ImportList<IStorageAdapter>;
   public manifest: string | AssetsManifest | undefined;
   public onPause = new Signal<() => void>();
   public onResume = new Signal<() => void>();
@@ -381,6 +378,7 @@ export class Application<
     }
     // initialize the logger
     Logger.initialize(this.config.logger);
+    
     await this.boot(this.config);
     await this.preInitialize(this.config);
     await this.initAssets();
@@ -391,13 +389,12 @@ export class Application<
 
     // internal setup
     await this._setup();
-
-    if (this.config.plugins && this.config.plugins.length > 0) {
-      for (let i = 0; i < this.config.plugins.length; i++) {
-        const listItem = this.config.plugins[i];
-        if (listItem && listItem?.autoLoad !== false) {
-          await this.loadPlugin(listItem);
-        }
+    this.plugins = generatePluginList<IPlugin>(this.config.plugins || []);
+    
+    for (let i = 0; i < this.plugins.length; i++) {
+      const listItem = this.plugins[i];
+      if (listItem && listItem?.autoLoad !== false) {
+        await this.loadPlugin(listItem);
       }
     }
 
@@ -407,16 +404,15 @@ export class Application<
     // add the store if it's enabled
     if (this.config.useStore) {
       // register any storage adapters passed through the config
-      if (this.config.storageAdapters && this.config.storageAdapters.length > 0) {
-        for (let i = 0; i < this.config.storageAdapters.length; i++) {
-          const listItem = this.config.storageAdapters[i];
-          if (this.store.hasAdapter(listItem.id)) {
-            Logger.error(`Storage Adapter with id "${listItem.id}" already registered. Not registering.`);
-            continue;
-          }
-          const storageAdapter = await getDynamicModuleFromImportListItem(listItem);
-          await this.registerStorageAdapter(new storageAdapter(listItem.id), listItem.options);
+      this.storageAdapters = generateAdapterList(this.config.storageAdapters || []);
+      for (let i = 0; i < this.storageAdapters.length; i++) {
+        const listItem = this.storageAdapters[i];
+        if (this.store.hasAdapter(listItem.id)) {
+          Logger.error(`Storage Adapter with id "${listItem.id}" already registered. Not registering.`);
+          continue;
         }
+        const storageAdapter = await getDynamicModuleFromImportListItem(listItem);
+        await this.registerStorageAdapter(new storageAdapter(listItem.id), listItem.options);
       }
       // also call the registerStorageAdapters method to allow for custom storage adapters to be registered
       await this.registerStorageAdapters();
@@ -447,6 +443,8 @@ export class Application<
 
   async postInitialize(): Promise<void> {
     (globalThis as any).__PIXI_APP__ = this;
+    this._resize();
+    
     this._plugins.forEach((plugin) => {
       plugin.postInitialize(this as unknown as IApplication<DataSchema>);
     });
@@ -458,12 +456,10 @@ export class Application<
         this.audio.suspend();
       }
     });
-
-    void this._resize();
   }
 
   public getUnloadedPlugin(id: string): ImportListItem<IPlugin> | undefined {
-    return this.config.plugins?.find((plugin) => plugin.id === id);
+    return this.plugins?.find((plugin) => plugin.id === id);
   }
 
   async loadPlugin(listItem: ImportListItem, isDefault: boolean = false) {
@@ -678,16 +674,15 @@ export class Application<
     const opts: Partial<AssetInitOptions> = this.config.assets?.initOptions || {};
     if (this.config.assets?.manifest) {
       let manifest = this.config.assets.manifest || opts.manifest;
-      console.log(manifest, isPromise(manifest));
       if (isPromise(manifest)) {
         manifest = await manifest;
-        console.log(manifest);
       }
       opts.manifest = manifest as AssetsManifest;
     }
-    this.manifest = opts.manifest;
 
     await Assets.init(opts);
+    /** @ts-expect-error manifest is not a public property */
+    this.manifest = Assets.resolver._manifest;
   }
 
   protected async loadDefaultScene(): Promise<void> {
@@ -707,7 +702,6 @@ export class Application<
       this.onResize.emit(this.size);
     });
   }
-
   /**
    * Called after the application is initialized
    * Here we add application specific signal listeners, etc

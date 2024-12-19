@@ -116,7 +116,7 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
   private _locales: string[];
   private _activeCaptionLine = -1;
   private _activeCaptionTime = 0;
-
+  
   private _locale: string;
 
   /**
@@ -127,6 +127,7 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
   }
 
   private _options: CaptionsOptions;
+  private _originalOptions: CaptionsOptions;
 
   get options(): CaptionsOptions {
     return this._options;
@@ -134,6 +135,7 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
 
   set options(value: Partial<CaptionsOptions>) {
     this._options = { ...this._options, ...value };
+    
 
     if (value.padding) {
       this._options.padding = ensurePadding(value.padding);
@@ -235,7 +237,7 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
 
   public set maxWidth(value: number) {
     this.options.maxWidth = resolveMaxWidth(value, this.app.size.width);
-    this.renderer.resize();
+    this.renderer?.resize();
   }
 
   get list(): CaptionsDict {
@@ -259,6 +261,8 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
       ...options,
     } as CaptionsOptions;
 
+    this._originalOptions = { ...this._options};
+
     if (options?.padding) {
       this._options.padding = ensurePadding(options.padding);
     }
@@ -276,6 +280,13 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
         await this.loadLocale(file.id);
       }
     }
+
+    this.addSignalConnection(this.app.onResize.connect(this.handleResize, 'highest'));
+  }
+
+  private handleResize() {
+    Logger.log('CaptionsPlugin.handleResize');
+    this.maxWidth = this._originalOptions.maxWidth ;
   }
 
   public postInitialize(): void {
@@ -287,7 +298,7 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
     this.app.voiceover.onVoiceOverStopped.connect(this._handleVoiceoverStopped);
 
     this.app.stage.addChild(this.view);
-    this._options.maxWidth = resolveMaxWidth(this.options.maxWidth, this.app.size.width);
+    this._options.maxWidth = resolveMaxWidth(this._originalOptions.maxWidth, this.app.size.width);
     const RendererClass: CaptionRendererConstructor = this.options.renderer;
     this.renderer = this.view.addChild(new RendererClass(this)) as CaptionsRenderer;
 

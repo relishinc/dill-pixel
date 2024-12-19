@@ -1,4 +1,4 @@
-import { Graphics, Point } from 'pixi.js';
+import { Graphics } from 'pixi.js';
 
 import { Container } from '../display';
 import type { IApplication } from '../core';

@@ -28,7 +28,7 @@
   ],
   "include": [
     "./src/**/*.ts"
-, "types/dillpixel.d.ts"  ],
+,   "./src/virtual-modules.d.ts"  ],
   "exclude": [
     "./lib/index.d.ts",
     "./node_modules",

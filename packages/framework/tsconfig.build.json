@@ -7,6 +7,6 @@
     "noUnusedParameters": false,
     "declaration": true,
     "declarationMap": true,
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": true,
   }
 }

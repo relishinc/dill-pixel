@@ -11,13 +11,15 @@ import {
 
 const signalPriorities = {
   highest: Number.MIN_SAFE_INTEGER,
+  higher: -1000,
   high: -100,
   normal: 0,
   low: 100,
+  lower: 1000,
   lowest: Number.MAX_SAFE_INTEGER,
 } as const;
 
-export type SignalOrder = 'highest' | 'high' | 'normal' | 'low' | 'lowest' | number;
+export type SignalOrder = 'highest' | 'high' | 'normal' | 'low' | 'lower' | 'lowest' | number;
 
 class Signal<THandler extends (...args: any[]) => any> extends TsSignal<THandler> {
   // add a connectOnce method to the Signal class, that will connect a listener to the signal, and then remove it after the first time it is called

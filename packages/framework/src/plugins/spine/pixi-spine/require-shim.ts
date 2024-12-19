@@ -28,7 +28,7 @@
  *****************************************************************************/
 
 declare global {
-  var require: NodeRequire;
+  var require: any;
   var PIXI: any;
 }
 

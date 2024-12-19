@@ -18,7 +18,6 @@ import { Plugin } from './Plugin';
 
 import { sceneList } from 'virtual:dill-pixel-scenes';
 
-// console.log({ sceneList });
 export interface ISceneManagerPlugin extends IPlugin {
   isFirstScene: boolean;
   onSceneChangeStart: Signal<(detail: { exiting: string | null; entering: string }) => void>;

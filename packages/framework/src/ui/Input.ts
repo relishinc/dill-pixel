@@ -320,12 +320,16 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
 
   _triggerFocusAndSelection(selection?: number) {
     if (this.domElement) {
-      this.domElement.focus();
-      this.domElement.click();
-      if (selection === undefined) {
-        this.domElement.selectionStart = this.domElement.value?.length;
-      } else {
-        this.domElement.setSelectionRange(selection, selection, 'none');
+      try{
+        this.domElement.focus();
+        this.domElement.click();
+        if (selection === undefined) {
+          this.domElement.selectionStart = this.domElement?.value?.length;
+        } else {
+          this.domElement.setSelectionRange(selection, selection, 'none');
+        }
+      }catch(e){
+        // nothing
       }
       this._updateCaretAndSelection();
     }

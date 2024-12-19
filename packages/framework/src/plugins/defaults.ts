@@ -14,14 +14,19 @@ import { InputPlugin } from './input';
 
 export const defaultPlugins: ImportList<IPlugin> = [
   {
-    id: 'assets',
-    module: AssetsPlugin,
-    namedExport: 'AssetsPlugin',
-  },
-  {
     id: 'webEvents',
     module: WebEventsPlugin,
     namedExport: 'WebEventsPlugin',
+  },
+  {
+    id: 'resizer',
+    module: ResizerPlugin,
+    namedExport: 'ResizerPlugin',
+  },
+  {
+    id: 'assets',
+    module: AssetsPlugin,
+    namedExport: 'AssetsPlugin',
   },
   {
     id: 'scenes',
@@ -63,9 +68,5 @@ export const defaultPlugins: ImportList<IPlugin> = [
     module: i18nPlugin,
     namedExport: 'i18nPlugin',
   },
-  {
-    id: 'resizer',
-    module: ResizerPlugin,
-    namedExport: 'ResizerPlugin',
-  },
+  
 ] as const;

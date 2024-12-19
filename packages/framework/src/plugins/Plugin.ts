@@ -24,6 +24,14 @@ export interface IPlugin {
   registerCoreSignals(): void;
 }
 
+export interface PluginListItem {
+  id: string;
+  path: string;
+  plugin: () => Promise<new () => IPlugin> | IPlugin;
+  assets?: string[];
+  plugins?: string[];
+}
+
 export class Plugin<T extends Application = Application> implements IPlugin {
   // A collection of signal connections.
   __dill_pixel_method_binding_root: boolean;
