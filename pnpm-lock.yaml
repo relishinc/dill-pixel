@@ -85,7 +85,7 @@ importers:
         version: link:../storage-adapters/firebase
       '@pixi/sound':
         specifier: ^6.0.1
-        version: 6.0.1(pixi.js@8.6.3)
+        version: 6.0.1(pixi.js@8.6.6)
       dat.gui:
         specifier: ^0.7.9
         version: 0.7.9
@@ -102,8 +102,8 @@ importers:
         specifier: 4.1.5
         version: 4.1.5
       pixi.js:
-        specifier: 8.6.3
-        version: 8.6.3
+        specifier: 8.6.6
+        version: 8.6.6
       rimraf:
         specifier: 5.0.5
         version: 5.0.5
@@ -289,8 +289,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0
       pixi.js:
-        specifier: 8.6.3
-        version: 8.6.3
+        specifier: 8.6.6
+        version: 8.6.6
     devDependencies:
       dill-pixel:
         specifier: workspace:*
@@ -308,8 +308,8 @@ importers:
         specifier: ^0.20.0
         version: 0.20.0
       pixi.js:
-        specifier: 8.6.3
-        version: 8.6.3
+        specifier: 8.6.6
+        version: 8.6.6
     devDependencies:
       dill-pixel:
         specifier: workspace:*
@@ -324,8 +324,8 @@ importers:
         specifier: ^3.12.5
         version: 3.12.5
       pixi.js:
-        specifier: 8.6.3
-        version: 8.6.3
+        specifier: 8.6.6
+        version: 8.6.6
     devDependencies:
       dill-pixel:
         specifier: workspace:*
@@ -340,8 +340,8 @@ importers:
         specifier: ^2.18.0
         version: 2.18.0
       pixi.js:
-        specifier: 8.6.3
-        version: 8.6.3
+        specifier: 8.6.6
+        version: 8.6.6
     devDependencies:
       dill-pixel:
         specifier: workspace:*
@@ -5444,9 +5444,6 @@ packages:
     resolution: {integrity: sha512-J8B6xqiO37sU/gkcMglv6h5Jbd9xNER7aHzpfRdNmV4IbQBzBpe4l9XmbG+xPF/znacgu2jfEw+wHffaq/YkXA==}
     hasBin: true
 
-  pixi.js@8.6.3:
-    resolution: {integrity: sha512-yQcDd8UYdeUsk6TnzY2PFFtDeRMqQQX+MEUNX7iqshIRLW2BmpT9E4nw/y2MXWMZozQs/FfRNkaBPE6SsO1HBw==}
-
   pixi.js@8.6.6:
     resolution: {integrity: sha512-o5pw7G2yuIrnBx0G4npBlmFp+XGNcapI/Ufs62rRj/4XKxc1Zo74YJr/BtEXcXTraTKd+pQvYOLvnfxRjxBMvQ==}
 
@@ -8719,10 +8716,6 @@ snapshots:
   '@pixi/colord@2.9.6': {}
 
   '@pixi/runner@7.4.2': {}
-
-  '@pixi/sound@6.0.1(pixi.js@8.6.3)':
-    dependencies:
-      pixi.js: 8.6.3
 
   '@pixi/sound@6.0.1(pixi.js@8.6.6)':
     dependencies:
@@ -13211,18 +13204,6 @@ snapshots:
   pixelmatch@4.0.2:
     dependencies:
       pngjs: 3.4.0
-
-  pixi.js@8.6.3:
-    dependencies:
-      '@pixi/colord': 2.9.6
-      '@types/css-font-loading-module': 0.0.12
-      '@types/earcut': 2.1.4
-      '@webgpu/types': 0.1.43
-      '@xmldom/xmldom': 0.8.10
-      earcut: 2.2.4
-      eventemitter3: 5.0.1
-      ismobilejs: 1.1.1
-      parse-svg-path: 0.1.2
 
   pixi.js@8.6.6:
     dependencies:

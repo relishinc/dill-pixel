@@ -109,7 +109,7 @@ function createEmptyPlugin({ virtualModuleId, moduleTemplate }) {
 }
 
 // Plugin discovery plugin
- function pluginListPlugin(isProject = true) {
+function pluginListPlugin(isProject = true) {
   const func = isProject ? createDiscoveryPlugin : createEmptyPlugin;
   return func({
     virtualModuleId: 'virtual:dill-pixel-plugins',
@@ -128,9 +128,8 @@ function createEmptyPlugin({ virtualModuleId, moduleTemplate }) {
   });
 }
 
-
 // Storage adapter discovery plugin
- function storageAdapterListPlugin(isProject = true) {
+function storageAdapterListPlugin(isProject = true) {
   const func = isProject ? createDiscoveryPlugin : createEmptyPlugin;
   return func({
     virtualModuleId: 'virtual:dill-pixel-storage-adapters',
@@ -148,7 +147,6 @@ function createEmptyPlugin({ virtualModuleId, moduleTemplate }) {
     },
   });
 }
-
 
 // scene list plugin
 async function findTypeScriptFiles(dir) {
@@ -181,7 +179,7 @@ function findExportedConstants(ast) {
         return node.value;
       case AST_NODE_TYPES.ArrayExpression:
         return node.elements.map((element) => element && extractValue(element)).filter((value) => value !== undefined);
-      case AST_NODE_TYPES.ObjectExpression:{
+      case AST_NODE_TYPES.ObjectExpression: {
         const obj = {};
         for (const prop of node.properties) {
           if (prop.type === AST_NODE_TYPES.Property && prop.key.type === AST_NODE_TYPES.Identifier) {
@@ -267,19 +265,30 @@ export function sceneListPlugin(isProject = true) {
         autoUnloadAssets: exports.assets?.autoUnload ?? false,
       });
     }
-
     return scenes;
   }
 
+  function extractClassName(scene) {
+    const basename = path.basename(scene.module);
+    // remove .ts
+    return basename.replace('.ts', '');
+  }
+
   function generateSceneListModule(scenes) {
-    return `
+    // extract non function scenes from the list
+    const nonFunctionScenes = scenes.filter((scene) => !scene.module.isFunction);
+
+    const imports = nonFunctionScenes.map((scene) => `import ${extractClassName(scene)} from '${scene.module}';`);
+
+    const result = `
+    ${imports.join('\n')}
     export const sceneList = [
       ${scenes
         .map(
           (scene) => `{
         id: '${scene.id}',
         active: ${scene.active},
-        module: ${scene.module.isFunction ? scene.module.toString() : `'${scene.module}'`},
+        module: ${scene.module.isFunction ? scene.module.toString() : extractClassName(scene)},
         debugLabel: ${JSON.stringify(scene.debugLabel)},
         debugGroup: ${JSON.stringify(scene.debugGroup)},
         assets: ${JSON.stringify(scene.assets)},
@@ -290,6 +299,7 @@ export function sceneListPlugin(isProject = true) {
         .join(',\n')}
     ];
   `;
+    return result;
   }
 
   const virtualModuleId = 'virtual:dill-pixel-scenes';
@@ -305,7 +315,9 @@ export function sceneListPlugin(isProject = true) {
     async load(id) {
       if (id === resolvedVirtualModuleId) {
         let scenes = [];
-        if (isProject){scenes = await discoverScenes();} 
+        if (isProject) {
+          scenes = await discoverScenes();
+        }
         return generateSceneListModule(scenes);
       }
     },
