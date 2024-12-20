@@ -28,7 +28,6 @@ export default class AnimatedSpriteScene extends BaseScene {
     },
   };
   private list: FlexContainer;
-
   private male: AnimatedSprite;
   private female: AnimatedSprite;
 

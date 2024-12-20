@@ -5,8 +5,12 @@ import { V8Application } from '@/V8Application';
 import { GUI } from 'dat.gui';
 import { FlexContainer, Scene, Size } from 'dill-pixel';
 
+// will cause the scene to be included in the bundle
 export const dynamic = false;
+
+// will cause the scene not to be a part of the scene list
 export const active = false;
+
 export default class BaseScene extends Scene<V8Application> {
   protected readonly title: string;
   protected readonly subtitle: string;
