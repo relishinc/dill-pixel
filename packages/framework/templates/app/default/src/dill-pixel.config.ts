@@ -1,17 +1,30 @@
-import BaseScene from '@/scenes/BaseScene';
 import { defineActions, defineButtons, defineConfig, defineContexts, defineControls } from 'dill-pixel';
 
 /** Default template */
-export const contexts = defineContexts([]); // e.g.
+// TODO: Add custom contexts here if desired
+// by default, we use the default contexts
+export const contexts = defineContexts(); // e.g.
 
-export const actions = defineActions(contexts, {});
+// TODO: Add actions here
+// examples below
+export const actions = defineActions(contexts, {
+  //pause: { context: '*' },
+  //close: { context: ['menu', 'popup'] },
+  //back: { context: ['menu'] },
+  //next: { context: ['menu'] },
+  //select: { context: ['menu', 'default'] },
+  //show_popup: { context: '*' },
+});
 
 /** Don't touch */
 export type Contexts = (typeof contexts)[number];
 export type ActionTypes = keyof typeof actions;
 /** Don't touch */
 
+// TODO: Add buttons here
 const buttons = defineButtons();
+
+// TODO: Add controls here
 export const controls = defineControls(actions, buttons);
 /** End of Default Template */
 
@@ -32,6 +45,7 @@ export const config = defineConfig<Data>({
   data: {
     initial: {
       dill: 'pixel',
+      pixel: 0,
     },
     backupKeys: [],
     backupAll: false,
@@ -50,14 +64,6 @@ export const config = defineConfig<Data>({
     },
   },
   plugins: [],
-  scenes: [
-    { id: 'base', active: false, module: BaseScene },
-    {
-      id: 'assets',
-      debugLabel: 'Start',
-      namedExport: 'StartScene',
-      module: () => import('@/scenes/StartScene'),
-    },
-  ],
+  storageAdapters: [],
 });
 /** End of User config */

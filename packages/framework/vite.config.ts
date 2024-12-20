@@ -1,7 +1,7 @@
+import path from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
-import path from 'path';
-import { pluginListPlugin, sceneListPlugin, storageAdapterListPlugin } from './config/vite/vite-dill-pixel-plugins.mjs';
+
 export default defineConfig({
   build: {
     outDir: './lib',
@@ -15,5 +15,5 @@ export default defineConfig({
       external: ['pixi.js', 'gsap'],
     },
   },
-  plugins: [storageAdapterListPlugin(false),pluginListPlugin(false),sceneListPlugin(false), dts()],
+  plugins: [dts()],
 });

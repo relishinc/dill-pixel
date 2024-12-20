@@ -16,7 +16,7 @@ import {
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
 
-import { sceneList } from 'virtual:dill-pixel-scenes';
+type VirtualScenesModule = { sceneList: SceneImportListItem<IScene>[] };
 
 export interface ISceneManagerPlugin extends IPlugin {
   isFirstScene: boolean;
@@ -116,13 +116,14 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
 
   public destroy(): void {}
 
-  public initialize(app: IApplication): Promise<void> {
+  public async initialize(app: IApplication): Promise<void> {
     this._debugVisible =
       this.app.config?.showSceneDebugMenu === true || (isDev && this.app.config?.showSceneDebugMenu !== false);
     this._useHash = app.config?.useHash === true || this._debugVisible;
     this.view.sortableChildren = true;
-    this.list = sceneList as unknown as SceneImportListItem<IScene>[];
-    this.list = this.list.filter((scene) => scene.active !== false);
+    const globalThisAsAny = globalThis as any;
+    const sceneList: SceneImportListItem<IScene>[] = globalThisAsAny.getDillPixel('sceneList') || [];
+    this.list = sceneList.filter((scene) => scene.active !== false);
 
     if (this._debugVisible || this._useHash) {
       this.defaultScene = this.getSceneFromHash() || '';

@@ -1,4 +1,5 @@
 import { create } from 'dill-pixel';
+import 'dill-pixel-globals';
 import { V8Application } from './V8Application';
 import { config } from './dill-pixel.config';
 

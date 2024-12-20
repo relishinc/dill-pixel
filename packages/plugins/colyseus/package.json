@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-colyseus",
-  "version": "8.17.4",
+  "version": "8.18.2",
   "description": "",
   "files": [
     "lib",
@@ -27,7 +27,7 @@
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
-    "dill-pixel": "8.17.4"
+    "dill-pixel": "8.18.2"
   },
   "dependencies": {
     "@colyseus/schema": "^2.0.34",

@@ -1,5 +1,5 @@
 import { DefaultActionContextsArray, defaultActionsList } from './constants';
-import { ActionContext, type UserActions, type UserButtons, type UserContexts } from './types';
+import { type UserActions, type UserButtons, type UserContexts } from './types';
 
 /**
  * Define the contexts for the actions.

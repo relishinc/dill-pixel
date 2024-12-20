@@ -31,7 +31,6 @@ import type { ICaptionsPlugin } from './plugins/captions';
 import { defaultPlugins } from './plugins/defaults';
 import { Signal } from './signals';
 
-
 const defaultApplicationOptions: Partial<IApplicationOptions> = {
   antialias: false,
   autoStart: true,
@@ -378,7 +377,7 @@ export class Application<
     }
     // initialize the logger
     Logger.initialize(this.config.logger);
-    
+
     await this.boot(this.config);
     await this.preInitialize(this.config);
     await this.initAssets();
@@ -389,8 +388,8 @@ export class Application<
 
     // internal setup
     await this._setup();
-    this.plugins = generatePluginList<IPlugin>(this.config.plugins || []);
-    
+    this.plugins = await generatePluginList<IPlugin>(this.config.plugins || []);
+
     for (let i = 0; i < this.plugins.length; i++) {
       const listItem = this.plugins[i];
       if (listItem && listItem?.autoLoad !== false) {
@@ -404,7 +403,7 @@ export class Application<
     // add the store if it's enabled
     if (this.config.useStore) {
       // register any storage adapters passed through the config
-      this.storageAdapters = generateAdapterList(this.config.storageAdapters || []);
+      this.storageAdapters = await generateAdapterList(this.config.storageAdapters || []);
       for (let i = 0; i < this.storageAdapters.length; i++) {
         const listItem = this.storageAdapters[i];
         if (this.store.hasAdapter(listItem.id)) {
@@ -444,7 +443,7 @@ export class Application<
   async postInitialize(): Promise<void> {
     (globalThis as any).__PIXI_APP__ = this;
     this._resize();
-    
+
     this._plugins.forEach((plugin) => {
       plugin.postInitialize(this as unknown as IApplication<DataSchema>);
     });
@@ -691,9 +690,9 @@ export class Application<
 
   private async _resize() {
     this.resizer.resize();
-    
+
     console.log('Application._resize', this.size);
-    
+
     this.ticker.addOnce(() => {
       this._center.set(this.size.width * 0.5, this.size.height * 0.5);
       this.views.forEach((view) => {

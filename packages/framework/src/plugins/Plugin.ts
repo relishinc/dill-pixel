@@ -27,7 +27,7 @@ export interface IPlugin {
 export interface PluginListItem {
   id: string;
   path: string;
-  plugin: () => Promise<new () => IPlugin> | IPlugin;
+  module: () => Promise<new () => IPlugin>;
   assets?: string[];
   plugins?: string[];
 }

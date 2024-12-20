@@ -28,13 +28,14 @@ export const actions = defineActions(contexts, {
   delete_from_firebase: { context: '*' },
   // physics
   drop: { context: ['game'] },
-  // voiceover
-  vo: { context: "*" }, 
-  pause_vo: { context:  "*"  },
-  stop_vo: { context:  "*"  },
-  caption_theme: { context: "*"  },
+  // audio
   music: { context: '*' },
   sfx: { context: '*' },
+  // voiceover
+  vo: { context: '*' },
+  pause_vo: { context: '*' },
+  stop_vo: { context: '*' },
+  caption_theme: { context: '*' },
 });
 
 /** Don't touch */

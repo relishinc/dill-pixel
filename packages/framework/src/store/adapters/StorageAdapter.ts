@@ -34,7 +34,7 @@ export interface IStorageAdapter extends IPlugin {
 export interface StorageAdapterListItem {
   id: string;
   path: string;
-  storageAdapter: () => Promise<new () => IStorageAdapter> | IStorageAdapter;
+  module: () => Promise<new () => IStorageAdapter>;
 }
 
 /**

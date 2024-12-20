@@ -1,0 +1,67 @@
+{
+  "hash": "bf449c11",
+  "configHash": "7eec8631",
+  "lockfileHash": "06416acf",
+  "browserHash": "450a6f0e",
+  "optimized": {
+    "dill-pixel": {
+      "src": "../../node_modules/dill-pixel/lib/dill-pixel.mjs",
+      "file": "dill-pixel.js",
+      "fileHash": "1e8a4792",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "CaptionsPlugin-DazrJZ9z-YQYZV5TQ": {
+      "file": "CaptionsPlugin-DazrJZ9z-YQYZV5TQ.js"
+    },
+    "browserAll-HAZIGKTY": {
+      "file": "browserAll-HAZIGKTY.js"
+    },
+    "webworkerAll-T5G3ILZ3": {
+      "file": "webworkerAll-T5G3ILZ3.js"
+    },
+    "chunk-TFMGWHVQ": {
+      "file": "chunk-TFMGWHVQ.js"
+    },
+    "WebGPURenderer-UOMWUPXY": {
+      "file": "WebGPURenderer-UOMWUPXY.js"
+    },
+    "WebGLRenderer-QZD5H7ON": {
+      "file": "WebGLRenderer-QZD5H7ON.js"
+    },
+    "SpinePlugin-BmtOdimW-WL2DPB5Z": {
+      "file": "SpinePlugin-BmtOdimW-WL2DPB5Z.js"
+    },
+    "StatsPlugin-oCsIuD9Y-YOPXGXUK": {
+      "file": "StatsPlugin-oCsIuD9Y-YOPXGXUK.js"
+    },
+    "VoiceOverPlugin-C1E6kNts-Z2ENHN2Z": {
+      "file": "VoiceOverPlugin-C1E6kNts-Z2ENHN2Z.js"
+    },
+    "chunk-D37FA67I": {
+      "file": "chunk-D37FA67I.js"
+    },
+    "chunk-IF2C3KLE": {
+      "file": "chunk-IF2C3KLE.js"
+    },
+    "chunk-AYLFXNJK": {
+      "file": "chunk-AYLFXNJK.js"
+    },
+    "chunk-3OY5PPQQ": {
+      "file": "chunk-3OY5PPQQ.js"
+    },
+    "chunk-TDGCD75C": {
+      "file": "chunk-TDGCD75C.js"
+    },
+    "chunk-MKM4NCB5": {
+      "file": "chunk-MKM4NCB5.js"
+    },
+    "chunk-ULUUGPA3": {
+      "file": "chunk-ULUUGPA3.js"
+    },
+    "chunk-5TVQ26FI": {
+      "file": "chunk-5TVQ26FI.js"
+    }
+  }
+}

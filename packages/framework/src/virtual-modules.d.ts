@@ -1,16 +1,13 @@
-
+/// <reference types="vite/client" />
 
 declare module 'virtual:dill-pixel-scenes' {
-  import type { SceneListItem } from "./display";
-  export const sceneList: SceneListItem[];
+  export const sceneList: any[];
 }
 
 declare module 'virtual:dill-pixel-plugins' {
-  import type { PluginListItem } from '../plugins/Plugin';
-  export const pluginsList: PluginListItem[];
+  export const pluginsList: any[];
 }
 
 declare module 'virtual:dill-pixel-storage-adapters' {
-  import type { StorageAdapterListItem } from "./store/adapters/StorageAdapter";
-  export const storageAdaptersList: StorageAdapterListItem[];
+  export const storageAdaptersList: any[];
 }

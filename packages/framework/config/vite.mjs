@@ -109,7 +109,7 @@ function createEmptyPlugin({ virtualModuleId, moduleTemplate }) {
 }
 
 // Plugin discovery plugin
-function pluginListPlugin(isProject = true) {
+export function pluginListPlugin(isProject = true) {
   const func = isProject ? createDiscoveryPlugin : createEmptyPlugin;
   return func({
     virtualModuleId: 'virtual:dill-pixel-plugins',
@@ -122,14 +122,14 @@ function pluginListPlugin(isProject = true) {
         name: '${plugin.name}',
         id: '${plugin.id}',
         isLocal: ${plugin.isLocal},
-        module: (enabledPlugins) => enabledPlugins === 'all' || enabledPlugins.includes('${plugin.id}') ? import('${plugin.importPath}') : null
+        module: ()=>import('${plugin.importPath}')
       }`,
     },
   });
 }
 
 // Storage adapter discovery plugin
-function storageAdapterListPlugin(isProject = true) {
+export function storageAdapterListPlugin(isProject = true) {
   const func = isProject ? createDiscoveryPlugin : createEmptyPlugin;
   return func({
     virtualModuleId: 'virtual:dill-pixel-storage-adapters',
@@ -142,7 +142,7 @@ function storageAdapterListPlugin(isProject = true) {
         name: '${adapter.name}',
         id: '${adapter.id}',
         isLocal: ${adapter.isLocal},
-        module: (enabledAdapters) => enabledAdapters === 'all' || enabledAdapters.includes('${adapter.id}') ? import('${adapter.importPath}') : null
+        module: import('${adapter.importPath}')
       }`,
     },
   });
@@ -323,7 +323,52 @@ export function sceneListPlugin(isProject = true) {
     },
   };
 }
+function createDillPixelGlobalsPlugin() {
+  const entryId = 'dill-pixel-globals';
+  const resolvedEntryId = '\0' + entryId;
 
+  return {
+    name: 'vite-virtual-entry',
+    enforce: 'pre',
+    resolveId(id) {
+      if (id === entryId) {
+        return resolvedEntryId;
+      }
+    },
+    load(id) {
+      if (id === resolvedEntryId) {
+        return `
+          import {sceneList} from 'virtual:dill-pixel-scenes';
+          import {pluginsList} from 'virtual:dill-pixel-plugins';
+          import {storageAdaptersList} from 'virtual:dill-pixel-storage-adapters';
+
+          globalThis.__DILL_PIXEL = globalThis.__DILL_PIXEL || {};
+          globalThis.__DILL_PIXEL.sceneList = sceneList;
+          globalThis.__DILL_PIXEL.pluginsList = pluginsList;
+          globalThis.__DILL_PIXEL.storageAdaptersList = storageAdaptersList;
+
+          globalThis.getDillPixel = function(key) {
+            globalThis.__DILL_PIXEL = globalThis.__DILL_PIXEL || {};
+            return key ? globalThis.__DILL_PIXEL[key] : globalThis.__DILL_PIXEL;
+          };
+        `;
+      }
+    },
+    config(config) {
+      // Add our virtual entry to the input array
+      const input = config.build?.rollupOptions?.input || 'index.html';
+      const inputs = Array.isArray(input) ? input : [input];
+
+      return {
+        build: {
+          rollupOptions: {
+            input: [entryId, ...inputs],
+          },
+        },
+      };
+    },
+  };
+}
 /** END PLUGINS */
 
 /** CONFIG */
@@ -348,6 +393,7 @@ const defaultConfig = {
     wasm(),
     topLevelAwait(),
     createHtmlPlugin(),
+    createDillPixelGlobalsPlugin(),
     viteStaticCopy({
       targets: [
         {
@@ -356,8 +402,6 @@ const defaultConfig = {
         },
       ],
     }),
-    // dill pixel plugins
-    // from ./vite/vite-dill-pixel-plugins.mjs
     storageAdapterListPlugin(),
     pluginListPlugin(),
     sceneListPlugin(),
