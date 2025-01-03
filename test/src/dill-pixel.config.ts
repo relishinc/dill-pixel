@@ -1,4 +1,5 @@
 import { defineActions, defineButtons, defineConfig, defineContexts, defineControls } from 'dill-pixel';
+import { Splash } from './Splash';
 
 /** Default template */
 // TODO: Add custom contexts here if desired
@@ -36,11 +37,14 @@ export type Data = {
 
 export const config = defineConfig<Data>({
   id: 'Test',
+  defaultScene: 'start',
+  splash: {
+    view: Splash,
+  },
   defaultSceneLoadMethod: 'immediate',
   useSpine: true,
   showStats: true,
   showSceneDebugMenu: true,
-  useHash: true,
   useVoiceover: false,
   data: {
     initial: {

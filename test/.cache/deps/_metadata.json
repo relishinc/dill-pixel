@@ -2,66 +2,87 @@
   "hash": "bf449c11",
   "configHash": "7eec8631",
   "lockfileHash": "06416acf",
-  "browserHash": "450a6f0e",
+  "browserHash": "e63ed8dc",
   "optimized": {
     "dill-pixel": {
       "src": "../../node_modules/dill-pixel/lib/dill-pixel.mjs",
       "file": "dill-pixel.js",
-      "fileHash": "1e8a4792",
+      "fileHash": "2b0cc360",
+      "needsInterop": false
+    },
+    "gsap": {
+      "src": "../../node_modules/gsap/index.js",
+      "file": "gsap.js",
+      "fileHash": "af70a577",
+      "needsInterop": false
+    },
+    "pixi.js": {
+      "src": "../../node_modules/pixi.js/lib/index.mjs",
+      "file": "pixi__js.js",
+      "fileHash": "d56ce1a6",
       "needsInterop": false
     }
   },
   "chunks": {
-    "CaptionsPlugin-DazrJZ9z-YQYZV5TQ": {
-      "file": "CaptionsPlugin-DazrJZ9z-YQYZV5TQ.js"
+    "StatsPlugin-oCsIuD9Y-IW4A3OU2": {
+      "file": "StatsPlugin-oCsIuD9Y-IW4A3OU2.js"
     },
-    "browserAll-HAZIGKTY": {
-      "file": "browserAll-HAZIGKTY.js"
+    "VoiceOverPlugin-C1E6kNts-2N6S526O": {
+      "file": "VoiceOverPlugin-C1E6kNts-2N6S526O.js"
     },
-    "webworkerAll-T5G3ILZ3": {
-      "file": "webworkerAll-T5G3ILZ3.js"
+    "CaptionsPlugin-DazrJZ9z-ARWFCCQW": {
+      "file": "CaptionsPlugin-DazrJZ9z-ARWFCCQW.js"
     },
-    "chunk-TFMGWHVQ": {
-      "file": "chunk-TFMGWHVQ.js"
+    "browserAll-JJ6XULWM": {
+      "file": "browserAll-JJ6XULWM.js"
     },
-    "WebGPURenderer-UOMWUPXY": {
-      "file": "WebGPURenderer-UOMWUPXY.js"
+    "webworkerAll-DMBYXCU4": {
+      "file": "webworkerAll-DMBYXCU4.js"
     },
-    "WebGLRenderer-QZD5H7ON": {
-      "file": "WebGLRenderer-QZD5H7ON.js"
+    "chunk-QZDSROX2": {
+      "file": "chunk-QZDSROX2.js"
     },
-    "SpinePlugin-BmtOdimW-WL2DPB5Z": {
-      "file": "SpinePlugin-BmtOdimW-WL2DPB5Z.js"
+    "WebGPURenderer-Z3GSLBT3": {
+      "file": "WebGPURenderer-Z3GSLBT3.js"
     },
-    "StatsPlugin-oCsIuD9Y-YOPXGXUK": {
-      "file": "StatsPlugin-oCsIuD9Y-YOPXGXUK.js"
+    "WebGLRenderer-QF6EABOS": {
+      "file": "WebGLRenderer-QF6EABOS.js"
     },
-    "VoiceOverPlugin-C1E6kNts-Z2ENHN2Z": {
-      "file": "VoiceOverPlugin-C1E6kNts-Z2ENHN2Z.js"
+    "SpinePlugin-BmtOdimW-2OR6W5WF": {
+      "file": "SpinePlugin-BmtOdimW-2OR6W5WF.js"
     },
-    "chunk-D37FA67I": {
-      "file": "chunk-D37FA67I.js"
+    "chunk-2O2QZPWA": {
+      "file": "chunk-2O2QZPWA.js"
     },
-    "chunk-IF2C3KLE": {
-      "file": "chunk-IF2C3KLE.js"
+    "chunk-LB2R3FI5": {
+      "file": "chunk-LB2R3FI5.js"
     },
-    "chunk-AYLFXNJK": {
-      "file": "chunk-AYLFXNJK.js"
+    "chunk-35K3ZVTQ": {
+      "file": "chunk-35K3ZVTQ.js"
     },
-    "chunk-3OY5PPQQ": {
-      "file": "chunk-3OY5PPQQ.js"
+    "chunk-WGSHJJI4": {
+      "file": "chunk-WGSHJJI4.js"
     },
-    "chunk-TDGCD75C": {
-      "file": "chunk-TDGCD75C.js"
+    "chunk-VXOICCBN": {
+      "file": "chunk-VXOICCBN.js"
     },
-    "chunk-MKM4NCB5": {
-      "file": "chunk-MKM4NCB5.js"
+    "chunk-QOUQSLCC": {
+      "file": "chunk-QOUQSLCC.js"
     },
-    "chunk-ULUUGPA3": {
-      "file": "chunk-ULUUGPA3.js"
+    "chunk-YBKGRBSO": {
+      "file": "chunk-YBKGRBSO.js"
     },
-    "chunk-5TVQ26FI": {
-      "file": "chunk-5TVQ26FI.js"
+    "chunk-IYUHB4SQ": {
+      "file": "chunk-IYUHB4SQ.js"
+    },
+    "chunk-XRNVWQXP": {
+      "file": "chunk-XRNVWQXP.js"
+    },
+    "chunk-BQAEV2AX": {
+      "file": "chunk-BQAEV2AX.js"
+    },
+    "chunk-5WRI5ZAA": {
+      "file": "chunk-5WRI5ZAA.js"
     }
   }
 }

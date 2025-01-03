@@ -1,18 +1,20 @@
 {
-  "name": "my-dill-pixel-game",
+  "name": "test",
   "version": "0.0.0",
-  "description": "Hello World with dill pixel",
+  "private": true,
   "main": "index.html",
-  "type": "module",
   "scripts": {
-    "start": "vite",
-    "dev": "vite",
-    "build": "vite build"
+    "clean": "rimraf .cache",
+    "start": "npm run clean && vite",
+    "dev": "npm run clean && npm run assets && vite",
+    "prepreview": "vite build",
+    "preview": "vite preview",
+    "prebuild": "npm run assets",
+    "build": "npm run clean && vite build",
+    "assets": "assetpack -c .assetpack.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Me<me@myname.com>",
   "dependencies": {
-    "dill-pixel": "^3.1.9",
-    "typescript": "^5",
-    "vite": "^5"
+    "dill-pixel": "next"
   }
 }

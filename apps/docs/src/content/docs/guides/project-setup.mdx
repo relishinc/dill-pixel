@@ -2,42 +2,65 @@
 title: Project Setup
 ---
 
-import {FileTree, Code} from '@astrojs/starlight/components';
-import viteConfigJs from '../../../../examples/simple-game/vite.config.js?raw';
+import { FileTree, Code } from '@astrojs/starlight/components';
+import viteConfigJs from '../../../../examples/hello-world/vite.config.mjs?raw';
 
 ## Organizing Files and Directories
 
 We recommend setting up your project directory as follows:
 
 <FileTree>
+
 - package.json
 - README.md
-- vite.config.js
 - tsconfig.json
+- vite.config.mjs
+- dill-pixel.config.ts - configuration file for dill pixel
 - index.html
+- assets - configured for [assetpack](https://github.com/pixijs/assetpack) (example below)
+  - audio\{m\}
+    - music
+      - music.wav
+    - sfx
+      - click.ogg
+      - beep.ogg
+      - boop.wav
+  - ui\{tps\}
+    - button.png
+    - arrow.png
+  - game\{tps\}
+    - obstacle.png
+    - rocket.png
+  - spine\{m\}
+    - animation.skel
+    - animation.atlas
+    - animations.png
 - **src**
-		- index.css	  
-	- index.ts
-	- Application.ts
-	- assets static assets like fonts, images, and audio
-		- …		
-	- states where your game states are stored
-      - SplashScreen.ts
-      - IntroScreen.ts
-      - GameScreen.ts
-      - HighScoresScreen.ts
-	- …		
+  - index.ts
+  - index.css
+  - bootstrap.ts - where you initialize your game
+  - MyApplication.ts - extends a dill pixel Application (optional)
+  - scenes - where your scenes are stored,<br/>- automatically registered with dill pixel
+    - Splash.ts
+    - Intro.ts
+    - Game.ts
+    - HighScores.ts
+  - locales - where you store your locale files
+    - en.ts
+    - fr.ts
+  - gameobjects - where you store your game objects
+    - Player.ts
+    - Enemy.ts
+  - utils - where you store your utility functions
+    - utils.ts
+  - …
+
 </FileTree>
 
-## Build Tools
+## Vite Configuration
 
-To develop your game locally and build it for production, you'll need to configure a 
-build process. We recommend using [Vite](https://vitejs.dev), a blazing fast build tool 
-that supports modern JavaScript features.
+Dill Pixel uses Vite under the hood to compile your game and export it for both development and production environments.
 
-Create a `vite.config.js` file in the root directory to configure the build process. The default Vite configuration
-is sufficient but for handling static assets we're using the [vite-plugin-static-copy](https://www.npmjs.com/package/vite-plugin-static-copy) 
-so that they can be loaded from within the game. You can configure the plugin
-however you like based on how you've organized your assets.
+The `vite.config.mjs` file in the root directory configures the build process. The default Vite configuration can be imported from the `dill-pixel` package, and should be sufficient for most projects.
 
-<Code code={viteConfigJs} lang="js" title="vite.config.js" />
+<Code code={viteConfigJs} lang="js" title="vite.config.mjs" />

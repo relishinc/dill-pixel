@@ -2,167 +2,164 @@
 title: Quick Start
 ---
 
-import {TabItem, Tabs, Aside, FileTree, Code, Steps} from '@astrojs/starlight/components';
+import { TabItem, Tabs, Aside, FileTree, Code, Steps } from '@astrojs/starlight/components';
 
 import packageJson from '../../../../examples/hello-world/package.json?raw';
 import indexHtml from '../../../../examples/hello-world/index.html?raw';
-import indexCss from '../../../../examples/hello-world/src/index.css?raw';
 import indexTs from '../../../../examples/hello-world/src/index.ts?raw';
-import applicationTs from '../../../../examples/hello-world/src/Application.ts?raw';
-import loadScreenTs from '../../../../examples/hello-world/src/state/LoadScreen.ts?raw';
-import myScreenTs from '../../../../examples/hello-world/src/state/MyScreen.ts?raw';
+import bootstrapTs from '../../../../examples/hello-world/src/bootstrap.ts?raw';
+import indexCss from '../../../../examples/hello-world/src/index.css?raw';
+import applicationTs from '../../../../examples/hello-world/src/MyApplication.ts?raw';
+import baseSceneTs from '../../../../examples/hello-world/src/scenes/BaseScene.ts?raw';
+import startSceneTs from '../../../../examples/hello-world/src/scenes/StartScene.ts?raw';
 
-## Installing the Framework
+## Creating a New Project (CLI)
 
-Make sure you have an up-to-date version of [Node.js](https://nodejs.org/) installed and your current working directory is the one where you intend to create a project. Run the following command in your command line:
+The easiest way to get started with Dill Pixel is to use the CLI to create a new project. Run the following command in your terminal:
+
+```bash
+npx create-dill-pixel@next my-application
+```
+
+<Aside type="tip">Replace `my-application` with whatever you'd like to name your project</Aside>
+
+This will create a new directory called `my-application` with all the necessary files and dependencies pre-configured.
+
+### Using PNPM (Recommended)
+
+<Aside type="tip">If you're using PNPM, you can use the following command instead:</Aside>
+
+```bash
+npx create-dill-pixel@next my-application --use-pnpm
+```
+
+## Manual Installation
+
+If you prefer to set up your project manually, you can install the framework directly:
 
 <Tabs>
-	<TabItem label={"npm"}>
-		```bash
-		npm i dill-pixel
-		```
-	</TabItem>
-	<TabItem label={"yarn"}>
-		```bash
-		yarn add dill-pixel
-		```
-	</TabItem>
-	<TabItem label={"pnpm"}>
-		```bash
-		pnpm install dill-pixel
-		```
-	</TabItem>
+  <TabItem label={'npm'}>
+    <Code code={`npm i dill-pixel@next`} lang="bash" />
+  </TabItem>
+  <TabItem label={'yarn'}>
+    <Code code={`yarn add dill-pixel@next`} lang="bash" />
+  </TabItem>
+  <TabItem label={'pnpm'}>
+    <Code code={`pnpm install dill-pixel@next`} lang="bash" />
+  </TabItem>
 </Tabs>
 
 ## "Hello World" Example
 
-The most basic example of a dill pixel game is a simple "Hello World" message. Let's get started...
-
-![Hello world example](../../../assets/screenshots/hello-world.png)
-
-### Create the Files
-
-<Steps>
-
-1. First, create a `package.json` in your project's root directory:
-
-	<Code code={packageJson} lang="json" title="package.json" />
-
-	<Aside type="tip">
-		We recommend using [Vite](https://vitejs.dev) to develop locally and bundle your application
-	</Aside>
-
-2. Next, create an `index.html` file in the root directory:
-
-	<Code code={indexHtml} lang="html" title="index.html" />
-
-3. Create an `index.css` file in the `src` directory:
-
-	<Code code={indexCss} lang="css" title="src/index.css" />
-
-4. Create the remaining files in the `src` directory:
-
-	<Tabs>
-		<TabItem label="src/index.ts">
-			<Code code={indexTs} lang="ts" />
-		</TabItem>
-		<TabItem label="src/Application.ts">
-			<Code code={applicationTs} lang="ts" />
-		</TabItem>
-		<TabItem label="src/state/LoadScreen.ts">
-			<Code code={loadScreenTs} lang="ts" />
-		</TabItem>	
-		<TabItem label="src/state/MyScreen.ts">
-			<Code code={myScreenTs} lang="ts" />
-		</TabItem>		
-	</Tabs>
-
-</Steps>
-
-Your project directory should look like this:
-
-<FileTree>
-
-- package.json
-- index.html
-- **src**
-		- index.css	  
-	- index.ts
-	- Application.ts
-	- state
-		- LoadScreen.ts
-		- MyScreen.ts		
-
-</FileTree>
-
 <Aside type="tip">
-	The entire source code for this example can be found in the [GitHub repository](https://github.com/relishinc/dill-pixel/tree/main/docs/examples/hello-world)
+  The entire source code for this example can be found in the [GitHub
+  repository](https://github.com/relishinc/dill-pixel/tree/main/docs/examples/hello-world)
 </Aside>
 
-### Install the Dependencies
+## Project Structure
 
-Once you have created the files, install the dependencies:
+When you create a new project using the CLI, it will generate the following file structure:
 
-<Tabs>
-	<TabItem label={"npm"}>
-		```bash
-		npm install
-		```
-	</TabItem>
-	<TabItem label={"yarn"}>
-		```bash
-		yarn install
-		```
-	</TabItem>
-	<TabItem label={"pnpm"}>
-		```bash
-		pnpm install
-		```
-	</TabItem>
-</Tabs>
+<FileTree>
+- package.json
+- tsconfig.json
+- vite.config.mjs
+- index.html
+- .assetpack.mjs
+- .eslintrc.json
+- .prettierrc.json
+- .nvmrc
+- **src**
+  - index.ts
+  - index.css
+  - bootstrap.ts
+  - MyApplication.ts
+  - dill-pixel.config.ts
+  - Splash.ts
+  - **scenes**
+    - BaseScene.ts
+    - StartScene.ts
+  - **utils**
+    - Constants.ts
+- **assets**
+  - **audio\{m\}**
+    - **music**
+      - Game_Over.ogg
+    - **sfx**
+      - click.ogg
+      - hover.ogg
+  - **required\{m\}**
+    - **ui\{tps\}**
+      - **btn**
+        - blue.png
+        - green.png
+      - **joystick**
+        - base.png
+        - handle.png
+  - **spine\{m\}**
+    - spineboy-pro.png
+    - spineboy-pro.atlas
+    - spineboy-pro.skel
+</FileTree>
+
+### Key Files and Directories
+
+- `src/MyApplication.ts`: Main application class extending from Dill Pixel's Application
+- `src/bootstrap.ts`: Initializes the game and handles core setup
+- `src/dill-pixel.config.ts`: Core game configuration including actions, controls, and data management
+- `src/Splash.ts`: Default loading screen implementation
+- `src/scenes/`: Contains all game scenes
+  - `BaseScene.ts`: Base scene class with shared functionality
+  - `StartScene.ts`: Initial game scene with "Hello Dill Pixel" example
+- `src/utils/Constants.ts`: Shared constants like fonts and colors
+- `.assetpack.mjs`: Asset processing configuration
+- `.eslintrc.json`: Code linting rules
+- `.prettierrc.json`: Code formatting rules
+
+<Aside type="tip">
+  The CLI creates a production-ready project structure with TypeScript, ESLint, Prettier, and asset management
+  pre-configured.
+</Aside>
 
 ### Start the Dev Server
 
 <Tabs>
-	<TabItem label={"npm"}>
-		```bash
-		npm run dev
-		```
-	</TabItem>
-	<TabItem label={"yarn"}>
-		```bash
-		yarn dev
-		```
-	</TabItem>
-	<TabItem label={"pnpm"}>
-		```bash
-		pnpm run dev
-		```
-	</TabItem>
+  <TabItem label={'npm'}>
+    <Code code={`npm run dev`} lang="bash" />
+  </TabItem>
+  <TabItem label={'yarn'}>
+    <Code code={`yarn dev`} lang="bash" />
+  </TabItem>
+  <TabItem label={'pnpm'}>
+    <Code code={`pnpm dev`} lang="bash" />
+  </TabItem>
 </Tabs>
 
 ### Build for Production
 
 <Tabs>
-	<TabItem label={"npm"}>
-		```bash
-		npm run build
-		```
+	<TabItem label={'npm'}>
+	
+	```bash 
+	npm run build
+	```
+	
 	</TabItem>
-	<TabItem label={"yarn"}>
-		```bash
-		yarn build
-		```
-	</TabItem>
-	<TabItem label={"pnpm"}>
-		```bash
-		pnpm run build
-		```
-	</TabItem>
+
+    <TabItem label={'yarn'}>
+
+    ```bash
+    yarn build
+    ```
+
+    </TabItem>
+
+    <TabItem label={'pnpm'}>
+
+    ```bash
+    pnpm run build
+    ```
+
+    </TabItem>
+
 </Tabs>
-
-
-
-
-
-

@@ -81,6 +81,9 @@
             - Ease of integration and future upgrades
             - If using native plugins (e.g., for sound or device features), handle them in a centralized service
 
+            Documentation Site:
+            - Use your knowledge of the framework in ./packages/framework/src/*, the cli in ./packages/framework/cli.mjs, Vite, (p)npm, Typescript, Starlight, Astro, Tailwind, and other technologies to assist in writing documentation for the framework in ./apps/docs, which is a Starlight documentation site.
+
             Advanced Techniques:
             - Understand and use Pixi.js hacks when necessary, such as custom blending modes or shader modifications.
             - Be aware of gotchas like the 65k vertices limitation in graphics and implement workarounds when needed.
@@ -116,4 +119,3 @@
             Remember to continually optimize for both web and mobile performance, ensuring smooth gameplay across all target platforms. Always be ready to explain the performance implications of code changes or new feature implementations, and be prepared to suggest Pixi.js-specific optimizations and workarounds when needed.
 
             Follow the official Pixi.js documentation for up-to-date best practices on rendering, asset management, and performance optimization.
-

@@ -1,7 +1,7 @@
 import starlightTypeDoc, { typeDocSidebarGroup } from 'starlight-typedoc';
 
-import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
@@ -52,7 +52,7 @@ export default defineConfig({
         {
           label: 'Fundamentals',
           items: [
-            { label: 'State Management', link: '/fundamentals/state' },
+            { label: 'Scenes', link: '/fundamentals/scenes' },
             { label: 'Layout', link: '/fundamentals/layout' },
             { label: 'Assets', link: '/fundamentals/assets' },
             { label: 'Styling Text', link: '/fundamentals/styling-text' },

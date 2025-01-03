@@ -16,8 +16,6 @@ import {
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
 
-type VirtualScenesModule = { sceneList: SceneImportListItem<IScene>[] };
-
 export interface ISceneManagerPlugin extends IPlugin {
   isFirstScene: boolean;
   onSceneChangeStart: Signal<(detail: { exiting: string | null; entering: string }) => void>;

@@ -2,137 +2,92 @@
 title: Creating a Game
 ---
 
-import {TabItem, Tabs, Aside, FileTree, Code, Steps} from '@astrojs/starlight/components';
+import { TabItem, Tabs, Aside, FileTree, Code, Steps } from '@astrojs/starlight/components';
 
-import packageJson from '../../../../examples/simple-game/package.json?raw';
-import viteConfigJs from '../../../../examples/simple-game/vite.config.js?raw';
-import indexHtml from '../../../../examples/simple-game/index.html?raw';
-import indexCss from '../../../../examples/simple-game/src/index.css?raw';
-import indexTs from '../../../../examples/simple-game/src/index.ts?raw';
-import applicationTs from '../../../../examples/simple-game/src/Application.ts?raw';
-import loadScreenTs from '../../../../examples/simple-game/src/state/LoadScreen.ts?raw';
-import introScreenTs from '../../../../examples/simple-game/src/state/IntroScreen.ts?raw';
-import gameScreenTs from '../../../../examples/simple-game/src/state/GameScreen.ts?raw';
+import packageJson from '../../../../examples/hello-world/package.json?raw';
+import viteConfigJs from '../../../../examples/hello-world/vite.config.mjs?raw';
+import dillPixelConfigTs from '../../../../examples/hello-world/src/dill-pixel.config.ts?raw';
+import indexHtml from '../../../../examples/hello-world/index.html?raw';
+import indexCss from '../../../../examples/hello-world/src/index.css?raw';
+import indexTs from '../../../../examples/hello-world/src/index.ts?raw';
+import applicationTs from '../../../../examples/hello-world/src/MyApplication.ts?raw';
+import splashTs from '../../../../examples/hello-world/src/Splash.ts?raw';
+import baseSceneTs from '../../../../examples/hello-world/src/scenes/BaseScene.ts?raw';
+import startSceneTs from '../../../../examples/hello-world/src/scenes/StartScene.ts?raw';
+import gameSceneTs from '../../../../examples/hello-world/src/scenes/Game.ts?raw';
 
 In the [Quick Start guide](./quick-start), we learned how to set up a very simple project using dill pixel.
 Now let's go through the process of creating a basic game.
 
 <Aside type="tip">
-	The entire source code for this sample game can be found in the [GitHub repository](https://github.com/relishinc/dill-pixel/tree/main/docs/examples/simple-game)
+  The entire source code for this sample game can be found in the [GitHub
+  repository](https://github.com/relishinc/dill-pixel/tree/main/docs/examples/simple-game)
 </Aside>
 
-## Setup the Files
+## Custom Splash Screen
 
 <Steps>
+  <ol>
+    <li>
+      <div>
+        Create an `Splash.ts` file in the `src` folder. This will be displayed when the game starts. Similar to a Scene,
+        there are `added()`, `enter()` and `exit()` methods to control how the screen is revealed and hidden. It also contains a `update()` method that can be used to update the progress of the loading screen, and a `handleLoadProgress()` method that can be used to update the progress of the loading screen. For
+        simplicity's sake we're just creating a green background and adding a title that can be clicked to take us to
+        the next screen:
+        <Code code={splashTs} lang="ts" title="src/Splash.ts" />
+      </div>
+    </li>
+    <li>
+      In `./dill-pixel-config.ts`, import your `Splash` class:
 
-1. First, create a `package.json` in your project's root directory:
+      ```ts
+      import Splash from '@/Splash';
+      ```
 
-	<Code code={packageJson} lang="json" title="package.json" />
+      and set the set the `splash` property to
+      ```json
+      { ... // other config
+        splash: {
+          view: Splash
+        }
+    	...
+      }
+      ```
 
-2. Create a `vite.config.js` file in the root directory to configure the build process. The default Vite configuration
-is sufficient but for handling static assets we're using the [vite-plugin-static-copy](https://www.npmjs.com/package/vite-plugin-static-copy) 
-so that they can be loaded from within the game. You can configure the plugin
-however you like based on how you've organized your assets.
+      your `dill-pixel.config.ts` should now look like this:
+      <Code code={dillPixelConfigTs} lang="ts" title="dill-pixel.config.ts" />
+    </li>
+    <li>
+      in `index.html`, you can remove the `loader.css` import, as we're no longer using it.
+    </li>
 
-	<Code code={viteConfigJs} lang="js" title="vite.config.js" />
-
-3. Next, create an `index.html` file in the root directory. This file will be the entry point for your 
-game and dill pixel will automatically create a `<div id="game-container" />` to contain the game canvas:
-
-	<Code code={indexHtml} lang="html" title="index.html" />
-
-4. Create an `index.css` file in the `src` directory that displays the game at full screen:
-
-	<Code code={indexCss} lang="css" title="src/index.css" />
-
-5. Create an `index.ts` file in the `src` directory that initializes the game:
-
-	<Code code={indexTs} lang="ts" title="src/index.ts" />
-
+  </ol>
 </Steps>
 
-## Create the Game States
+## Create Scenes
 
-### Loading Screen
+### Game Scene
 
-Create a `state` folder in the `src` directory and create a `LoadScreen.ts` file in it. This will 
-be displayed while the game is loading and also when transitioning between states.
-
-To manage the transitions smoothly, we're using `gsap` to fade the loading screen in and out 
-in the `animateIn()` and `animateOut()` methods:
-
-<Code code={loadScreenTs} lang="ts" title="src/state/LoadScreen.ts" />
-
-### Intro Screen
-
-Create an `IntroScreen.ts` file in the `state` folder. This will be displayed when the game starts. 
-Similar to the `LoadScreen`, there are `animateIn()` and `animateOut()` methods to control how the screen 
-is revealed and hidden. For simplicity's sake we're just creating a green background and adding a title 
-that can be clicked to take us to the next screen:
-
-<Code code={introScreenTs} lang="ts" title="src/state/IntroScreen.ts" />
-
-### Game Screen
-
-Create a `GameScreen.ts` file in the `state` folder. This will be the main game screen with a few
+Create a `Game.ts` file in the `scenes` folder. This will be the main game scene with a few
 elements: an image, a title, a message, and a button.
 
-Clicking on the image will trigger a short animation and increment a counter. Clicking the 
-button will take us back to the `IntroScreen`.
+Add the id and debug label to the scene
+
+```ts
+export const id = 'game';
+export const debug = {
+  label: 'Game',
+};
+```
+
+Clicking on the image will trigger a short animation and increment a counter. Clicking the
+button will take us back to `StartScene`.
 
 Note that in the `destroy()` method we're cleaning up the `gsap` animations.
 
-<Code code={gameScreenTs} lang="ts" title="src/state/GameScreen.ts" />
-
-## Create the Application
-
-Create an `Application.ts` file in the `src` directory. This is the main application class that will
-manage the game states and transitions between them:
-
-<Code code={applicationTs} lang="ts" title="src/Application.ts" />
-
-### Install the Dependencies
-
-Once you have created the files, install the dependencies:
-
-<Tabs>
-	<TabItem label={"npm"}>
-		```bash
-		npm install
-		```
-	</TabItem>
-	<TabItem label={"yarn"}>
-		```bash
-		yarn install
-		```
-	</TabItem>
-	<TabItem label={"pnpm"}>
-		```bash
-		pnpm install
-		```
-	</TabItem>
-</Tabs>
-
-### Run the Game
-
-<Tabs>
-	<TabItem label={"npm"}>
-		```bash
-		npm run dev
-		```
-	</TabItem>
-	<TabItem label={"yarn"}>
-		```bash
-		yarn dev
-		```
-	</TabItem>
-	<TabItem label={"pnpm"}>
-		```bash
-		pnpm run dev
-		```
-	</TabItem>
-</Tabs>
+<Code code={gameSceneTs} lang="ts" title="src/scenes/Game.ts" />
 
 <Aside type="tip">
-	The entire source code for this sample game can be found in the [GitHub repository](https://github.com/relishinc/dill-pixel/tree/main/docs/examples/simple-game)
+  The entire source code for this sample game can be found in the [GitHub
+  repository](https://github.com/relishinc/dill-pixel/tree/main/docs/examples/simple-game)
 </Aside>

@@ -1,0 +1,50 @@
+---
+title: Scene Management
+---
+
+import { TabItem, Tabs, Aside, FileTree, Code, Steps } from '@astrojs/starlight/components';
+
+import baseSceneTs from '../../../../examples/hello-world/src/scenes/BaseScene.ts?raw';
+import startSceneTs from '../../../../examples/hello-world/src/scenes/StartScene.ts?raw';
+import applicationTs from '../../../../examples/hello-world/src/MyApplication.ts?raw';
+
+dill pixel uses a simple state management system to manage the different states (or screens)
+in your game. For example, a simple game might have a `TitleScreen`, `GameScreen`, and `GameOverScreen`.
+Let's see how we would include those in our game and switch between them.
+
+## Creating a Base Scene
+
+To create a new scene, create a new file in the `src/scenes` directory. For example, let's create a `BaseScene`
+that all of our other game scenes will extend. This first scene should extend dill pixel's [`Scene`](/api/classes/scene) class
+and for now we'll just add custom `animateIn` and `animateOut` methods that will fade all of our scenes in and out:
+
+<Code code={baseSceneTs} lang="ts" title="src/scenes/BaseScene.ts" />
+
+## Creating a Screen
+
+Next, let's create a `StartScene` that extends our `BaseScene`:
+
+<Code code={startSceneTs} lang="ts" title="src/scenes/StartScene.ts" />
+
+## Registering Scenes
+
+Scenes in the ./src/scenes directory will be automatically registered with the game.
+You can configure how your scene is loaded by modifying a few custom exports in your scene file.
+
+<Code code={applicationTs} lang="ts" title="src/MyApplication.ts" />
+
+## Switching Between Scenes
+
+To switch between scenes, use the `transitionTo` method on the game instance:
+
+```ts
+// From within the Application.ts file
+this.loadScene('game'); // reference by the scene's id
+
+// From outside of the Application.ts file, and not within a scene,
+// you can call the app's loadScene method directly
+app.loadScene('game'); // reference by the scene's id
+
+// From within a scene (or any container with an Application instance)
+this.app.loadScene('game');
+```

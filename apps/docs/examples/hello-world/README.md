@@ -1,5 +1,11 @@
-## dill pixel "Hello world"
+# My Dill Pixel Application
 
-Run `npm install` to install the dependencies and `npm run dev` to run the game locally.
+## Development
 
-Run `npm run build` to build the game for production.
+- run `npm install` to install dependencies
+- run `npm run dev` to start the vite development server
+- make changes to the code
+- see them reflected at http://localhost:3000
+
+
+

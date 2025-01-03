@@ -1,6 +1,6 @@
 import { FlexContainer, SceneTransition } from 'dill-pixel';
-import { Sprite, Text, Texture } from 'pixi.js';
 import { gsap } from 'gsap';
+import { Sprite, Text, Texture } from 'pixi.js';
 
 export class Splash extends SceneTransition {
   private _labelPercent: Text;
@@ -9,7 +9,7 @@ export class Splash extends SceneTransition {
   private _percent: number = 0;
 
   constructor() {
-    super(true);
+    super(true); // autoUpdate - triggers the update loop
   }
 
   added() {
