@@ -2,7 +2,7 @@
 title: Assets
 ---
 
-import {Aside} from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 
 Assets are the static resources that your game loads to run. These can be:
 
@@ -13,145 +13,149 @@ Assets are the static resources that your game loads to run. These can be:
 - Spritesheets
 - [Spine animations](/guides/spine)
 
-## Loading Assets
+## Asset Management
 
-Setting up your build tools per our [project setup](/guides/project-setup#build-tools) guide will
-automatically copy your assets to the correct location whether you're developing locally or building for production.
+An asset manifest is a JSON file that describes the assets that will be used in your game. Dill Pixel uses Pixi's [AssetPack](https://www.github.com/pixijs/assetpack) to manage assets. You can define the location your asset manifest should go in your `vite.config.ts` file - by default it will be generated in the `public/assets.json` file, and auto-loaded during bootstrap.
 
-### From the Application
+### Required Assets
 
-You can load assets that are available globally to the entire application by defining them in
-the `requiredAssets()` getter in the `Application.ts` file or where your application is defined.
+Your application can define required assets that will be loaded before any scenes are initialized. These can be configured in your application options:
 
-```js
-// Application.ts
-import { 
-  AssetMapData, 
-  TextureAsset, 
-  AssetType, 
-  JsonAsset,
-  AudioAsset,
-  FontAsset,
-} from 'dill-pixel';
+```ts
+import { createApplication } from 'dill-pixel';
 
-...
+const app = await createApplication({
+  assets: {
+    // Path to your asset manifest file
+    manifest: './assets.json',
 
-public get requiredAssets(): AssetMapData[] {
-  return [
-    new TextureAsset('foo', AssetType.PNG),
-    new TextureAsset('bar', AssetType.JPG),
-    new JsonAsset('config'),
-    new AudioAsset('bang', 'sfx'),
-    new FontAsset('myFont'),
-  ];
-}
+    // Assets to preload before the application starts
+    preload: {
+      // Individual assets
+      assets: {
+        logo: '/assets/logo.png',
+        fonts: '/assets/fonts.css',
+        ui: {
+          src: '/assets/ui.svg',
+          data: { parseAsGraphicsContext: true },
+        },
+      },
+      // Asset bundles defined in your manifest
+      bundles: ['common-ui', 'shared-sprites'],
+    },
 
+    // Assets to load in the background after the app starts
+    background: {
+      assets: {
+        'level-music': '/assets/music.mp3',
+      },
+      bundles: ['background-content'],
+    },
+
+    // Optional Pixi.js asset initialization options
+    initOptions: {
+      // ... any Pixi.js Assets.init() options
+    },
+  },
+});
 ```
 
-<Aside type="tip">
-  When preloading audio files you have to specify [their category](/guides/audio#categories).
+<Aside type="tip" title="Required Assets">
+  Required assets defined in your application config will be loaded before any scenes are initialized, ensuring they're
+  available throughout your entire application.
 </Aside>
 
-### From a Game State
-
-For assets that are only needed in a single [game state](/fundamentals/state),
-you can define which assets you want to load in the `Assets()` getter of the game state:
-
-```js
-// MyGameState.ts
-import {
-  AssetMapData,
-  TextureAtlasAsset, 
-  JsonAsset, 
-  TextureAsset, 
-  AudioAsset, 
-  AssetType 
-} from 'dill-pixel';
-
-...
-
-public static get Assets(): AssetMapData[] {
-  return [
-    new TextureAtlasAsset('myspritesheet'),
-    new JsonAsset('settings'),
-    new TextureAsset('someImage', AssetType.JPG),
-    new AudioAsset('killerSong', 'music'),
-    new AudioAsset('splat', 'sfx'),
-  ];
-}
-
-```
-
-## Accessing Assets
-
-Once your assets are loaded, you can access them in your game. The way you access them depends on the type of asset.
-
-### Images
-
-Images are loaded as `Texture` objects. You can access them by their key:
-
-```js
-// A single image
-
-const myImage = this.add.sprite({ asset: 'foo', position: [-150, 50] });
-
-// A sprite from a spritesheet
-
-const mySprite = this.add.sprite({ asset: 'bar', sheet: 'myspritesheet', position: [150, 50] });
-```
-
-### JSON Files
-
-JSON files are accessed using Pixi's `Cache` class. For example, if you have the following file:
-
-```json
-// config.json
-{
-  "foo": "bar",
-  "baz": 42,
-  "qux": [1, 2, 3]
-}
-```
-
-You can access it in your game like this:
-
-```js
-import { Cache } from 'pixi.js';
-
-const config = Cache.get('config');
-console.log(config.foo); // Outputs "bar"
-```
-
-### Audio Files
-
-Once audio files have been loaded, you can [play them](/guides/audio#playing-audio) using the `playAudioTrack` function:
-
-```js
-
-// Play a sound once
-
-playAudioTrack('sound');
-
-```
-
-<Aside type="tip">
-  Audio files don't actually have to be loaded in advance. Because they're streamed, you can
-  play them on demand by just calling `playAudioTrack('sound');` and the file will be loaded and played.
+<Aside type="caution" title="Background Assets">
+  Background assets will be loaded after the application has started, and will be available throughout the application,
+  but are loaded asynchronously.
 </Aside>
 
-### Fonts
+You can listen for application-level asset loading events:
 
-The only font format that can be loaded using the asset manager is an `.fnt` file, which is a bitmap font.
-Once a font has been loaded, you can use it in your game like this:
-
-```js
-
-const myBitmapText = this.add.bitmapText('Hello World!', { 
-  fontName: 'myFont', 
-  fontSize: 64,
-  letterSpacing: -2, 
+```ts
+app.assets.onLoadStart.connect(() => {
+  console.log('Started loading required assets');
 });
 
+app.assets.onLoadProgress.connect((progress) => {
+  console.log(`Loading progress: ${progress * 100}%`);
+});
+
+app.assets.onLoadComplete.connect(() => {
+  console.log('All required assets loaded');
+});
+
+// For background assets
+app.assets.onBackgroundLoadStart.connect(() => {
+  console.log('Started loading background assets');
+});
+
+app.assets.onBackgroundAssetLoaded.connect((asset) => {
+  console.log('Background asset loaded:', asset);
+});
+
+app.assets.onBackgroundBundlesLoaded.connect(() => {
+  console.log('All background bundles loaded');
+});
 ```
 
-To use web fonts and load custom fonts, check out the [styling text guide](/fundamentals/styling-text).
+Scenes can define their assets using the `assets` export, which also supports both preloaded and background-loaded assets:
+
+```ts
+export const assets = {
+  // Assets that must be loaded before the scene starts
+  preload: {
+    // Individual assets
+    assets: {
+      player: '/assets/player.png',
+      // Support for asset objects with additional options
+      background: {
+        src: '/assets/background.png',
+        // For SVGs, you can enable parsing as graphics
+        data: { parseAsGraphicsContext: true },
+      },
+    },
+    // Asset bundles (defined in your asset manifest)
+    bundles: ['level-1', 'ui-elements'],
+  },
+  // Assets that will load after the scene is running
+  background: {
+    assets: {
+      'level-2': '/assets/level-2.png',
+      'level-3': '/assets/level-3.png',
+    },
+    bundles: ['level-2-assets'],
+  },
+};
+
+// Control whether assets are automatically unloaded when leaving the scene
+export const autoUnloadAssets = true;
+```
+
+<Aside type="tip">
+  Preloaded assets will be available before your scene's `initialize()` method is called, making them safe to use
+  immediately in your scene setup.
+</Aside>
+
+### Asset Loading Events
+
+You can listen for background asset loading events in your scene:
+
+```ts
+class MyScene extends Scene {
+  initialize() {
+    // Listen for background asset loading events
+    this.app.assets.onBackgroundLoadStart.connect(() => {
+      console.log('Background assets started loading');
+    });
+
+    this.app.assets.onBackgroundAssetLoaded.connect((asset) => {
+      console.log('Background asset loaded:', asset);
+    });
+
+    this.app.assets.onBackgroundBundlesLoaded.connect(() => {
+      console.log('All background bundles loaded');
+    });
+  }
+}
+```
