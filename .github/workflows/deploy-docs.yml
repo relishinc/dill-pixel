@@ -17,16 +17,21 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Cache dependencies
         uses: actions/cache@v2
         with:
-          path: ~/.turbo
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-node-
+            ${{ runner.os }}-pnpm-
 
       - name: Install Dependencies
-        run: pnpm ci && cd ./docs && pnpm ci
+        run: pnpm install
 
       - name: Build Docs
         run: pnpm run docs
