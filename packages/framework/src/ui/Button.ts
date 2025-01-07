@@ -336,7 +336,7 @@ export class Button extends _Button implements IButton {
   /**
    * @description Handles the pointer up event.
    */
-  protected handlePointerUpOutside(e: PointerEvent) {
+  protected handlePointerUpOutside(e: PointerEvent | FederatedPointerEvent) {
     if (!this._enabled || e.pointerId !== this._pointerId) {
       return;
     }

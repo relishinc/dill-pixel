@@ -1,5 +1,5 @@
 {
-  "extends": "dill-pixel/config/tsconfig.json",
+  "extends": "../../../packages/framework/config/tsconfig.json",
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"]

@@ -1,6 +1,7 @@
 import starlightTypeDoc, { typeDocSidebarGroup } from 'starlight-typedoc';
 
 import starlight from '@astrojs/starlight';
+import tailwind from '@astrojs/tailwind';
 import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
@@ -68,5 +69,8 @@ export default defineConfig({
       ],
       customCss: ['./src/custom.css'],
     }),
+    tailwind(),
   ],
+  outDir: './dist',
+  exclude: ['./examples/**/*'],
 });

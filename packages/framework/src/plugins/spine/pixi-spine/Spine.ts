@@ -497,7 +497,7 @@ export class Spine extends ViewContainer {
           }
 
           // need to copy because attachments uvs are shared among skeletons using the same atlas
-          fastCopy((attachment.uvs as Float32Array).buffer, cacheData.uvs.buffer);
+          fastCopy((attachment.uvs as Float32Array).buffer as ArrayBuffer, cacheData.uvs.buffer as ArrayBuffer);
 
           const skeleton = slot.bone.skeleton;
           const skeletonColor = skeleton.color;
