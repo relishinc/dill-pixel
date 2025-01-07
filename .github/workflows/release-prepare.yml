@@ -1,4 +1,4 @@
-name: Prepare Release (V8)
+name: Prepare Release
 
 on:
   pull_request:
@@ -13,7 +13,7 @@ on:
 
 jobs:
   notify:
-    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'release') && github.event.pull_request.base.ref == 'refs/heads/v8')
+    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'release') && github.event.pull_request.base.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
 
     steps:
