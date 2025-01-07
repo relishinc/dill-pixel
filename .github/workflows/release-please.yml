@@ -1,4 +1,4 @@
-name: Release Please (V8)
+name: Release Please
 
 on:
   push:
@@ -17,6 +17,6 @@ jobs:
         uses: google-github-actions/release-please-action@v3
         with:
           release-type: node
-          default-branch: v8
+          default-branch: main
           package-name: release-please-action
           token: ${{ secrets.GITHUB_TOKEN }}
