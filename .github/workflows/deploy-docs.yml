@@ -32,10 +32,10 @@ jobs:
             ${{ runner.os }}-pnpm-
 
       - name: Install docs dependencies
-        run: pnpm install --filter dill-pixel-docs --ignore-workspace-root-check
+        run: pnpm --filter=dill-pixel-docs install
 
       - name: Build Docs
-        run: pnpm --filter dill-pixel-docs build
+        run: pnpm --filter=dill-pixel-docs build
 
       - name: Deploy to Remote Host via SFTP
         uses: ticoraap/sftp-mirror@v1.6
