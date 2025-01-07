@@ -20,7 +20,6 @@ export async function generatePluginList<T extends IPlugin = IPlugin>(
         return null;
       }
       const pluginAsArray = plugin as [string, { autoLoad?: boolean; options?: any }];
-      console.log({ p });
       return {
         id: p.id,
         path: p.path,
@@ -59,7 +58,7 @@ export async function generateAdapterList<T extends IStorageAdapter = IStorageAd
 
 export function defineConfig<D extends DataSchema = DataSchema>(config: Partial<AppConfig<D>>): AppConfig<D> {
   // Provide sensible defaults
-  return {
+  const userConfig = {
     id: 'DillPixelApplication',
     showStats: false,
     showSceneDebugMenu: false,
@@ -82,6 +81,9 @@ export function defineConfig<D extends DataSchema = DataSchema>(config: Partial<
     },
     plugins: [],
     scenes: [],
+
     ...config,
   };
+
+  return userConfig as AppConfig<D>;
 }

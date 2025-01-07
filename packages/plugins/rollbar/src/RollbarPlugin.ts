@@ -46,6 +46,5 @@ export class RollbarPlugin extends Plugin implements IRollbarPlugin {
     } else {
       Logger.log('Rollbar is enabled');
     }
-    Logger.log(this._rollbar);
   }
 }

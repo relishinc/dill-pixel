@@ -7,19 +7,19 @@
     "dill-pixel": {
       "src": "../../node_modules/dill-pixel/lib/dill-pixel.mjs",
       "file": "dill-pixel.js",
-      "fileHash": "2b0cc360",
+      "fileHash": "d2d6c556",
       "needsInterop": false
     },
     "gsap": {
       "src": "../../node_modules/gsap/index.js",
       "file": "gsap.js",
-      "fileHash": "af70a577",
+      "fileHash": "ece7333a",
       "needsInterop": false
     },
     "pixi.js": {
       "src": "../../node_modules/pixi.js/lib/index.mjs",
       "file": "pixi__js.js",
-      "fileHash": "d56ce1a6",
+      "fileHash": "f310a6b4",
       "needsInterop": false
     }
   },

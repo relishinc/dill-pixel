@@ -73,15 +73,6 @@ export default class BaseScene extends Scene<V8Application> {
     // this.alpha = 0;
   }
 
-  public async enter() {
-    // this.alpha = 0;
-    // return this.animate({ alpha: 1, duration: 0.6, ease: 'sine.out' });
-  }
-
-  public async exit() {
-    // return this.animate({ alpha: 0, duration: 0.4, ease: 'sine.in' });
-  }
-
   public destroy() {
     if (this.gui) {
       this.gui.destroy();
@@ -91,7 +82,6 @@ export default class BaseScene extends Scene<V8Application> {
 
   resize(size?: Size) {
     super.resize(size);
-    console.log('BaseScene.resize', size, this.app.size);
     if (this._bg) {
       this._bg.clear();
       this._bg

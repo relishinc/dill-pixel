@@ -1,7 +1,6 @@
 import { Application } from '../Application';
 import { sayHello } from '../hello';
 import { DataSchema } from '../store';
-import { delay } from '../utils';
 import { IApplication } from './interfaces';
 import { AppConfig } from './types';
 
@@ -53,8 +52,6 @@ export async function create<T extends IApplication = Application, D extends Dat
     throw new Error('No element found to append the view to.');
   }
   // ensure all plugins are initialized
-  await delay(0.01);
-
   // call postInitialize on the instance
   await instance.postInitialize();
 

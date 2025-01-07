@@ -97,7 +97,7 @@ export const config = defineConfig<Data>({
   defaultSceneLoadMethod: 'transitionExitEnter',
   useSpine: true,
   showStats: true,
-  showSceneDebugMenu: true,
+  showSceneDebugMenu: false,
   useHash: true,
   useVoiceover: true,
   data: {
@@ -190,6 +190,14 @@ export const config = defineConfig<Data>({
     backgroundColor: 0x0,
     textColor: 0xffffff,
     maxWidth: 0.4,
+  },
+  autoDensity: false,
+  resizeToContainer: true,
+  resizer: {
+    minWidth: 500,
+    minHeight: 768,
+    letterbox: false,
+    center: false,
   },
 });
 /** End of User config */

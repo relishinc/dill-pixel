@@ -1,7 +1,7 @@
 import { gsap } from 'gsap';
 import { BitmapText, Container as PIXIContainer, Sprite, Texture } from 'pixi.js';
 import { Container } from '../../display';
-import { Logger, type Size } from '../../utils';
+import { type Size } from '../../utils';
 import { CaptionsPlugin } from './CaptionsPlugin';
 
 export type CaptionLine = {
@@ -37,8 +37,8 @@ export class CaptionsRenderer extends Container implements ICaptionRenderer {
   private readonly fontSize = 48;
 
   constructor(private plugin: CaptionsPlugin) {
-    super({autoResize:false});
-    
+    super({ autoResize: false });
+
     this._bg = this.add.sprite({ asset: Texture.WHITE, anchor: [0.5, 0] });
     this._bg.tint = this.plugin.options.backgroundColor;
     this._bg.alpha = 0;
@@ -109,7 +109,6 @@ export class CaptionsRenderer extends Container implements ICaptionRenderer {
   public lineEnd(_line: CaptionLine): void {}
 
   public resize(): void {
-    Logger.log('CaptionsRenderer.resize', this.plugin.options.maxWidth);
     const size = this.app.size;
     const opts = this.plugin.options;
 

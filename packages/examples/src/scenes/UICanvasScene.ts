@@ -51,13 +51,13 @@ export default class UICanvasScene extends BaseScene {
     this.config.size.height = this.app.size.height;
 
     const size = this.gui.addFolder('Size');
-    size.add(this.config.size, 'width', 0, 2000, 1).onChange(() => {
+    size.add(this.config.size, 'width', 0, 3000, 1).onChange(() => {
       if (!this._isResizing) {
         this._sizeChanged = true;
       }
       this.setSize();
     });
-    size.add(this.config.size, 'height', 0, 2000, 1).onChange(() => {
+    size.add(this.config.size, 'height', 0, 3000, 1).onChange(() => {
       if (!this._isResizing) {
         this._sizeChanged = true;
       }
@@ -95,7 +95,6 @@ export default class UICanvasScene extends BaseScene {
     this.ui.addElement(
       this.make.text({
         text: 'right center',
-        resolution: 2,
         style: whiteTextStyle(24),
       }),
       { align: 'right' },
@@ -103,7 +102,6 @@ export default class UICanvasScene extends BaseScene {
     this.ui.addElement(
       this.make.text({
         text: 'bottom left',
-        resolution: 2,
         style: whiteTextStyle(24),
       }),
       { align: 'bottom left' },
@@ -116,10 +114,10 @@ export default class UICanvasScene extends BaseScene {
       }),
       { align: 'left' },
     );
+
     this.ui.addElement(
       this.make.text({
         text: 'bottom right',
-        resolution: 2,
         style: whiteTextStyle(24),
       }),
       { align: 'bottom right' },

@@ -12,13 +12,22 @@ type DeepPartial<T> = {
  * Interface for the options of the LocalStorageAdapter.
  */
 export interface IDataAdapterOptions<D extends DataSchema = DataSchema> {
+  initial: Partial<D>;
   /**
    * The namespace to use for the keys in the local storage.
    */
-  initial: Partial<D>;
   namespace: string;
+  /**
+   * Whether to override the data with the data from local storage.
+   */
   overrideWithLocalStorage: boolean;
+  /**
+   * Whether to backup all data to local storage.
+   */
   backupAll: boolean;
+  /**
+   * The keys to backup to local storage.
+   */
   backupKeys: Array<keyof D>;
 }
 
@@ -34,9 +43,6 @@ export interface IDataAdapter<D extends DataSchema = DataSchema> {
  * A class representing a storage adapter that uses the local storage.
  */
 export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapter implements IDataAdapter<D> {
-  /**
-   * The namespace to use for the keys in the local storage.
-   */
   public data: D;
   private backupKeys: Array<keyof D> = [];
   private backupAll: boolean = false;
@@ -128,7 +134,7 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
   private backupToLocalStorage(keys?: Array<keyof D>): void {
     const dataToBackup =
       keys && keys?.length > 0 ? Object.fromEntries(keys.map((key) => [key, this.data[key]])) : this.data;
-    
+
     for (const key in dataToBackup) {
       localStorage.setItem(`${this.namespace}-${key}`, JSON.stringify(dataToBackup[key]));
     }

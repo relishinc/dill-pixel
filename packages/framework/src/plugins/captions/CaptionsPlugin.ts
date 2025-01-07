@@ -116,7 +116,7 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
   private _locales: string[];
   private _activeCaptionLine = -1;
   private _activeCaptionTime = 0;
-  
+
   private _locale: string;
 
   /**
@@ -135,7 +135,6 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
 
   set options(value: Partial<CaptionsOptions>) {
     this._options = { ...this._options, ...value };
-    
 
     if (value.padding) {
       this._options.padding = ensurePadding(value.padding);
@@ -261,7 +260,7 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
       ...options,
     } as CaptionsOptions;
 
-    this._originalOptions = { ...this._options};
+    this._originalOptions = { ...this._options };
 
     if (options?.padding) {
       this._options.padding = ensurePadding(options.padding);
@@ -285,8 +284,7 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
   }
 
   private handleResize() {
-    Logger.log('CaptionsPlugin.handleResize');
-    this.maxWidth = this._originalOptions.maxWidth ;
+    this.maxWidth = this._originalOptions.maxWidth;
   }
 
   public postInitialize(): void {

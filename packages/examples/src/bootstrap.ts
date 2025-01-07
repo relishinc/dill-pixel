@@ -5,12 +5,17 @@ import { config } from './dill-pixel.config';
 
 async function bootstrap() {
   const app = await create<V8Application>(config, V8Application);
+  console.log('created app', app);
 
   function populateSidebar() {
     // populate sidebar
     const sidebar = document.getElementById('sidebar');
     const nav = sidebar?.querySelector('nav');
-    const scenes = app.scenes.ids.filter((scene: string) => scene !== 'Interstitial');
+
+    app.signal.onSceneChangeComplete.connect(() => {
+      nav?.classList.remove('disabled');
+    });
+    const scenes = app.scenes.ids;
     const defaultScene = app.scenes.defaultScene;
 
     if (nav) {
@@ -80,6 +85,7 @@ async function bootstrap() {
       // check hash for active example and update nav
       const checkHash = () => {
         const scene = app.scenes.getSceneFromHash();
+        console.log('checkHash', scene, defaultScene);
         setActiveNavItem(scene ?? defaultScene);
       };
       window.addEventListener('hashchange', checkHash);
@@ -87,9 +93,6 @@ async function bootstrap() {
       // disable nav initially
       nav.classList.add('disabled');
 
-      app.signal.onSceneChangeComplete.connect(() => {
-        nav?.classList.remove('disabled');
-      });
       checkHash();
     }
   }

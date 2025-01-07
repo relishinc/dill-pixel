@@ -34,7 +34,7 @@ import { Signal } from './signals';
 const defaultApplicationOptions: Partial<IApplicationOptions> = {
   antialias: false,
   autoStart: true,
-  resizeToContainer: false,
+  resizeToContainer: true,
   backgroundColor: 0x0,
   backgroundAlpha: 1,
   clearBeforeRender: false,
@@ -442,7 +442,6 @@ export class Application<
 
   async postInitialize(): Promise<void> {
     (globalThis as any).__PIXI_APP__ = this;
-    this._resize();
 
     this._plugins.forEach((plugin) => {
       plugin.postInitialize(this as unknown as IApplication<DataSchema>);
@@ -455,6 +454,8 @@ export class Application<
         this.audio.suspend();
       }
     });
+
+    await this._resize();
   }
 
   public getUnloadedPlugin(id: string): ImportListItem<IPlugin> | undefined {
@@ -689,20 +690,15 @@ export class Application<
   }
 
   private async _resize() {
-    this.resizer.resize();
-
-    console.log('Application._resize', this.size);
-
-    this.ticker.addOnce(() => {
-      this._center.set(this.size.width * 0.5, this.size.height * 0.5);
-      this.views.forEach((view) => {
-        if (!view || !view.position) {
-          return;
-        }
-        view.position.set(this._center.x, this._center.y);
-      });
-      this.onResize.emit(this.size);
+    await this.resizer.resize();
+    this._center.set(this.size.width * 0.5, this.size.height * 0.5);
+    this.views.forEach((view) => {
+      if (!view || !view.position) {
+        return;
+      }
+      view.position.set(this._center.x, this._center.y);
     });
+    this.onResize.emit(this.size);
   }
   /**
    * Called after the application is initialized
@@ -715,9 +711,10 @@ export class Application<
     if (isDev) {
       (globalThis as any).__PIXI_APP__ = this;
     }
-    void this._resize();
     // connect onResize signal
     this.webEvents.onResize.connect(this._resize, -1);
+
+    await this._resize();
 
     if (this.scenes.splash?.view && this.scenes.splash.zOrder === 'bottom') {
       this._addSplash();
@@ -740,6 +737,8 @@ export class Application<
     // focus manager
     this.focus.view.label = 'FocusManager';
     this.stage.addChild(this.focus.view);
+
+    setTimeout(this._resize, 75);
 
     // is touch device
     return Promise.resolve();

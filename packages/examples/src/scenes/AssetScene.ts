@@ -1,5 +1,5 @@
 import BaseScene from '@/scenes/BaseScene';
-import { FlexContainer, Logger, scaleToHeight, SceneAssets } from 'dill-pixel';
+import { FlexContainer, SceneAssets } from 'dill-pixel';
 
 export const id = 'assets';
 export const debug = {
@@ -48,8 +48,6 @@ export default class AssetScene extends BaseScene {
     this.container.add.sprite({ asset: 'static/jar', scale: 0.4 });
     this.container.add.sprite({ asset: 'zilla' });
     this.container.add.svg({ ctx: 'logo', scale: 0.5, resolution: 2 });
-
-    Logger.log('AssetScene:: initialize');
   }
 
   resize() {
@@ -65,10 +63,7 @@ export default class AssetScene extends BaseScene {
       this.container.size = [0, this.app.size.height - 110];
       this.container.flexDirection = 'column';
       this.container.flexWrap = 'nowrap';
-      scaleToHeight(this.container, this.app.size.height - 130);
-      this.container.position.set(0, -this.container.height * 0.5 + 100);
+      this.container.position.set(0, -this.app.size.height * 0.5 + 100);
     }
-
-    Logger.log('AssetScene:: resize');
   }
 }
