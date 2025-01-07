@@ -65,5 +65,9 @@ export const config = defineConfig<Data>({
   },
   plugins: [],
   storageAdapters: [],
+  resizer: {
+    minWidth: 500,
+    minHeight: 768,
+  },
 });
 /** End of User config */

@@ -1,6 +1,6 @@
 {
   "name": "dill-pixel",
-  "version": "8.19.2",
+  "version": "8.19.3",
   "title": "Dill Pixel V8",
   "description": "Relish framework for HTML games",
   "bin": {
@@ -17,6 +17,7 @@
     "config/tsconfig.json",
     "extras/css/accessibility.css",
     "extras/css/loader.css",
+    "extras/css/fullscreen.css",
     "templates",
     "types"
   ],
@@ -44,6 +45,9 @@
     },
     "./extras/css/loader.css": {
       "default": "./extras/css/loader.css"
+    },
+    "./extras/css/fullscreen.css": {
+      "default": "./extras/css/fullscreen.css"
     }
   },
   "sideEffects": false,

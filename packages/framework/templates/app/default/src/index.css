@@ -1,33 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;600;700;800&display=swap');
 
 :root {
-    --app-width: 100dvw;
-    --app-height: 100dvh;
-    --color-green: #8ac733;
-    --color-bg: #1f2937;
-}
-
-* {
-    box-sizing: border-box;
+  --color-green: #8ac733;
+  --color-bg: #1f2937;
 }
 
 body,
 html {
-    position: fixed;
-    margin: 0;
-    padding: 0;
-    width: var(--app-width, 100%);
-    height: var(--app-height, 100%);
-    background-color: var(--color-bg);
-    font-family: 'Kumbh Sans', 'Arial', sans-serif;
-    overflow: hidden;
-    color: #fff;
-}
-
-#dill-pixel-game-container {
-    position: relative;
-    display: block;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
+  background-color: var(--color-bg);
+  font-family: 'Kumbh Sans', 'Arial', sans-serif;
+  color: #fff;
 }
