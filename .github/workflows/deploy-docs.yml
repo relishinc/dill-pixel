@@ -32,7 +32,7 @@ jobs:
             ${{ runner.os }}-pnpm-
 
       - name: Install docs dependencies
-        run: pnpm install --filter=dill-pixel-docs... --workspace-root
+        run: pnpm install --filter=dill-pixel-docs... --ignore-workspace --no-optional
 
       - name: Build Docs
         run: pnpm --filter=dill-pixel-docs build
