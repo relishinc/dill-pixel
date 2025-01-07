@@ -33,7 +33,7 @@ jobs:
 
       - name: Install docs dependencies
         working-directory: apps/docs
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Build Docs
         working-directory: apps/docs
