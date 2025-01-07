@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "framework:build": "turbo build --filter={./packages/framework}",
-    "framework:publish": "cd packages/framework && npm publish --tag next",
+    "framework:publish": "cd packages/framework && npm publish",
     "framework:all": "pnpm framework:build && pnpm framework:publish",
     "packages:update": "node ./scripts/update-package-versions.mjs",
     "packages:build": "sh ./scripts/build-packages.sh",
@@ -13,7 +13,7 @@
     "packages:all": "pnpm packages:update && pnpm packages:build && pnpm packages:publish",
     "plugin:create": "node ./scripts/create-plugin.mjs",
     "storage-adapter:create": "node ./scripts/create-storage-adapter.mjs",
-    "build-publish-all": "pnpm framework:build && pnpm framework:publish && pnpm packages:update && pnpm packages:build && pnpm packages:publish",
+    "build-publish-all": "npm run framework:build && npm run framework:publish && npm run packages:update && npm run packages:build && npm run packages:publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
