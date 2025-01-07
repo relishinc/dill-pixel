@@ -19,4 +19,6 @@ jobs:
           release-type: node
           default-branch: main
           package-name: release-please-action
+          release-as: '4.0.0'
+          bootstrap-sha: ${{ github.sha }}
           token: ${{ secrets.GITHUB_TOKEN }}
