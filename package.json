@@ -14,6 +14,7 @@
     "plugin:create": "node ./scripts/create-plugin.mjs",
     "storage-adapter:create": "node ./scripts/create-storage-adapter.mjs",
     "build-publish-all": "npm run framework:build && npm run framework:publish && npm run packages:update && npm run packages:build && npm run packages:publish",
+    "docs:build": "turbo build --filter={./apps/docs}",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
