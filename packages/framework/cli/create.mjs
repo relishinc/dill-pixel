@@ -171,10 +171,13 @@ export async function create(cwd = '.', packageManagerOverride) {
   // derive an application name from the project name by camel casing it
   const applicationNameForPkg = appName.replace(/\s+/g, '-').replace('_', '-').toLowerCase();
 
-  const applicationName = applicationNameForPkg
-    .split('-')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join('');
+  const applicationName =
+    applicationNameForPkg.indexOf('-') === -1
+      ? appName
+      : applicationNameForPkg
+          .split('-')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join('');
 
   await write(cwd, {
     name,

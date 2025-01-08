@@ -100,6 +100,7 @@
     "@esotericsoftware/spine-core": "~4.2.66",
     "@pixi/sound": "^6.0.1",
     "@types/stats.js": "^0.17.3",
+    "@typescript-eslint/typescript-estree": "^8.19.1",
     "csv-parse": "^5.5.5",
     "gsap": "^3.12.5",
     "kleur": "^4.1.5",
