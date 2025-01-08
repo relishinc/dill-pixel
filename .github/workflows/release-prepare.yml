@@ -36,7 +36,7 @@ jobs:
           version: 8
 
       - name: Install dependencies
-        run: pnpm install --filter={!dill-pixel-docs,!dill-pixel-examples-v8}
+        run: pnpm --filter=\!dill-pixel-docs --filter=\!dill-pixel-examples-v8 install
 
       - name: Publish to npm
         run: pnpm run build-publish-all
