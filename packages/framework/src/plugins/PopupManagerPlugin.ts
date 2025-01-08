@@ -1,10 +1,10 @@
-import type {IPopup, PopupConfig, PopupConstructor} from '../ui';
-import {Container} from '../display';
-import {Signal} from '../signals';
-import {bindAllMethods, getLastMapEntry} from '../utils';
-import type {IPlugin} from './Plugin';
-import {Plugin} from './Plugin';
-import type {IApplication} from '../core';
+import type { IApplication } from '../core';
+import { Container } from '../display';
+import { Signal } from '../signals';
+import type { IPopup, PopupConfig, PopupConstructor } from '../ui';
+import { bindAllMethods, getLastMapEntry } from '../utils';
+import type { IPlugin } from './Plugin';
+import { Plugin } from './Plugin';
 
 /**`
  * Interface for PopupManager
@@ -12,12 +12,13 @@ import type {IApplication} from '../core';
 export interface IPopupManagerPlugin extends IPlugin {
   readonly view: Container; // The view of the PopupManager
   readonly current: IPopup | undefined; // The current active popup
+  readonly hasActivePopups: boolean; // Whether there are any active popups
   readonly popupCount: number; // The count of popups
   readonly currentPopupId: string | number | undefined; // The id of the current popup
   // signals
   onShowPopup: Signal<(detail: PopupSignalDetail) => void>; // Signal for when a popup is shown
   onHidePopup: Signal<(detail: PopupSignalDetail) => void>; // Signal for when a popup is hidden
-
+  onPopupChanged: Signal<(detail: PopupSignalDetail) => void>; // Signal for when a popup is changed
   // methods
   addPopup(id: string | number, popup: PopupConstructor): void; // Add a popup
 
@@ -41,6 +42,9 @@ export class PopupManagerPlugin extends Plugin implements IPopupManagerPlugin {
   // signals
   public onShowPopup: Signal<(detail: PopupSignalDetail) => void> = new Signal<(detail: PopupSignalDetail) => void>(); // Signal for when a popup is shown
   public onHidePopup: Signal<(detail: PopupSignalDetail) => void> = new Signal<(detail: PopupSignalDetail) => void>(); // Signal for when a popup is hidden
+  public onPopupChanged: Signal<(detail: PopupSignalDetail) => void> = new Signal<
+    (detail: PopupSignalDetail) => void
+  >(); // Signal for when a popup is changed
   private _popups: Map<string | number, PopupConstructor> = new Map(); // Map of popups
   private _activePopups: Map<string | number, IPopup> = new Map(); // Map of active popups
 
@@ -59,6 +63,10 @@ export class PopupManagerPlugin extends Plugin implements IPopupManagerPlugin {
       return undefined;
     }
     return this._activePopups.get(this._currentPopupId);
+  }
+
+  get hasActivePopups(): boolean {
+    return this._activePopups.size > 0;
   }
 
   /**
@@ -109,6 +117,7 @@ export class PopupManagerPlugin extends Plugin implements IPopupManagerPlugin {
       this._currentPopupId = id;
       this.onShowPopup.emit({ id, data: config?.data });
       instance.start();
+      this.onPopupChanged.emit({ id, data: config?.data });
       return instance;
     }
     return;
@@ -130,6 +139,7 @@ export class PopupManagerPlugin extends Plugin implements IPopupManagerPlugin {
       this._currentPopupId = getLastMapEntry(this._activePopups)?.[0] || undefined;
       this.onHidePopup.emit({ id, data });
       popup.end();
+      this.onPopupChanged.emit({ id, data });
       return popup;
     }
     return;
@@ -155,7 +165,7 @@ export class PopupManagerPlugin extends Plugin implements IPopupManagerPlugin {
   }
 
   protected getCoreSignals() {
-    return ['onShowPopup', 'onHidePopup'];
+    return ['onShowPopup', 'onHidePopup', 'onPopupChanged'];
   }
 
   /**

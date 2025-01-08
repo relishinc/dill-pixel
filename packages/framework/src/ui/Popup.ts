@@ -1,10 +1,9 @@
-import {ColorSource, DestroyOptions, Graphics, Sprite, Texture} from 'pixi.js';
+import { ColorSource, DestroyOptions, Container as PIXIContainer, Sprite, Texture } from 'pixi.js';
 
-import {Application} from '../Application';
-import type {IContainer} from '../display/Container';
-import {Container} from '../display/Container';
-import type {IFocusable} from '../plugins';
-import type {Size} from '../utils';
+import type { IContainer } from '../display/Container';
+import { Container } from '../display/Container';
+import type { IFocusable } from '../plugins';
+import type { Size } from '../utils';
 
 /**
  * Interface for Popup
@@ -13,7 +12,7 @@ export interface IPopup<T = any> extends IContainer {
   readonly id: string | number; // Unique identifier for the popup
   config: PopupConfig<T>; // Configuration for the popup
   view: Container; // The view of the popup
-  backing?: any; // The backing of the popup
+  backing?: PIXIContainer; // The backing of the popup
   isShowing: boolean; // Whether the popup is currently showing
   firstFocusableEntity?: IFocusable; // The first focusable entity in the popup
   data: T;
@@ -67,11 +66,10 @@ const defaultPopupConfig = { backing: true, closeOnEscape: true, closeOnPointerD
  * Class representing a Popup
  */
 export class Popup<T = any> extends Container implements IPopup<T> {
-  public static BACKING_TEXTURE: Texture;
   public isShowing: boolean = false;
   public firstFocusableEntity: IFocusable;
   public view: Container;
-  public backing?: Container;
+  public backing?: Sprite;
   public config: PopupConfig<T>;
 
   /**
@@ -99,26 +97,19 @@ export class Popup<T = any> extends Container implements IPopup<T> {
    * @param size - The size of the backing
    * @returns The backing container
    */
-  private static makeBacking(config: boolean | Partial<BackingConfig>, size: Size): Container {
+  private static makeBacking(config: boolean | Partial<BackingConfig>, size: Size): Sprite {
     let finalConfig = {};
     if (typeof config === 'object') {
       finalConfig = config;
     }
     const backingConfig: BackingConfig = Object.assign({ ...defaultBackingConfig }, finalConfig);
-    if (Popup.BACKING_TEXTURE === undefined) {
-      const gfx = new Graphics();
-      gfx.rect(0, 0, 100, 100).fill('white');
-      Popup.BACKING_TEXTURE = Application.getInstance().renderer.generateTexture(gfx);
-    }
-    const backingWrapper = new Container();
-    backingWrapper.sortableChildren = false;
-    const backing = backingWrapper.addChild(new Sprite(Popup.BACKING_TEXTURE));
+    const backing = new Sprite(Texture.WHITE);
     backing.anchor.set(0.5);
     backing.alpha = backingConfig.alpha;
     backing.tint = backingConfig.color;
-    backing.setSize(size.width, size.height);
-
-    return backingWrapper;
+    backing.width = size.width;
+    backing.height = size.height;
+    return backing;
   }
 
   initialize() {}

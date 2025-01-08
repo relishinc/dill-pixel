@@ -43,6 +43,7 @@ export interface ICoreSignals {
   // PopupManager;
   onShowPopup: Signal<(detail: PopupSignalDetail) => void>;
   onHidePopup: Signal<(detail: PopupSignalDetail) => void>;
+  onPopupChanged: Signal<(detail: PopupSignalDetail) => void>;
   // SceneManager;
   onSceneChangeStart: Signal<(detail: { exiting: string | null; entering: string }) => void>;
   onSceneChangeComplete: Signal<(detail: { current: string }) => void>;
