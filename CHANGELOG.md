@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.0.2](https://github.com/relishinc/dill-pixel/compare/v4.0.1...v4.0.2) (2025-01-08)
+
+
+### Bug Fixes
+
+* changed package.json updater to use main package.json version ([7591a86](https://github.com/relishinc/dill-pixel/commit/7591a86c0ca345cda090ce62e06f0b977dea9dd6))
+* simplify popup creation, added hasActivePopups getter ([5bc2799](https://github.com/relishinc/dill-pixel/commit/5bc2799230ebf2ae2398eeaa1845c914fc94e263))
+
 ## [4.0.1](https://github.com/relishinc/dill-pixel/compare/v4.0.0...v4.0.1) (2025-01-08)
 
 
