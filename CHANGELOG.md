@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.0.1](https://github.com/relishinc/dill-pixel/compare/v4.0.0...v4.0.1) (2025-01-08)
+
+
+### Bug Fixes
+
+* cli keeps application name in tact when no spaces or dashes present ([0566865](https://github.com/relishinc/dill-pixel/commit/05668653d9d66063027a220e9c18ba6c19b707ee))
+* include typescript-eslint/typescript-estree, ([0566865](https://github.com/relishinc/dill-pixel/commit/05668653d9d66063027a220e9c18ba6c19b707ee))
+* release please locked to 4.0.0 ([7783102](https://github.com/relishinc/dill-pixel/commit/778310248b22c069a735c996899a915bf9b5b0e9))
+
 ## [4.0.0](https://github.com/relishinc/dill-pixel/compare/v1.0.0...v4.0.0) (2025-01-07)
 
 
