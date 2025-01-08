@@ -36,18 +36,7 @@ jobs:
           version: 8
 
       - name: Install dependencies
-        run: pnpm install
-
-      - name: Build
-        run: pnpm run build
-
-      - name: Checkout repo 2
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Fetch tags
-        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+        run: pnpm install --filter={!dill-pixel-docs,!dill-pixel-examples-v8}
 
       - name: Publish to npm
         run: pnpm run build-publish-all
@@ -61,6 +50,14 @@ jobs:
           git add .
           git commit -m "Update version"
           git push
+
+      - name: Checkout repo 2
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Fetch tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
       - name: Delay 2
         run: sleep 10
