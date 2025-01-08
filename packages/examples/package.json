@@ -27,7 +27,6 @@
   "author": "Relish Digital<dev@reli.sh>",
   "license": "MIT",
   "devDependencies": {
-    "@relishinc/text-to-speech": "^1.4.0",
     "@types/dat.gui": "^0.7.13"
   },
   "dependencies": {
