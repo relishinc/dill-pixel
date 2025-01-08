@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.3](https://github.com/relishinc/dill-pixel/compare/v4.0.2...v4.0.3) (2025-01-08)
+
+
+### Bug Fixes
+
+* audio resuming on visibility change ([5349831](https://github.com/relishinc/dill-pixel/commit/5349831e5b0572fb6dfd033ad23d6a12d90eb2ab))
+
 ## [4.0.2](https://github.com/relishinc/dill-pixel/compare/v4.0.1...v4.0.2) (2025-01-08)
 
 
