@@ -26,6 +26,10 @@ export default class PopupScene extends BaseScene {
     this.app.popups.addPopup('two', ExamplePopup);
     this.app.popups.addPopup('three', ExamplePopup);
 
+    this.app.popups.onPopupChanged.connect(() => {
+      console.log(this.app.popups.hasActivePopups);
+    });
+
     this.buttonContainer = this.add.flexContainer({
       gap: 10,
       flexWrap: 'wrap',

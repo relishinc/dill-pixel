@@ -115,10 +115,14 @@ export class PopupManagerPlugin extends Plugin implements IPopupManagerPlugin {
       instance.afterShow();
       this._activePopups.set(id, instance);
       this._currentPopupId = id;
-      this.onShowPopup.emit({ id, data: config?.data });
-      instance.start();
-      this.onPopupChanged.emit({ id, data: config?.data });
-      return instance;
+      return new Promise((resolve) => {
+        this.app.ticker.addOnce(() => {
+          this.onShowPopup.emit({ id, data: config?.data });
+          instance.start();
+          this.onPopupChanged.emit({ id, data: config?.data });
+          resolve(instance);
+        });
+      });
     }
     return;
   }
@@ -137,10 +141,14 @@ export class PopupManagerPlugin extends Plugin implements IPopupManagerPlugin {
       this.view.removeChild(popup as any);
       this._activePopups.delete(id);
       this._currentPopupId = getLastMapEntry(this._activePopups)?.[0] || undefined;
-      this.onHidePopup.emit({ id, data });
-      popup.end();
-      this.onPopupChanged.emit({ id, data });
-      return popup;
+      return new Promise((resolve) => {
+        this.app.ticker.addOnce(() => {
+          this.onHidePopup.emit({ id, data });
+          popup.end();
+          this.onPopupChanged.emit({ id, data });
+          resolve(popup);
+        });
+      });
     }
     return;
   }

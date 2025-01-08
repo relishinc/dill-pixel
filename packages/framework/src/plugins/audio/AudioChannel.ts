@@ -1,3 +1,4 @@
+import { Logger } from '../../utils';
 import { IAudioInstance } from './AudioInstance';
 import { ChannelName, IAudioManagerPlugin } from './AudioManagerPlugin';
 
@@ -15,7 +16,13 @@ export interface IAudioChannel {
 
   updateVolume(): void;
 
+  restore(): void;
+
   destroy(): void;
+
+  pause(): void;
+
+  resume(): void;
 }
 
 export class AudioChannel<C extends ChannelName = ChannelName> {
@@ -72,6 +79,26 @@ export class AudioChannel<C extends ChannelName = ChannelName> {
     return instance;
   }
 
+  pause(): void {
+    this._sounds.forEach((sound) => {
+      try {
+        sound.pause();
+      } catch (error) {
+        Logger.error('Error pausing sound', sound.id, error);
+      }
+    });
+  }
+
+  resume(): void {
+    this._sounds.forEach((sound) => {
+      try {
+        sound.resume();
+      } catch (error) {
+        Logger.error('Error resuming sound', sound.id, error);
+      }
+    });
+  }
+
   _setMuted(): void {
     this._sounds.forEach((sound) => {
       sound.muted = this._muted;
@@ -79,10 +106,17 @@ export class AudioChannel<C extends ChannelName = ChannelName> {
   }
 
   updateVolume() {
-    this._sounds.forEach((sound) => {
-      sound.updateVolume();
+    this.manager.app.ticker.addOnce(() => {
+      this._sounds.forEach((sound) => {
+        sound.updateVolume();
+      });
+      this.manager.onChannelVolumeChanged.emit({ channel: this, volume: this._volume });
     });
-    this.manager.onChannelVolumeChanged.emit({ channel: this, volume: this._volume });
+  }
+
+  restore() {
+    this.muted = this._muted;
+    this.volume = this._volume;
   }
 
   destroy() {}

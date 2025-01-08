@@ -13,7 +13,7 @@
     "packages:all": "pnpm packages:update && pnpm packages:build && pnpm packages:publish",
     "plugin:create": "node ./scripts/create-plugin.mjs",
     "storage-adapter:create": "node ./scripts/create-storage-adapter.mjs",
-    "build-publish-all": "npm run framework:build && npm run framework:publish && npm run packages:update && npm run packages:build && npm run packages:publish",
+    "build-publish-all": "npm run packages:update && npm run framework:build && npm run framework:publish && npm run packages:build && npm run packages:publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

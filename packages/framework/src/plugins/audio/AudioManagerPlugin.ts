@@ -519,8 +519,10 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
     if (this._storedVolume !== undefined) {
       this.masterVolume = this._storedVolume;
     }
+    this._channels.forEach((channel) => {
+      channel.restore();
+    });
     this.muted = this._muted;
-    this.resume();
   }
 
   /**

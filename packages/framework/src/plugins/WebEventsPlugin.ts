@@ -1,9 +1,9 @@
 import { Application } from '../Application';
-import type { IPlugin } from './Plugin';
-import { Plugin } from './Plugin';
 import { Signal } from '../signals';
 import type { Size } from '../utils';
-import { bindAllMethods } from '../utils';
+import { bindAllMethods, debounce } from '../utils';
+import type { IPlugin } from './Plugin';
+import { Plugin } from './Plugin';
 
 export interface IWebEventsPlugin extends IPlugin {
   onResize: Signal<(size: { width: number; height: number }) => void>;
@@ -56,7 +56,7 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
    * Called when the browser visibility changes. Passes the `hidden` flag of the document to all callbacks.
    */
   private _onVisibilityChanged(): void {
-    this.onVisibilityChanged.emit(!document.hidden);
+    this._emitVisibilityChanged(!document.hidden);
   }
 
   /**
@@ -79,7 +79,7 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
    * We're just mimicking the `visibilitychange` event here.
    */
   private _onPageHide() {
-    this.onVisibilityChanged.emit(false);
+    this._emitVisibilityChanged(false);
   }
 
   /**
@@ -89,6 +89,12 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
    * @private
    */
   private _onPageShow() {
-    this.onVisibilityChanged.emit(true);
+    this._emitVisibilityChanged(true);
+  }
+
+  private _emitVisibilityChanged(value: boolean) {
+    debounce(() => {
+      this.onVisibilityChanged.emit(value);
+    }, 25);
   }
 }

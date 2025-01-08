@@ -8,6 +8,7 @@ import type {
 } from '../../plugins';
 import { ActionContext } from '../../plugins';
 import { Signal } from '../../signals';
+import type { DataChangeSignalDetail } from '../../store/adapters/DataAdapter';
 import type { Size } from '../../utils';
 
 export interface ICoreSignals {
@@ -54,4 +55,6 @@ export interface ICoreSignals {
   onLoadProgress: Signal<(progress: number) => void>;
   onLoadComplete: Signal<() => void>;
   onError: Signal<(error: Error) => void>;
+  // DataAdapter;
+  onDataChange: Signal<(detail: DataChangeSignalDetail) => void>;
 }

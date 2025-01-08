@@ -30,7 +30,7 @@ export interface ICoreFunctions {
   // i18nPlugin
   setLocale(localeId: string): void;
   t(key: string, params?: i18nTParams, locale?: string): string;
-
+  translate(key: string, params?: i18nTParams, locale?: string): string;
   // InputPlugin
   isControllerActive(controller: InputController): boolean;
   isGamepadActive(gamepad: Gamepad): boolean;

@@ -1,4 +1,5 @@
 import type { IApplication } from '../../core';
+import { Signal } from '../../signals';
 import { StorageAdapter } from './StorageAdapter';
 
 export type DataSchema = {
@@ -31,12 +32,19 @@ export interface IDataAdapterOptions<D extends DataSchema = DataSchema> {
   backupKeys: Array<keyof D>;
 }
 
+export interface DataChangeSignalDetail<D extends DataSchema = DataSchema> {
+  key?: keyof D | Array<keyof D>;
+  value?: D[keyof D];
+  restore?: boolean;
+}
+
 export interface IDataAdapter<D extends DataSchema = DataSchema> {
   load<K extends keyof D>(key: K): D[K] | undefined;
   save<K extends keyof D>(key: K, data: D[K]): D;
   set(data: DeepPartial<D>, merge?: boolean): D;
   get(): D;
   clear<K extends keyof D>(key: K): void;
+  onDataChange: Signal<(detail: DataChangeSignalDetail<D>) => void>;
 }
 
 /**
@@ -44,13 +52,22 @@ export interface IDataAdapter<D extends DataSchema = DataSchema> {
  */
 export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapter implements IDataAdapter<D> {
   public data: D;
+
+  public onDataChange: Signal<(detail: DataChangeSignalDetail<D>) => void> = new Signal();
+
   private backupKeys: Array<keyof D> = [];
   private backupAll: boolean = false;
   private namespace: string = '';
   private overrideWithLocalStorage: boolean = true;
+
   constructor(public readonly id: string = 'data') {
     super(id);
   }
+
+  public getCoreSignals(): string[] {
+    return ['onDataChange'];
+  }
+
   /**
    * Destroys the adapter.
    */
@@ -89,6 +106,7 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
     if (this.backupAll || this.backupKeys.includes(key)) {
       this.backupToLocalStorage([key]);
     }
+    this.onDataChange.emit({ key, value: data });
     return data;
   }
 
@@ -111,6 +129,10 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
     if (this.backupAll || this.backupKeys.length > 0) {
       this.backupToLocalStorage(this.backupKeys);
     }
+    this.onDataChange.emit({
+      key: Object.keys(data)?.length === 1 ? Object.keys(data)[0] : Object.keys(data),
+      value: data[Object.keys(data)[0]] as D[keyof D],
+    });
     return this.data;
   }
 
@@ -152,6 +174,7 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
         this.data[key] = JSON.parse(loadedData);
       }
     });
+    this.onDataChange.emit({ restore: true });
   }
 }
 

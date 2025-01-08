@@ -1,10 +1,10 @@
-import {Assets} from 'pixi.js';
-import {IApplication} from '../core';
-import {Signal} from '../signals';
-import type {ImportListItem, ImportListItemModule} from '../utils';
-import {getDynamicModuleFromImportListItem, Logger} from '../utils';
-import type {IPlugin} from './Plugin';
-import {Plugin} from './Plugin';
+import { Assets } from 'pixi.js';
+import { IApplication } from '../core';
+import { Signal } from '../signals';
+import type { ImportListItem, ImportListItemModule } from '../utils';
+import { getDynamicModuleFromImportListItem, Logger } from '../utils';
+import type { IPlugin } from './Plugin';
+import { Plugin } from './Plugin';
 
 /**
  * Type definition for i18n dictionary.
@@ -179,6 +179,17 @@ export class i18nPlugin extends Plugin implements Ii18nPlugin {
   }
 
   /**
+   * Translates a key into a string (alias for t)
+   * @param key The key to translate.
+   * @param params The parameters to replace in the string.
+   * @param locale The locale to use for translation.
+   * @returns The translated string.
+   */
+  translate(key: string, params?: i18nTParams, locale: string = this._locale): string {
+    return this.t(key, params, locale);
+  }
+
+  /**
    * Parses the input string and replaces anything in between {} braces, assuming it is a key in the dictionary.
    * @param {string} input
    * @param locale
@@ -220,7 +231,7 @@ export class i18nPlugin extends Plugin implements Ii18nPlugin {
   }
 
   protected getCoreFunctions(): string[] {
-    return ['t', 'setLocale'];
+    return ['t', 'translate', 'setLocale'];
   }
 
   protected getCoreSignals(): string[] {
