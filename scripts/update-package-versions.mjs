@@ -7,11 +7,14 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = resolve(dirname(__filename), '../');
 
+const mainPackageJsonPath = resolve(__dirname, './package.json');
+const mainPackageJson = JSON.parse(readFileSync(mainPackageJsonPath, 'utf8'));
+const { version: dillPixelVersion } = mainPackageJson;
+
 // Load the framework package.json to get the versions
 const frameworkPackageJsonPath = resolve(__dirname, './packages/framework/package.json');
 const frameworkPackageJson = JSON.parse(readFileSync(frameworkPackageJsonPath, 'utf8'));
 const {
-  version: dillPixelVersion,
   dependencies: { 'pixi.js': pixiJsVersion, '@pixi/sound': pixiSoundVersion },
 } = frameworkPackageJson;
 
@@ -50,7 +53,7 @@ function updatePackageJson(packageJsonPath) {
 
 // Glob pattern to find package.json files
 const globPattern =
-  '{./packages/plugins/*/package.json,./packages/storage-adapters/*/package.json,./packages/examples/package.json,./packages/templates/*/package.json}';
+  '{./packages/framework/package.json,./packages/plugins/*/package.json,./packages/storage-adapters/*/package.json,./packages/examples/package.json,./packages/templates/*/package.json}';
 
 function run() {
   const files = glob.sync(globPattern);
