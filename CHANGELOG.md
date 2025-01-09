@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.5](https://github.com/relishinc/dill-pixel/compare/v4.0.4...v4.0.5) (2025-01-09)
+
+
+### Bug Fixes
+
+* audio channel pausing / resuming ([d490062](https://github.com/relishinc/dill-pixel/commit/d49006289bf8a321c835551f335e9a80b3edad6c))
+
 ## [4.0.4](https://github.com/relishinc/dill-pixel/compare/v4.0.3...v4.0.4) (2025-01-09)
 
 
