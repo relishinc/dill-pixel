@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-google-analytics",
-  "version": "4.0.5",
+  "version": "4.0.6",
   "description": "",
   "files": [
     "lib",
@@ -29,7 +29,7 @@
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
-    "dill-pixel": "4.0.5"
+    "dill-pixel": "4.0.6"
   },
   "dependencies": {
     "@types/gtag.js": "^0.0.20"
