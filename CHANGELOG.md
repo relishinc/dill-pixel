@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.6](https://github.com/relishinc/dill-pixel/compare/v4.0.5...v4.0.6) (2025-01-09)
+
+
+### Bug Fixes
+
+* removed typing from DataChangeSignalDetail ([1b776b3](https://github.com/relishinc/dill-pixel/commit/1b776b3207f0e93f22c2466dc28f1df72d963fc9))
+
 ## [4.0.5](https://github.com/relishinc/dill-pixel/compare/v4.0.4...v4.0.5) (2025-01-09)
 
 
