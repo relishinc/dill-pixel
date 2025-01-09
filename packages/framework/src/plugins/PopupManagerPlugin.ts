@@ -110,11 +110,15 @@ export class PopupManagerPlugin extends Plugin implements IPopupManagerPlugin {
       const instance = this.view.add.existing(new popup(id, config));
       instance.initialize();
       this.app.focus.clearFocus();
+
       await instance.show();
+
       this.app.focus.setFocusLayer(id);
       instance.afterShow();
+
       this._activePopups.set(id, instance);
       this._currentPopupId = id;
+
       return new Promise((resolve) => {
         this.app.ticker.addOnce(() => {
           this.onShowPopup.emit({ id, data: config?.data });

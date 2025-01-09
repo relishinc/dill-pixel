@@ -547,7 +547,7 @@ export class Application<
   /**
    * Get a storage adapter by id
    * @param {string} adapterId
-   * @returns {IStorageAdapter}
+   * @returns {IDataAdapter}
    */
   public get data(): IDataAdapter<D> {
     return this.store.getAdapter('data') as unknown as IDataAdapter<D>;

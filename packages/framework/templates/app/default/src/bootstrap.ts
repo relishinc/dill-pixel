@@ -7,7 +7,8 @@ import 'dill-pixel-globals'; // required for globals like the scenes list
  * Bootstrap the application
  */
 async function bootstrap() {
-  await create<__APPLICATION_NAME__>(config, __APPLICATION_NAME__);
+  const app = await create<__APPLICATION_NAME__>(config, __APPLICATION_NAME__);
+  app.data.onDataChange.connectOnce((detail) => {});
 }
 
 void bootstrap();

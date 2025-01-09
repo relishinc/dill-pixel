@@ -32,9 +32,9 @@ export interface IDataAdapterOptions<D extends DataSchema = DataSchema> {
   backupKeys: Array<keyof D>;
 }
 
-export interface DataChangeSignalDetail<D extends DataSchema = DataSchema> {
-  key?: keyof D | Array<keyof D>;
-  value?: D[keyof D];
+export interface DataChangeSignalDetail {
+  key?: any;
+  value?: any;
   restore?: boolean;
 }
 
@@ -44,7 +44,7 @@ export interface IDataAdapter<D extends DataSchema = DataSchema> {
   set(data: DeepPartial<D>, merge?: boolean): D;
   get(): D;
   clear<K extends keyof D>(key: K): void;
-  onDataChange: Signal<(detail: DataChangeSignalDetail<D>) => void>;
+  onDataChange: Signal<(detail: DataChangeSignalDetail) => void>;
 }
 
 /**
@@ -53,7 +53,7 @@ export interface IDataAdapter<D extends DataSchema = DataSchema> {
 export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapter implements IDataAdapter<D> {
   public data: D;
 
-  public onDataChange: Signal<(detail: DataChangeSignalDetail<D>) => void> = new Signal();
+  public onDataChange: Signal<(detail: DataChangeSignalDetail) => void> = new Signal();
 
   private backupKeys: Array<keyof D> = [];
   private backupAll: boolean = false;
