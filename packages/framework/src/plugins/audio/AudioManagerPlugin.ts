@@ -682,9 +682,6 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
    * @private
    */
   private _setMuted(): void {
-    this._channels.forEach((channel) => {
-      channel.muted = this._muted;
-    });
     if (this._muted) {
       sound.muteAll();
     } else {
