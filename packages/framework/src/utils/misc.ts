@@ -28,13 +28,18 @@ type DebouncedFunction<T extends (...args: any[]) => any> = (...args: Parameters
  * @example window.addEventListener('resize', debounced);
  */
 export function debounce<T extends (...args: any[]) => any>(func: T, wait: number): DebouncedFunction<T> {
-  let timeoutId: any;
-  return function (...args: Parameters<T>) {
-    if (timeoutId !== undefined) {
+  let timeoutId: NodeJS.Timeout | null = null;
+
+  return function (this: any, ...args: Parameters<T>) {
+    // Clear existing timeout if any
+    if (timeoutId) {
       clearTimeout(timeoutId);
     }
+
+    // Set new timeout
     timeoutId = setTimeout(() => {
-      func(...args);
+      func.apply(this, args);
+      timeoutId = null;
     }, wait);
   };
 }

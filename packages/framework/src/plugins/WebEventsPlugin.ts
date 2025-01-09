@@ -20,6 +20,10 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
   public onResize: Signal<(size: Size) => void> = new Signal<(size: Size) => void>();
   public onVisibilityChanged: Signal<(visible: boolean) => void> = new Signal<(visible: boolean) => void>();
 
+  private _debouncedEmitVisibility = debounce((value: boolean) => {
+    this.onVisibilityChanged.emit(value);
+  }, 1);
+
   /**
    * Creates callback arrays and registers to web events.
    */
@@ -93,8 +97,6 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
   }
 
   private _emitVisibilityChanged(value: boolean) {
-    debounce(() => {
-      this.onVisibilityChanged.emit(value);
-    }, 25);
+    this._debouncedEmitVisibility(value);
   }
 }

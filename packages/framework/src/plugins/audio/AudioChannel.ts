@@ -47,6 +47,7 @@ export class AudioChannel<C extends ChannelName = ChannelName> {
 
   set muted(value: boolean) {
     this._muted = value;
+    this.manager.onChannelMuted.emit({ channel: this, muted: value });
     this._setMuted();
   }
 
@@ -115,6 +116,7 @@ export class AudioChannel<C extends ChannelName = ChannelName> {
   }
 
   restore() {
+    console.log('restore', this.name, this._muted, this._volume);
     this.muted = this._muted;
     this.volume = this._volume;
   }

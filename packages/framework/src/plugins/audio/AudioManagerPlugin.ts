@@ -13,6 +13,7 @@ import TweenVars = gsap.TweenVars;
 
 export type SoundDetail = { id: string; instance: IAudioInstance; channelName: string };
 export type ChannelVolumeDetail = { channel: IAudioChannel; volume: number };
+export type ChannelMutedDetail = { channel: IAudioChannel; muted: boolean };
 export type ChannelName = 'music' | 'sfx' | 'voiceover' | (string & {});
 
 export interface IAudioManagerPlugin<C extends ChannelName = ChannelName> extends IPlugin {
@@ -21,6 +22,7 @@ export interface IAudioManagerPlugin<C extends ChannelName = ChannelName> extend
   onMasterVolumeChanged: Signal<(volume: number) => void>;
   onChannelVolumeChanged: Signal<(detail: ChannelVolumeDetail) => void>;
   onMuted: Signal<(muted: boolean) => void>;
+  onChannelMuted: Signal<(detail: ChannelMutedDetail) => void>;
 
   masterVolume: number;
   muted: boolean;
@@ -112,6 +114,14 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
   public onChannelVolumeChanged: Signal<(detail: ChannelVolumeDetail) => void> = new Signal<
     (detail: ChannelVolumeDetail) => void
   >();
+  /**
+   * Signal that is emitted when a channel is muted or unmuted.
+   * The callback function receives a ChannelMutedDetail object.
+   */
+  public onChannelMuted: Signal<(detail: ChannelMutedDetail) => void> = new Signal<
+    (detail: ChannelMutedDetail) => void
+  >();
+
   private _storedVolume: number | undefined = undefined;
   private _paused: boolean = false;
   private _idMap: Map<string, string> = new Map();
@@ -212,6 +222,7 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
    * @returns {Promise<void>}
    */
   public initialize(app: IApplication): Promise<void> {
+    sound.disableAutoPause = true;
     if (typeof app?.manifest === 'object') {
       this.addAllFromManifest(app.manifest);
     }
@@ -512,10 +523,12 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
    * Restores the audio state after it has been suspended.
    */
   public async restore() {
+    Logger.log('AudioManagerPlugin:: restore', this._muted, this._storedVolume);
     const ctx = sound?.context?.audioContext;
     if (ctx) {
       await ctx.resume();
     }
+    this.resume();
     if (this._storedVolume !== undefined) {
       this.masterVolume = this._storedVolume;
     }
@@ -596,7 +609,14 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
   }
 
   protected getCoreSignals(): string[] {
-    return ['onSoundStarted', 'onSoundEnded', 'onMuted', 'onMasterVolumeChanged', 'onChannelVolumeChanged'];
+    return [
+      'onSoundStarted',
+      'onSoundEnded',
+      'onMuted',
+      'onMasterVolumeChanged',
+      'onChannelVolumeChanged',
+      'onChannelMuted',
+    ];
   }
 
   private _verifySoundId(soundId: string): string {

@@ -1,4 +1,5 @@
 import type {
+  ChannelMutedDetail,
   ChannelVolumeDetail,
   FocusChangeDetail,
   IAudioInstance,
@@ -18,6 +19,7 @@ export interface ICoreSignals {
   onMuted: Signal<(muted: boolean) => void>;
   onMasterVolumeChanged: Signal<(volume: number) => void>;
   onChannelVolumeChanged: Signal<(detail: ChannelVolumeDetail) => void>;
+  onChannelMuted: Signal<(detail: ChannelMutedDetail) => void>;
   // VoiceOverPlugin;
   onVoiceOverStart: Signal<(instance: IAudioInstance) => void>;
   onVoiceOverPaused: Signal<(instance: IAudioInstance) => void>;
