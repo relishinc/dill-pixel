@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.4](https://github.com/relishinc/dill-pixel/compare/v4.0.3...v4.0.4) (2025-01-09)
+
+
+### Bug Fixes
+
+* stop muting all channels when  is used ([bfd0d59](https://github.com/relishinc/dill-pixel/commit/bfd0d59717c14999885d877fb69048c1d77a492f))
+
 ## [4.0.3](https://github.com/relishinc/dill-pixel/compare/v4.0.2...v4.0.3) (2025-01-08)
 
 
