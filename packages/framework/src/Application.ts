@@ -31,6 +31,10 @@ import type { ICaptionsPlugin } from './plugins/captions';
 import { defaultPlugins } from './plugins/defaults';
 import { Signal } from './signals';
 
+function getDefaultResolution() {
+  return typeof window !== 'undefined' ? (window.devicePixelRatio > 1 ? 2 : 1) : 2;
+}
+
 const defaultApplicationOptions: Partial<IApplicationOptions> = {
   antialias: false,
   autoStart: true,
@@ -49,7 +53,7 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   sharedTicker: true,
   view: undefined,
   autoDensity: false,
-  resolution: Math.max(window.devicePixelRatio, 2),
+  resolution: getDefaultResolution(), // must be 1 or 2
   // dill pixel options
   useHash: isDev,
   showSceneDebugMenu: isDev,
@@ -377,6 +381,15 @@ export class Application<
     }
     // initialize the logger
     Logger.initialize(this.config.logger);
+
+    // ensure the resolution is 1 or 2
+    if (this.config.resolution !== 1 && this.config.resolution !== 2) {
+      const userResolution = this.config.resolution;
+      this.config.resolution = getDefaultResolution();
+      Logger.warn(
+        `App resolution must be 1 or 2, setting to ${this.config.resolution} instead of ${userResolution}. Modify your app config to set the resolution to 1 or 2.`,
+      );
+    }
 
     await this.boot(this.config);
     await this.preInitialize(this.config);

@@ -129,12 +129,9 @@ export class ResizerPlugin extends Plugin implements IResizerPlugin {
     let canvasHeight = minHeight;
 
     if (this.app.config.resizeToContainer) {
-      canvasWidth = window.innerWidth;
-      canvasHeight = window.innerHeight;
-
-      const el = this.app.renderer.canvas?.parentElement;
+      const canvas = this.app.renderer.canvas;
+      const el = canvas?.parentElement;
       const bounds = el?.getBoundingClientRect();
-
       if (bounds) {
         canvasWidth = bounds.width;
         canvasHeight = bounds.height;
