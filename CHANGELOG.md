@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.7](https://github.com/relishinc/dill-pixel/compare/v4.0.6...v4.0.7) (2025-01-11)
+
+
+### Bug Fixes
+
+* ensure app resolution is set to 1 or 2 (currently resizer doesn't work otherwise) ([3485bb5](https://github.com/relishinc/dill-pixel/commit/3485bb5e8a70b3b0223a75447c219f15951850e6))
+
 ## [4.0.6](https://github.com/relishinc/dill-pixel/compare/v4.0.5...v4.0.6) (2025-01-09)
 
 
