@@ -2,50 +2,127 @@
 title: Copy and Content
 ---
 
-The `CopyManager` class is used to manage the copy and content of your game. It allows you to easily switch between languages and access strings in your game.
-The instance of the `CopyManager` class is available in the `copy` property of the `Application` class.
+import { Aside } from '@astrojs/starlight/components';
 
-```js
-// Get the current language ('en_ca' by default)
+Dill pixel provides robust internationalization (i18n) support through its i18n plugin, allowing you to manage text content in multiple languages.
 
-const lang = this.copy.currentLanguage;
+## Configuration
 
-// Load copy data
+Configure i18n in your `dill-pixel.config.ts`:
 
-this.copy.setData({
-  hello: {
-    en_ca: 'Hello',
-    es: 'Hola',
-    fr: 'Bonjour'
+```ts
+export const config = defineConfig({
+  // ... other config options
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'fr', 'es'],
+    loadAll: false,
+    files: [
+      { id: 'en', json: '/locales/en.json' },
+      { id: 'fr', json: '/locales/fr.json' },
+      { id: 'es', json: '/locales/es.json' },
+    ],
   },
-  goodbye: {
-    en_ca: 'Goodbye',
-    es: 'Adios',
-    fr: 'Au revoir'
-  },
+  ...
 });
-
-// Get a string
-
-this.copy.getCopy('hello'); // Outputs: 'Hello'
-
-// Change the language
-
-this.copy.changeLanguage('es');
-
-// Get a string
-
-this.copy.getCopy('hello'); // Outputs: 'Hola'
-
 ```
 
-Within a game state, you can access the `CopyManager` instance using `this.app.copy`:
+## Translation Files
 
-```js
-// MyGameState.ts
+Create JSON files for each supported language:
 
-// Get a string
-
-this.app.copy.getCopy('hello'); // Outputs: 'Hello'
-
+```json
+// locales/en.json
+{
+  "welcome": "Welcome to my game!",
+  "score": "Score: {points}",
+  "greeting": "[Hello|Hi|Hey] {name}!",
+  "level": "Level {number}"
+}
 ```
+
+<Aside type="tip">
+  The `loadAll` option determines whether all locale files are loaded at startup or on-demand when switching languages.
+</Aside>
+
+## Using Translations
+
+### Simple Translation
+
+```ts
+// Translation key: "welcome": "Welcome to my game!"
+const message = this.app.i18n.t('welcome');
+// Output: "Welcome to my game!"
+
+// Translation key: "score": "Score: {points}"
+const score = this.app.i18n.t('score', { points: 100 });
+// Output: "Score: 100"
+
+// Translation key: "greeting": "[Hello|Hi|Hey] {name}!"
+const greeting = this.app.i18n.t('greeting', {
+  name: 'Player',
+  variant: 'random',
+});
+// Output: Randomly selects one of:
+// "Hello Player!" or "Hi Player!" or "Hey Player!"
+
+// Translation key: "greeting": "[Hello|Hi|Hey] {name}!"
+const specificGreeting = this.app.i18n.t('greeting', {
+  name: 'Player',
+  variant: 1,
+});
+// Output: "Hi Player!" (selects second variant)
+```
+
+### Switching Languages
+
+```ts
+// Change the current locale
+await this.app.i18n.setLocale('fr');
+// Get current locale
+const currentLocale = this.app.i18n.locale;
+// Get available locales
+const availableLocales = this.app.i18n.locales;
+```
+
+### Listening for Language Changes
+
+```ts
+this.app.i18n.onLocaleChanged.connect((newLocale) => {
+console.log(Language changed to: ${newLocale});
+// Update UI elements, etc.
+});
+```
+
+### Parsing Text with Keys
+
+The parse method allows you to embed translation keys within text:
+
+```ts
+const text = this.app.i18n.parse('Current {level}');
+// If level="Level 5" in dictionary, outputs: "Current Level 5"
+```
+
+## Loading Additional Translations
+
+You can load additional translation files after initialization:
+
+```ts
+await this.app.i18n.loadLocale('fr');
+```
+
+<Aside type="caution">
+  Make sure the locale is included in your configured `locales` array before attempting to load it.
+</Aside>
+
+## Best Practices
+
+1. Use meaningful translation keys that describe the content
+2. Keep translations organized by feature or section
+3. Use parameters instead of concatenating strings
+4. Consider using variants for natural language variation
+5. Always provide fallback text for missing translations
+
+<Aside type="tip">
+  The i18n plugin automatically logs errors when translation keys are missing or when a locale dictionary isn't loaded.
+</Aside>

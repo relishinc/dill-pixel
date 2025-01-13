@@ -13,5 +13,6 @@ export class V8Application extends Application<Data, Contexts, ActionTypes> {
 
   setup() {
     this.actions('toggle_pause').connect(this.togglePause, 'highest');
+    this.actions('show_popup').connect((detail) => this.popups.showPopup(detail.id, detail.data));
   }
 }

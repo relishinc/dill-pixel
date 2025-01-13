@@ -10,11 +10,11 @@ import { Button, Camera, Container, Joystick, SpineAnimation, UICanvas } from 'd
 import { Texture, Ticker } from 'pixi.js';
 
 export const id = 'arcade-physics';
+export const active = false;
 export const debug = {
   group: 'Physics',
   label: 'Arcade',
 };
-
 export const plugins = ['arcade-physics'];
 export const assets = {
   preload: {
@@ -31,7 +31,7 @@ class Player extends Entity {
     super();
   }
 
-  protected declare _view: SpineAnimation;
+  declare protected _view: SpineAnimation;
 
   get view(): SpineAnimation {
     return this._view;

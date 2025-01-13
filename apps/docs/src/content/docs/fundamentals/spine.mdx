@@ -1,0 +1,84 @@
+---
+title: Spine
+---
+
+import { Aside, FileTree, TabItem, Tabs } from '@astrojs/starlight/components';
+
+dill pixel supports the [Spine format](https://esotericsoftware.com/) for animations.
+Spine is a 2D skeletal animation tool that allows you to animate 2D characters and objects
+in a way that is similar to how 3D animations are done. This allows for more complex
+animations and more efficient use of resources.
+
+## Getting Started
+
+To work with Spine in dill pixel you'll need to enabled dill pixel's Spine plugin in your game's configuration via the `useSpine` property.
+
+```ts
+// dill-pixel.config.ts
+import { defineConfig } from 'dill-pixel';
+
+export const config = defineConfig({
+  ...
+  useSpine: true,
+  ...
+});
+
+```
+
+## Loading a Spine Animation
+
+### 1. Include your spine animation in your assets:
+
+Ensure your spine animation is included in your assets folder and you've [configured your application's assets for assetpack](/guides/project-setup), (example below):
+
+<FileTree>
+- assets
+  - spine\{m\}
+    - spineboy-pro.skel
+    - spineboy-pro.atlas
+    - spineboy-pro.png
+
+</FileTree>
+
+### 2. Add the spine animation to your scene:
+
+```ts
+// import the SpineAnimation class from dill pixel
+import { SpineAnimation, Scene } from 'dill-pixel';
+
+// ensure your scene loads the spine assets
+export const assets = {
+  preload: {
+    bundles: ['spine'],
+  },
+};
+
+export default class SpineScene extends Scene {
+  // declare the spine animation variable
+  private _spine: SpineAnimation;
+
+  public async initialize() {
+    // add the spine animation to your scene
+    this._spine = this.add.spineAnimation({
+      data: 'spine/spineboy-pro.skel',
+      animationName: 'idle',
+      loop: true,
+    });
+  }
+}
+```
+
+## Playing an Animation
+
+To play an animation on the spine object, call `.setAnimation` with the animation name, and whether the animation should loop or not:
+
+<Aside type="tip">The third parameter, `trackIndex`, is optional and defaults to 0.</Aside>
+
+```ts
+// Play an animation
+this._spine.setAnimation('walk', true);
+
+// or play an animation on a specific track
+// the track index is optional and defaults to 0 (fine for most cases)
+// this._spine.setAnimation('walk', true, 1);
+```

@@ -178,7 +178,7 @@ export const config = defineConfig<Data>({
     files: [
       { id: 'en', module: EN },
       { id: 'fr', module: () => import('@/locales/fr') },
-      { id: 'fr-json', json: '/locales/fr.json' },
+      { id: 'fr-json', json: './locales/fr.json' },
     ],
   },
   captions: {

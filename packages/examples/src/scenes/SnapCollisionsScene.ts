@@ -7,7 +7,7 @@ export const id = 'snap-collisions';
 
 export const debug = {
   group: 'Physics',
-  label: 'Snap - Body types & Collisions',
+  label: 'Snap - Bodies & Collisions',
 };
 
 export const plugins = ['snap-physics'];

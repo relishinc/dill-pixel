@@ -1,0 +1,183 @@
+---
+title: Audio
+---
+
+The Audio Manager in dill-pixel provides a robust system for handling audio playback in your game, including support for multiple channels, volume control, fading, and more.
+
+## Audio Channels
+
+The Audio Manager comes with three default channels:
+
+- `music` - For background music
+- `sfx` - For sound effects
+- `voiceover` - For voice-over audio
+
+```ts
+// Access channels through the audio manager
+this.app.audio.music; // music channel
+this.app.audio.sfx; // sound effects channel
+this.app.audio.vo; // voice-over channel (alias for voiceover)
+```
+
+## Playing Audio
+
+To play a sound, use the `play` method:
+
+```ts
+// Basic playback
+await this.app.audio.play('click-sound', 'sfx');
+
+// With options
+await this.app.audio.play('background-music', 'music', {
+  loop: true,
+  volume: 0.5,
+});
+
+// returns an AudioInstance
+const audioInstance = await this.app.audio.play('background-music', 'music', {
+  loop: true,
+  volume: 0.5,
+});
+
+// Stop the audio
+audioInstance.stop();
+```
+
+## Loading Audio Assets
+
+Audio assets can be loaded in several ways:
+
+### 1. Through Asset Manifest
+
+```ts
+// In your scene or application
+export const assets = {
+  preload: {
+    assets: {
+      'click-sound': '/assets/audio/click.mp3',
+      'background-music': '/assets/audio/music.mp3',
+    },
+    // Or using bundles defined in your manifest
+    bundles: ['game-audio'],
+  },
+};
+```
+
+### 2. Manually Adding Audio
+
+```ts
+// Add individual sound
+this.app.audio.add({
+  name: 'click-sound',
+  src: '/assets/audio/click.mp3',
+});
+
+// Add from manifest
+this.app.audio.addAllFromManifest(manifest);
+
+// Add from bundle
+this.app.audio.addAllFromBundle('audio-bundle');
+```
+
+## Volume Control
+
+```typescript
+// Master volume
+this.app.audio.masterVolume = 0.5;
+
+// Channel volume
+this.app.audio.setChannelVolume('music', 0.8);
+
+// Multiple channels at once
+this.app.audio.setChannelVolume(['music', 'sfx'], 0.7);
+```
+
+## Fading Audio
+
+The Audio Manager provides several methods for smooth audio transitions:
+
+```typescript
+// Fade to specific volume
+await this.app.audio.fade('background-music', 'music', {
+  volume: 0.5,
+  duration: 2,
+});
+
+// Fade in
+await this.app.audio.fadeIn('background-music', 'music', {
+  duration: 1,
+});
+
+// Fade out
+await this.app.audio.fadeOut('background-music', 'music', {
+  duration: 1,
+});
+
+// Cross-fade between two tracks
+await this.app.audio.crossFade(
+  'current-music',
+  'new-music',
+  'music',
+  2, // duration in seconds
+);
+```
+
+## Global Audio Controls
+
+```typescript
+// Mute/Unmute all audio
+this.app.audio.mute();
+this.app.audio.unmute();
+
+// Pause/Resume all audio
+this.app.audio.pause();
+this.app.audio.resume();
+
+// Stop all audio
+this.app.audio.stopAll();
+
+// Stop all with fade
+this.app.audio.stopAll(true, 1); // fade duration in seconds
+```
+
+## Event Handling
+
+The Audio Manager provides several signals you can listen to:
+
+```typescript
+// Sound started playing
+this.app.audio.onSoundStarted.connect((detail) => {
+  console.log(`Sound ${detail.id} started in ${detail.channelName} channel`);
+});
+
+// Sound finished playing
+this.app.audio.onSoundEnded.connect((detail) => {
+  console.log(`Sound ${detail.id} ended in ${detail.channelName} channel`);
+});
+
+// Volume changes
+this.app.audio.onMasterVolumeChanged.connect((volume) => {
+  console.log(`Master volume changed to ${volume}`);
+});
+
+this.app.audio.onChannelVolumeChanged.connect((detail) => {
+  console.log(`Channel ${detail.channel} volume changed to ${detail.volume}`);
+});
+
+// Mute state changes
+this.app.audio.onMuted.connect((muted) => {
+  console.log(`Audio ${muted ? 'muted' : 'unmuted'}`);
+});
+```
+
+## Custom Channels
+
+You can create additional audio channels beyond the default ones:
+
+```typescript
+// Create a new channel
+this.app.audio.createChannel('ambient');
+
+// Use the new channel
+await this.app.audio.play('wind-sound', 'ambient');
+```

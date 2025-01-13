@@ -1,0 +1,218 @@
+---
+title: Data Management
+description: Learn how to manage and persist data in your dill-pixel application
+---
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Overview
+
+dill pixel provides a robust data management system through its `DataAdapter` class. This system allows you to:
+
+- Store and retrieve game data
+- Persist data to localStorage
+- Listen for data changes
+- Selectively backup specific data keys
+
+## Basic Configuration
+
+Configure data management in your `dill-pixel.config.ts`:
+
+```ts
+export type Data = {
+  score: number;
+  playerName: string;
+  settings: {
+    soundEnabled: boolean;
+    musicVolume: number;
+  };
+};
+export const config = defineConfig<Data>({
+  // ... other config options
+  data: {
+    // Initial data values
+    initial: {
+      score: 0,
+      playerName: '',
+      settings: {
+        soundEnabled: true,
+        musicVolume: 0.5,
+      },
+    },
+    // Keys to backup to localStorage
+    backupKeys: ['settings'],
+    // Whether to backup all data (alternative to specifying keys)
+    backupAll: false,
+    // Optional namespace for localStorage keys
+    namespace: 'my-game',
+  },
+});
+```
+
+## Data Manipulation Methods
+
+The DataAdapter provides several methods for managing game data. Each has specific use cases and behaviors.
+
+### save() Method
+
+The `save()` method updates a single key and triggers localStorage backup if configured:
+
+```ts
+// Updates a single value and triggers backup if key is in backupKeys
+this.app.data.save('score', 100);
+
+// Type-safe usage with nested objects
+this.app.data.save('settings', {
+  soundEnabled: true,
+  musicVolume: 0.5,
+});
+```
+
+<Aside type="tip">
+  `save()` emits a data change event with both the key and new value, making it ideal for tracking specific field
+  updates.
+</Aside>
+
+### set() Method
+
+The `set()` method allows updating multiple values at once, with optional deep merging:
+
+```ts
+// Update multiple values with deep merge (default)
+this.app.data.set({
+  score: 100,
+  settings: {
+    soundEnabled: false, // Only updates soundEnabled, preserves other settings
+  },
+});
+
+// Replace entire data object (no merge)
+this.app.data.set(
+  {
+    score: 0,
+    settings: {
+      soundEnabled: true,
+      musicVolume: 1.0,
+    },
+  },
+  false,
+);
+```
+
+<Aside type="caution">
+  When `merge: false`, the entire data object is replaced. Be sure to include all required fields.
+</Aside>
+
+### get() and load() Methods
+
+Two methods are available for retrieving data:
+
+```ts
+// Get entire data object
+const allData = this.app.data.get();
+
+// Get specific field
+const score = this.app.data.load('score');
+const settings = this.app.data.load('settings');
+```
+
+Key differences:
+
+- `get()`: Returns the entire data object
+- `load()`: Returns a specific field value with type safety
+
+### clear() Method
+
+The `clear()` method removes data both from memory and localStorage:
+
+```ts
+// Remove score from memory and localStorage
+this.app.data.clear('score');
+```
+
+## Deep Merging Behavior
+
+When using `set()` with `merge: true` (default), the DataAdapter performs a deep merge:
+
+```ts
+// Initial data
+const data = {
+  settings: {
+    sound: { enabled: true, volume: 0.5 },
+    display: { fullscreen: false }
+  }
+};
+
+// Update with deep merge
+this.app.data.set({
+  settings: {
+    sound: { volume: 0.8 }
+  }
+});
+
+// Result:
+{
+  settings: {
+    sound: { enabled: true, volume: 0.8 },
+    display: { fullscreen: false }
+  }
+}
+```
+
+<Aside type="tip">If set up correctly, TypeScript will ensure type safety when working with data:</Aside>
+
+In `src/dill-pixel.config.ts`:
+
+```ts
+export type Data = {
+  score: number;
+  settings: {
+    sound: { enabled: boolean; volume: number };
+  };
+};
+```
+
+In `src/MyApplication.ts`
+
+```ts
+import { Application } from 'dill-pixel';
+import type { Data, Contexts, ActionTypes } from './dill-pixel.config';
+export class MyApplication extends Application<Data, Contexts, ActionTypes> {}
+```
+
+In `src/scenes/MyScene.ts`
+
+```ts
+import { Scene } from 'dill-pixel';
+export default class MyScene extends Scene<MyApplication> {
+  initialize() {
+    // TS error, invalid type for "score"
+    this.app.data.save('score', 'invalid');
+  }
+}
+```
+
+## Change Events
+
+All data modifications emit change events that you can listen to:
+
+```ts
+this.app.data.onDataChange.add((detail) => {
+  const { key, value, restore } = detail;
+
+  // Single key updates (from save())
+  if (typeof key === 'string') {
+    console.log(`${key} updated to:`, value);
+  }
+
+  // Multiple key updates (from set())
+  if (Array.isArray(key)) {
+    console.log('Updated keys:', key);
+  }
+
+  // Restoration from localStorage
+  if (restore) {
+    console.log('Data restored from localStorage');
+  }
+});
+```

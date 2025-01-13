@@ -1,7 +1,5 @@
 import { V8Application } from '@/V8Application';
-import { Actor } from '@dill-pixel/plugin-snap-physics/Actor';
-import { Solid } from '@dill-pixel/plugin-snap-physics/Solid';
-import { WithVelocity } from '@dill-pixel/plugin-snap-physics/mixins';
+import { Actor, Solid, WithVelocity } from '@dill-pixel/plugin-snap-physics';
 import { Signal, Size } from 'dill-pixel';
 import { Texture } from 'pixi.js';
 
@@ -75,7 +73,7 @@ export class BasicActor<T extends BasicActorConfig = BasicActorConfig> extends A
   }
 
   setColor() {
-    this.view.tint = this._active ? this.config.activeColor ?? this.config.color : this.config.color;
+    this.view.tint = this._active ? (this.config.activeColor ?? this.config.color) : this.config.color;
   }
 
   protected _setActive() {

@@ -1,0 +1,182 @@
+---
+title: Popups
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Dill pixel provides a robust popup system through its `PopupManagerPlugin`. Popups can be used to display modal content, alerts, or any other overlaid UI elements.
+
+## Basic Usage
+
+### 1. Create a Popup Class
+
+First, create a class that extends the base `Popup` class:
+
+```ts
+import { Container, Focusable, Interactive, IPopup, Popup } from 'dill-pixel';
+export class MyPopup extends Popup implements IPopup {
+  window: Container;
+  initialize() {
+    // Create your popup content
+    this.window = this.view.add.container();
+    // Add content to the window
+    const text = this.window.add.text({
+      text: this.config.data?.title ?? 'My Popup',
+      style: { fill: 'white' },
+    });
+  }
+  async show() {
+    // Animate your popup in
+    return gsap.to(this.window, {
+      alpha: 1,
+      duration: 0.3,
+    });
+  }
+  async hide() {
+    // Animate your popup out
+    return gsap.to(this.window, {
+      alpha: 0,
+      duration: 0.3,
+    });
+  }
+}
+```
+
+### 2. Register the Popup
+
+Register your popup with the popup manager in your scene's initialize method:
+
+```ts
+initialize() {
+  this.app.popups.addPopup('my-popup', MyPopup);
+}
+```
+
+### 3. Show the Popup
+
+You can show the popup in several ways:
+
+#### Directly
+
+```ts
+this.app.func.showPopup('my-popup', {
+  data: { title: 'Hello World' },
+});
+```
+
+#### Using an action
+
+```ts
+// in your dill-pixel.config.ts
+// define the action
+export const config = defineConfig({
+  actions: {
+    // allow the action to be used in any context
+    show_popup: { context: '*' },
+  },
+});
+
+// in your application file
+export class MyApp extends Application {
+  setup() {
+    // connect the action to the popup manager
+    this.action('show_popup').connect((detail: { id: string; data: any }) =>
+      this.popups.showPopup(detail.id, detail.data),
+    );
+  }
+}
+
+// in your scene
+
+// send the action
+this.app.sendAction('show_popup', {
+  id: 'my-popup',
+  data: { title: 'Hello World' },
+});
+```
+
+## Popup Configuration
+
+When showing a popup, you can pass configuration options:
+
+```ts
+his.app.func.showPopup('my-popup', {
+  // Close when ESC is pressed (default: true)
+  closeOnEscape: true,
+  // Close when clicking outside (default: true)
+  closeOnPointerDownOutside: true,
+  // Backing (overlay) configuration
+  backing: {
+    color: 0x000000,
+    alpha: 0.5,
+  },
+  // Custom data passed to popup
+  data: {
+    title: 'My Popup',
+    message: 'Hello World',
+  },
+});
+```
+
+# Handling Popup Events
+
+The popup manager provides several signals you can listen to:
+
+```ts
+// When a popup is shown
+this.app.popups.onShowPopup.connect((detail) => {
+console.log(Popup ${detail.id} shown);
+});
+// When a popup is hidden
+this.app.popups.onHidePopup.connect((detail) => {
+console.log(Popup ${detail.id} hidden);
+});
+// When the active popup changes
+this.app.popups.onPopupChanged.connect((detail) => {
+console.log(Active popup changed to ${detail.id});
+});
+
+
+```
+
+## Focus Management
+
+Popups automatically manage keyboard focus when shown. The popup's content will be focused, and focus will be trapped within the popup until it's closed.
+
+To specify the first focusable element in your popup:
+
+```ts
+// in your popup class
+initialize() {
+  this.closeButton = this.add.button({/*...config*/});
+  // Set as first focus target
+  this.firstFocusableEntity = this.closeButton;
+}
+```
+
+## Multiple Popups
+
+The popup manager supports multiple active popups. They will be stacked in the order they were shown, with the most recent popup on top.
+
+```ts
+// Show multiple popups
+await this.app.func.showPopup('popup1');
+await this.app.func.showPopup('popup2');
+// Check if there are active popups
+if (this.app.popups.hasActivePopups) {
+  // Get the current popup
+  const currentPopup = this.app.popups.current;
+}
+```
+
+## Cleaning Up
+
+Popups are automatically cleaned up when scenes change. You can also manually remove all popups:
+
+```ts
+// Remove all popups instantly
+this.app.popups.removeAllPopups();
+
+// Remove all popups with animation
+this.app.popups.removeAllPopups(true);
+```

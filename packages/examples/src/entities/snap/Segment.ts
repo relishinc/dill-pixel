@@ -25,8 +25,12 @@ export class Segment {
     return Application.getInstance();
   }
 
+  get physics() {
+    return this.app.getPlugin('snap-physics') as unknown as SnapPhysicsPlugin;
+  }
+
   get system() {
-    return (this.app.getPlugin('snap-physics') as unknown as SnapPhysicsPlugin).system;
+    return this.physics.system;
   }
 
   get x(): number {
