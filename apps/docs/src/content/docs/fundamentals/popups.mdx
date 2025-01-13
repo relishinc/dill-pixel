@@ -2,7 +2,7 @@
 title: Popups
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
 
 Dill pixel provides a robust popup system through its `PopupManagerPlugin`. Popups can be used to display modal content, alerts, or any other overlaid UI elements.
 
@@ -47,8 +47,14 @@ export class MyPopup extends Popup implements IPopup {
 Register your popup with the popup manager in your scene's initialize method:
 
 ```ts
-initialize() {
-  this.app.popups.addPopup('my-popup', MyPopup);
+// MyScene.ts
+
+import { Scene } from 'dill-pixel';
+export class MyScene extends Scene {
+  initialize() {
+    this.app.popups.addPopup('my-popup', MyPopup);
+  }
+  //...other scene code
 }
 ```
 
@@ -59,6 +65,7 @@ You can show the popup in several ways:
 #### Directly
 
 ```ts
+// from anywhere that has a reference to the app
 this.app.func.showPopup('my-popup', {
   data: { title: 'Hello World' },
 });
@@ -66,41 +73,56 @@ this.app.func.showPopup('my-popup', {
 
 #### Using an action
 
-```ts
-// in your dill-pixel.config.ts
-// define the action
+<Tabs>
+  <TabItem label={'dill-pixel.config.ts'}>
+    Register the action in your `dill-pixel.config.ts` file:
+    <Code
+      code={`// define the action
 export const config = defineConfig({
-  actions: {
-    // allow the action to be used in any context
-    show_popup: { context: '*' },
-  },
-});
-
-// in your application file
-export class MyApp extends Application {
-  setup() {
-    // connect the action to the popup manager
-    this.action('show_popup').connect((detail: { id: string; data: any }) =>
-      this.popups.showPopup(detail.id, detail.data),
-    );
-  }
-}
-
-// in your scene
-
-// send the action
-this.app.sendAction('show_popup', {
-  id: 'my-popup',
-  data: { title: 'Hello World' },
-});
-```
+    actions: {
+      // allow the action to be used in any context
+      show_popup: { context: '*' },
+    },
+});`}
+      lang="ts"
+    />
+  </TabItem>
+  <TabItem label={'MyApplication.ts'}>
+    Connect the action to the popup manager in your application file (or elsewhere):
+    <Code
+      code={`
+  export class MyApp extends Application {
+    setup() {
+      // connect the action to the popup manager
+      this.action('show_popup').connect((detail: { id: string; data: any }) =>
+        this.popups.showPopup(detail.id, detail.data),
+      );
+    }
+}`}
+      lang="ts"
+    />
+  </TabItem>
+  <TabItem label={'MyScene.ts'}>
+    Send the action from anywhere:
+    <Code
+      code={`
+  // send the action
+  this.app.sendAction('show_popup', {
+    id: 'my-popup',
+    data: { title: 'Hello World' },
+  });
+`}
+      lang="ts"
+    />
+  </TabItem>
+</Tabs>
 
 ## Popup Configuration
 
 When showing a popup, you can pass configuration options:
 
 ```ts
-his.app.func.showPopup('my-popup', {
+this.app.func.showPopup('my-popup', {
   // Close when ESC is pressed (default: true)
   closeOnEscape: true,
   // Close when clicking outside (default: true)
