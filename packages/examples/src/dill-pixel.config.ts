@@ -100,6 +100,7 @@ export const config = defineConfig<Data>({
   showSceneDebugMenu: true,
   useHash: true,
   useVoiceover: true,
+  defaultScene: 'assets',
   sceneGroupOrder: ['Framework', 'Display', 'Audio', 'UI', 'Accessibility', 'Physics', 'Rive', 'Storage Adapters'],
   data: {
     initial: {
