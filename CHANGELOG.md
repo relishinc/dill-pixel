@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.1.0](https://github.com/relishinc/dill-pixel/compare/v4.0.7...v4.1.0) (2025-01-14)
+
+
+### Features
+
+* added vite assetpack plugin ([125ae5c](https://github.com/relishinc/dill-pixel/commit/125ae5c13adbac84e0da6a035a2b982339c16b3b))
+
+
+### Bug Fixes
+
+* added text / bitmaptext examples, ([125ae5c](https://github.com/relishinc/dill-pixel/commit/125ae5c13adbac84e0da6a035a2b982339c16b3b))
+* scene management - group ordering, ([125ae5c](https://github.com/relishinc/dill-pixel/commit/125ae5c13adbac84e0da6a035a2b982339c16b3b))
+
 ## [4.0.7](https://github.com/relishinc/dill-pixel/compare/v4.0.6...v4.0.7) (2025-01-11)
 
 
