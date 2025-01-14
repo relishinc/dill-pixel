@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.2](https://github.com/relishinc/dill-pixel/compare/v4.1.1...v4.1.2) (2025-01-14)
+
+
+### Bug Fixes
+
+* upgraded all plugins to include debug information upon iniitialization ([9562611](https://github.com/relishinc/dill-pixel/commit/956261114c26f56773a8e36c349ce96b1aeec47b))
+
 ## [4.1.1](https://github.com/relishinc/dill-pixel/compare/v4.1.0...v4.1.1) (2025-01-14)
 
 
