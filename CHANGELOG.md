@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.1](https://github.com/relishinc/dill-pixel/compare/v4.1.0...v4.1.1) (2025-01-14)
+
+
+### Bug Fixes
+
+* addColoredBackground for container ([fa7de94](https://github.com/relishinc/dill-pixel/commit/fa7de94671536c6067c103dd0160116c34bb893f))
+
 ## [4.1.0](https://github.com/relishinc/dill-pixel/compare/v4.0.7...v4.1.0) (2025-01-14)
 
 
