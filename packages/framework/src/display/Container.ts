@@ -83,8 +83,7 @@ export class Container<A extends Application = Application>
     return Application.getInstance() as A;
   }
 
-  addColoredBackground(color?: number, alpha?: number): Sprite;
-  addColoredBackground(colorOrConfig: number | Partial<BackgroundConfig> = 0x0, alpha: number = 1): Sprite {
+  public addColoredBackground(colorOrConfig: number | Partial<BackgroundConfig> = 0x0, alpha: number = 1): Sprite {
     const defaultConfig = {
       color: 0x0,
       width: this.app.size.width,
@@ -164,7 +163,7 @@ export class Container<A extends Application = Application>
    */
   private _added() {
     if (this.__config.autoResize) {
-      this.addSignalConnection(this.app.onResize.connect( this.resize,this.__config.priority ?? 'highest'));
+      this.addSignalConnection(this.app.onResize.connect(this.resize, this.__config.priority ?? 'highest'));
     }
 
     if (this.__config.autoUpdate) {

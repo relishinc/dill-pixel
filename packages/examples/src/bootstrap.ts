@@ -57,14 +57,10 @@ async function bootstrap() {
     // check hash for active example and update nav
     const checkHash = () => {
       const scene = app.scenes.getSceneFromHash();
-      console.log('checkHash', scene, defaultScene);
       setActiveNavItem(scene ?? defaultScene);
     };
+
     window.addEventListener('hashchange', checkHash);
-
-    // disable nav initially
-    nav.classList.add('disabled');
-
     checkHash();
   }
   populateSidebar();
