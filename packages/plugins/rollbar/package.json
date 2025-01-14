@@ -16,8 +16,9 @@
   },
   "sideEffects": false,
   "scripts": {
-    "build": "vite build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "pnpm run generate-version && vite build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate-version": "node generateVersion.mjs"
   },
   "keywords": [],
   "author": "",

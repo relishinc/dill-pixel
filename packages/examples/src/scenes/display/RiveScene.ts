@@ -1,6 +1,6 @@
 import BaseScene from '@/scenes/BaseScene';
 import { RiveEntity } from '@dill-pixel/plugin-rive';
-import { FlexContainer, Logger } from 'dill-pixel';
+import { FlexContainer } from 'dill-pixel';
 import { FederatedEvent } from 'pixi.js';
 
 export const id = 'rive';
@@ -106,11 +106,11 @@ export default class RiveScene extends BaseScene {
   }
 
   async _handleReady() {
-    Logger.log({
-      artboards: this.animation.getAvailableArtboards(),
-      animations: this.animation.getAvailableAnimations(),
-      stateMachines: this.animation.getAvailableStateMachines(),
-    });
+    // Logger.log({
+    //   artboards: this.animation.getAvailableArtboards(),
+    //   animations: this.animation.getAvailableAnimations(),
+    //   stateMachines: this.animation.getAvailableStateMachines(),
+    // });
     this.animation.off('click', this._changeAnimation);
     // this.animation.off('click', this._changeAnimation);
 

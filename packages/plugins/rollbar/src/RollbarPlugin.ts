@@ -1,8 +1,10 @@
-import { IApplication, IPlugin, Logger, Plugin } from 'dill-pixel';
+import { IApplication, IPlugin, isDev, Logger, Plugin } from 'dill-pixel';
 import Rollbar from 'rollbar';
+import { rollbarVersion, version } from './version';
 
 export interface RollbarPluginOptions extends Rollbar.Configuration {
   isDev?: boolean;
+  debug?: boolean;
 }
 
 export interface IRollbarPlugin extends IPlugin {
@@ -14,6 +16,7 @@ const defaultOptions = {
   enabled: true,
   captureUncaught: true,
   captureUnhandledRejections: true,
+  debug: isDev,
 };
 
 export class RollbarPlugin extends Plugin implements IRollbarPlugin {
@@ -22,6 +25,20 @@ export class RollbarPlugin extends Plugin implements IRollbarPlugin {
 
   get rollbar() {
     return this._rollbar;
+  }
+
+  private hello() {
+    const hello = `%c Dill Pixel Rollbar Plugin v${version} | %cRollbar v${rollbarVersion}`;
+    console.log(
+      hello,
+      'background: rgba(31, 41, 55, 1);color: #74b64c',
+      'background: rgba(31, 41, 55, 1);color: #e91e63',
+      'background: rgba(31, 41, 55, 1);color: #74b64c',
+    );
+
+    if (this._options.debug) {
+      Logger.log(this._options);
+    }
   }
 
   async initialize(_app: IApplication, options: RollbarPluginOptions) {
@@ -35,10 +52,9 @@ export class RollbarPlugin extends Plugin implements IRollbarPlugin {
     if (!this._options.accessToken) {
       throw new Error('Rollbar accessToken is required');
     }
-    Logger.log(`Rollbar plugin initialized`);
     // TODO: should we even instantiate Rollbar here if isDev is true?
     this._rollbar = new Rollbar(this._options);
-    this._rollbar.log('Rollbar plugin initialized');
+    this.hello();
 
     if (this._options.isDev) {
       Logger.warn('Rollbar is disabled in development mode');

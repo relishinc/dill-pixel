@@ -4,34 +4,17 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "dill-pixel/*": [
-        "../framework/src/*"
-      ],
-      "@dill-pixel/plugin-snap-physics/*": [
-        "../plugins/physics-snap/src/*"
-      ],
-      "@dill-pixel/plugin-arcade-physics/*": [
-        "../plugins/physics-arcade/src/*"
-      ],
-      "@dill-pixel/plugin-matter-physics/*": [
-        "../plugins/physics-matter/src/*"
-      ],
-      "@dill-pixel/plugin-springroll/*": [
-        "../plugins/springroll/src/*"
-      ],
-      "@dill-pixel/plugin-google-analytics/*": [
-        "../plugins/google-analytics/src/*"
-      ],
-      "@dill-pixel/storage-adapter-firebase/*": [
-        "../storage-adapters/firebase/src/*"
-      ]
+      "@/*": ["src/*"],
+      "dill-pixel/*": ["../framework/src/*"],
+      "@dill-pixel/plugin-snap-physics/*": ["../plugins/physics-snap/src/*"],
+      "@dill-pixel/plugin-arcade-physics/*": ["../plugins/physics-arcade/src/*"],
+      "@dill-pixel/plugin-matter-physics/*": ["../plugins/physics-matter/src/*"],
+      "@dill-pixel/plugin-springroll/*": ["../plugins/springroll/src/*"],
+      "@dill-pixel/plugin-google-analytics/*": ["../plugins/google-analytics/src/*"],
+      "@dill-pixel/storage-adapter-firebase/*": ["../storage-adapters/firebase/src/*"],
+      "@dill-pixel/storage-adapter-supabase/*": ["../storage-adapters/supabase/src/*"]
     },
-    "types": [
-      "vite/client"
-    ]
+    "types": ["vite/client"]
     // added this to resolve errors when using import.meta.env
   },
   "references": [
@@ -59,15 +42,16 @@
     {
       "path": "../storage-adapters/firebase"
     },
+    {
+      "path": "../storage-adapters/supabase"
+    }
   ],
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.json",
-    "../**/*.ts"
+    "../**/*.ts",
+    "../storage-adapters/firebase/generateVersion.mjs"
   ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "exclude": ["node_modules", "dist"]
 }

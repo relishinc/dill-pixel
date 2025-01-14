@@ -15,7 +15,9 @@ export default extendConfig({
       '@dill-pixel/plugin-springroll': path.resolve(__dirname, '../plugins/springroll/src'),
       '@dill-pixel/plugin-google-analytics': path.resolve(__dirname, '../plugins/google-analytics/src'),
       '@dill-pixel/plugin-rive': path.resolve(__dirname, '../plugins/rive/src'),
+      '@dill-pixel/plugin-rollbar': path.resolve(__dirname, '../plugins/rollbar/src'),
       '@dill-pixel/storage-adapter-firebase': path.resolve(__dirname, '../storage-adapters/firebase/src'),
+      '@dill-pixel/storage-adapter-supabase': path.resolve(__dirname, '../storage-adapters/supabase/src'),
     },
   },
 });

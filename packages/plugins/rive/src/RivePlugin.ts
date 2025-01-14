@@ -1,6 +1,7 @@
 import Rive, { RiveCanvas } from '@rive-app/canvas-advanced-lite';
 import { IApplication, IPlugin, Plugin } from 'dill-pixel';
 import { BrowserAdapter, checkExtension, extensions, ExtensionType, LoaderParserPriority } from 'pixi.js';
+import { riveVersion, version } from './version';
 
 export interface IRivePlugin extends IPlugin {
   rive: RiveCanvas;
@@ -30,8 +31,18 @@ export class RivePlugin extends Plugin implements IRivePlugin {
 
   private _addedExtensions: boolean = false;
 
+  private hello() {
+    const hello = `%c Dill Pixel Rive Plugin v${version} | %cRive v${riveVersion} (@rive-app/canvas-advanced-lite)`;
+    console.log(
+      hello,
+      'background: rgba(31, 41, 55, 1);color: #74b64c',
+      'background: rgba(31, 41, 55, 1);color: #e91e63',
+    );
+  }
+
   async initialize(_app: IApplication, options: RivePluginOptions) {
     this.options = { ...defaultOptions, ...options };
+    this.hello();
     RivePlugin.ID = this.id;
     this._addLoaderExtensions();
     if (!this.rive) {

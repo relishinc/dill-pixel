@@ -90,7 +90,7 @@ export class SpringRollPlugin extends Plugin implements ISpringRollPlugin {
       features: this._options.features,
       hintPlayer: this._options.hintPlayer,
     });
-
+    this.hello();
     this._subscribeToSpringrollFeatures();
 
     await new Promise<void>((resolve) => {
@@ -98,8 +98,6 @@ export class SpringRollPlugin extends Plugin implements ISpringRollPlugin {
         resolve();
       });
     });
-
-    this.hello();
   }
 
   private hello() {
@@ -109,6 +107,10 @@ export class SpringRollPlugin extends Plugin implements ISpringRollPlugin {
       'background: rgba(31, 41, 55, 1);color: #74b64c',
       'background: rgba(31, 41, 55, 1);color: #e91e63',
     );
+
+    if (this._options.debug) {
+      Logger.log(this._options);
+    }
 
     if (this._options.features && Object.keys(this._options.features)?.length > 0) {
       console.log(

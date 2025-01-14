@@ -1,5 +1,5 @@
 import type { IApplication, IPlugin } from 'dill-pixel';
-import { Logger, omitKeys, Plugin } from 'dill-pixel';
+import { isDev, Logger, omitKeys, Plugin } from 'dill-pixel';
 import { version } from './version';
 
 type ConfigParams = Gtag.ConfigParams & Gtag.ControlParams & Gtag.EventParams & Gtag.ConfigParams & Gtag.CustomParams;
@@ -7,6 +7,7 @@ type ConfigParams = Gtag.ConfigParams & Gtag.ControlParams & Gtag.EventParams & 
 export type GoogleAnalyticsPluginOptions = ConfigParams & {
   trackingId?: string | string[];
   dataLayerName?: string;
+  debug?: boolean;
 };
 
 export type GAEvents = Record<string, unknown>;
@@ -24,12 +25,12 @@ export class GoogleAnalyticsPlugin<E extends GAEvents = GAEvents> extends Plugin
 
   async initialize(_app: IApplication, options: Partial<GoogleAnalyticsPluginOptions>) {
     this._options = {
+      debug: isDev,
       trackingId: _app.env.VITE_GOOGLE_ANALYTICS_TRACKING_ID || _app.env.GOOGLE_ANALYTICS_TRACKING_ID,
       ...options,
     };
-    this.install();
-
     this.hello();
+    this.install();
 
     if (!this._options.trackingId) {
       Logger.warn(
@@ -42,6 +43,10 @@ export class GoogleAnalyticsPlugin<E extends GAEvents = GAEvents> extends Plugin
   private hello() {
     const hello = `%c Dill Pixel Google Analytics Plugin v${version}`;
     console.log(hello, 'background: rgba(31, 41, 55, 1);color: #74b64c');
+
+    if (this._options.debug) {
+      Logger.log(this._options);
+    }
   }
 
   private initDataLayer() {
@@ -92,7 +97,9 @@ export class GoogleAnalyticsPlugin<E extends GAEvents = GAEvents> extends Plugin
   }
 
   public gtag(...args: any[]) {
-    Logger.log(`gtag(${JSON.stringify(args)})`);
+    if (isDev) {
+      Logger.log(`gtag(${JSON.stringify(args)})`);
+    }
 
     if (!this._dataLayer) {
       this._queue.push(args);

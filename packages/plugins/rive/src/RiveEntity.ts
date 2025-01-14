@@ -1,4 +1,3 @@
-import {Container, destroyCanvas, Logger, Signal, WithSignals} from 'dill-pixel';
 import {
   Artboard,
   File,
@@ -9,9 +8,10 @@ import {
   StateMachineInstance,
   WrappedRenderer,
 } from '@rive-app/canvas-advanced-lite';
-import {Alignment, Fit, RiveOptions} from './types';
-import {Assets, FederatedPointerEvent, Sprite, Texture, Ticker} from 'pixi.js';
-import {RivePlugin} from './RivePlugin';
+import { Container, destroyCanvas, Logger, Signal, WithSignals } from 'dill-pixel';
+import { Assets, FederatedPointerEvent, Sprite, Texture, Ticker } from 'pixi.js';
+import { RivePlugin } from './RivePlugin';
+import { Alignment, Fit, RiveOptions } from './types';
 
 /**
  * @see https://www.npmjs.com/package/pixi-rive
@@ -462,7 +462,6 @@ export class RiveEntity extends WithSignals(Container) {
   }
 
   private _destroyInternals() {
-    Logger.log('riveEntity:: destroying internals');
     this.disable();
     this.off('pointerdown', this.handlePointerdown);
     this.off('pointerup', this.handlePointerup);
@@ -498,7 +497,6 @@ export class RiveEntity extends WithSignals(Container) {
 
     if (this._canvas) {
       destroyCanvas(this._canvas);
-      Logger.log(this._canvas);
     }
     // @ts-expect-error canvas can't be null
     this._canvas = null;

@@ -53,7 +53,6 @@ export class ActionsPlugin extends Plugin implements IActionsPlugin {
 
   initialize(app: IApplication): void {
     this._actions = app?.config?.actions ? app.config.actions || {} : {};
-    console.log('ActionsPlugin initialized');
   }
 
   getAction<TActionData = any>(action: Action | string): ActionSignal<TActionData> {

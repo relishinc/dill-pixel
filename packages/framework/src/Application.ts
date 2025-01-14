@@ -468,7 +468,6 @@ export class Application<
       }
     });
 
-    Logger.log('Application:: postInitialize resize', this);
     await this._resize();
   }
 

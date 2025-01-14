@@ -15,7 +15,8 @@
     }
   },
   "scripts": {
-    "build": "vite build",
+    "build": "pnpm run version && vite build",
+    "version": "node generateVersion.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

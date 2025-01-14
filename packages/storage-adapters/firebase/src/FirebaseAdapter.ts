@@ -1,4 +1,4 @@
-import { IApplication, IStorageAdapter, Logger, StorageAdapter } from 'dill-pixel';
+import { IApplication, isDev, IStorageAdapter, Logger, StorageAdapter } from 'dill-pixel';
 import type { FirebaseApp, FirebaseOptions } from 'firebase/app';
 import { initializeApp } from 'firebase/app';
 import type { DocumentData, Firestore, QueryConstraint } from 'firebase/firestore';
@@ -14,6 +14,7 @@ import {
   setDoc,
   where,
 } from 'firebase/firestore';
+import { firebaseVersion, version } from './version';
 
 interface DocumentResult extends DocumentData {
   id: string;
@@ -43,12 +44,16 @@ export interface IFirebaseAdapter extends IStorageAdapter {
   queryCollection(collectionName: string, ...queries: QueryConstraint[]): Promise<DocumentResult[]>;
 }
 
+interface IFirebaseAdapterOptions extends FirebaseOptions {
+  debug?: boolean;
+}
+
 /**
  * A class representing a storage adapter that uses Firebase.
  * @extends StorageAdapter
  */
 export class FirebaseAdapter extends StorageAdapter implements IFirebaseAdapter {
-  private _options: FirebaseOptions;
+  private _options: IFirebaseAdapterOptions;
 
   private _firebaseApp: FirebaseApp;
 
@@ -70,15 +75,28 @@ export class FirebaseAdapter extends StorageAdapter implements IFirebaseAdapter 
     return this._db;
   }
 
+  private hello() {
+    const hello = `%c Dill Pixel Firebase Storage Adapter v${version} | %cFirebase v${firebaseVersion}`;
+    console.log(
+      hello,
+      'background: rgba(31, 41, 55, 1);color: #74b64c',
+      'background: rgba(31, 41, 55, 1);color: #e91e63',
+      'background: rgba(31, 41, 55, 1);color: #74b64c',
+    );
+
+    if (this._options.debug) {
+      Logger.log(this._options);
+    }
+  }
   /**
    * Initializes the adapter.
    * @param {IApplication} _app The application that the adapter belongs to.
    * @param {FirebaseOptions} options The options to initialize the adapter with.
    * @returns {void}
    */
-  public initialize(_app: IApplication, options: Partial<FirebaseOptions> = {}): void {
-    Logger.log('FirebaseAdapter initialized');
-    const defaultConfig: FirebaseOptions = {
+  public initialize(_app: IApplication, options: Partial<IFirebaseAdapterOptions> = {}): void {
+    const defaultConfig: IFirebaseAdapterOptions = {
+      debug: isDev,
       apiKey: _app.env.VITE_FIREBASE_API_KEY || _app.env.FIREBASE_API_KEY,
       authDomain: _app.env.VITE_FIREBASE_AUTH_DOMAIN || _app.env.FIREBASE_AUTH_DOMAIN,
       projectId: _app.env.VITE_FIREBASE_PROJECT_ID || _app.env.FIREBASE_PROJECT_ID,
@@ -89,6 +107,7 @@ export class FirebaseAdapter extends StorageAdapter implements IFirebaseAdapter 
     this._options = { ...defaultConfig, ...options };
     this._firebaseApp = initializeApp(this._options);
     this._db = getFirestore(this._firebaseApp); // initialize Firestore and get a reference to the database
+    this.hello();
   }
 
   /**

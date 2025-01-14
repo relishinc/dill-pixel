@@ -1,4 +1,4 @@
-import { Button, FlexContainer, IFocusable, Input, Logger } from 'dill-pixel';
+import { ActionDetail, Button, FlexContainer, IFocusable, Input, Logger } from 'dill-pixel';
 import { collection, DocumentData, limit, onSnapshot, orderBy, QuerySnapshot, where } from 'firebase/firestore';
 import { Graphics, Text } from 'pixi.js';
 
@@ -109,6 +109,10 @@ export default class FirebaseAdapterScene extends BaseScene {
     this.app.focus.sortFocusablesByPosition();
   }
 
+  start() {
+    this.resize();
+  }
+
   resize() {
     super.resize();
     this.list.y = -this.app.size.height * 0.5 + 160;
@@ -201,8 +205,8 @@ export default class FirebaseAdapterScene extends BaseScene {
     this.usernameInput = this.createInput('Username');
     this.scoreInput = this.createInput('Score');
 
-    this.inputContainer.addChild(this.usernameInput);
-    this.inputContainer.addChild(this.scoreInput);
+    this.inputContainer.add.existing(this.usernameInput);
+    this.inputContainer.add.existing(this.scoreInput);
 
     this.addSignalConnection(this.scoreInput.onEnter.connect(this._sendSaveScoreAction));
 

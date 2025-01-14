@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
 import { GenericSchema } from '@supabase/supabase-js/dist/module/lib/types';
 import { IApplication, IStorageAdapter, Logger, StorageAdapter } from 'dill-pixel';
+import { supabasePostgresVersion, supabaseVersion, version } from './version';
 
 type SaveMethod = 'insert' | 'update' | 'upsert';
 
@@ -12,6 +13,7 @@ type DeleteData = {
 interface ISupabaseAdapterOptions {
   supabaseUrl?: string;
   anonKey?: string;
+  debug?: boolean;
 }
 
 export interface ISupabaseAdapter<Database extends GenericSchema = any> extends IStorageAdapter {
@@ -44,6 +46,22 @@ export class SupabaseAdapter<Database extends GenericSchema = any>
     return this._supabase as SupabaseClient<Database>;
   }
 
+  private hello() {
+    const hello = `%c Dill Pixel Supabase Adapter v${version} | %cSupabase v${supabaseVersion} | %cSupabase Postgres v${supabasePostgresVersion}`;
+    console.log(
+      hello,
+      'background: rgba(31, 41, 55, 1);color: #74b64c',
+      'background: rgba(31, 41, 55, 1);color: #e91e63',
+      'background: rgba(31, 41, 55, 1);color: #e91e63',
+      'background: rgba(31, 41, 55, 1);color: #74b64c',
+      'background: rgba(31, 41, 55, 1);color: #74b64c',
+    );
+
+    if (this._options.debug) {
+      Logger.log(this._options);
+    }
+  }
+
   /**
    * Initializes the adapter.
    * @param {IApplication} _app The application that the adapter belongs to.
@@ -57,6 +75,8 @@ export class SupabaseAdapter<Database extends GenericSchema = any>
       anonKey: _app.env.VITE_SUPABASE_ANON_KEY || _app.env.SUPABASE_ANON_KEY,
     };
     this._options = { ...defaultConfig, ...options };
+
+    this.hello();
 
     if (!this._options.supabaseUrl) {
       throw new Error('Supabase URL is not set');
