@@ -54,7 +54,6 @@ export async function create<T extends IApplication = Application, D extends Dat
   // ensure all plugins are initialized
   // call postInitialize on the instance
   await instance.postInitialize();
-
   // return the app instance
   return instance as T;
 }

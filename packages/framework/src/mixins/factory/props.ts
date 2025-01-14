@@ -80,7 +80,7 @@ export interface TextProps extends AbstractProps, PositionProps, ScaleProps, Vis
 
 export interface OmittedTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {}
 
-export const TextPropsKeys: (keyof TextProps)[] = ['text', 'anchor', 'resolution', 'roundPixels', 'style'];
+export const TextPropsKeys: (keyof TextProps)[] = ['text', 'anchor', 'roundPixels', 'style', 'pivot'];
 
 export interface ContainerProps
   extends AbstractProps,

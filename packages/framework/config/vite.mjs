@@ -11,6 +11,8 @@ import wasm from 'vite-plugin-wasm';
 const env = process.env.NODE_ENV;
 const cwd = process.cwd();
 
+import { assetpackPlugin } from './assetpack.mjs';
+
 /** PLUGINS */
 function findRegistryAndLocal({ packagePrefix, localPaths, idPrefix = '', importPathPrefix = '@' }) {
   // Find npm packages
@@ -260,6 +262,7 @@ export function sceneListPlugin(isProject = true) {
         active: exports.active === false ? false : true,
         debugLabel: exports.debug?.label || id,
         debugGroup: exports.debug?.group || undefined,
+        debugOrder: exports.debug?.order >= 0 ? exports.debug.order : Number.MAX_SAFE_INTEGER,
         assets: exports.assets ?? undefined,
         plugins: exports.plugins ?? undefined,
         autoUnloadAssets: exports.assets?.autoUnload ?? false,
@@ -291,6 +294,7 @@ export function sceneListPlugin(isProject = true) {
         module: ${scene.module.isFunction ? scene.module.toString() : extractClassName(scene)},
         debugLabel: ${JSON.stringify(scene.debugLabel)},
         debugGroup: ${JSON.stringify(scene.debugGroup)},
+        debugOrder: ${scene.debugOrder},
         assets: ${JSON.stringify(scene.assets)},
         plugins: ${JSON.stringify(scene.plugins)},
         autoUnloadAssets: ${scene.autoUnloadAssets}
@@ -405,7 +409,7 @@ const defaultConfig = {
     storageAdapterListPlugin(),
     pluginListPlugin(),
     sceneListPlugin(),
-    // assetpackPlugin(),
+    assetpackPlugin(),
   ],
   resolve: {
     alias: {
@@ -418,10 +422,15 @@ const defaultConfig = {
   },
 };
 
+// config without assetpack plugin
+const noAssetpackConfig = { ...defaultConfig };
+// remove assetpack plugin
+noAssetpackConfig.plugins = noAssetpackConfig.plugins.filter((plugin) => plugin.name !== 'vite-plugin-assetpack');
+
 function extendConfig(userConfig = {}) {
   return mergeConfig(defaultConfig, userConfig);
 }
 
-export { extendConfig };
+export { extendConfig, noAssetpackConfig };
 
 export default defaultConfig;

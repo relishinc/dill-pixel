@@ -61,7 +61,7 @@ export default class BaseScene extends Scene<V8Application> {
       resolution: 2,
       style: {
         fill: 'white',
-        fontFamily: 'Kumbh Sans',
+        fontFamily: FONT_KUMBH_SANS,
         fontSize: 16,
       },
     });

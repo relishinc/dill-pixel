@@ -112,6 +112,7 @@ type SceneItemOptions = {
   active?: boolean;
   debugLabel?: string;
   debugGroup?: string;
+  debugOrder: number;
   plugins?: string[];
   assets?: AssetLoadingOptions;
   autoUnloadAssets?: boolean;

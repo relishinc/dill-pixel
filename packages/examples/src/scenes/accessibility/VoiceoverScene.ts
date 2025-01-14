@@ -4,7 +4,7 @@ import { Text } from 'pixi.js';
 
 export const id = 'voiceover';
 export const debug = {
-  group: 'Audio',
+  group: 'Accessibility',
   label: 'Voiceovers & Captions',
 };
 

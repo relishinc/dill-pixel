@@ -135,6 +135,7 @@ export const defaultFactoryMethods = {
           resolution: props.resolution,
           style: props.style,
           anchor: props.anchor ? resolvePointLike(props.anchor, true) : undefined,
+          pivot: props.pivot ? resolvePointLike(props.pivot, true) : undefined,
         }
       : {};
     const entity = new Text(options);

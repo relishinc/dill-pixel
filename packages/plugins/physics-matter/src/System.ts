@@ -107,9 +107,9 @@ export class System {
     World.clear(System._engine.world, false);
     Engine.clear(System._engine);
     Runner.stop(System._runner);
-    System._debugGraphics?.destroy();
-    System._debugGraphics = null;
     System._objects.clear();
+    System._debugGraphics?.destroy({ children: true });
+    System._debugGraphics = null;
   }
 
   static initialize(options: Partial<MatterPhysicsPluginOptions>) {

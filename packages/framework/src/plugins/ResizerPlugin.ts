@@ -12,7 +12,7 @@ import { Plugin } from './Plugin';
 export interface IResizerPlugin extends IPlugin {
   readonly size: Size;
   readonly scale: number;
-  resize(): void;
+  resize(): Promise<Size>;
 }
 
 /**
@@ -77,7 +77,7 @@ export class ResizerPlugin extends Plugin implements IResizerPlugin {
     this.resize();
   }
 
-  async resize() {
+  async resize(): Promise<Size> {
     this._cancelResize!();
     return new Promise((resolve) => {
       this._resizeId = requestAnimationFrame(() => {

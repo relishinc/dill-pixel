@@ -13,6 +13,7 @@ export const id = 'snap-physics';
 export const debug = {
   group: 'Physics',
   label: 'Snap - Level & Camera',
+  order: 1,
 };
 
 export const plugins = ['snap-physics'];

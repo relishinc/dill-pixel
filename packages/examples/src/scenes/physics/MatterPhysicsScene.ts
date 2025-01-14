@@ -8,6 +8,7 @@ export const id = 'matter-physics';
 export const debug = {
   group: 'Physics',
   label: 'Matter',
+  order: 4,
 };
 
 export const plugins = ['matter-physics'];
@@ -100,10 +101,8 @@ export default class MatterPhysicsScene extends BaseScene {
   }
 
   destroy() {
-    this.off('click', this._addEntity);
-    this.off('tap', this._addEntity);
+    this.off('pointerup', this._drop);
     this.physics.destroy();
-
     super.destroy();
   }
 
@@ -142,15 +141,19 @@ export default class MatterPhysicsScene extends BaseScene {
 
     this._particles = this.level.add.existing(new Particles());
 
-    this.on('pointerup', (e) => {
-      this.app.action('drop', e);
-    });
+    this.on('pointerup', this._drop);
 
-    this.app.actions('drop').connect((e) => {
-      this._addEntity(e.data!);
-    });
+    this.addSignalConnection(
+      this.app.actions('drop').connect((e) => {
+        this._addEntity(e.data!);
+      }),
+    );
 
     this._handleDebugChanged();
+  }
+
+  _drop(e: FederatedPointerEvent) {
+    this.app.sendAction('drop', e);
   }
 
   update() {

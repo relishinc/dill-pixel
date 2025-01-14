@@ -13,6 +13,7 @@ export const id = 'snap-endless-runner';
 export const debug = {
   group: 'Physics',
   label: 'Snap - Endless Runner',
+  order: 3,
 };
 
 export const plugins = ['snap-physics'];

@@ -441,6 +441,112 @@
       "assets": [
         {
           "alias": [
+            "required/fonts/KumbhSans-Bold.ttf",
+            "required/fonts/KumbhSans-Bold",
+            "KumbhSans-Bold.ttf",
+            "KumbhSans-Bold"
+          ],
+          "src": [
+            "required/fonts/KumbhSans-Bold.woff2"
+          ],
+          "data": {
+            "tags": {
+              "m": true,
+              "family": "KumbhSans",
+              "wf": true
+            },
+            "family": "KumbhSans"
+          }
+        },
+        {
+          "alias": [
+            "required/fonts/KumbhSans-Medium.ttf",
+            "required/fonts/KumbhSans-Medium",
+            "KumbhSans-Medium.ttf",
+            "KumbhSans-Medium"
+          ],
+          "src": [
+            "required/fonts/KumbhSans-Medium.woff2"
+          ],
+          "data": {
+            "tags": {
+              "m": true,
+              "family": "KumbhSans",
+              "wf": true
+            },
+            "family": "KumbhSans"
+          }
+        },
+        {
+          "alias": [
+            "required/fonts/KumbhSans-Regular.ttf",
+            "required/fonts/KumbhSans-Regular",
+            "KumbhSans-Regular.ttf",
+            "KumbhSans-Regular"
+          ],
+          "src": [
+            "required/fonts/KumbhSans-Regular.woff2"
+          ],
+          "data": {
+            "tags": {
+              "m": true,
+              "family": "KumbhSans",
+              "wf": true
+            },
+            "family": "KumbhSans"
+          }
+        },
+        {
+          "alias": [
+            "required/fonts/KumbhSans-SemiBold.ttf",
+            "required/fonts/KumbhSans-SemiBold",
+            "KumbhSans-SemiBold.ttf",
+            "KumbhSans-SemiBold"
+          ],
+          "src": [
+            "required/fonts/KumbhSans-SemiBold.woff2"
+          ],
+          "data": {
+            "tags": {
+              "m": true,
+              "family": "KumbhSans",
+              "wf": true
+            },
+            "family": "KumbhSans"
+          }
+        },
+        {
+          "alias": [
+            "required/fonts/KumbhSansBlack.fnt",
+            "KumbhSansBlack.fnt"
+          ],
+          "src": [
+            "required/fonts/KumbhSansBlack.fnt"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "required/fonts/KumbhSansBlack.png",
+            "KumbhSansBlack.png"
+          ],
+          "src": [
+            "required/fonts/KumbhSansBlack.webp",
+            "required/fonts/KumbhSansBlack.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true,
+              "fix": true
+            }
+          }
+        },
+        {
+          "alias": [
             "required/jar.png",
             "required/jar"
           ],

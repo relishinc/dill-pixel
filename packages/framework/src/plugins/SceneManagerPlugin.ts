@@ -20,7 +20,6 @@ export interface ISceneManagerPlugin extends IPlugin {
   isFirstScene: boolean;
   onSceneChangeStart: Signal<(detail: { exiting: string | null; entering: string }) => void>;
   onSceneChangeComplete: Signal<(detail: { current: string }) => void>;
-
   view: Container;
   list: SceneImportList<IScene>;
   splash: { view: ISceneTransition | null; hideWhen: SplashHideWhen; zOrder: SplashZOrder };
@@ -28,6 +27,7 @@ export interface ISceneManagerPlugin extends IPlugin {
   currentScene: IScene;
   readonly ids: string[];
   readonly defaultScene: string;
+  readonly debugGroupsList: any[];
 
   setDefaultLoadMethod(method: LoadSceneMethod): void;
 
@@ -83,8 +83,10 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
 
   // scene management
   public list: SceneImportList<IScene> = [];
+  public groupOrder: string[] = [];
   public currentScene: IScene;
   public defaultScene: string;
+  public debugGroupsList: any[] = [];
   private _sceneModules: Map<string, Constructor<IScene>> = new Map();
   //
   private _lastScene: IScene | null = null;
@@ -122,6 +124,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
     const globalThisAsAny = globalThis as any;
     const sceneList: SceneImportListItem<IScene>[] = globalThisAsAny.getDillPixel('sceneList') || [];
     this.list = sceneList.filter((scene) => scene.active !== false);
+    this.groupOrder = app.config?.sceneGroupOrder || [];
 
     if (this._debugVisible || this._useHash) {
       this.defaultScene = this.getSceneFromHash() || '';
@@ -502,6 +505,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
 
     // create option groups
     const groups = new Map<string, HTMLOptGroupElement>();
+    const groupsList: any[] = [];
 
     this.list.forEach((item) => {
       if (item.debugGroup) {
@@ -509,13 +513,15 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
           const group = document.createElement('optgroup');
           group.label = item.debugGroup;
           groups.set(item.debugGroup, group);
-          this._sceneSelect.appendChild(group);
+          groupsList.push(group);
+          // this._sceneSelect.appendChild(group);
         }
       }
     });
 
     if (groups.size > 0) {
       const nogroups = this.list.filter((item) => !item.debugGroup);
+
       if (nogroups.length) {
         const group = document.createElement('optgroup');
         group.label = 'Other';
@@ -524,8 +530,15 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
         nogroups.forEach((item) => {
           item.debugGroup = 'Other';
         });
+        groupsList.push(group);
       }
     }
+
+    this.debugGroupsList = groupsList;
+
+    this.list.sort((a, b) => {
+      return a.debugOrder! - b.debugOrder!;
+    });
 
     this.list.forEach((value) => {
       const option = document.createElement('option');
@@ -539,6 +552,15 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
       } else {
         this._sceneSelect.appendChild(option);
       }
+    });
+
+    // add groups in order
+    groupsList.sort((a, b) => {
+      return this.groupOrder.indexOf(a.label) - this.groupOrder.indexOf(b.label);
+    });
+
+    groupsList.forEach((group) => {
+      this._sceneSelect.appendChild(group);
     });
 
     this._debugMenu.appendChild(this._sceneSelect);

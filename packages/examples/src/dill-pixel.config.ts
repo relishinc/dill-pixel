@@ -97,9 +97,10 @@ export const config = defineConfig<Data>({
   defaultSceneLoadMethod: 'transitionExitEnter',
   useSpine: true,
   showStats: true,
-  showSceneDebugMenu: false,
+  showSceneDebugMenu: true,
   useHash: true,
   useVoiceover: true,
+  sceneGroupOrder: ['Framework', 'Display', 'Audio', 'UI', 'Accessibility', 'Physics', 'Rive', 'Storage Adapters'],
   data: {
     initial: {
       saved: 'QUX',
@@ -199,5 +200,7 @@ export const config = defineConfig<Data>({
     letterbox: false,
     center: false,
   },
+
+  resolution: 3,
 });
 /** End of User config */

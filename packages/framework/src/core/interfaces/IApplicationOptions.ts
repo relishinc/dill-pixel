@@ -27,8 +27,9 @@ export interface IApplicationOptions<D extends DataSchema = DataSchema> extends 
   data: Partial<IDataAdapterOptions<D>>;
   plugins: PluginOrAdapterConfig[];
   assets: AssetLoadingOptions;
-  sceneImportList: SceneImportListItem<IScene>[]
+  sceneImportList: SceneImportListItem<IScene>[];
   scenes: SceneImportList<IScene>;
+  sceneGroupOrder: string[];
   scenesLocation: string;
   actions: Partial<ActionMap>;
   input: Partial<InputManagerOptions>;

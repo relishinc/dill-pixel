@@ -461,7 +461,6 @@ export class Application<
     });
 
     this.webEvents.onVisibilityChanged.connect((visible) => {
-      Logger.log('Application:: onVisibilityChanged', visible);
       if (visible) {
         this.audio.restore();
       } else {
@@ -469,6 +468,7 @@ export class Application<
       }
     });
 
+    Logger.log('Application:: postInitialize resize', this);
     await this._resize();
   }
 
@@ -703,16 +703,20 @@ export class Application<
     return this.scenes.loadDefaultScene();
   }
 
-  private async _resize() {
-    await this.resizer.resize();
-    this._center.set(this.size.width * 0.5, this.size.height * 0.5);
-    this.views.forEach((view) => {
-      if (!view || !view.position) {
-        return;
-      }
-      view.position.set(this._center.x, this._center.y);
+  private async _resize(): Promise<Size> {
+    return new Promise((resolve) => {
+      this.resizer.resize().then((size) => {
+        this._center.set(size.width * 0.5, size.height * 0.5);
+        this.views.forEach((view) => {
+          if (!view || !view.position) {
+            return;
+          }
+          view.position.set(this._center.x, this._center.y);
+        });
+        this.onResize.emit(this.size);
+        resolve(size);
+      });
     });
-    this.onResize.emit(this.size);
   }
   /**
    * Called after the application is initialized

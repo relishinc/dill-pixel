@@ -8,7 +8,7 @@
     "assets": "assetpack -c .assetpack.mjs",
     "cache": "rimraf .cache",
     "start": "run-s cache && vite --open",
-    "dev": "run-s cache assets && vite --open",
+    "dev": "run-s cache  && vite --open",
     "build": "vite build",
     "types": "tsc",
     "preview": "pnpm run clean && pnpm run build && vite preview --open",

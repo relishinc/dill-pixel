@@ -8,6 +8,7 @@ export const id = 'ui-popup';
 export const debug = {
   group: 'UI',
   label: 'Popups',
+  order: 1,
 };
 
 export default class PopupScene extends BaseScene {

@@ -2,25 +2,26 @@ import { AssetPack } from '@assetpack/core';
 import { pixiPipes } from '@assetpack/core/pixi';
 import process from 'node:process';
 const cwd = process.cwd();
+const defaultManifestUrl = './public/assets.json';
 
-export const assetpackConfig = (
-  manifestUrl = './public/assets.json',
-  pixiPipesConfig = {
-    cacheBust: false,
-    resolutions: { default: 1, low: 0.5 },
-    compression: { jpg: true, png: true, webp: true },
-    texturePacker: {
-      nameStyle: 'relative',
-      removeFileExtension: true,
-      texturePacker: { nameStyle: 'relative', removeFileExtension: true },
-    },
-    audio: {},
-    manifest: { trimExtensions: true, createShortcuts: true, output: manifestUrl },
+const defaultPixiPipesConfig = {
+  cacheBust: false,
+  resolutions: { default: 1, low: 0.5 },
+  compression: { jpg: true, png: true, webp: true },
+  texturePacker: {
+    nameStyle: 'relative',
+    removeFileExtension: true,
+    texturePacker: { nameStyle: 'relative', removeFileExtension: true },
   },
-) => ({
+  audio: {},
+  webfont: {},
+  manifest: { trimExtensions: true, createShortcuts: true, output: defaultManifestUrl },
+};
+export const assetpackConfig = (manifestUrl = defaultManifestUrl, pixiPipesConfig = defaultPixiPipesConfig) => ({
+  manifestUrl,
   entry: './assets',
   output: './public',
-  logLevel: 4,
+  logLevel: 'info',
   cache: false,
   pipes: [
     ...pixiPipes({
@@ -31,7 +32,19 @@ export const assetpackConfig = (
 
 export default assetpackConfig;
 
-export function assetpackPlugin() {
+export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfig = defaultPixiPipesConfig) {
+  const apConfig = {
+    manifestUrl,
+    entry: './assets',
+    output: './public',
+    logLevel: 4,
+    cache: false,
+    pipes: [
+      ...pixiPipes({
+        ...pixiPipesConfig,
+      }),
+    ],
+  };
   let mode;
   let ap;
 
@@ -40,17 +53,17 @@ export function assetpackPlugin() {
     configResolved(resolvedConfig) {
       mode = resolvedConfig.command;
       if (!resolvedConfig.publicDir) return;
-      if (assetpackConfig.output) return;
-      const publicDir = resolvedConfig.publicDir.replace(cwd, '');
-      assetpackConfig.output = `${publicDir}/assets/`;
+      if (apConfig.output) return;
+      const publicDir = resolvedConfig.publicDir.replace(process.cwd(), '');
+      apConfig.output = `.${publicDir}/assets/`;
     },
     buildStart: async () => {
       if (mode === 'serve') {
         if (ap) return;
-        ap = new AssetPack(assetpackConfig);
+        ap = new AssetPack(apConfig);
         void ap.watch();
       } else {
-        await new AssetPack(assetpackConfig).run();
+        await new AssetPack(apConfig).run();
       }
     },
     buildEnd: async () => {

@@ -9,6 +9,7 @@ export const id = 'snap-projectiles';
 export const debug = {
   group: 'Physics',
   label: 'Snap - Projectiles',
+  order: 2,
 };
 
 export const plugins = ['snap-physics'];
