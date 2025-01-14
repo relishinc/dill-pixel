@@ -200,7 +200,6 @@ export const config = defineConfig<Data>({
     letterbox: false,
     center: false,
   },
-
-  resolution: 3,
+  resolution: 2,
 });
 /** End of User config */

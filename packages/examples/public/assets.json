@@ -452,6 +452,7 @@
           "data": {
             "tags": {
               "m": true,
+              "fix": true,
               "family": "KumbhSans",
               "wf": true
             },
@@ -471,6 +472,7 @@
           "data": {
             "tags": {
               "m": true,
+              "fix": true,
               "family": "KumbhSans",
               "wf": true
             },
@@ -490,6 +492,7 @@
           "data": {
             "tags": {
               "m": true,
+              "fix": true,
               "family": "KumbhSans",
               "wf": true
             },
@@ -509,6 +512,7 @@
           "data": {
             "tags": {
               "m": true,
+              "fix": true,
               "family": "KumbhSans",
               "wf": true
             },
@@ -525,7 +529,8 @@
           ],
           "data": {
             "tags": {
-              "m": true
+              "m": true,
+              "fix": true
             }
           }
         },
