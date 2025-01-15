@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.2.0](https://github.com/relishinc/dill-pixel/compare/v4.1.5...v4.2.0) (2025-01-15)
+
+
+### Features
+
+* added full watch support to vite assetpack plugin, ([9974134](https://github.com/relishinc/dill-pixel/commit/99741343e60c9800e743bda50890d04091cf344d))
+
+
+### Bug Fixes
+
+* initial assetpack reload issue on dev server ([9974134](https://github.com/relishinc/dill-pixel/commit/99741343e60c9800e743bda50890d04091cf344d))
+
 ## [4.1.5](https://github.com/relishinc/dill-pixel/compare/v4.1.4...v4.1.5) (2025-01-15)
 
 
