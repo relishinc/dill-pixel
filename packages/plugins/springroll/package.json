@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-springroll",
-  "version": "4.1.3",
+  "version": "4.1.4",
   "description": "SpringRoll plugin for Dill Pixel",
   "files": [
     "lib",
@@ -29,7 +29,7 @@
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
-    "dill-pixel": "4.1.3"
+    "dill-pixel": "4.1.4"
   },
   "dependencies": {
     "springroll": "github:SpringRoll/SpringRoll#2.7.0"
