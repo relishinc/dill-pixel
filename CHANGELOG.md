@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.1.4](https://github.com/relishinc/dill-pixel/compare/v4.1.3...v4.1.4) (2025-01-15)
+
+
+### Bug Fixes
+
+* update assetpack ([25288f5](https://github.com/relishinc/dill-pixel/commit/25288f5dade2b78a41bee025d1de10f22d969c9e))
+* update assetpack ([eac0bd9](https://github.com/relishinc/dill-pixel/commit/eac0bd9a0b7a24f6ffd9c590a471376d944b1c0b))
+
 ## [4.1.3](https://github.com/relishinc/dill-pixel/compare/v4.1.2...v4.1.3) (2025-01-15)
 
 
