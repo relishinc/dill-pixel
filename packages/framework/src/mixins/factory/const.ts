@@ -16,6 +16,7 @@ import {
   ExistingProps,
   FlexContainerProps,
   GraphicsProps,
+  HTMLTextProps,
   ParticleContainerProps,
   SpineProps,
   SpriteProps,
@@ -33,7 +34,7 @@ import {
   resolveUnknownKeys,
 } from './utils';
 
-import { BitmapText, Graphics, Sprite, Text } from 'pixi.js';
+import { BitmapText, Graphics, HTMLText, Sprite, Text } from 'pixi.js';
 import {
   ParticleContainer,
   ParticleContainerConfig,
@@ -139,6 +140,30 @@ export const defaultFactoryMethods = {
         }
       : {};
     const entity = new Text(options);
+    if (!props) return entity;
+    const { position, x, y, scale, scaleX, scaleY, pivot } = props;
+    resolvePosition({ position, x, y }, entity);
+    resolveScale({ scale, scaleX, scaleY }, entity);
+    resolvePivot(pivot, entity);
+    const unknowns = omitKeys(
+      ['x', 'y', 'position', 'text', 'roundPixels', 'resolution', 'style', 'anchor', 'pivot'],
+      props,
+    );
+    resolveUnknownKeys(unknowns, entity);
+    return entity;
+  },
+  htmlText: (props?: Partial<HTMLTextProps>) => {
+    const options = props
+      ? {
+          text: props.text,
+          roundPixels: props.roundPixels,
+          resolution: props.resolution,
+          style: props.style,
+          anchor: props.anchor ? resolvePointLike(props.anchor, true) : undefined,
+          pivot: props.pivot ? resolvePointLike(props.pivot, true) : undefined,
+        }
+      : {};
+    const entity = new HTMLText(options);
     if (!props) return entity;
     const { position, x, y, scale, scaleX, scaleY, pivot } = props;
     resolvePosition({ position, x, y }, entity);

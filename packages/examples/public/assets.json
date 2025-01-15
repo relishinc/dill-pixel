@@ -48,6 +48,20 @@
         },
         {
           "alias": [
+            "static/logo.svg",
+            "static/logo",
+            "logo.svg",
+            "logo"
+          ],
+          "src": [
+            "static/logo.svg"
+          ],
+          "data": {
+            "tags": {}
+          }
+        },
+        {
+          "alias": [
             "static/marty.riv",
             "static/marty",
             "marty.riv",
@@ -83,20 +97,6 @@
           ],
           "src": [
             "static/skins_demo.riv"
-          ],
-          "data": {
-            "tags": {}
-          }
-        },
-        {
-          "alias": [
-            "static/logo.svg",
-            "static/logo",
-            "logo.svg",
-            "logo"
-          ],
-          "src": [
-            "static/logo.svg"
           ],
           "data": {
             "tags": {}

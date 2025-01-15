@@ -49,17 +49,32 @@ export default defineConfig({
         {
           label: 'Fundamentals',
           items: [
-            { label: 'Scenes', link: '/fundamentals/scenes' },
-            { label: 'Layout', link: '/fundamentals/layout' },
             { label: 'Assets', link: '/fundamentals/assets' },
+            { label: 'Scenes', link: '/fundamentals/scenes' },
             { label: 'Data', link: '/fundamentals/data' },
             { label: 'Copy and Content', link: '/fundamentals/copy' },
             { label: 'Audio', link: '/fundamentals/audio' },
-            { label: 'Popups', link: '/fundamentals/popups' },
             { label: 'Spine', link: '/fundamentals/spine' },
-            { label: 'Physics', link: '/fundamentals/physics' },
-            { label: 'Styling Text', link: '/fundamentals/styling-text' },
-            { label: 'Focus Management', link: '/fundamentals/focus' },
+            {
+              label: 'Physics',
+              items: [
+                { label: 'Overview', link: '/fundamentals/physics/overview' },
+                { label: 'Matter Physics Plugin', link: '/fundamentals/physics/matter' },
+                { label: 'Snap Physics Plugin', link: '/fundamentals/physics/snap' },
+              ],
+            },
+            {
+              label: 'UI',
+              items: [
+                { label: 'Text', link: '/fundamentals/ui/text' },
+                { label: 'Layout', link: '/fundamentals/ui/layout' },
+                { label: 'Popups', link: '/fundamentals/ui/popups' },
+              ],
+            },
+            {
+              label: 'Accessibility',
+              items: [{ label: 'Focus Management', link: '/fundamentals/focus' }],
+            },
           ],
         },
         typeDocSidebarGroup,

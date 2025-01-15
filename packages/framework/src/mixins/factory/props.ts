@@ -1,4 +1,4 @@
-import { GraphicsContext, TextStyleOptions } from 'pixi.js';
+import { GraphicsContext, HTMLTextStyleOptions, TextStyleOptions } from 'pixi.js';
 import { ContainerConfig } from '../../display';
 import { ParticleContainerConfig } from '../../display/ParticleContainer';
 import { ButtonConfig, FlexContainerConfig, UICanvasProps } from '../../ui';
@@ -76,6 +76,14 @@ export interface TextProps extends AbstractProps, PositionProps, ScaleProps, Vis
   resolution: number;
   roundPixels: boolean;
   style: Partial<TextStyleOptions>;
+}
+
+export interface HTMLTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {
+  text: string;
+  anchor: PointLike;
+  resolution: number;
+  roundPixels: boolean;
+  style: Partial<HTMLTextStyleOptions>;
 }
 
 export interface OmittedTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {}

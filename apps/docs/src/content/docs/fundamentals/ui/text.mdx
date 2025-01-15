@@ -1,0 +1,164 @@
+---
+title: Text
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Text rendering is a crucial part of any game UI. dill-pixel provides several text implementations through Pixi.js, each with its own advantages and use cases.
+
+## Basic Text
+
+The most straightforward way to add text is using the basic text implementation:
+
+```ts
+const text = this.add.text({
+  text: 'Hello World',
+  style: {
+    fontFamily: 'Arial',
+    fontSize: 48,
+    fill: 'white',
+  },
+});
+```
+
+### Style Options
+
+Basic text supports various style options:
+
+```ts
+const textStyle = {
+  fontFamily: 'Arial', // Web font or system font
+  fontSize: 48, // Font size in pixels
+  fill: 'white', // Text color
+  align: 'center', // Text alignment
+  leading: -10, // Line spacing
+  textBaseline: 'bottom', // Vertical alignment
+  wordWrap: true, // Enable word wrapping
+  wordWrapWidth: 500, // Width before wrapping
+};
+```
+
+### Advantages
+
+- Simple to implement
+- Good performance for static text
+- Supports basic formatting
+
+### Pitfalls
+
+- Limited styling options
+- No rich text formatting
+- Can be blurry if scaled
+
+## HTML Text
+
+For more complex text formatting, use HTML text:
+
+```ts
+this.add.htmlText({
+  text: 'Text with <strong>bold</strong>, <em>italic</em>, and <span style="color: pink">colors</span>.',
+  style: {
+    align: 'center',
+    fontFamily: 'Arial',
+    wordWrapWidth: 500,
+    wordWrap: true,
+    fontSize: 32,
+  },
+});
+```
+
+### Supported HTML Tags
+
+- `<strong>` or `<b>` for bold text
+- `<em>` or `<i>` for italic text
+- `<u>` for underlined text
+- `<s>` for strikethrough text
+- `<span>` with style attributes for custom formatting
+
+### Advantages
+
+- Rich text formatting
+- Supports HTML-style markup
+- Color and style variations within text
+- Familiar HTML syntax
+
+### Pitfalls
+
+- Higher performance overhead than basic text
+- More complex to implement
+- Limited HTML tag support
+- May have inconsistent rendering across platforms
+
+## Bitmap Text
+
+For optimal performance, especially in games with lots of text updates, use bitmap text:
+
+```ts
+this.add.bitmapText({
+  text: 'High Performance Text',
+  style: {
+    fontFamily: 'MyBitmapFont',
+    fontSize: 64,
+  },
+});
+```
+
+### Advantages
+
+- Best performance
+- Consistent rendering across platforms
+- Perfect for frequently updated text (scores, timers)
+- Crisp at any scale
+
+### Pitfalls
+
+- Requires pre-generated bitmap fonts
+- Limited to characters included in the font
+- No dynamic styling
+- Fixed color unless using tint
+- Larger asset size
+
+## Implementation Example
+
+Here's a complete example showing all three text types:
+
+```ts
+// in your scene
+async initialize() {
+  this._layout = this.add.flexContainer({
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 30,
+    bindToAppSize: true,
+  });
+
+  const text = this._layout.add.text({
+    text: 'Text (using a web font)',
+    style: {
+      fontFamily: FONT_KUMBH_SANS,
+      fontSize: 48,
+      leading: -10,
+      textBaseline: 'bottom',
+    },
+  });
+
+  this._layout.add.htmlText({
+    text: 'HTML text with <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strikethrough</s>, and <span style="color:white; background-color: black">some</span> <span style="color: #8ac733">different</span> <span style="color: pink">colors</span>.',
+    style: {
+      align: 'center',
+      fontFamily: FONT_KUMBH_SANS,
+      wordWrapWidth: 500,
+      wordWrap: true,
+      fontSize: 32,
+    },
+  });
+
+  this._layout.add.bitmapText({
+    text: 'Bitmap Font',
+    style: {
+      fontFamily: FONT_KUMBH_SANS_BLACK,
+      fontSize: 64,
+    },
+  });
+```

@@ -15,35 +15,23 @@ export default class TextScene extends BaseScene {
   public subtitle = 'Various text implementations';
 
   private _layout: FlexContainer;
-  private _bitmapTextContainer: FlexContainer;
-  private _textContainer: FlexContainer;
 
   async initialize() {
     super.initialize();
 
     this._layout = this.add.flexContainer({
-      direction: 'row',
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: 50,
+      gap: 30,
       bindToAppSize: true,
     });
 
-    this._bitmapTextContainer = this._layout.add.flexContainer({
-      direction: 'column',
-      gap: 10,
-    });
-
-    this._textContainer = this._layout.add.flexContainer({
-      direction: 'column',
-      gap: 10,
-    });
-
-    const text = this._textContainer.add.text({
-      text: 'Web font',
+    const text = this._layout.add.text({
+      text: 'Text (using a web font)',
       style: {
         fontFamily: FONT_KUMBH_SANS,
-        fontSize: 64,
+        fontSize: 48,
         leading: -10,
         textBaseline: 'bottom',
       },
@@ -51,7 +39,20 @@ export default class TextScene extends BaseScene {
 
     text.pivot.y = -25;
 
-    this._bitmapTextContainer.add.bitmapText({
+    this._layout.add.htmlText({
+      text: 'HTML text with <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strikethrough</s>, and <span style="color:white; background-color: black">some</span> <span style="color: #8ac733">different</span> <span style="color: pink">colors</span>.',
+      style: {
+        align: 'center',
+        fontFamily: FONT_KUMBH_SANS,
+        wordWrapWidth: 500,
+        wordWrap: true,
+        fontSize: 32,
+      },
+    });
+
+    text.pivot.y = -25;
+
+    this._layout.add.bitmapText({
       text: 'Bitmap Font',
       style: {
         fontFamily: FONT_KUMBH_SANS_BLACK,
