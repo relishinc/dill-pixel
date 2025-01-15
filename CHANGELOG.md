@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.1.3](https://github.com/relishinc/dill-pixel/compare/v4.1.2...v4.1.3) (2025-01-15)
+
+
+### Bug Fixes
+
+* default applicatio config defaults during bootstrap ([7391743](https://github.com/relishinc/dill-pixel/commit/739174305bf7d85a9890af7a090cb4ac2a1a64cc))
+* default manifest url ([b9b8f02](https://github.com/relishinc/dill-pixel/commit/b9b8f02cc00021461f5b1480e82ccaa20f643899))
+
 ## [4.1.2](https://github.com/relishinc/dill-pixel/compare/v4.1.1...v4.1.2) (2025-01-14)
 
 
