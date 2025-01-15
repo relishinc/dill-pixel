@@ -49,7 +49,7 @@ jobs:
           echo "always-auth=true" >> .npmrc
 
       - name: Install dependencies
-        run: pnpm --filter=\!{dill-pixel-docs,dill-pixel-examples-v8} install
+        run: pnpm --no-frozen-lockfile --filter=\!{dill-pixel-docs,dill-pixel-examples-v8} install
 
       - name: Publish to npm
         run: pnpm run build-publish-all
