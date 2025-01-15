@@ -2,7 +2,7 @@
 title: Text
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, FileTree } from '@astrojs/starlight/components';
 
 Text rendering is a crucial part of any game UI. dill-pixel provides several text implementations through Pixi.js, each with its own advantages and use cases.
 
@@ -162,3 +162,32 @@ async initialize() {
     },
   });
 ```
+
+---
+
+## Font Loading
+
+Web and bitmap fonts need to be loaded via assetpack before they can be used in your game.
+
+Here's how you might structure your assets folder to include a web and bitmap font version of the same font:
+
+<FileTree>
+- assets
+  - required\{m\}
+    - fonts\{fix\} // ensures assetpack mipmap plugin doesn't resize any image files inside this folder
+      - KumbhSans-Bold\{family=KumbhSans\}\{wf\}.ttf
+      - KumbhSans-Medium\{family=KumbhSans\}\{wf\}.ttf
+      - KumbhSans-Regular\{family=KumbhSans\}\{wf\}.ttf
+      - KumbhSans-SemiBold\{family=KumbhSans\}\{wf\}.ttf
+      - KumbhSansBlack.fnt // bitmap font (font name inside the file needs to be the same as the file name, and will be the bitmap font family name)
+      - KumbhSansBlack.png // bitmap font image
+</FileTree>
+
+<Aside type="tip">The `{wf}` suffix in the file name indicates that the file is a web font.</Aside>
+
+<Aside type="tip">
+  The `{family}` suffix in the file name indicates that the font belongs to the `KumbhSans` family. This setup allows
+  you to use the same font family name and have access to all the different font weights.
+</Aside>
+
+This setup ensures that fonts will be loaded as part of the required assets, and will be available to your game.
