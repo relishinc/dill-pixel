@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.5](https://github.com/relishinc/dill-pixel/compare/v4.1.4...v4.1.5) (2025-01-15)
+
+
+### Bug Fixes
+
+* errors in bootstrap ([ae997f1](https://github.com/relishinc/dill-pixel/commit/ae997f173c31941111e0e009c2c8301c84a0afb6))
+
 ## [4.1.4](https://github.com/relishinc/dill-pixel/compare/v4.1.3...v4.1.4) (2025-01-15)
 
 
