@@ -72,10 +72,10 @@ export default defineConfig({
                 { label: 'Popups', link: '/fundamentals/ui/popups' },
               ],
             },
-            {
-              label: 'Accessibility',
-              items: [{ label: 'Focus Management', link: '/fundamentals/focus' }],
-            },
+            // {
+            //   label: 'Accessibility',
+            //   items: [{ label: 'Focus Management', link: '/fundamentals/focus' }],
+            // },
           ],
         },
         typeDocSidebarGroup,
