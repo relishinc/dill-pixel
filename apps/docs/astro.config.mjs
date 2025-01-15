@@ -15,7 +15,7 @@ export default defineConfig({
         src: './src/assets/jar.png',
       },
       social: {
-        github: 'https://github.com/relishinc/dill-pixel/tree/v8',
+        github: 'https://github.com/relishinc/dill-pixel',
       },
       editLink: {
         baseUrl: 'https://github.com/relishinc/dill-pixel/tree/docs',

@@ -2,4 +2,275 @@
 title: Actions
 ---
 
-Actions are a way to create and manage events in your game.
+import { Aside, Code, Steps, TabItem, Tabs } from '@astrojs/starlight/components';
+
+Actions are a powerful system for handling input and events in your game while maintaining context-aware control over when these events can occur. The system consists of three main components: contexts, actions, and controls.
+
+## Contexts
+
+Contexts represent different states or modes of your game. For example:
+
+```ts
+// src/dill-pixel.config.ts
+const contexts = defineContexts(['default', 'game', 'menu', 'popup']);
+```
+
+Common contexts include:
+
+- `default` - Base game state
+- `game` - Active gameplay
+- `menu` - Menu navigation
+- `popup` - Popup/modal dialogs
+- `pause` - Paused state
+
+## Defining Actions
+
+Actions are defined with their allowed contexts using `defineActions`:
+
+```ts
+// src/dill-pixel.config.ts
+const actions = defineActions(contexts, {
+  // Action with specific contexts
+  move_left: { context: ['game'] },
+
+  // Action allowed in all contexts
+  pause: { context: '*' },
+
+  // Action with multiple contexts
+  close: { context: ['menu', 'popup'] },
+});
+```
+
+**Each action specifies:**
+
+- An action identifier (e.g., `move_left`)
+- Context(s) where the action is allowed
+- `'*'` means the action is allowed in all contexts
+
+## Defining Buttons
+
+The action system supports touch controls through buttons and joysticks. Here's how to configure them:
+
+```ts
+// src/dill-pixel.config.ts
+const buttons = defineButtons(['A', 'B']);
+```
+
+## Connecting Controls
+
+Actions can be mapped to different input methods using `defineControls`:
+
+```ts
+// src/dill-pixel.config.ts
+const controls = defineControls(actions, buttons, {
+  keyboard: {
+    down: {
+      move_left: ['ArrowLeft', 'A'],
+      jump: ['ArrowUp', 'Space'],
+    },
+    up: {
+      pause: 'P',
+      close: 'Escape',
+    },
+  },
+  touch: {
+    down: {
+      jump: 'A',
+      warp: 'B',
+    },
+    joystick: {
+      move_left: ['left', 'bottom_left'],
+    },
+  },
+});
+```
+
+<Aside type="caution">You must manually register your button controls in order for them to work.</Aside>
+### 3. Registering Buttons
+
+In your game code, create and register button instances with the touch controls:
+
+```ts
+import { MyApplication } from '@/MyApplication';
+import { Scene, Button } from 'dill-pixel';
+export default class GameScene extends Scene<MyApplication> {
+  initialize() {
+    // Create buttons
+    const jumpButton = this.add.button({
+      id: 'A', // Must match the ID used in defineButtons
+      textures: {
+        default: 'button-a',
+        hover: 'button-a-hover',
+        active: 'button-a-pressed',
+      },
+    });
+
+    const warpButton = this.add.button({
+      id: 'B',
+      textures: {
+        default: 'button-b',
+        hover: 'button-b-hover',
+        active: 'button-b-pressed',
+      },
+    });
+
+    // Register buttons with touch controls
+    this.app.input.touch.addButton(jumpButton);
+    this.app.input.touch.addButton(warpButton);
+  }
+}
+```
+
+## How It Works
+
+<Steps>
+  <ol>
+    <li>
+      <div>
+        ### Context Management: 
+        
+        The ActionsPlugin maintains the current context and validates actions against it:
+
+        ```ts
+        sendAction<TActionData = any>(actionId: Action | string, data?: TActionData): void {
+            // check if action is defined
+            if (!this._actions[actionId]) {
+                return;
+            }
+            // check if action is allowed for current context
+            // send action if allowed
+            if (
+                this._actions[actionId]?.context === '*' ||
+                this._actions[actionId]?.context === this.context ||
+                this._actions[actionId]?.context?.includes(this.context)
+            ) {
+                return this.getAction<TActionData>(actionId).emit({ id: actionId, context: this.context, data });
+            }
+        }
+
+        ```
+    </div>
+
+  </li>
+  <li>
+    <div>
+      ### Action Dispatching:
+
+      Actions can be dispatched using:
+
+        ```ts
+        // Send an action with optional data
+        app.sendAction('jump', { power: 100 });
+        // Or using the shorter alias
+        app.action('jump', { power: 100 });
+        ```
+    </div>
+
+  </li>
+  <li>
+    <div>
+      ### Action Handling:
+
+      You can listen for actions:
+
+        ```ts
+        app.actions('jump').connect((detail) => {
+            const { id, context, data } = detail;
+            // Handle the jump action
+        });
+        ```
+    </div>
+
+  </li>
+</ol>
+</Steps>
+
+## Benefits
+
+1. **Context Control**: Actions are automatically filtered based on the current context, preventing unwanted inputs during inappropriate game states.
+
+2. **Input Abstraction**: The action system separates input handling from game logic, making it easier to:
+
+   - Support multiple input methods (keyboard, touch, gamepad)
+   - Change control schemes without modifying game logic
+   - Add new input methods
+
+3. **Type Safety**: The system is fully typed, providing autocomplete and compile-time checking:
+
+## Example
+
+The following example demonstrates how the action system ensuring that player movement is automatically disabled when the game is paused, while still allowing pause-specific actions like "resume" to function.
+
+<Tabs>
+  <TabItem label={'dill-pixel.config.ts'}>
+    Register the action in your `dill-pixel.config.ts` file:
+    <Code
+      code={`
+// Define actions with contexts
+const actions = defineActions(contexts, {
+    move: { context: ['game'] },
+    pause: { context: '*' },
+    resume: { context: ['pause'] },
+    select: { context: ['menu'] }
+});
+
+// ... later on, export the action types and contexts
+export type ActionTypes = keyof typeof actions;
+export type Contexts = (typeof contexts)[number];
+`}
+lang="ts"
+/>
+
+  </TabItem>
+  <TabItem label={'MyApplication.ts'}>
+    Ensure your application is setup to use the actions:
+    <Code
+      code={`
+import { Application } from 'dill-pixel';
+import { type ActionTypes, type AnalyticsEvents, type Contexts, type Data } from './dill-pixel.config';
+export class MyApplication extends Application<Data, Contexts, ActionTypes>P {}
+      `}
+      lang="ts"
+    />
+  </TabItem>
+  <TabItem label={'MyScene.ts'}>
+    Send the action from anywhere:
+    <Code
+      code={`
+import { Scene } from 'dill-pixel';
+
+export default class Game extends Scene {
+    async initialize() {
+        this.app.actionContext = 'game';
+        // connect to your actions
+        this.addSignalConnection(
+            // Listen for pause action (allowed in all contexts)
+            this.app.actions('pause').connect(() => {
+                this.pauseGame();
+                // Change context to 'pause'
+                
+            }),
+            // Movement only works in 'game' context
+            this.app.actions('move').connect((detail) => {
+                this.movePlayer(detail.data);
+            });
+        );
+    }
+
+    pauseGame(){
+        this.app.actionContext = 'pause'
+        // trigger pause menu, etc
+    }
+
+    resumeGame(){
+        this.app.actionContext = 'game'
+        // resume game, allowing movement
+    }
+
+}
+`}
+lang="ts"
+/>
+
+  </TabItem>
+</Tabs>
