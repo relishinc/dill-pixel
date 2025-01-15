@@ -1,5 +1,6 @@
-import { AssetPack } from '@assetpack/core';
+import { AssetPack, Logger } from '@assetpack/core';
 import { pixiPipes } from '@assetpack/core/pixi';
+import fs from 'node:fs';
 import process from 'node:process';
 const cwd = process.cwd();
 const defaultManifestUrl = './public/assets.json';
@@ -32,6 +33,15 @@ export const assetpackConfig = (manifestUrl = defaultManifestUrl, pixiPipesConfi
 
 export default assetpackConfig;
 
+// write a debounce function
+const debounce = (func, wait) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+};
+
 export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfig = defaultPixiPipesConfig) {
   const apConfig = {
     manifestUrl,
@@ -47,9 +57,22 @@ export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfi
   };
   let mode;
   let ap;
+  let viteServer;
+  let manifestWatcher;
+  let initialBuild = false;
+
+  function reload() {
+    Logger.info('Dill Pixel assetpack plugin:: manifest changed, reloading browser...');
+    viteServer?.ws?.send({ type: 'full-reload' });
+  }
+
+  const debouncedReload = debounce(reload, 100);
 
   return {
     name: 'vite-plugin-assetpack',
+    configureServer(server) {
+      viteServer = server;
+    },
     configResolved(resolvedConfig) {
       mode = resolvedConfig.command;
       if (!resolvedConfig.publicDir) return;
@@ -61,12 +84,29 @@ export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfi
       if (mode === 'serve') {
         if (ap) return;
         ap = new AssetPack(apConfig);
+        await ap.run();
+
+        // wait for the manifest to be initially created
+        setTimeout(() => {
+          initialBuild = true;
+        }, 1000);
+
         void ap.watch();
+
+        if (mode === 'serve') {
+          Logger.info('Dill Pixel assetpack plugin:: watching manifest');
+          manifestWatcher = fs.watch(manifestUrl, async (eventType) => {
+            if (initialBuild && eventType === 'change') {
+              debouncedReload();
+            }
+          });
+        }
       } else {
         await new AssetPack(apConfig).run();
       }
     },
     buildEnd: async () => {
+      manifestWatcher?.close();
       if (ap) {
         await ap.stop();
         ap = undefined;
