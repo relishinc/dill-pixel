@@ -57,8 +57,8 @@ export async function generateAdapterList<T extends IStorageAdapter = IStorageAd
 }
 
 export function defineConfig<D extends DataSchema = DataSchema>(config: Partial<AppConfig<D>>): AppConfig<D> {
-  const assets = config.assets || {};
   // Provide sensible defaults
+  const assets = config.assets || {};
   const userConfig = {
     id: 'DillPixelApplication',
     showStats: isDev,
@@ -67,13 +67,13 @@ export function defineConfig<D extends DataSchema = DataSchema>(config: Partial<
     useSpine: false,
     useVoiceover: false,
     defaultSceneLoadMethod: 'immediate',
+
     plugins: [],
     scenes: [],
     ...config,
     assets: {
       manifest:
-        assets?.manifest ||
-        ('./assets.json' as unknown as string | AssetsManifest | Promise<AssetsManifest> | undefined),
+        assets?.manifest || ('assets.json' as unknown as string | AssetsManifest | Promise<AssetsManifest> | undefined),
       preload: assets?.preload || {
         bundles: ['required'],
       },

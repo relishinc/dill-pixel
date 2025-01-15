@@ -20,7 +20,6 @@ import { Signal } from '../../signals';
 import type { DataSchema, IDataAdapter, IStore } from '../../store';
 import type { Size } from '../../utils';
 import type { AppConfig } from '../types';
-import type { IApplicationOptions } from './IApplicationOptions';
 import type { ICoreFunctions } from './ICoreFunctions';
 import { ICoreSignals } from './ICoreSignals';
 
@@ -29,7 +28,7 @@ export interface IApplication<
   C extends ActionContext = ActionContext,
   A extends Action = Action,
 > extends PIXIPApplication {
-  config: Partial<IApplicationOptions<D>>;
+  config: Partial<AppConfig<D>>;
   readonly env: Record<string, string>;
   readonly size: Size;
   readonly center: Point;
@@ -66,7 +65,7 @@ export interface IApplication<
   sendAction(action: A, data?: any): void;
   isActionActive(action: A): boolean;
 
-  initialize(config: AppConfig<D>): Promise<IApplication<D, C, A>>;
+  initialize(config: Partial<AppConfig<D>>): Promise<IApplication<D, C, A>>;
 
   postInitialize(): Promise<void>;
 

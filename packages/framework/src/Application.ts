@@ -1,4 +1,4 @@
-import type { IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals } from './core';
+import type { AppConfig, IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals } from './core';
 import { coreFunctionRegistry, coreSignalRegistry, generateAdapterList, generatePluginList } from './core';
 import type {
   Action,
@@ -369,18 +369,19 @@ export class Application<
     }
   }
 
-  public async initialize(config: Partial<IApplicationOptions<D>> = {}): Promise<IApplication<D, C, A>> {
+  public async initialize(config: AppConfig<D>): Promise<IApplication<D, C, A>> {
     if (Application.instance) {
       throw new Error('Application is already initialized');
     }
     Application.instance = this as unknown as IApplication<DataSchema, ActionContext, Action>;
-    this.config = Object.assign({ ...defaultApplicationOptions }, config);
+    this.config = Object.assign({ ...defaultApplicationOptions }, config as Partial<IApplicationOptions<D>>);
 
     if (config.container) {
       Application.containerElement = config.container;
     }
     // initialize the logger
     Logger.initialize(this.config.logger);
+
     // ensure the resolution is 1 or 2
     if (this.config.resolution !== 1 && this.config.resolution !== 2) {
       const userResolution = this.config.resolution;
