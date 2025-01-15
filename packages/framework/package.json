@@ -95,7 +95,7 @@
     "vite-plugin-dts": "^4.3.0"
   },
   "dependencies": {
-    "@assetpack/core": "^1.2.0",
+    "@assetpack/core": "^1.2.3",
     "@clack/prompts": "^0.8.2",
     "@esotericsoftware/spine-core": "~4.2.66",
     "@pixi/sound": "^6.0.1",
