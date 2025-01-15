@@ -2,5 +2,147 @@
 title: Matter Physics Plugin
 ---
 
-Matter.js is a 2D physics engine that allows you to simulate physics in your game. This can be
-used to create realistic physics simulations, such as gravity, collisions, and more.
+import { Aside, Steps } from '@astrojs/starlight/components';
+
+The Matter Physics Plugin integrates the popular Matter.js 2D physics engine into your dill pixel game. It's ideal for games requiring realistic physics simulations including gravity, collisions, constraints, and complex body interactions.
+
+## Key Features
+
+- Full Matter.js physics engine integration
+- Debug visualization support
+- Configurable walls and boundaries
+- Support for circles, rectangles, and complex polygon bodies
+- Custom body definitions and properties
+
+<Steps>
+  <ol>
+    <li>
+      <div>
+        ### Add the plugin
+        ```json
+        // in package.json
+        {
+            "dependencies": {   
+                // ... other dependencies
+                "@dill-pixel/plugin-matter-physics": "latest"
+            }
+        }
+        ```
+      </div>
+    </li>
+    <li>
+      <div>
+        ### Configure the plugin in your dill-pixel.config.ts:
+        ```ts
+        export const config = defineConfig({
+            // ... rest of your config
+            plugins: [
+                [
+                    'matter-physics',
+                    {
+                        autoLoad: false,
+                        options: {
+                            debug:true,
+                        },
+                    },
+                ],
+            ],
+        });
+        ```
+      </div>
+    </li>
+    <li>
+      <div>
+        ### Initialize physics in your scene:
+        ```ts
+        import { MatterPhysics } from '@dill-pixel/plugin-matter-physics';
+
+        export default class MatterPhysicsScene extends Scene {
+            protected get physics(): MatterPhysics {
+                return this.app.getPlugin('matter-physics') as unknown as MatterPhysics;
+            }
+
+            async initialize() {
+                this.physics.system.initialize({
+                    debug: true,
+                    container: this.level,
+                    engine: {
+                        gravity: { y: 0.98 }
+                    },
+                    createWalls: {
+                        thickness: 10,
+                        bottom: true,
+                        left: true,
+                        right: true
+                    },
+                    worldBounds: new Rectangle(0, 0, this.app.size.width, this.app.size.height - 20)
+                });
+            }
+
+        }
+        ```
+      </div>
+    </li>
+
+  </ol>
+</Steps>
+
+## Physics Objects
+
+The plugin supports different types of physics entities. Here's an example of creating various physics objects:
+
+```ts
+import { Entity } from '@dill-pixel/plugin-matter-physics';
+
+// somewhere in your scene
+async initialize() {
+    // Create a circular physics object
+    const circleEntity = new Entity({
+        bodyType: 'circle',
+        view: this.make.sprite({
+            asset: 'circle-texture',
+            scale: 0.1,
+            anchor: 0.5,
+        }),
+    });
+
+    // Create a rectangular physics object
+    const rectangleEntity = new Entity({
+        bodyType: 'rectangle',
+        bodyDefinition: {
+            restitution: 0.1,
+            friction: 0.5,
+            angle: Math.random() * Math.PI,
+        },
+        view: this.make.graphics().rect(0, 0, width, height).fill({ color: 0xff0000 }),
+    });
+}
+```
+
+## Configuration Options
+
+The Matter Physics Plugin accepts several configuration options:
+
+```ts
+export type MatterPhysicsPluginOptions = {
+  debug: boolean;
+  autoInit: boolean;
+  container?: Container;
+  worldBounds?: Rectangle;
+  createWalls?: {
+    thickness: number;
+    top?: boolean;
+    bottom?: boolean;
+    left?: boolean;
+    right?: boolean;
+  };
+  engine: Partial<IEngineDefinition>;
+  runner: Partial<IRunnerOptions>;
+};
+```
+
+## Example Implementation
+
+For a complete example implementation, you can reference the Matter Physics Scene:
+
+Matter Scene: [Demo](https://dillpixel.io/examples/#matter-physics) | [Source](https://github.com/relishinc/dill-pixel/blob/main/packages/examples/src/scenes/physics/MatterPhysicsScene.ts)

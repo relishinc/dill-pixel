@@ -10,7 +10,7 @@ export default defineConfig({
   base: '/',
   integrations: [
     starlight({
-      title: 'dill pixel (v8)',
+      title: 'dill pixel',
       logo: {
         src: './src/assets/jar.png',
       },
@@ -50,6 +50,7 @@ export default defineConfig({
           label: 'Fundamentals',
           items: [
             { label: 'Assets', link: '/fundamentals/assets' },
+            { label: 'Actions', link: '/fundamentals/actions' },
             { label: 'Scenes', link: '/fundamentals/scenes' },
             { label: 'Data', link: '/fundamentals/data' },
             { label: 'Copy and Content', link: '/fundamentals/copy' },
