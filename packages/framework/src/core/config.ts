@@ -72,7 +72,8 @@ export function defineConfig<D extends DataSchema = DataSchema>(config: Partial<
     ...config,
     assets: {
       manifest:
-        assets?.manifest || ('assets.json' as unknown as string | AssetsManifest | Promise<AssetsManifest> | undefined),
+        assets?.manifest ||
+        ('./assets.json' as unknown as string | AssetsManifest | Promise<AssetsManifest> | undefined),
       preload: assets?.preload || {
         bundles: ['required'],
       },
