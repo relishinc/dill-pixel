@@ -1,7 +1,7 @@
 import { AssetsManifest } from 'pixi.js';
 import { IPlugin, PluginListItem } from '../plugins/Plugin';
 import { DataSchema, IStorageAdapter, StorageAdapterListItem } from '../store';
-import { ImportList, Logger } from '../utils';
+import { ImportList, isDev, Logger } from '../utils';
 import { AppConfig } from './types';
 
 export type PluginOrAdapterConfig = string | [string, { autoLoad?: boolean; options?: any }];
@@ -57,32 +57,29 @@ export async function generateAdapterList<T extends IStorageAdapter = IStorageAd
 }
 
 export function defineConfig<D extends DataSchema = DataSchema>(config: Partial<AppConfig<D>>): AppConfig<D> {
+  const assets = config.assets || {};
   // Provide sensible defaults
   const userConfig = {
     id: 'DillPixelApplication',
-    showStats: false,
-    showSceneDebugMenu: false,
-    useHash: false,
+    showStats: isDev,
+    showSceneDebugMenu: isDev,
+    useHash: isDev,
     useSpine: false,
     useVoiceover: false,
     defaultSceneLoadMethod: 'immediate',
-    data: {
-      initial: {} as D,
-      backupAll: false,
-    },
+    plugins: [],
+    scenes: [],
+    ...config,
     assets: {
-      manifest: {} as unknown as string | AssetsManifest | Promise<AssetsManifest> | undefined,
-      preload: {
+      manifest:
+        assets?.manifest || ('assets.json' as unknown as string | AssetsManifest | Promise<AssetsManifest> | undefined),
+      preload: assets?.preload || {
         bundles: ['required'],
       },
-      background: {
+      background: assets?.background || {
         bundles: [],
       },
     },
-    plugins: [],
-    scenes: [],
-
-    ...config,
   };
 
   return userConfig as AppConfig<D>;
