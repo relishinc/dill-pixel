@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.1](https://github.com/relishinc/dill-pixel/compare/v4.2.0...v4.2.1) (2025-01-16)
+
+
+### Bug Fixes
+
+* cli support for more vo csv generation options ([af3af6c](https://github.com/relishinc/dill-pixel/commit/af3af6cc6157a9b733aeb745f8c96272e4fa6283))
+
 ## [4.2.0](https://github.com/relishinc/dill-pixel/compare/v4.1.5...v4.2.0) (2025-01-15)
 
 
