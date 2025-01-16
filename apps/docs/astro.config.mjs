@@ -56,7 +56,13 @@ export default defineConfig({
             { label: 'Data', link: '/fundamentals/data' },
             { label: 'Copy and Content', link: '/fundamentals/copy' },
             { label: 'Audio', link: '/fundamentals/audio' },
-            { label: 'Spine', link: '/fundamentals/animation/spine' },
+            {
+              label: 'Animation',
+              items: [
+                { label: 'Animated Sprite', link: '/fundamentals/animation/animated-sprite' },
+                { label: 'Spine', link: '/fundamentals/animation/spine' },
+              ],
+            },
             {
               label: 'UI',
               items: [
