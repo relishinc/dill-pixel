@@ -60,8 +60,8 @@ export default defineConfig({
               label: 'Physics',
               items: [
                 { label: 'Overview', link: '/fundamentals/physics/overview' },
-                { label: 'Matter Physics Plugin', link: '/fundamentals/physics/matter' },
                 { label: 'Snap Physics Plugin', link: '/fundamentals/physics/snap' },
+                { label: 'Matter Physics Plugin', link: '/fundamentals/physics/matter' },
               ],
             },
             {
@@ -72,10 +72,15 @@ export default defineConfig({
                 { label: 'Popups', link: '/fundamentals/ui/popups' },
               ],
             },
-            // {
-            //   label: 'Accessibility',
-            //   items: [{ label: 'Focus Management', link: '/fundamentals/focus' }],
-            // },
+            {
+              label: 'Accessibility',
+              items: [
+                { label: 'Overview', link: '/fundamentals/accessibility/overview' },
+                { label: 'Focus Management', link: '/fundamentals/accessibility/focus-management' },
+                { label: 'Voiceover', link: '/fundamentals/accessibility/voiceover' },
+                { label: 'Captions', link: '/fundamentals/accessibility/captions' },
+              ],
+            },
           ],
         },
         typeDocSidebarGroup,

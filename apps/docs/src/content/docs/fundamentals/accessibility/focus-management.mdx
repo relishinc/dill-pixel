@@ -1,0 +1,162 @@
+---
+title: Focus Management
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+Focus management in dill-pixel provides keyboard navigation and visual feedback for interactive elements in your application. The system consists of multiple layers of focusable elements that can be navigated using the Tab key.
+
+## Core Concepts
+
+### Focus Layers
+
+Focus layers provide a way to manage multiple sets of focusable elements in your application. Think of them as stackable groups of interactive elements where only one layer can be active at a time.
+
+```ts
+// Create a new focus layer
+app.focus.addFocusLayer('menu');
+app.focus.addFocusLayer('popup', false); // second param: don't make active
+
+// Switch active layer
+app.focus.setFocusLayer('popup');
+
+// Remove a layer
+app.focus.removeFocusLayer('menu');
+```
+
+### Common Use Cases
+
+1. Menu Navigation: Separate menu items into their own layer
+2. Popups: Create a dedicated layer for popup content
+3. Game UI: Switch between different UI states (inventory, skills, etc.)
+
+### Layer Priority
+
+You can control the order of layers to manage focus priority:
+
+```ts
+// Set explicit layer order
+app.focus.setLayerOrder(['popup', 'menu', 'game']);
+```
+
+### Layer Events
+
+```ts
+app.focus.onFocusLayerChange.connect((layerId) => {
+  console.log(`Active layer changed to: ${layerId}`);
+});
+```
+
+### Default Focus
+
+Each layer can have a default focusable element that receives focus when the layer becomes active:
+
+```ts
+// Set default focus when adding focusables
+app.focus.addFocusable(menuButton, 'menu', true); // true = set as default
+
+// Or when adding multiple elements
+app.focus.addFocusLayer('menu', true, [
+  menuButton, // First element becomes default
+  optionsButton,
+  exitButton,
+]);
+```
+
+### Layer Cleanup
+
+Focus layers are automatically cleaned up when changing scenes, but you can also manually remove them:
+
+```ts
+// Remove specific layer
+app.focus.removeFocusLayer('popup');
+// Remove all layers
+app.focus.removeAllFocusLayers();
+```
+
+### Focusable Elements
+
+Any container implementing the `IFocusable` interface can receive focus. The framework provides built-in focus support for components like `Button`.
+
+```ts
+// Add focusable elements to a layer
+app.focus.addFocusable(button, 'main', true); // true = set as default focus
+app.focus.addFocusable([element1, element2], 'popup');
+```
+
+---
+
+## Visual Feedback
+
+The `FocusOutliner` provides visual feedback when elements receive focus. By default, it draws a cyan rectangle or rounded rectangle around the focused element.
+
+### Default Outliner Configuration
+
+Configure the default outliner's appearance in your dill-pixel config:
+
+#### Configuration Options
+
+| Option      | Type                                 | Default               | Description                               |
+| ----------- | ------------------------------------ | --------------------- | ----------------------------------------- |
+| `color`     | `number`                             | `0x00ffff`            | Outline color in hex format               |
+| `shape`     | `'rectangle' \| 'rounded rectangle'` | `'rounded rectangle'` | Outline shape style                       |
+| `lineWidth` | `number`                             | `2`                   | Width of the outline in pixels            |
+| `radius`    | `number`                             | `8`                   | Corner radius for rounded rectangle shape |
+
+```ts
+// dill-pixel.config.ts
+export const config = defineConfig({
+  focus: {
+    outliner: {
+      color: 0x00ffff, // Cyan color (default)
+      shape: 'rounded rectangle', // 'rectangle' or 'rounded rectangle'
+      lineWidth: 2, // Outline thickness
+      radius: 8, // Corner radius (for rounded rectangle)
+    },
+  },
+});
+```
+
+### Custom Focus Outliner
+
+You can create your own focus outliner by extending the base `FocusOutliner` class:
+
+<Steps>
+  <ol>
+    <li>
+    #### Create a custom outliner component
+    ```ts
+        // src/components/MyCustomOutliner.ts
+        import { FocusOutliner } from 'dill-pixel';
+        export class MyCustomOutliner extends FocusOutliner {
+                public draw(focusTarget: IFocusable): void {
+                    this.clear();
+                    this.setFocusTarget(focusTarget);
+
+                    // Custom drawing logic here
+                    this._graphics.lineStyle(2, 0xff0000); // Red outline
+                    this._graphics.drawRect(0, 0, this.focusBounds.width, this.focusBounds.height);
+                }
+
+        }
+    ```
+    </li>
+
+    <li>
+    #### Configure the outliner in your dill-pixel.config.ts
+    ```ts
+    // dill-pixel.config.ts
+    import { defineConfig } from 'dill-pixel';
+    import { MyCustomOutliner } from '@/components/MyCustomOutliner';
+
+    export const config = defineConfig({
+        //... rest ofyour config
+        focus: {
+            outliner: MyCustomOutliner, // Use custom outliner
+        },
+    });
+    ```
+    </li>
+
+  </ol>
+</Steps>

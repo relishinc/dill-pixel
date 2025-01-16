@@ -1,0 +1,200 @@
+---
+title: Voiceover
+---
+
+The [VoiceOverPlugin](https://github.com/relishinc/dill-pixel/blob/main/packages/framework/src/plugins/audio/VoiceOverPlugin.ts) provides functionality for managing voice-over audio in a dill-pixel application. It handles playing, pausing, resuming and stopping voice-over audio with support for localization and queueing.
+
+## Core Features
+
+### 1. Voice-over Queue Management
+
+The plugin maintains two queues:
+
+- `_queue`: Active voice-over queue
+- `_pausedQueue`: Queue for paused voice-overs
+
+### 2. Play Modes
+
+Supports three play modes:
+
+```ts
+export type PlayMode = 'append' | 'override' | 'new';
+```
+
+- `append`: Adds voice-over to end of queue
+
+- `override`: Stops current and plays new if priority is >= current
+
+- `new`: Only plays if `priority` > `current.priority`
+
+### 3. Localization Support
+
+The plugin supports localization by loading locale-specific voice-over files.
+
+```ts
+// VoiceoverScene.ts
+this.app.voiceover.playVO(['vo_intro_0', 'vo_intro_1', 'vo_intro_2'], {
+  localized: true,
+});
+// Results in IDs like: vo_intro_0_en, vo_intro_1_en, etc.
+```
+
+## Key Methods
+
+### Playing Voice-overs
+
+```ts
+// Basic play
+playVO(key: VoKey | VoKey[]): Promise<IAudioInstance>;
+
+// With options
+playVO(key: VoKey | VoKey[], options: IPlayVoiceOverOptions): Promise<IAudioInstance>;
+```
+
+### Control Methods
+
+```ts
+// Stop current voice-over
+stopVO(): Promise<void>;
+
+// Pause current voice-over
+pauseVO(): void;
+
+// Resume paused voice-over
+resumeVO(): void;
+```
+
+## Events/Signals
+
+The plugin emits signals for various voice-over states:
+
+```ts
+onVoiceOverStart: Signal<(instance: IAudioInstance) => void>;
+onVoiceOverPaused: Signal<(instance: IAudioInstance) => void>;
+onVoiceOverResumed: Signal<(instance: IAudioInstance) => void>;
+onVoiceOverComplete: Signal<(instance: IAudioInstance) => void>;
+onVoiceOverStopped: Signal<(instance?: IAudioInstance) => void>;
+```
+
+## Auto-cleanup
+
+The plugin automatically handles cleanup in these scenarios:
+
+1. Scene changes
+2. When stopping voice-overs
+
+## Integration Example
+
+Here's how to integrate voice-over controls in a scene:
+
+```ts
+// MyScene.ts
+export class MyScene extends Scene {
+    protected voButtons: FlexContainer;
+
+    async initialize() {
+        // add a flex container to the scene for buttons
+        this.voButtons = this.add.flexContainer({ gap: 30, flexDirection:'column'});
+
+        // add the buttons
+        this.addButton(this.voButtons, 'Play', () => {
+            this.app.action('vo', {
+                ids: ['vo_intro_0', 'vo_intro_1', 'vo_intro_2'],
+            });
+        });
+
+        this.addButton(this.voButtons, 'Pause', () => {
+            this.app.action('pause_vo');
+        });
+
+        this.addButton(this.voButtons, 'Stop', () => {
+            this.app.action('stop_vo');
+        });
+
+        // Connect action handlers
+        this.addSignalConnection()
+            this.app.actions('vo').connect(this._handleVo),
+            this.app.actions('pause_vo').connect(this._handlePauseVo),
+            this.app.actions('stop_vo').connect(this._handleStopVo)
+        )
+    }
+
+    // utility method to add a button to the scene
+    private addButton(container: FlexContainer, label: string = 'Button', callback: () => void) {
+        const btn = container.add.button({
+            scale: 0.5,
+            cursor: 'pointer',
+            textures: { default: 'btn/blue', hover: 'btn/yellow', disabled: 'btn/grey', active: 'btn/red' },
+            sheet: 'ui',
+            accessibleTitle: label,
+            accessibleHint: `Press me to play a sound`,
+        });
+
+        btn.add.text({
+            text: label,
+            anchor: 0.5,
+            style: { fill: 0xffffff, fontWeight: 'bold', fontSize: 48, align: 'center' },
+        });
+
+        this.addSignalConnection(btn.onClick.connect(callback));
+
+        btn.label = label;
+        this.app.focus.add(btn, this.id, false);
+
+        return btn;
+    }
+
+    // Update button text depending on the voiceover state
+    private _updatePauseButton() {
+        if (this.app.voiceover.paused) {
+            (this._voPauseButton.getChildAt(1) as Text).text = 'Resume';
+        } else {
+            (this._voPauseButton.getChildAt(1) as Text).text = 'Pause';
+        }
+    }
+
+    // Play voiceover
+    private _handleVo(action: ActionDetail) {
+        void this.app.voiceover.playVO(action.data.ids, { localized: true });
+        this._updatePauseButton();
+    }
+
+    // Pause voiceover
+    private _handlePauseVo() {
+        if (this.app.voiceover.paused) {
+        this.app.voiceover.resumeVO();
+        } else {
+        this.app.voiceover.pauseVO();
+        }
+        this._updatePauseButton();
+    }
+
+    // Stop voiceover
+    private _handleStopVo() {
+        void this.app.voiceover.stopVO();
+        this._updatePauseButton();
+    }
+}
+
+
+```
+
+## Error Handling
+
+The plugin includes comprehensive error handling and logging:
+
+1. Skips duplicate voice-overs
+   Handles priority conflicts
+2. Manages early completion scenarios
+3. Provides detailed logging in development mode
+
+## Best Practices
+
+- Handle localization through options rather than manually appending locale codes
+- Clean up signal connections when destroying scenes
+- Use priority system for managing voice-over interruptions
+- Implement proper UI feedback for voice-over states (e.g., updating pause/resume button text)
+
+## Captions Integration
+
+Voiceovers in dill-pixel can be paired with captions. See the [Captions](/fundamentals/accessibility/captions) documentation for more information.

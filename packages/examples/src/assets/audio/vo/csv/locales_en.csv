@@ -1,0 +1,9 @@
+FILENAME	LINE	SCRATCH_VOICE	SCRATCH_GENDER	SCRATCH_LANGUAGE	CAPTION
+foo	baz	en-US-Wavenet-D	female	en-US	Y
+opts_0	bar	en-US-Wavenet-D	female	en-US	Y
+opts_1	baz	en-US-Wavenet-D	female	en-US	Y
+opts_2	bal	en-US-Wavenet-D	female	en-US	Y
+replace_0	This is a test of bar.	en-US-Wavenet-D	female	en-US	Y
+replace_1	This is a test of baz.	en-US-Wavenet-D	female	en-US	Y
+replace_2	This is a test of bal.	en-US-Wavenet-D	female	en-US	Y
+html	Some *strong* and _emphasized_ HTML	en-US-Wavenet-D	female	en-US	Y

@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 
 // Default voiceover attributes
-const defaultVoice = 'en-US-Wavenet-D';  // Example Google voice ID
+const defaultVoice = 'en-US-Wavenet-D'; // Example Google voice ID
 const defaultGender = 'female';
 const defaultLanguage = 'en-US';
 const defaultCaption = 'Y';
@@ -13,7 +13,8 @@ function loadExistingCsv(filePath) {
     const csvData = fs.readFileSync(filePath, 'utf8');
     const lines = csvData.split('\n');
     lines.forEach((line, index) => {
-      if (line && index > 0) { // Skip header
+      if (line && index > 0) {
+        // Skip header
         const parts = line.split('\t'); // Use tab to split
         const filename = parts[0];
         csvMap.set(filename, parts);
@@ -31,14 +32,7 @@ function updateOrAddLine(filename, lineText, csvMap) {
     parts[1] = lineText; // Update the line text
   } else {
     // Create new line with defaults if they are not present
-    const newLine = [
-      filename,
-      lineText,
-      defaultVoice,
-      defaultGender,
-      defaultLanguage,
-      defaultCaption,
-    ];
+    const newLine = [filename, lineText, defaultVoice, defaultGender, defaultLanguage, defaultCaption];
     csvMap.set(filename, newLine);
   }
 }
@@ -59,61 +53,106 @@ function stripHtmlTags(str) {
 
 // Function to parse the object and create CSV content
 function parseOrUpdateVoiceoverData(data, existingCsvMap) {
-  let csvContent = 'FILENAME\tLINE\tSCRATCH_VOICE\tSCRATCH_GENDER\tSCRATCH_LANGUAGE\tCAPTION\n'; // Use tab as the delimiter
+  let csvContent = 'FILENAME\tLINE\tSCRATCH_VOICE\tSCRATCH_GENDER\tSCRATCH_LANGUAGE\tCAPTION\n';
 
   for (const key in data) {
-    let value = data[key];
+    const value = data[key];
 
-    if (typeof value === 'string' && value.startsWith('[') && value.endsWith(']')) {
-      value = value.slice(1, -1);  // Remove the brackets
-      const options = value.split('|');
+    // Handle replace object structure
+    if (value && typeof value === 'object' && 'replace' in value) {
+      const { replace, replaceOpts } = value;
 
+      // Parse replacement options
+      if (replaceOpts && replaceOpts.startsWith('[') && replaceOpts.endsWith(']')) {
+        const options = replaceOpts.slice(1, -1).split('|');
+
+        // Generate a line for each replacement option
+        options.forEach((option, index) => {
+          const filename = `${key}_${index}`;
+          const replacedText = replace.replace(/\{[^}]+\}/, option.trim());
+          updateOrAddLine(filename, replacedText, existingCsvMap);
+        });
+      } else {
+        // If no valid replaceOpts, just use the replace text as is
+        updateOrAddLine(key, replace, existingCsvMap);
+      }
+    }
+    // Handle existing string array format
+    else if (typeof value === 'string' && value.startsWith('[') && value.endsWith(']')) {
+      const options = value.slice(1, -1).split('|');
       options.forEach((option, index) => {
         const filename = `${key}_${index}`;
         updateOrAddLine(filename, option, existingCsvMap);
       });
-    } else if (typeof value === 'string') {
-      const filename = key;
-      updateOrAddLine(filename, value, existingCsvMap);
+    }
+    // Handle simple string
+    else if (typeof value === 'string') {
+      updateOrAddLine(key, value, existingCsvMap);
     }
   }
 
-  existingCsvMap.forEach((parts, filename) => {
-    csvContent += parts.join('\t') + '\n'; // Join parts with a tab
+  existingCsvMap.forEach((parts) => {
+    csvContent += parts.join('\t') + '\n';
   });
 
   return csvContent;
 }
 
-export async function generateVoiceoverCSV(inputDir, outputDir) {
-  // get all the files in the input directory, excluding dotfiles
-  const files = fs.readdirSync(inputDir).filter(file => !file.startsWith('.'));
-  for (const file of files) {
-    const filePath = `${inputDir}/${file}`;
-    let fileData = fs.readFileSync(filePath, 'utf-8');
-    // if the file is a js or ts file, extract a JSON object by finding the first occurrence of '{'
-    if (file.endsWith('.js') || file.endsWith('.ts')) {
-      const startIndex = fileData.indexOf('{');
-      const endIndex = fileData.lastIndexOf('}');
-      fileData = fileData.slice(startIndex, endIndex + 1);
-      // ensure it's valid json by eliminating single quotes and comments
-      fileData = fileData.replace(/\/\/.*/g, '').replace(/\/\*.*\*\//g, '').replace(/'/g, '"');
-      // wrap the keys in double quotes
-      fileData = fileData.replace(/(\w+):/g, '"$1":');
-      // remove trailing commas
-      fileData = fileData.replace(/,(\s*})/g, '$1');
+export async function generateVoiceoverCSV(inputDirs, outputDir) {
+  console.log('inputDirs', inputDirs);
+  // Split input directories and trim whitespace
+  const directories = inputDirs.split(',').map((dir) => dir.trim());
+
+  // Process each directory
+  for (const inputDir of directories) {
+    // Skip if directory doesn't exist
+    if (!fs.existsSync(inputDir)) {
+      console.warn(`Warning: Directory ${inputDir} does not exist, skipping...`);
+      continue;
     }
-    // parse the JSON object
-    fileData = JSON.parse(fileData);
-    const csvFilePath = `${outputDir}/${file.replace(/\.\w+$/, '')}.csv`;
-    const existingCsvMap = loadExistingCsv(csvFilePath);
-    // generate the CSV content
-    const csvContent = parseOrUpdateVoiceoverData(fileData, existingCsvMap);
-    // replace extension with .csv
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
+
+    const files = fs.readdirSync(inputDir).filter((file) => !file.startsWith('.'));
+    for (const file of files) {
+      const filePath = `${inputDir}/${file}`;
+      console.log('filePath', filePath);
+      // only process files that end with .js or .ts or .json
+      if (!file.endsWith('.js') && !file.endsWith('.ts') && !file.endsWith('.json')) {
+        console.log('Skipping file', file);
+        continue;
+      }
+
+      let fileData = fs.readFileSync(filePath, 'utf-8');
+      // if the file is a js or ts file, extract a JSON object by finding the first occurrence of '{'
+      if (file.endsWith('.js') || file.endsWith('.ts')) {
+        const startIndex = fileData.indexOf('{');
+        const endIndex = fileData.lastIndexOf('}');
+        fileData = fileData.slice(startIndex, endIndex + 1);
+        // ensure it's valid json by eliminating single quotes and comments
+        fileData = fileData
+          .replace(/\/\/.*/g, '')
+          .replace(/\/\*.*\*\//g, '')
+          .replace(/'/g, '"');
+        // wrap the keys in double quotes
+        fileData = fileData.replace(/(\w+):/g, '"$1":');
+        // remove trailing commas
+        fileData = fileData.replace(/,(\s*})/g, '$1');
+      }
+      // parse the JSON object
+      fileData = JSON.parse(fileData);
+
+      // Use the directory name as part of the output filename to avoid conflicts
+      const dirName = inputDir.split('/').filter(Boolean).pop() || 'default';
+      const csvFilePath = `${outputDir}/${dirName}_${file.replace(/\.\w+$/, '')}.csv`;
+
+      const existingCsvMap = loadExistingCsv(csvFilePath);
+      // generate the CSV content
+      const csvContent = parseOrUpdateVoiceoverData(fileData, existingCsvMap);
+
+      if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+      }
+      // write the CSV content to the file
+      fs.writeFileSync(csvFilePath, csvContent);
     }
-    // write the CSV content to the file
-    fs.writeFileSync(csvFilePath, csvContent);
   }
 }

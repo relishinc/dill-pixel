@@ -1,0 +1,3 @@
+FILENAME	LINE	SCRATCH_VOICE	SCRATCH_GENDER	SCRATCH_LANGUAGE	CAPTION
+foo	bar FR	en-US-Wavenet-D	female	en-US	Y
+foo2	bar fr json	en-US-Wavenet-D	female	en-US	Y

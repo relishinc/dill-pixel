@@ -1,0 +1,107 @@
+---
+title: Captions
+---
+
+The captions system in dill-pixel provides synchronized subtitles/captions for voice-over audio content. It's tightly integrated with the audio system and supports multiple languages, styling options, and positioning configurations.
+
+## Configuration
+
+Captions can be configured in your dill-pixel.config.ts file. Here's an example configuration:
+
+```ts
+// dill-pixel.config.ts
+import { defineConfig } from 'dill-pixel';
+
+export const config = defineConfig({
+  // ... rest of your config
+  captions: {
+    files: [
+      { id: 'en', json: 'audio/vo/en/cc.json' },
+      { id: 'fr', json: 'audio/vo/fr/cc.json' },
+    ],
+    backgroundAlpha: 0.5,
+    backgroundColor: 0x0,
+    textColor: 0xffffff,
+    maxWidth: 0.4,
+  },
+});
+```
+
+### Available Configuration Options
+
+1. Core Settings:
+   - `files`: Array of caption files for different languages
+   - `defaultLocale`: Default language (defaults to 'en')
+   - `enabled`: Whether captions are enabled (defaults to true)
+2. Visual Settings:
+   - `fontFile`: Path to the bitmap font file
+   - `fontName`: Name of the font to use
+   - `fontSizeMultiplier`: Scale factor for font size
+   - `maxWidth`: Maximum width of captions (as ratio of screen width)
+   - `textColor`: Color of caption text
+   - `backgroundColor`: Color of caption background
+   - `backgroundAlpha`: Opacity of caption background
+3. Positioning Settings:
+   - `floating`: Whether captions float or stretch full width - distance: Distance from screen edge when floating
+   - `padding`: Padding around caption text
+   - `position`: Vertical position ('top' or 'bottom')
+
+## Integration with Audio System
+
+The CaptionsPlugin automatically syncs with the AudioManagerPlugin through several signal connections:
+
+- `onLocaleChanged`: Triggered when the locale changes
+- `onVoiceOverStart`: Triggered when voiceover starts
+- `onVoiceOverPaused`: Triggered when voiceover is paused
+- `onVoiceOverResumed`: Triggered when voiceover is resumed
+- `onVoiceOverComplete`: Triggered when voiceover completes
+- `onVoiceOverStopped`: Triggered when voiceover stops
+
+These connections ensure captions are:
+
+- Started when voice-over begins
+- Paused/resumed with audio
+- Stopped when voice-over ends
+- Cleared when switching scenes
+
+## Caption Rendering
+
+The CaptionsRenderer handles the visual presentation of captions.
+
+### Key rendering features:
+
+- Bitmap text rendering for optimal performance
+- Background sprite with configurable color/opacity
+- Automatic text wrapping and positioning
+- Smooth fade transitions
+- Support for different screen sizes and orientations
+
+## Localization Support
+
+The captions system integrates with the i18n system:
+
+- Locale-specific caption files are loaded based on the current locale
+- Captions are displayed in the selected language
+- Captions are cleared when switching locales
+
+## Best Practices
+
+1. **Caption Files**: Structure your caption files with proper timing:
+   ```json
+   {
+     "vo_intro_1": [
+       {
+         "start": 0,
+         "end": 3000,
+         "content": "Welcome to the game"
+       }
+     ]
+   }
+   ```
+2. **Accessibility**: Always provide clear contrast between text and background colors
+3. **Positioning**: Consider game content when choosing between top/bottom positioning
+4. **Text Width**: Keep maxWidth between 0.4-0.8 for optimal readability
+
+## Voiceover Integration
+
+Captions in dill-pixel are be paired with voiceovers. See the [Voiceover](/fundamentals/accessibility/voiceover) documentation for more information.
