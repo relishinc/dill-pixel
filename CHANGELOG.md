@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.2](https://github.com/relishinc/dill-pixel/compare/v4.2.1...v4.2.2) (2025-01-16)
+
+
+### Bug Fixes
+
+* rive plugin wasm and package versions ([137124a](https://github.com/relishinc/dill-pixel/commit/137124aa57ca7a66a9313c12c1bc6c3190782c83))
+
 ## [4.2.1](https://github.com/relishinc/dill-pixel/compare/v4.2.0...v4.2.1) (2025-01-16)
 
 
