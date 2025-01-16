@@ -49,27 +49,28 @@ export default defineConfig({
         {
           label: 'Fundamentals',
           items: [
+            { label: 'Overview', link: '/fundamentals/overview' },
             { label: 'Assets', link: '/fundamentals/assets' },
             { label: 'Actions', link: '/fundamentals/actions' },
             { label: 'Scenes', link: '/fundamentals/scenes' },
             { label: 'Data', link: '/fundamentals/data' },
             { label: 'Copy and Content', link: '/fundamentals/copy' },
             { label: 'Audio', link: '/fundamentals/audio' },
-            { label: 'Spine', link: '/fundamentals/spine' },
-            {
-              label: 'Physics',
-              items: [
-                { label: 'Overview', link: '/fundamentals/physics/overview' },
-                { label: 'Snap Physics Plugin', link: '/fundamentals/physics/snap' },
-                { label: 'Matter Physics Plugin', link: '/fundamentals/physics/matter' },
-              ],
-            },
+            { label: 'Spine', link: '/fundamentals/animation/spine' },
             {
               label: 'UI',
               items: [
                 { label: 'Text', link: '/fundamentals/ui/text' },
                 { label: 'Layout', link: '/fundamentals/ui/layout' },
                 { label: 'Popups', link: '/fundamentals/ui/popups' },
+              ],
+            },
+            {
+              label: 'Physics',
+              items: [
+                { label: 'Overview', link: '/fundamentals/physics/overview' },
+                { label: 'Snap Physics Plugin', link: '/fundamentals/physics/snap' },
+                { label: 'Matter Physics Plugin', link: '/fundamentals/physics/matter' },
               ],
             },
             {
