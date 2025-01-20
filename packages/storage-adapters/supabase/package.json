@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/storage-adapter-supabase",
-  "version": "4.2.2",
+  "version": "4.2.3",
   "description": "",
   "files": [
     "lib",
@@ -28,7 +28,7 @@
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
-    "dill-pixel": "4.2.2"
+    "dill-pixel": "4.2.3"
   },
   "dependencies": {
     "@supabase/postgrest-js": "^1.15.5",
