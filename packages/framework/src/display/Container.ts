@@ -117,6 +117,7 @@ export class Container<A extends Application = Application>
 
     if (opts.autoResize) {
       this.addSignalConnection(this.app.signal.onResize.connect(this.__resizeBackground));
+      this.__resizeBackground();
     }
 
     return this.__background;
