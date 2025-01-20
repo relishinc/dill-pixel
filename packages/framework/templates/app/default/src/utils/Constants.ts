@@ -1,5 +1,5 @@
 // fonts
-export const FONT_KUMBH_SANS = 'Kumbh Sans';
+export const FONT_KUMBH_SANS = 'KumbhSans';
 
 // colors
 export const COLOR_GREEN = 0x8ac733;
