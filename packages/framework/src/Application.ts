@@ -318,6 +318,10 @@ export class Application<
     return coreSignalRegistry;
   }
 
+  get signals(): ICoreSignals {
+    return this.signal;
+  }
+
   get func(): ICoreFunctions {
     return coreFunctionRegistry;
   }

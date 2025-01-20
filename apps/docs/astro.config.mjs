@@ -51,6 +51,8 @@ export default defineConfig({
           label: 'Fundamentals',
           items: [
             { label: 'Overview', link: '/fundamentals/overview' },
+            { label: 'Application', link: '/fundamentals/application' },
+            { label: 'Signals', link: '/fundamentals/signals' },
             { label: 'Assets', link: '/fundamentals/assets' },
             { label: 'Actions', link: '/fundamentals/actions' },
             { label: 'Scenes', link: '/fundamentals/scenes' },
@@ -69,6 +71,7 @@ export default defineConfig({
               items: [
                 { label: 'Text', link: '/fundamentals/ui/text' },
                 { label: 'Layout', link: '/fundamentals/ui/layout' },
+                { label: 'Button', link: '/fundamentals/ui/button' },
                 { label: 'Popups', link: '/fundamentals/ui/popups' },
               ],
             },

@@ -1,0 +1,162 @@
+---
+title: Button
+---
+
+The [Button](/api/classes/button) component in dill-pixel provides an interactive button implementation with support for different states, textures, sounds, and accessibility features.
+
+## Basic Usage
+
+The simplest way to create a button is using the `add.button()` factory method:
+
+```ts
+const button = this.add.button({
+  textures: {
+    default: 'btn/blue',
+    hover: 'btn/yellow',
+    disabled: 'btn/grey',
+  },
+  sheet: 'ui',
+});
+```
+
+## Button Configuration
+
+The button accepts several configuration options:
+
+```ts
+export type ButtonConfig = {
+  id: string;
+  textures: {
+    default: TextureLike;
+    hover?: TextureLike;
+    active?: TextureLike;
+    disabled?: TextureLike;
+  };
+  sounds?: {
+    hover?: string;
+    out?: string;
+    up?: string;
+    down?: string;
+    click?: string;
+  };
+  actions?: {
+    hover?: ButtonActionOrCallback;
+    out?: ButtonActionOrCallback;
+    up?: ButtonActionOrCallback;
+    down?: ButtonActionOrCallback;
+    click?: ButtonActionOrCallback;
+  };
+  cursor: Cursor;
+  disabledCursor: Cursor;
+  sheet: SpriteSheetLike;
+  enabled: boolean;
+};
+```
+
+## Button States
+
+Buttons support multiple states with different textures:
+
+- `default`: Normal state
+- `hover`: When pointer is over the button
+- `active`: When button is pressed
+- `disabled`: When button is disabled
+
+## Event Handling
+
+Buttons provide several signals for interaction:
+
+```ts
+// Click handling
+button.onClick.connect(() => {
+  console.log('Button clicked!');
+});
+
+// Other available signals
+button.onDown.connect(() => {}); // Button pressed
+button.onUp.connect(() => {}); // Button released
+button.onOver.connect(() => {}); // Pointer entered
+button.onOut.connect(() => {}); // Pointer exited
+```
+
+## Adding Content
+
+You can add child elements to buttons using the factory methods:
+
+```ts
+const button = this.add.button({
+  textures: { default: 'btn/blue' },
+});
+
+// Add text label
+button.add.text({
+  text: 'Click Me',
+  anchor: 0.5,
+  style: {
+    fontSize: 60,
+    fill: 0xffffff,
+  },
+});
+```
+
+## Focus Management
+
+Buttons automatically integrate with dill-pixel's [focus management](/fundamentals/accessibility/focus-management) system.
+
+To enable focus management:
+
+```ts
+// Add focus layer in your scene
+this.app.focus.addFocusLayer('my-scene');
+
+// Add button to focus management
+this.app.focus.add(button);
+
+// Optional: Set custom focus order
+button.tabIndex = 1;
+```
+
+## Example: Interactive Menu
+
+Here's a complete example showing button usage in a menu:
+
+```ts
+import { Button, FlexContainer, Scene } from 'dill-pixel';
+export default class MenuScene extends Scene {
+  async initialize() {
+    // Create focus layer
+    this.app.focus.addFocusLayer(this.id);
+
+    // Create container for buttons
+    const container = this.add.flexContainer({
+      gap: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+    });
+
+    // Create play button
+    const playButton = container.add.button({
+      textures: {
+        default: 'btn/green',
+        hover: 'btn/yellow',
+        disabled: 'btn/grey',
+      },
+      accessibleTitle: 'Play Game',
+      scale: 0.65,
+    });
+
+    playButton.add.text({
+      text: 'Play',
+      anchor: 0.5,
+      style: { fontSize: 60, fill: 0xffffff },
+    });
+
+    playButton.onClick.connectOnce(() => {
+      this.app.exec.loadScene('game');
+    });
+
+    // Add to focus management
+    this.app.focus.add(playButton);
+  }
+}
+```

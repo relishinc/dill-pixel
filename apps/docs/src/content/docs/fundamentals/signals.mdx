@@ -1,0 +1,209 @@
+---
+title: Signals
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Signals in dill-pixel provide a type-safe event system for communication between different parts of your application. The framework extends the `typed-signals` library to add priority ordering and convenience methods.
+
+## Core Concepts
+
+### Signal Priorities
+
+Signals can be ordered using predefined priorities or custom numeric values:
+
+```ts
+const priorities = {
+  highest: Number.MIN_SAFE_INTEGER,
+  higher: -1000,
+  high: -100,
+  normal: 0,
+  low: 100,
+  lower: 1000,
+  lowest: Number.MAX_SAFE_INTEGER,
+};
+```
+
+### Basic Usage
+
+```ts
+// MyScene.ts
+import { Signal } from 'dill-pixel';
+
+export default class MyScene extends Scene<MyApplication> {
+  initialize() {
+    // Create a signal
+    const onScoreChange = new Signal<(score: number) => void>();
+
+    // Connect with default (normal) priority
+    onScoreChange.connect((score) => {
+        console.log(Score changed to: ${score});
+    });
+
+    // Connect with specific priority
+    onScoreChange.connect((score) => {
+      console.log('High priority handler: ${score}');
+    }, 'high');
+  }
+
+  updateScore(score: number) {
+    // Emit the signal
+    onScoreChange.emit(score);
+  }
+}
+```
+
+## Connection Methods
+
+### Standard Connection
+
+```ts
+// Basic connection
+const connection = signal.connect(callback);
+// Connection with priority
+const highPriority = signal.connect(callback, 'high');
+const customPriority = signal.connect(callback, -50);
+```
+
+### One-time Connection
+
+```ts
+// Connect and automatically disconnect after first execution
+signal.connectOnce(callback);
+```
+
+### N-times Connection
+
+```ts
+// Connect and automatically disconnect after N executions
+signal.connectNTimes(callback, 3);
+```
+
+## Managing Connections
+
+### Manual Disconnection
+
+```ts
+// Manually disconnect a callback
+const connection = signal.connect(callback);
+// Later...
+connection.disconnect();
+```
+
+### Disconnecting All
+
+```ts
+// Disconnect all callbacks
+signal.disconnectAll();
+```
+
+### Scene Cleanup
+
+In scenes, use `addSignalConnection` to automatically manage signal lifecycles:
+
+```ts
+class MyScene extends Scene {
+  private scoreChangeSignal: Signal<(score: number) => void>;
+  private levelChangeSignal: Signal<(level: number) => void>;
+
+  initialize() {
+    // These connections will be automatically cleaned up when scene is destroyed
+    this.addSignalConnection(
+      this.scoreChangeSignal.connect((score) => {
+        console.log('Score changed to: ${score}');
+      }),
+      this.levelChangeSignal.connect((level) => {
+        console.log('Level changed to: ${level}');
+      }),
+    );
+  }
+}
+```
+
+## Core Application Signals
+
+The Application provides several built-in signals through [ICoreSignals](/api/interfaces/icoresignals):
+
+```ts
+export interface ICoreSignals {
+  // AudioManager;
+  onSoundStarted: Signal<(detail: SoundDetail) => void>;
+  onSoundEnded: Signal<(detail: SoundDetail) => void>;
+  onMuted: Signal<(muted: boolean) => void>;
+  onMasterVolumeChanged: Signal<(volume: number) => void>;
+  onChannelVolumeChanged: Signal<(detail: ChannelVolumeDetail) => void>;
+  onChannelMuted: Signal<(detail: ChannelMutedDetail) => void>;
+  // VoiceOverPlugin;
+  onVoiceOverStart: Signal<(instance: IAudioInstance) => void>;
+  onVoiceOverPaused: Signal<(instance: IAudioInstance) => void>;
+  onVoiceOverComplete: Signal<(instance: IAudioInstance) => void>;
+  onVoiceOverResumed: Signal<(instance: IAudioInstance) => void>;
+  onVoiceOverStopped: Signal<(instance?: IAudioInstance) => void>;
+  // FocusManager;
+  onFocusManagerActivated: Signal<() => void>;
+  onFocusManagerDeactivated: Signal<() => void>;
+  onFocusLayerChange: Signal<(currentLayerId: string | number) => void>;
+  onFocusChange: Signal<(detail: FocusChangeDetail) => void>;
+  // i18nPlugin;
+  onLocaleChanged: Signal<(locale: string) => void>;
+  // actionsPlugin;
+  onActionContextChanged: Signal<(context: string | ActionContext) => void>;
+  // InputManager;
+  onGamepadConnected: Signal<(gamepad: Gamepad) => void>;
+  onGamepadDisconnected: Signal<(gamepad: Gamepad) => void>;
+  onControllerActivated: Signal<(controller: string) => void>;
+  onControllerDeactivated: Signal<(controller: string) => void>;
+  // KeyboardManager;
+  onGlobalKeyDown: Signal<(detail: KeyboardEventDetail) => void>;
+  onGlobalKeyUp: Signal<(detail: KeyboardEventDetail) => void>;
+  // PopupManager;
+  onShowPopup: Signal<(detail: PopupSignalDetail) => void>;
+  onHidePopup: Signal<(detail: PopupSignalDetail) => void>;
+  onPopupChanged: Signal<(detail: PopupSignalDetail) => void>;
+  // SceneManager;
+  onSceneChangeStart: Signal<(detail: { exiting: string | null; entering: string }) => void>;
+  onSceneChangeComplete: Signal<(detail: { current: string }) => void>;
+  // WebEventsManager;
+  onResize: Signal<(size: Size) => void>;
+  onVisibilityChanged: Signal<(visible: boolean) => void>;
+  // AssetPlugin
+  onLoadProgress: Signal<(progress: number) => void>;
+  onLoadComplete: Signal<() => void>;
+  onError: Signal<(error: Error) => void>;
+  // DataAdapter;
+  onDataChange: Signal<(detail: DataChangeSignalDetail) => void>;
+}
+```
+
+## Best Practices
+
+1. **Type Safety**
+
+   - Always define signal types explicitly for better type inference
+   - Use TypeScript interfaces for complex signal payloads
+
+2. **Connection Management**
+
+   - Use `addSignalConnection` in scenes (or any class extending dill pixel's `Container` class) for automatic cleanup
+   - Disconnect manual connections when no longer needed
+   - Consider using `connectOnce` for one-time events
+
+3. **Priority Usage**
+
+   - Use predefined priorities for common cases
+   - Reserve custom numeric priorities for specific ordering requirements
+   - Keep priority system consistent across your application
+
+4. **Performance**
+   - Avoid creating signals in tight loops
+   - Clean up connections when components are destroyed
+   - Use `connectOnce` or `connectNTimes` instead of manual disconnection when appropriate
+
+<Aside type="tip">
+  Signals are a powerful way to decouple components in your application. Use them to communicate between systems that
+  shouldn't have direct references to each other.
+</Aside>
+
+<Aside type="caution">
+  Be careful with high-frequency signals (like update loops). Too many connections can impact performance.
+</Aside>

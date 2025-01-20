@@ -13,6 +13,7 @@ export const active = false;
  * it casts the scene to the application type,
  * so you can access the application's properties and methods in all scenes extending this one
  * it also allows you to add custom logic to the scene that can be shared across scenes
+ * Be sure to provide your Application class as a generic parameter in your scene or base scene - it will give you intellisense for your actions and contexts.
  */
 export default class BaseScene extends Scene<MyApplication> {
   constructor() {

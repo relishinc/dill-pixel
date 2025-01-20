@@ -1,0 +1,246 @@
+---
+title: Application
+---
+
+The Application class is the entry point for your game. It is responsible for initializing the game, loading assets, and managing the game loop.
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+import indexHtml from '../../../../../examples/hello-world/index.html?raw';
+import indexCss from '../../../../../examples/hello-world/src/index.css?raw';
+
+The [Application](/api/classes/application) class is the entry point for your game. It is responsible for initializing the game, loading assets, and managing the game loop. It extends PIXI's Application class and implements core functionality through plugins and signals.
+
+## Creating an Application
+
+The simplest way to create an application is using the `create` function:
+
+```ts
+import { create } from 'dill-pixel';
+
+const app = create({
+  width: 800,
+  height: 600,
+});
+```
+
+### Configuration
+
+Applications can be configured with various options in your `dill-pixel.config.ts` file:
+
+```ts
+// src/dill-pixel.config.ts
+export const config = defineConfig({
+  // Core settings
+  id: 'MyGame',
+  resizeToContainer: true,
+  resolution: 2,
+
+  // Plugin configurations
+  plugins: [
+    // Add your plugins here
+    ['matter-physics', { autoLoad: false }],
+    // ... other plugins
+  ],
+
+  // Storage adapters
+  storageAdapters: ['firebase'],
+
+  // Internationalization
+  i18n: {
+    loadAll: true,
+    locales: ['en', 'fr'],
+    files: [
+      /* locale configs */
+    ],
+  },
+});
+```
+
+### Bootstrapping
+
+To bootstrap a custom application:
+
+```ts
+// src/bootstrap.ts
+import { create } from 'dill-pixel';
+import { MyApplication } from './MyApplication';
+import { config } from '@/dill-pixel.config';
+
+async function bootstrap() {
+  await create<MyApplication>(config, MyApplication);
+}
+
+void bootstrap();
+```
+
+Then, in `index.ts`, you can import the application and start it:
+
+```ts
+import '@/bootstrap';
+```
+
+## Core Features
+
+### Signals
+
+The Application provides core signals (defined in [ICoreSignals](/api/interfaces/icoresignals)) for various built-in signals. These signals are used to communicate between different parts of the application, and can be accessed via `this.app.signals` or `this.app.signal`. These signals are usually aliases for plugins that provide the functionality. E.G. `this.app.signals.onSceneChangeStart` is just an alias for the SceneManagerPlugin's `onSceneChangeStart` signal - `this.app.scenes.onSceneChangeStart.connect((detail) => { ... })`:
+
+```ts
+// Listen for scene changes
+this.app.signals.onSceneChangeStart.connect((detail) => {
+  console.log(`Changing from ${detail.exiting} to ${detail.entering}`);
+});
+
+// Listen for window resizing
+this.app.signals.onResize.connect((size) => {
+  console.log(`Window resized to ${size.width}x${size.height}`);
+});
+```
+
+### Core Functions
+
+Similarly, the Application provides core functions (defined in [ICoreFunctions](/api/interfaces/icorefunctions)) for common operations. These functions are used to perform various actions, and can be accessed via `this.app.exec` or `this.app.func`. These functions are usually just aliases for the plugins that provide the functionality. E.G. `app.exec.loadScene('gameScene')` is just an alias for the SceneManagerPlugin's `loadScene` function - `this.app.scenes.loadScene('gameScene')`.
+
+```ts
+// Scene management
+app.exec.loadScene('gameScene');
+// also available as `app.func.loadScene('gameScene')` or via the SceneManagerPlugin `this.app.scenes.loadScene('gameScene')`
+
+// Popup management
+app.exec.showPopup('menuPopup');
+
+// Asset loading
+app.exec.loadAssets(['sprite1', 'sprite2']);
+```
+
+## Using `this.app` in Containers and Scenes
+
+Both [Container](/api/classes/container) and [Scene](/api/classes/scene) classes provide access to the Application instance via `this.app`. This gives you easy access to all Application features:
+
+```ts
+export class MyScene extends Scene {
+  initialize() {
+    // Access core functions
+    this.app.exec.loadAssets(['required-assets']);
+
+    // Listen to signals
+    this.app.onResize.connect(this.handleResize);
+
+    // Access plugins
+    this.app.audio.play('background-music');
+
+    // Manage data
+    this.app.data.save('score', 100);
+  }
+}
+```
+
+## Example Implementation
+
+Here's a complete example showing how to create a custom Application:
+
+<Tabs>
+    <TabItem label="index.html">
+        <Code lang="html" code={indexHtml}/>
+    </TabItem>
+    <TabItem label="index.css">
+        <Code lang="css" code={indexCss}/>
+    </TabItem>
+    <TabItem label="src/index.ts">
+        ```ts
+        import('@/bootstrap');
+        ```
+    </TabItem>
+  <TabItem label="src/dill-pixel.config.ts">
+```ts
+import { defineActions, defineButtons, defineConfig, defineContexts, defineControls } from 'dill-pixel';
+
+export const contexts = defineContexts(['default', 'game', 'menu', 'popup']);
+
+export const actions = defineActions(contexts, {
+  toggle_pause: { context: '*' },
+});
+
+export type Contexts = (typeof contexts)[number];
+export type ActionTypes = keyof typeof actions;
+
+const buttons = defineButtons();
+
+export const controls = defineControls(actions, buttons, {
+  keyboard: {
+    up: {
+      pause: 'P',
+    },
+  },
+});
+
+export type Data = {};
+
+export const config = defineConfig<Data>({
+    id: 'MyApplication',
+    actions,
+    input: {
+        controls,
+    },
+    plugins: [],
+    storageAdapters: [],
+});
+    ```
+  </TabItem>
+  <TabItem label="src/bootstrap.ts">
+    ```ts
+    import { create } from 'dill-pixel';
+    import { MyApplication } from '@/MyApplication';
+    import { config } from '@/dill-pixel.config';
+
+    async function bootstrap() {
+      await create<MyApplication>(config, MyApplication);
+    }
+
+    void bootstrap();
+    ```
+
+  </TabItem>
+  <TabItem label="src/MyApplication.ts">
+    ```ts
+    import { Application } from 'dill-pixel';
+    import type { ActionTypes, Contexts, Data } from '@/dill-pixel.config';
+
+    export class MyApplication extends Application<Data, Contexts, ActionTypes> {
+        // do some custom stuff specific to your application here
+        setup() {
+        // Connect to core actions
+        this.actions('pause').connect(this.handlePause);
+        }
+
+        public pause() {
+        // Send pause action
+        this.sendAction('pause');
+        }
+
+        private handlePause() {
+        // Handle pause action
+        }
+    }
+    ```
+
+  </TabItem>
+  <TabItem label="src/scenes/Game.ts">
+    ```ts
+    import { Scene } from 'dill-pixel';
+    import type { MyApplication } from '@/MyApplication';
+
+    export default class Game extends Scene<MyApplication> {
+      // be sure to provide your Application class as a generic parameter in your scene or base scene - it will give you intellisense for your actions and contexts.
+      initialize() {
+        // ...
+        this.app.actionContext = 'game'; // this is the context for your actions, you can define multiple contexts in your config. you'll get an intellisense list of your defined contexts
+
+        // you would get intellisense showing the custom "pause" method in the application class
+        this.app.pause();
+      }
+    }
+    ```
+
+  </TabItem>
+</Tabs>

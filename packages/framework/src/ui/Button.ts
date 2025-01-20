@@ -9,7 +9,7 @@ import { bindAllMethods, SpriteSheetLike, TextureLike } from '../utils';
 export type ButtonCallback = (() => void) | (() => Promise<void>);
 export type ButtonAction = { id: string | number; data?: any };
 
-export type ButtonActionOrCallback = ButtonAction | ButtonCallback;
+export type sButtonActionOrCallback = ButtonAction | ButtonCallback;
 
 type ButtonTextureId = 'default' | 'hover' | 'active' | 'disabled';
 
