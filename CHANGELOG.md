@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.5](https://github.com/relishinc/dill-pixel/compare/v4.2.4...v4.2.5) (2025-01-20)
+
+
+### Bug Fixes
+
+* framework - initial resize would sometimes not work ([3daae48](https://github.com/relishinc/dill-pixel/commit/3daae483914d30081cbfada390d810dd490cd66e))
+
 ## [4.2.4](https://github.com/relishinc/dill-pixel/compare/v4.2.3...v4.2.4) (2025-01-20)
 
 
