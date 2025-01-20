@@ -137,6 +137,7 @@ export class ResizerPlugin extends Plugin implements IResizerPlugin {
         canvasHeight = bounds.height;
       }
     }
+
     const { width, height, aspectRatio } = this._resizeInternal(
       canvasWidth,
       canvasHeight,

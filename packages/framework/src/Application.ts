@@ -373,7 +373,7 @@ export class Application<
     }
   }
 
-  public async initialize(config: AppConfig<D>): Promise<IApplication<D, C, A>> {
+  public async initialize(config: AppConfig<D>, el?: HTMLElement): Promise<IApplication<D, C, A>> {
     if (Application.instance) {
       throw new Error('Application is already initialized');
     }
@@ -400,6 +400,14 @@ export class Application<
     await this.initAssets();
     // initialize the pixi application
     await this.init(this.config);
+
+    if (el) {
+      el.appendChild(this.canvas as HTMLCanvasElement);
+      this.setContainer(el);
+    } else {
+      throw new Error('No element found to append the view to.');
+    }
+
     // register the default plugins
     await this.registerDefaultPlugins();
 
@@ -459,6 +467,7 @@ export class Application<
 
   async postInitialize(): Promise<void> {
     (globalThis as any).__PIXI_APP__ = this;
+    await this._resize();
 
     this._plugins.forEach((plugin) => {
       plugin.postInitialize(this as unknown as IApplication<DataSchema>);
@@ -471,8 +480,6 @@ export class Application<
         this.audio.suspend();
       }
     });
-
-    await this._resize();
   }
 
   public getUnloadedPlugin(id: string): ImportListItem<IPlugin> | undefined {
@@ -707,6 +714,16 @@ export class Application<
   }
 
   private async _resize(): Promise<Size> {
+    // Wait for DOM content to be loaded
+    if (document.readyState !== 'complete') {
+      await new Promise<void>((resolve) => {
+        window.addEventListener('load', () => resolve(), { once: true });
+      });
+    }
+
+    // Add a small delay to ensure canvas dimensions are set
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
     return new Promise((resolve) => {
       this.resizer.resize().then((size) => {
         this._center.set(size.width * 0.5, size.height * 0.5);
@@ -758,8 +775,6 @@ export class Application<
     // focus manager
     this.focus.view.label = 'FocusManager';
     this.stage.addChild(this.focus.view);
-
-    setTimeout(this._resize, 75);
 
     // is touch device
     return Promise.resolve();

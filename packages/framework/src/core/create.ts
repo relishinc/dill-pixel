@@ -44,13 +44,9 @@ export async function create<T extends IApplication = Application, D extends Dat
   }
   config.container = el;
   const instance = new ApplicationClass();
-  await instance.initialize(config as AppConfig<DataSchema>);
-  if (el) {
-    el.appendChild(instance.canvas as HTMLCanvasElement);
-    instance.setContainer(el);
-  } else {
-    throw new Error('No element found to append the view to.');
-  }
+
+  await instance.initialize(config as AppConfig<DataSchema>, el);
+
   // ensure all plugins are initialized
   // call postInitialize on the instance
   await instance.postInitialize();

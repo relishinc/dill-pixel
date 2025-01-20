@@ -65,7 +65,7 @@ export interface IApplication<
   sendAction(action: A, data?: any): void;
   isActionActive(action: A): boolean;
 
-  initialize(config: Partial<AppConfig<D>>): Promise<IApplication<D, C, A>>;
+  initialize(config: Partial<AppConfig<D>>, el?: HTMLElement): Promise<IApplication<D, C, A>>;
 
   postInitialize(): Promise<void>;
 
