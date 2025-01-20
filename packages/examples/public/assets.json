@@ -228,6 +228,23 @@
         },
         {
           "alias": [
+            "audio/sfx/clonk.wav",
+            "audio/sfx/clonk",
+            "clonk.wav",
+            "clonk"
+          ],
+          "src": [
+            "audio/sfx/clonk.ogg",
+            "audio/sfx/clonk.mp3"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "audio/vo/en/cc.json",
             "audio/vo/en/cc"
           ],
