@@ -222,10 +222,12 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
    * @returns {Promise<void>}
    */
   public initialize(app: IApplication): Promise<void> {
+    void app;
     sound.disableAutoPause = true;
-    if (typeof app?.manifest === 'object') {
-      this.addAllFromManifest(app.manifest);
-    }
+    // Note: it seems like this isn't needed - sounds automatically get added to @pixi/sound when they are loaded
+    // if (typeof app?.manifest === 'object') {
+    //   this.addAllFromManifest(app.manifest);
+    // }
     return Promise.resolve(undefined);
   }
 

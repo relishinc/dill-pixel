@@ -30,8 +30,6 @@ const detaultAssetPreferences: Partial<AssetsPreferences> = {
   crossOrigin: 'anonymous',
 };
 
-const imageExtensions = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'avif', 'svg'];
-
 function addParseAsGraphicsContext(asset: string | UnresolvedAsset): string | UnresolvedAsset {
   if (typeof asset === 'string') {
     if (!asset?.includes('.svg')) {

@@ -46,7 +46,6 @@ export async function create<T extends IApplication = Application, D extends Dat
   const instance = new ApplicationClass();
 
   await instance.initialize(config as AppConfig<DataSchema>, el);
-
   // ensure all plugins are initialized
   // call postInitialize on the instance
   await instance.postInitialize();
