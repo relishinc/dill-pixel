@@ -211,14 +211,14 @@
         },
         {
           "alias": [
-            "audio/sfx/hover.ogg",
-            "audio/sfx/hover",
-            "hover.ogg",
-            "hover"
+            "audio/sfx/clonk.wav",
+            "audio/sfx/clonk",
+            "clonk.wav",
+            "clonk"
           ],
           "src": [
-            "audio/sfx/hover.ogg",
-            "audio/sfx/hover.mp3"
+            "audio/sfx/clonk.ogg",
+            "audio/sfx/clonk.mp3"
           ],
           "data": {
             "tags": {
@@ -228,14 +228,14 @@
         },
         {
           "alias": [
-            "audio/sfx/clonk.wav",
-            "audio/sfx/clonk",
-            "clonk.wav",
-            "clonk"
+            "audio/sfx/hover.ogg",
+            "audio/sfx/hover",
+            "hover.ogg",
+            "hover"
           ],
           "src": [
-            "audio/sfx/clonk.ogg",
-            "audio/sfx/clonk.mp3"
+            "audio/sfx/hover.ogg",
+            "audio/sfx/hover.mp3"
           ],
           "data": {
             "tags": {
