@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.2.4](https://github.com/relishinc/dill-pixel/compare/v4.2.3...v4.2.4) (2025-01-20)
+
+
+### Bug Fixes
+
+* added fonts to asset pipeline in template ([1185484](https://github.com/relishinc/dill-pixel/commit/11854848b4667931897690e5ef53f34f92f5c325))
+* updated  in Container.ts to trigger immediate resize ([91b9080](https://github.com/relishinc/dill-pixel/commit/91b9080d28fdd9109a1b321d20b7bdb5fb78c998))
+* updated template .gitignore, ([91b9080](https://github.com/relishinc/dill-pixel/commit/91b9080d28fdd9109a1b321d20b7bdb5fb78c998))
+
 ## [4.2.3](https://github.com/relishinc/dill-pixel/compare/v4.2.2...v4.2.3) (2025-01-20)
 
 
