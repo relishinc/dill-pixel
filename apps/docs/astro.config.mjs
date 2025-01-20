@@ -43,6 +43,7 @@ export default defineConfig({
           items: [
             { label: 'Creating a Game', link: '/guides/creating-game' },
             { label: 'Project Setup', link: '/guides/project-setup' },
+            { label: 'CLI', link: '/guides/cli' },
             { label: 'Examples', link: '/guides/examples' },
           ],
         },

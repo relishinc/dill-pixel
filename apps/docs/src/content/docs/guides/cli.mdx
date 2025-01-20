@@ -1,0 +1,228 @@
+---
+title: 'CLI'
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## Requirements
+
+- Node.js v20 or higher
+
+## Installation
+
+```bash
+npm install -g dill-pixel
+```
+
+## Available Commands
+
+### Create a New Project
+
+Create a new Dill Pixel project:
+
+```bash
+dill-pixel create my-project
+```
+
+Options:
+
+- `--use-pnpm` - Use PNPM as package manager (recommended)
+- `--use-yarn` - Use Yarn as package manager
+
+Example:
+
+```bash
+dill-pixel create my-game --use-pnpm
+```
+
+### Update Dill Pixel
+
+Update to the latest version:
+
+```bash
+dill-pixel update
+```
+
+### Install Peer Dependencies
+
+Install required peer dependencies:
+
+```bash
+dill-pixel install
+```
+
+### Audio Tools
+
+#### Convert Audio
+
+Convert audio files to the correct format:
+
+```bash
+dill-pixel audio compress [input-directory]
+```
+
+Default input directory: `./src/assets/audio`
+
+Output will be placed in `[input-directory]/output`
+
+#### Generate Captions
+
+Generate caption files from CSV:
+
+```bash
+dill-pixel audio captions [input-directory] [output-directory]
+```
+
+Default paths:
+
+- Input: `./src/assets/audio/captions`
+- Output: `./src/assets/json`
+
+### Voiceover CSV Generation
+
+Generate voiceover CSV files from your i18n locale files:
+
+```bash
+dill-pixel vo generate [input-directory] [output-directory]
+```
+
+Default paths:
+
+- Input: `./src/locales`
+- Output: `./src/assets/audio/vo/csv`
+
+The tool supports parsing `.js`, `.ts`, and `.json` locale files. It processes the following formats:
+
+1. Simple string values:
+
+```json
+{
+  "greeting": "Hello world"
+}
+```
+
+Generated CSV output:
+
+```csv
+FILENAME    LINE         SCRATCH_VOICE     SCRATCH_GENDER    SCRATCH_LANGUAGE    CAPTION
+greeting    Hello world  en-US-Wavenet-D   female           en-US              Y
+```
+
+2. Array of options (using pipe separator):
+
+```json
+{
+  "greeting": "[Hello|Hi|Hey]"
+}
+```
+
+Generated CSV output:
+
+```csv
+FILENAME      LINE    SCRATCH_VOICE     SCRATCH_GENDER    SCRATCH_LANGUAGE    CAPTION
+greeting_0    Hello   en-US-Wavenet-D   female           en-US              Y
+greeting_1    Hi      en-US-Wavenet-D   female           en-US              Y
+greeting_2    Hey     en-US-Wavenet-D   female           en-US              Y
+```
+
+3. Dynamic replacements with options:
+
+```json
+{
+  "greeting": {
+    "replace": "Hello {name}",
+    "replaceOpts": "[John|Jane|Alex]"
+  }
+}
+```
+
+Generated CSV output:
+
+```csv
+FILENAME      LINE          SCRATCH_VOICE     SCRATCH_GENDER    SCRATCH_LANGUAGE    CAPTION
+greeting_0    Hello John    en-US-Wavenet-D   female           en-US              Y
+greeting_1    Hello Jane    en-US-Wavenet-D   female           en-US              Y
+greeting_2    Hello Alex    en-US-Wavenet-D   female           en-US              Y
+```
+
+The generated CSV files will include the following columns:
+
+- `FILENAME` - Unique identifier for the voice line
+- `LINE` - The text to be voiced
+- `SCRATCH_VOICE` - Voice ID (default: en-US-Wavenet-D)
+- `SCRATCH_GENDER` - Voice gender (default: female)
+- `SCRATCH_LANGUAGE` - Voice language (default: en-US)
+- `CAPTION` - Caption flag (default: Y)
+
+Text formatting:
+
+- `<strong>text</strong>` is converted to `*text*`
+- `<em>text</em>` is converted to `_text_`
+- Other HTML tags are removed
+
+### Using Generated CSV Files with Google Text-to-Speech
+
+The generated CSV files are formatted to work with Google Cloud Text-to-Speech service. Here's how to use them:
+
+1. **Prerequisites**:
+
+   - A Google Cloud account with Text-to-Speech API enabled
+   - Google Cloud credentials configured
+
+2. **CSV Format**:
+   The generated CSV files contain the necessary metadata for voice generation:
+
+   - `FILENAME`: Used as the output audio file name
+   - `LINE`: The text to be converted to speech
+   - `SCRATCH_VOICE`: Google Cloud voice ID (e.g., 'en-US-Wavenet-D')
+   - `SCRATCH_GENDER`: Voice gender preference
+   - `SCRATCH_LANGUAGE`: Target language code
+   - `CAPTION`: Whether to generate captions (Y/N)
+
+3. **Example Workflow**:
+
+   ```bash
+   # 1. Generate CSV files from your locale files
+   dill-pixel vo generate ./src/locales
+
+   # 2. Use Google Cloud Text-to-Speech to generate audio files
+   # Example using gcloud command (you'll need to adapt this for your specific setup)
+   gcloud text-to-speech synthesize-speech \
+     --voice-name=en-US-Wavenet-D \
+     --text="$(cat path/to/generated.csv)" \
+     --output-dir=./src/assets/audio/vo
+   ```
+
+4. **After Generation**:
+   - Audio files will be created using the FILENAME from your CSV
+   - Generate captions using `dill-pixel audio captions`
+
+### Version Information
+
+Display the current version:
+
+```bash
+dill-pixel version
+```
+
+## Project Structure
+
+When creating a new project using `dill-pixel create`, it will generate a standard project structure with all necessary configuration files. For more details on the project structure, see the [Quick Start Guide](/guides/quick-start)
+
+The easiest way to get started with Dill Pixel is to use the CLI to create a new project. Run the following command in your terminal:
+
+```bash
+npx dill-pixel create my-application
+```
+
+<Aside type="tip">Replace my-application with whatever you'd like to name your project</Aside>
+
+This will create a new directory called my-application with all the necessary files and dependencies pre-configured.
+
+### Using PNPM (Recommended)
+
+<Aside type="tip">If you're using PNPM, you can use the following command instead:</Aside>
+
+```bash
+npx dill-pixel create my-application --use-pnpm
+```
