@@ -116,7 +116,6 @@ export class AudioChannel<C extends ChannelName = ChannelName> {
   }
 
   restore() {
-    console.log('restore', this.name, this._muted, this._volume);
     this.muted = this._muted;
     this.volume = this._volume;
   }
