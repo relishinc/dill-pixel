@@ -174,10 +174,16 @@ class FocusLayer implements IFocusLayer {
     }
   }
 
-  setCurrentFocusable(focusable: IFocusable | null) {
+  setCurrentFocusable(focusable: IFocusable | null): IFocusable | null {
     if (focusable) {
       this._currentIndex = this._focusables.indexOf(focusable);
       this.currentFocusable = focusable;
+      if (this.availableFocusables.length === 0) {
+        return null;
+      }
+      if (!this.currentFocusable.focusEnabled) {
+        return this.next();
+      }
     } else {
       this._currentIndex = -1;
       this.currentFocusable = null;
@@ -185,21 +191,33 @@ class FocusLayer implements IFocusLayer {
     return this.currentFocusable;
   }
 
-  public next() {
+  public next(): IFocusable | null {
     this._currentIndex = this._currentIndex + 1;
     if (this._currentIndex >= this._focusables.length) {
       this._currentIndex = 0;
     }
     this.currentFocusable = this._focusables[this._currentIndex];
+    if (this.availableFocusables.length === 0) {
+      return null;
+    }
+    if (!this.currentFocusable.focusEnabled) {
+      return this.next();
+    }
     return this.currentFocusable;
   }
 
-  public prev() {
+  public prev(): IFocusable | null {
     this._currentIndex = this._currentIndex - 1;
     if (this._currentIndex < 0) {
       this._currentIndex = this._focusables.length - 1;
     }
     this.currentFocusable = this._focusables[this._currentIndex];
+    if (this.availableFocusables.length === 0) {
+      return null;
+    }
+    if (!this.currentFocusable.focusEnabled) {
+      return this.prev();
+    }
     return this.currentFocusable;
   }
 }

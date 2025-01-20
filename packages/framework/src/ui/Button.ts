@@ -176,6 +176,10 @@ export class Button extends _Button implements IButton {
     }
   }
 
+  public get enabled() {
+    return this._enabled;
+  }
+
   get app(): IApplication {
     return Application.getInstance();
   }

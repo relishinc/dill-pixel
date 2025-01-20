@@ -3,3 +3,6 @@
 /creds/*
 .voiceover
 .env
+/.assetpack
+/.cache
+/public
