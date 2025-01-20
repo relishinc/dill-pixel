@@ -225,6 +225,7 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
     void app;
     sound.disableAutoPause = true;
     // Note: it seems like this isn't needed - sounds automatically get added to @pixi/sound when they are loaded
+
     // if (typeof app?.manifest === 'object') {
     //   this.addAllFromManifest(app.manifest);
     // }
