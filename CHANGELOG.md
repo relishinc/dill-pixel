@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.2.6](https://github.com/relishinc/dill-pixel/compare/v4.2.5...v4.2.6) (2025-01-20)
+
+
+### Bug Fixes
+
+* disable force loading audio files from manifest ([2d1a349](https://github.com/relishinc/dill-pixel/commit/2d1a3492b99e830828e89065a8e6eaf6242af4d7))
+* disable force loading audio files from manifest ([d567d4e](https://github.com/relishinc/dill-pixel/commit/d567d4ee74cab261b2e2882ce9a8b4b128b47d9d))
+
 ## [4.2.5](https://github.com/relishinc/dill-pixel/compare/v4.2.4...v4.2.5) (2025-01-20)
 
 
