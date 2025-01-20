@@ -105,7 +105,6 @@ export default class ButtonScene extends BaseScene {
   private onClickToggleEnabled() {
     // toggle playSoundButton to the opposite of its current interactive/enabled state
     this.playSoundButton.enabled = !this.playSoundButton.enabled;
-    console.log(this.playSoundButton.focusEnabled);
   }
 
   // switches between signal-based listeners and event-based listeners
