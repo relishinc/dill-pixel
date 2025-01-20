@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.3](https://github.com/relishinc/dill-pixel/compare/v4.2.2...v4.2.3) (2025-01-20)
+
+
+### Bug Fixes
+
+* added buttons example, fixed button related issues ([ab31afd](https://github.com/relishinc/dill-pixel/commit/ab31afdeb8b41fb1508eb9e9d62de20f5deb7e4c))
+
 ## [4.2.2](https://github.com/relishinc/dill-pixel/compare/v4.2.1...v4.2.2) (2025-01-16)
 
 
