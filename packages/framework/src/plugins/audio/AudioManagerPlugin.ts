@@ -224,11 +224,10 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
   public initialize(app: IApplication): Promise<void> {
     void app;
     sound.disableAutoPause = true;
-    // Note: it seems like this isn't needed - sounds automatically get added to @pixi/sound when they are loaded
-
-    // if (typeof app?.manifest === 'object') {
-    //   this.addAllFromManifest(app.manifest);
-    // }
+    // TODO: investigate why this causes a console.assert error during load because audio files are already added.
+    if (typeof app?.manifest === 'object') {
+      this.addAllFromManifest(app.manifest);
+    }
     return Promise.resolve(undefined);
   }
 
