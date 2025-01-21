@@ -362,6 +362,8 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
       this.currentScene.autoUnloadAssets = sceneItem.autoUnloadAssets;
     }
 
+    this.currentScene.label = sceneItem.debugLabel || sceneItem.id;
+
     this.onSceneChangeStart.emit({ exiting: this._lastScene?.id || null, entering: this.currentScene.id });
   }
 

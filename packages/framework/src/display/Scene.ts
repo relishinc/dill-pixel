@@ -8,6 +8,7 @@ export type SceneAssets = Omit<AssetLoadingOptions, 'manifest' | 'initOptions' |
 
 export interface IScene extends IContainer {
   id: string;
+  label?: string;
   assets?: SceneAssets;
   autoUnloadAssets?: boolean;
 

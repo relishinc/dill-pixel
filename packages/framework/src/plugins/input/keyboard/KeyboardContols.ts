@@ -52,6 +52,8 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
       this.app.keyboard.onKeyDown().connect(this._handleKeyDown),
       this.app.keyboard.onKeyUp().connect(this._handleKeyUp),
     );
+
+    this._handleContextChanged();
     this.app.ticker.add(this._update);
   }
 
