@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.8](https://github.com/relishinc/dill-pixel/compare/v4.2.7...v4.2.8) (2025-01-21)
+
+
+### Bug Fixes
+
+* make core signals in onResize signal =  app.onResize ([c8ec0ca](https://github.com/relishinc/dill-pixel/commit/c8ec0caba1b4fd75df2eb5630687b27e7ec54e43))
+
 ## [4.2.7](https://github.com/relishinc/dill-pixel/compare/v4.2.6...v4.2.7) (2025-01-21)
 
 
