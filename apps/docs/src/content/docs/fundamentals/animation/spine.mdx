@@ -11,7 +11,7 @@ animations and more efficient use of resources.
 
 ## Getting Started
 
-To work with Spine in dill pixel you'll need to enabled dill pixel's Spine plugin in your game's configuration via the `useSpine` property.
+To work with Spine in dill pixel you'll need to enable dill pixel's Spine plugin in your game's configuration via the `useSpine` property.
 
 ```ts
 // dill-pixel.config.ts
@@ -71,7 +71,12 @@ export default class SpineScene extends Scene {
 
 To play an animation on the spine object, call `.setAnimation` with the animation name, and whether the animation should loop or not:
 
-<Aside type="tip">The third parameter, `trackIndex`, is optional and defaults to 0.</Aside>
+<Aside type="tip">
+  The third parameter, `trackIndex`, is optional and defaults to 0. Track indices allow you to play multiple animations
+  simultaneously on different tracks, enabling animation mixing and layering.
+</Aside>
+
+### Example:
 
 ```ts
 // Play an animation
@@ -80,4 +85,15 @@ this._spine.setAnimation('walk', true);
 // or play an animation on a specific track
 // the track index is optional and defaults to 0 (fine for most cases)
 // this._spine.setAnimation('walk', true, 1);
+```
+
+<Aside type="tip">You can pause and resume spine animations using the `paused` property:</Aside>
+
+### Example:
+
+```ts
+// Pause the animation
+this._spine.paused = true;
+// Resume the animation
+this._spine.paused = false;
 ```

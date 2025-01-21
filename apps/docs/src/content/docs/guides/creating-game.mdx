@@ -30,8 +30,8 @@ Now let's go through the process of creating a basic game.
   <ol>
     <li>
       <div>
-        Create an `Splash.ts` file in the `src` folder. This will be displayed when the game starts. Similar to a Scene,
-        there are `added()`, `enter()` and `exit()` methods to control how the screen is revealed and hidden. It also contains a `update()` method that can be used to update the progress of the loading screen, and a `handleLoadProgress()` method that can be used to update the progress of the loading screen. For
+        Create a `Splash.ts` file in the `src` folder. This will be displayed when the game starts. Similar to a Scene,
+        there are `added()`, `enter()` and `exit()` methods to control how the screen is revealed and hidden. It also contains a `update()` method that runs every tick, and a `handleLoadProgress()` method that can be used to update the progress of the loading screen. For
         simplicity's sake we're just creating a green background and adding a title that can be clicked to take us to
         the next screen:
         <Code code={splashTs} lang="ts" title="src/Splash.ts" />

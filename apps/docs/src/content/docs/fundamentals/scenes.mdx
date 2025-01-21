@@ -8,15 +8,14 @@ import applicationTs from '../../../../../examples/hello-world/src/MyApplication
 import baseSceneTs from '../../../../../examples/hello-world/src/scenes/BaseScene.ts?raw';
 import startSceneTs from '../../../../../examples/hello-world/src/scenes/StartScene.ts?raw';
 
-Dill Pixel uses a scene management system to manage different scenes
-in your game. For example, a simple game might have `Title`, `Game`, and `GameOver` scenes.
+In Dill Pixel, a Scene is a container that contains a game's assets, logic, and UI. For example, a simple game might have `Title`, `Game`, and `GameOver` scenes.
 Let's see how we would include those in our game and switch between them.
 
 ## Creating a Base Scene
 
 To create a new scene, create a new file in the `src/scenes` directory. For example, let's create a `BaseScene`
 that all of our other game scenes will extend. This first scene should extend dill pixel's [`Scene`](/api/classes/scene) class
-and for now we'll just add custom `animateIn` and `animateOut` methods that will fade all of our scenes in and out:
+and for now we'll just add custom `enter` and `exit` methods that will fade all of our scenes in and out:
 
 <Code code={baseSceneTs} lang="ts" title="src/scenes/BaseScene.ts" />
 
@@ -45,7 +44,7 @@ export const debug = {
 
 ## Switching Between Scenes
 
-To switch between scenes, use the `transitionTo` method on the game instance:
+To switch between scenes, use the `loadScene` method on the app:
 
 ```ts
 // From within the Application.ts file
