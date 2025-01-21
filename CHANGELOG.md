@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.7](https://github.com/relishinc/dill-pixel/compare/v4.2.6...v4.2.7) (2025-01-21)
+
+
+### Bug Fixes
+
+* revert ([4adeb20](https://github.com/relishinc/dill-pixel/commit/4adeb20d0d04bc373f5a700e2f081a8865050f56))
+
 ## [4.2.6](https://github.com/relishinc/dill-pixel/compare/v4.2.5...v4.2.6) (2025-01-20)
 
 
