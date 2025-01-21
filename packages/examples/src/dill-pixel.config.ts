@@ -114,7 +114,6 @@ export const config = defineConfig<Data>({
     controls,
   },
   assets: {
-    manifest: 'assets.json',
     preload: {
       bundles: ['required', 'game'],
     },
@@ -178,13 +177,13 @@ export const config = defineConfig<Data>({
     files: [
       { id: 'en', module: EN },
       { id: 'fr', module: () => import('@/locales/fr') },
-      { id: 'fr-json', json: './locales/fr.json' },
+      { id: 'fr-json', json: 'locales/fr.json' },
     ],
   },
   captions: {
     files: [
-      { id: 'en', json: 'audio/vo/en/cc.json' },
-      { id: 'fr', json: 'audio/vo/fr/cc.json' },
+      { id: 'en', json: './audio/vo/en/cc.json' },
+      { id: 'fr', json: './audio/vo/fr/cc.json' },
     ],
     backgroundAlpha: 0.5,
     backgroundColor: 0x0,

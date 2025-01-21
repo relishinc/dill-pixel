@@ -705,7 +705,7 @@ export class Application<
       }
       opts.manifest = manifest as AssetsManifest;
     }
-
+    opts.basePath = opts.basePath || './assets';
     await Assets.init(opts);
     /** @ts-expect-error manifest is not a public property */
     this.manifest = Assets.resolver._manifest;

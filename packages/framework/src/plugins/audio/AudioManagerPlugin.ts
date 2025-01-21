@@ -306,6 +306,18 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
     });
   }
 
+  private _addPrefix(asset: UnresolvedAsset): void {
+    const prefix = Assets.resolver.basePath.replace('./', '');
+    if (Array.isArray(asset.src)) {
+      const mappedSrc = asset.src.map((s) => {
+        return (s as string).startsWith(prefix) ? s : `${prefix}/${s}`;
+      });
+      asset.src = mappedSrc;
+    } else {
+      asset.src = asset.src?.startsWith(prefix) ? asset.src : `${prefix}/${asset.src}`;
+    }
+  }
+
   /**
    * Adds all sound assets from the specified bundle.
    * @param {string} bundleName
@@ -326,6 +338,7 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
       bundle.assets = [bundle.assets];
     }
     bundle.assets.forEach((asset) => {
+      this._addPrefix(asset);
       // detect sound assets by asset.src extension
       let src = asset.src;
       if (Array.isArray(src)) {
@@ -353,6 +366,7 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
         if (a === undefined) {
           return;
         }
+
         // @ts-expect-error soundAsset is not a string error
         obj[a] = soundAsset.src;
       });
@@ -673,6 +687,7 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
       }
       for (let j = 0; j < bundle.assets.length; j++) {
         const asset = bundle.assets[j];
+        this._addPrefix(asset);
         // detect sound assets by asset.src extension
         const src = asset.src;
         const filename = sound.url.split('/').pop() ?? '';

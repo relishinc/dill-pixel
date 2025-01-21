@@ -3,7 +3,7 @@ import { pixiPipes } from '@assetpack/core/pixi';
 import fs from 'node:fs';
 import process from 'node:process';
 const cwd = process.cwd();
-const defaultManifestUrl = './public/assets.json';
+const defaultManifestUrl = 'assets.json';
 
 const defaultPixiPipesConfig = {
   cacheBust: false,
@@ -21,7 +21,6 @@ const defaultPixiPipesConfig = {
 export const assetpackConfig = (manifestUrl = defaultManifestUrl, pixiPipesConfig = defaultPixiPipesConfig) => ({
   manifestUrl,
   entry: './assets',
-  output: './public',
   logLevel: 'info',
   cache: false,
   pipes: [
@@ -46,7 +45,6 @@ export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfi
   const apConfig = {
     manifestUrl,
     entry: './assets',
-    output: './public',
     logLevel: 4,
     cache: false,
     pipes: [
@@ -94,8 +92,8 @@ export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfi
         void ap.watch();
 
         if (mode === 'serve') {
-          Logger.info('Dill Pixel assetpack plugin:: watching manifest');
-          manifestWatcher = fs.watch(manifestUrl, async (eventType) => {
+          Logger.info(`Dill Pixel assetpack plugin:: watching manifest at ${apConfig.output}${manifestUrl}`);
+          manifestWatcher = fs.watch(`${apConfig.output}${manifestUrl}`, async (eventType) => {
             if (initialBuild && eventType === 'change') {
               debouncedReload();
             }
