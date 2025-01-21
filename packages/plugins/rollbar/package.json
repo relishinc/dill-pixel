@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-rollbar",
-  "version": "4.2.8",
+  "version": "4.3.0",
   "description": "",
   "files": [
     "lib",
@@ -29,7 +29,7 @@
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
-    "dill-pixel": "4.2.8"
+    "dill-pixel": "4.3.0"
   },
   "dependencies": {
     "rollbar": "^2.26.4"
