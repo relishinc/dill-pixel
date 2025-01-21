@@ -53,7 +53,7 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
   }
 
   protected getCoreSignals(): string[] {
-    return ['onResize', 'onVisibilityChanged'];
+    return ['onVisibilityChanged'];
   }
 
   /**

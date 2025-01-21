@@ -13,6 +13,8 @@ import type { DataChangeSignalDetail } from '../../store/adapters/DataAdapter';
 import type { Size } from '../../utils';
 
 export interface ICoreSignals {
+  // Application;
+  onResize: Signal<(size: Size) => void>;
   // AudioManager;
   onSoundStarted: Signal<(detail: SoundDetail) => void>;
   onSoundEnded: Signal<(detail: SoundDetail) => void>;
@@ -51,7 +53,7 @@ export interface ICoreSignals {
   onSceneChangeStart: Signal<(detail: { exiting: string | null; entering: string }) => void>;
   onSceneChangeComplete: Signal<(detail: { current: string }) => void>;
   // WebEventsManager;
-  onResize: Signal<(size: Size) => void>;
+
   onVisibilityChanged: Signal<(visible: boolean) => void>;
   // AssetPlugin
   onLoadProgress: Signal<(progress: number) => void>;

@@ -380,6 +380,8 @@ export class Application<
     Application.instance = this as unknown as IApplication<DataSchema, ActionContext, Action>;
     this.config = Object.assign({ ...defaultApplicationOptions }, config as Partial<IApplicationOptions<D>>);
 
+    this.signals.onResize = this.onResize;
+
     if (config.container) {
       Application.containerElement = config.container;
     }

@@ -116,7 +116,7 @@ export class Container<A extends Application = Application>
     this.setChildIndex(this.__background, 0);
 
     if (opts.autoResize) {
-      this.addSignalConnection(this.app.signal.onResize.connect(this.__resizeBackground));
+      this.addSignalConnection(this.app.onResize.connect(this.__resizeBackground));
       this.__resizeBackground();
     }
 
