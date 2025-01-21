@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.3.0](https://github.com/relishinc/dill-pixel/compare/v4.2.8...v4.3.0) (2025-01-21)
+
+
+### Features
+
+* tweaked assetpack settings / internal asset paths so  folder doesn't get wiped, and other static files can be included in it ([9037bf9](https://github.com/relishinc/dill-pixel/commit/9037bf9ac6922fc901893746f8639e8032b4890f))
+
 ## [4.2.8](https://github.com/relishinc/dill-pixel/compare/v4.2.7...v4.2.8) (2025-01-21)
 
 
