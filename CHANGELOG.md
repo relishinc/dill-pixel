@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.4.3](https://github.com/relishinc/dill-pixel/compare/v4.4.2...v4.4.3) (2025-01-22)
+
+
+### Bug Fixes
+
+* optional increment amount in DataAdapter ([1b03f83](https://github.com/relishinc/dill-pixel/commit/1b03f83b154db1c9acec0efe509b2bdc18f549d8))
+
 ## [4.4.2](https://github.com/relishinc/dill-pixel/compare/v4.4.1...v4.4.2) (2025-01-22)
 
 
