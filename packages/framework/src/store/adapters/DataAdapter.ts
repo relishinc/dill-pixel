@@ -73,7 +73,7 @@ export interface IDataAdapter<D extends DataSchema = DataSchema> {
    */
   increment<K extends keyof D & { [P in keyof D]: D[P] extends number ? P : never }[keyof D]>(
     key: K,
-    amount: number,
+    amount?: number,
   ): D[K];
   /**
    * Concatenates a value or array of values to an array property.

@@ -5,11 +5,9 @@ title: Animated Sprite
 The AnimatedSprite class in dill-pixel extends Pixi.js's AnimatedSprite to provide a more game-friendly implementation for frame-based animations. It's particularly useful for sprite sheets containing multiple animations for a single character or object.
 
 See the `Animated Sprites` scene in the examples:<br/>
-[Demo](https://dillpixel.io/examples/#animated-sprites) | [Source](https://github.com/relishinc/dill-pixel/tree/main/packages/examples/src/scenes/display/AnimatedSpriteScene.ts) <br/>for a practical implementation.
+[Demo](https://dillpixel.io/examples/#animated-sprites) | [Source](https://github.com/relishinc/dill-pixel/tree/main/packages/examples/src/scenes/display/AnimatedSpriteScene.ts)
 
 ## Key Features
-
-1. **Simplified Configuration**
 
 ```ts
 const sprite = container.add.animatedSprite({
@@ -25,49 +23,27 @@ const sprite = container.add.animatedSprite({
 });
 ```
 
-2. **Animation Management**
+- **Simplified Configuration**: Automatic texture generation from sprite sheets
+- **Animation Management**: Named animations with per-animation speeds
+- **Enhanced Control**: Pause/resume, reverse playback, and animation switching
+- **Rich Event System**: Comprehensive signals for animation states
 
-- Built-in support for multiple named animations
-- Easy switching between animations using `nextAnimation()` and `previousAnimation()`
-- Per-animation speed configuration
-- Automatic texture generation from sprite sheets
+## Comparison with Pixi.js AnimatedSprite
 
-3. **Enhanced Control**
+| Feature              | Pixi.js                       | dill-pixel                                        |
+| -------------------- | ----------------------------- | ------------------------------------------------- |
+| Configuration        | Manual texture array creation | Automatic from config                             |
+| Animation Management | Basic play/stop               | Named animations, switching, per-animation speeds |
+| Events               | Basic                         | Comprehensive signal system                       |
 
-- Pause/resume functionality
-- Animation reversal support
-- Rich event system for animation states
+### Available Signals
 
-## Differences from Pixi.js AnimatedSprite
-
-1. **Configuration**
-
-- **Pixi.js**: Requires manual texture array creation
-- **dill-pixel**: Handles texture generation automatically from configuration
-
-2. **Animation Management**
-
-- **Pixi.js**: Has basic play/stop functionality
-- **dill-pixel** adds:
-  - Named animations
-  - Animation switching
-  - Per-animation speeds
-  - Reverse playback
-  - Pause/resume
-  - Rich event system using signals
-
-3. **Event System**
-   - **dill-pixel** adds additional signals:
-     - `onAnimationChange`
-     - `onAnimationStart`
-     - `onAnimationStop`
-     - `onAnimationLoop`
-     - `onAnimationComplete`
-     - `onAnimationFrameChange`
+- `onAnimationChange`
+- `onAnimationStart`/`onAnimationStop`
+- `onAnimationLoop`/`onAnimationComplete`
+- `onAnimationFrameChange`
 
 ## Example Usage
-
-The AnimatedSpriteScene demonstrates a practical implementation:
 
 ```ts
 // AnimatedSpriteScene.ts
@@ -76,60 +52,33 @@ import { Scene } from 'dill-pixel';
 export default class AnimatedSpriteScene extends Scene {
   async initialize() {
     const sprite = charContainer.add.animatedSprite({
-      animationSpeed: 0.2, // default animation speed
-      animation: 'idle', // default
-      sheet: 'characters', // default spritesheet
-      texturePrefix: `${folderName}/${spriteName}_`, // default prefix
-      // zeroPad: 1, // optional default zero padding
+      animationSpeed: 0.2,
+      animation: 'idle',
+      sheet: 'characters',
+      texturePrefix: `${folderName}/${spriteName}_`,
+      // zeroPad: 1, // optional
       animations: {
-        idle: {
-          numFrames: 1,
-        },
-        walk: {
-          numFrames: 8,
-        },
-        run: {
-          numFrames: 3,
-        },
+        idle: { numFrames: 1 },
+        walk: { numFrames: 8 },
+        run: { numFrames: 3 },
         climb: {
           numFrames: 2,
-          animationSpeed: 0.05, // custom speed for this animation only
+          animationSpeed: 0.05, // custom speed
         },
       },
+    });
+
+    // Cycle through animations on click
+    sprite.eventMode = 'static';
+    sprite.on('pointerup', () => {
+      sprite.nextAnimation();
     });
   }
 }
 ```
 
-This configuration creates a character with multiple animations, each having different frame counts and speeds. The animations can be cycled through by clicking on the sprite:
+## Key Benefits
 
-```ts
-sprite.eventMode = 'static';
-sprite.on('pointerup', () => {
-  sprite.nextAnimation();
-});
-```
-
----
-
-## Benefits Over Basic Pixi.js Implementation
-
-1. **Automatic Asset Management**
-
-- Handles sprite sheet references
-- Manages texture generation
-- Supports zero-padding for frame numbers
-
-2. **Game-Ready Features**
-
-- Built-in pause/resume
-- Animation speed control
-- Animation sequencing
-- Reverse playback support
-
-3. **Developer Experience**
-
-- Declarative configuration
-- Simplified API
-- Robust event system
-- Automatic cleanup
+- **Asset Management**: Automatic sprite sheet handling and texture generation
+- **Game-Ready Features**: Built-in pause/resume, speed control, and animation sequencing
+- **Developer Experience**: Declarative configuration with simplified API and automatic cleanup

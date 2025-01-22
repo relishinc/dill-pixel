@@ -4,465 +4,218 @@ title: Snap Physics Plugin
 
 import { Aside, Steps } from '@astrojs/starlight/components';
 
-The Snap Physics Plugin provides a lightweight 2D physics system for basic collision detection and resolution. It's ideal for platformers, endless runners, and other games that need simple physics without the overhead of a full physics engine.
+The Snap Physics Plugin provides a lightweight, deterministic physics system inspired by Maddy Thorson's TowerFall physics engine. It excels at platformer-style games requiring precise collision detection and resolution.
 
-## Key Features
+## Core Concepts
 
-- Spatial hash grid for efficient collision detection
-- Configurable FPS for physics updates
-- Support for circular and rectangular colliders
-- Basic gravity and velocity systems
-- Projectile physics support
+The system is built around three main entity types:
 
-## Getting Started
+### Actors (`Actor`)
 
-<Steps>
-  <ol>
-    <li>
-      <div>
-        ### Add the plugin
-        ```json
-        // in package.json
-        {
-            "dependencies": {   
-                // ... other dependencies
-                "@dill-pixel/plugin-snap-physics": "latest"
-            }
-        }
-        ```
-      </div>
-    </li>
-    <li>
-      <div>
-        ### Configure the Plugin
+Dynamic entities that can move and collide with other objects. Actors:
 
-        Add the snap-physics plugin to your `dill-pixel.config.ts`:
-
-        ```ts
-        export const config = defineConfig({
-            // ... rest of your config
-            plugins: [
-                [
-                    'snap-physics',
-                    {
-                        autoLoad: false,
-                        options: {
-                        useSpatialHashGrid: true,
-                        gridCellSize: 200,
-                        },
-                    },
-                ],
-            ],
-        });
-        ```
-      </div>
-    </li>
-    <li>
-      <div>
-        ### Initialize Physics in Your Scene
-
-        ```ts
-        export default class SnapPhysicsScene extends Scene {
-            protected get physics(): SnapPhysics {
-                return this.app.getPlugin('snap-physics') as unknown as SnapPhysics;
-            }
-            async initialize() {
-                // Initialize physics system
-                this.physics.system.initialize({
-                    gravity: 10,
-                    container: this.level,
-                    debug: true,
-                    useSpatialHashGrid: true,
-                    cellSize: 300,
-                    fps: 60,
-                    boundary: {
-                        padding: 10,
-                        thickness: 10,
-                        height: this.app.size.height,
-                        width: this.app.size.width,
-                    },
-                });
-            }
-        }
-            ```
-      </div>
-    </li>
-
-  </ol>
-</Steps>
-
-## Collision Detection
-
-### Spatial Hash Grid
-
-The spatial hash grid system improves collision detection performance by dividing the game world into a grid and only checking for collisions between objects in the same or adjacent cells.
+- Handle their own movement and collision detection
+- Can ride on moving platforms
+- Support pass-through collision filtering
+- Maintain sub-pixel movement precision
 
 ```ts
-// Configure spatial hash in your scene (can also sbe set in the config)
-this.physics.useSpatialHashGrid = true;
-this.physics.gridCellSize = 400; // Adjust based on your game's needs
+class Player extends Actor {
+  update(deltaTime: number) {
+    // Move with precise collision detection
+    this.moveX(velocity.x * deltaTime);
+    this.moveY(velocity.y * deltaTime);
+  }
+}
+```
+
+### Solids (`Solid`)
+
+Static or kinematic objects that block movement. Solids:
+
+- Can move and push actors
+- Support one-way platforms
+- Handle riding actors automatically
+- Can be static or kinematic
+
+```ts
+class Platform extends Solid {
+  move(x: number, y: number) {
+    // Automatically pushes riding actors
+    this.move(x, y);
+  }
+}
+```
+
+### Sensors (`Sensor`)
+
+Trigger areas that detect but don't block movement. Sensors:
+
+- Detect overlapping entities
+- Don't affect movement
+- Support filtering by entity type
+- Useful for triggers and detection zones
+
+```ts
+class TriggerZone extends Sensor {
+  passThroughTypes = ['Actor', 'Player']; // Entities that won't trigger
+  update() {
+    // Check all overlapping entities
+    this.activeCollisions = this.resolveAllCollisions();
+  }
+}
+```
+
+## Collision Resolution
+
+### Basic Resolution
+
+By default, collisions stop movement and prevent overlap. However, you can customize this behavior by implementing a collision resolver:
+
+```ts
+// src/scenes/MyPhysicsScene.ts
+import { Scene } from 'dill-pixel';
+import SnapPhysicsPlugin from '@dill-pixel/plugin-snap-physics';
+
+export class MyPhysicsScene extends Scene {
+  get physics() {
+    return this.app.getPlugin('snap-physics') as SnapPhysicsPlugin;
+  }
+
+  async initialize() {
+    // ... other initialization code
+    this.physics.system.initialize({
+      // ... other options
+      collisionResolver: this._resolveCollision,
+    });
+  }
+
+  private _resolveCollision(collision: Collision) {
+    // Implement your custom collision resolution logic here
+    switch (collision.type) {
+      case 'Player|Enemy':
+        handlePlayerEnemyCollision(collision);
+        return false; // Don't block movement
+      case 'Player|Coin':
+        collectCoin(collision);
+        return false; // Pass through
+      default:
+        return true; // Block movement (default behavior)
+    }
+  }
+}
+```
+
+### Advanced Resolution
+
+The collision resolver receives detailed information about each collision:
+
+```ts
+type Collision = {
+  entity1: Entity; // First colliding entity
+  entity2: Entity; // Second colliding entity
+  type: string; // Combined type (e.g. "Player|Platform")
+  direction: string; // Collision direction
+  overlap: {
+    // Overlap amounts
+    x: number;
+    y: number;
+  };
+  // Additional collision data
+};
+```
+
+### Riding & Pass-Through
+
+The system supports advanced features like:
+
+- **Riding** - Actors can ride moving platforms
+- **Pass-Through** - One-way platforms and selective collision filtering
+- **Pushing** - Solids can push actors out of the way when moving
+
+```typescript
+// Example of configuring pass-through types
+class Player extends Actor {
+  passThroughTypes = ['OneWayPlatform'];
+}
+```
+
+### Common Resolution Patterns
+
+1. **One-Way Platforms**:
+
+```ts
+// Example of a one-way platform`
+private _resolveCollision(collision: Collision): boolean {
+  if (collision.type === 'Player|Platform') {
+    const platform = collision.entity2 as Platform;
+    if (platform.oneWay) {
+      // Only collide when coming from above
+      return collision.direction === 'bottom';
+    }
+  }
+  return true;
+}
+```
+
+2. **Trigger Areas**:
+
+```ts
+class TriggerZone extends Sensor {
+  private _onPlayerEnter() {
+    // Handle player entering trigger zone
+  }
+
+  update() {
+    // Check for collisions without blocking
+    const collisions = this.resolveAllCollisions();
+    if (collisions) {
+      collisions.forEach((collision) => {
+        if (collision.entity2.type === 'Player') {
+          this._onPlayerEnter();
+        }
+      });
+    }
+  }
+}
+```
+
+3. **Moving Platforms**:
+
+```ts
+class MovingPlatform extends Solid {
+  move(dx: number, dy: number) {
+    // First move the platform
+    this.position.set(this.x + dx, this.y + dy);
+    // Then push any riding actors
+    this.getAllRiding().forEach((actor) => {
+      actor.move(dx, dy);
+    });
+  }
+}
+```
+
+<Aside type="tip">
+  The collision resolver is called for every collision before it's resolved. Returning `true` will block movement and
+  push objects apart, while `false` allows objects to pass through each other.
+</Aside>
+
+## Spatial Partitioning
+
+For better performance with many objects, the system uses a spatial hash grid:
+
+```typescript
+// Configure in your scene
+this.physics.system.initialize({
+  useSpatialHashGrid: true,
+  gridCellSize: 200, // Adjust based on average object size
+});
 ```
 
 <Aside type="tip">
   Larger grid cells mean fewer cells to check but more objects per cell. Smaller cells mean more precise collision
   checks but more overhead. Choose a size that balances performance with your game's needs.
 </Aside>
-
-### Collision Resolution
-
-Handle collisions by implementing a collision resolution method:
-
-```ts
-// in your scene
-private resolveCollision(collision: Collision): boolean {
-    switch (collision.type) {
-        case 'Player|Platform':
-            const platform = collision.entity2 as Platform;
-            const player = collision.entity1 as Player;
-            if (platform.oneWay) {
-                if (collision.top) {
-                    player.setPassingThrough(platform);
-                }
-                return !player.isPassingThrough(platform);
-            }
-            return true;
-        default:
-            return true;
-    }
-}
-```
-
-## Physics Objects
-
-The plugin supports different types of physics objects:
-
-### Basic Actors
-
-Here's a complete example of some different simple actors and solids:
-
-```ts
-import { Actor, Solid, WithVelocity } from '@dill-pixel/plugin-snap-physics';
-import { Signal, Size } from 'dill-pixel';
-import { Texture } from 'pixi.js';
-
-type BasicSolidConfig = {
-  color: number;
-};
-
-type BasicActorConfig = {
-  color: number;
-  activeColor: number;
-};
-
-export class BasicActor<T extends BasicActorConfig = BasicActorConfig> extends Actor<T, V8Application> {
-  static speed: number = 5;
-  static onActivated = new Signal<(actor: BasicActor) => void>();
-
-  constructor(config?: Partial<T>) {
-    super(config);
-    this.initialize();
-  }
-
-  private _active: boolean = false;
-
-  get active(): boolean {
-    return this._active;
-  }
-
-  set active(value: boolean) {
-    if (this._active === value) {
-      return;
-    }
-    this._active = value;
-    if (this._active) {
-      BasicActor.onActivated.emit(this);
-    }
-    this.setColor();
-  }
-
-  initialize() {
-    this.eventMode = 'static';
-    this.on('pointerup', this._setActive);
-  }
-
-  destroy() {
-    this.off('pointerup', this._setActive);
-    super.destroy();
-  }
-
-  added() {
-    super.added();
-    this.setColor();
-  }
-
-  update(deltaTime?: number) {
-    void deltaTime;
-    if (!this._active) {
-      return;
-    }
-    if (this.app.isActionActive('move_left')) {
-      this.moveX(-BasicActor.speed);
-    }
-    if (this.app.isActionActive('move_right')) {
-      this.moveX(BasicActor.speed);
-    }
-    if (this.app.isActionActive('jump')) {
-      this.moveY(-BasicActor.speed);
-    }
-    if (this.app.isActionActive('move_down')) {
-      this.moveY(BasicActor.speed);
-    }
-  }
-
-  setColor() {
-    this.view.tint = this._active ? (this.config.activeColor ?? this.config.color) : this.config.color;
-  }
-
-  protected _setActive() {
-    this.active = true;
-  }
-}
-
-export class BasicSolid<T extends BasicSolidConfig = BasicSolidConfig> extends Solid<T> {
-  static onActivated = new Signal<(actor: BasicActor) => void>();
-
-  constructor(config?: Partial<T>) {
-    super(config);
-    this.initialize();
-    this.eventMode = 'none';
-    this.interactiveChildren = false;
-  }
-
-  added() {
-    super.added();
-    this.setColor();
-  }
-
-  setColor() {
-    this.view.tint = this.config.color;
-  }
-}
-
-type CircActorConfig = BasicActorConfig & {
-  radius: number;
-};
-type RectActorConfig = BasicActorConfig & {
-  size: Size;
-};
-
-type RectSolidConfig = BasicSolidConfig & {
-  size: Size;
-};
-type CircSolidConfig = BasicSolidConfig & {
-  radius: number;
-};
-
-export class CircActor extends BasicActor<CircActorConfig> {
-  static texture: Texture;
-  static defaults: CircActorConfig = {
-    radius: 50,
-    color: 0x00fff0,
-    activeColor: 0x0000ff,
-  };
-  type = 'Circ';
-  isCircle = true;
-
-  constructor(config?: Partial<CircActorConfig>) {
-    super({ ...CircActor.defaults, ...(config ?? {}) });
-  }
-
-  initialize() {
-    super.initialize();
-    if (!CircActor.texture) {
-      const gfx = this.make.graphics().circle(0, 0, 250).fill({ color: 0xffffff });
-      CircActor.texture = this.app.renderer.generateTexture(gfx);
-    }
-    this.view = this.add.sprite({
-      asset: CircActor.texture,
-      anchor: 0.5,
-      width: this.config.radius * 2,
-      height: this.config.radius * 2,
-      tint: this.config.color,
-    });
-  }
-
-  init(config?: Partial<CircActorConfig>) {
-    this.config = { ...CircActor.defaults, ...(config ?? {}) };
-    if (this.view) {
-      this.removeChild(this.view);
-    }
-    this.initialize();
-  }
-
-  reset() {
-    this.active = false;
-    this.x = 0;
-    this.y = 0;
-  }
-}
-
-export class RectActor extends BasicActor<RectActorConfig> {
-  static defaults: RectActorConfig = {
-    size: { width: 200, height: 100 },
-    color: 0x00fff0,
-    activeColor: 0x0000ff,
-  };
-  type = 'Rect';
-
-  constructor(config?: Partial<RectActorConfig>) {
-    super({ ...RectActor.defaults, ...(config ?? {}) });
-  }
-
-  initialize() {
-    super.initialize();
-    const gfx = this.make
-      .graphics()
-      .rect(0, 0, this.config.size.width, this.config.size.height)
-      .fill({ color: 0xffffff });
-
-    this.view = this.add.sprite({ asset: this.app.renderer.generateTexture(gfx), anchor: 0.5 });
-  }
-
-  init(config?: Partial<RectActorConfig>) {
-    this.config = { ...RectActor.defaults, ...(config ?? {}) };
-    if (this.view) {
-      this.removeChild(this.view);
-    }
-    this.initialize();
-  }
-
-  reset() {
-    this.active = false;
-    this.x = 0;
-    this.y = 0;
-  }
-}
-
-export class RectSolid extends BasicSolid<RectSolidConfig> {
-  static defaults: RectSolidConfig = {
-    size: { width: 150, height: 100 },
-    color: 0x00ff00,
-  };
-  type = 'RectSolid';
-
-  constructor(config?: Partial<RectSolidConfig>) {
-    super({ ...RectSolid.defaults, ...(config ?? {}) });
-  }
-
-  initialize() {
-    const gfx = this.make
-      .graphics()
-      .rect(0, 0, this.config.size.width, this.config.size.height)
-      .fill({ color: 0xffffff });
-
-    this.view = this.add.sprite({ asset: this.app.renderer.generateTexture(gfx), anchor: 0.5 });
-  }
-}
-
-export class CircSolid extends BasicSolid<CircSolidConfig> {
-  static defaults: CircSolidConfig = {
-    radius: 100,
-    color: 0x00ff00,
-  };
-  type = 'CircSolid';
-  isCircle = true;
-
-  constructor(config?: Partial<CircSolidConfig>) {
-    super({ ...CircSolid.defaults, ...(config ?? {}) });
-  }
-
-  initialize() {
-    const gfx = this.make.graphics().circle(0, 0, this.config.radius).fill({ color: 0xffffff });
-    this.view = this.add.sprite({ asset: this.app.renderer.generateTexture(gfx), anchor: 0.5 });
-  }
-}
-
-export class Projectile extends WithVelocity(CircActor) {
-  type = 'Projectile';
-
-  initialize() {
-    super.initialize();
-    this.eventMode = 'none';
-    this.interactiveChildren = false;
-  }
-
-  update(deltaTime: number) {
-    super.update(deltaTime);
-    this.moveByVelocity(deltaTime);
-  }
-}
-```
-
-### Adding Physics Objects to Your Scene
-
-Now, you can create your physics objects in your scene:
-
-```ts
-// import your physics objects, e.g:
-import { CircActor, RectActor } from './entities';
-
-// Create a circular actor
-const circleActor = this.level.add.existing(
-  new CircActor({
-    radius: 50,
-  }),
-);
-// Create a rectangular actor
-const rectActor = this.level.add.existing(
-  new RectActor({
-    width: 100,
-    height: 100,
-  }),
-);
-```
-
-#### Projectiles
-
-```ts
-// import projectile
-import { Projectile } from './entities';
-class Ball extends Projectile {
-  type = 'Ball';
-
-  // during update, apply gravity to the ball
-  update(deltaTime: number) {
-    super.update(deltaTime);
-
-    // bounce the ball
-    if (this.velocity.y < this.system.gravity) {
-      this.velocity.y += this.velocity.y < 0 ? 1 : 0.5;
-      this.velocity.y = Math.min(this.system.gravity, this.velocity.y);
-    }
-  }
-}
-```
-
-## Debug Mode
-
-Enable debug visualization to help with physics development:
-
-```ts
-// in your scene
-this.physics.system.debug = true;
-```
-
-<Aside type="tip">
-  Debug mode draws collision boundaries and spatial hash grid cells, which is invaluable during development but should
-  be disabled in production, as it will impact performance.
-</Aside>
-
-## Cleanup
-
-Don't forget to clean up the physics system when destroying your scene:
-
-```ts
-// in your scene
-destroy() {
-    this.physics.destroy();
-    super.destroy();
-}
-```
-
 ## Examples
 
 For implementation examples, see the following:
@@ -471,3 +224,7 @@ For implementation examples, see the following:
 - Platformer Physics: [Demo](https://dillpixel.io/examples/#snap-physics) | [Source](https://github.com/relishinc/dill-pixel/blob/main/packages/examples/src/scenes/physics/SnapPhysicsScene.ts)
 - Endless Runner: [Demo](https://dillpixel.io/examples/#snap-endless-runner) | [Source](https://github.com/relishinc/dill-pixel/blob/main/packages/examples/src/scenes/physics/SnapEndlessRunnerScene.ts)
 - Projectile Physics: [Demo](https://dillpixel.io/examples/#snap-projectiles) | [Source](https://github.com/relishinc/dill-pixel/blob/main/packages/examples/src/scenes/physics/SnapProjectileScene.ts)
+
+```
+
+```

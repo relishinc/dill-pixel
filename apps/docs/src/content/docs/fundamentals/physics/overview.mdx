@@ -4,48 +4,27 @@ title: Physics Overview
 
 import { Aside } from '@astrojs/starlight/components';
 
-Dill Pixel provides two physics plugins to suit different game development needs:
+Dill Pixel offers two physics plugins:
 
-- **Snap Physics**: A lightweight, performance-focused 2D physics system ideal for platformers and simple collision-based games
-- **Matter Physics**: A full-featured physics engine integration using Matter.js, suitable for complex physics simulations
+- **Snap Physics**: A lightweight, AABB and circle-based collision system inspired by Maddy Thorson's TowerFall physics
+- **Matter Physics**: A full-featured physics engine (using Matter.js) for complex physics simulations
 
-## Choosing a Physics Plugin
+## Plugin Comparison
 
-### Snap Physics
+| Feature        | Snap Physics                                                                                         | Matter Physics                                                                                      |
+| -------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Best Use Cases | • Platformers & endless runners<br/>• AABB & circle collisions<br/>• Precise, deterministic movement | • Physics-based puzzles<br/>• Complex body interactions<br/>• Realistic gravity & force simulations |
+| Performance    | Minimal overhead, deterministic                                                                      | More resource-intensive, feature-rich                                                               |
+| Complexity     | Simple, straightforward API                                                                          | Advanced features, steeper learning curve                                                           |
 
-Best for:
-
-- Platformers and endless runners
-- Games requiring basic collision detection
-- Mobile-first games where performance is critical
-- Simple projectile physics
-
-### Matter Physics
-
-Best for:
-
-- Physics-based puzzle games
-- Complex body interactions and constraints
-- Realistic gravity and force simulations
-- Games requiring advanced physics features
-
-<Aside type="caution">
-  Only one physics plugin should be active at a time in your game. While it's possible to use both, this isn't
-  recommended due to performance implications and potential conflicts.
-</Aside>
-
-## Performance Considerations
-
-- **Snap Physics** is more performant for simple collision detection and basic physics needs, making it ideal for mobile games
-- **Matter Physics** provides more realistic physics but comes with additional overhead
-- Both plugins support debug visualization, which should be disabled in production
+<Aside type="caution">Only use one physics plugin at a time to avoid performance issues and potential conflicts.</Aside>
 
 <Aside type="tip">
-  For mobile games or projects where performance is critical, start with Snap Physics and only switch to Matter Physics
-  if you need its advanced features.
+  For performance-critical projects requiring precise platformer-style physics, start with Snap Physics and only switch
+  to Matter if you need its advanced features.
 </Aside>
 
-See the individual plugin documentation for detailed setup and usage instructions:
+For detailed setup and usage instructions, see:
 
 - [Snap Physics Plugin](/fundamentals/physics/snap)
 - [Matter Physics Plugin](/fundamentals/physics/matter)

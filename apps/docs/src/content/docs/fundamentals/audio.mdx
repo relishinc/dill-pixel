@@ -43,6 +43,42 @@ const audioInstance = await this.app.audio.play('background-music', 'music', {
 audioInstance.stop();
 ```
 
+:::note[Why is Audio Playing Async?]
+Audio playback in dill-pixel is asynchronous:
+
+```ts
+const instance = await this.app.audio.play('background-music', 'music', {
+  loop: true,
+  volume: 0.5,
+});
+
+// later on
+instance.stop();
+```
+
+for several important reasons:
+
+1. **Resource Loading**: Audio files need to be loaded before they can be played. The async nature allows for:
+
+   - Loading audio files on-demand
+   - Handling loading errors gracefully
+   - Not blocking the main thread during load
+
+2. **Browser Policies**: Modern browsers have strict policies around audio playback:
+
+   - Audio context must be initialized after user interaction
+   - Some browsers require explicit user permission
+   - Async handling allows proper management of these requirements
+
+3. **Instance Management**: The audio system needs to:
+   - Create and initialize audio instances
+   - Set up proper channel routing
+   - Configure volume and other properties
+   - Handle cleanup of previous instances
+
+This async pattern ensures reliable audio playback while maintaining good performance and user experience.
+:::
+
 ## Loading Audio Assets
 
 Audio assets can be loaded in several ways:
