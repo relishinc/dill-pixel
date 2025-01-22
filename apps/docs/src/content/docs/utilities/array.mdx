@@ -1,0 +1,220 @@
+---
+title: Array Utilities
+description: Functions for working with arrays and collections in dill-pixel
+---
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Overview
+
+Array utilities provide essential functions for manipulating and working with arrays in your game. These utilities are designed to be type-safe and efficient, particularly useful for game state management, inventory systems, and randomization.
+
+## Array Operations
+
+### Shuffling Arrays
+
+The `shuffle` function randomly reorders elements in an array:
+
+```ts
+import { shuffle } from 'dill-pixel;
+
+// Shuffle an array in place
+const cards = ['A', '2', '3', '4', '5'];
+shuffle(cards);
+// cards is now randomly reordered, e.g.: ['4', '2', 'A', '5', '3']
+```
+
+<Aside title="Note" type="note">
+  The shuffle operation modifies the array in place and is optimized for performance.
+</Aside>
+
+### Random Element Selection
+
+Get a random element from an array:
+
+```ts
+import { getRandomElement } from 'dill-pixel;
+
+const items = ['sword', 'shield', 'potion', 'gem'];
+const randomItem = getRandomElement(items);
+```
+
+## Common Use Cases
+
+### Card Games
+
+```ts
+import { shuffle } from 'dill-pixel;
+
+class Deck {
+  private cards: string[];
+
+  constructor() {
+    // Initialize deck
+    this.cards = ['A♠', 'K♠', 'Q♠' /* ... */];
+
+    // Shuffle the deck
+    shuffle(this.cards);
+  }
+
+  draw() {
+    return this.cards.pop();
+  }
+
+  reset() {
+    // Reshuffle all cards
+    shuffle(this.cards);
+  }
+}
+```
+
+### Random Loot Generation
+
+```ts
+import { getRandomElement } from 'dill-pixel;
+
+interface LootItem {
+  id: string;
+  rarity: 'common' | 'rare' | 'epic';
+  value: number;
+}
+
+class LootSystem {
+  private lootTable: LootItem[];
+
+  generateLoot(count: number): LootItem[] {
+    const loot: LootItem[] = [];
+
+    for (let i = 0; i < count; i++) {
+      loot.push(getRandomElement(this.lootTable));
+    }
+
+    return loot;
+  }
+}
+```
+
+### Level Generation
+
+```ts
+import { shuffle } from 'dill-pixel;
+
+class LevelGenerator {
+  private roomTemplates: string[];
+
+  generateLevel(roomCount: number) {
+    // Create copy of templates
+    const templates = [...this.roomTemplates];
+
+    // Shuffle templates
+    shuffle(templates);
+
+    // Use first n templates
+    return templates.slice(0, roomCount);
+  }
+}
+```
+
+## Type Safety
+
+The array utilities are fully typed and work with any array type:
+
+```ts
+import { shuffle, getRandomElement } from 'dill-pixel;
+
+// Works with any type
+interface Player {
+  id: string;
+  name: string;
+  score: number;
+}
+
+const players: Player[] = [
+  { id: '1', name: 'Alice', score: 100 },
+  { id: '2', name: 'Bob', score: 200 },
+];
+
+// Type-safe shuffling
+shuffle(players);
+
+// Type-safe random selection
+const randomPlayer: Player = getRandomElement(players);
+```
+
+## Best Practices
+
+1. Use `shuffle` when you need to randomize the entire array
+2. Use `getRandomElement` for single random selection
+3. Create a copy before shuffling if you need to preserve the original order:
+
+   ```ts
+   const original = [1, 2, 3, 4, 5];
+   const shuffled = [...original];
+   shuffle(shuffled);
+   ```
+
+4. Consider caching random selections for performance:
+
+   ```ts
+   class EnemySpawner {
+     private enemyTypes = ['goblin', 'orc', 'troll'];
+     private spawnQueue: string[] = [];
+
+     getNextEnemy(): string {
+       if (this.spawnQueue.length === 0) {
+         // Refill queue with shuffled enemies
+         this.spawnQueue = [...this.enemyTypes];
+         shuffle(this.spawnQueue);
+       }
+       return this.spawnQueue.pop()!;
+     }
+   }
+   ```
+
+## Performance Considerations
+
+<Aside title="Optimization" type="tip">
+  The array utilities are optimized for performance and avoid unnecessary array copies. The `shuffle` function modifies
+  arrays in place for better memory efficiency.
+</Aside>
+
+### Efficient Usage
+
+```ts
+// Good: Shuffle in place
+shuffle(array);
+
+// Less Efficient: Creating new array
+const shuffled = [...array].sort(() => Math.random() - 0.5);
+
+// Good: Direct random access
+const item = getRandomElement(array);
+
+// Less Efficient: Manual random index
+const item = array[Math.floor(Math.random() * array.length)];
+```
+
+## Tips and Tricks
+
+1. Use `shuffle` for initial randomization of game elements
+2. Combine with other utilities for complex behaviors:
+
+   ```ts
+   import { shuffle, Color } from 'dill-pixel;
+
+   // Create random color palette
+   const colors = [Color.RED, Color.BLUE, Color.GREEN];
+   shuffle(colors);
+   ```
+
+3. Consider using `getRandomElement` for variety in game events:
+
+   ```ts
+   const events = ['spawn', 'powerup', 'obstacle'];
+   const nextEvent = getRandomElement(events);
+   ```
+
+4. Use type annotations to ensure type safety:
+   ```ts
+   const <T>(arr: T[]): T => getRandomElement(arr);
+   ```

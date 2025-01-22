@@ -159,3 +159,66 @@ class MyScene extends Scene {
   }
 }
 ```
+
+## Alternative ways to check for assets loaded status
+
+Asset loading is built-in to Dill Pixel during scene transitions, or during application bootstrap. However, there are a few alternative ways to check if an asset is loaded in Pixi.js:
+
+### 1. Using Assets.cache.has()
+
+```ts
+import { Assets } from 'pixi.js';
+
+// Check if an asset exists in the cache
+const isLoaded = Assets.cache.has('myAssetKey');
+```
+
+### 2. Using Assets.get()
+
+```ts
+import { Assets } from 'pixi.js';
+
+// Try to get the asset - returns undefined if not loaded
+const asset = Assets.get('myAssetKey');
+if (asset) {
+  // Asset is loaded
+  console.log('Asset is loaded!');
+} else {
+  // Asset is not loaded
+  console.log('Asset is not loaded');
+}
+```
+
+### 3. Checking for Specific Asset Types
+
+```typescript
+import { Assets, Texture, Spritesheet } from 'pixi.js';
+
+// For textures
+function isTextureLoaded(key: string): boolean {
+  const asset = Assets.get(key);
+  return asset instanceof Texture;
+}
+
+// For spritesheets
+function isSpriteSheetLoaded(key: string): boolean {
+  const asset = Assets.get(key);
+  return asset instanceof Spritesheet;
+}
+```
+
+### 4. Safe Asset Access with Error Handling
+
+```typescript
+function getLoadedAsset(key: string) {
+  try {
+    if (!Assets.cache.has(key)) {
+      throw new Error(`Asset "${key}" not loaded into Pixi cache`);
+    }
+    return Assets.get(key);
+  } catch (error) {
+    console.error(`Failed to get asset: ${error.message}`);
+    return null;
+  }
+}
+```

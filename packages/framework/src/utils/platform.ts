@@ -25,6 +25,5 @@ export const isTouch: boolean =
  * @type {boolean}
  */
 export const isMobile = PIXIUtilsIsMobile.any;
-
 export const isAndroid = PIXIUtilsIsMobile.android.device;
 export const isIos = PIXIUtilsIsMobile.apple.device;

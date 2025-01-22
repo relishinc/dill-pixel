@@ -1,0 +1,161 @@
+---
+title: Math Utilities
+description: Essential mathematical functions for game development in dill-pixel
+---
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Overview
+
+Math utilities provide essential mathematical functions commonly used in game development. These utilities are optimized for performance and designed to handle common game math operations.
+
+## Basic Operations
+
+### Clamping Values
+
+The `clamp` function constrains a value between a minimum and maximum:
+
+```ts
+import { clamp } from 'dill-pixel';
+
+// Clamp value between 0 and 100
+const health = clamp(currentHealth + healing, 0, 100);
+
+// Clamp normalized value
+const progress = clamp(currentProgress, 0, 1);
+```
+
+<Aside title="Use Cases" type="tip">
+  Clamping is essential for: - Health/resource management - Progress indicators - Normalized values (0-1 range) - Screen
+  boundaries
+</Aside>
+
+### Linear Interpolation (Lerp)
+
+The `lerp` function performs linear interpolation between two values:
+
+```ts
+import { lerp } from 'dill-pixel';
+
+// Interpolate between 0 and 100
+const halfway = lerp(0, 100, 0.5); // 50
+
+// Smooth camera movement
+function updateCameraPosition(current: number, target: number, smoothing: number) {
+  return lerp(current, target, smoothing);
+}
+```
+
+## Common Use Cases
+
+### Smooth Movement
+
+```ts
+import { lerp } from 'dill-pixel';
+
+class SmoothFollow {
+  private position = 0;
+  private target = 0;
+  private smoothing = 0.1;
+
+  update() {
+    // Smooth movement towards target
+    this.position = lerp(this.position, this.target, this.smoothing);
+  }
+}
+```
+
+### Progress Bars
+
+```ts
+import { clamp, lerp } from 'dill-pixel';
+
+class ProgressBar {
+  private current = 0;
+  private target = 0;
+  private smoothing = 0.2;
+
+  update() {
+    // Ensure values stay in valid range
+    this.target = clamp(this.target, 0, 1);
+
+    // Smooth progress update
+    this.current = lerp(this.current, this.target, this.smoothing);
+  }
+}
+```
+
+### Camera Controls
+
+```ts
+import { lerp, clamp } from 'dill-pixel';
+
+class Camera {
+  private x = 0;
+  private y = 0;
+  private zoom = 1;
+
+  // Smooth camera movement with bounds
+  update(targetX: number, targetY: number, targetZoom: number) {
+    this.x = lerp(this.x, targetX, 0.1);
+    this.y = lerp(this.y, targetY, 0.1);
+    this.zoom = lerp(this.zoom, clamp(targetZoom, 0.5, 2), 0.1);
+  }
+}
+```
+
+## Best Practices
+
+1. Use `clamp` to ensure values stay within valid ranges
+2. Use `lerp` for smooth transitions and animations
+3. Consider performance in tight loops:
+
+   ```ts
+   // Cache lerp factor for multiple operations
+   const t = 0.1;
+   position.x = lerp(position.x, target.x, t);
+   position.y = lerp(position.y, target.y, t);
+   ```
+
+4. Combine with other utilities for complex behaviors:
+
+   ```ts
+   import { lerp, clamp, Color } from 'dill-pixel';
+
+   // Smooth color transition with bounded progress
+   function updateColor(progress: number) {
+     const t = clamp(progress, 0, 1);
+     return Color.lerp(startColor, endColor, t);
+   }
+   ```
+
+## Performance Considerations
+
+<Aside title="Optimization" type="tip">
+  Math utilities are designed to be fast and efficient. They use native Math functions and avoid unnecessary object
+  creation.
+</Aside>
+
+### Efficient Usage
+
+```ts
+// Good: Single lerp call
+const smoothed = lerp(current, target, 0.1);
+
+// Better: Cache lerp factor for multiple operations
+const t = 0.1;
+x = lerp(x, targetX, t);
+y = lerp(y, targetY, t);
+z = lerp(z, targetZ, t);
+
+// Good: Combine clamp and lerp efficiently
+const progress = clamp(lerp(start, end, t), 0, 1);
+```
+
+## Tips and Tricks
+
+1. Use small lerp values (0.1-0.3) for smooth movement
+2. Combine `lerp` with `clamp` for bounded smooth transitions
+3. Consider frame rate independence for consistent motion
+4. Use lerp for camera smoothing and UI animations
+5. Apply clamping after calculations to ensure valid results

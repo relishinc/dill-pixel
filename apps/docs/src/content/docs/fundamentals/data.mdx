@@ -53,31 +53,14 @@ export const config = defineConfig<Data>({
 
 The DataAdapter provides several methods for managing game data. Each has specific use cases and behaviors.
 
-### save() Method
+## set() Method
 
-The `save()` method updates a single key and triggers localStorage backup if configured:
-
-```ts
-// Updates a single value and triggers backup if key is in backupKeys
-this.app.data.save('score', 100);
-
-// Type-safe usage with nested objects
-this.app.data.save('settings', {
-  soundEnabled: true,
-  musicVolume: 0.5,
-});
-```
-
-<Aside type="tip">
-  `save()` emits a data change event with both the key and new value, making it ideal for tracking specific field
-  updates.
-</Aside>
-
-### set() Method
-
-The `set()` method allows updating multiple values at once, with optional deep merging:
+The `set()` method allows updating single or multiple values, with optional deep merging:
 
 ```ts
+// Update a single value
+this.app.data.set('score', 100);
+
 // Update multiple values with deep merge (default)
 this.app.data.set({
   score: 100,
@@ -85,7 +68,68 @@ this.app.data.set({
     soundEnabled: false, // Only updates soundEnabled, preserves other settings
   },
 });
+```
 
+<Aside title="Type Safety" type="note">
+  Type safety is enforced for the `set()` method. If you pass an object that doesn't match the expected shape,
+  TypeScript will throw an error.
+</Aside>
+
+```ts
+this.app.data.set('score', 'pickle'); // will throw a ts error
+```
+
+### Deep Merge Behavior
+
+You can also use the `merge` parameter to control the merge behavior. By default, the `set()` method will merge the new data with the existing data, passing `false` will replace the entire data object.
+
+<Aside title="Merge: true (default)" type="tip">
+  When using `set()` with `merge: true` (default), the DataAdapter performs a deep merge:
+</Aside>
+<Tabs>
+<TabItem label="dill-pixel.config.ts">
+<Code lang="ts" code={`
+// Initial data, set in dill-pixel.config.ts
+defineConfig<Data>({
+    // ... other config options
+    data: {
+      initial: {
+        settings: {
+          sound: { enabled: true, volume: 0.5 },
+          display: { fullscreen: false },
+        },
+      },
+    },
+  });
+`}
+/>
+</TabItem>
+<TabItem label="src/scenes/MyScene.ts">
+<Code lang="ts" code={`
+// Update with deep merge
+  this.app.data.set({
+    settings: {
+      sound: { volume: 0.8 }
+    }
+  });
+
+    /* Result:
+    {
+      settings: {
+        sound: { enabled: true, volume: 0.8 },
+        display: { fullscreen: false }
+      }
+    }
+    */
+
+`}/>
+
+</TabItem>
+</Tabs>
+<Aside title="Merge: false" type="caution">
+  With the `merge` parameter set to `false`, the entire data object is replaced. Be sure to include all required fields:
+</Aside>
+```ts
 // Replace entire data object (no merge)
 this.app.data.set(
   {
@@ -95,104 +139,36 @@ this.app.data.set(
       musicVolume: 1.0,
     },
   },
-  false,
+  false, // do not merge
 );
-```
+````
 
-<Aside type="caution">
-  When `merge: false`, the entire data object is replaced. Be sure to include all required fields.
-</Aside>
+## get() Method
 
-### get() and load() Methods
-
-Two methods are available for retrieving data:
+The `get()` method retrieves data from storage:
 
 ```ts
 // Get entire data object
 const allData = this.app.data.get();
 
 // Get specific field
-const score = this.app.data.load('score');
-const settings = this.app.data.load('settings');
+const score = this.app.data.get('score');
+const settings = this.app.data.get('settings');
 ```
 
-Key differences:
-
-- `get()`: Returns the entire data object
-- `load()`: Returns a specific field value with type safety
-
-### clear() Method
+## clear() Method
 
 The `clear()` method removes data both from memory and localStorage:
 
 ```ts
-// Remove score from memory and localStorage
+// Clear all data
+this.app.data.clear();
+
+// Clear specific field
 this.app.data.clear('score');
 ```
 
-## Deep Merging Behavior
-
-When using `set()` with `merge: true` (default), the DataAdapter performs a deep merge:
-
-```ts
-// Initial data
-const data = {
-  settings: {
-    sound: { enabled: true, volume: 0.5 },
-    display: { fullscreen: false }
-  }
-};
-
-// Update with deep merge
-this.app.data.set({
-  settings: {
-    sound: { volume: 0.8 }
-  }
-});
-
-// Result:
-{
-  settings: {
-    sound: { enabled: true, volume: 0.8 },
-    display: { fullscreen: false }
-  }
-}
-```
-
-<Aside type="tip">If set up correctly, TypeScript will ensure type safety when working with data:</Aside>
-
-In `src/dill-pixel.config.ts`:
-
-```ts
-export type Data = {
-  score: number;
-  settings: {
-    sound: { enabled: boolean; volume: number };
-  };
-};
-```
-
-In `src/MyApplication.ts`
-
-```ts
-import { Application } from 'dill-pixel';
-import type { Data, Contexts, ActionTypes } from './dill-pixel.config';
-export class MyApplication extends Application<Data, Contexts, ActionTypes> {}
-```
-
-In `src/scenes/MyScene.ts`
-
-```ts
-import { Scene } from 'dill-pixel';
-export default class MyScene extends Scene<MyApplication> {
-  initialize() {
-    // TS error, invalid type for "score"
-    this.app.data.save('score', 'invalid');
-  }
-}
-```
-
-## Change Events
+## Change Signal
 
 All data modifications emit change events that you can listen to:
 

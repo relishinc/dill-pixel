@@ -1,0 +1,225 @@
+---
+title: Map Utilities
+description: Functions for working with Map data structures in dill-pixel
+---
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Overview
+
+Map utilities provide functions for working with JavaScript's `Map` data structure. These utilities are particularly useful for managing collections of game objects, state machines, and sequential data.
+
+## Map Navigation
+
+### Getting Adjacent Entries
+
+Navigate between map entries using `getPreviousMapEntry` and `getNextMapEntry`:
+
+```ts
+import { getPreviousMapEntry, getNextMapEntry } from 'dill-pixel';
+
+const gameStates = new Map([
+  [
+    'menu',
+    {
+      /* ... */
+    },
+  ],
+  [
+    'playing',
+    {
+      /* ... */
+    },
+  ],
+  [
+    'paused',
+    {
+      /* ... */
+    },
+  ],
+  [
+    'gameover',
+    {
+      /* ... */
+    },
+  ],
+]);
+
+// Get previous state
+const prevState = getPreviousMapEntry(gameStates, 'playing'); // ['menu', {...}]
+
+// Get next state
+const nextState = getNextMapEntry(gameStates, 'playing'); // ['paused', {...}]
+```
+
+### Getting Boundary Entries
+
+Access the first and last entries of a map:
+
+```ts
+import { getFirstMapEntry, getLastMapEntry } from 'dill-pixel';
+
+// Get first entry
+const firstState = getFirstMapEntry(gameStates); // ['menu', {...}]
+
+// Get last entry
+const lastState = getLastMapEntry(gameStates); // ['gameover', {...}]
+```
+
+## Common Use Cases
+
+### State Machine Implementation
+
+```ts
+import { getNextMapEntry } from 'dill-pixel';
+
+class GameStateMachine {
+  private states = new Map([
+    ['idle', { enter: () => console.log('Entering idle') }],
+    ['running', { enter: () => console.log('Starting to run') }],
+    ['jumping', { enter: () => console.log('Jumping!') }],
+  ]);
+
+  private currentState = 'idle';
+
+  transitionToNext() {
+    const nextEntry = getNextMapEntry(this.states, this.currentState);
+    if (nextEntry) {
+      const [nextState, handlers] = nextEntry;
+      this.currentState = nextState;
+      handlers.enter();
+    }
+  }
+}
+```
+
+### Level Progression
+
+```ts
+import { getNextMapEntry, getLastMapEntry } from 'dill-pixel';
+
+class LevelManager {
+  private levels = new Map([
+    [1, { name: 'Tutorial', difficulty: 'easy' }],
+    [2, { name: 'First Steps', difficulty: 'easy' }],
+    [3, { name: 'Challenge', difficulty: 'medium' }],
+  ]);
+
+  private currentLevel = 1;
+
+  progressToNextLevel() {
+    const nextLevel = getNextMapEntry(this.levels, this.currentLevel);
+    if (nextLevel) {
+      const [levelNumber, levelData] = nextLevel;
+      this.currentLevel = levelNumber;
+      return levelData;
+    }
+    return null; // No more levels
+  }
+
+  isLastLevel() {
+    const [lastLevelNumber] = getLastMapEntry(this.levels) ?? [];
+    return this.currentLevel === lastLevelNumber;
+  }
+}
+```
+
+### UI Navigation
+
+```ts
+import { getPreviousMapEntry, getNextMapEntry } from 'dill-pixel';
+
+class MenuSystem {
+  private menuItems = new Map([
+    ['play', { label: 'Play Game', action: () => {} }],
+    ['options', { label: 'Options', action: () => {} }],
+    ['credits', { label: 'Credits', action: () => {} }],
+  ]);
+
+  private selectedItem = 'play';
+
+  navigateUp() {
+    const prevItem = getPreviousMapEntry(this.menuItems, this.selectedItem);
+    if (prevItem) {
+      const [itemKey] = prevItem;
+      this.selectedItem = itemKey;
+    }
+  }
+
+  navigateDown() {
+    const nextItem = getNextMapEntry(this.menuItems, this.selectedItem);
+    if (nextItem) {
+      const [itemKey] = nextItem;
+      this.selectedItem = itemKey;
+    }
+  }
+}
+```
+
+## Type Safety
+
+The map utilities are fully typed and support generic types:
+
+```ts
+interface GameState {
+  name: string;
+  onEnter: () => void;
+  onExit: () => void;
+}
+
+const states = new Map<string, GameState>();
+const nextState = getNextMapEntry(states, 'current'); // Type: [string, GameState] | undefined
+```
+
+## Best Practices
+
+1. Use map utilities for ordered collections where sequence matters:
+
+   ```ts
+   // Good: Using map for ordered states
+   const gameStates = new Map([
+     ['intro', introState],
+     ['gameplay', gameplayState],
+     ['ending', endingState],
+   ]);
+
+   // Less ideal: Using object where order matters
+   const gameStates = {
+     intro: introState,
+     gameplay: gameplayState,
+     ending: endingState,
+   };
+   ```
+
+2. Handle undefined cases:
+
+   ```ts
+   const nextEntry = getNextMapEntry(map, currentKey);
+   if (nextEntry) {
+     const [key, value] = nextEntry;
+     // Process next entry
+   } else {
+     // Handle end of sequence
+   }
+   ```
+
+3. Consider caching results for performance:
+
+   ```ts
+   class Navigator {
+     private cachedNext: Map<string, [string, any]> = new Map();
+
+     getNextCached(key: string) {
+       if (!this.cachedNext.has(key)) {
+         const next = getNextMapEntry(this.items, key);
+         if (next) this.cachedNext.set(key, next);
+       }
+       return this.cachedNext.get(key);
+     }
+   }
+   ```
+
+<Aside title="Performance" type="note">
+  Map utilities perform linear searches through the map entries. For very large maps, consider caching results or using
+  alternative data structures if performance becomes a concern.
+</Aside>

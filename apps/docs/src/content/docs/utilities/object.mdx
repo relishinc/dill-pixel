@@ -1,0 +1,238 @@
+---
+title: Object Utilities
+description: Functions for manipulating objects and their properties in dill-pixel
+---
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Overview
+
+Object utilities provide type-safe functions for manipulating JavaScript objects. These utilities are particularly useful for managing game state, configuration objects, and data transformations.
+
+## Object Operations
+
+### Plucking Properties
+
+The `pluck` function creates a new object with only the specified properties:
+
+```ts
+import { pluck } from 'dill-pixel';
+
+const character = {
+  name: 'Hero',
+  health: 100,
+  mana: 50,
+  inventory: ['sword', 'potion'],
+  position: { x: 0, y: 0 },
+};
+
+// Get only specific properties
+const stats = pluck(character, ['health', 'mana']);
+// { health: 100, mana: 50 }
+```
+
+### Omitting Properties
+
+The `omitKeys` function creates a new object excluding the specified properties:
+
+```ts
+import { omitKeys } from 'dill-pixel';
+
+const playerData = {
+  id: '123',
+  name: 'Player1',
+  score: 1000,
+  sessionToken: 'abc123',
+  lastLogin: '2024-01-01',
+};
+
+// Remove sensitive data
+const publicData = omitKeys(['sessionToken', 'lastLogin'], playerData);
+// { id: '123', name: 'Player1', score: 1000 }
+```
+
+## Common Use Cases
+
+### State Management
+
+```ts
+import { pluck } from 'dill-pixel';
+
+class GameState {
+  private state = {
+    player: { health: 100, position: { x: 0, y: 0 } },
+    score: 0,
+    level: 1,
+    settings: { sound: true, music: true },
+  };
+
+  // Get only necessary data for saving
+  getSaveData() {
+    return pluck(this.state, ['player', 'score', 'level']);
+  }
+}
+```
+
+### API Data Transformation
+
+```ts
+import { omitKeys } from 'dill-pixel';
+
+interface PlayerData {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  score: number;
+}
+
+class PlayerAPI {
+  // Remove sensitive data before sending to leaderboard
+  getLeaderboardData(player: PlayerData) {
+    return omitKeys(['email', 'password'], player);
+  }
+}
+```
+
+### Configuration Management
+
+```ts
+import { pluck } from 'dill-pixel';
+
+class GameConfig {
+  private config = {
+    graphics: { quality: 'high', resolution: '1080p' },
+    sound: { volume: 0.8, effects: true, music: true },
+    controls: { sensitivity: 0.5, invertY: false },
+    network: { server: 'us-east', port: 8080 },
+  };
+
+  // Get only graphics settings
+  getGraphicsSettings() {
+    return pluck(this.config, ['graphics']);
+  }
+
+  // Get only sound settings
+  getSoundSettings() {
+    return pluck(this.config, ['sound']);
+  }
+}
+```
+
+## Type Safety
+
+The object utilities are fully typed and provide TypeScript type inference:
+
+```ts
+import { pluck, omitKeys } from 'dill-pixel';
+
+interface GameEntity {
+  id: string;
+  position: { x: number; y: number };
+  velocity: { x: number; y: number };
+  sprite: string;
+  health: number;
+}
+
+// Types are preserved
+const position = pluck(entity, ['position']); // Type: { position: { x: number, y: number } }
+const noVelocity = omitKeys(['velocity'], entity); // Type: Omit<GameEntity, 'velocity'>
+```
+
+## Best Practices
+
+1. Use `pluck` for selecting specific properties:
+
+   ```ts
+   // Good: Select only needed properties
+   const playerStats = pluck(player, ['health', 'mana', 'level']);
+
+   // Less ideal: Manual property selection
+   const playerStats = {
+     health: player.health,
+     mana: player.mana,
+     level: player.level,
+   };
+   ```
+
+2. Use `omitKeys` for removing sensitive or unnecessary data:
+
+   ```ts
+   // Good: Remove sensitive data
+   const publicData = omitKeys(['password', 'token'], userData);
+
+   // Less ideal: Manual property copying
+   const publicData = { ...userData };
+   delete publicData.password;
+   delete publicData.token;
+   ```
+
+3. Consider performance with large objects:
+
+   ```ts
+   // Cache results for frequently accessed subsets
+   class EntityManager {
+     private positionCache = new Map<string, ReturnType<typeof pluck>>();
+
+     getEntityPosition(id: string) {
+       if (!this.positionCache.has(id)) {
+         const entity = this.entities.get(id);
+         if (entity) {
+           this.positionCache.set(id, pluck(entity, ['position']));
+         }
+       }
+       return this.positionCache.get(id);
+     }
+   }
+   ```
+
+## Performance Considerations
+
+<Aside title="Optimization" type="tip">
+  Both `pluck` and `omitKeys` create new objects. For performance-critical code, consider caching results or using more
+  direct property access if you need only a single property.
+</Aside>
+
+### Efficient Usage
+
+```ts
+// Less efficient: Creating new object frequently
+function update() {
+  const pos = pluck(entity, ['position']); // New object every frame
+  updatePosition(pos);
+}
+
+// More efficient: Direct property access
+function update() {
+  updatePosition(entity.position); // Direct reference
+}
+
+// Good: Cache frequently used subsets
+const cachedStats = pluck(character, ['health', 'mana', 'stamina']);
+function updateUI() {
+  renderStats(cachedStats); // Use cached object
+}
+```
+
+## Tips and Tricks
+
+1. Use with destructuring for cleaner code:
+
+   ```ts
+   const { health, mana } = pluck(character, ['health', 'mana']);
+   ```
+
+2. Chain operations for complex transformations:
+
+   ```ts
+   const processedData = omitKeys(['sensitive'], pluck(data, ['public', 'shared']));
+   ```
+
+3. Use with type guards:
+   ```ts
+   function isValidEntity(entity: unknown): entity is GameEntity {
+     const required = ['id', 'position', 'sprite'];
+     const props = pluck(entity as any, required);
+     return required.every((key) => key in props);
+   }
+   ```

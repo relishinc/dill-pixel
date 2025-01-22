@@ -1,0 +1,174 @@
+---
+title: Point Utilities
+description: Functions for working with 2D points and coordinates in dill-pixel
+---
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Overview
+
+Point utilities provide a comprehensive set of functions for manipulating and working with 2D points in your game. These utilities are designed to work seamlessly with Pixi.js's Point system while providing additional flexibility through the `PointLike` type.
+
+## Point Types
+
+The framework provides flexible point types to handle different coordinate representations:
+
+```ts
+type PointLike = number | { x: number; y: number } | [number, number?] | [number] | number[] | Point;
+```
+
+This allows you to work with points in various formats:
+
+```ts
+import { resolvePointLike } from 'dill-pixel';
+
+// Different ways to specify points
+const point1 = resolvePointLike({ x: 10, y: 20 });
+const point2 = resolvePointLike([10, 20]);
+const point3 = resolvePointLike(10); // Both x and y will be 10
+```
+
+## Basic Operations
+
+### Adding Points
+
+```ts
+import { add, addToPoint } from 'dill-pixel';
+
+// Create new point from addition
+const sum = add(point1, point2);
+
+// Modify existing point
+addToPoint(point1, point2); // point1 is modified in place
+```
+
+### Subtracting Points
+
+```ts
+import { subtract, subtractFromPoint } from 'dill-pixel';
+
+// Create new point from subtraction
+const diff = subtract(point1, point2);
+
+// Modify existing point
+subtractFromPoint(point1, point2); // point1 is modified in place
+```
+
+### Scaling Points
+
+```ts
+import { multiply } from 'dill-pixel';
+
+// Scale a point by a number
+const scaled = multiply(point1, 2); // Doubles both x and y
+```
+
+## Distance Calculations
+
+### Linear Distance
+
+```ts
+import { distance, distanceSq } from 'dill-pixel';
+
+// Get distance between points
+const dist = distance(point1, point2);
+
+// Get squared distance (more efficient)
+const distSquared = distanceSq(point1, point2);
+```
+
+<Aside title="Performance" type="tip">
+  Use `distanceSq` when comparing distances, as it avoids the costly square root operation. Only use `distance` when you
+  need the actual distance value.
+</Aside>
+
+### Point Magnitude
+
+```ts
+import { magnitude } from 'dill-pixel';
+
+// Get the magnitude (length) of a point vector
+const length = magnitude(point1);
+```
+
+## Interpolation
+
+### Linear Interpolation
+
+```ts
+import { lerpPoint } from 'dill-pixel';
+
+// Interpolate between point coordinates
+const value = lerpPoint(point1, 0.5); // 50% between x and y
+```
+
+## Point Resolution
+
+The `resolvePointLike` function is a powerful utility for converting various coordinate formats into a consistent point representation:
+
+```ts
+import { resolvePointLike } from 'dill-pixel';
+
+// Convert to object with x,y
+const objPoint = resolvePointLike([10, 20]); // { x: 10, y: 20 }
+
+// Convert to Pixi.js Point
+const pixiPoint = resolvePointLike([10, 20], true); // Point(10, 20)
+
+// Default values
+const withDefaults = resolvePointLike(undefined, false, 10, 20); // { x: 10, y: 20 }
+```
+
+<Aside title="Type Safety" type="note">
+  The `resolvePointLike` function is overloaded to provide proper TypeScript types based on the `asPoint` parameter.
+</Aside>
+
+## Common Use Cases
+
+### Movement and Position
+
+```ts
+import { Point } from 'pixi.js';
+import { add, multiply } from 'dill-pixel';
+
+// Update position with velocity
+const position = new Point(100, 100);
+const velocity = new Point(5, 0);
+const newPosition = add(position, velocity);
+
+// Apply acceleration
+const acceleration = 1.5;
+const newVelocity = multiply(velocity, acceleration);
+```
+
+### Distance Checking
+
+```ts
+import { distance } from 'dill-pixel';
+
+// Check if two objects are within range
+function isInRange(object1: Point, object2: Point, range: number): boolean {
+  return distance(object1, object2) <= range;
+}
+```
+
+### Smooth Movement
+
+```ts
+import { lerpPoint } from 'dill-pixel';
+
+// Smooth movement between points
+function smoothMove(current: Point, target: Point, speed: number) {
+  const t = lerpPoint(current, speed);
+  current.x = t * (target.x - current.x) + current.x;
+  current.y = t * (target.y - current.y) + current.y;
+}
+```
+
+## Best Practices
+
+1. Use `PointLike` type for flexible input parameters
+2. Prefer `distanceSq` over `distance` for performance when comparing distances
+3. Use `resolvePointLike` to handle different coordinate formats consistently
+4. Consider using `addToPoint` and `subtractFromPoint` to avoid object creation
+5. Use `multiply` for scaling vectors and velocities

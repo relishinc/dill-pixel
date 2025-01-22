@@ -1,4 +1,4 @@
-import {Logger} from '../console';
+import { Logger } from '../console';
 
 /**
  * Creates a new Queue with the given promises.
@@ -35,6 +35,14 @@ export class Queue<T = any | void> {
    */
   public get results(): T[] {
     return this._results;
+  }
+
+  /**
+   * Gets the progress of the queue.
+   * @returns {number} The progress (0-1)
+   */
+  public get progress(): number {
+    return this._currentIndex / this._promises.length;
   }
 
   /**

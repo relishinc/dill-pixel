@@ -1,5 +1,4 @@
-import {Point, PointLike, Rectangle} from 'pixi.js';
-
+import { Point, PointLike, Rectangle } from 'pixi.js';
 /**
  *
  * @param rect

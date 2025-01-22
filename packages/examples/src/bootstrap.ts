@@ -1,10 +1,37 @@
-import { create } from 'dill-pixel';
+import { create, shuffle } from 'dill-pixel';
 import 'dill-pixel-globals';
 import { V8Application } from './V8Application';
 import { config } from './dill-pixel.config';
 
+const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+shuffle(arr);
+console.log(arr);
+
 async function bootstrap() {
   const app = await create<V8Application>(config, V8Application);
+
+  /*
+  // test data adapter
+  app.data.clear();
+  let data = app.data.get();
+  console.log('data 1', JSON.stringify(data, null, 2));
+  app.data.set('foo', 'anthony');
+  let foo = app.data.get('foo');
+
+  console.log('foo', JSON.stringify(foo, null, 2));
+  app.data.set({ foo: 'baz', saved: 'adsf;kjdfgj' });
+
+  data = app.data.get();
+  foo = app.data.get('foo');
+
+  console.log('foo 2', JSON.stringify(foo, null, 2));
+  console.log('data 2', JSON.stringify(data, null, 2));
+
+  app.data.clear('foo');
+
+  foo = app.data.get('foo');
+  console.log('foo 3', JSON.stringify(foo, null, 2));
+  */
 
   function populateSidebar() {
     // populate sidebar

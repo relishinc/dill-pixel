@@ -1,0 +1,174 @@
+---
+title: Color Utilities
+description: Functions and classes for working with colors in dill-pixel
+---
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Overview
+
+The color utilities provide a robust system for working with colors in your game. The framework includes both standalone functions and a powerful `Color` class that supports various color formats and transformations.
+
+## Color Class
+
+The `Color` class is the primary way to work with colors in dill-pixel:
+
+```ts
+import { Color } from 'dill-pixel';
+
+// Create colors
+const red = new Color(255, 0, 0);
+const blue = new Color(0x0000ff); // Using hex value
+```
+
+### Predefined Colors
+
+The `Color` class includes several predefined color constants:
+
+```ts
+const { WHITE, BLACK, GREY, RED, GREEN, BLUE, YELLOW, MAGENTA, CYAN } = Color;
+```
+
+## Color Formats
+
+### RGB to Hex
+
+Convert RGB values to hexadecimal format:
+
+```ts
+import { Color } from 'dill-pixel';
+
+// Using the Color class
+const color = new Color(255, 0, 0);
+const hex = color.toHex(); // Returns number: 0xFF0000
+const hexString = color.toHexString(); // Returns string: "FF0000"
+
+// Using static methods
+const hexValue = Color.rgbToHex(255, 0, 0); // Returns number: 0xFF0000
+const hexStr = Color.rgbToFullHexString(255, 0, 0); // Returns string: "FF0000"
+```
+
+### Hex to RGB
+
+Convert hexadecimal colors to RGB format:
+
+```ts
+import { toRgb } from 'dill-pixel';
+
+const rgbValue = toRgb('#FF0000'); // Returns number: 16711680
+const color = new Color(rgbValue); // Creates Color with r: 255, g: 0, b: 0
+```
+
+### WebGL Format
+
+Convert colors to WebGL-compatible format (0-1 range):
+
+```ts
+const color = new Color(255, 128, 0);
+const webglColor = color.toWebGL(); // Returns [1, 0.5, 0]
+```
+
+<Aside title="WebGL" type="tip">
+  The `toWebGL()` method is particularly useful when working with shaders and WebGL materials, as it automatically
+  normalizes the color values to the 0-1 range that WebGL expects.
+</Aside>
+
+## Color Operations
+
+### Color Interpolation
+
+Smoothly interpolate between two colors:
+
+```ts
+import { Color } from 'dill-pixel';
+
+// Interpolate between colors
+const start = new Color(255, 0, 0); // Red
+const end = new Color(0, 0, 255); // Blue
+const middle = Color.lerp(start, end, 0.5); // Purple
+
+// Interpolate between hex values
+const startHex = 0xff0000;
+const endHex = 0x0000ff;
+const middleHex = Color.lerpHex(startHex, endHex, 0.5);
+```
+
+### Random Colors
+
+Generate random colors:
+
+```ts
+const randomColor = Color.random();
+```
+
+## Common Use Cases
+
+### UI Elements
+
+```ts
+import { Color } from 'dill-pixel';
+
+// Create button states
+const buttonColors = {
+  normal: new Color(200, 200, 200),
+  hover: new Color(220, 220, 220),
+  pressed: new Color(180, 180, 180),
+};
+
+// Interpolate for smooth transitions
+function updateButtonColor(progress: number) {
+  return Color.lerp(buttonColors.normal, buttonColors.hover, progress);
+}
+```
+
+### Particle Effects
+
+```ts
+import { Color } from 'dill-pixel';
+
+// Create a fire effect
+function createFireParticle() {
+  const startColor = new Color(255, 200, 0); // Yellow
+  const endColor = new Color(255, 0, 0); // Red
+
+  return {
+    updateColor(progress: number) {
+      return Color.lerp(startColor, endColor, progress);
+    },
+  };
+}
+```
+
+### Dynamic Lighting
+
+```ts
+import { Color } from 'dill-pixel';
+
+// Time-based ambient light
+function getAmbientLight(timeOfDay: number) {
+  // 0-24
+  const dawn = new Color(255, 200, 200);
+  const noon = new Color(255, 255, 255);
+  const dusk = new Color(200, 200, 255);
+  const night = new Color(50, 50, 100);
+
+  // Calculate interpolation based on time
+  if (timeOfDay < 6) return Color.lerp(night, dawn, timeOfDay / 6);
+  if (timeOfDay < 12) return Color.lerp(dawn, noon, (timeOfDay - 6) / 6);
+  if (timeOfDay < 18) return Color.lerp(noon, dusk, (timeOfDay - 12) / 6);
+  return Color.lerp(dusk, night, (timeOfDay - 18) / 6);
+}
+```
+
+## Best Practices
+
+1. Use the `Color` class for consistent color handling across your game
+2. Leverage color interpolation for smooth transitions
+3. Use `toWebGL()` when working with WebGL shaders
+4. Store frequently used colors as constants
+5. Use meaningful color names in your code for better readability
+
+<Aside title="Performance" type="note">
+  The `Color` class caches its internal values, making it efficient for repeated operations. However, for very
+  performance-critical code (like particle systems), consider using raw number values and the static methods.
+</Aside>{' '}

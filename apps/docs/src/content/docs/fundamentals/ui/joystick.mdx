@@ -1,0 +1,63 @@
+---
+title: Joystick
+---
+
+Dill Pixel includes a built-in virtual joystick component that provides touch-based directional input for games. The Joystick class is based on the pixi-virtual-joystick library but has been ported to TypeScript and adapted specifically for Dill Pixel.
+
+## Usage
+
+Here's a basic example of creating a joystick:
+
+```ts
+const joystick = new Joystick({
+  // Optional custom textures
+  inner: this.make.sprite({
+    asset: 'joystick/handle',
+    sheet: 'ui',
+  }),
+  outer: this.make.sprite({
+    asset: 'joystick/base',
+    sheet: 'ui',
+  }),
+  innerScale: 0.7,
+  outerScale: 0.7,
+});
+```
+
+The joystick provides:
+
+- Directional input (up, down, left, right and diagonals)
+- Power/intensity value based on distance from center
+- Angle information in degrees
+- Touch/pointer event handling
+- Customizable appearance
+- Threshold setting to control dead zone
+
+While the joystick comes with a default skin (simple black circles), you can easily customize its appearance by providing your own textures for the outer base and inner handle through the constructor options.
+
+### Using the Joystick with the Actions Plugin
+
+To use the joystick with the action system, you need to:
+
+1. Register it with touch controls:
+
+```ts
+this.app.controls.touch.joystick = joystick;
+```
+
+2. Map joystick directions to actions in your config:
+
+```ts
+const controls = defineControls(actions, buttons, {
+  touch: {
+    joystick: {
+      move_left: ['left', 'bottom_left', 'top_left'],
+      move_right: ['right', 'bottom_right', 'top_right'],
+    },
+  },
+});
+```
+
+You can see examples of the joystick implementation in the physics demo scenes:
+
+- [Snap Physics Scene](https://github.com/dill-pixel/examples/blob/main/src/scenes/physics/SnapPhysicsScene.ts)

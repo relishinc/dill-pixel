@@ -1,0 +1,146 @@
+---
+title: Number Utilities
+description: Functions for number formatting and manipulation in dill-pixel
+---
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Overview
+
+Number utilities provide functions for formatting and manipulating numbers in your game. These utilities are particularly useful for displaying scores, timers, and other numerical game elements.
+
+## Number Formatting
+
+### Zero Padding
+
+The `getZeroPaddedNumber` function adds leading zeros to a number:
+
+```ts
+import { getZeroPaddedNumber } from 'dill-pixel';
+
+// Add leading zeros
+const score = getZeroPaddedNumber(42, 5); // "00042"
+const time = getZeroPaddedNumber(7, 2); // "07"
+```
+
+## Common Use Cases
+
+### Score Display
+
+```ts
+import { getZeroPaddedNumber } from 'dill-pixel';
+
+class ScoreDisplay {
+  private score = 0;
+
+  updateDisplay() {
+    // Display score with 6 digits
+    return getZeroPaddedNumber(this.score, 6); // e.g., "000123"
+  }
+}
+```
+
+### Timer Formatting
+
+```ts
+import { getZeroPaddedNumber } from 'dill-pixel';
+
+class GameTimer {
+  formatTime(seconds: number) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+
+    return `${getZeroPaddedNumber(minutes, 2)}:${getZeroPaddedNumber(remainingSeconds, 2)}`;
+    // e.g., "05:42"
+  }
+}
+```
+
+### Level Numbering
+
+```ts
+import { getZeroPaddedNumber } from 'dill-pixel';
+
+class LevelManager {
+  formatLevelNumber(level: number) {
+    // Format as "Level 01", "Level 02", etc.
+    return `Level ${getZeroPaddedNumber(level, 2)}`;
+  }
+}
+```
+
+## Best Practices
+
+1. Use consistent padding lengths for similar types of numbers:
+
+   ```ts
+   // Good: Consistent padding for all scores
+   const highScore = getZeroPaddedNumber(highScore, 6);
+   const currentScore = getZeroPaddedNumber(currentScore, 6);
+
+   // Bad: Inconsistent padding
+   const highScore = getZeroPaddedNumber(highScore, 6);
+   const currentScore = getZeroPaddedNumber(currentScore, 4);
+   ```
+
+2. Consider locale-specific formatting when needed:
+
+   ```ts
+   class ScoreFormatter {
+     format(score: number) {
+       // Combine with locale-specific formatting
+       return new Intl.NumberFormat().format(parseInt(getZeroPaddedNumber(score, 6)));
+     }
+   }
+   ```
+
+3. Use appropriate padding lengths for your use case:
+
+   ```ts
+   // Time: 2 digits per component
+   const seconds = getZeroPaddedNumber(time % 60, 2);
+
+   // Scores: Usually 4-6 digits
+   const score = getZeroPaddedNumber(points, 6);
+
+   // Levels: Usually 2-3 digits
+   const level = getZeroPaddedNumber(currentLevel, 2);
+   ```
+
+## Tips and Tricks
+
+1. Combine with other utilities for complex formatting:
+
+   ```ts
+   import { getZeroPaddedNumber } from 'dill-pixel';
+
+   function formatGameState(score: number, time: number, level: number) {
+     return {
+       score: getZeroPaddedNumber(score, 6),
+       time: `${getZeroPaddedNumber(Math.floor(time / 60), 2)}:${getZeroPaddedNumber(time % 60, 2)}`,
+       level: `Level ${getZeroPaddedNumber(level, 2)}`,
+     };
+   }
+   ```
+
+2. Use for file naming conventions:
+
+   ```ts
+   function generateSaveFileName(slot: number) {
+     return `save_${getZeroPaddedNumber(slot, 3)}.json`;
+   }
+   ```
+
+3. Create helper functions for common formats:
+   ```ts
+   function formatTimer(seconds: number) {
+     const minutes = Math.floor(seconds / 60);
+     const secs = seconds % 60;
+     return `${getZeroPaddedNumber(minutes, 2)}:${getZeroPaddedNumber(secs, 2)}`;
+   }
+   ```
+
+<Aside title="Performance" type="note">
+  The number utilities are lightweight and efficient. However, if you're formatting numbers in a tight loop, consider
+  caching the formatted results rather than reformatting on every frame.
+</Aside>{' '}

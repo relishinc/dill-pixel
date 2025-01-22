@@ -1,0 +1,246 @@
+---
+title: Random Utilities
+description: Functions for generating random numbers and values in dill-pixel
+---
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Overview
+
+Random utilities provide a set of functions for generating random numbers and values in your game. These utilities are essential for creating variety in gameplay, procedural generation, and randomized behaviors.
+
+## Random Number Generation
+
+### Float Values
+
+Generate random floating-point numbers within a range:
+
+```ts
+import { floatBetween } from 'dill-pixel';
+
+// Random float between 0 and 1
+const opacity = floatBetween(0, 1);
+
+// Random float for position
+const x = floatBetween(-100, 100);
+```
+
+### Integer Values
+
+Generate random integer numbers within a range:
+
+```ts
+import { intBetween } from 'dill-pixel';
+
+// Random level between 1 and 10 (inclusive)
+const level = intBetween(1, 11);
+
+// Random damage value
+const damage = intBetween(10, 21); // 10-20 damage
+```
+
+### Boolean Values
+
+Generate random boolean values:
+
+```ts
+import { bool } from 'dill-pixel';
+
+// 50/50 chance
+const shouldSpawn = bool();
+const isCriticalHit = bool();
+```
+
+### Point-Based Random Values
+
+Generate random values between point coordinates:
+
+```ts
+import { Point } from 'pixi.js';
+import { floatBetweenPoint, intBetweenPoint } from 'dill-pixel';
+
+// Define range using a point
+const range = new Point(0, 100);
+
+// Random float between point coordinates
+const float = floatBetweenPoint(range); // 0-100 float
+
+// Random integer between point coordinates
+const int = intBetweenPoint(range); // 0-99 integer
+```
+
+## Common Use Cases
+
+### Procedural Generation
+
+```ts
+import { intBetween, floatBetween } from 'dill-pixel';
+
+class LevelGenerator {
+  generateRoom() {
+    return {
+      width: intBetween(10, 21), // 10-20 units wide
+      height: intBetween(10, 21), // 10-20 units high
+      enemies: intBetween(3, 7), // 3-6 enemies
+      difficulty: floatBetween(1, 2), // 1.0-2.0 difficulty multiplier
+    };
+  }
+}
+```
+
+### Particle Effects
+
+```ts
+import { floatBetween, bool } from 'dill-pixel';
+
+class ParticleEmitter {
+  createParticle() {
+    return {
+      velocity: {
+        x: floatBetween(-5, 5),
+        y: floatBetween(-5, 0),
+      },
+      lifetime: floatBetween(0.5, 2),
+      rotates: bool(), // 50% chance to rotate
+    };
+  }
+}
+```
+
+### Enemy Behavior
+
+```ts
+import { bool, intBetween } from 'dill-pixel';
+
+class Enemy {
+  decideAction() {
+    if (bool()) {
+      // 50% chance to attack
+      return {
+        type: 'attack',
+        damage: intBetween(5, 11), // 5-10 damage
+      };
+    } else {
+      // 50% chance to move
+      return {
+        type: 'move',
+        distance: intBetween(1, 4), // 1-3 units
+      };
+    }
+  }
+}
+```
+
+### Loot Tables
+
+```ts
+import { floatBetween, intBetween } from 'dill-pixel';
+
+class LootSystem {
+  generateLoot(quality: number) {
+    return {
+      gold: intBetween(10, 51) * quality, // 10-50 gold, scaled by quality
+      rarity: floatBetween(0, 1) < 0.2 ? 'rare' : 'common', // 20% chance for rare
+      quantity: intBetween(1, 4), // 1-3 items
+    };
+  }
+}
+```
+
+## Best Practices
+
+1. Use appropriate functions for your needs:
+
+   ```ts
+   // Good: Using intBetween for discrete values
+   const damage = intBetween(1, 11); // 1-10 damage
+
+   // Good: Using floatBetween for continuous values
+   const speed = floatBetween(0, 1); // 0.0-1.0 speed
+
+   // Good: Using bool for binary choices
+   const success = bool(); // true/false
+   ```
+
+2. Consider range boundaries:
+
+   ```ts
+   // Remember: intBetween max is exclusive
+   const diceRoll = intBetween(1, 7); // 1-6 (for a d6)
+
+   // Remember: floatBetween max is exclusive
+   const percent = floatBetween(0, 1); // 0.0-0.999...
+   ```
+
+3. Use Point-based ranges when appropriate:
+
+   ```ts
+   import { Point } from 'pixi.js';
+
+   // Define reusable ranges
+   const damageRange = new Point(10, 21);
+   const speedRange = new Point(0, 1);
+
+   // Use consistently
+   const damage = intBetweenPoint(damageRange);
+   const speed = floatBetweenPoint(speedRange);
+   ```
+
+## Performance Considerations
+
+<Aside title="Optimization" type="tip">
+  Random utilities use JavaScript's built-in Math.random(), which is fast but not cryptographically secure. For game
+  purposes, this provides a good balance of performance and randomness.
+</Aside>
+
+### Efficient Usage
+
+```ts
+// Good: Cache random values that won't change
+class Enemy {
+  private readonly damage = intBetween(5, 11);
+  private readonly speed = floatBetween(0.8, 1.2);
+
+  // Bad: Generating random values every frame
+  update() {
+    this.x += floatBetween(-1, 1); // Don't do this
+  }
+
+  // Good: Generate random values when needed
+  attack() {
+    return this.damage + intBetween(-2, 3); // Base damage ± 2
+  }
+}
+```
+
+## Tips and Tricks
+
+1. Create helper functions for common ranges:
+
+   ```ts
+   const randomPercent = () => floatBetween(0, 1);
+   const randomSign = () => (bool() ? 1 : -1);
+   const d20 = () => intBetween(1, 21);
+   ```
+
+2. Combine with other utilities:
+
+   ```ts
+   import { Point } from 'pixi.js';
+   import { floatBetween } from 'dill-pixel';
+
+   function randomPosition(bounds: { width: number; height: number }): Point {
+     return new Point(floatBetween(0, bounds.width), floatBetween(0, bounds.height));
+   }
+   ```
+
+3. Use for weighted choices:
+   ```ts
+   function getRandomRarity() {
+     const roll = floatBetween(0, 1);
+     if (roll < 0.1) return 'legendary'; // 10%
+     if (roll < 0.3) return 'rare'; // 20%
+     if (roll < 0.6) return 'uncommon'; // 30%
+     return 'common'; // 40%
+   }
+   ```

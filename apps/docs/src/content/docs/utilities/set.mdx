@@ -1,0 +1,237 @@
+---
+title: Set Utilities
+description: Functions for working with Set data structures in dill-pixel
+---
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Overview
+
+Set utilities provide functions for manipulating JavaScript's `Set` data structure. These utilities are particularly useful for managing unique collections of game objects, handling event listeners, and maintaining state.
+
+## Set Operations
+
+### Filtering Sets
+
+Create a new set containing only elements that match a condition:
+
+```ts
+import { filterSet } from 'dill-pixel';
+
+const numbers = new Set([1, 2, 3, 4, 5]);
+
+// Get only even numbers
+const evenNumbers = filterSet(numbers, (num) => num % 2 === 0);
+// Set(2) { 2, 4 }
+```
+
+### Accessing Elements
+
+Get the first or last element from a set:
+
+```ts
+import { firstFromSet, lastFromSet } from 'dill-pixel';
+
+const items = new Set(['a', 'b', 'c']);
+
+// Get first element
+const first = firstFromSet(items); // 'a'
+
+// Get last element
+const last = lastFromSet(items); // 'c'
+```
+
+## Common Use Cases
+
+### Active Entity Management
+
+```ts
+import { filterSet } from 'dill-pixel';
+
+class EntityManager {
+  private entities = new Set<GameEntity>();
+
+  // Filter active entities
+  getActiveEntities() {
+    return filterSet(this.entities, (entity) => entity.isActive);
+  }
+
+  // Filter by type
+  getEntitiesByType(type: string) {
+    return filterSet(this.entities, (entity) => entity.type === type);
+  }
+}
+```
+
+### Event Listener Management
+
+```ts
+import { filterSet } from 'dill-pixel';
+
+class EventSystem {
+  private listeners = new Set<{ event: string; callback: Function }>();
+
+  // Get listeners for specific event
+  getEventListeners(eventName: string) {
+    return filterSet(this.listeners, (listener) => listener.event === eventName);
+  }
+
+  // Remove inactive listeners
+  cleanupListeners() {
+    this.listeners = filterSet(this.listeners, (listener) => !listener.isExpired);
+  }
+}
+```
+
+### Queue Management
+
+```ts
+import { firstFromSet, lastFromSet } from 'dill-pixel';
+
+class TaskQueue {
+  private tasks = new Set<Task>();
+
+  getNextTask() {
+    const nextTask = firstFromSet(this.tasks);
+    if (nextTask) {
+      this.tasks.delete(nextTask);
+    }
+    return nextTask;
+  }
+
+  getLastTask() {
+    return lastFromSet(this.tasks);
+  }
+}
+```
+
+## Type Safety
+
+The set utilities are fully typed and support generic types:
+
+```ts
+interface Player {
+  id: string;
+  isOnline: boolean;
+  score: number;
+}
+
+const players = new Set<Player>();
+
+// Type-safe filtering
+const onlinePlayers = filterSet(players, (player) => player.isOnline);
+const highScorers = filterSet(players, (player) => player.score > 1000);
+
+// Type-safe element access
+const firstPlayer: Player | undefined = firstFromSet(players);
+const lastPlayer: Player | undefined = lastFromSet(players);
+```
+
+## Best Practices
+
+1. Use appropriate operations for your needs:
+
+   ```ts
+   // Good: Using filterSet for complex filtering
+   const activePlayers = filterSet(players, (p) => p.isActive && p.health > 0);
+
+   // Less ideal: Manual filtering
+   const active = new Set([...players].filter((p) => p.isActive));
+   ```
+
+2. Handle undefined cases:
+
+   ```ts
+   const first = firstFromSet(set);
+   if (first) {
+     // Process first element
+   } else {
+     // Handle empty set
+   }
+   ```
+
+3. Consider performance with large sets:
+
+   ```ts
+   // Cache filtered results when appropriate
+   class EntityManager {
+     private cachedActive = new Set<Entity>();
+     private needsUpdate = true;
+
+     getActiveEntities() {
+       if (this.needsUpdate) {
+         this.cachedActive = filterSet(this.entities, (e) => e.isActive);
+         this.needsUpdate = false;
+       }
+       return this.cachedActive;
+     }
+   }
+   ```
+
+## Performance Considerations
+
+<Aside title="Optimization" type="tip">
+  Set operations create new Set instances. For performance-critical code, consider caching filtered results or using
+  more direct operations if you need only a single element.
+</Aside>
+
+### Efficient Usage
+
+```ts
+// Less efficient: Filtering on every frame
+function update() {
+  const activeEnemies = filterSet(enemies, (e) => e.isActive);
+  processEnemies(activeEnemies);
+}
+
+// More efficient: Cache and update as needed
+class EnemyManager {
+  private activeEnemies = new Set<Enemy>();
+
+  markActive(enemy: Enemy) {
+    if (enemy.isActive) {
+      this.activeEnemies.add(enemy);
+    } else {
+      this.activeEnemies.delete(enemy);
+    }
+  }
+
+  getActiveEnemies() {
+    return this.activeEnemies;
+  }
+}
+```
+
+## Tips and Tricks
+
+1. Combine with other utilities:
+
+   ```ts
+   import { filterSet, intBetween } from 'dill-pixel';
+
+   // Get random subset
+   function getRandomSubset<T>(set: Set<T>, count: number) {
+     return filterSet(set, () => intBetween(0, 2) === 1);
+   }
+   ```
+
+2. Chain operations efficiently:
+
+   ```ts
+   function getEligiblePlayers(players: Set<Player>) {
+     return filterSet(
+       filterSet(players, (p) => p.isOnline),
+       (p) => p.level >= 10,
+     );
+   }
+   ```
+
+3. Use with type guards:
+
+   ```ts
+   function isValidPlayer(player: unknown): player is Player {
+     return typeof player === 'object' && player !== null && 'id' in player && 'isOnline' in player;
+   }
+
+   const validPlayers = filterSet(players, isValidPlayer);
+   ```

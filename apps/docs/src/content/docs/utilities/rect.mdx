@@ -1,0 +1,159 @@
+---
+title: Rectangle Utilities
+description: Functions for manipulating rectangles and bounds in dill-pixel
+---
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Overview
+
+Rectangle utilities provide functions for manipulating rectangles and bounds in your game. These utilities are essential for working with collision boxes, UI elements, and game object boundaries.
+
+## Rectangle Operations
+
+### Offsetting Rectangles
+
+Move a rectangle by a specified amount:
+
+```ts
+import { Rectangle, Point } from 'pixi.js';
+import { offset } from 'dill-pixel';
+
+const rect = new Rectangle(0, 0, 100, 100);
+const delta = new Point(10, 20);
+
+// Move rectangle by delta
+offset(rect, delta); // rect is now at (10, 20)
+```
+
+### Finding Center Points
+
+Get the center point of a rectangle:
+
+```ts
+import { Rectangle, Point } from 'pixi.js';
+import { center } from 'dill-pixel';
+
+const rect = new Rectangle(0, 0, 100, 100);
+
+// Get center point
+const centerPoint = center(rect); // Point(50, 50)
+
+// Reuse existing point
+const existingPoint = new Point();
+center(rect, existingPoint); // Modifies existingPoint
+```
+
+### Scaling Rectangles
+
+Scale a rectangle by a factor:
+
+```ts
+import { Rectangle } from 'pixi.js';
+import { scale } from 'dill-pixel';
+
+const rect = new Rectangle(10, 10, 50, 50);
+
+// Double the size
+scale(rect, 2); // rect is now (20, 20, 100, 100)
+```
+
+### Getting Rectangle Size
+
+Get the dimensions of a rectangle as a point:
+
+```ts
+import { Rectangle } from 'pixi.js';
+import { size } from 'dill-pixel';
+
+const rect = new Rectangle(0, 0, 100, 50);
+
+// Get size as point
+const dimensions = size(rect); // Point(100, 50)
+```
+
+## Common Use Cases
+
+### Collision Detection
+
+```ts
+import { Rectangle } from 'pixi.js';
+import { center, scale } from 'dill-pixel';
+
+class CollisionSystem {
+  // Create hitbox with padding
+  createHitbox(rect: Rectangle, padding: number): Rectangle {
+    const hitbox = rect.clone();
+    scale(hitbox, 1 + padding);
+    return hitbox;
+  }
+
+  // Check if point is near center
+  isNearCenter(rect: Rectangle, point: Point, threshold: number): boolean {
+    const centerPoint = center(rect);
+    const dx = point.x - centerPoint.x;
+    const dy = point.y - centerPoint.y;
+    return Math.sqrt(dx * dx + dy * dy) <= threshold;
+  }
+}
+```
+
+## Best Practices
+
+1. Chain operations efficiently:
+
+   ```ts
+   // Good: Reuse the same rectangle
+   const rect = new Rectangle(0, 0, 100, 100);
+   scale(rect, 2);
+   offset(rect, new Point(10, 10));
+
+   // Less efficient: Creating new rectangles
+   let rect = new Rectangle(0, 0, 100, 100);
+   rect = new Rectangle(rect.x * 2, rect.y * 2, rect.width * 2, rect.height * 2);
+   ```
+
+2. Reuse Point objects:
+
+   ```ts
+   // Good: Reuse point for center calculations
+   const centerPoint = new Point();
+   function updateCenter(rect: Rectangle) {
+     center(rect, centerPoint);
+     // Use centerPoint...
+   }
+   ```
+
+3. Use appropriate methods for your needs:
+
+   ```ts
+   // Good: Using size() for dimensions
+   const dimensions = size(rect);
+
+   // Less ideal: Manual extraction
+   const dimensions = new Point(rect.width, rect.height);
+   ```
+
+## Performance Considerations
+
+<Aside title="Optimization" type="tip">
+  Rectangle utilities modify rectangles in place to avoid object creation. They also support reusing Point objects for
+  outputs to minimize garbage collection.
+</Aside>
+
+### Efficient Usage
+
+```ts
+// Good: Reuse objects
+class GameObject {
+  private bounds: Rectangle = new Rectangle();
+  private centerPoint: Point = new Point();
+  private sizePoint: Point = new Point();
+
+  update() {
+    // Reuse existing points
+    center(this.bounds, this.centerPoint);
+    size(this.bounds, this.sizePoint);
+  }
+}
+```

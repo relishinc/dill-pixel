@@ -1,0 +1,179 @@
+---
+title: String Utilities
+description: Functions for string manipulation and formatting in dill-pixel
+---
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Overview
+
+String utilities provide functions for manipulating and formatting text strings in your game. These utilities are particularly useful for displaying text, formatting messages, and handling user input.
+
+## String Operations
+
+### Capitalizing Text
+
+Capitalize the first letter of a string:
+
+```ts
+import { capitalize } from 'dill-pixel';
+
+// Capitalize first letter
+const text = capitalize('hello'); // "Hello"
+const name = capitalize('john'); // "John"
+```
+
+### Capitalizing Words
+
+Capitalize the first letter of each word in a string:
+
+```ts
+import { capitalizeWords } from 'dill-pixel';
+
+// Capitalize each word
+const title = capitalizeWords('game over'); // "Game Over"
+const name = capitalizeWords('john doe'); // "John Doe"
+```
+
+## Common Use Cases
+
+### UI Text Formatting
+
+```ts
+import { capitalize, capitalizeWords } from 'dill-pixel';
+
+class TextFormatter {
+  // Format menu items
+  formatMenuItem(text: string) {
+    return capitalize(text);
+  }
+
+  // Format dialog titles
+  formatTitle(text: string) {
+    return capitalizeWords(text);
+  }
+}
+```
+
+### Message System
+
+```ts
+import { capitalize } from 'dill-pixel';
+
+class MessageSystem {
+  formatMessage(type: string, message: string) {
+    return `${capitalize(type)}: ${message}`;
+  }
+
+  // Example usage:
+  displayNotification() {
+    return this.formatMessage('info', 'level complete'); // "Info: level complete"
+  }
+
+  displayError() {
+    return this.formatMessage('error', 'connection lost'); // "Error: connection lost"
+  }
+}
+```
+
+### Name Generation
+
+```ts
+import { capitalize, capitalizeWords } from 'dill-pixel';
+
+class NameGenerator {
+  generateCharacterName(prefix: string, title: string) {
+    return `${capitalize(prefix)} ${capitalizeWords(title)}`;
+  }
+
+  // Example usage:
+  generateName() {
+    return this.generateCharacterName('sir', 'dragon slayer'); // "Sir Dragon Slayer"
+  }
+}
+```
+
+## Best Practices
+
+1. Use appropriate function for your needs:
+
+   ```ts
+   // Good: Using capitalize for single words
+   const name = capitalize('hero'); // "Hero"
+
+   // Good: Using capitalizeWords for titles
+   const title = capitalizeWords('the final battle'); // "The Final Battle"
+   ```
+
+2. Create helper functions for common formats:
+
+   ```ts
+   function formatGameTitle(name: string) {
+     return capitalizeWords(name.toLowerCase());
+   }
+
+   function formatPlayerName(name: string) {
+     return capitalize(name.trim());
+   }
+   ```
+
+## Performance Considerations
+
+<Aside title="Optimization" type="tip">
+  String utilities are lightweight but create new strings. For performance-critical code, consider caching formatted
+  results rather than reformatting on every frame.
+</Aside>
+
+### Efficient Usage
+
+```ts
+// Less efficient: Formatting on every frame
+function update() {
+  displayText(capitalizeWords(title)); // Don't do this
+}
+
+// More efficient: Cache formatted text
+class TextDisplay {
+  private formattedTitle: string;
+
+  setTitle(title: string) {
+    this.formattedTitle = capitalizeWords(title);
+  }
+
+  render() {
+    displayText(this.formattedTitle);
+  }
+}
+```
+
+## Tips and Tricks
+
+1. Combine with other utilities:
+
+   ```ts
+   import { capitalize, getZeroPaddedNumber } from 'dill-pixel';
+
+   function formatLevel(level: number) {
+     return `${capitalize('level')} ${getZeroPaddedNumber(level, 2)}`;
+   }
+   ```
+
+2. Create consistent text styles:
+
+   ```ts
+   const TextStyles = {
+     TITLE: (text: string) => capitalizeWords(text),
+     MENU_ITEM: (text: string) => capitalize(text),
+     DIALOG: (text: string) => capitalize(text.toLowerCase()),
+   };
+   ```
+
+3. Handle multi-line text:
+   ```ts
+   function formatParagraph(text: string) {
+     return text
+       .split('\n')
+       .map((line) => capitalize(line))
+       .join('\n');
+   }
+   ```

@@ -39,10 +39,11 @@ export interface DataChangeSignalDetail {
 }
 
 export interface IDataAdapter<D extends DataSchema = DataSchema> {
-  load<K extends keyof D>(key: K): D[K] | undefined;
-  save<K extends keyof D>(key: K, data: D[K]): D;
-  set(data: DeepPartial<D>, merge?: boolean): D;
   get(): D;
+  get<K extends keyof D>(key: K): D[K] | undefined;
+  set<K extends keyof D>(key: K, data: D[K]): D;
+  set(data: DeepPartial<D>, merge?: boolean): D;
+  clear(): void;
   clear<K extends keyof D>(key: K): void;
   onDataChange: Signal<(detail: DataChangeSignalDetail) => void>;
 }
@@ -96,57 +97,85 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
   }
 
   /**
-   * Saves data under a specified key in the local storage.
-   * @param {string} key The key under which to save the data.
-   * @param {any} data The data to save.
-   * @returns {any} The saved data.
+   * Saves or sets data in the storage.
+   * @param {K} key - The key under which to save the data
+   * @param {D[K]} data - The data to save
+   * @returns {D} The updated data object
+   *
+   * @overload
+   * @param {DeepPartial<D>} data - The data object to set
+   * @param {boolean} [merge] - Whether to merge with existing data
+   * @returns {D} The updated data object
    */
-  save<K extends keyof D>(key: K, data: D[K]): D {
-    this.data[key] = data;
-    if (this.backupAll || this.backupKeys.includes(key)) {
-      this.backupToLocalStorage([key]);
+  set<K extends keyof D>(key: K, data: D[K]): D;
+  set(data: DeepPartial<D>, merge?: boolean): D;
+  set<K extends keyof D>(keyOrData: K | DeepPartial<D>, dataOrMerge?: D[K] | boolean): D {
+    // Handle single key-value save
+    if (typeof keyOrData === 'string' || typeof keyOrData === 'number' || typeof keyOrData === 'symbol') {
+      const key = keyOrData;
+      const data = dataOrMerge as D[K];
+
+      this.data[key] = data;
+      if (this.backupAll || this.backupKeys.includes(key)) {
+        this.backupToLocalStorage([key]);
+      }
+      this.onDataChange.emit({ key, value: data });
+      return this.data;
     }
-    this.onDataChange.emit({ key, value: data });
-    return data;
-  }
 
-  /**
-   * Loads data from a specified key in the local storage.
-   * @template T The type of the data to load.
-   * @param {string} key The key from which to load the data.
-   * @returns {T} The loaded data.
-   */
-  load<K extends keyof D>(key: K): D[K] | undefined {
-    return this.data[key];
-  }
+    // Handle bulk data set
+    const data = keyOrData as DeepPartial<D>;
+    const merge = (dataOrMerge as boolean) ?? true;
 
-  set(data: DeepPartial<D>, merge: boolean = true): D {
     if (merge) {
       this.data = deepMerge({ ...this.data }, data);
     } else {
       this.data = data as D;
     }
+
     if (this.backupAll || this.backupKeys.length > 0) {
       this.backupToLocalStorage(this.backupKeys);
     }
+
     this.onDataChange.emit({
       key: Object.keys(data)?.length === 1 ? Object.keys(data)[0] : Object.keys(data),
       value: data[Object.keys(data)[0]] as D[keyof D],
     });
+
     return this.data;
   }
 
-  get(): D {
-    return this.data;
+  /**
+   * Loads data from storage. If a key is provided, returns the value for that key.
+   * If no key is provided, returns all data.
+   * @template K The type of the key to load
+   * @param {K} [key] Optional key to load specific data
+   * @returns {D | D[K] | undefined} The loaded data
+   */
+  get(): D;
+  get<K extends keyof D>(key?: K): D[K] | undefined;
+  get<K extends keyof D>(key?: K): D[K] | D | undefined {
+    if (key === undefined) {
+      return this.data;
+    }
+    return this.data[key];
   }
 
   /**
    * Deletes data from a specified key in the local storage.
    * @param {string} key The key from which to delete the data.
    */
-  clear<K extends keyof D>(key: K) {
-    delete this.data[key];
-    localStorage.removeItem(`${this.namespace}-${key as string}`);
+  clear(): void;
+  clear<K extends keyof D>(key?: K): void {
+    if (key === undefined) {
+      this.data = {} as D;
+      localStorage.clear();
+    } else {
+      delete this.data[key];
+      localStorage.removeItem(`${this.namespace}-${key as string}`);
+    }
+
+    this.onDataChange.emit({ key });
   }
 
   /**

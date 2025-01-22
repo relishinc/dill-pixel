@@ -1,0 +1,202 @@
+---
+title: Platform Utilities
+description: Functions for detecting device capabilities and platform features in dill-pixel
+---
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Overview
+
+Platform utilities provide a set of functions for detecting device capabilities, screen properties, and platform-specific features. These utilities are essential for creating responsive and platform-optimized games.
+
+## Display Detection
+
+### Retina Display
+
+Detect high-DPI (Retina) displays:
+
+```ts
+import { isRetina } from 'dill-pixel';
+
+if (isRetina) {
+  // Load high-resolution textures
+  // Adjust rendering resolution
+}
+```
+
+<Aside title="Performance" type="tip">
+  For retina displays, consider using higher resolution textures but be mindful of memory usage, especially on mobile
+  devices.
+</Aside>
+
+## Input Detection
+
+### Touch Support
+
+Check if the device supports touch input:
+
+```ts
+import { isTouch } from 'dill-pixel';
+
+if (isTouch) {
+  // Enable touch controls
+  // Adjust UI for touch interaction
+}
+```
+
+## Device Detection
+
+### Mobile Devices
+
+Check if the user is on a mobile device:
+
+```ts
+import { isMobile } from 'dill-pixel';
+
+if (isMobile) {
+  // Optimize for mobile performance
+  // Adjust UI layout for smaller screens
+}
+```
+
+### Specific Platforms
+
+Detect specific mobile platforms:
+
+```ts
+import { isAndroid, isIos } from 'dill-pixel';
+
+if (isAndroid) {
+  // Android-specific optimizations
+}
+
+if (isIos) {
+  // iOS-specific optimizations
+}
+```
+
+## Common Use Cases
+
+### Responsive Game Design
+
+```ts
+import { isMobile, isRetina } from 'dill-pixel';
+
+function configureGameResolution() {
+  const config = {
+    resolution: 1,
+    textureQuality: 'medium',
+    particleCount: 1000,
+  };
+
+  if (isMobile) {
+    // Reduce quality for mobile
+    config.textureQuality = 'low';
+    config.particleCount = 500;
+  }
+
+  if (isRetina) {
+    // Increase resolution for retina displays
+    config.resolution = 2;
+  }
+
+  return config;
+}
+```
+
+### Input Management
+
+```ts
+import { isTouch, isMobile } from 'dill-pixel';
+
+function setupControls() {
+  if (isTouch) {
+    // Setup touch controls
+    return {
+      type: 'touch',
+      joystickEnabled: true,
+      buttonSize: isMobile ? 'large' : 'medium',
+    };
+  }
+
+  // Setup keyboard/mouse controls
+  return {
+    type: 'keyboard',
+    keyboardMap: defaultKeyboardMap,
+    mouseEnabled: true,
+  };
+}
+```
+
+### Platform-Specific Features
+
+```ts
+import { isAndroid, isIos } from 'dill-pixel';
+
+function setupPlatformFeatures() {
+  const features = {
+    hapticFeedback: false,
+    shareEnabled: true,
+    adProvider: 'default',
+  };
+
+  if (isIos) {
+    features.hapticFeedback = true;
+    features.adProvider = 'ios';
+  }
+
+  if (isAndroid) {
+    features.hapticFeedback = true;
+    features.adProvider = 'android';
+  }
+
+  return features;
+}
+```
+
+## Best Practices
+
+1. Use platform detection for initial setup rather than continuous checks
+2. Cache detection results rather than checking repeatedly
+3. Combine multiple checks for comprehensive device profiling
+4. Consider progressive enhancement based on device capabilities
+5. Test on various devices and platforms to ensure proper detection
+
+<Aside title="Testing" type="note">
+  Always test your platform detection logic on real devices. Emulators and simulators may not always provide accurate
+  results for all detection methods.
+</Aside>
+
+## Performance Considerations
+
+When using platform detection:
+
+1. Cache detection results at startup:
+
+```ts
+const deviceProfile = {
+  isMobile: isMobile,
+  isTouch: isTouch,
+  isRetina: isRetina,
+  isAndroid: isAndroid,
+  isIos: isIos,
+};
+```
+
+2. Use the cached values throughout your game:
+
+```ts
+function updateGameSettings() {
+  if (deviceProfile.isMobile) {
+    // Mobile optimizations
+  }
+  if (deviceProfile.isRetina) {
+    // Retina optimizations
+  }
+}
+```
+
+<Aside title="Device Changes" type="caution">
+  Some device properties (like orientation) can change during gameplay. For these cases, use event listeners rather than
+  cached values.
+</Aside>{' '}

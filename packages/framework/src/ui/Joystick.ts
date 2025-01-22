@@ -1,3 +1,8 @@
+/**
+ * Joystick UI component
+ * based on https://github.com/endel/pixi-virtual-joystick
+ * ported to TypeScript and adapted for Dill Pixel
+ */
 import { DestroyOptions, FederatedPointerEvent, Graphics, Point, Sprite } from 'pixi.js';
 import { Container } from '../display';
 import { JoystickDirection } from '../plugins';

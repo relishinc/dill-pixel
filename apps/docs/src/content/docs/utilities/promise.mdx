@@ -1,0 +1,290 @@
+---
+title: Promise Utilities
+description: Functions for managing asynchronous operations and promise queues in dill-pixel
+---
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Overview
+
+Promise utilities provide powerful tools for managing asynchronous operations in your game. The main feature is the `Queue` class, which allows you to execute promises sequentially with control over their execution flow.
+
+## Promise Utility Functions
+
+Before diving into the Queue class, let's look at some helpful utility functions for working with promises:
+
+### wait
+
+A function to pause execution for a specified duration:
+
+```ts
+import { wait } from 'dill-pixel';
+
+// 'wait' is an alias for delay
+await wait(2);
+```
+
+### isPromise
+
+A type guard function to check if a value is a Promise:
+
+```ts
+import { isPromise } from 'dill-pixel';
+
+const value1 = Promise.resolve();
+const value2 = 42;
+
+console.log(isPromise(value1)); // true
+console.log(isPromise(value2)); // false
+
+// Useful in type guards
+function processValue(value: unknown) {
+  if (isPromise(value)) {
+    // TypeScript now knows value is a Promise
+    value.then((result) => console.log(result));
+  }
+}
+```
+
+## Queue Class
+
+The Queue class provides a way to manage and execute a sequence of promises with control over their execution:
+
+```ts
+import { Queue, createQueue } from 'dill-pixel';
+
+// Create a queue using the factory function
+const queue = createQueue(
+  fetch('api/data'),
+  () => loadTexture('sprite.png'),
+  async () => await playAnimation(),
+);
+
+// Or create directly
+const queue2 = new Queue([fetch('api/data'), () => loadTexture('sprite.png')]);
+```
+
+### Queue Control
+
+Control the execution flow of your promises:
+
+```ts
+const queue = new Queue([() => fetch('/api/data1'), () => fetch('/api/data2'), () => fetch('/api/data3')]);
+
+// Start execution
+queue.start();
+
+// Check progress (returns a number between 0 and 1)
+console.log(queue.progress); // e.g., 0.33 after first promise completes
+
+// Pause execution
+queue.pause();
+
+// Resume execution
+queue.resume();
+
+// Cancel execution
+queue.cancel();
+```
+
+### Tracking Progress
+
+The Queue class provides a `progress` property that returns a number between 0 and 1, representing the completion percentage:
+
+```ts
+// src/scenes/MyScene.ts
+import { Scene, Queue } from 'dill-pixel';
+
+export default class MyScene extends Scene {
+  private _queueComplete = false;
+  private queue = new Queue([
+    async () => {
+      await fetch('/api/data1');
+    },
+    async () => {
+      await fetch('/api/data2');
+    },
+    async () => {
+      await fetch('/api/data3');
+    },
+  ]);
+
+  async start() {
+    this.queue.start();
+  }
+
+  async update(dt: number) {
+    if (!this._queueComplete) {
+      this._showQueueProgress();
+      if (this.queue.progress === 1) {
+        this._queueComplete = true;
+        this._onQueueComplete();
+      }
+    }
+  }
+
+  private _showQueueProgress() {
+    console.log(`Progress: ${Math.round(this.queue.progress * 100)}%`);
+  }
+
+  private _onQueueComplete() {
+    console.log('Queue complete!');
+  }
+}
+```
+
+### Accessing Results
+
+Track the results of executed promises:
+
+```ts
+const queue = new Queue([() => fetchUserData(), () => fetchGameState(), () => fetchLeaderboard()]);
+
+queue.start();
+
+// Later...
+const results = queue.results; // Array of resolved values
+```
+
+## Common Use Cases
+
+### Sequential API Calls
+
+```ts
+const queue = new Queue([() => fetch('/api/user'), () => fetch('/api/preferences'), () => fetch('/api/stats')]);
+
+queue.start();
+```
+
+### Timed Operations
+
+```ts
+const queue = new Queue([
+  async () => {
+    console.log('Start');
+    await wait(1);
+    console.log('After 1 second');
+  },
+  async () => {
+    await wait(2);
+    console.log('After 2 more seconds');
+  },
+]);
+
+queue.start();
+```
+
+### Data Processing
+
+```ts
+const queue = new Queue([
+  async () => processChunk(data.slice(0, 100)),
+  async () => processChunk(data.slice(100, 200)),
+  async () => processChunk(data.slice(200, 300)),
+]);
+
+queue.start();
+```
+
+## Best Practices
+
+1. Error Handling:
+
+   ```ts
+   const queue = new Queue([
+     async () => {
+       try {
+         const response = await fetch('/api/data');
+         return await response.json();
+       } catch (error) {
+         console.error('Failed to fetch:', error);
+         return null;
+       }
+     },
+   ]);
+   ```
+
+2. Dynamic Queue Management:
+
+   ```ts
+   const queue = new Queue();
+
+   // Add tasks dynamically
+   for (const url of urls) {
+     queue.add(async () => {
+       const response = await fetch(url);
+       return response.json();
+     });
+   }
+
+   queue.start();
+   ```
+
+## Performance Considerations
+
+<Aside title="Optimization" type="tip">
+  Queue operations are lightweight, but be mindful of memory usage when storing large results arrays or creating many
+  queues.
+</Aside>
+
+### Efficient Usage
+
+```ts
+// Less efficient: Creating new queues frequently
+function update() {
+  const queue = new Queue([task1, task2]); // Don't do this
+  queue.start();
+}
+
+// More efficient: Reuse queues
+class TaskManager {
+  private queue = new Queue();
+
+  runTasks(tasks: (() => Promise<void>)[]) {
+    this.queue.cancel(); // Clear previous tasks
+    tasks.forEach((task) => this.queue.add(task));
+    this.queue.start();
+  }
+}
+```
+
+## Tips and Tricks
+
+1. Combine with other utilities:
+
+   ```ts
+   import { Queue, wait } from 'dill-pixel';
+
+   const queue = new Queue([
+     async () => {
+       console.log('Starting');
+       await wait(1);
+       console.log('Done');
+     },
+   ]);
+   ```
+
+2. Create task factories:
+
+   ```ts
+   function createFetchTask(url: string) {
+     return async () => {
+       const response = await fetch(url);
+       return response.json();
+     };
+   }
+
+   const queue = new Queue([createFetchTask('/api/data1'), createFetchTask('/api/data2')]);
+   ```
+
+3. Handle cleanup:
+
+   ```ts
+   const queue = new Queue([
+     /* tasks */
+   ]);
+
+   // Later when needed
+   queue.cancel(); // Stop current execution
+   queue.clear(); // Remove all tasks
+   ```

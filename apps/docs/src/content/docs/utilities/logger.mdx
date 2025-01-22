@@ -1,0 +1,126 @@
+---
+title: Logger Utilities
+description: Functions for consistent and configurable logging in dill-pixel
+---
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Overview
+
+The Logger utility provides a centralized, configurable logging system for your game. It's automatically initialized by the Application during bootstrap based on your application configuration, so there's no need to manually initialize it.
+
+## Logger Configuration
+
+The logger mode is automatically set based on your application configuration (uses sensible defaults, but you can override it):
+
+```ts
+// In your application config
+import { defineConfig } from 'dill-pixel';
+
+export const config = defineConfig({
+  logger: 'development', // Options: 'development' | 'default' | 'disabled'
+});
+```
+
+If needed, you can still modify the mode after initialization:
+
+```ts
+import { Logger } from 'dill-pixel';
+
+// Change mode after initialization
+Logger.mode = 'development';
+```
+
+## Logging Methods
+
+### Basic Logging
+
+```ts
+import { Logger } from 'dill-pixel';
+
+// Regular log
+Logger.log('Game initialized');
+
+// Warning log
+Logger.warn('Low memory warning');
+
+// Error log
+Logger.error('Failed to load asset');
+```
+
+### Trace Logging
+
+```ts
+import { Logger } from 'dill-pixel';
+
+// Custom trace with type
+Logger.trace('log', 'Custom trace message');
+Logger.trace('warn', 'Custom warning trace');
+Logger.trace('error', 'Custom error trace');
+```
+
+## Logger Modes
+
+The Logger supports three modes that control how logging information is displayed:
+
+### Development Mode (`'development'`)
+
+Development mode provides the most detailed logging output, including stack traces in collapsible groups. This is ideal during development and debugging:
+
+```ts
+Logger.mode = 'development';
+
+Logger.log('Loading assets');
+// Shows:
+// ▶ Log Loading assets
+//   ▶ Stack
+//     at AssetLoader.load (asset-loader.ts:42)
+//     at Game.initialize (game.ts:23)
+```
+
+Benefits:
+
+- Collapsible log groups for cleaner console output
+- Automatic stack traces for easier debugging
+- Full visibility into the call chain
+- Automatically enabled in development environments unless overridden
+
+### Default Mode (`'default'`)
+
+Default mode provides basic logging with visual distinction between log types:
+
+```ts
+Logger.mode = 'default';
+
+Logger.warn('Performance warning');
+// Shows: [Warning] Performance warning
+```
+
+Benefits:
+
+- Color-coded log messages for different types (log, warn, error)
+- Cleaner output suitable for staging environments
+- No stack traces for reduced console clutter
+
+### Disabled Mode (`'disabled'`)
+
+Disabled mode suppresses all logging output:
+
+```ts
+Logger.mode = 'disabled';
+
+Logger.log("This won't be logged");
+// Shows: nothing
+```
+
+Benefits:
+
+- Zero logging overhead in production
+- Prevents sensitive information leakage
+- Ideal for production builds
+
+<Aside type="tip">
+  The Logger automatically selects the appropriate mode based on your environment: - In development: Defaults to
+  `'development'` mode - In production: Defaults to `'default'` mode You can override this behavior in your application
+  config.
+</Aside>
