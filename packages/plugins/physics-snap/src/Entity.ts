@@ -1,5 +1,14 @@
-import { Bounds, Circle, Container as PIXIContianer, ObservablePoint, PointData, Rectangle, Sprite } from 'pixi.js';
 import { Application, Container } from 'dill-pixel';
+import {
+  Bounds,
+  Circle,
+  ObservablePoint,
+  Container as PIXIContianer,
+  Point,
+  PointData,
+  Rectangle,
+  Sprite,
+} from 'pixi.js';
 import { ICollider } from './ICollider';
 import { System } from './System';
 import { EntityType, SnapBoundary } from './types';
@@ -20,6 +29,10 @@ export class Entity<T = any, A extends Application = Application> extends Contai
   xRemainder: number = 0;
   yRemainder: number = 0;
   config: T;
+
+  protected subpixelX: number = 0;
+  protected subpixelY: number = 0;
+  protected remainder: Point = new Point(0, 0);
 
   constructor(config?: Partial<T>) {
     super();
@@ -152,22 +165,45 @@ export class Entity<T = any, A extends Application = Application> extends Contai
     return null;
   }
 
-  // Simple collision detection between this solid and an actor
+  moveX(amount: number): void {
+    this.remainder.x += amount;
+    const move = Math.round(this.remainder.x);
+    if (move !== 0) {
+      this.remainder.x -= move;
+      this.x += move;
+    }
+  }
+
+  moveY(amount: number): void {
+    this.remainder.y += amount;
+    const move = Math.round(this.remainder.y);
+    if (move !== 0) {
+      this.remainder.y -= move;
+      this.y += move;
+    }
+  }
+
+  // Improved collision detection with subpixel precision
   collidesWith(entity: Entity, dx: number = 0, dy: number = 0): boolean {
     if (!entity) {
       return false;
     }
+
+    // Add subpixel remainders to the collision check
+    const totalDx = dx + this.remainder.x;
+    const totalDy = dy + this.remainder.y;
+
     if (this.isCircle) {
       if (entity.isCircle) {
-        return System.getCircleToCircleIntersection(entity, this, dx, dy);
+        return System.getCircleToCircleIntersection(entity, this, totalDx, totalDy);
       } else {
-        return System.getRectToCircletIntersection(entity, this, dx, dy);
+        return System.getRectToCircletIntersection(entity, this, totalDx, totalDy);
       }
     }
     if (entity.isCircle) {
-      return System.getRectToCircletIntersection(this, entity, dx, dy);
+      return System.getRectToCircletIntersection(this, entity, totalDx, totalDy);
     }
-    return System.getRectangleIntersection(entity, this, dx, dy);
+    return System.getRectangleIntersection(entity, this, totalDx, totalDy);
   }
 
   protected initialize() {

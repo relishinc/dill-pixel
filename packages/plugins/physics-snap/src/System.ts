@@ -50,6 +50,8 @@ export class System {
   public static container: Container<any>;
   public static grid: SpatialHashGrid | null;
   public static fps: number;
+  public static accumulator: number = 0;
+  public static timestep: number = 1 / 60; // Default 60 FPS fixed timestep
   //
   static debug: boolean = true;
   static typeMap: Map<EntityType, Entity[]> = new Map();
@@ -298,10 +300,30 @@ export class System {
     if (!System.enabled) {
       return;
     }
-    const deltaTime = ticker.deltaTime;
 
+    // Calculate fixed timestep
+    System.accumulator += ticker.deltaMS / 1000; // Convert to seconds
+
+    // Run as many fixed updates as needed
+    while (System.accumulator >= System.timestep) {
+      System.fixedUpdate(System.timestep);
+      System.accumulator -= System.timestep;
+    }
+
+    // Render interpolation can be added here if needed
+    if (System.debug) {
+      System.drawDebug();
+    } else {
+      if (System.gfx) {
+        System.gfx.clear();
+      }
+    }
+  }
+
+  static fixedUpdate(deltaTime: number) {
     if (!System.container) {
       Logger.error('SnapPhysicsPlugin: World container not set!');
+      return;
     }
 
     if (System.preUpdateHooks) {
@@ -311,21 +333,26 @@ export class System {
     if (System.updateHooks) {
       System.updateHooks.forEach((hook) => hook(deltaTime));
     }
-    // Implement world step logic
+
+    // Pre-update phase
     System.all.forEach((entity: Entity) => {
       entity.preUpdate();
     });
 
+    // Update phase - process in specific order
     System.solids.forEach((solid: Solid) => {
       solid.update(deltaTime);
     });
+
     System.sensors.forEach((sensor: Sensor) => {
       sensor.update(deltaTime);
     });
+
     System.actors.forEach((actor: Actor) => {
       actor.update(deltaTime);
     });
 
+    // Post-update phase
     System.all.forEach((entity: Entity) => {
       entity.postUpdate();
     });
@@ -336,14 +363,6 @@ export class System {
 
     if (System.camera) {
       System.camera.update();
-    }
-
-    if (System.debug) {
-      System.drawDebug();
-    } else {
-      if (System.gfx) {
-        System.gfx.clear();
-      }
     }
   }
 
