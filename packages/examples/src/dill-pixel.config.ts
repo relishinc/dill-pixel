@@ -143,6 +143,7 @@ export const config = defineConfig<Data>({
       {
         autoLoad: false,
         options: {
+          debug: true,
           useSpatialHashGrid: false,
           gridCellSize: 300,
         },

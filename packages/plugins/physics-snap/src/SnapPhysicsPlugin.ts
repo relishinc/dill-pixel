@@ -2,6 +2,7 @@ import { IApplication, Logger, Plugin } from 'dill-pixel';
 import { Point } from 'pixi.js';
 import { pointExtras } from './extras';
 import { System } from './System';
+import { version } from './version';
 
 export interface ISnapPhysicsPlugin extends Plugin {
   get system(): typeof System;
@@ -17,12 +18,14 @@ type SnapPhysicsPluginOptions = {
   useSpatialHashGrid: boolean;
   gridCellSize: number;
   fps: number;
+  debug: boolean;
 };
 
 const defaultOptions = {
   useSpatialHashGrid: false,
   gridCellSize: -1,
   fps: -1,
+  debug: false,
 };
 
 export class SnapPhysicsPlugin extends Plugin {
@@ -62,7 +65,14 @@ export class SnapPhysicsPlugin extends Plugin {
   public get system(): typeof System {
     return System;
   }
+  private hello() {
+    const hello = `%c Dill Pixel Snap Physics Plugin v${version}`;
+    console.log(hello, 'background: rgba(31, 41, 55, 1);color: #74b64c');
 
+    if (this.options.debug) {
+      Logger.log(this.options);
+    }
+  }
   destroy() {
     Logger.log('SnapPhysicsPlugin:: destroy');
     this.system.enabled = false;
@@ -82,6 +92,7 @@ export class SnapPhysicsPlugin extends Plugin {
     if (this.options.fps > 0) {
       System.fps = this.options.fps;
     }
+    this.hello();
   }
 
   private _addMathExtras() {
