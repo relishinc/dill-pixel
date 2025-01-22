@@ -23,5 +23,9 @@ packages/plugins/physics-snap/lib
 packages/plugins/physics-matter/lib
 packages/plugins/rive/lib
 packages/storage-adapters/firebase/lib
+packages/examples/public/assets
+packages/examples/.assetpack
+packages/examples/.cache
+packages/examples/.env
 
 .turbo
