@@ -19,7 +19,7 @@ export interface IDataAdapterOptions<D extends DataSchema = DataSchema> {
    */
   namespace: string;
   /**
-   * Whether to override the data with the data from local storage.
+   * Whether to override the data with the data from local stor age.
    */
   overrideWithLocalStorage: boolean;
   /**
@@ -36,15 +36,81 @@ export interface DataChangeSignalDetail {
   key?: any;
   value?: any;
   restore?: boolean;
+  clear?: boolean;
 }
 
 export interface IDataAdapter<D extends DataSchema = DataSchema> {
   get(): D;
   get<K extends keyof D>(key: K): D[K] | undefined;
+  /**
+   * Sets data for a specific key in storage.
+   * @param {K} key - The key under which to save the data
+   * @param {D[K]} data - The data to save
+   * @returns {D} The updated data object
+   */
   set<K extends keyof D>(key: K, data: D[K]): D;
+  /**
+   * Merges data into storage.
+   * @param {DeepPartial<D>} data - The data object to set
+   * @param {boolean} [merge] - Whether to merge with existing data
+   * @returns {D} The updated data object
+   */
   set(data: DeepPartial<D>, merge?: boolean): D;
+  /**
+   * Clears all data from storage.
+   */
   clear(): void;
+  /**
+   * Clears data for a specific key from storage.
+   * @param {K} key - The key from which to delete the data
+   */
   clear<K extends keyof D>(key: K): void;
+  /**
+   * Increments a numeric property by a specified amount.
+   * @param {K} key - The key of the property to increment
+   * @param {number} amount - The amount to increment by (default: 1)
+   * @returns {D[K]} The new value after incrementing
+   */
+  increment<K extends keyof D & { [P in keyof D]: D[P] extends number ? P : never }[keyof D]>(
+    key: K,
+    amount: number,
+  ): D[K];
+  /**
+   * Concatenates a value or array of values to an array property.
+   * @param {K} key - The key of the array property
+   * @param {D[K] extends (infer E)[] ? E | E[] : never} value - The value(s) to concatenate
+   * @returns {D[K]} The new array after concatenation
+   */
+  concat<K extends keyof D & { [P in keyof D]: D[P] extends any[] ? P : never }[keyof D]>(
+    key: K,
+    value: D[K] extends (infer E)[] ? E | E[] : never,
+  ): D[K];
+  /**
+   * Appends a string to a string property.
+   * @param {K} key - The key of the string property
+   * @param {string} value - The string to append
+   * @param {string} [separator] - The separator to use (default: '')
+   * @returns {D[K]} The new string after concatenation
+   */
+  append<K extends keyof D & { [P in keyof D]: D[P] extends string ? P : never }[keyof D]>(
+    key: K,
+    value: string,
+    separator?: string,
+  ): D[K];
+  /**
+   * Returns a snapshot of the current data.
+   * @returns {D} A snapshot of the current data
+   */
+  snapshot(): D;
+  /**
+   * Returns a snapshot of the current data for a specific key.
+   * @param {K} key - The key of the data to snapshot
+   * @returns {D[K]} A snapshot of the current data for the specified key
+   */
+  snapshot<K extends keyof D>(key?: K): D[K];
+  /**
+   * Emits a signal when data changes.
+   */
   onDataChange: Signal<(detail: DataChangeSignalDetail) => void>;
 }
 
@@ -96,17 +162,6 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
     }
   }
 
-  /**
-   * Saves or sets data in the storage.
-   * @param {K} key - The key under which to save the data
-   * @param {D[K]} data - The data to save
-   * @returns {D} The updated data object
-   *
-   * @overload
-   * @param {DeepPartial<D>} data - The data object to set
-   * @param {boolean} [merge] - Whether to merge with existing data
-   * @returns {D} The updated data object
-   */
   set<K extends keyof D>(key: K, data: D[K]): D;
   set(data: DeepPartial<D>, merge?: boolean): D;
   set<K extends keyof D>(keyOrData: K | DeepPartial<D>, dataOrMerge?: D[K] | boolean): D {
@@ -162,6 +217,61 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
   }
 
   /**
+   * Increments a numeric property by a specified amount.
+   * @template K The type of keys in D where the value is a number
+   * @param {K} key The key of the property to increment
+   * @param {number} amount The amount to increment by (default: 1)
+   * @returns {D[K]} The new value after incrementing
+   */
+  increment<K extends keyof D & { [P in keyof D]: D[P] extends number ? P : never }[keyof D]>(
+    key: K,
+    amount: number = 1,
+  ): D[K] {
+    const currentValue = this.data[key] || 0;
+    const newValue = currentValue + amount;
+    this.set({ [key]: newValue } as DeepPartial<D>);
+    return newValue as D[K];
+  }
+
+  /**
+   * Concatenates a value or array of values to an array property.
+   * @template K The type of keys in D where the value is an array
+   * @param {K} key The key of the array property
+   * @param {ElementType<D[K]> | ElementType<D[K]>[]} value The value(s) to concatenate
+   * @returns {D[K]} The new array after concatenation
+   */
+  concat<K extends keyof D & { [P in keyof D]: D[P] extends any[] ? P : never }[keyof D]>(
+    key: K,
+    value: D[K] extends (infer E)[] ? E | E[] : never,
+  ): D[K] {
+    const currentValue = this.data[key];
+    const newValue = [...currentValue, ...(Array.isArray(value) ? value : [value])];
+    this.set({ [key]: newValue } as DeepPartial<D>);
+    return newValue as D[K];
+  }
+
+  /**
+   * Appends a string to a string property.
+   * @template K The type of keys in D where the value is a string
+   * @param {K} key The key of the string property
+   * @param {string} value The string to append
+   * @returns {D[K]} The new string after concatenation
+   */
+  append<K extends keyof D & { [P in keyof D]: D[P] extends string ? P : never }[keyof D]>(
+    key: K,
+    value: string,
+    separator: string = '',
+  ): D[K] {
+    const currentValue = this.data[key];
+    let newValue = value;
+    if ((currentValue as string)?.length > 0) {
+      newValue = currentValue + separator + value;
+    }
+    this.set({ [key]: newValue } as DeepPartial<D>);
+    return newValue as D[K];
+  }
+
+  /**
    * Deletes data from a specified key in the local storage.
    * @param {string} key The key from which to delete the data.
    */
@@ -170,12 +280,25 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
     if (key === undefined) {
       this.data = {} as D;
       localStorage.clear();
+      this.onDataChange.emit({ key, clear: true });
     } else {
       delete this.data[key];
       localStorage.removeItem(`${this.namespace}-${key as string}`);
+      this.onDataChange.emit({ clear: true });
     }
+  }
 
-    this.onDataChange.emit({ key });
+  /**
+   * Returns a snapshot of the current data.
+   * @returns {D} A snapshot of the current data
+   */
+  snapshot(): D;
+  snapshot<K extends keyof D>(key?: K): D[K];
+  snapshot<K extends keyof D>(key?: K): D[K] | D {
+    if (key === undefined) {
+      return JSON.parse(JSON.stringify(this.data));
+    }
+    return JSON.parse(JSON.stringify(this.data[key]));
   }
 
   /**

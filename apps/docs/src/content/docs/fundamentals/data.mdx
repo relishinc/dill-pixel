@@ -1,5 +1,5 @@
 ---
-title: Data Management
+title: Data Adapter
 description: Learn how to manage and persist data in your dill-pixel application
 ---
 
@@ -7,9 +7,13 @@ import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
 
 ## Overview
 
-dill pixel provides a robust data management system through its `DataAdapter` class. This system allows you to:
+Dill Pixel provides a robust data management system through its [DataAdapter](/api/classes/dataadapter/) class. This system allows you to:
 
 - Store and retrieve game data
+  - increment numeric values
+  - append strings
+  - concatenate arrays
+  - deep merge data
 - Persist data to localStorage
 - Listen for data changes
 - Selectively backup specific data keys
@@ -167,6 +171,133 @@ this.app.data.clear();
 // Clear specific field
 this.app.data.clear('score');
 ```
+
+## increment() Method
+
+The `increment()` method provides a type-safe way to increment numeric values:
+
+```ts
+// Set initial value (could also be set in dill-pixel.config.ts)
+this.app.data.set('score', 0);
+
+// Increment by 1 (default)
+this.app.data.increment('score'); // score is now 1
+
+// Increment by specific amount
+this.app.data.increment('score', 10); // score is now 11
+```
+
+<Aside title="Type Safety" type="note">
+  The `increment()` method only works with numeric properties. Attempting to increment a non-numeric property will
+  result in a TypeScript error.
+</Aside>
+
+```ts
+// property value must be defined as a number
+this.app.data.increment('someStringValueKey', 10); // will throw a ts error
+```
+
+## concat() Method
+
+The `concat()` method allows you to append values to array properties:
+
+```ts
+// E.G. the `inventory` property has previously been defined as an array of strings
+
+// Initialize empty array
+this.app.data.set('inventory', ['sword']);
+// Add single item
+this.app.data.concat('inventory', 'shield');
+// Add multiple items
+this.app.data.concat('inventory', ['potion', 'book']);
+// Result: inventory = ['sword', 'shield', 'potion', 'book']
+```
+
+<Aside title="Type Safety" type="note">
+  The `concat()` method maintains type safety for array elements. The values being concatenated must match the array's
+  element type.
+</Aside>
+
+```ts
+// property value must be defined as an array
+this.app.data.concat('inventory', [1, 2, 3]); // will throw a ts error
+```
+
+## append() Method
+
+The `append()` method is used to concatenate strings with optional separators:
+
+```ts
+// E.G. the `stuff` property has previously been defined as a string
+
+// set the initial value
+this.app.data.set('stuff', 'things');
+// Append a single string
+this.app.data.append('stuff', 'more', '-');
+// Result: stuff = 'things-more'
+
+// set the initial value
+this.app.data.set('stuff2', 'things');
+// Append multiple strings, uses the ' ' separator
+this.app.data.append('stuff2', ['more', 'stuff'], ' ');
+// Result: stuff2 = 'things more stuff'
+```
+
+<Aside title="Type Safety" type="note">
+  The `append()` method only works with string properties and automatically enforces this at compile time.
+</Aside>
+
+## snapshot() Method
+
+The `snapshot()` method creates a deep copy of your game data, useful for:
+
+- Creating save states
+- Comparing data changes
+- Debugging
+- Implementing undo/redo functionality
+
+```ts
+// Get snapshot of all data
+const fullSnapshot = this.app.data.snapshot();
+
+// Get snapshot of specific field
+const scoreSnapshot = this.app.data.snapshot('score');
+```
+
+<Aside title="Deep Copy" type="tip">
+  The `snapshot()` method performs a deep copy using JSON serialization, ensuring that the returned data is completely
+  disconnected from the original data object. This means modifications to the snapshot won't affect the actual game
+  data.
+</Aside>
+
+### Example Use Cases
+
+<Tabs>
+<TabItem label="Save States">
+```ts
+// Create a save point
+const savePoint = this.app.data.snapshot();
+
+// Later, restore the save point
+this.app.data.set(savePoint, false); // false = don't merge
+
+````
+</TabItem>
+<TabItem label="Debugging">
+```ts
+// Log data at specific points without worrying about reference issues
+console.log('Game state before battle:', this.app.data.snapshot());
+startBattle();
+console.log('Game state after battle:', this.app.data.snapshot());
+````
+
+</TabItem>
+</Tabs>
+
+<Aside title="Performance Note" type="caution">
+  Since `snapshot()` creates a deep copy, it should be used judiciously with large data structures to avoid performance
+  impacts. Consider snapshotting only the specific keys you need rather than the entire data object.
+</Aside>
 
 ## Change Signal
 

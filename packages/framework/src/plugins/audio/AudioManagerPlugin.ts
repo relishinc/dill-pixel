@@ -539,7 +539,6 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
    * Restores the audio state after it has been suspended.
    */
   public async restore() {
-    Logger.log('AudioManagerPlugin:: restore', this._muted, this._storedVolume);
     const ctx = sound?.context?.audioContext;
     if (ctx) {
       await ctx.resume();

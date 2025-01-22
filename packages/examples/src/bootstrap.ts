@@ -1,11 +1,7 @@
-import { create, shuffle } from 'dill-pixel';
+import { create } from 'dill-pixel';
 import 'dill-pixel-globals';
 import { V8Application } from './V8Application';
 import { config } from './dill-pixel.config';
-
-const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-shuffle(arr);
-console.log(arr);
 
 async function bootstrap() {
   const app = await create<V8Application>(config, V8Application);
@@ -31,6 +27,14 @@ async function bootstrap() {
 
   foo = app.data.get('foo');
   console.log('foo 3', JSON.stringify(foo, null, 2));
+
+  app.data.set({ foo: 'bar', list2: [1, 2] });
+  app.data.concat('list', ['hello', 'world', 'foo', 'bar', 'baz']);
+  app.data.concat('list2', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  app.data.concat('list3', [{ bar: 'bar', baz: 5 }]);
+  app.data.increment('bar', 10);
+  app.data.append('saved', 'adsf;kjdfgj', ' ');
+  app.data.append('saved', 'more', '-');
   */
 
   function populateSidebar() {

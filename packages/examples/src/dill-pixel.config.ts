@@ -76,11 +76,20 @@ export const controls = defineControls(actions, buttons, {
 });
 /** End of Default Template */
 
+type Foo = {
+  bar: string;
+  baz: number;
+};
+
 /** User config */
 export type Data = {
   foo: string;
   bar: number;
+  num: number;
   saved: string;
+  list: string[];
+  list2: number[];
+  list3: Foo[];
   baz: {
     qux: boolean;
     quux: string[];
@@ -102,9 +111,13 @@ export const config = defineConfig<Data>({
   sceneGroupOrder: ['Framework', 'Display', 'Audio', 'UI', 'Accessibility', 'Physics', 'Rive', 'Storage Adapters'],
   data: {
     initial: {
+      bar: 5,
       saved: 'QUX',
+      list: ['hello', 'world'],
+      list2: [0, 1],
+      list3: [{ bar: 'bar', baz: 0 }],
     },
-    backupKeys: ['saved'],
+    backupKeys: [],
   },
   focus: {
     outliner: ExampleOutliner,
