@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.4.0](https://github.com/relishinc/dill-pixel/compare/v4.3.0...v4.4.0) (2025-01-21)
+
+
+### Features
+
+* tweaked assetpack settings / internal asset paths so  folder doesn't get wiped, and other static files can be included in it ([73e9e20](https://github.com/relishinc/dill-pixel/commit/73e9e20c9f20a2b7303056f8809e1b72c4b3a36d))
+
+
+### Bug Fixes
+
+* keyboard controls initializer - down controls ([265f2df](https://github.com/relishinc/dill-pixel/commit/265f2dfa37e863ec424be41fa34af2c3f57fee47))
+* keyboard controls initializer - down controls ([da63e7b](https://github.com/relishinc/dill-pixel/commit/da63e7b237b7d67eb0b1a4b78e6165d354076e9f))
+
 ## [4.3.0](https://github.com/relishinc/dill-pixel/compare/v4.2.8...v4.3.0) (2025-01-21)
 
 
