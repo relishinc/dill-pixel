@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.4.1](https://github.com/relishinc/dill-pixel/compare/v4.4.0...v4.4.1) (2025-01-22)
+
+
+### Bug Fixes
+
+* updated DataAdapter get / set / clear ([8aa2843](https://github.com/relishinc/dill-pixel/commit/8aa284327626a9456978997944a10c9fcddacb03))
+* updated DataAdapter get / set / clear ([f273b90](https://github.com/relishinc/dill-pixel/commit/f273b901e1cf32b39786cbddd966f0b9bdec7c6a))
+
 ## [4.4.0](https://github.com/relishinc/dill-pixel/compare/v4.3.0...v4.4.0) (2025-01-21)
 
 
