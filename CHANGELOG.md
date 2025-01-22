@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.4.2](https://github.com/relishinc/dill-pixel/compare/v4.4.1...v4.4.2) (2025-01-22)
+
+
+### Bug Fixes
+
+* added more utility methods to the DataAdapter, ([9a2dc78](https://github.com/relishinc/dill-pixel/commit/9a2dc789eceda24a6d4904a6f9fffc3032cb6868))
+
 ## [4.4.1](https://github.com/relishinc/dill-pixel/compare/v4.4.0...v4.4.1) (2025-01-22)
 
 
