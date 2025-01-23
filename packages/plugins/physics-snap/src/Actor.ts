@@ -1,10 +1,10 @@
-import { Circle, Point, Rectangle } from 'pixi.js';
 import { Application } from 'dill-pixel';
+import { gsap } from 'gsap';
+import { Circle, Point, Rectangle } from 'pixi.js';
 import { Entity } from './Entity';
 import { System } from './System';
 import { Collision, EntityType } from './types';
 import { checkCollision } from './utils';
-import { gsap } from 'gsap';
 
 export class Actor<T = any, A extends Application = Application> extends Entity<T, A> {
   type = 'Actor';
@@ -55,7 +55,7 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
     return this.animateTo('y', target, vars, validationMethod);
   }
 
-  postUpdate() {
+  postFixedUpdate() {
     this.setAllRiding();
   }
 

@@ -1,5 +1,5 @@
 import { IApplication, ICamera, Logger, Signal } from 'dill-pixel';
-import { Circle, Container, Graphics, Point, Rectangle, Ticker } from 'pixi.js';
+import { Circle, Container, Graphics, Point, Rectangle } from 'pixi.js';
 import { Collision, EntityType, Side, SpatialHashGridFilter } from './types';
 
 import { Actor } from './Actor';
@@ -49,9 +49,7 @@ export class System {
   public static app: IApplication;
   public static container: Container<any>;
   public static grid: SpatialHashGrid | null;
-  public static fps: number;
-  public static accumulator: number = 0;
-  public static timestep: number = 1 / 60; // Default 60 FPS fixed timestep
+  public static fps: number = 60;
   //
   static debug: boolean = true;
   static typeMap: Map<EntityType, Entity[]> = new Map();
@@ -65,23 +63,43 @@ export class System {
   static camera?: ICamera;
   static collisionThreshold = 8;
   static updateHooks: Set<(deltaTime: number) => void> = new Set();
-  static preUpdateHooks: Set<(deltaTime: number) => void> = new Set();
-  static postUpdateHooks: Set<(deltaTime: number) => void> = new Set();
-  private static gfx: Graphics;
 
+  private static _cleaningUp: boolean = false;
+  private static gfx: Graphics;
   private static _enabled: boolean = false;
+  private static _fixedTimeStep: number = 1000 / System.fps; // Default 60 FPS
+  private static _fixedUpdateInterval: any = null;
+
+  public static onSystemEnabledChanged: Signal<(enabled: boolean) => void> = new Signal<(enabled: boolean) => void>();
 
   static get enabled() {
     return System._enabled;
   }
 
   static set enabled(value: boolean) {
+    if (!System._cleaningUp && value === System._enabled) return;
     System._enabled = value;
+
+    // clear the interval if we are disabling
     if (System._enabled) {
-      System.app.ticker.add(System.update);
+      // Start fixed update loop
+      System._fixedUpdateInterval = setInterval(() => {
+        System.fixedUpdate(System._fixedTimeStep / 1000);
+      }, System._fixedTimeStep);
     } else {
-      System.app.ticker.remove(System.update);
+      // Stop fixed update loop
+      if (System._fixedUpdateInterval) {
+        clearInterval(System._fixedUpdateInterval);
+        System._fixedUpdateInterval = null;
+      }
     }
+
+    if (!System._cleaningUp) {
+      // don't send the signal if we are cleaning up
+      return;
+    }
+
+    System.onSystemEnabledChanged.emit(value);
   }
 
   private static _collisionResolver: ((collision: Collision) => boolean) | null = null;
@@ -296,73 +314,50 @@ export class System {
     return intersection.area > 0 && intersection.area > System.collisionThreshold;
   }
 
-  static update(ticker: Ticker) {
+  static fixedUpdate(deltaTime: number) {
     if (!System.enabled) {
       return;
     }
 
-    // Calculate fixed timestep
-    System.accumulator += ticker.deltaMS / 1000; // Convert to seconds
+    if (!System.container) {
+      Logger.error('SnapPhysicsPlugin: World container not set!');
+    }
+    // pre-update phase
+    System.all.forEach((entity: Entity) => {
+      entity.preFixedUpdate();
+    });
 
-    // Run as many fixed updates as needed
-    while (System.accumulator >= System.timestep) {
-      System.fixedUpdate(System.timestep);
-      System.accumulator -= System.timestep;
+    // update hooks
+    if (System.updateHooks) {
+      System.updateHooks.forEach((hook) => hook(deltaTime));
+    }
+    // Fixed update phases
+    System.solids.forEach((solid: Solid) => {
+      solid.fixedUpdate(deltaTime);
+    });
+
+    System.sensors.forEach((sensor: Sensor) => {
+      sensor.fixedUpdate(deltaTime);
+    });
+
+    System.actors.forEach((actor: Actor) => {
+      actor.fixedUpdate(deltaTime);
+    });
+
+    System.all.forEach((entity: Entity) => {
+      entity.postFixedUpdate();
+    });
+
+    if (System.camera) {
+      System.camera.update();
     }
 
-    // Render interpolation can be added here if needed
     if (System.debug) {
       System.drawDebug();
     } else {
       if (System.gfx) {
         System.gfx.clear();
       }
-    }
-  }
-
-  static fixedUpdate(deltaTime: number) {
-    if (!System.container) {
-      Logger.error('SnapPhysicsPlugin: World container not set!');
-      return;
-    }
-
-    if (System.preUpdateHooks) {
-      System.preUpdateHooks.forEach((hook) => hook(deltaTime));
-    }
-
-    if (System.updateHooks) {
-      System.updateHooks.forEach((hook) => hook(deltaTime));
-    }
-
-    // Pre-update phase
-    System.all.forEach((entity: Entity) => {
-      entity.preUpdate();
-    });
-
-    // Update phase - process in specific order
-    System.solids.forEach((solid: Solid) => {
-      solid.update(deltaTime);
-    });
-
-    System.sensors.forEach((sensor: Sensor) => {
-      sensor.update(deltaTime);
-    });
-
-    System.actors.forEach((actor: Actor) => {
-      actor.update(deltaTime);
-    });
-
-    // Post-update phase
-    System.all.forEach((entity: Entity) => {
-      entity.postUpdate();
-    });
-
-    if (System.postUpdateHooks) {
-      System.postUpdateHooks.forEach((hook) => hook(deltaTime));
-    }
-
-    if (System.camera) {
-      System.camera.update();
     }
   }
 
@@ -446,11 +441,6 @@ export class System {
           .circle(circBounds.x, circBounds.y, circBounds.radius)
           .stroke({ width: 1, color: entity.debugColors.bounds, alignment: 0.5, pixelLine: true });
 
-        // const bds = entity.boundingRect;
-        // System.gfx
-        //   .rect(bds.x, bds.y, bds.width, bds.height)
-        //   .stroke({ width: 1, color: entity.debugColors.bounds, alignment: 0.5 });
-
         if (outerBounds) {
           const outerCircBounds = outerBounds as Circle;
           System.gfx
@@ -491,6 +481,7 @@ export class System {
     }
     if (opts.fps) {
       System.fps = opts.fps;
+      System._fixedTimeStep = 1000 / opts.fps;
     }
     if (opts.container) {
       System.setContainer(opts.container);
@@ -532,11 +523,7 @@ export class System {
   }
 
   static cleanup() {
-    System.enabled = false;
-    System.postUpdateHooks.clear();
-    System.preUpdateHooks.clear();
-    System.updateHooks.clear();
-
+    System._cleaningUp = true;
     if (System.worldBounds) {
       System.worldBounds.forEach((wall: Wall) => {
         wall.parent.removeChild(wall);
@@ -566,10 +553,13 @@ export class System {
       System.camera = null;
     }
 
+    System.enabled = false; // This will clear the interval
     System.solids = [];
     System.actors = [];
     System.sensors = [];
     System.typeMap.clear();
     System.worldBounds = [];
+
+    System._cleaningUp = false;
   }
 }

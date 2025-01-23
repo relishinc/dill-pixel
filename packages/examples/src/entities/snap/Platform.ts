@@ -1,5 +1,5 @@
-import { PointLike, resolvePointLike } from 'dill-pixel';
 import { Actor, Solid as SnapSolid, System } from '@dill-pixel/plugin-snap-physics';
+import { PointLike, resolvePointLike } from 'dill-pixel';
 
 import { Point } from 'pixi.js';
 
@@ -101,13 +101,17 @@ export class Platform extends SnapSolid<PlatformConfig> {
     this.initialize();
   }
 
+  reset() {
+    this.removeChildren();
+  }
+
   added() {
     const pt = this.position.clone();
     this._startPos = new Point(Math.round(pt.x), Math.round(pt.y));
     super.added();
   }
 
-  update() {
+  fixedUpdate() {
     if (!this.config.moving || !this.config.movementConfig) return;
 
     this.move(
@@ -116,11 +120,7 @@ export class Platform extends SnapSolid<PlatformConfig> {
     );
   }
 
-  reset() {
-    this.removeChildren();
-  }
-
-  postUpdate() {
+  postFixedUpdate() {
     let isBeingRidden = false;
     for (const actor of this.getCollideables<Actor>()) {
       if (actor.riding.has(this)) {

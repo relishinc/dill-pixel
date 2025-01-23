@@ -35,7 +35,7 @@ export class Entity<T = any, A extends Application = Application> extends Contai
   protected remainder: Point = new Point(0, 0);
 
   constructor(config?: Partial<T>) {
-    super();
+    super({ autoUpdate: true });
     this.config = config as T;
   }
 
@@ -133,13 +133,13 @@ export class Entity<T = any, A extends Application = Application> extends Contai
     return new Set<T>();
   }
 
-  preUpdate() {}
+  preFixedUpdate() {}
 
-  update(deltaTime?: number) {
+  fixedUpdate(deltaTime?: number) {
     void deltaTime;
   }
 
-  postUpdate() {}
+  postFixedUpdate() {}
 
   getWorldBounds(): SnapBoundary {
     const pos = this.system.container.toLocal(this.view.getGlobalPosition());

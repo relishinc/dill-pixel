@@ -86,16 +86,16 @@ export class Portal extends Sensor<DoorConfig> {
     return rect;
   }
 
-  preUpdate() {
-    super.preUpdate();
+  preFixedUpdate() {
+    super.preFixedUpdate();
     this.showingPartnerConnections = false;
   }
 
-  update(deltaTime: number) {
+  fixedUpdate(deltaTime: number) {
     // Implement update logic
-    super.update(deltaTime);
+    super.fixedUpdate(deltaTime);
 
-    this.moveY(System.gravity * deltaTime, null);
+    this.moveY(System.gravity * 100 * deltaTime, null);
 
     if (this.entities.size) {
       for (const entity of this.entities) {

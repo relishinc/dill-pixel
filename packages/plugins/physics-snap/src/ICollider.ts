@@ -12,9 +12,9 @@ export interface ICollider {
   right: number;
   isCircle: boolean;
 
-  preUpdate(): void;
+  preFixedUpdate(): void;
 
-  update(deltaTime?: number): void;
+  fixedUpdate(deltaTime?: number): void;
 
-  postUpdate(): void;
+  postFixedUpdate(): void;
 }

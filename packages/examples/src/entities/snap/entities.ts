@@ -53,7 +53,7 @@ export class BasicActor<T extends BasicActorConfig = BasicActorConfig> extends A
     this.setColor();
   }
 
-  update(deltaTime?: number) {
+  fixedUpdate(deltaTime?: number) {
     void deltaTime;
     if (!this._active) {
       return;
@@ -244,8 +244,8 @@ export class Projectile extends WithVelocity(CircActor) {
     this.interactiveChildren = false;
   }
 
-  update(deltaTime: number) {
-    super.update(deltaTime);
+  fixedUpdate(deltaTime: number) {
+    super.fixedUpdate(deltaTime);
     this.moveByVelocity(deltaTime);
   }
 }

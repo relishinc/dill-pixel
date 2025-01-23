@@ -1,4 +1,4 @@
-import { Actor as SnapActor, Collision, Entity, System } from '@dill-pixel/plugin-snap-physics';
+import { Collision, Entity, Actor as SnapActor, System } from '@dill-pixel/plugin-snap-physics';
 import { Point, Pool, Texture } from 'pixi.js';
 
 export class FX extends SnapActor {
@@ -22,7 +22,7 @@ export class FX extends SnapActor {
     });
   }
 
-  update(deltaTime: number) {
+  fixedUpdate(deltaTime: number) {
     if (!this.enabled) {
       return;
     }

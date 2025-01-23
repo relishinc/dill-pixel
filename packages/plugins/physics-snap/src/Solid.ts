@@ -1,8 +1,8 @@
 import { Application, filterSet } from 'dill-pixel';
+import { gsap } from 'gsap';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { System } from './System';
-import { gsap } from 'gsap';
 
 export class Solid<T = any, A extends Application = Application> extends Entity<T, A> {
   type = 'Solid';
@@ -16,11 +16,24 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
 
   added() {
     System.addSolid(this);
+    this.addSignalConnection(this.system.onSystemEnabledChanged.connect(this._handleSystemEnabledChanged));
+  }
+
+  private _handleSystemEnabledChanged(enabled: boolean) {
+    if (enabled) {
+      if (this._animations?.size > 0) {
+        this._animations.forEach((animation) => animation?.resume());
+      }
+    } else {
+      if (this._animations?.size > 0) {
+        this._animations.forEach((animation) => animation?.pause());
+      }
+    }
   }
 
   removed() {
     System.removeSolid(this);
-    if (this._animations) {
+    if (this._animations?.size > 0) {
       this._animations.forEach((animation) => animation?.kill());
     }
   }

@@ -30,7 +30,6 @@ export default class SnapPhysicsScene extends BaseScene {
   platforms: Platform[] = [];
   doors: Door[] = [];
   portals: Portal[] = [];
-  _isPaused: boolean = false;
   camera: Camera;
   protected readonly title = 'Snap Physics';
   protected readonly subtitle = 'Arrows to move, up to jump, "Q" for hoverboard';
@@ -90,7 +89,6 @@ export default class SnapPhysicsScene extends BaseScene {
   }
 
   destroy() {
-    this.app.ticker.maxFPS = 0;
     this.physics.destroy();
     super.destroy();
   }
@@ -106,7 +104,6 @@ export default class SnapPhysicsScene extends BaseScene {
       label: 'Level',
     });
 
-    this.app.ticker.maxFPS = 60;
     this.physics.system.initialize({
       gravity: 10,
       container: this.level,
@@ -131,20 +128,18 @@ export default class SnapPhysicsScene extends BaseScene {
     this.addControls();
 
     this.physics.system.enabled = true;
-    this.physics.system.updateHooks.add(this.physicsUpdate);
 
     this._handleDebugChanged();
     this._handleUseCameraChanged();
+
+    this.addSignalConnection(
+      this.app.actions('toggle_pause').connect(() => {
+        this.physics.system.enabled = this.app.paused ? false : true;
+      }),
+    );
   }
 
   async start() {}
-
-  physicsUpdate() {
-    if (this._isPaused) return;
-    if (this.player.y > this.app.size.height + 50) {
-      this.player.kill();
-    }
-  }
 
   resize() {
     super.resize();
