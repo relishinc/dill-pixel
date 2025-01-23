@@ -34,7 +34,31 @@ class Ball extends Projectile {
 
   // Override the reflect method for better bouncing
   reflect(collision: Collision) {
-    if (this._canBounce) {
+    if (!this._canBounce) return;
+
+    // Calculate separation vector for circle collisions
+    if (collision.overlap && collision.entity2.isCircle) {
+      const dx = this.x - collision.overlap.x;
+      const dy = this.y - collision.overlap.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist > 0) {
+        // Apply immediate separation to prevent sticking
+        const separationX = (dx / dist) * 2; // Small separation boost
+        const separationY = (dy / dist) * 2;
+        this.x += separationX;
+        this.y += separationY;
+
+        // Adjust velocity based on collision normal
+        const normalX = dx / dist;
+        const normalY = dy / dist;
+        const dotProduct = this.velocity.x * normalX + this.velocity.y * normalY;
+
+        this.velocity.x = (this.velocity.x - 2 * dotProduct * normalX) * (1 - this.BOUNCE_ENERGY_LOSS);
+        this.velocity.y = (this.velocity.y - 2 * dotProduct * normalY) * (1 - this.BOUNCE_ENERGY_LOSS);
+      }
+    } else {
+      // Use default reflection for non-circle collisions
       super.reflect(collision, this.BOUNCE_ENERGY_LOSS);
     }
 
@@ -55,6 +79,42 @@ class Bullet extends Projectile {
   private readonly SEPARATION_BOOST = 2; // Additional separation on collision
 
   reflect(collision: Collision) {
+    // Handle circle collisions with proper reflection
+    if (collision.overlap && collision.entity2.isCircle) {
+      const dx = this.x - collision.overlap.x;
+      const dy = this.y - collision.overlap.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist > 0) {
+        // Apply immediate separation to prevent sticking
+        const separationX = (dx / dist) * this.SEPARATION_BOOST;
+        const separationY = (dy / dist) * this.SEPARATION_BOOST;
+        this.x += separationX;
+        this.y += separationY;
+
+        // Calculate reflection using collision normal
+        const normalX = dx / dist;
+        const normalY = dy / dist;
+        const dotProduct = this.velocity.x * normalX + this.velocity.y * normalY;
+
+        // Reflect velocity with minimal energy loss
+        this.velocity.x = (this.velocity.x - 2 * dotProduct * normalX) * (1 - this.BOUNCE_ENERGY_LOSS);
+        this.velocity.y = (this.velocity.y - 2 * dotProduct * normalY) * (1 - this.BOUNCE_ENERGY_LOSS);
+
+        // Maintain minimum speed
+        const currentSpeed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
+        const targetSpeed = Math.max(this.MIN_SPEED, currentSpeed * this.COLLISION_BOOST);
+
+        if (currentSpeed > 0) {
+          const speedScale = targetSpeed / currentSpeed;
+          this.velocity.x *= speedScale;
+          this.velocity.y *= speedScale;
+        }
+      }
+      return;
+    }
+
+    // For non-circle collisions, use the original reflection logic
     // First, apply immediate separation in the direction of the collision normal
     if (collision.overlap) {
       // Move away from the collision point
