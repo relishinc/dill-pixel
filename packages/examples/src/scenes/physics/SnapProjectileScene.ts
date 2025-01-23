@@ -16,23 +16,34 @@ export const plugins = ['snap-physics'];
 
 class Ball extends Projectile {
   type = 'Ball';
+
   private readonly BOUNCE_ENERGY_LOSS = 0.3; // Higher value = more energy loss per bounce
   private readonly GRAVITY = 1000; // Pixels per second squared (roughly like real gravity)
+  private _canBounce = true;
 
   fixedUpdate(deltaTime: number) {
     super.fixedUpdate(deltaTime);
     // Apply gravity acceleration
     this.velocity.y += this.GRAVITY * deltaTime;
+    if (Math.abs(this.velocity.y) < 100) {
+      this._canBounce = false;
+    } else {
+      this._canBounce = true;
+    }
   }
 
   // Override the reflect method for better bouncing
   reflect(collision: Collision) {
-    super.reflect(collision, this.BOUNCE_ENERGY_LOSS);
+    if (this._canBounce) {
+      super.reflect(collision, this.BOUNCE_ENERGY_LOSS);
+    }
 
     // Add a minimum velocity threshold to eventually stop bouncing
     if (Math.abs(this.velocity.y) < 100 && collision.bottom) {
       this.velocity.y = 0;
     }
+
+    this.velocity.x *= 0.95;
   }
 }
 
