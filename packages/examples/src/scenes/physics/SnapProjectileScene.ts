@@ -33,10 +33,6 @@ class Ball extends Projectile {
     if (Math.abs(this.velocity.y) < 100 && collision.bottom) {
       this.velocity.y = 0;
     }
-    // Add some friction when hitting the ground
-    if (collision.bottom) {
-      this.velocity.x *= 0.8;
-    }
   }
 }
 

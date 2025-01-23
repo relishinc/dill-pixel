@@ -9,6 +9,7 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
   isSolid = true;
   riding: Set<Actor> = new Set();
   protected _animations: Set<gsap.core.Tween | gsap.core.Timeline> = new Set<gsap.core.Tween | gsap.core.Timeline>();
+
   protected _positionAnimation: {
     targetX: number;
     targetY: number;
@@ -69,7 +70,34 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
     if (moveX !== 0 || moveY !== 0) {
       // Get all potential collisions before moving
       const ridingActors = this.getAllRiding(moveX, moveY);
-      const potentialCollisions = this.getCollideables<Actor>(moveX, moveY);
+
+      // For moving platforms, we need to check a larger area to catch fast-moving actors
+      const sweepBox = this.boundingRect.clone();
+      // Expand the sweep box in the direction of movement
+      if (moveY < 0) {
+        // Moving up - expand upward
+        sweepBox.y += moveY;
+        sweepBox.height -= moveY;
+      } else {
+        // Moving down - expand downward
+        sweepBox.height += moveY;
+      }
+      if (moveX < 0) {
+        // Moving left - expand left
+        sweepBox.x += moveX;
+        sweepBox.width -= moveX;
+      } else {
+        // Moving right - expand right
+        sweepBox.width += moveX;
+      }
+
+      // Get potential collisions using the sweep box
+      const potentialCollisions = new Set<Actor>();
+      for (const actor of this.getCollideables<Actor>(moveX, moveY)) {
+        if (actor.boundingRect.intersects(sweepBox)) {
+          potentialCollisions.add(actor);
+        }
+      }
 
       // First move riding actors with the platform
       for (const actor of ridingActors) {
@@ -191,7 +219,12 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
       if (ridingActors.has(actor)) continue;
 
       if (!actor.passThroughTypes.includes(this.type) && !actor.isPassingThrough(this)) {
-        if (this.collidesWith(actor, deltaX, deltaY)) {
+        // For moving platforms, we need to do a more thorough collision check
+        const isColliding = this.collidesWith(actor, deltaX, deltaY);
+        const wasColliding = this.collidesWith(actor, 0, 0);
+
+        // If either check detects a collision, handle it
+        if (isColliding || wasColliding) {
           // Calculate overlaps
           const overlapX =
             deltaX !== 0
@@ -207,12 +240,21 @@ export class Solid<T = any, A extends Application = Application> extends Entity<
                 : this.boundingRect.top - actor.boundingRect.bottom
               : 0;
 
-          // For diagonal movement, resolve both axes
-          if (overlapX !== 0) {
-            actor.moveX(overlapX, actor.squish, null, this);
-          }
-          if (overlapY !== 0) {
-            actor.moveY(overlapY, actor.squish, null, this);
+          // For fast-moving platforms, prioritize vertical resolution
+          if (Math.abs(deltaY) > Math.abs(deltaX)) {
+            if (overlapY !== 0) {
+              actor.moveY(overlapY, actor.squish, null, this);
+            }
+            if (overlapX !== 0) {
+              actor.moveX(overlapX, actor.squish, null, this);
+            }
+          } else {
+            if (overlapX !== 0) {
+              actor.moveX(overlapX, actor.squish, null, this);
+            }
+            if (overlapY !== 0) {
+              actor.moveY(overlapY, actor.squish, null, this);
+            }
           }
         }
       }
