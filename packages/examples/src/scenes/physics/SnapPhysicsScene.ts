@@ -137,6 +137,14 @@ export default class SnapPhysicsScene extends BaseScene {
         this.physics.system.enabled = this.app.paused ? false : true;
       }),
     );
+
+    this.physics.system.updateHooks.add(this._checkPlayerPosition);
+  }
+
+  private _checkPlayerPosition() {
+    if (this.player.y > this.app.size.height + 50) {
+      this.player.kill();
+    }
   }
 
   async start() {}

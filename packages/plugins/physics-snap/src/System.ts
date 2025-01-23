@@ -63,6 +63,7 @@ export class System {
   static camera?: ICamera;
   static collisionThreshold = 8;
   static updateHooks: Set<(deltaTime: number) => void> = new Set();
+  static postUpdateHooks: Set<(deltaTime: number) => void> = new Set();
 
   private static _cleaningUp: boolean = false;
   private static gfx: Graphics;

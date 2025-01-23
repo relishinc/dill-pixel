@@ -17,6 +17,24 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   protected _animations: Set<gsap.core.Tween | gsap.core.Timeline> = new Set<gsap.core.Tween | gsap.core.Timeline>();
   protected _activeCollisions: Collision[];
 
+  // Add new properties for animation tracking
+  protected _animationTargets: Map<
+    'x' | 'y',
+    {
+      target: number;
+      duration: number;
+      elapsed: number;
+      start: number;
+      ease: gsap.EaseString;
+      repeat: number;
+      yoyo: boolean;
+      repeatDelay: number;
+      delayRemaining: number;
+      iteration: number;
+      isReversed: boolean;
+    }
+  > = new Map();
+
   get activeCollisions() {
     return this._activeCollisions;
   }
@@ -47,46 +65,97 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   squish(_collision?: Collision, _pushingEntity?: Entity, _direction?: Point) {}
 
-  animateX(target: number, vars: gsap.TweenVars = {}, validationMethod?: (delta?: number) => boolean): gsap.core.Tween {
-    return this.animateTo('x', target, vars, validationMethod);
+  animateX(target: number, vars: gsap.TweenVars = {}): gsap.core.Tween {
+    return this.animateTo('x', target, vars);
   }
 
-  animateY(target: number, vars: gsap.TweenVars = {}, validationMethod?: (delta?: number) => boolean): gsap.core.Tween {
-    return this.animateTo('y', target, vars, validationMethod);
+  animateY(target: number, vars: gsap.TweenVars = {}): gsap.core.Tween {
+    return this.animateTo('y', target, vars);
   }
 
   postFixedUpdate() {
     this.setAllRiding();
   }
 
-  animateTo(
-    prop: 'x' | 'y',
-    target: number,
-    vars: gsap.TweenVars = {},
-    validationMethod?: (delta?: number) => boolean,
-  ): gsap.core.Tween {
-    const pos = this.position.clone();
-    const initialPosition = { [prop]: Math.round(pos[prop]) };
-    const tweenVars = Object.assign({ duration: 1, ease: 'linear.none' }, vars);
-    const result = gsap.to(initialPosition, {
-      [prop]: Math.round(target),
-      ...tweenVars,
-      onUpdate: () => {
-        const delta = initialPosition[prop] - this.position[prop];
-        if (validationMethod !== undefined && !validationMethod(delta)) {
-          return;
-        }
-        if (delta) {
-          if (prop === 'x') {
-            this.moveX(delta, null, null);
-          } else if (prop === 'y') {
-            this.moveY(delta, null, null);
-          }
-        }
-      },
+  animateTo(prop: 'x' | 'y', target: number, vars: gsap.TweenVars = {}): gsap.core.Tween {
+    // Store animation data for physics update
+    const duration = (vars.duration as number) || 1;
+    const ease = (vars.ease?.toString() || 'linear.none') as gsap.EaseString;
+    const repeat = (vars.repeat as number) || 0;
+    const yoyo = vars.yoyo || false;
+    const repeatDelay = (vars.repeatDelay as number) || 0;
+    const start = this[prop];
+
+    this._animationTargets.set(prop, {
+      target,
+      duration,
+      elapsed: 0,
+      start,
+      ease,
+      repeat,
+      yoyo,
+      repeatDelay,
+      delayRemaining: 0,
+      iteration: 0,
+      isReversed: false,
     });
-    this._animations.add(result);
-    return result;
+
+    // Create a dummy tween for compatibility
+    const tween = gsap.to({}, { duration, ...vars });
+    this._animations.add(tween);
+    return tween;
+  }
+
+  fixedUpdate(deltaTime: number) {
+    super.fixedUpdate(deltaTime);
+
+    // Update animations in sync with physics
+    for (const [prop, anim] of this._animationTargets.entries()) {
+      // Handle repeat delay
+      if (anim.delayRemaining > 0) {
+        anim.delayRemaining -= deltaTime;
+        continue;
+      }
+
+      anim.elapsed += deltaTime;
+      const progress = Math.min(anim.elapsed / anim.duration, 1);
+
+      // Calculate the new position using GSAP's easing
+      const easedProgress = gsap.parseEase(anim.ease)(anim.isReversed ? 1 - progress : progress);
+      const newValue = anim.start + (anim.target - anim.start) * easedProgress;
+
+      // Apply movement through physics system
+      const delta = newValue - this[prop];
+      if (prop === 'x') {
+        this.moveX(delta, null, null);
+      } else {
+        this.moveY(delta, null, null);
+      }
+
+      // Handle completion of current iteration
+      if (progress >= 1) {
+        // Reset elapsed time
+        anim.elapsed = 0;
+
+        // Handle repeat logic
+        if (anim.repeat === -1 || anim.iteration < anim.repeat) {
+          anim.iteration++;
+
+          // Handle yoyo
+          if (anim.yoyo) {
+            anim.isReversed = !anim.isReversed;
+          }
+
+          // Apply repeat delay
+          if (anim.repeatDelay > 0) {
+            anim.delayRemaining = anim.repeatDelay;
+          }
+        } else {
+          // Animation complete
+          this._animationTargets.delete(prop);
+        }
+      }
+    }
   }
 
   moveX(
@@ -101,6 +170,7 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
     if (pushingEntity) {
       pushingEntity.isCollideable = false;
     }
+
     while (move !== 0) {
       const nextX = this.x + (move ? sign : 0); // Predict the next X position
       const collisions: Collision[] | false = this.collideAt(nextX - this.x, 0, this.getBoundingBox(), [
@@ -113,11 +183,7 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
             onCollide(collision, pushingEntity, new Point(nextX - this.x, 0));
           });
         }
-        for (const collision of collisions) {
-          if (!this.isRiding(collision.entity2)) {
-            this.xRemainder = 0;
-          }
-        }
+        this.xRemainder = 0;
         break;
       } else {
         this.x = nextX;
@@ -127,8 +193,9 @@ export class Actor<T = any, A extends Application = Application> extends Entity<
           onNoCollisions();
         }
       }
+      System.updateEntity(this);
     }
-    System.updateEntity(this);
+
     if (pushingEntity) {
       pushingEntity.isCollideable = true;
     }

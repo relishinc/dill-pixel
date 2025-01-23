@@ -1,14 +1,5 @@
 import { Application, Container } from 'dill-pixel';
-import {
-  Bounds,
-  Circle,
-  ObservablePoint,
-  Container as PIXIContianer,
-  Point,
-  PointData,
-  Rectangle,
-  Sprite,
-} from 'pixi.js';
+import { Bounds, Circle, Container as PIXIContianer, Point, Rectangle, Sprite } from 'pixi.js';
 import { ICollider } from './ICollider';
 import { System } from './System';
 import { EntityType, SnapBoundary } from './types';
@@ -61,32 +52,6 @@ export class Entity<T = any, A extends Application = Application> extends Contai
 
   set cachedBounds(value: Bounds) {
     this._cachedBounds = value;
-  }
-
-  get position(): ObservablePoint {
-    return super.position;
-  }
-
-  set position(value: PointData) {
-    value.x = Math.round(value.x);
-    value.y = Math.round(value.y);
-    super.position = value;
-  }
-
-  get x(): number {
-    return super.x;
-  }
-
-  set x(value: number) {
-    super.x = Math.round(value);
-  }
-
-  get y(): number {
-    return super.y;
-  }
-
-  set y(value: number) {
-    super.y = Math.round(value);
   }
 
   protected _dirtyBounds: boolean = true;
@@ -167,7 +132,7 @@ export class Entity<T = any, A extends Application = Application> extends Contai
 
   moveX(amount: number): void {
     this.remainder.x += amount;
-    const move = Math.round(this.remainder.x);
+    const move = this.remainder.x;
     if (move !== 0) {
       this.remainder.x -= move;
       this.x += move;
@@ -176,7 +141,7 @@ export class Entity<T = any, A extends Application = Application> extends Contai
 
   moveY(amount: number): void {
     this.remainder.y += amount;
-    const move = Math.round(this.remainder.y);
+    const move = this.remainder.y;
     if (move !== 0) {
       this.remainder.y -= move;
       this.y += move;
