@@ -1,5 +1,6 @@
 import BaseScene from '@/scenes/BaseScene';
-import TowerfallPhysicsPlugin, { Actor, Solid } from '@dill-pixel/plugin-towerfall-physics';
+import { V8Application } from '@/V8Application';
+import TowerfallPhysicsPlugin, { Actor, CollisionResult, Solid } from '@dill-pixel/plugin-towerfall-physics';
 import { ActionDetail, Container } from 'dill-pixel';
 import gsap from 'gsap';
 import { FederatedPointerEvent, Graphics, Point } from 'pixi.js';
@@ -19,14 +20,50 @@ export const assets = {
   },
 };
 
-export default class TowerfallPhysicsScene extends BaseScene {
-  private player: Actor;
+class Player extends Actor<V8Application> {
   private isJumping = false;
-  private canJump = false;
+
+  protected initialize(): void {
+    this.app.actions('jump').connect(this._jump);
+  }
+
+  private _jump() {
+    if (this.isRidingSolid() && !this.isJumping) {
+      const JUMP_FORCE = -600;
+      this.velocity.y = JUMP_FORCE;
+      this.isJumping = true;
+    }
+  }
+
+  public onCollide(result: CollisionResult): void {
+    // If we hit something while moving up, stop upward velocity
+    if (result.normal?.y === 1) {
+      this.velocity.y = 0;
+    }
+    // If we hit something while moving down, we've landed
+    else if (result.normal?.y === -1) {
+      this.isJumping = false;
+      this.velocity.y = 0;
+    }
+    // If we hit something horizontally, stop horizontal velocity
+    else if (result.normal?.x !== 0) {
+      this.velocity.x = 0;
+    }
+  }
+}
+
+export default class TowerfallPhysicsScene extends BaseScene {
+  title = 'Towerfall Physics';
+  subtitle = 'Actors: 1';
+
+  private player: Player;
   private physicsContainer: Container;
   private numActors = 1;
   protected config = {
     debug: true,
+    itemsToAdd: 20,
+    gravity: 1000,
+    maxVelocity: 900,
     gridCellSize: 100,
   };
 
@@ -37,6 +74,14 @@ export default class TowerfallPhysicsScene extends BaseScene {
   configureGUI() {
     const physicsFolder = this.gui.addFolder('Physics Settings');
     physicsFolder.open();
+    physicsFolder.add(this.config, 'itemsToAdd', 0, 200, 10);
+    physicsFolder.add(this.config, 'gravity', 0, 2000, 100).onChange(() => {
+      this.physics.system.gravity = this.config.gravity;
+    });
+
+    physicsFolder.add(this.config, 'maxVelocity', 0, 2000, 100).onChange(() => {
+      this.physics.system.maxVelocity = this.config.maxVelocity;
+    });
 
     physicsFolder
       .add(this.config, 'debug')
@@ -62,8 +107,8 @@ export default class TowerfallPhysicsScene extends BaseScene {
     // Initialize physics
     await this.physics.initialize(this.app, {
       container: this.physicsContainer,
-      gravity: 1000,
-      maxVelocity: 900,
+      gravity: this.config.gravity,
+      maxVelocity: this.config.maxVelocity,
       gridSize: this.config.gridCellSize,
       debug: this.config.debug,
     });
@@ -76,15 +121,8 @@ export default class TowerfallPhysicsScene extends BaseScene {
     this.physicsContainer.add.existing(playerSprite);
 
     // Create player with sprite as view
-    this.player = this.physics.createActor([100, 100], { width: 32, height: 32 }, playerSprite);
-
-    this.player.onCollideY = (direction: number) => {
-      if (direction > 0) {
-        // Hit ground
-        this.canJump = true;
-        this.isJumping = false;
-      }
-    };
+    this.player = new Player(100, 100, { width: 32, height: 32 }, playerSprite);
+    this.physics.system.addActor(this.player);
 
     // Create platforms
     this.createPlatform(0, this.app.size.height - 32, this.app.size.width, 32); // Ground
@@ -115,15 +153,13 @@ export default class TowerfallPhysicsScene extends BaseScene {
     this.addSignalConnection(
       this.app.actions('move_left').connect(this._movePlayer),
       this.app.actions('move_right').connect(this._movePlayer),
-      this.app.actions('jump').connect(this._jump),
     );
 
     this.eventMode = 'static';
-    this.on('click', (event: FederatedPointerEvent) => this._addActors(new Point(event.globalX, event.globalY), 100));
+    this.on('click', (event: FederatedPointerEvent) => this._addActors(new Point(event.globalX, event.globalY)));
   }
 
   protected _handleDebugChanged() {
-    console.log('debug changed', this.config.debug);
     this.physics.system.debug = this.config.debug;
   }
 
@@ -140,26 +176,18 @@ export default class TowerfallPhysicsScene extends BaseScene {
     return this.physics.createSolid({ x, y }, { width, height }, sprite);
   }
 
-  private _movePlayer = (detail: ActionDetail): void => {
+  private _movePlayer(detail: ActionDetail) {
     const MOVE_SPEED = 600;
     const direction = detail.id === 'move_left' ? -1 : 1;
     this.player.velocity.x = direction * MOVE_SPEED;
-  };
+  }
 
-  private _jump = (): void => {
-    if (this.canJump && !this.isJumping) {
-      const JUMP_FORCE = -600;
-      this.player.velocity.y = JUMP_FORCE;
-      this.isJumping = true;
-      this.canJump = false;
-    }
-  };
-
-  private _addActors(pt: Point, amount: number = 1) {
+  private _addActors(pt: Point) {
+    const amount = this.config.itemsToAdd;
     for (let i = 0; i < amount; i++) {
       const sprite = new Graphics();
 
-      const size = 10 + Math.random() * 10;
+      const size = Math.round(16 + Math.random() * 16);
       sprite.rect(0, 0, size, size);
       sprite.fill({ color: Math.random() * 0xffffff, alpha: 0.5 });
       this.physicsContainer.add.existing(sprite);
@@ -169,21 +197,10 @@ export default class TowerfallPhysicsScene extends BaseScene {
       // Give initial random velocity
       const angle = Math.random() * Math.PI * 2;
 
-      const speed = 200 + Math.random() * 300;
+      const speed = 200 + Math.random() * 200;
 
       actor.velocity.x = Math.cos(angle) * speed;
       actor.velocity.y = Math.sin(angle) * speed;
-
-      // Stop on collision for rectangles
-      actor.onCollideX = () => {
-        actor.velocity.x = 0;
-        actor.velocity.y *= 0.5;
-      };
-
-      actor.onCollideY = () => {
-        actor.velocity.y = 0;
-        actor.velocity.x *= 0.95;
-      };
     }
 
     this.numActors += amount;

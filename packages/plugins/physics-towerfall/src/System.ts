@@ -17,7 +17,6 @@ export interface CollisionResult {
   collided: boolean;
   normal?: Vector2;
   penetration?: number;
-  restitution?: number;
 }
 
 export class System {
@@ -36,13 +35,14 @@ export class System {
     if (this._debug) {
       if (!this._debugContainer) {
         this._debugContainer = this.options.plugin.container.addChild(new Container());
-        this._debugGfx = new Graphics();
-        this._debugContainer.addChild(this._debugGfx);
       }
+      if (!this._debugGfx) {
+        this._debugGfx = new Graphics();
+      }
+      this._debugContainer.addChild(this._debugGfx);
     } else {
       this._debugGfx?.clear();
       this._debugContainer?.removeChildren();
-      this._debugContainer?.destroy();
     }
   }
 
@@ -53,6 +53,14 @@ export class System {
     for (const solid of this.solids) {
       this.addSolidToGrid(solid);
     }
+  }
+
+  set gravity(value: number) {
+    this.options.gravity = value;
+  }
+
+  set maxVelocity(value: number) {
+    this.options.maxVelocity = value;
   }
 
   constructor(options: PhysicsSystemOptions) {
@@ -110,11 +118,15 @@ export class System {
     actor.updateView();
   }
 
+  public addActor(actor: Actor): void {
+    this.actors.add(actor);
+    actor.updateView();
+  }
+
   public createActor(position: PointLike, bodyConfig: PhysicsBodyConfig, view: PhysicsObjectView): Actor {
     const { x, y } = resolvePointLike(position);
     const actor = new Actor(x, y, bodyConfig, view);
-    this.actors.add(actor);
-    actor.updateView();
+    this.addActor(actor);
     return actor;
   }
 

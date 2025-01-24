@@ -1,14 +1,10 @@
+import { Application } from 'dill-pixel';
+import { Entity } from './Entity';
 import { Solid } from './Solid';
-import { PhysicsBodyConfig, PhysicsObject, PhysicsObjectView, Vector2 } from './types';
+import { CollisionResult, PhysicsBodyConfig, PhysicsObjectView, Vector2 } from './types';
 
-export class Actor extends PhysicsObject {
+export class Actor<T extends Application = Application> extends Entity<T> {
   public velocity: Vector2 = { x: 0, y: 0 };
-  public restitution: number;
-  private xRemainder: number = 0;
-  private yRemainder: number = 0;
-
-  public onCollideX?: (direction: number, normal?: Vector2, penetration?: number) => void;
-  public onCollideY?: (direction: number, normal?: Vector2, penetration?: number) => void;
 
   constructor(
     x: number,
@@ -26,9 +22,24 @@ export class Actor extends PhysicsObject {
     this._y = Math.round(y);
     this.width = Math.round(bodyConfig.width);
     this.height = Math.round(bodyConfig.height);
-    this.restitution = bodyConfig.restitution ?? 0;
     this.updateView();
+
+    this.initialize();
   }
+
+  protected initialize() {
+    // Override in subclass
+  }
+
+  /**
+   * Called when the actor collides with anything
+   * @param result The collision result containing information about the collision
+   */
+  public onCollide(result: CollisionResult): void {
+    // Override in subclass
+    void result;
+  }
+
   /**
    * Check if this actor is riding the given solid
    * By default, an actor is riding if it's directly above the solid
@@ -45,6 +56,14 @@ export class Actor extends PhysicsObject {
   }
 
   /**
+   * Check if this actor is riding any solid in the physics system
+   */
+  public isRidingSolid(): boolean {
+    const solids = this.getSolidsAt(this.x, this.y + 1);
+    return solids.some((solid) => this.isRiding(solid));
+  }
+
+  /**
    * Called when the actor is squeezed between solids
    * By default, just stops movement
    */
@@ -57,11 +76,11 @@ export class Actor extends PhysicsObject {
    * Move the actor horizontally, checking for collisions with solids
    */
   public moveX(amount: number, onCollide?: () => void): void {
-    this.xRemainder += amount;
-    const move = Math.round(this.xRemainder);
+    this._xRemainder += amount;
+    const move = Math.round(this._xRemainder);
 
     if (move !== 0) {
-      this.xRemainder -= move;
+      this._xRemainder -= move;
       const sign = Math.sign(move);
 
       let remaining = Math.abs(move);
@@ -71,9 +90,15 @@ export class Actor extends PhysicsObject {
 
         // Check for collision with any solid
         let collided = false;
+        let collision: CollisionResult | null = null;
         for (const solid of this.getSolidsAt(nextX, this.y)) {
           if (solid.collidable) {
             collided = true;
+            collision = {
+              collided: true,
+              normal: { x: -sign, y: 0 },
+              penetration: Math.abs(nextX - (solid.x + (sign > 0 ? 0 : solid.width))),
+            };
             break;
           }
         }
@@ -83,6 +108,9 @@ export class Actor extends PhysicsObject {
           remaining--;
           this.updateView();
         } else {
+          if (collision) {
+            this.onCollide(collision);
+          }
           if (onCollide) onCollide();
           break;
         }
@@ -94,11 +122,11 @@ export class Actor extends PhysicsObject {
    * Move the actor vertically, checking for collisions with solids
    */
   public moveY(amount: number, onCollide?: () => void): void {
-    this.yRemainder += amount;
-    const move = Math.round(this.yRemainder);
+    this._yRemainder += amount;
+    const move = Math.round(this._yRemainder);
 
     if (move !== 0) {
-      this.yRemainder -= move;
+      this._yRemainder -= move;
       const sign = Math.sign(move);
 
       let remaining = Math.abs(move);
@@ -108,9 +136,15 @@ export class Actor extends PhysicsObject {
 
         // Check for collision with any solid
         let collided = false;
+        let collision: CollisionResult | null = null;
         for (const solid of this.getSolidsAt(this.x, nextY)) {
           if (solid.collidable) {
             collided = true;
+            collision = {
+              collided: true,
+              normal: { x: 0, y: -sign },
+              penetration: Math.abs(nextY - (solid.y + (sign > 0 ? 0 : solid.height))),
+            };
             break;
           }
         }
@@ -120,6 +154,9 @@ export class Actor extends PhysicsObject {
           remaining--;
           this.updateView();
         } else {
+          if (collision) {
+            this.onCollide(collision);
+          }
           if (onCollide) onCollide();
           break;
         }

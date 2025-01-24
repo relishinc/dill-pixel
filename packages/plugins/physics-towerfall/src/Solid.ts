@@ -1,12 +1,11 @@
+import { Application } from 'dill-pixel';
 import { Actor } from './Actor';
-import { PhysicsBodyConfig, PhysicsObject, PhysicsObjectView } from './types';
+import { Entity } from './Entity';
+import { PhysicsBodyConfig, PhysicsObjectView } from './types';
 
-export class Solid extends PhysicsObject {
+export class Solid<T extends Application = Application> extends Entity<T> {
   public collidable: boolean = true;
   public moving: boolean = false;
-
-  private _xRemainder: number = 0;
-  private _yRemainder: number = 0;
 
   private _nextX: number;
   private _nextY: number;
@@ -42,7 +41,6 @@ export class Solid extends PhysicsObject {
     this._nextY = this._y;
     this.width = Math.round(bodyConfig.width);
     this.height = Math.round(bodyConfig.height);
-    this.restitution = bodyConfig.restitution ?? 0;
 
     if (view) {
       this.view = view;
