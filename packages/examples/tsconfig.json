@@ -31,6 +31,9 @@
       "path": "../plugins/physics-matter"
     },
     {
+      "path": "../plugins/physics-towerfall"
+    },
+    {
       "path": "../plugins/rive"
     },
     {

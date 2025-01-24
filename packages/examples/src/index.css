@@ -226,7 +226,7 @@ nav.disabled {
 }
 
 #dill-pixel-game-container #scene-debug {
-  display: none;
+  /* display: none; */
 }
 
 @media (max-width: 480px) {

@@ -1,0 +1,36 @@
+{
+  "name": "@dill-pixel/plugin-towerfall-physics",
+  "version": "4.4.4",
+  "description": "",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "main": "lib/dill-pixel-plugin-towerfall-physics.mjs",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "default": "./lib/dill-pixel-plugin-towerfall-physics.mjs",
+      "types": "./lib/index.d.ts"
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "pnpm run generate-version && vite build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate-version": "node generateVersion.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "dill-pixel": "workspace:*",
+    "vite": "6.0.5",
+    "vite-plugin-dts": "^3.9.1"
+  },
+  "peerDependencies": {
+    "dill-pixel": "4.4.4",
+    "gsap": "^3.12.5",
+    "pixi.js": "8.6.6"
+  }
+}
