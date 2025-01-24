@@ -1,45 +1,34 @@
 import { Solid } from './Solid';
-import { CollisionShape, PhysicsBodyConfig, PhysicsObject, PhysicsObjectView, Vector2 } from './types';
+import { PhysicsBodyConfig, PhysicsObject, PhysicsObjectView, Vector2 } from './types';
 
 export class Actor extends PhysicsObject {
   public velocity: Vector2 = { x: 0, y: 0 };
+  public restitution: number;
+  private xRemainder: number = 0;
+  private yRemainder: number = 0;
+
   public onCollideX?: (direction: number, normal?: Vector2, penetration?: number) => void;
   public onCollideY?: (direction: number, normal?: Vector2, penetration?: number) => void;
-  public view?: PhysicsObjectView;
-  public shape: CollisionShape;
-  public radius?: number;
-  public width: number;
-  public height: number;
-  public restitution: number = 0;
 
   constructor(
-    public x: number,
-    public y: number,
+    x: number,
+    y: number,
     bodyConfig: PhysicsBodyConfig,
-    view?: PhysicsObjectView,
+    public view: PhysicsObjectView,
   ) {
     super();
-    this._x = x;
-    this._y = y;
-    this.shape = bodyConfig.shape;
+
+    if (!bodyConfig.width || !bodyConfig.height) {
+      throw new Error('Width and height are required for bodies');
+    }
+
+    this._x = Math.round(x);
+    this._y = Math.round(y);
+    this.width = Math.round(bodyConfig.width);
+    this.height = Math.round(bodyConfig.height);
     this.restitution = bodyConfig.restitution ?? 0;
-
-    if (this.shape === 'circle') {
-      if (!bodyConfig.radius) throw new Error('Radius is required for circular bodies');
-      this.radius = bodyConfig.radius;
-      this.width = this.height = this.radius * 2;
-    } else {
-      if (!bodyConfig.width || !bodyConfig.height)
-        throw new Error('Width and height are required for rectangular bodies');
-      this.width = bodyConfig.width;
-      this.height = bodyConfig.height;
-    }
-
-    if (view) {
-      this.setView(view);
-    }
+    this.updateView();
   }
-
   /**
    * Check if this actor is riding the given solid
    * By default, an actor is riding if it's directly above the solid
@@ -62,5 +51,91 @@ export class Actor extends PhysicsObject {
   public squish(): void {
     this.velocity.x = 0;
     this.velocity.y = 0;
+  }
+
+  /**
+   * Move the actor horizontally, checking for collisions with solids
+   */
+  public moveX(amount: number, onCollide?: () => void): void {
+    this.xRemainder += amount;
+    const move = Math.round(this.xRemainder);
+
+    if (move !== 0) {
+      this.xRemainder -= move;
+      const sign = Math.sign(move);
+
+      let remaining = Math.abs(move);
+      while (remaining > 0) {
+        const step = sign;
+        const nextX = this.x + step;
+
+        // Check for collision with any solid
+        let collided = false;
+        for (const solid of this.getSolidsAt(nextX, this.y)) {
+          if (solid.collidable) {
+            collided = true;
+            break;
+          }
+        }
+
+        if (!collided) {
+          this._x = nextX;
+          remaining--;
+          this.updateView();
+        } else {
+          if (onCollide) onCollide();
+          break;
+        }
+      }
+    }
+  }
+
+  /**
+   * Move the actor vertically, checking for collisions with solids
+   */
+  public moveY(amount: number, onCollide?: () => void): void {
+    this.yRemainder += amount;
+    const move = Math.round(this.yRemainder);
+
+    if (move !== 0) {
+      this.yRemainder -= move;
+      const sign = Math.sign(move);
+
+      let remaining = Math.abs(move);
+      while (remaining > 0) {
+        const step = sign;
+        const nextY = this.y + step;
+
+        // Check for collision with any solid
+        let collided = false;
+        for (const solid of this.getSolidsAt(this.x, nextY)) {
+          if (solid.collidable) {
+            collided = true;
+            break;
+          }
+        }
+
+        if (!collided) {
+          this._y = nextY;
+          remaining--;
+          this.updateView();
+        } else {
+          if (onCollide) onCollide();
+          break;
+        }
+      }
+    }
+  }
+
+  public updateView(): void {
+    if (this.view) {
+      this.view.x = this._x;
+      this.view.y = this._y;
+    }
+  }
+
+  // This would be implemented by the physics system to provide the solids at a given position
+  protected getSolidsAt(_x: number, _y: number): Solid[] {
+    return this.system.getSolidsAt(_x, _y, this);
   }
 }

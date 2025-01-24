@@ -1,4 +1,4 @@
-import { Application, Container, Plugin } from 'dill-pixel';
+import { Application, Container, Plugin, PointLike } from 'dill-pixel';
 
 import { Container as PIXIContainer, Ticker } from 'pixi.js';
 import { Actor } from './Actor';
@@ -55,15 +55,15 @@ export default class TowerfallPhysicsPlugin extends Plugin {
   /**
    * Create a new physics actor
    */
-  public createActor(x: number, y: number, bodyConfig: PhysicsBodyConfig, view?: PhysicsObjectView): Actor {
-    return this.system.createActor(x, y, bodyConfig, view);
+  public createActor(position: PointLike, bodyConfig: PhysicsBodyConfig, view: PhysicsObjectView): Actor {
+    return this.system.createActor(position, bodyConfig, view);
   }
 
   /**
    * Create a new solid obstacle
    */
-  public createSolid(x: number, y: number, bodyConfig: PhysicsBodyConfig, view?: PhysicsObjectView): Solid {
-    return this.system.createSolid(x, y, bodyConfig, view);
+  public createSolid(position: PointLike, bodyConfig: PhysicsBodyConfig, view: PhysicsObjectView): Solid {
+    return this.system.createSolid(position, bodyConfig, view);
   }
 
   /**
@@ -81,6 +81,7 @@ export default class TowerfallPhysicsPlugin extends Plugin {
   }
 
   public updateSolidPosition(solid: Solid, x: number, y: number): void {
-    this.system.updateSolidPosition(solid, x, y);
+    solid.x = x;
+    solid.y = y;
   }
 }

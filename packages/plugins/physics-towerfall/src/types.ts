@@ -20,10 +20,9 @@ export interface Circle {
   radius: number;
 }
 
-export type CollisionShape = 'rectangle' | 'circle';
+export type CollisionShape = 'rectangle';
 
 export interface PhysicsBodyConfig {
-  shape: CollisionShape;
   width?: number;
   height?: number;
   radius?: number;
@@ -31,28 +30,30 @@ export interface PhysicsBodyConfig {
 }
 
 export type PhysicsObjectView = Container | ViewContainer;
-
+export type PhysicsObjectType = 'actor' | 'solid' | (string & {});
 export class PhysicsObject<A extends Application = Application> {
   protected _x: number;
   protected _y: number;
+
   get x(): number {
-    return this._x;
-  }
-  get y(): number {
-    return this._y;
+    return Math.round(this._x);
   }
   set x(value: number) {
     this._x = value;
   }
+
+  get y(): number {
+    return Math.round(this._y);
+  }
+
   set y(value: number) {
     this._y = value;
   }
 
-  shape: CollisionShape;
   width: number;
   height: number;
-  radius?: number;
-  view?: PhysicsObjectView;
+  view: PhysicsObjectView;
+  restitution: number;
 
   get app(): A {
     return Application.getInstance() as A;
@@ -71,42 +72,18 @@ export class PhysicsObject<A extends Application = Application> {
     this.updateView();
   }
 
-  updateView(): void {
+  public updateView(): void {
     if (this.view) {
       this.view.position.set(this.x, this.y);
     }
   }
 
   public getBounds(): Rectangle {
-    if (this.shape === 'circle') {
-      return {
-        x: this.x - this.radius!,
-        y: this.y - this.radius!,
-        width: this.radius! * 2,
-        height: this.radius! * 2,
-      };
-    }
     return {
       x: this.x,
       y: this.y,
       width: this.width,
       height: this.height,
-    };
-  }
-
-  public getCircle(): Circle {
-    if (this.shape === 'circle') {
-      return {
-        x: this.x,
-        y: this.y,
-        radius: this.radius!,
-      };
-    }
-    // For rectangular bodies, return a circle that encompasses the rectangle
-    return {
-      x: this.x + this.width / 2,
-      y: this.y + this.height / 2,
-      radius: Math.sqrt((this.width * this.width + this.height * this.height) / 4),
     };
   }
 }
