@@ -25,9 +25,32 @@ export default class TowerfallPhysicsScene extends BaseScene {
   private canJump = false;
   private physicsContainer: Container;
   private numActors = 1;
+  protected config = {
+    debug: true,
+    gridCellSize: 100,
+  };
 
   get physics(): TowerfallPhysicsPlugin {
     return this.app.getPlugin('towerfall-physics') as TowerfallPhysicsPlugin;
+  }
+
+  configureGUI() {
+    const physicsFolder = this.gui.addFolder('Physics Settings');
+    physicsFolder.open();
+
+    physicsFolder
+      .add(this.config, 'debug')
+      .onChange(() => {
+        this._handleDebugChanged();
+      })
+      .name('Debug Physics');
+
+    physicsFolder
+      .add(this.config, 'gridCellSize', 50, 400, 50)
+      .onChange(() => {
+        this._handleGridCellSizeChange();
+      })
+      .name('Grid Cell Size');
   }
 
   async initialize() {
@@ -39,10 +62,10 @@ export default class TowerfallPhysicsScene extends BaseScene {
     // Initialize physics
     await this.physics.initialize(this.app, {
       container: this.physicsContainer,
-      gridSize: 100,
       gravity: 1000,
       maxVelocity: 900,
-      debug: true,
+      gridSize: this.config.gridCellSize,
+      debug: this.config.debug,
     });
 
     // Create player sprite (circular)
@@ -62,7 +85,6 @@ export default class TowerfallPhysicsScene extends BaseScene {
         this.isJumping = false;
       }
     };
-    this.start;
 
     // Create platforms
     this.createPlatform(0, this.app.size.height - 32, this.app.size.width, 32); // Ground
@@ -98,6 +120,15 @@ export default class TowerfallPhysicsScene extends BaseScene {
 
     this.eventMode = 'static';
     this.on('click', (event: FederatedPointerEvent) => this._addActors(new Point(event.globalX, event.globalY), 100));
+  }
+
+  protected _handleDebugChanged() {
+    console.log('debug changed', this.config.debug);
+    this.physics.system.debug = this.config.debug;
+  }
+
+  protected _handleGridCellSizeChange() {
+    this.physics.system.gridSize = this.config.gridCellSize;
   }
 
   private createPlatform(x: number, y: number, width: number, height: number): Solid {

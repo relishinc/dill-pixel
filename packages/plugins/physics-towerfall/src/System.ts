@@ -2,12 +2,15 @@ import { PointLike, resolvePointLike } from 'dill-pixel';
 import { Container, Graphics } from 'pixi.js';
 import { Actor } from './Actor';
 import { Solid } from './Solid';
+import TowerfallPhysicsPlugin from './TowerfallPhysicsPlugin';
 import { PhysicsBodyConfig, PhysicsObjectView, Rectangle, Vector2 } from './types';
 
 export interface PhysicsSystemOptions {
+  plugin: TowerfallPhysicsPlugin;
   gridSize: number;
   gravity: number;
   maxVelocity: number;
+  debug?: boolean;
 }
 
 export interface CollisionResult {
@@ -18,14 +21,43 @@ export interface CollisionResult {
 }
 
 export class System {
+  private readonly options: PhysicsSystemOptions;
   private actors: Set<Actor> = new Set();
   private solids: Set<Solid> = new Set();
   private grid: Map<string, Set<Solid>> = new Map();
-  private debugGfx: Graphics;
-  private readonly options: PhysicsSystemOptions;
+  // debugging
+  private _debugContainer: Container;
+  private _debugGfx: Graphics | null = null;
+  private _debug: boolean = false;
+
+  set debug(value: boolean) {
+    this._debug = value;
+
+    if (this._debug) {
+      if (!this._debugContainer) {
+        this._debugContainer = this.options.plugin.container.addChild(new Container());
+        this._debugGfx = new Graphics();
+        this._debugContainer.addChild(this._debugGfx);
+      }
+    } else {
+      this._debugGfx?.clear();
+      this._debugContainer?.removeChildren();
+      this._debugContainer?.destroy();
+    }
+  }
+
+  set gridSize(value: number) {
+    this.options.gridSize = value;
+    this.grid.clear();
+
+    for (const solid of this.solids) {
+      this.addSolidToGrid(solid);
+    }
+  }
 
   constructor(options: PhysicsSystemOptions) {
     this.options = options;
+    this.debug = options.debug ?? false;
   }
 
   public update(dt: number): void {
@@ -49,6 +81,10 @@ export class System {
     // Update actors
     for (const actor of this.actors) {
       this.updateActor(actor, deltaTime);
+    }
+    // Update debug rendering if enabled
+    if (this._debug) {
+      this.debugRender();
     }
   }
 
@@ -123,13 +159,49 @@ export class System {
       height: actor.height,
     };
 
+    // Calculate movement direction from current position to check position
+    const dx = x - actor.x;
+    const dy = y - actor.y;
+
+    // Get the base cells that the bounds intersect
     const cells = this.getCells(bounds);
+
+    // Add one extra cell in the direction of movement
+    if (dx !== 0) {
+      const extraX =
+        dx > 0 ? Math.ceil((x + bounds.width) / this.options.gridSize) : Math.floor(x / this.options.gridSize) - 1;
+      for (
+        let y = Math.floor(bounds.y / this.options.gridSize);
+        y < Math.ceil((bounds.y + bounds.height) / this.options.gridSize);
+        y++
+      ) {
+        cells.push(`${extraX},${y}`);
+      }
+    }
+
+    if (dy !== 0) {
+      const extraY =
+        dy > 0 ? Math.ceil((y + bounds.height) / this.options.gridSize) : Math.floor(y / this.options.gridSize) - 1;
+      for (
+        let x = Math.floor(bounds.x / this.options.gridSize);
+        x < Math.ceil((bounds.x + bounds.width) / this.options.gridSize);
+        x++
+      ) {
+        cells.push(`${x},${extraY}`);
+      }
+    }
+
     const result: Solid[] = [];
+    const seen = new Set<Solid>();
 
     for (const cell of cells) {
       const solids = this.grid.get(cell);
       if (solids) {
         for (const solid of solids) {
+          // Skip if we've already checked this solid
+          if (seen.has(solid)) continue;
+          seen.add(solid);
+
           // Only add solids that actually overlap with the actor's bounds
           if (
             this.overlaps(bounds, {
@@ -156,14 +228,16 @@ export class System {
     const cells: string[] = [];
     const { gridSize } = this.options;
 
-    // Only get cells that could contain overlapping solids
-    const startX = Math.floor((bounds.x - gridSize) / gridSize);
-    const startY = Math.floor((bounds.y - gridSize) / gridSize);
-    const endX = Math.ceil((bounds.x + bounds.width + gridSize) / gridSize);
-    const endY = Math.ceil((bounds.y + bounds.height + gridSize) / gridSize);
+    // Calculate the exact grid cells that the bounds intersect with
+    const startX = Math.floor(bounds.x / gridSize);
+    const startY = Math.floor(bounds.y / gridSize);
+    const endX = Math.ceil((bounds.x + bounds.width) / gridSize);
+    const endY = Math.ceil((bounds.y + bounds.height) / gridSize);
 
-    for (let x = startX; x <= endX; x++) {
-      for (let y = startY; y <= endY; y++) {
+    // Only check one additional cell in the direction of movement for actors
+    // For solids or static bounds, just use the exact cells
+    for (let x = startX; x < endX; x++) {
+      for (let y = startY; y < endY; y++) {
         cells.push(`${x},${y}`);
       }
     }
@@ -208,12 +282,11 @@ export class System {
     }
   }
 
-  public debugRender(container: Container): void {
-    if (!this.debugGfx) {
-      this.debugGfx = new Graphics();
-      container.addChild(this.debugGfx);
+  public debugRender(): void {
+    if (!this._debugGfx) {
+      return;
     }
-    const gfx = this.debugGfx;
+    const gfx = this._debugGfx!;
     gfx.clear();
 
     // Draw grid
@@ -234,5 +307,12 @@ export class System {
       gfx.rect(actor.x, actor.y, actor.width, actor.height);
       gfx.stroke({ color: 0xff0000, width: 1, alignment: 0.5 });
     }
+  }
+
+  public destroy(): void {
+    this.debug = false;
+    this.grid.clear();
+    this.solids.clear();
+    this.actors.clear();
   }
 }

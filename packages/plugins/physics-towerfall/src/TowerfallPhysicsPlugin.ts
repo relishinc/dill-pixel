@@ -1,4 +1,4 @@
-import { Application, Container, Plugin, PointLike } from 'dill-pixel';
+import { Application, Plugin, PointLike } from 'dill-pixel';
 
 import { Container as PIXIContainer, Ticker } from 'pixi.js';
 import { Actor } from './Actor';
@@ -9,8 +9,7 @@ import { PhysicsBodyConfig, PhysicsObjectView } from './types';
 
 export default class TowerfallPhysicsPlugin extends Plugin {
   public system: System;
-  private debugContainer?: Container;
-  private container: PIXIContainer;
+  public container: PIXIContainer;
 
   constructor() {
     super('towerfall-physics');
@@ -28,10 +27,11 @@ export default class TowerfallPhysicsPlugin extends Plugin {
       gridSize,
       gravity,
       maxVelocity,
+      plugin: this,
     });
 
     if (debug) {
-      this.debugContainer = this.container.addChild(new Container());
+      this.system.debug = true;
     }
 
     // Register update loop
@@ -40,17 +40,13 @@ export default class TowerfallPhysicsPlugin extends Plugin {
 
   public destroy(): void {
     this.app.ticker.remove(this.update);
-    this.debugContainer?.destroy();
+    this.system.destroy();
     super.destroy();
   }
 
-  private update = (_ticker: Ticker) => {
+  private update(_ticker: Ticker) {
     this.system.update(_ticker.deltaTime);
-
-    if (this.debugContainer) {
-      this.system.debugRender(this.debugContainer);
-    }
-  };
+  }
 
   /**
    * Create a new physics actor

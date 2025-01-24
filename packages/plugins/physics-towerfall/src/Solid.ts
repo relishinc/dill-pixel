@@ -2,14 +2,14 @@ import { Actor } from './Actor';
 import { PhysicsBodyConfig, PhysicsObject, PhysicsObjectView } from './types';
 
 export class Solid extends PhysicsObject {
-  private xRemainder: number = 0;
-  private yRemainder: number = 0;
-
   public collidable: boolean = true;
+  public moving: boolean = false;
+
+  private _xRemainder: number = 0;
+  private _yRemainder: number = 0;
 
   private _nextX: number;
   private _nextY: number;
-  public moving: boolean = false;
 
   public set x(value: number) {
     this._nextX = Math.round(value);
@@ -71,11 +71,11 @@ export class Solid extends PhysicsObject {
     const totalX = x + (this._nextX - this._x);
     const totalY = y + (this._nextY - this._y);
 
-    this.xRemainder += totalX;
-    this.yRemainder += totalY;
+    this._xRemainder += totalX;
+    this._yRemainder += totalY;
 
-    const moveX = Math.round(this.xRemainder);
-    const moveY = Math.round(this.yRemainder);
+    const moveX = Math.round(this._xRemainder);
+    const moveY = Math.round(this._yRemainder);
 
     if (moveX !== 0 || moveY !== 0) {
       // Get all riding actors before movement
@@ -90,7 +90,7 @@ export class Solid extends PhysicsObject {
       this.collidable = false;
 
       if (moveX !== 0) {
-        this.xRemainder -= moveX;
+        this._xRemainder -= moveX;
         this._x += moveX;
 
         if (moveX > 0) {
@@ -119,7 +119,7 @@ export class Solid extends PhysicsObject {
       }
 
       if (moveY !== 0) {
-        this.yRemainder -= moveY;
+        this._yRemainder -= moveY;
         this._y += moveY;
 
         if (moveY > 0) {
@@ -149,11 +149,11 @@ export class Solid extends PhysicsObject {
 
       // Re-enable collisions
       this.collidable = true;
+      this.moving = false;
 
       // Update next positions to match current
       this._nextX = this._x;
       this._nextY = this._y;
-      this.moving = false;
 
       // Update the view position
       this.updateView();
