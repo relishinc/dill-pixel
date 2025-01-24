@@ -152,13 +152,9 @@ export const config = defineConfig<Data>({
       },
     ],
     [
-      'arcade-physics',
+      'towerfall-physics',
       {
         autoLoad: false,
-        options: {
-          debug: true,
-          useTree: true,
-        },
       },
     ],
     [

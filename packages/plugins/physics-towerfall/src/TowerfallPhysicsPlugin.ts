@@ -2,24 +2,13 @@ import { Application, Container, Plugin } from 'dill-pixel';
 
 import { Container as PIXIContainer, Ticker } from 'pixi.js';
 import { Actor } from './Actor';
+import { TowerfallPhysicsOptions } from './interfaces';
 import { Solid } from './Solid';
-import { PhysicsSystem } from './System';
+import { System } from './System';
 import { PhysicsBodyConfig, PhysicsObjectView } from './types';
 
-export interface TowerfallPhysicsOptions {
-  container: PIXIContainer;
-  /** Grid cell size in pixels */
-  gridSize?: number;
-  /** Gravity strength */
-  gravity?: number;
-  /** Maximum velocity */
-  maxVelocity?: number;
-  /** Whether to enable debug rendering */
-  debug?: boolean;
-}
-
-export class TowerfallPhysicsPlugin extends Plugin {
-  private system: PhysicsSystem;
+export default class TowerfallPhysicsPlugin extends Plugin {
+  public system: System;
   private debugContainer?: Container;
   private container: PIXIContainer;
 
@@ -35,7 +24,7 @@ export class TowerfallPhysicsPlugin extends Plugin {
 
     this.container = options.container!;
 
-    this.system = new PhysicsSystem({
+    this.system = new System({
       gridSize,
       gravity,
       maxVelocity,
@@ -89,5 +78,9 @@ export class TowerfallPhysicsPlugin extends Plugin {
    */
   public removeSolid(solid: Solid): void {
     this.system.removeSolid(solid);
+  }
+
+  public updateSolidPosition(solid: Solid, x: number, y: number): void {
+    this.system.updateSolidPosition(solid, x, y);
   }
 }

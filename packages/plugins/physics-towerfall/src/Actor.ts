@@ -1,23 +1,28 @@
-import { Container } from 'pixi.js';
-import { Circle, CollisionShape, PhysicsBodyConfig, PhysicsObject, Rectangle, Vector2 } from './types';
+import { Solid } from './Solid';
+import { CollisionShape, PhysicsBodyConfig, PhysicsObject, PhysicsObjectView, Vector2 } from './types';
 
-export class Actor implements PhysicsObject {
+export class Actor extends PhysicsObject {
   public velocity: Vector2 = { x: 0, y: 0 };
-  public onCollideX?: (direction: number) => void;
-  public onCollideY?: (direction: number) => void;
-  public view?: Container;
+  public onCollideX?: (direction: number, normal?: Vector2, penetration?: number) => void;
+  public onCollideY?: (direction: number, normal?: Vector2, penetration?: number) => void;
+  public view?: PhysicsObjectView;
   public shape: CollisionShape;
   public radius?: number;
   public width: number;
   public height: number;
+  public restitution: number = 0;
 
   constructor(
     public x: number,
     public y: number,
     bodyConfig: PhysicsBodyConfig,
-    view?: Container,
+    view?: PhysicsObjectView,
   ) {
+    super();
+    this._x = x;
+    this._y = y;
     this.shape = bodyConfig.shape;
+    this.restitution = bodyConfig.restitution ?? 0;
 
     if (this.shape === 'circle') {
       if (!bodyConfig.radius) throw new Error('Radius is required for circular bodies');
@@ -35,47 +40,27 @@ export class Actor implements PhysicsObject {
     }
   }
 
-  public setView(view: Container): void {
-    this.view = view;
-    this.updateView();
+  /**
+   * Check if this actor is riding the given solid
+   * By default, an actor is riding if it's directly above the solid
+   */
+  public isRiding(solid: Solid): boolean {
+    // Must be directly above the solid (within 1 pixel)
+    const actorBottom = this.y + this.height;
+    const onTop = Math.abs(actorBottom - solid.y) <= 1;
+
+    // Must be horizontally overlapping
+    const overlap = this.x + this.width > solid.x && this.x < solid.x + solid.width;
+
+    return onTop && overlap;
   }
 
-  public updateView(): void {
-    if (this.view) {
-      this.view.position.set(this.x, this.y);
-    }
-  }
-
-  public getBounds(): Rectangle {
-    if (this.shape === 'circle') {
-      return {
-        x: this.x - this.radius!,
-        y: this.y - this.radius!,
-        width: this.radius! * 2,
-        height: this.radius! * 2,
-      };
-    }
-    return {
-      x: this.x,
-      y: this.y,
-      width: this.width,
-      height: this.height,
-    };
-  }
-
-  public getCircle(): Circle {
-    if (this.shape === 'circle') {
-      return {
-        x: this.x,
-        y: this.y,
-        radius: this.radius!,
-      };
-    }
-    // For rectangular bodies, return a circle that encompasses the rectangle
-    return {
-      x: this.x + this.width / 2,
-      y: this.y + this.height / 2,
-      radius: Math.sqrt((this.width * this.width + this.height * this.height) / 4),
-    };
+  /**
+   * Called when the actor is squeezed between solids
+   * By default, just stops movement
+   */
+  public squish(): void {
+    this.velocity.x = 0;
+    this.velocity.y = 0;
   }
 }

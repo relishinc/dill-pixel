@@ -13,11 +13,13 @@ export interface CollisionResult {
   collided: boolean;
   normal?: Vector2;
   penetration?: number;
+  restitution?: number;
 }
 
-export class PhysicsSystem {
+export class System {
   private actors: Set<Actor> = new Set();
   private solids: Set<Solid> = new Set();
+  private movingSolids: Set<Solid> = new Set();
   private grid: Map<string, Set<Solid>> = new Map();
   private debugGfx: Graphics;
   private readonly options: PhysicsSystemOptions;
@@ -26,10 +28,41 @@ export class PhysicsSystem {
     this.options = options;
   }
 
+  public addMovingSolid(solid: Solid): void {
+    this.movingSolids.add(solid);
+  }
+
+  public removeMovingSolid(solid: Solid): void {
+    this.movingSolids.delete(solid);
+  }
+
   public update(dt: number): void {
     // Convert delta time to seconds
     const deltaTime = dt / 60;
 
+    // First update moving solids
+    for (const solid of this.movingSolids) {
+      // Calculate movement delta
+      const dx = solid.x - solid.lastX;
+      const dy = solid.y - solid.lastY;
+
+      if (dx !== 0 || dy !== 0) {
+        // Find all actors that are riding this solid
+        for (const actor of this.actors) {
+          if (actor.isRiding(solid)) {
+            // Move actor with solid, but only by half the movement to prevent overshooting
+            if (dx !== 0) {
+              this.moveX(actor, dx * 0.5);
+            }
+            if (dy !== 0) {
+              this.moveY(actor, dy);
+            }
+          }
+        }
+      }
+    }
+
+    // Then update actors
     for (const actor of this.actors) {
       this.updateActor(actor, deltaTime);
     }
@@ -67,17 +100,13 @@ export class PhysicsSystem {
       const collision = this.checkCollision(actor, bounds);
 
       if (collision.collided) {
-        if (collision.normal && actor.shape === 'circle') {
-          // Project velocity onto the collision normal
-          const dot = actor.velocity.x * collision.normal.x + actor.velocity.y * collision.normal.y;
-
-          // Remove the velocity component in the normal direction
-          actor.velocity.x -= dot * collision.normal.x;
-          actor.velocity.y -= dot * collision.normal.y;
-        } else {
-          actor.velocity.x = 0;
+        // Move actor out of collision by penetration amount if available
+        if (collision.normal && collision.penetration) {
+          actor.x += collision.normal.x * collision.penetration + collision.restitution! * collision.normal.x;
         }
-        actor.onCollideX?.(step);
+
+        // Pass direction, normal, and penetration to callback
+        actor.onCollideX?.(step, collision.normal, collision.penetration);
         break;
       }
 
@@ -95,17 +124,13 @@ export class PhysicsSystem {
       const collision = this.checkCollision(actor, bounds);
 
       if (collision.collided) {
-        if (collision.normal && actor.shape === 'circle') {
-          // Project velocity onto the collision normal
-          const dot = actor.velocity.x * collision.normal.x + actor.velocity.y * collision.normal.y;
-
-          // Remove the velocity component in the normal direction
-          actor.velocity.x -= dot * collision.normal.x;
-          actor.velocity.y -= dot * collision.normal.y;
-        } else {
-          actor.velocity.y = 0;
+        // Move actor out of collision by penetration amount if available
+        if (collision.normal && collision.penetration) {
+          actor.y += collision.normal.y * collision.penetration + collision.restitution! * collision.normal.y;
         }
-        actor.onCollideY?.(step);
+
+        // Pass direction, normal, and penetration to callback
+        actor.onCollideY?.(step, collision.normal, collision.penetration);
         break;
       }
 
@@ -123,16 +148,27 @@ export class PhysicsSystem {
       for (const solid of solids) {
         if (actor.shape === 'circle' && solid.shape === 'circle') {
           const result = this.circleToCircle(actor.getCircle(), solid.getCircle());
-          if (result.collided) return result;
+          if (result.collided) {
+            result.restitution = solid.restitution + actor.restitution;
+            return result;
+          }
         } else if (actor.shape === 'circle') {
           const result = this.circleToRect(actor.getCircle(), solid.getBounds());
-          if (result.collided) return result;
+          if (result.collided) {
+            result.restitution = solid.restitution + actor.restitution;
+            return result;
+          }
         } else if (solid.shape === 'circle') {
           const result = this.circleToRect(solid.getCircle(), actor.getBounds());
-          if (result.collided) return result;
+          if (result.collided) {
+            result.restitution = solid.restitution + actor.restitution;
+            return result;
+          }
         } else {
-          if (this.rectToRect(bounds, solid.getBounds())) {
-            return { collided: true };
+          const result = this.rectToRect(bounds, solid.getBounds());
+          if (result.collided) {
+            result.restitution = solid.restitution + actor.restitution;
+            return result;
           }
         }
       }
@@ -204,8 +240,34 @@ export class PhysicsSystem {
     return { collided: false };
   }
 
-  private rectToRect(a: Rectangle, b: Rectangle): boolean {
-    return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
+  private rectToRect(a: Rectangle, b: Rectangle): CollisionResult {
+    // Check if rectangles overlap
+    if (!(a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y)) {
+      return { collided: false };
+    }
+
+    // Calculate overlap on each axis
+    const overlapX = Math.min(a.x + a.width - b.x, b.x + b.width - a.x);
+    const overlapY = Math.min(a.y + a.height - b.y, b.y + b.height - a.y);
+
+    // Use the smallest overlap to determine the collision normal and penetration
+    if (overlapX < overlapY) {
+      // X-axis collision
+      const fromRight = a.x + a.width / 2 > b.x + b.width / 2;
+      return {
+        collided: true,
+        normal: { x: fromRight ? 1 : -1, y: 0 },
+        penetration: overlapX,
+      };
+    } else {
+      // Y-axis collision
+      const fromBottom = a.y + a.height / 2 > b.y + b.height / 2;
+      return {
+        collided: true,
+        normal: { x: 0, y: fromBottom ? 1 : -1 },
+        penetration: overlapY,
+      };
+    }
   }
 
   private getCells(bounds: Rectangle): string[] {
@@ -298,14 +360,13 @@ export class PhysicsSystem {
     gfx.clear();
 
     // Draw grid
-    gfx.lineStyle(1, 0x666666, 0.5);
     for (const cell of this.grid.keys()) {
       const [x, y] = cell.split(',').map(Number);
       gfx.rect(x * this.options.gridSize, y * this.options.gridSize, this.options.gridSize, this.options.gridSize);
     }
+    gfx.stroke({ color: 0x00ff00, width: 1, pixelLine: true, join: 'miter', cap: 'butt' });
 
     // Draw solids
-    gfx.lineStyle(2, 0x00ff00);
     for (const solid of this.solids) {
       if (solid.shape === 'circle') {
         gfx.circle(solid.x, solid.y, solid.radius!);
@@ -313,34 +374,63 @@ export class PhysicsSystem {
         gfx.rect(solid.x, solid.y, solid.width, solid.height);
       }
     }
+    gfx.stroke({ color: 0xf0f0f0, width: 1, alignment: 0.5 });
 
     // Draw actors and their collision normals
     for (const actor of this.actors) {
       // Draw actor shape
-      gfx.lineStyle(2, 0xff0000);
       if (actor.shape === 'circle') {
         gfx.circle(actor.x, actor.y, actor.radius!);
       } else {
         gfx.rect(actor.x, actor.y, actor.width, actor.height);
       }
 
+      gfx.stroke({ color: 0xff0000, width: 1, alignment: 0.5 });
       // Check and draw collision normals
-      const bounds = this.getActorBounds(actor, actor.x, actor.y);
-      const collision = this.checkCollision(actor, bounds);
+      //   const bounds = this.getActorBounds(actor, actor.x, actor.y);
+      //   const collision = this.checkCollision(actor, bounds);
 
-      if (collision.collided && collision.normal) {
-        // Draw collision normal
-        const normalLength = 20;
-        gfx.lineStyle(2, 0xffff00);
-        gfx.moveTo(actor.x, actor.y);
-        gfx.lineTo(actor.x + collision.normal.x * normalLength, actor.y + collision.normal.y * normalLength);
+      //   if (collision.collided && collision.normal) {
+      //     // Draw collision normal
+      //     const normalLength = 20;
+      //     gfx.moveTo(actor.x, actor.y);
+      //     gfx.lineTo(actor.x + collision.normal.x * normalLength, actor.y + collision.normal.y * normalLength);
 
-        // Draw velocity vector
-        gfx.lineStyle(2, 0x00ffff);
-        gfx.moveTo(actor.x, actor.y);
-        const velocityScale = 0.1;
-        gfx.lineTo(actor.x + actor.velocity.x * velocityScale, actor.y + actor.velocity.y * velocityScale);
+      //     // Draw velocity vector
+      //     gfx.moveTo(actor.x, actor.y);
+      //     const velocityScale = 0.1;
+      //     gfx.lineTo(actor.x + actor.velocity.x * velocityScale, actor.y + actor.velocity.y * velocityScale);
+      //   }
+
+      //   gfx.stroke({ color: 0xffff00, width: 1 });
+    }
+  }
+
+  public updateSolidPosition(solid: Solid, newPosition: { x: number; y: number }): void {
+    // Remove from old grid cells
+    const oldBounds = solid.getBounds();
+    const oldCells = this.getCells(oldBounds);
+
+    for (const cell of oldCells) {
+      const solids = this.grid.get(cell);
+      if (solids) {
+        solids.delete(solid);
+        if (solids.size === 0) {
+          this.grid.delete(cell);
+        }
       }
     }
+    // Add to new grid cells
+    const newBounds = { x: newPosition.x, y: newPosition.y, width: solid.width, height: solid.height };
+    const newCells = this.getCells(newBounds);
+    for (const cell of newCells) {
+      if (!this.grid.has(cell)) {
+        this.grid.set(cell, new Set());
+      }
+      this.grid.get(cell)!.add(solid);
+    }
+
+    // Update position
+    solid.updateView();
   }
 }

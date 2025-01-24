@@ -1,20 +1,63 @@
+import { Application } from 'dill-pixel';
 import { Container } from 'pixi.js';
-import { Circle, CollisionShape, PhysicsBodyConfig, PhysicsObject, Rectangle } from './types';
+import { CollisionShape, PhysicsBodyConfig, PhysicsObject, PhysicsObjectView } from './types';
 
-export class Solid implements PhysicsObject {
+export class Solid extends PhysicsObject<Application> {
   public view?: Container;
   public shape: CollisionShape;
   public radius?: number;
   public width: number;
   public height: number;
+  public restitution: number = 0;
+
+  private _moving = false;
+  public lastX: number;
+  public lastY: number;
+
+  set moving(value: boolean) {
+    this._moving = value;
+    if (this._moving) {
+      this.system.addMovingSolid(this);
+    } else {
+      this.system.removeMovingSolid(this);
+    }
+  }
+
+  get x(): number {
+    return this._x;
+  }
+
+  get y(): number {
+    return this._y;
+  }
+
+  set x(value: number) {
+    if (this._x !== value) {
+      this.lastX = this._x;
+      this.updatePosition({ x: value, y: this._y });
+    }
+    this._x = value;
+  }
+
+  set y(value: number) {
+    if (this._y !== value) {
+      this.lastY = this._y;
+      this.updatePosition({ x: this._x, y: value });
+    }
+    this._y = value;
+  }
 
   constructor(
-    public x: number,
-    public y: number,
+    protected _x: number,
+    protected _y: number,
     bodyConfig: PhysicsBodyConfig,
-    view?: Container,
+    view?: PhysicsObjectView,
   ) {
+    super();
+    this.lastX = _x;
+    this.lastY = _y;
     this.shape = bodyConfig.shape;
+    this.restitution = bodyConfig.restitution ?? 0;
 
     if (this.shape === 'circle') {
       if (!bodyConfig.radius) throw new Error('Radius is required for circular bodies');
@@ -32,47 +75,7 @@ export class Solid implements PhysicsObject {
     }
   }
 
-  public setView(view: Container): void {
-    this.view = view;
-    this.updateView();
-  }
-
-  public updateView(): void {
-    if (this.view) {
-      this.view.position.set(this.x, this.y);
-    }
-  }
-
-  public getBounds(): Rectangle {
-    if (this.shape === 'circle') {
-      return {
-        x: this.x - this.radius!,
-        y: this.y - this.radius!,
-        width: this.radius! * 2,
-        height: this.radius! * 2,
-      };
-    }
-    return {
-      x: this.x,
-      y: this.y,
-      width: this.width,
-      height: this.height,
-    };
-  }
-
-  public getCircle(): Circle {
-    if (this.shape === 'circle') {
-      return {
-        x: this.x,
-        y: this.y,
-        radius: this.radius!,
-      };
-    }
-    // For rectangular bodies, return a circle that encompasses the rectangle
-    return {
-      x: this.x + this.width / 2,
-      y: this.y + this.height / 2,
-      radius: Math.sqrt((this.width * this.width + this.height * this.height) / 4),
-    };
+  public updatePosition(newPosition: { x: number; y: number }): void {
+    this.system.updateSolidPosition(this, newPosition);
   }
 }
