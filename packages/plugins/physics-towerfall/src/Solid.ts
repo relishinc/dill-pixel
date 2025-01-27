@@ -9,6 +9,7 @@ export class Solid<T extends Application = Application> extends Entity<T> {
   public type = 'Solid';
   public collidable: boolean = true;
   public moving: boolean = false;
+  public shouldRemoveOnCull = false;
 
   private _nextX: number;
   private _nextY: number;

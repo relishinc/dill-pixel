@@ -30,7 +30,6 @@ export const assets = {
 class Player extends Actor<V8Application> {
   type = 'Player';
   public onKilled: Signal<(player: Player) => void> = new Signal();
-
   private isJumping = false;
 
   initialize(): void {
@@ -138,14 +137,16 @@ class Portal extends Sensor<V8Application> {
     portal.linkedPortal = this;
   }
 
-  protected onActorEnter(actor: Actor): void {
+  protected onActorEnter(actor: Player): void {
     if (!this.active) return;
     this.active = false;
     if (this.linkedPortal) {
       this.linkedPortal.active = false;
+      actor.velocity = { x: 0, y: 0 };
+      actor.frozen = true;
       actor.moveTo(
         this.linkedPortal.x + this.linkedPortal.width / 2 - actor.width / 2,
-        this.linkedPortal.y + this.linkedPortal.height - actor.height,
+        this.linkedPortal.y + this.linkedPortal.height - actor.height - 1,
       );
     }
   }
@@ -174,8 +175,8 @@ export default class TowerfallPhysicsScene extends BaseScene {
     useCamera: true,
     boundary: {
       width: 800,
-      height: 600,
-      bindToAppSize: true,
+      height: 1500,
+      bindToAppSize: false,
     },
     zoom: 1,
   };

@@ -542,7 +542,7 @@ export class System {
     const boundary = this.options.boundary!;
     const toRemoveActors: Actor[] = [];
     const toRemoveSolids: Solid[] = [];
-
+    const toRemoveSensors: Sensor[] = [];
     // Check actors
     for (const actor of this.actors) {
       if (!this.isInBounds(actor, boundary)) {
@@ -573,12 +573,30 @@ export class System {
       }
     }
 
+    // check sensors
+    for (const sensor of this.sensors) {
+      if (!this.isInBounds(sensor, boundary)) {
+        if (!sensor.isCulled) {
+          sensor.onCull();
+        }
+        if (sensor.shouldRemoveOnCull) {
+          toRemoveSensors.push(sensor);
+        }
+      } else if (sensor.isCulled) {
+        // Uncull if back in bounds
+        sensor.onUncull();
+      }
+    }
+
     // Remove culled entities that should be removed
     for (const actor of toRemoveActors) {
       this.removeActor(actor);
     }
     for (const solid of toRemoveSolids) {
       this.removeSolid(solid);
+    }
+    for (const sensor of toRemoveSensors) {
+      this.removeSensor(sensor);
     }
   }
 
@@ -592,7 +610,7 @@ export class System {
     }
   }
 
-  private isInBounds(entity: Actor | Solid, boundary: Rectangle): boolean {
+  private isInBounds(entity: Actor | Solid | Sensor, boundary: Rectangle): boolean {
     // Only consider entity out of bounds if it's completely outside the boundary
     return !(
       entity.x >= boundary.x + boundary.width || // Completely to the right
