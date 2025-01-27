@@ -1,6 +1,6 @@
 import BaseScene from '@/scenes/BaseScene';
 import { V8Application } from '@/V8Application';
-import TowerfallPhysicsPlugin, { Actor, CollisionResult, Solid } from '@dill-pixel/plugin-towerfall-physics';
+import TowerfallPhysicsPlugin, { Actor, CollisionResult, Sensor, Solid } from '@dill-pixel/plugin-towerfall-physics';
 import { ActionDetail, Container, Signal } from 'dill-pixel';
 import gsap from 'gsap';
 import { FederatedPointerEvent, Graphics, Point, Pool, Rectangle } from 'pixi.js';
@@ -21,6 +21,7 @@ export const assets = {
 };
 
 class Player extends Actor<V8Application> {
+  type = 'Player';
   public onKilled: Signal<(player: Player) => void> = new Signal();
 
   private isJumping = false;
@@ -64,6 +65,7 @@ class Player extends Actor<V8Application> {
 }
 
 class FX extends Actor<V8Application> {
+  type = 'FX';
   initialize() {
     const sprite = new Graphics();
     const size = Math.round(16 + Math.random() * 16);
@@ -75,6 +77,79 @@ class FX extends Actor<V8Application> {
     this.view = sprite;
     this.system.addView(this.view);
     this.view.visible = false;
+  }
+}
+
+class Portal extends Sensor<V8Application> {
+  type = 'Portal';
+  collidableTypes = ['Player', 'FX'];
+  private linkedPortal: Portal | null = null;
+  public active = true;
+  private static PORTAL_SIZE = 48;
+
+  constructor(config: any) {
+    super({
+      ...config,
+      type: 'Portal',
+      width: Portal.PORTAL_SIZE,
+      height: Portal.PORTAL_SIZE * 1.5,
+    });
+  }
+
+  initialize(): void {
+    const container = new Container();
+    // Create a circular portal visual
+    const sprite = new Graphics();
+    sprite.circle(Portal.PORTAL_SIZE / 2, Portal.PORTAL_SIZE / 2, Portal.PORTAL_SIZE / 2);
+    sprite.fill({ color: 0x00ffff, alpha: 0.5 });
+
+    const sprite2 = new Graphics();
+    sprite2.circle(0, 0, Portal.PORTAL_SIZE / 4);
+    sprite2.fill({ color: 0x00ffff, alpha: 0.8 });
+    sprite2.position.set(Portal.PORTAL_SIZE / 2, Portal.PORTAL_SIZE / 2);
+
+    container.addChild(sprite);
+    container.addChild(sprite2);
+
+    gsap.to(sprite2.scale, {
+      x: 1.5,
+      y: 1.5,
+      duration: 0.75,
+      repeat: -1,
+      yoyo: true,
+      ease: 'none',
+    });
+
+    container.scale.y = 1.5;
+
+    this.view = container;
+
+    this.system.addView(this.view);
+  }
+
+  public linkTo(portal: Portal): void {
+    this.linkedPortal = portal;
+    portal.linkedPortal = this;
+  }
+
+  protected onActorEnter(actor: Actor): void {
+    if (!this.active) return;
+    this.active = false;
+    if (this.linkedPortal) {
+      this.linkedPortal.active = false;
+      actor.moveTo(
+        this.linkedPortal.x + this.linkedPortal.width / 2 - actor.width / 2,
+        this.linkedPortal.y + this.linkedPortal.height - actor.height,
+      );
+    }
+  }
+
+  public onActorExit(): void {
+    this.active = true;
+  }
+
+  public update(dt: number): void {
+    super.update(dt);
   }
 }
 
@@ -104,11 +179,14 @@ export default class TowerfallPhysicsScene extends BaseScene {
 
   private pool = new Pool<FX>(FX, 100);
 
+  private portal1: Portal;
+  private portal2: Portal;
+
   configureGUI() {
     const physicsFolder = this.gui.addFolder('Physics Settings');
     physicsFolder.open();
     physicsFolder.add(this.config, 'itemsToAdd', 0, 200, 1);
-    physicsFolder.add(this.config, 'gravity', 0, 2000, 100).onChange(() => {
+    physicsFolder.add(this.config, 'gravity', -1000, 1000, 50).onChange(() => {
       this.physics.system.gravity = this.config.gravity;
     });
 
@@ -166,6 +244,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
     });
 
     this._createPlayer();
+    this._createPortals();
 
     // Create platforms
     this.createPlatform(0, this.app.size.height - 32, this.app.size.width, 32); // Ground
@@ -269,6 +348,22 @@ export default class TowerfallPhysicsScene extends BaseScene {
 
     this.numActors += amount;
     this._subtitle.text = `Actors: ${this.numActors}`;
+  }
+
+  private _createPortals(): void {
+    // Create two portals on opposite sides of the scene
+    this.portal1 = new Portal({
+      position: [100, 400],
+    });
+    this.physics.system.addSensor(this.portal1);
+
+    this.portal2 = new Portal({
+      position: [700, 400],
+    });
+    this.physics.system.addSensor(this.portal2);
+
+    // Link the portals together
+    this.portal1.linkTo(this.portal2);
   }
 
   update() {

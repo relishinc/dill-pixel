@@ -30,6 +30,7 @@ export class System {
   // Type-based lookup maps
   private actorsByType: Map<string, Set<Actor>> = new Map();
   private solidsByType: Map<string, Set<Solid>> = new Map();
+  private sensorsByType: Map<string, Set<Sensor>> = new Map();
   // debugging
   private _debugContainer: Container;
   private _debugGfx: Graphics | null = null;
@@ -63,6 +64,10 @@ export class System {
 
   set gravity(value: number) {
     this.options.gravity = value;
+  }
+
+  get gravity(): number {
+    return this.options.gravity;
   }
 
   set maxVelocity(value: number) {
@@ -150,6 +155,10 @@ export class System {
     actor.updateView();
   }
 
+  private updateSensor(sensor: Sensor, dt: number): void {
+    sensor.update(dt);
+  }
+
   public addActor(actor: Actor): void {
     this.actors.add(actor);
     // Add to type index
@@ -164,6 +173,34 @@ export class System {
     const actor = new Actor(config);
     this.addActor(actor);
     return actor;
+  }
+
+  public createSensor(config: PhysicsEntityConfig): Sensor {
+    const sensor = new Sensor(config);
+    this.addSensor(sensor);
+    return sensor;
+  }
+
+  public addSensor(sensor: Sensor): void {
+    this.sensors.add(sensor);
+    // Add to type index
+    if (!this.sensorsByType.has(sensor.type)) {
+      this.sensorsByType.set(sensor.type, new Set());
+    }
+    this.sensorsByType.get(sensor.type)!.add(sensor);
+    sensor.updateView();
+  }
+
+  public removeSensor(sensor: Sensor): void {
+    this.sensors.delete(sensor);
+    // Remove from type index
+    const typeSet = this.sensorsByType.get(sensor.type);
+    if (typeSet) {
+      typeSet.delete(sensor);
+      if (typeSet.size === 0) {
+        this.sensorsByType.delete(sensor.type);
+      }
+    }
   }
 
   public createSolid(config: PhysicsEntityConfig): Solid {
@@ -291,15 +328,6 @@ export class System {
     return result;
   }
 
-  private checkOverlap(entity: Actor | Sensor, solid: Solid): boolean {
-    return (
-      entity.x < solid.x + solid.width &&
-      entity.x + entity.width > solid.x &&
-      entity.y < solid.y + solid.height &&
-      entity.y + entity.height > solid.y
-    );
-  }
-
   private overlaps(a: Rectangle, b: Rectangle): boolean {
     return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
   }
@@ -381,19 +409,25 @@ export class System {
       const [x, y] = cell.split(',').map(Number);
       gfx.rect(x * this.options.gridSize, y * this.options.gridSize, this.options.gridSize, this.options.gridSize);
     }
-    gfx.stroke({ color: 0x00ff00, width: 1, pixelLine: true, join: 'miter', cap: 'butt' });
+    gfx.stroke({ color: 0x00ff00, width: 1, join: 'miter', cap: 'butt' });
 
     // Draw solids
     for (const solid of this.solids) {
       gfx.rect(solid.x, solid.y, solid.width, solid.height);
     }
-    gfx.stroke({ color: 0xf0f0f0, width: 1, alignment: 0.5 });
+    gfx.stroke({ color: 0x00ff00, width: 1, alignment: 0.5 });
 
     // Draw actors
     for (const actor of this.actors) {
       gfx.rect(actor.x, actor.y, actor.width, actor.height);
-      gfx.stroke({ color: 0xff0000, width: 1, alignment: 0.5 });
     }
+    gfx.stroke({ color: 0xff0000, width: 1, alignment: 0.5 });
+
+    // Draw sensors
+    for (const sensor of this.sensors) {
+      gfx.rect(sensor.x, sensor.y, sensor.width, sensor.height);
+    }
+    gfx.stroke({ color: 0xffff00, width: 1, alignment: 0.5 });
   }
 
   /**
@@ -412,17 +446,33 @@ export class System {
    * @param type The type to look for
    * @returns Array of actors matching the type
    */
-  public getActorsByType(type: string): Actor[] {
+  public getActorsByType(type: string | string[]): Actor[] {
+    if (Array.isArray(type)) {
+      return type.flatMap((t) => Array.from(this.actorsByType.get(t) || new Set()));
+    }
     return Array.from(this.actorsByType.get(type) || new Set());
   }
-
   /**
    * Get all solids of a specific type
    * @param type The type to look for
    * @returns Array of solids matching the type
    */
-  public getSolidsByType(type: string): Solid[] {
+  public getSolidsByType(type: string | string[]): Solid[] {
+    if (Array.isArray(type)) {
+      return type.flatMap((t) => Array.from(this.solidsByType.get(t) || new Set()));
+    }
     return Array.from(this.solidsByType.get(type) || new Set());
+  }
+  /**
+   * Get all sensors of a specific type
+   * @param type The type to look for
+   * @returns Array of sensors matching the type
+   */
+  public getSensorsByType(type: string | string[]): Sensor[] {
+    if (Array.isArray(type)) {
+      return type.flatMap((t) => Array.from(this.sensorsByType.get(t) || new Set()));
+    }
+    return Array.from(this.sensorsByType.get(type) || new Set());
   }
 
   public destroy(): void {
@@ -432,6 +482,8 @@ export class System {
     this.actors.clear();
     this.actorsByType.clear();
     this.solidsByType.clear();
+    this.sensors.clear();
+    this.sensorsByType.clear();
   }
 
   private cullOutOfBounds(): void {
@@ -496,20 +548,5 @@ export class System {
       entity.y >= boundary.y + boundary.height || // Completely below
       entity.y + entity.height <= boundary.y // Completely above
     );
-  }
-
-  public createSensor(config: PhysicsEntityConfig): Sensor {
-    const sensor = new Sensor(config);
-    this.addSensor(sensor);
-    return sensor;
-  }
-
-  public addSensor(sensor: Sensor): void {
-    this.sensors.add(sensor);
-    sensor.updateView();
-  }
-
-  public removeSensor(sensor: Sensor): void {
-    this.sensors.delete(sensor);
   }
 }

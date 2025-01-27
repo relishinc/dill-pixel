@@ -19,6 +19,18 @@ export class Entity<A extends Application = Application> {
   height: number = 0;
   view!: PhysicsEntityView;
 
+  setPosition(x: number, y: number): void {
+    this._x = x;
+    this._y = y;
+    this._xRemainder = 0;
+    this._yRemainder = 0;
+    this.updateView();
+  }
+
+  moveTo(x: number, y: number): void {
+    this.setPosition(x, y);
+  }
+
   get x(): number {
     return Math.round(this._x);
   }

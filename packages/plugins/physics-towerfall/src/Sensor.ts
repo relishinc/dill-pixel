@@ -7,6 +7,7 @@ import { resolveEntityPosition, resolveEntitySize } from './utils';
 
 export class Sensor<T extends Application = Application> extends Entity<T> {
   public type = 'Sensor';
+  public collidableTypes: string[] = [];
   public velocity: Vector2 = { x: 0, y: 0 };
   public shouldRemoveOnCull: boolean = false; // Sensors typically persist
   private overlappingActors: Set<Actor> = new Set();
@@ -21,27 +22,39 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
         this.type = config.type;
       }
 
-      const { x, y } = resolveEntityPosition(config);
-      const { width, height } = resolveEntitySize(config);
+      if (config.position !== undefined || (config.x !== undefined && config.y !== undefined)) {
+        const { x, y } = resolveEntityPosition(config);
+        this._x = Math.round(x);
+        this._y = Math.round(y);
+      }
 
-      this._x = Math.round(x);
-      this._y = Math.round(y);
-      this.width = Math.round(width);
-      this.height = Math.round(height);
+      if (config.size !== undefined || (config.width !== undefined && config.height !== undefined)) {
+        const { width, height } = resolveEntitySize(config);
+        this.width = Math.round(width);
+        this.height = Math.round(height);
+      }
 
       // Reset physics properties
       this._xRemainder = 0;
       this._yRemainder = 0;
+
+      if (!this.velocity) {
+        this.velocity = { x: 0, y: 0 };
+      }
       this.velocity.x = 0;
       this.velocity.y = 0;
-    }
 
-    if (config?.view) {
-      this.view = config.view;
-      this.updateView();
-    }
+      if (config?.view) {
+        this.view = config.view;
+        this.updateView();
+      }
 
-    this.overlappingActors.clear();
+      if (!this.overlappingActors) {
+        this.overlappingActors = new Set();
+      }
+
+      this.overlappingActors.clear();
+    }
   }
 
   /**
@@ -67,7 +80,7 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Move the sensor horizontally, checking for collisions
+   * Move the sensor horizontally - pass through solids
    */
   public moveX(amount: number): void {
     this._xRemainder += amount;
@@ -82,7 +95,7 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Move the sensor vertically, checking for collisions
+   * Move the sensor vertically - collide with solids for riding
    */
   public moveY(amount: number): void {
     this._yRemainder += amount;
@@ -90,9 +103,36 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
 
     if (move !== 0) {
       this._yRemainder -= move;
-      this._y += move;
-      this.updateView();
-      this.checkActorOverlaps();
+      const sign = Math.sign(move);
+
+      let remaining = Math.abs(move);
+      while (remaining > 0) {
+        const step = sign;
+        const nextY = this.y + step;
+
+        // Check for collision with any solid (only when moving down)
+        let collided = false;
+        if (sign > 0) {
+          // Only check collisions when moving down
+          for (const solid of this.getSolidsAt(this.x, nextY)) {
+            if (solid.collidable) {
+              collided = true;
+              break;
+            }
+          }
+        }
+
+        if (!collided) {
+          this._y = nextY;
+          remaining--;
+          this.updateView();
+          this.checkActorOverlaps();
+        } else {
+          // Stop vertical movement when landing on a solid
+          this.velocity.y = 0;
+          break;
+        }
+      }
     }
   }
 
@@ -123,7 +163,7 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
     const currentOverlaps = new Set<Actor>();
 
     // Get all actors at current position
-    const nearbyActors = this.system.getActorsByType('Actor');
+    const nearbyActors = this.system.getActorsByType(this.collidableTypes);
 
     for (const actor of nearbyActors) {
       if (this.overlaps(actor)) {
