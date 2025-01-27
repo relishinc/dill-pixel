@@ -93,6 +93,7 @@ export class System {
   }
 
   public update(dt: number): void {
+    if (!this.options.plugin.enabled) return;
     // Clear collisions from previous frame
     this.collisions = [];
     this.sensorOverlaps = [];

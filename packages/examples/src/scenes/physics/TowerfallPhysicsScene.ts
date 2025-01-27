@@ -1,14 +1,14 @@
 import BaseScene from '@/scenes/BaseScene';
 import { V8Application } from '@/V8Application';
-import { Collision } from '@dill-pixel/plugin-snap-physics';
 import TowerfallPhysicsPlugin, {
   Actor,
+  Collision,
   CollisionResult,
   Sensor,
   SensorOverlap,
   Solid,
 } from '@dill-pixel/plugin-towerfall-physics';
-import { ActionDetail, Container, Signal } from 'dill-pixel';
+import { ActionDetail, Camera, Container, Signal } from 'dill-pixel';
 import gsap from 'gsap';
 import { FederatedPointerEvent, Graphics, Point, Pool, Rectangle } from 'pixi.js';
 
@@ -16,7 +16,7 @@ export const id = 'towerfall-physics';
 
 export const debug = {
   group: 'Physics',
-  label: 'Towerfall',
+  label: 'Towerfall - Level & Camera',
   order: 6,
 };
 
@@ -75,7 +75,7 @@ class FX extends Actor<V8Application> {
   type = 'FX';
   initialize() {
     const sprite = new Graphics();
-    const size = Math.round(16 + Math.random() * 16);
+    const size = Math.round(4 + Math.random() * 4);
     this.width = size;
     this.height = size;
     sprite.rect(0, 0, size, size);
@@ -130,7 +130,6 @@ class Portal extends Sensor<V8Application> {
     container.scale.y = 1.5;
 
     this.view = container;
-
     this.system.addView(this.view);
   }
 
@@ -162,27 +161,30 @@ class Portal extends Sensor<V8Application> {
 
 export default class TowerfallPhysicsScene extends BaseScene {
   title = 'Towerfall Physics';
-  subtitle = 'Actors: 1';
+  subtitle = 'Particles: 0 (click to add more)';
 
   private player: Player;
   private physicsContainer: Container;
-  private numActors = 1;
   protected config = {
     debug: true,
     itemsToAdd: 25,
     gravity: 1000,
     maxVelocity: 900,
     gridCellSize: 100,
+    useCamera: true,
     boundary: {
       width: 800,
       height: 600,
       bindToAppSize: true,
     },
+    zoom: 1,
   };
 
   get physics(): TowerfallPhysicsPlugin {
     return this.app.getPlugin('towerfall-physics') as TowerfallPhysicsPlugin;
   }
+
+  private camera: Camera;
 
   private pool = new Pool<FX>(FX, 100);
 
@@ -192,7 +194,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
   configureGUI() {
     const physicsFolder = this.gui.addFolder('Physics Settings');
     physicsFolder.open();
-    physicsFolder.add(this.config, 'itemsToAdd', 0, 200, 1);
+    physicsFolder.add(this.config, 'itemsToAdd', 0, 200, 1).name('Particles to add');
     physicsFolder.add(this.config, 'gravity', -1000, 1000, 50).onChange(() => {
       this.physics.system.gravity = this.config.gravity;
     });
@@ -216,6 +218,20 @@ export default class TowerfallPhysicsScene extends BaseScene {
       }
     });
 
+    this.gui
+      .add(this.config, 'zoom', 0.25, 3, 0.25)
+      .onChange(() => {
+        this._handleCameraZoomChanged();
+      })
+      .name('Camera Zoom');
+
+    this.gui
+      .add(this.config, 'useCamera')
+      .onChange(() => {
+        this._handleUseCameraChanged();
+      })
+      .name('Use Camera');
+
     physicsFolder
       .add(this.config, 'debug')
       .onChange(() => {
@@ -229,6 +245,42 @@ export default class TowerfallPhysicsScene extends BaseScene {
         this._handleGridCellSizeChange();
       })
       .name('Grid Cell Size');
+  }
+
+  protected _handleUseCameraChanged() {
+    const { useCamera } = this.config;
+    if (useCamera) {
+      this.camera = new Camera({
+        container: this.physicsContainer,
+        viewportWidth: this.app.size.width,
+        viewportHeight: this.app.size.height,
+        worldWidth: this.app.size.width,
+        worldHeight: this.app.size.height,
+        minX: -300,
+        minY: -1000,
+        maxX: 300,
+        maxY: 200,
+        lerp: 0.1,
+      });
+
+      this.add.existing(this.camera);
+      this.camera.follow(this.player.view, [this.app.screen.width * 0.25, -this.app.size.height * 0.25]);
+      this._handleCameraZoomChanged();
+    } else {
+      this.removeChild(this.camera);
+      // @ts-expect-error camera can't be null error
+      this.camera = null;
+      this.add.existing(this.physicsContainer);
+      this.physicsContainer.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
+      this.physicsContainer.pivot.set(0, 0);
+    }
+  }
+
+  protected _handleCameraZoomChanged() {
+    const { zoom } = this.config;
+    if (this.camera) {
+      this.camera.zoom(zoom);
+    }
   }
 
   async initialize() {
@@ -270,7 +322,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
     // Create moving platform
     const pf = this.createPlatform(400, 600, 200, 32);
     gsap.to(pf, {
-      y: 1100,
+      y: 1150,
       duration: 3,
       repeat: -1,
       yoyo: true,
@@ -287,7 +339,9 @@ export default class TowerfallPhysicsScene extends BaseScene {
     );
 
     this.eventMode = 'static';
-    this.on('click', (event: FederatedPointerEvent) => this._addActors(new Point(event.globalX, event.globalY)));
+    this.on('click', (event: FederatedPointerEvent) => this._addParticles(new Point(event.globalX, event.globalY)));
+
+    this._handleUseCameraChanged();
   }
 
   private _resolveCollisions(collisions: Collision[]): void {
@@ -313,8 +367,11 @@ export default class TowerfallPhysicsScene extends BaseScene {
     // Create player with sprite as view
     this.player = new Player({ type: 'Player', position: [125, 100], size: [32, 64], view: playerSprite });
     this.physics.system.addActor(this.player);
-
     this.player.onKilled.connectOnce(this._createPlayer);
+
+    if (this.camera) {
+      this.camera.follow(this.player.view, [this.app.screen.width * 0.25, -this.app.size.height * 0.25]);
+    }
   }
 
   protected _handleDebugChanged() {
@@ -340,12 +397,14 @@ export default class TowerfallPhysicsScene extends BaseScene {
     this.player.velocity.x = direction * MOVE_SPEED;
   }
 
-  private _addActors(pt: Point) {
+  private _addParticles(pt: Point) {
+    pt = this.physicsContainer.toLocal(pt);
     const amount = this.config.itemsToAdd;
     for (let i = 0; i < amount; i++) {
       const actor = this.pool.get({ position: pt });
 
       this.physics.system.addActor(actor);
+      this.physicsContainer.addChild(actor.view);
 
       // Give initial random velocity
       const angle = Math.random() * Math.PI * 2;
@@ -366,9 +425,6 @@ export default class TowerfallPhysicsScene extends BaseScene {
         this.pool.return(actor);
       };
     }
-
-    this.numActors += amount;
-    this._subtitle.text = `Actors: ${this.numActors}`;
   }
 
   private _createPortals(): void {
@@ -388,8 +444,12 @@ export default class TowerfallPhysicsScene extends BaseScene {
   }
 
   update() {
-    // Add some air control
-    this.player.velocity.x *= 0.3; // Deceleration
+    if (this.player && this.camera) {
+      this.camera.update();
+      // Add some air control
+      this.player.velocity.x *= 0.3; // Deceleration
+    }
+    this._subtitle.text = `Particles: ${this.physics.system.getActorsByType('FX')?.length || 0} (click to add more)`;
   }
 
   resize() {
@@ -398,7 +458,8 @@ export default class TowerfallPhysicsScene extends BaseScene {
   }
 
   destroy(): void {
-    this.app.ticker.remove(this.update);
+    this.pool.clear();
+    this.physics.destroy();
     super.destroy();
   }
 }

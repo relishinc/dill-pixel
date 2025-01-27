@@ -13,6 +13,7 @@ export default class TowerfallPhysicsPlugin extends Plugin {
   public container: PIXIContainer;
   private collisionResolver?: (collisions: Collision[]) => void;
   private overlapResolver?: (overlaps: SensorOverlap[]) => void;
+  public enabled = false;
 
   constructor() {
     super('towerfall-physics');
@@ -42,6 +43,7 @@ export default class TowerfallPhysicsPlugin extends Plugin {
       this.system.debug = true;
     }
 
+    this.enabled = true;
     // Register update loop
     app.ticker.add(this.update);
   }
@@ -52,12 +54,14 @@ export default class TowerfallPhysicsPlugin extends Plugin {
   }
 
   public destroy(): void {
+    this.enabled = false;
     this.app.ticker.remove(this.update);
     this.system.destroy();
     super.destroy();
   }
 
   private update(_ticker: Ticker) {
+    if (!this.enabled) return;
     this.system.update(_ticker.deltaTime);
   }
 
