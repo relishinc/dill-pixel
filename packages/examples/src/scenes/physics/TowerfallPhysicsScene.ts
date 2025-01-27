@@ -3,7 +3,7 @@ import { V8Application } from '@/V8Application';
 import TowerfallPhysicsPlugin, { Actor, CollisionResult, Solid } from '@dill-pixel/plugin-towerfall-physics';
 import { ActionDetail, Container } from 'dill-pixel';
 import gsap from 'gsap';
-import { FederatedPointerEvent, Graphics, Point } from 'pixi.js';
+import { FederatedPointerEvent, Graphics, Point, Rectangle } from 'pixi.js';
 
 export const id = 'towerfall-physics';
 
@@ -111,6 +111,8 @@ export default class TowerfallPhysicsScene extends BaseScene {
       maxVelocity: this.config.maxVelocity,
       gridSize: this.config.gridCellSize,
       debug: this.config.debug,
+      shouldCull: true,
+      boundary: new Rectangle(0, 0, this.app.size.width, this.app.size.height),
     });
 
     // Create player sprite (circular)
@@ -121,7 +123,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
     this.physicsContainer.add.existing(playerSprite);
 
     // Create player with sprite as view
-    this.player = new Player(100, 100, { width: 32, height: 32 }, playerSprite);
+    this.player = new Player({ type: 'Player', position: [100, 100], size: 32 }, playerSprite);
     this.physics.system.addActor(this.player);
 
     // Create platforms
@@ -173,7 +175,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
     sprite.fill({ color: 0x000fff });
 
     this.physicsContainer.add.existing(sprite);
-    return this.physics.createSolid({ x, y }, { width, height }, sprite);
+    return this.physics.createSolid({ type: 'Platform', x, y, width, height }, sprite);
   }
 
   private _movePlayer(detail: ActionDetail) {
@@ -192,7 +194,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
       sprite.fill({ color: Math.random() * 0xffffff, alpha: 0.5 });
       this.physicsContainer.add.existing(sprite);
 
-      const actor = this.physics.createActor(pt, { width: size, height: size }, sprite);
+      const actor = this.physics.createActor({ type: 'fx', position: pt, size }, sprite);
 
       // Give initial random velocity
       const angle = Math.random() * Math.PI * 2;
@@ -201,6 +203,9 @@ export default class TowerfallPhysicsScene extends BaseScene {
 
       actor.velocity.x = Math.cos(angle) * speed;
       actor.velocity.y = Math.sin(angle) * speed;
+      actor.onCollide = () => {
+        actor.velocity.x *= 0.975;
+      };
     }
 
     this.numActors += amount;

@@ -1,4 +1,4 @@
-import { Container } from 'pixi.js';
+import { Container, Rectangle } from 'pixi.js';
 
 export interface TowerfallPhysicsOptions {
   container: Container;
@@ -10,4 +10,8 @@ export interface TowerfallPhysicsOptions {
   maxVelocity?: number;
   /** Whether to enable debug rendering */
   debug?: boolean;
+  /** Whether to cull out-of-bounds entities */
+  shouldCull?: boolean;
+  /** Whether to remove entities from the system after culling */
+  boundary?: Rectangle;
 }

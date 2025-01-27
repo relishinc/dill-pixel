@@ -1,7 +1,8 @@
 import { Application } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
-import { PhysicsBodyConfig, PhysicsObjectView } from './types';
+import { PhysicsEntityConfig, PhysicsEntityView } from './types';
+import { resolveEntityPosition, resolveEntitySize } from './utils';
 
 export class Solid<T extends Application = Application> extends Entity<T> {
   public collidable: boolean = true;
@@ -28,10 +29,13 @@ export class Solid<T extends Application = Application> extends Entity<T> {
     return this._y;
   }
 
-  constructor(x: number, y: number, bodyConfig: PhysicsBodyConfig, view?: PhysicsObjectView) {
-    super();
+  constructor(config: PhysicsEntityConfig, view?: PhysicsEntityView) {
+    super(config);
 
-    if (!bodyConfig.width || !bodyConfig.height) {
+    const { x, y } = resolveEntityPosition(config);
+    const { width, height } = resolveEntitySize(config);
+
+    if (!width || !height) {
       throw new Error('Width and height are required for bodies');
     }
 
@@ -39,8 +43,8 @@ export class Solid<T extends Application = Application> extends Entity<T> {
     this._y = Math.round(y);
     this._nextX = this._x;
     this._nextY = this._y;
-    this.width = Math.round(bodyConfig.width);
-    this.height = Math.round(bodyConfig.height);
+    this.width = Math.round(width);
+    this.height = Math.round(height);
 
     if (view) {
       this.view = view;

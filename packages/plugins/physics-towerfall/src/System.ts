@@ -1,9 +1,8 @@
-import { PointLike, resolvePointLike } from 'dill-pixel';
 import { Container, Graphics } from 'pixi.js';
 import { Actor } from './Actor';
 import { Solid } from './Solid';
 import TowerfallPhysicsPlugin from './TowerfallPhysicsPlugin';
-import { PhysicsBodyConfig, PhysicsObjectView, Rectangle, Vector2 } from './types';
+import { PhysicsEntityConfig, PhysicsEntityView, Rectangle, Vector2 } from './types';
 
 export interface PhysicsSystemOptions {
   plugin: TowerfallPhysicsPlugin;
@@ -11,6 +10,8 @@ export interface PhysicsSystemOptions {
   gravity: number;
   maxVelocity: number;
   debug?: boolean;
+  boundary?: Rectangle;
+  shouldCull?: boolean;
 }
 
 export interface CollisionResult {
@@ -24,6 +25,9 @@ export class System {
   private actors: Set<Actor> = new Set();
   private solids: Set<Solid> = new Set();
   private grid: Map<string, Set<Solid>> = new Map();
+  // Type-based lookup maps
+  private actorsByType: Map<string, Set<Actor>> = new Map();
+  private solidsByType: Map<string, Set<Solid>> = new Map();
   // debugging
   private _debugContainer: Container;
   private _debugGfx: Graphics | null = null;
@@ -64,7 +68,10 @@ export class System {
   }
 
   constructor(options: PhysicsSystemOptions) {
-    this.options = options;
+    this.options = {
+      ...options,
+      shouldCull: options.shouldCull ?? false,
+    };
     this.debug = options.debug ?? false;
   }
 
@@ -90,6 +97,12 @@ export class System {
     for (const actor of this.actors) {
       this.updateActor(actor, deltaTime);
     }
+
+    // Cull out-of-bounds entities if enabled and boundary is set
+    if (this.options.shouldCull && this.options.boundary) {
+      this.cullOutOfBounds();
+    }
+
     // Update debug rendering if enabled
     if (this._debug) {
       this.debugRender();
@@ -120,20 +133,29 @@ export class System {
 
   public addActor(actor: Actor): void {
     this.actors.add(actor);
+    // Add to type index
+    if (!this.actorsByType.has(actor.type)) {
+      this.actorsByType.set(actor.type, new Set());
+    }
+    this.actorsByType.get(actor.type)!.add(actor);
+    console.log(this.actorsByType);
     actor.updateView();
   }
 
-  public createActor(position: PointLike, bodyConfig: PhysicsBodyConfig, view: PhysicsObjectView): Actor {
-    const { x, y } = resolvePointLike(position);
-    const actor = new Actor(x, y, bodyConfig, view);
+  public createActor(config: PhysicsEntityConfig, view: PhysicsEntityView): Actor {
+    const actor = new Actor(config, view);
     this.addActor(actor);
     return actor;
   }
 
-  public createSolid(position: PointLike, bodyConfig: PhysicsBodyConfig, view: PhysicsObjectView): Solid {
-    const { x, y } = resolvePointLike(position);
-    const solid = new Solid(x, y, bodyConfig, view);
+  public createSolid(config: PhysicsEntityConfig, view: PhysicsEntityView): Solid {
+    const solid = new Solid(config, view);
     this.solids.add(solid);
+    // Add to type index
+    if (!this.solidsByType.has(solid.type)) {
+      this.solidsByType.set(solid.type, new Set());
+    }
+    this.solidsByType.get(solid.type)!.add(solid);
     // Add to spatial grid
     this.addSolidToGrid(solid);
     solid.updateView();
@@ -143,10 +165,26 @@ export class System {
 
   public removeActor(actor: Actor): void {
     this.actors.delete(actor);
+    // Remove from type index
+    const typeSet = this.actorsByType.get(actor.type);
+    if (typeSet) {
+      typeSet.delete(actor);
+      if (typeSet.size === 0) {
+        this.actorsByType.delete(actor.type);
+      }
+    }
   }
 
   public removeSolid(solid: Solid): void {
     this.solids.delete(solid);
+    // Remove from type index
+    const typeSet = this.solidsByType.get(solid.type);
+    if (typeSet) {
+      typeSet.delete(solid);
+      if (typeSet.size === 0) {
+        this.solidsByType.delete(solid.type);
+      }
+    }
     this.removeSolidFromGrid(solid);
   }
 
@@ -301,6 +339,13 @@ export class System {
     const gfx = this._debugGfx!;
     gfx.clear();
 
+    // Draw boundary if set
+    if (this.options.boundary) {
+      const b = this.options.boundary;
+      gfx.rect(b.x, b.y, b.width, b.height);
+      gfx.stroke({ color: 0x0000ff, width: 2, alignment: 0.5 });
+    }
+
     // Draw grid
     for (const cell of this.grid.keys()) {
       const [x, y] = cell.split(',').map(Number);
@@ -321,10 +366,105 @@ export class System {
     }
   }
 
+  /**
+   * Get all entities of a specific type
+   * @param type The type to look for
+   * @returns Array of entities matching the type
+   */
+  public getByType(type: string): (Actor | Solid)[] {
+    const actors = this.actorsByType.get(type) || new Set<Actor>();
+    const solids = this.solidsByType.get(type) || new Set<Solid>();
+    return [...actors, ...solids];
+  }
+
+  /**
+   * Get all actors of a specific type
+   * @param type The type to look for
+   * @returns Array of actors matching the type
+   */
+  public getActorsByType(type: string): Actor[] {
+    return Array.from(this.actorsByType.get(type) || new Set());
+  }
+
+  /**
+   * Get all solids of a specific type
+   * @param type The type to look for
+   * @returns Array of solids matching the type
+   */
+  public getSolidsByType(type: string): Solid[] {
+    return Array.from(this.solidsByType.get(type) || new Set());
+  }
+
   public destroy(): void {
     this.debug = false;
     this.grid.clear();
     this.solids.clear();
     this.actors.clear();
+    this.actorsByType.clear();
+    this.solidsByType.clear();
+  }
+
+  private cullOutOfBounds(): void {
+    const boundary = this.options.boundary!;
+    const toRemoveActors: Actor[] = [];
+    const toRemoveSolids: Solid[] = [];
+
+    // Check actors
+    for (const actor of this.actors) {
+      if (!this.isInBounds(actor, boundary)) {
+        if (!actor.isCulled) {
+          actor.onCull();
+        }
+        if (actor.shouldRemoveOnCull) {
+          toRemoveActors.push(actor);
+        }
+      } else if (actor.isCulled) {
+        // Uncull if back in bounds
+        actor.onUncull();
+      }
+    }
+
+    // Check solids
+    for (const solid of this.solids) {
+      if (!this.isInBounds(solid, boundary)) {
+        if (!solid.isCulled) {
+          solid.onCull();
+        }
+        if (solid.shouldRemoveOnCull) {
+          toRemoveSolids.push(solid);
+        }
+      } else if (solid.isCulled) {
+        // Uncull if back in bounds
+        solid.onUncull();
+      }
+    }
+
+    // Remove culled entities that should be removed
+    for (const actor of toRemoveActors) {
+      this.removeActor(actor);
+    }
+    for (const solid of toRemoveSolids) {
+      this.removeSolid(solid);
+    }
+  }
+
+  /**
+   * Force uncull an entity if it was culled
+   * @param entity The entity to uncull
+   */
+  public uncullEntity(entity: Actor | Solid): void {
+    if (entity.isCulled) {
+      entity.onUncull();
+    }
+  }
+
+  private isInBounds(entity: Actor | Solid, boundary: Rectangle): boolean {
+    // Check if any part of the entity overlaps with the boundary
+    return (
+      entity.x < boundary.x + boundary.width &&
+      entity.x + entity.width > boundary.x &&
+      entity.y < boundary.y + boundary.height &&
+      entity.y + entity.height > boundary.y
+    );
   }
 }

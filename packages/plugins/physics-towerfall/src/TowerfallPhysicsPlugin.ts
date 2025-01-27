@@ -1,11 +1,11 @@
-import { Application, Plugin, PointLike } from 'dill-pixel';
+import { Application, Plugin } from 'dill-pixel';
 
 import { Container as PIXIContainer, Ticker } from 'pixi.js';
 import { Actor } from './Actor';
 import { TowerfallPhysicsOptions } from './interfaces';
 import { Solid } from './Solid';
 import { System } from './System';
-import { PhysicsBodyConfig, PhysicsObjectView } from './types';
+import { PhysicsEntityConfig, PhysicsEntityView } from './types';
 
 export default class TowerfallPhysicsPlugin extends Plugin {
   public system: System;
@@ -27,6 +27,8 @@ export default class TowerfallPhysicsPlugin extends Plugin {
       gridSize,
       gravity,
       maxVelocity,
+      boundary: options.boundary,
+      shouldCull: options.shouldCull,
       plugin: this,
     });
 
@@ -51,15 +53,15 @@ export default class TowerfallPhysicsPlugin extends Plugin {
   /**
    * Create a new physics actor
    */
-  public createActor(position: PointLike, bodyConfig: PhysicsBodyConfig, view: PhysicsObjectView): Actor {
-    return this.system.createActor(position, bodyConfig, view);
+  public createActor(config: PhysicsEntityConfig, view: PhysicsEntityView): Actor {
+    return this.system.createActor(config, view);
   }
 
   /**
    * Create a new solid obstacle
    */
-  public createSolid(position: PointLike, bodyConfig: PhysicsBodyConfig, view: PhysicsObjectView): Solid {
-    return this.system.createSolid(position, bodyConfig, view);
+  public createSolid(config: PhysicsEntityConfig, view: PhysicsEntityView): Solid {
+    return this.system.createSolid(config, view);
   }
 
   /**

@@ -1,27 +1,30 @@
 import { Application } from 'dill-pixel';
 import { Entity } from './Entity';
 import { Solid } from './Solid';
-import { CollisionResult, PhysicsBodyConfig, PhysicsObjectView, Vector2 } from './types';
+import { CollisionResult, PhysicsEntityConfig, PhysicsEntityView, Vector2 } from './types';
+import { resolveEntityPosition, resolveEntitySize } from './utils';
 
 export class Actor<T extends Application = Application> extends Entity<T> {
+  public type: string;
   public velocity: Vector2 = { x: 0, y: 0 };
+  public shouldRemoveOnCull: boolean = true;
 
   constructor(
-    x: number,
-    y: number,
-    bodyConfig: PhysicsBodyConfig,
-    public view: PhysicsObjectView,
+    config: PhysicsEntityConfig,
+    public view: PhysicsEntityView,
   ) {
-    super();
-
-    if (!bodyConfig.width || !bodyConfig.height) {
-      throw new Error('Width and height are required for bodies');
+    super(config);
+    if (!config.type) {
+      this.type = this.constructor.name;
     }
+
+    const { x, y } = resolveEntityPosition(config);
+    const { width, height } = resolveEntitySize(config);
 
     this._x = Math.round(x);
     this._y = Math.round(y);
-    this.width = Math.round(bodyConfig.width);
-    this.height = Math.round(bodyConfig.height);
+    this.width = Math.round(width);
+    this.height = Math.round(height);
     this.updateView();
 
     this.initialize();
@@ -29,6 +32,15 @@ export class Actor<T extends Application = Application> extends Entity<T> {
 
   protected initialize() {
     // Override in subclass
+  }
+
+  /**
+   * Called when the actor is culled (goes out of bounds)
+   * Override this to handle culling differently (e.g., hide instead of destroy)
+   */
+  public onCull(): void {
+    // Default behavior: destroy the view
+    this.view?.destroy();
   }
 
   /**

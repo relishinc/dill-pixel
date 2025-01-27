@@ -1,3 +1,4 @@
+import { PointLike, SizeLike } from 'dill-pixel';
 import { Container } from 'pixi.js';
 
 export interface Vector2 {
@@ -14,9 +15,14 @@ export interface Rectangle {
 
 export type CollisionShape = 'rectangle';
 
-export interface PhysicsBodyConfig {
-  width: number;
-  height: number;
+export interface PhysicsEntityConfig {
+  type: PhysicsEntityType;
+  position?: PointLike;
+  size?: SizeLike;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
   restitution?: number;
 }
 
@@ -26,5 +32,5 @@ export interface CollisionResult {
   penetration?: number;
 }
 
-export type PhysicsObjectView = Container;
-export type PhysicsObjectType = 'actor' | 'solid' | string;
+export type PhysicsEntityView = Container;
+export type PhysicsEntityType = 'Actor' | 'Solid' | string;
