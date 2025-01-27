@@ -1,4 +1,5 @@
 import { Container, Rectangle } from 'pixi.js';
+import { Collision, SensorOverlap } from './types';
 
 export interface TowerfallPhysicsOptions {
   container: Container;
@@ -14,4 +15,6 @@ export interface TowerfallPhysicsOptions {
   shouldCull?: boolean;
   /** Whether to remove entities from the system after culling */
   boundary?: Rectangle;
+  collisionResolver?: (collisions: Collision[]) => void;
+  overlapResolver?: (overlaps: SensorOverlap[]) => void;
 }

@@ -1,6 +1,13 @@
 import BaseScene from '@/scenes/BaseScene';
 import { V8Application } from '@/V8Application';
-import TowerfallPhysicsPlugin, { Actor, CollisionResult, Sensor, Solid } from '@dill-pixel/plugin-towerfall-physics';
+import { Collision } from '@dill-pixel/plugin-snap-physics';
+import TowerfallPhysicsPlugin, {
+  Actor,
+  CollisionResult,
+  Sensor,
+  SensorOverlap,
+  Solid,
+} from '@dill-pixel/plugin-towerfall-physics';
 import { ActionDetail, Container, Signal } from 'dill-pixel';
 import gsap from 'gsap';
 import { FederatedPointerEvent, Graphics, Point, Pool, Rectangle } from 'pixi.js';
@@ -241,6 +248,8 @@ export default class TowerfallPhysicsScene extends BaseScene {
       boundary: this.config.boundary.bindToAppSize
         ? new Rectangle(0, 0, this.app.size.width, this.app.size.height)
         : new Rectangle(0, 0, this.config.boundary.width, this.config.boundary.height),
+      collisionResolver: this._resolveCollisions,
+      overlapResolver: this._resolveOverlaps,
     });
 
     this._createPlayer();
@@ -251,18 +260,18 @@ export default class TowerfallPhysicsScene extends BaseScene {
 
     const pf1 = this.createPlatform(100, 600, 200, 32); // Platform 1
     gsap.to(pf1, {
-      x: 400,
-      duration: 2,
+      x: 800,
+      duration: 4,
       repeat: -1,
       yoyo: true,
       ease: 'none',
-      delay: 1,
+      delay: 0.5,
     });
     // Create moving platform
-    const pf = this.createPlatform(400, 1000, 200, 32);
+    const pf = this.createPlatform(400, 600, 200, 32);
     gsap.to(pf, {
-      y: 1200,
-      duration: 2,
+      y: 1100,
+      duration: 3,
       repeat: -1,
       yoyo: true,
       ease: 'none',
@@ -281,6 +290,18 @@ export default class TowerfallPhysicsScene extends BaseScene {
     this.on('click', (event: FederatedPointerEvent) => this._addActors(new Point(event.globalX, event.globalY)));
   }
 
+  private _resolveCollisions(collisions: Collision[]): void {
+    // collisions.forEach((collision) => {
+    //   console.log('collision', collision.type);
+    // });
+  }
+
+  private _resolveOverlaps(overlaps: SensorOverlap[]): void {
+    // overlaps.forEach((overlap) => {
+    //   console.log('overlap', overlap.type);
+    // });
+  }
+
   protected _createPlayer(): void {
     // Create player sprite (circular)
     const playerSprite = new Graphics();
@@ -290,7 +311,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
     this.physicsContainer.add.existing(playerSprite);
 
     // Create player with sprite as view
-    this.player = new Player({ type: 'Player', position: [100, 100], size: [32, 64], view: playerSprite });
+    this.player = new Player({ type: 'Player', position: [125, 100], size: [32, 64], view: playerSprite });
     this.physics.system.addActor(this.player);
 
     this.player.onKilled.connectOnce(this._createPlayer);
@@ -353,7 +374,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
   private _createPortals(): void {
     // Create two portals on opposite sides of the scene
     this.portal1 = new Portal({
-      position: [100, 400],
+      position: [200, 400],
     });
     this.physics.system.addSensor(this.portal1);
 

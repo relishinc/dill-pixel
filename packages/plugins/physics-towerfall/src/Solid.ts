@@ -153,7 +153,7 @@ export class Solid<T extends Application = Application> extends Entity<T> {
           for (const actor of actors) {
             if (this.overlaps(actor)) {
               // Push down
-              actor.moveY(this.bottom - actor.y, () => actor.squish());
+              actor.moveY(this.bottom - actor.y, actor.squish);
             } else if (ridingActors.has(actor)) {
               // Carry down
               actor.moveY(moveY);
@@ -173,7 +173,7 @@ export class Solid<T extends Application = Application> extends Entity<T> {
           for (const actor of actors) {
             if (this.overlaps(actor)) {
               // Push up
-              actor.moveY(this.top - (actor.y + actor.height), () => actor.squish());
+              actor.moveY(this.top - (actor.y + actor.height), actor.squish);
             } else if (ridingActors.has(actor)) {
               // Carry up
               actor.moveY(moveY);

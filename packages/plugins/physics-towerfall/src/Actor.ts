@@ -97,9 +97,10 @@ export class Actor<T extends Application = Application> extends Entity<T> {
   /**
    * Move the actor horizontally, checking for collisions with solids
    */
-  public moveX(amount: number, onCollide?: () => void): void {
+  public moveX(amount: number, collisionHandler?: (result: CollisionResult) => void): CollisionResult[] {
     this._xRemainder += amount;
     const move = Math.round(this._xRemainder);
+    const collisions: CollisionResult[] = [];
 
     if (move !== 0) {
       this._xRemainder -= move;
@@ -112,15 +113,20 @@ export class Actor<T extends Application = Application> extends Entity<T> {
 
         // Check for collision with any solid
         let collided = false;
-        let collision: CollisionResult | null = null;
         for (const solid of this.getSolidsAt(nextX, this.y)) {
           if (solid.collidable) {
             collided = true;
-            collision = {
+            const result: CollisionResult = {
               collided: true,
               normal: { x: -sign, y: 0 },
               penetration: Math.abs(nextX - (solid.x + (sign > 0 ? 0 : solid.width))),
+              solid,
             };
+            collisions.push(result);
+            if (collisionHandler) {
+              collisionHandler(result);
+            }
+            this.onCollide(result);
             break;
           }
         }
@@ -130,22 +136,21 @@ export class Actor<T extends Application = Application> extends Entity<T> {
           remaining--;
           this.updateView();
         } else {
-          if (collision) {
-            this.onCollide(collision);
-          }
-          if (onCollide) onCollide();
           break;
         }
       }
     }
+
+    return collisions;
   }
 
   /**
    * Move the actor vertically, checking for collisions with solids
    */
-  public moveY(amount: number, onCollide?: () => void): void {
+  public moveY(amount: number, collisionHandler?: (result: CollisionResult) => void): CollisionResult[] {
     this._yRemainder += amount;
     const move = Math.round(this._yRemainder);
+    const collisions: CollisionResult[] = [];
 
     if (move !== 0) {
       this._yRemainder -= move;
@@ -158,15 +163,20 @@ export class Actor<T extends Application = Application> extends Entity<T> {
 
         // Check for collision with any solid
         let collided = false;
-        let collision: CollisionResult | null = null;
         for (const solid of this.getSolidsAt(this.x, nextY)) {
           if (solid.collidable) {
             collided = true;
-            collision = {
+            const result: CollisionResult = {
               collided: true,
               normal: { x: 0, y: -sign },
               penetration: Math.abs(nextY - (solid.y + (sign > 0 ? 0 : solid.height))),
+              solid,
             };
+            collisions.push(result);
+            if (collisionHandler) {
+              collisionHandler(result);
+            }
+            this.onCollide(result);
             break;
           }
         }
@@ -176,14 +186,12 @@ export class Actor<T extends Application = Application> extends Entity<T> {
           remaining--;
           this.updateView();
         } else {
-          if (collision) {
-            this.onCollide(collision);
-          }
-          if (onCollide) onCollide();
           break;
         }
       }
     }
+
+    return collisions;
   }
 
   public updateView(): void {

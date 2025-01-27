@@ -2,7 +2,7 @@ import { Application } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { Solid } from './Solid';
-import { PhysicsEntityConfig, Vector2 } from './types';
+import { PhysicsEntityConfig, SensorOverlap, Vector2 } from './types';
 import { resolveEntityPosition, resolveEntitySize } from './utils';
 
 export class Sensor<T extends Application = Application> extends Entity<T> {
@@ -144,7 +144,6 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
     if (!this.isRidingSolid()) {
       this.velocity.y += this.system.gravity * deltaTime;
     }
-
     // Move
     if (this.velocity.x !== 0) {
       this.moveX(this.velocity.x * deltaTime);
@@ -152,14 +151,13 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
     if (this.velocity.y !== 0) {
       this.moveY(this.velocity.y * deltaTime);
     }
-
-    this.checkActorOverlaps();
   }
 
   /**
    * Check for overlapping actors and trigger callbacks
    */
-  private checkActorOverlaps(): void {
+  public checkActorOverlaps(): Set<SensorOverlap> {
+    const currentSensorOverlaps = new Set<SensorOverlap>();
     const currentOverlaps = new Set<Actor>();
 
     // Get all actors at current position
@@ -170,6 +168,11 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
         currentOverlaps.add(actor);
         if (!this.overlappingActors.has(actor)) {
           // New overlap
+          currentSensorOverlaps.add({
+            actor,
+            sensor: this,
+            type: `${actor.type}|${this.type}`,
+          });
           this.onActorEnter(actor);
         }
       }
@@ -183,6 +186,8 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
     }
 
     this.overlappingActors = currentOverlaps;
+
+    return currentSensorOverlaps;
   }
 
   /**

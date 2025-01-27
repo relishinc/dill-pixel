@@ -3,7 +3,7 @@ import { Actor } from './Actor';
 import { Sensor } from './Sensor';
 import { Solid } from './Solid';
 import TowerfallPhysicsPlugin from './TowerfallPhysicsPlugin';
-import { PhysicsEntityConfig, PhysicsEntityView, Rectangle, Vector2 } from './types';
+import { Collision, PhysicsEntityConfig, PhysicsEntityView, Rectangle, SensorOverlap } from './types';
 
 export interface PhysicsSystemOptions {
   plugin: TowerfallPhysicsPlugin;
@@ -13,12 +13,8 @@ export interface PhysicsSystemOptions {
   debug?: boolean;
   boundary?: Rectangle;
   shouldCull?: boolean;
-}
-
-export interface CollisionResult {
-  collided: boolean;
-  normal?: Vector2;
-  penetration?: number;
+  collisionResolver?: (collisions: Collision[]) => void;
+  overlapResolver?: (overlaps: SensorOverlap[]) => void;
 }
 
 export class System {
@@ -27,6 +23,8 @@ export class System {
   private solids: Set<Solid> = new Set();
   private sensors: Set<Sensor> = new Set();
   private grid: Map<string, Set<Solid>> = new Map();
+  private collisions: Collision[] = [];
+  private sensorOverlaps: SensorOverlap[] = [];
   // Type-based lookup maps
   private actorsByType: Map<string, Set<Actor>> = new Map();
   private solidsByType: Map<string, Set<Solid>> = new Map();
@@ -95,6 +93,9 @@ export class System {
   }
 
   public update(dt: number): void {
+    // Clear collisions from previous frame
+    this.collisions = [];
+    this.sensorOverlaps = [];
     // Convert delta time to seconds
     const deltaTime = dt / 60;
 
@@ -114,12 +115,22 @@ export class System {
 
     // Update sensors (before actors so they can detect entry/exit in the same frame)
     for (const sensor of this.sensors) {
-      sensor.update(deltaTime);
+      this.updateSensor(sensor, deltaTime);
     }
 
     // Update actors
     for (const actor of this.actors) {
       this.updateActor(actor, deltaTime);
+    }
+
+    // Process overlaps if resolver is set
+    if (this.options.overlapResolver && this.sensorOverlaps.length > 0) {
+      this.options.overlapResolver(this.sensorOverlaps);
+    }
+
+    // Process collisions if resolver is set
+    if (this.options.collisionResolver && this.collisions.length > 0) {
+      this.options.collisionResolver(this.collisions);
     }
 
     // Cull out-of-bounds entities if enabled and boundary is set
@@ -143,12 +154,12 @@ export class System {
 
     // Move horizontally
     if (actor.velocity.x !== 0) {
-      actor.moveX(actor.velocity.x * dt);
+      this.moveActorX(actor, actor.velocity.x * dt);
     }
 
     // Move vertically
     if (actor.velocity.y !== 0) {
-      actor.moveY(actor.velocity.y * dt);
+      this.moveActorY(actor, actor.velocity.y * dt);
     }
 
     // Update view
@@ -157,6 +168,46 @@ export class System {
 
   private updateSensor(sensor: Sensor, dt: number): void {
     sensor.update(dt);
+    const overlaps = sensor.checkActorOverlaps();
+    this.sensorOverlaps.push(...overlaps);
+  }
+
+  private moveActorX(actor: Actor, amount: number): void {
+    const collisions = actor.moveX(amount);
+
+    // Add any collisions to our collection
+    for (const result of collisions) {
+      this.collisions.push({
+        type: `${actor.type}|${result.solid!.type}`,
+        entity1: actor,
+        entity2: result.solid!,
+        result: {
+          collided: result.collided,
+          normal: result.normal,
+          penetration: result.penetration,
+          solid: result.solid,
+        },
+      });
+    }
+  }
+
+  private moveActorY(actor: Actor, amount: number): void {
+    const collisions = actor.moveY(amount);
+
+    // Add any collisions to our collection
+    for (const result of collisions) {
+      this.collisions.push({
+        type: `${actor.type}|${result.solid!.type}`,
+        entity1: actor,
+        entity2: result.solid!,
+        result: {
+          collided: result.collided,
+          normal: result.normal,
+          penetration: result.penetration,
+          solid: result.solid,
+        },
+      });
+    }
   }
 
   public addActor(actor: Actor): void {
@@ -548,5 +599,9 @@ export class System {
       entity.y >= boundary.y + boundary.height || // Completely below
       entity.y + entity.height <= boundary.y // Completely above
     );
+  }
+
+  public setCollisionResolver(resolver: (collisions: Collision[]) => void): void {
+    this.options.collisionResolver = resolver;
   }
 }

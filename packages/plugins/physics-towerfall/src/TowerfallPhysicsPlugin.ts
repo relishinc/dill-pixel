@@ -6,11 +6,13 @@ import { TowerfallPhysicsOptions } from './interfaces';
 import { Sensor } from './Sensor';
 import { Solid } from './Solid';
 import { System } from './System';
-import { PhysicsEntityConfig } from './types';
+import { Collision, PhysicsEntityConfig, SensorOverlap } from './types';
 
 export default class TowerfallPhysicsPlugin extends Plugin {
   public system: System;
   public container: PIXIContainer;
+  private collisionResolver?: (collisions: Collision[]) => void;
+  private overlapResolver?: (overlaps: SensorOverlap[]) => void;
 
   constructor() {
     super('towerfall-physics');
@@ -23,7 +25,8 @@ export default class TowerfallPhysicsPlugin extends Plugin {
     const { gridSize = 8, gravity = 900, maxVelocity = 400, debug = false } = options;
 
     this.container = options.container!;
-
+    this.collisionResolver = options.collisionResolver;
+    this.overlapResolver = options.overlapResolver;
     this.system = new System({
       gridSize,
       gravity,
@@ -31,6 +34,8 @@ export default class TowerfallPhysicsPlugin extends Plugin {
       boundary: options.boundary,
       shouldCull: options.shouldCull,
       plugin: this,
+      collisionResolver: this.collisionResolver,
+      overlapResolver: this.overlapResolver,
     });
 
     if (debug) {
@@ -39,6 +44,11 @@ export default class TowerfallPhysicsPlugin extends Plugin {
 
     // Register update loop
     app.ticker.add(this.update);
+  }
+
+  public setCollisionResolver(resolver: (collisions: Collision[]) => void): void {
+    this.collisionResolver = resolver;
+    this.system.setCollisionResolver(resolver);
   }
 
   public destroy(): void {
