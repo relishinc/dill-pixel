@@ -1,37 +1,47 @@
 import { Application } from 'dill-pixel';
 import { Entity } from './Entity';
 import { Solid } from './Solid';
-import { CollisionResult, PhysicsEntityConfig, PhysicsEntityView, Vector2 } from './types';
+import { CollisionResult, PhysicsEntityConfig, Vector2 } from './types';
 import { resolveEntityPosition, resolveEntitySize } from './utils';
 
 export class Actor<T extends Application = Application> extends Entity<T> {
-  public type: string;
+  public type = 'Actor';
   public velocity: Vector2 = { x: 0, y: 0 };
   public shouldRemoveOnCull: boolean = true;
 
-  constructor(
-    config: PhysicsEntityConfig,
-    public view: PhysicsEntityView,
-  ) {
-    super(config);
-    if (!config.type) {
-      this.type = this.constructor.name;
+  public init(config: PhysicsEntityConfig): void {
+    if (config) {
+      if (config.position !== undefined || (config.x !== undefined && config.y !== undefined)) {
+        const { x, y } = resolveEntityPosition(config);
+        this._x = Math.round(x);
+        this._y = Math.round(y);
+      }
+
+      if (config.size !== undefined || (config.width !== undefined && config.height !== undefined)) {
+        const { width, height } = resolveEntitySize(config);
+        this.width = Math.round(width);
+        this.height = Math.round(height);
+      }
     }
 
-    const { x, y } = resolveEntityPosition(config);
-    const { width, height } = resolveEntitySize(config);
-
-    this._x = Math.round(x);
-    this._y = Math.round(y);
-    this.width = Math.round(width);
-    this.height = Math.round(height);
-    this.updateView();
-
-    this.initialize();
+    if (config?.view) {
+      this.view = config.view;
+    }
+    if (this.view) {
+      this.view.visible = true;
+      this.updateView();
+    }
   }
 
-  protected initialize() {
-    // Override in subclass
+  public reset(): void {
+    super.reset();
+
+    this._x = -Number.MAX_SAFE_INTEGER;
+    this._y = -Number.MAX_SAFE_INTEGER;
+
+    if (this.view) {
+      this.view.visible = false;
+    }
   }
 
   /**

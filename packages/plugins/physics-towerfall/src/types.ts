@@ -24,6 +24,7 @@ export interface PhysicsEntityConfig {
   width?: number;
   height?: number;
   restitution?: number;
+  view?: PhysicsEntityView;
 }
 
 export interface CollisionResult {

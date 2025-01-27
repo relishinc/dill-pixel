@@ -3,9 +3,10 @@ import { Application, Plugin } from 'dill-pixel';
 import { Container as PIXIContainer, Ticker } from 'pixi.js';
 import { Actor } from './Actor';
 import { TowerfallPhysicsOptions } from './interfaces';
+import { Sensor } from './Sensor';
 import { Solid } from './Solid';
 import { System } from './System';
-import { PhysicsEntityConfig, PhysicsEntityView } from './types';
+import { PhysicsEntityConfig } from './types';
 
 export default class TowerfallPhysicsPlugin extends Plugin {
   public system: System;
@@ -53,15 +54,22 @@ export default class TowerfallPhysicsPlugin extends Plugin {
   /**
    * Create a new physics actor
    */
-  public createActor(config: PhysicsEntityConfig, view: PhysicsEntityView): Actor {
-    return this.system.createActor(config, view);
+  public createActor(config: PhysicsEntityConfig): Actor {
+    return this.system.createActor(config);
   }
 
   /**
    * Create a new solid obstacle
    */
-  public createSolid(config: PhysicsEntityConfig, view: PhysicsEntityView): Solid {
-    return this.system.createSolid(config, view);
+  public createSolid(config: PhysicsEntityConfig): Solid {
+    return this.system.createSolid(config);
+  }
+
+  /**
+   * Create a new sensor zone
+   */
+  public createSensor(config: PhysicsEntityConfig): Sensor {
+    return this.system.createSensor(config);
   }
 
   /**
@@ -76,6 +84,13 @@ export default class TowerfallPhysicsPlugin extends Plugin {
    */
   public removeSolid(solid: Solid): void {
     this.system.removeSolid(solid);
+  }
+
+  /**
+   * Remove a sensor from the physics system
+   */
+  public removeSensor(sensor: Sensor): void {
+    this.system.removeSensor(sensor);
   }
 
   public updateSolidPosition(solid: Solid, x: number, y: number): void {

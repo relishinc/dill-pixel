@@ -1,5 +1,6 @@
 import { Container, Graphics } from 'pixi.js';
 import { Actor } from './Actor';
+import { Sensor } from './Sensor';
 import { Solid } from './Solid';
 import TowerfallPhysicsPlugin from './TowerfallPhysicsPlugin';
 import { PhysicsEntityConfig, PhysicsEntityView, Rectangle, Vector2 } from './types';
@@ -24,6 +25,7 @@ export class System {
   private readonly options: PhysicsSystemOptions;
   private actors: Set<Actor> = new Set();
   private solids: Set<Solid> = new Set();
+  private sensors: Set<Sensor> = new Set();
   private grid: Map<string, Set<Solid>> = new Map();
   // Type-based lookup maps
   private actorsByType: Map<string, Set<Actor>> = new Map();
@@ -67,6 +69,18 @@ export class System {
     this.options.maxVelocity = value;
   }
 
+  set boundary(value: Rectangle) {
+    this.options.boundary = value;
+  }
+
+  get container(): Container {
+    return this.options.plugin.container;
+  }
+
+  public addView(view: PhysicsEntityView): void {
+    this.container.addChild(view);
+  }
+
   constructor(options: PhysicsSystemOptions) {
     this.options = {
       ...options,
@@ -85,12 +99,17 @@ export class System {
         // Remove from old grid cells
         this.removeSolidFromGrid(solid);
 
-        // Move the solid (which will handle pushing/carrying actors)
-        solid.move(0, 0, this.actors);
+        // Move the solid (which will handle pushing/carrying actors and sensors)
+        solid.move(0, 0, this.actors, this.sensors);
 
         // Add to new grid cells
         this.addSolidToGrid(solid);
       }
+    }
+
+    // Update sensors (before actors so they can detect entry/exit in the same frame)
+    for (const sensor of this.sensors) {
+      sensor.update(deltaTime);
     }
 
     // Update actors
@@ -138,18 +157,17 @@ export class System {
       this.actorsByType.set(actor.type, new Set());
     }
     this.actorsByType.get(actor.type)!.add(actor);
-    console.log(this.actorsByType);
     actor.updateView();
   }
 
-  public createActor(config: PhysicsEntityConfig, view: PhysicsEntityView): Actor {
-    const actor = new Actor(config, view);
+  public createActor(config: PhysicsEntityConfig): Actor {
+    const actor = new Actor(config);
     this.addActor(actor);
     return actor;
   }
 
-  public createSolid(config: PhysicsEntityConfig, view: PhysicsEntityView): Solid {
-    const solid = new Solid(config, view);
+  public createSolid(config: PhysicsEntityConfig): Solid {
+    const solid = new Solid(config);
     this.solids.add(solid);
     // Add to type index
     if (!this.solidsByType.has(solid.type)) {
@@ -173,6 +191,7 @@ export class System {
         this.actorsByType.delete(actor.type);
       }
     }
+    actor.onRemoved();
   }
 
   public removeSolid(solid: Solid): void {
@@ -193,7 +212,7 @@ export class System {
     this.removeSolidFromGrid(solid);
 
     // Move the solid (which will handle pushing/carrying actors)
-    solid.move(x, y, this.actors);
+    solid.move(x, y, this.actors, this.sensors);
 
     // Add to new grid cells
     this.addSolidToGrid(solid);
@@ -201,17 +220,17 @@ export class System {
     solid.updateView();
   }
 
-  public getSolidsAt(x: number, y: number, actor: Actor): Solid[] {
+  public getSolidsAt(x: number, y: number, entity: Actor | Sensor): Solid[] {
     const bounds = {
       x,
       y,
-      width: actor.width,
-      height: actor.height,
+      width: entity.width,
+      height: entity.height,
     };
 
     // Calculate movement direction from current position to check position
-    const dx = x - actor.x;
-    const dy = y - actor.y;
+    const dx = x - entity.x;
+    const dy = y - entity.y;
 
     // Get the base cells that the bounds intersect
     const cells = this.getCells(bounds);
@@ -220,6 +239,7 @@ export class System {
     if (dx !== 0) {
       const extraX =
         dx > 0 ? Math.ceil((x + bounds.width) / this.options.gridSize) : Math.floor(x / this.options.gridSize) - 1;
+
       for (
         let y = Math.floor(bounds.y / this.options.gridSize);
         y < Math.ceil((bounds.y + bounds.height) / this.options.gridSize);
@@ -232,6 +252,7 @@ export class System {
     if (dy !== 0) {
       const extraY =
         dy > 0 ? Math.ceil((y + bounds.height) / this.options.gridSize) : Math.floor(y / this.options.gridSize) - 1;
+
       for (
         let x = Math.floor(bounds.x / this.options.gridSize);
         x < Math.ceil((bounds.x + bounds.width) / this.options.gridSize);
@@ -252,7 +273,7 @@ export class System {
           if (seen.has(solid)) continue;
           seen.add(solid);
 
-          // Only add solids that actually overlap with the actor's bounds
+          // Only add solids that actually overlap with the entity's bounds
           if (
             this.overlaps(bounds, {
               x: solid.x,
@@ -268,6 +289,15 @@ export class System {
     }
 
     return result;
+  }
+
+  private checkOverlap(entity: Actor | Sensor, solid: Solid): boolean {
+    return (
+      entity.x < solid.x + solid.width &&
+      entity.x + entity.width > solid.x &&
+      entity.y < solid.y + solid.height &&
+      entity.y + entity.height > solid.y
+    );
   }
 
   private overlaps(a: Rectangle, b: Rectangle): boolean {
@@ -343,7 +373,7 @@ export class System {
     if (this.options.boundary) {
       const b = this.options.boundary;
       gfx.rect(b.x, b.y, b.width, b.height);
-      gfx.stroke({ color: 0x0000ff, width: 2, alignment: 0.5 });
+      gfx.stroke({ color: 0xff0000, width: 2, alignment: 0.5 });
     }
 
     // Draw grid
@@ -459,12 +489,27 @@ export class System {
   }
 
   private isInBounds(entity: Actor | Solid, boundary: Rectangle): boolean {
-    // Check if any part of the entity overlaps with the boundary
-    return (
-      entity.x < boundary.x + boundary.width &&
-      entity.x + entity.width > boundary.x &&
-      entity.y < boundary.y + boundary.height &&
-      entity.y + entity.height > boundary.y
+    // Only consider entity out of bounds if it's completely outside the boundary
+    return !(
+      entity.x >= boundary.x + boundary.width || // Completely to the right
+      entity.x + entity.width <= boundary.x || // Completely to the left
+      entity.y >= boundary.y + boundary.height || // Completely below
+      entity.y + entity.height <= boundary.y // Completely above
     );
+  }
+
+  public createSensor(config: PhysicsEntityConfig): Sensor {
+    const sensor = new Sensor(config);
+    this.addSensor(sensor);
+    return sensor;
+  }
+
+  public addSensor(sensor: Sensor): void {
+    this.sensors.add(sensor);
+    sensor.updateView();
+  }
+
+  public removeSensor(sensor: Sensor): void {
+    this.sensors.delete(sensor);
   }
 }

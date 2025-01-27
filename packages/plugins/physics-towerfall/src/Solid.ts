@@ -1,10 +1,12 @@
 import { Application } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
-import { PhysicsEntityConfig, PhysicsEntityView } from './types';
+import { Sensor } from './Sensor';
+import { PhysicsEntityConfig } from './types';
 import { resolveEntityPosition, resolveEntitySize } from './utils';
 
 export class Solid<T extends Application = Application> extends Entity<T> {
+  public type = 'Solid';
   public collidable: boolean = true;
   public moving: boolean = false;
 
@@ -29,25 +31,21 @@ export class Solid<T extends Application = Application> extends Entity<T> {
     return this._y;
   }
 
-  constructor(config: PhysicsEntityConfig, view?: PhysicsEntityView) {
-    super(config);
+  public init(config: PhysicsEntityConfig): void {
+    if (config) {
+      const { x, y } = resolveEntityPosition(config);
+      const { width, height } = resolveEntitySize(config);
 
-    const { x, y } = resolveEntityPosition(config);
-    const { width, height } = resolveEntitySize(config);
-
-    if (!width || !height) {
-      throw new Error('Width and height are required for bodies');
+      this._x = Math.round(x);
+      this._y = Math.round(y);
+      this._nextX = this._x;
+      this._nextY = this._y;
+      this.width = Math.round(width);
+      this.height = Math.round(height);
     }
 
-    this._x = Math.round(x);
-    this._y = Math.round(y);
-    this._nextX = this._x;
-    this._nextY = this._y;
-    this.width = Math.round(width);
-    this.height = Math.round(height);
-
-    if (view) {
-      this.view = view;
+    if (config?.view) {
+      this.view = config.view;
       this.updateView();
     }
   }
@@ -68,7 +66,7 @@ export class Solid<T extends Application = Application> extends Entity<T> {
     return this.y + this.height;
   }
 
-  public move(x: number, y: number, actors: Set<Actor>): void {
+  public move(x: number, y: number, actors: Set<Actor>, sensors: Set<Sensor>): void {
     // Calculate total movement including remainder
     const totalX = x + (this._nextX - this._x);
     const totalY = y + (this._nextY - this._y);
@@ -80,11 +78,19 @@ export class Solid<T extends Application = Application> extends Entity<T> {
     const moveY = Math.round(this._yRemainder);
 
     if (moveX !== 0 || moveY !== 0) {
-      // Get all riding actors before movement
-      const riding = new Set<Actor>();
+      // Get all riding actors and sensors before movement
+      const ridingActors = new Set<Actor>();
+      const ridingSensors = new Set<Sensor>();
+
       for (const actor of actors) {
         if (actor.isRiding(this)) {
-          riding.add(actor);
+          ridingActors.add(actor);
+        }
+      }
+
+      for (const sensor of sensors) {
+        if (sensor.isRiding(this)) {
+          ridingSensors.add(sensor);
         }
       }
 
@@ -101,9 +107,18 @@ export class Solid<T extends Application = Application> extends Entity<T> {
             if (this.overlaps(actor)) {
               // Push right
               actor.moveX(this.right - actor.x, () => actor.squish());
-            } else if (riding.has(actor)) {
+            } else if (ridingActors.has(actor)) {
               // Carry right
               actor.moveX(moveX);
+            }
+          }
+          for (const sensor of sensors) {
+            if (this.overlaps(sensor)) {
+              // Push right
+              sensor.moveX(this.right - sensor.x);
+            } else if (ridingSensors.has(sensor)) {
+              // Carry right
+              sensor.moveX(moveX);
             }
           }
         } else {
@@ -112,9 +127,18 @@ export class Solid<T extends Application = Application> extends Entity<T> {
             if (this.overlaps(actor)) {
               // Push left
               actor.moveX(this.left - (actor.x + actor.width), () => actor.squish());
-            } else if (riding.has(actor)) {
+            } else if (ridingActors.has(actor)) {
               // Carry left
               actor.moveX(moveX);
+            }
+          }
+          for (const sensor of sensors) {
+            if (this.overlaps(sensor)) {
+              // Push left
+              sensor.moveX(this.left - (sensor.x + sensor.width));
+            } else if (ridingSensors.has(sensor)) {
+              // Carry left
+              sensor.moveX(moveX);
             }
           }
         }
@@ -130,9 +154,18 @@ export class Solid<T extends Application = Application> extends Entity<T> {
             if (this.overlaps(actor)) {
               // Push down
               actor.moveY(this.bottom - actor.y, () => actor.squish());
-            } else if (riding.has(actor)) {
+            } else if (ridingActors.has(actor)) {
               // Carry down
               actor.moveY(moveY);
+            }
+          }
+          for (const sensor of sensors) {
+            if (this.overlaps(sensor)) {
+              // Push down
+              sensor.moveY(this.bottom - sensor.y);
+            } else if (ridingSensors.has(sensor)) {
+              // Carry down
+              sensor.moveY(moveY);
             }
           }
         } else {
@@ -141,9 +174,18 @@ export class Solid<T extends Application = Application> extends Entity<T> {
             if (this.overlaps(actor)) {
               // Push up
               actor.moveY(this.top - (actor.y + actor.height), () => actor.squish());
-            } else if (riding.has(actor)) {
+            } else if (ridingActors.has(actor)) {
               // Carry up
               actor.moveY(moveY);
+            }
+          }
+          for (const sensor of sensors) {
+            if (this.overlaps(sensor)) {
+              // Push up
+              sensor.moveY(this.top - (sensor.y + sensor.height));
+            } else if (ridingSensors.has(sensor)) {
+              // Carry up
+              sensor.moveY(moveY);
             }
           }
         }
@@ -169,12 +211,12 @@ export class Solid<T extends Application = Application> extends Entity<T> {
     }
   }
 
-  private overlaps(actor: Actor): boolean {
+  private overlaps(entity: Actor | Sensor): boolean {
     return (
-      this.x < actor.x + actor.width &&
-      this.x + this.width > actor.x &&
-      this.y < actor.y + actor.height &&
-      this.y + this.height > actor.y
+      this.x < entity.x + entity.width &&
+      this.x + this.width > entity.x &&
+      this.y < entity.y + entity.height &&
+      this.y + this.height > entity.y
     );
   }
 }

@@ -50,11 +50,19 @@ export class Entity<A extends Application = Application> {
     return this.app.getPlugin('towerfall-physics') as TowerfallPhysicsPlugin;
   }
 
-  constructor(config: PhysicsEntityConfig) {
+  constructor(config?: PhysicsEntityConfig) {
     bindAllMethods(this);
-    this.init(config);
+
+    if (config) {
+      this.init(config);
+    }
+
+    this.initialize();
   }
 
+  protected initialize() {
+    // Override in subclass
+  }
   /**
    * Initialize the entity with new configuration data
    * Called by Pool when retrieving from pool
@@ -87,13 +95,21 @@ export class Entity<A extends Application = Application> {
       this.view.visible = true;
       this.updateView();
     }
-
-    // Call subclass initialization
-    this.initialize();
   }
 
-  protected initialize() {
-    // Override in subclass
+  /**
+   * Reset the entity to its initial state for reuse in object pool
+   * Override this to handle custom reset logic
+   * @param config New configuration to apply
+   */
+  public reset(): void {
+    // Reset culling state
+    this._isCulled = false;
+    this._isDestroyed = false;
+
+    // Reset remainders
+    this._xRemainder = 0;
+    this._yRemainder = 0;
   }
 
   get system(): System {
@@ -125,41 +141,6 @@ export class Entity<A extends Application = Application> {
   }
 
   /**
-   * Reset the entity to its initial state for reuse in object pool
-   * Override this to handle custom reset logic
-   * @param config New configuration to apply
-   */
-  public reset(config: PhysicsEntityConfig): void {
-    // Reset culling state
-    this._isCulled = false;
-    this._isDestroyed = false;
-
-    // Reset type if provided
-    if (config.type) {
-      this.type = config.type;
-    }
-
-    // Reset position and size
-    const { x, y } = resolveEntityPosition(config);
-    const { width, height } = resolveEntitySize(config);
-
-    this._x = Math.round(x);
-    this._y = Math.round(y);
-    this.width = Math.round(width);
-    this.height = Math.round(height);
-
-    // Reset view if it exists
-    if (this.view) {
-      this.view.visible = true;
-      this.updateView();
-    }
-
-    // Reset remainders
-    this._xRemainder = 0;
-    this._yRemainder = 0;
-  }
-
-  /**
    * Prepare the entity for removal/recycling
    * Override this to handle custom cleanup
    */
@@ -178,6 +159,11 @@ export class Entity<A extends Application = Application> {
     if (this.view) {
       this.view.visible = false;
     }
+  }
+
+  public onRemoved(): void {
+    // Override in subclass
+    this.destroy();
   }
 
   public setView(view: PhysicsEntityView): void {

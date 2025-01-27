@@ -12,7 +12,7 @@ export function resolveEntitySize(config: PhysicsEntityConfig): { width: number;
   const { width, height } =
     config.size !== undefined
       ? resolveSizeLike(config.size)
-      : { width: config?.width ?? 0, height: config?.height ?? 0 };
+      : { width: config?.width ?? 32, height: config?.height ?? 32 };
 
   return { width, height };
 }
