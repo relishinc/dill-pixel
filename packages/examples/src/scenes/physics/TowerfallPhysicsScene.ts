@@ -1,13 +1,6 @@
 import BaseScene from '@/scenes/BaseScene';
 import { V8Application } from '@/V8Application';
-import TowerfallPhysicsPlugin, {
-  Actor,
-  Collision,
-  CollisionResult,
-  Sensor,
-  SensorOverlap,
-  Solid,
-} from '@dill-pixel/plugin-towerfall-physics';
+import TowerfallPhysicsPlugin, { Actor, CollisionResult, Sensor, Solid } from '@dill-pixel/plugin-towerfall-physics';
 import { ActionDetail, Camera, Container, Signal } from 'dill-pixel';
 import gsap from 'gsap';
 import { FederatedPointerEvent, Graphics, Point, Pool, Rectangle } from 'pixi.js';
@@ -45,15 +38,6 @@ class Player extends Actor<V8Application> {
     if (result.normal?.y === 1) {
       this.velocity.y = 0;
     }
-    // If we hit something while moving down, we've landed
-    else if (result.normal?.y === -1) {
-      this.isJumping = false;
-      this.velocity.y = 0;
-    }
-    // If we hit something horizontally, stop horizontal velocity
-    else if (result.normal?.x !== 0) {
-      this.velocity.x = 0;
-    }
   }
 
   public onRemoved(): void {
@@ -63,9 +47,15 @@ class Player extends Actor<V8Application> {
 
   private _jump() {
     if (this.isRidingSolid() && !this.isJumping) {
-      const JUMP_FORCE = -600;
-      this.velocity.y = JUMP_FORCE;
       this.isJumping = true;
+      this.velocity.y = Math.min(-this.system.gravity * 0.25, -600);
+    }
+  }
+
+  public postUpdate(): void {
+    if (this.isRidingSolid()) {
+      this.isJumping = false;
+      this.velocity.y = 0;
     }
   }
 }
@@ -143,7 +133,6 @@ class Portal extends Sensor<V8Application> {
     if (this.linkedPortal) {
       this.linkedPortal.active = false;
       actor.velocity = { x: 0, y: 0 };
-      actor.frozen = true;
       actor.moveTo(
         this.linkedPortal.x + this.linkedPortal.width / 2 - actor.width / 2,
         this.linkedPortal.y + this.linkedPortal.height - actor.height - 1,
@@ -154,23 +143,17 @@ class Portal extends Sensor<V8Application> {
   public onActorExit(): void {
     this.active = true;
   }
-
-  public update(dt: number): void {
-    super.update(dt);
-  }
 }
 
 export default class TowerfallPhysicsScene extends BaseScene {
   title = 'Towerfall Physics';
   subtitle = 'Particles: 0 (click to add more)';
 
-  private player: Player;
-  private physicsContainer: Container;
   protected config = {
     debug: true,
-    itemsToAdd: 25,
-    gravity: 1000,
-    maxVelocity: 900,
+    itemsToAdd: 100,
+    gravity: 6000,
+    maxVelocity: 1500,
     gridCellSize: 100,
     useCamera: true,
     boundary: {
@@ -180,23 +163,25 @@ export default class TowerfallPhysicsScene extends BaseScene {
     },
     zoom: 1,
   };
+  private physicsContainer: Container;
+  private camera: Camera;
+
+  private player: Player;
+
+  private portal1: Portal;
+  private portal2: Portal;
+
+  private pool = new Pool<FX>(FX, 1000);
 
   get physics(): TowerfallPhysicsPlugin {
     return this.app.getPlugin('towerfall-physics') as TowerfallPhysicsPlugin;
   }
 
-  private camera: Camera;
-
-  private pool = new Pool<FX>(FX, 100);
-
-  private portal1: Portal;
-  private portal2: Portal;
-
   configureGUI() {
     const physicsFolder = this.gui.addFolder('Physics Settings');
     physicsFolder.open();
     physicsFolder.add(this.config, 'itemsToAdd', 0, 200, 1).name('Particles to add');
-    physicsFolder.add(this.config, 'gravity', -1000, 1000, 50).onChange(() => {
+    physicsFolder.add(this.config, 'gravity', -1000, 10000, 500).onChange(() => {
       this.physics.system.gravity = this.config.gravity;
     });
 
@@ -301,15 +286,18 @@ export default class TowerfallPhysicsScene extends BaseScene {
       boundary: this.config.boundary.bindToAppSize
         ? new Rectangle(0, 0, this.app.size.width, this.app.size.height)
         : new Rectangle(0, 0, this.config.boundary.width, this.config.boundary.height),
-      collisionResolver: this._resolveCollisions,
-      overlapResolver: this._resolveOverlaps,
+      // collisionResolver: this._resolveCollisions,
+      // overlapResolver: this._resolveOverlaps,
     });
 
     this._createPlayer();
     this._createPortals();
 
     // Create platforms
-    this.createPlatform(0, this.app.size.height - 32, this.app.size.width, 32); // Ground
+    this.createPlatform(0, this.app.size.height - 32, this.app.size.width, 32); //
+
+    // celiing
+    this.createPlatform(0, 0, this.app.size.width, 32);
 
     const pf1 = this.createPlatform(100, 600, 200, 32); // Platform 1
     gsap.to(pf1, {
@@ -345,17 +333,17 @@ export default class TowerfallPhysicsScene extends BaseScene {
     this._handleUseCameraChanged();
   }
 
-  private _resolveCollisions(collisions: Collision[]): void {
-    // collisions.forEach((collision) => {
-    //   console.log('collision', collision.type);
-    // });
-  }
+  // private _resolveCollisions(collisions: Collision[]): void {
+  // collisions.forEach((collision) => {
+  //   console.log('collision', collision.type);
+  // });
+  // }
 
-  private _resolveOverlaps(overlaps: SensorOverlap[]): void {
-    // overlaps.forEach((overlap) => {
-    //   console.log('overlap', overlap.type);
-    // });
-  }
+  // private _resolveOverlaps(overlaps: SensorOverlap[]): void {
+  // overlaps.forEach((overlap) => {
+  //   console.log('overlap', overlap.type);
+  // });
+  // }
 
   protected _createPlayer(): void {
     // Create player sprite (circular)
@@ -393,7 +381,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
   }
 
   private _movePlayer(detail: ActionDetail) {
-    const MOVE_SPEED = 600;
+    const MOVE_SPEED = 1500;
     const direction = detail.id === 'move_left' ? -1 : 1;
     this.player.velocity.x = direction * MOVE_SPEED;
   }
@@ -409,7 +397,8 @@ export default class TowerfallPhysicsScene extends BaseScene {
 
       // Give initial random velocity
       const angle = Math.random() * Math.PI * 2;
-      const speed = 200 + Math.random() * 200;
+      const amt = Math.max(this.physics.system.gravity * 0.1, 200);
+      const speed = amt + Math.random() * amt;
 
       actor.velocity.x = Math.cos(angle) * speed;
       actor.velocity.y = Math.sin(angle) * speed;
@@ -447,9 +436,8 @@ export default class TowerfallPhysicsScene extends BaseScene {
   update() {
     if (this.player && this.camera) {
       this.camera.update();
-      // Add some air control
-      this.player.velocity.x *= 0.3; // Deceleration
     }
+    this.player.velocity.x *= 0.3; // Deceleration
     this._subtitle.text = `Particles: ${this.physics.system.getActorsByType('FX')?.length || 0} (click to add more)`;
   }
 

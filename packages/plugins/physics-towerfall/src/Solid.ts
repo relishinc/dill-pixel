@@ -3,13 +3,11 @@ import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { Sensor } from './Sensor';
 import { PhysicsEntityConfig } from './types';
-import { resolveEntityPosition, resolveEntitySize } from './utils';
 
 export class Solid<T extends Application = Application> extends Entity<T> {
-  public type = 'Solid';
+  public shouldRemoveOnCull = false;
   public collidable: boolean = true;
   public moving: boolean = false;
-  public shouldRemoveOnCull = false;
 
   private _nextX: number;
   private _nextY: number;
@@ -33,21 +31,10 @@ export class Solid<T extends Application = Application> extends Entity<T> {
   }
 
   public init(config: PhysicsEntityConfig): void {
+    super.init(config);
     if (config) {
-      const { x, y } = resolveEntityPosition(config);
-      const { width, height } = resolveEntitySize(config);
-
-      this._x = Math.round(x);
-      this._y = Math.round(y);
       this._nextX = this._x;
       this._nextY = this._y;
-      this.width = Math.round(width);
-      this.height = Math.round(height);
-    }
-
-    if (config?.view) {
-      this.view = config.view;
-      this.updateView();
     }
   }
 
@@ -67,7 +54,12 @@ export class Solid<T extends Application = Application> extends Entity<T> {
     return this.y + this.height;
   }
 
-  public move(x: number, y: number, actors: Set<Actor>, sensors: Set<Sensor>): void {
+  public move(
+    x: number,
+    y: number,
+    actors: Set<Actor> = this.system.actors,
+    sensors: Set<Sensor> = this.system.sensors,
+  ): void {
     // Calculate total movement including remainder
     const totalX = x + (this._nextX - this._x);
     const totalY = y + (this._nextY - this._y);
@@ -194,7 +186,6 @@ export class Solid<T extends Application = Application> extends Entity<T> {
 
       // Re-enable collisions
       this.collidable = true;
-      this.moving = false;
 
       // Update next positions to match current
       this._nextX = this._x;

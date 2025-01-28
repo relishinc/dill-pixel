@@ -19,16 +19,18 @@ export interface PhysicsSystemOptions {
 
 export class System {
   private readonly options: PhysicsSystemOptions;
-  private actors: Set<Actor> = new Set();
-  private solids: Set<Solid> = new Set();
-  private sensors: Set<Sensor> = new Set();
-  private grid: Map<string, Set<Solid>> = new Map();
-  private collisions: Collision[] = [];
-  private sensorOverlaps: SensorOverlap[] = [];
+  // Public collections
+  public actors: Set<Actor> = new Set();
+  public solids: Set<Solid> = new Set();
+  public sensors: Set<Sensor> = new Set();
   // Type-based lookup maps
   private actorsByType: Map<string, Set<Actor>> = new Map();
   private solidsByType: Map<string, Set<Solid>> = new Map();
   private sensorsByType: Map<string, Set<Sensor>> = new Map();
+
+  private grid: Map<string, Set<Solid>> = new Map();
+  private collisions: Collision[] = [];
+  private sensorOverlaps: SensorOverlap[] = [];
   // debugging
   private _debugContainer: Container;
   private _debugGfx: Graphics | null = null;
@@ -72,8 +74,16 @@ export class System {
     this.options.maxVelocity = value;
   }
 
+  get maxVelocity(): number {
+    return this.options.maxVelocity;
+  }
+
   set boundary(value: Rectangle) {
     this.options.boundary = value;
+  }
+
+  get boundary(): Rectangle {
+    return this.options.boundary!;
   }
 
   get container(): Container {
@@ -97,6 +107,7 @@ export class System {
     // Clear collisions from previous frame
     this.collisions = [];
     this.sensorOverlaps = [];
+
     // Convert delta time to seconds
     const deltaTime = dt / 60;
 
@@ -146,69 +157,28 @@ export class System {
   }
 
   private updateActor(actor: Actor, dt: number): void {
-    // Apply gravity
-    actor.velocity.y += this.options.gravity * dt;
-
-    // Clamp velocity
-    actor.velocity.x = Math.min(Math.max(actor.velocity.x, -this.options.maxVelocity), this.options.maxVelocity);
-    actor.velocity.y = Math.min(Math.max(actor.velocity.y, -this.options.maxVelocity), this.options.maxVelocity);
-
-    // Move horizontally
-    if (actor.velocity.x !== 0) {
-      this.moveActorX(actor, actor.velocity.x * dt);
+    actor.preUpdate();
+    actor.update(dt);
+    actor.postUpdate();
+    for (const result of actor.collisions) {
+      this.collisions.push({
+        type: `${actor.type}|${result.solid!.type}`,
+        entity1: actor,
+        entity2: result.solid!,
+        result: {
+          collided: result.collided,
+          normal: result.normal,
+          penetration: result.penetration,
+          solid: result.solid,
+        },
+      });
     }
-
-    // Move vertically
-    if (actor.velocity.y !== 0) {
-      this.moveActorY(actor, actor.velocity.y * dt);
-    }
-
-    // Update view
-    actor.updateView();
   }
 
   private updateSensor(sensor: Sensor, dt: number): void {
     sensor.update(dt);
     const overlaps = sensor.checkActorOverlaps();
     this.sensorOverlaps.push(...overlaps);
-  }
-
-  private moveActorX(actor: Actor, amount: number): void {
-    const collisions = actor.moveX(amount);
-
-    // Add any collisions to our collection
-    for (const result of collisions) {
-      this.collisions.push({
-        type: `${actor.type}|${result.solid!.type}`,
-        entity1: actor,
-        entity2: result.solid!,
-        result: {
-          collided: result.collided,
-          normal: result.normal,
-          penetration: result.penetration,
-          solid: result.solid,
-        },
-      });
-    }
-  }
-
-  private moveActorY(actor: Actor, amount: number): void {
-    const collisions = actor.moveY(amount);
-
-    // Add any collisions to our collection
-    for (const result of collisions) {
-      this.collisions.push({
-        type: `${actor.type}|${result.solid!.type}`,
-        entity1: actor,
-        entity2: result.solid!,
-        result: {
-          collided: result.collided,
-          normal: result.normal,
-          penetration: result.penetration,
-          solid: result.solid,
-        },
-      });
-    }
   }
 
   public addActor(actor: Actor): void {
@@ -218,7 +188,6 @@ export class System {
       this.actorsByType.set(actor.type, new Set());
     }
     this.actorsByType.get(actor.type)!.add(actor);
-    actor.updateView();
   }
 
   public createActor(config: PhysicsEntityConfig): Actor {
@@ -240,19 +209,6 @@ export class System {
       this.sensorsByType.set(sensor.type, new Set());
     }
     this.sensorsByType.get(sensor.type)!.add(sensor);
-    sensor.updateView();
-  }
-
-  public removeSensor(sensor: Sensor): void {
-    this.sensors.delete(sensor);
-    // Remove from type index
-    const typeSet = this.sensorsByType.get(sensor.type);
-    if (typeSet) {
-      typeSet.delete(sensor);
-      if (typeSet.size === 0) {
-        this.sensorsByType.delete(sensor.type);
-      }
-    }
   }
 
   public createSolid(config: PhysicsEntityConfig): Solid {
@@ -265,12 +221,11 @@ export class System {
     this.solidsByType.get(solid.type)!.add(solid);
     // Add to spatial grid
     this.addSolidToGrid(solid);
-    solid.updateView();
 
     return solid;
   }
 
-  public removeActor(actor: Actor): void {
+  public removeActor(actor: Actor, destroyView: boolean = true): void {
     this.actors.delete(actor);
     // Remove from type index
     const typeSet = this.actorsByType.get(actor.type);
@@ -281,9 +236,13 @@ export class System {
       }
     }
     actor.onRemoved();
+
+    if (destroyView) {
+      actor.view?.removeFromParent();
+    }
   }
 
-  public removeSolid(solid: Solid): void {
+  public removeSolid(solid: Solid, destroyView: boolean = true): void {
     this.solids.delete(solid);
     // Remove from type index
     const typeSet = this.solidsByType.get(solid.type);
@@ -294,6 +253,30 @@ export class System {
       }
     }
     this.removeSolidFromGrid(solid);
+
+    if (destroyView) {
+      solid.view?.removeFromParent();
+    }
+
+    solid.onRemoved();
+  }
+
+  public removeSensor(sensor: Sensor, destroyView: boolean = true): void {
+    this.sensors.delete(sensor);
+    // Remove from type index
+    const typeSet = this.sensorsByType.get(sensor.type);
+    if (typeSet) {
+      typeSet.delete(sensor);
+      if (typeSet.size === 0) {
+        this.sensorsByType.delete(sensor.type);
+      }
+    }
+
+    sensor.onRemoved();
+
+    if (destroyView) {
+      sensor.view?.removeFromParent();
+    }
   }
 
   public moveSolid(solid: Solid, x: number, y: number): void {
@@ -466,20 +449,20 @@ export class System {
     // Draw solids
     for (const solid of this.solids) {
       gfx.rect(solid.x, solid.y, solid.width, solid.height);
+      gfx.stroke({ color: solid.debugColor ?? 0x00ff00, alpha: 1 });
     }
-    gfx.stroke({ color: 0x00ff00, width: 1, alignment: 0.5 });
 
     // Draw actors
     for (const actor of this.actors) {
       gfx.rect(actor.x, actor.y, actor.width, actor.height);
+      gfx.stroke({ color: actor.debugColor ?? 0xff0000, alpha: 1 });
     }
-    gfx.stroke({ color: 0xff0000, width: 1, alignment: 0.5 });
 
     // Draw sensors
     for (const sensor of this.sensors) {
       gfx.rect(sensor.x, sensor.y, sensor.width, sensor.height);
+      gfx.stroke({ color: sensor.debugColor ?? 0xffff00, alpha: 1 });
     }
-    gfx.stroke({ color: 0xffff00, width: 1, alignment: 0.5 });
   }
 
   /**
@@ -529,12 +512,16 @@ export class System {
 
   public destroy(): void {
     this.debug = false;
+    this.gravity = 0;
+    this.maxVelocity = 0;
+
     this.grid.clear();
     this.solids.clear();
     this.actors.clear();
-    this.actorsByType.clear();
-    this.solidsByType.clear();
     this.sensors.clear();
+
+    this.solidsByType.clear();
+    this.actorsByType.clear();
     this.sensorsByType.clear();
   }
 

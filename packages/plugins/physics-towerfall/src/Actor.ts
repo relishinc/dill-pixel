@@ -5,9 +5,9 @@ import { CollisionResult, PhysicsEntityConfig, Vector2 } from './types';
 import { resolveEntityPosition, resolveEntitySize } from './utils';
 
 export class Actor<T extends Application = Application> extends Entity<T> {
-  public type = 'Actor';
   public velocity: Vector2 = { x: 0, y: 0 };
   public shouldRemoveOnCull: boolean = true;
+  public collisions: CollisionResult[] = [];
 
   public init(config: PhysicsEntityConfig): void {
     if (config) {
@@ -24,12 +24,51 @@ export class Actor<T extends Application = Application> extends Entity<T> {
       }
     }
 
+    // Reset velocity
+    this.velocity = { x: 0, y: 0 };
+
     if (config?.view) {
       this.view = config.view;
     }
     if (this.view) {
       this.view.visible = true;
       this.updateView();
+    }
+  }
+
+  public preUpdate(): void {
+    this.collisions = [];
+  }
+
+  public update(dt: number): void {
+    if (!this.active) return;
+
+    // Ensure velocity is valid
+    if (!this.isRidingSolid()) {
+      this.velocity.y += this.system.gravity * dt;
+    }
+
+    // Clamp velocity
+    this.velocity.x = Math.min(Math.max(this.velocity.x, -this.system.maxVelocity), this.system.maxVelocity);
+    this.velocity.y = Math.min(Math.max(this.velocity.y, -this.system.maxVelocity), this.system.maxVelocity);
+
+    // Move horizontally
+    if (this.velocity.x !== 0) {
+      this.moveX(this.velocity.x * dt);
+    }
+
+    // Move vertically
+    if (this.velocity.y !== 0) {
+      this.moveY(this.velocity.y * dt);
+    }
+
+    // Update view
+    this.updateView();
+  }
+
+  public postUpdate(): void {
+    if (this.isRidingSolid()) {
+      this.velocity.y = 0;
     }
   }
 
@@ -98,6 +137,8 @@ export class Actor<T extends Application = Application> extends Entity<T> {
    * Move the actor horizontally, checking for collisions with solids
    */
   public moveX(amount: number, collisionHandler?: (result: CollisionResult) => void): CollisionResult[] {
+    if (!this.active) return [];
+
     this._xRemainder += amount;
     const move = Math.round(this._xRemainder);
     const collisions: CollisionResult[] = [];
@@ -123,10 +164,10 @@ export class Actor<T extends Application = Application> extends Entity<T> {
               solid,
             };
             collisions.push(result);
+            this.onCollide(result);
             if (collisionHandler) {
               collisionHandler(result);
             }
-            this.onCollide(result);
             break;
           }
         }
@@ -148,6 +189,8 @@ export class Actor<T extends Application = Application> extends Entity<T> {
    * Move the actor vertically, checking for collisions with solids
    */
   public moveY(amount: number, collisionHandler?: (result: CollisionResult) => void): CollisionResult[] {
+    if (!this.active) return [];
+
     this._yRemainder += amount;
     const move = Math.round(this._yRemainder);
     const collisions: CollisionResult[] = [];
@@ -173,10 +216,10 @@ export class Actor<T extends Application = Application> extends Entity<T> {
               solid,
             };
             collisions.push(result);
+            this.onCollide(result);
             if (collisionHandler) {
               collisionHandler(result);
             }
-            this.onCollide(result);
             break;
           }
         }
@@ -195,7 +238,7 @@ export class Actor<T extends Application = Application> extends Entity<T> {
   }
 
   public updateView(): void {
-    if (this.view) {
+    if (this.view && this.view.visible) {
       this.view.x = this._x;
       this.view.y = this._y;
     }

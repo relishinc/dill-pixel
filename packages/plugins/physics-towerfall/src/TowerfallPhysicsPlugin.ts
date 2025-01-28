@@ -28,6 +28,14 @@ export default class TowerfallPhysicsPlugin extends Plugin {
     this.container = options.container!;
     this.collisionResolver = options.collisionResolver;
     this.overlapResolver = options.overlapResolver;
+
+    if (this.system) {
+      app.ticker.remove(this.update);
+      this.system.destroy();
+      // @ts-expect-error system can't be null
+      this.system = null;
+    }
+
     this.system = new System({
       gridSize,
       gravity,
@@ -57,6 +65,8 @@ export default class TowerfallPhysicsPlugin extends Plugin {
     this.enabled = false;
     this.app.ticker.remove(this.update);
     this.system.destroy();
+    // @ts-expect-error system can't be null
+    this.system = null;
     super.destroy();
   }
 
