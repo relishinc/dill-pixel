@@ -19,7 +19,7 @@ export interface Rectangle {
 export type CollisionShape = 'rectangle';
 
 export interface PhysicsEntityConfig {
-  type: PhysicsEntityType;
+  type?: PhysicsEntityType;
   position?: PointLike;
   size?: SizeLike;
   x?: number;

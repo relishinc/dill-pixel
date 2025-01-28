@@ -2,7 +2,6 @@ import { Application } from 'dill-pixel';
 import { Entity } from './Entity';
 import { Solid } from './Solid';
 import { CollisionResult, PhysicsEntityConfig, Vector2 } from './types';
-import { resolveEntityPosition, resolveEntitySize } from './utils';
 
 export class Actor<T extends Application = Application> extends Entity<T> {
   public velocity: Vector2 = { x: 0, y: 0 };
@@ -10,32 +9,10 @@ export class Actor<T extends Application = Application> extends Entity<T> {
   public collisions: CollisionResult[] = [];
 
   public init(config: PhysicsEntityConfig): void {
-    if (config) {
-      if (config.position !== undefined || (config.x !== undefined && config.y !== undefined)) {
-        const { x, y } = resolveEntityPosition(config);
-        this._x = Math.round(x);
-        this._y = Math.round(y);
-      }
-
-      if (config.size !== undefined || (config.width !== undefined && config.height !== undefined)) {
-        const { width, height } = resolveEntitySize(config);
-        this.width = Math.round(width);
-        this.height = Math.round(height);
-      }
-    }
-
+    super.init(config);
     // Reset velocity
     this.velocity = { x: 0, y: 0 };
-
-    if (config?.view) {
-      this.view = config.view;
-    }
-    if (this.view) {
-      this.view.visible = true;
-      this.updateView();
-    }
   }
-
   public preUpdate(): void {
     this.collisions = [];
   }

@@ -31,14 +31,20 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
    * Check if this sensor is riding the given solid
    */
   public isRiding(solid: Solid): boolean {
-    // Must be directly above the solid (within 1 pixel)
-    const sensorBottom = this.y + this.height;
-    const onTop = Math.abs(sensorBottom - solid.y) <= 1;
-
-    // Must be horizontally overlapping
-    const overlap = this.x + this.width > solid.x && this.x < solid.x + solid.width;
-
-    return onTop && overlap;
+    const gravityDirection = Math.sign(this.system.gravity);
+    if (gravityDirection > 0) {
+      // Normal gravity - check if we're on top of the solid
+      const sensorBottom = this.y + this.height;
+      const onTop = Math.abs(sensorBottom - solid.y) <= 1;
+      const overlap = this.x + this.width > solid.x && this.x < solid.x + solid.width;
+      return onTop && overlap;
+    } else {
+      // Reversed gravity - check if we're on bottom of the solid
+      const sensorTop = this.y;
+      const onBottom = Math.abs(sensorTop - (solid.y + solid.height)) <= 1;
+      const overlap = this.x + this.width > solid.x && this.x < solid.x + solid.width;
+      return onBottom && overlap;
+    }
   }
 
   /**
@@ -58,9 +64,32 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
 
     if (move !== 0) {
       this._xRemainder -= move;
-      this._x += move;
-      this.updateView();
-      this.checkActorOverlaps();
+      const sign = Math.sign(move);
+      let remaining = Math.abs(move);
+      while (remaining > 0) {
+        const step = sign;
+        const nextX = this.x + step;
+
+        // Check for collision with any solid
+        let collided = false;
+        for (const solid of this.getSolidsAt(nextX, this.y)) {
+          if (solid.collidable) {
+            collided = true;
+            break;
+          }
+        }
+
+        if (!collided) {
+          this._x = nextX;
+          remaining--;
+          this.updateView();
+          this.checkActorOverlaps();
+        } else {
+          // Stop horizontal movement when hitting a solid
+          this.velocity.x = 0;
+          break;
+        }
+      }
     }
   }
 
@@ -80,10 +109,10 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
         const step = sign;
         const nextY = this.y + step;
 
-        // Check for collision with any solid (only when moving down)
+        // Check for collision with any solid
         let collided = false;
-        if (sign > 0) {
-          // Only check collisions when moving down
+        // Only check collisions when moving in the direction of gravity
+        if (Math.sign(this.system.gravity) === sign) {
           for (const solid of this.getSolidsAt(this.x, nextY)) {
             if (solid.collidable) {
               collided = true;
@@ -110,6 +139,9 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
    * Update sensor position and check for overlapping actors
    */
   public update(deltaTime: number): void {
+    if (!this.active) {
+      return;
+    }
     // Apply gravity if not riding a solid
     if (!this.isRidingSolid()) {
       this.velocity.y += this.system.gravity * deltaTime;

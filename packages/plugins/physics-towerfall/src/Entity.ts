@@ -76,6 +76,7 @@ export class Entity<A extends Application = Application> {
   protected addView() {
     if (this.view) {
       this.view.visible = true;
+      this.view.label = this.type;
       this.system.container.addChild(this.view);
       this.updateView();
     }
@@ -90,7 +91,10 @@ export class Entity<A extends Application = Application> {
     if (config.type) {
       this.type = config.type;
     } else {
-      this.type = this.constructor.name;
+      console.log('no type', this.constructor.name);
+      if (!this.type) {
+        this.type = this.constructor.name;
+      }
     }
 
     if (config.position !== undefined || (config.x !== undefined && config.y !== undefined)) {

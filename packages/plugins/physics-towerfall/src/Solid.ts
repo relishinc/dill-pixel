@@ -60,6 +60,9 @@ export class Solid<T extends Application = Application> extends Entity<T> {
     actors: Set<Actor> = this.system.actors,
     sensors: Set<Sensor> = this.system.sensors,
   ): void {
+    if (!this.active) {
+      return;
+    }
     // Calculate total movement including remainder
     const totalX = x + (this._nextX - this._x);
     const totalY = y + (this._nextY - this._y);

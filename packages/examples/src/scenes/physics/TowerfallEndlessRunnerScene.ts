@@ -156,6 +156,8 @@ class Segment {
     this.x = x;
     this.y = y;
     this.width = width;
+    console.log('Segment', x, y, width);
+
     // Create floor platform
     this._createPlatform(0, y, width, 32, false);
 
@@ -204,7 +206,7 @@ class Segment {
     // Add obstacles on platform
     let obstacle: Solid | null = null;
     if (Math.random() < 0.7) {
-      obstacle = this._createObstacle(x + width / 2, y - 32);
+      obstacle = this._createObstacle(x + width / 2, y - 32 - Math.random() * 300);
       this.obstacles.push(obstacle);
     }
 

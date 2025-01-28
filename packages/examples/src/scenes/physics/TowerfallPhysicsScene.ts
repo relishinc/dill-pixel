@@ -22,11 +22,40 @@ export const assets = {
 
 class Player extends Actor<V8Application> {
   type = 'Player';
+  active = false;
   public onKilled: Signal<(player: Player) => void> = new Signal();
   private isJumping = false;
+  private movingDirection = 0;
 
   initialize(): void {
-    this.app.actions('jump').connect(this._jump);
+    this.addSignalConnection(
+      this.app.actions('jump').connect(this._jump),
+      this.app.actions('move_left').connect(this._move),
+      this.app.actions('move_right').connect(this._move),
+      this.app.actions('stop_move_left').connect(this._stopMove),
+      this.app.actions('stop_move_right').connect(this._stopMove),
+    );
+
+    gsap.to(this.view, {
+      alpha: 0.5,
+      duration: 0.5,
+      repeat: 3,
+      yoyo: true,
+      ease: 'none',
+      onComplete: () => {
+        this.view.alpha = 1;
+        this.active = true;
+      },
+    });
+  }
+
+  private _move(detail: ActionDetail) {
+    const direction = detail.id === 'move_left' ? -1 : 1;
+    this.movingDirection = direction;
+  }
+
+  private _stopMove() {
+    this.movingDirection = 0;
   }
 
   public squish(): void {
@@ -48,15 +77,16 @@ class Player extends Actor<V8Application> {
   private _jump() {
     if (this.isRidingSolid() && !this.isJumping) {
       this.isJumping = true;
-      this.velocity.y = Math.min(-this.system.gravity * 0.25, -600);
     }
   }
 
-  public postUpdate(): void {
-    if (this.isRidingSolid()) {
+  public update(dt: number): void {
+    this.velocity.x = this.movingDirection * 600;
+    if (this.isJumping) {
+      this.velocity.y = Math.min(-this.system.gravity * 0.25, -600);
       this.isJumping = false;
-      this.velocity.y = 0;
     }
+    super.update(dt);
   }
 }
 
@@ -69,10 +99,7 @@ class FX extends Actor<V8Application> {
     this.height = size;
     sprite.rect(0, 0, size, size);
     sprite.fill({ color: Math.random() * 0xffffff, alpha: 0.5 });
-
     this.view = sprite;
-    this.system.addView(this.view);
-    this.view.visible = false;
   }
 }
 
@@ -132,7 +159,13 @@ class Portal extends Sensor<V8Application> {
     this.active = false;
     if (this.linkedPortal) {
       this.linkedPortal.active = false;
-      actor.velocity = { x: 0, y: 0 };
+      if (actor.type === 'Player') {
+        actor.velocity = { x: 0, y: 0 };
+        actor.active = false;
+        setTimeout(() => {
+          actor.active = true;
+        }, 10);
+      }
       actor.moveTo(
         this.linkedPortal.x + this.linkedPortal.width / 2 - actor.width / 2,
         this.linkedPortal.y + this.linkedPortal.height - actor.height - 1,
@@ -181,7 +214,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
     const physicsFolder = this.gui.addFolder('Physics Settings');
     physicsFolder.open();
     physicsFolder.add(this.config, 'itemsToAdd', 0, 200, 1).name('Particles to add');
-    physicsFolder.add(this.config, 'gravity', -1000, 10000, 500).onChange(() => {
+    physicsFolder.add(this.config, 'gravity', -8000, 8000, 500).onChange(() => {
       this.physics.system.gravity = this.config.gravity;
     });
 
@@ -301,7 +334,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
 
     const pf1 = this.createPlatform(100, 600, 200, 32); // Platform 1
     gsap.to(pf1, {
-      x: 800,
+      x: 600,
       duration: 4,
       repeat: -1,
       yoyo: true,
@@ -321,11 +354,8 @@ export default class TowerfallPhysicsScene extends BaseScene {
     // Platform 2
     this.createPlatform(200, 200, 200, 32); // Platform 3
 
+    console.log('setup');
     // Setup input handlers
-    this.addSignalConnection(
-      this.app.actions('move_left').connect(this._movePlayer),
-      this.app.actions('move_right').connect(this._movePlayer),
-    );
 
     this.eventMode = 'static';
     this.on('click', (event: FederatedPointerEvent) => this._addParticles(new Point(event.globalX, event.globalY)));
@@ -354,7 +384,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
     this.physicsContainer.add.existing(playerSprite);
 
     // Create player with sprite as view
-    this.player = new Player({ type: 'Player', position: [125, 100], size: [32, 64], view: playerSprite });
+    this.player = new Player({ position: [125, this.app.size.height - 300], size: [32, 64], view: playerSprite });
     this.physics.system.addActor(this.player);
     this.player.onKilled.connectOnce(this._createPlayer);
 
@@ -378,12 +408,6 @@ export default class TowerfallPhysicsScene extends BaseScene {
 
     this.physicsContainer.add.existing(sprite);
     return this.physics.createSolid({ type: 'Platform', x, y, width, height, view: sprite });
-  }
-
-  private _movePlayer(detail: ActionDetail) {
-    const MOVE_SPEED = 1500;
-    const direction = detail.id === 'move_left' ? -1 : 1;
-    this.player.velocity.x = direction * MOVE_SPEED;
   }
 
   private _addParticles(pt: Point) {
@@ -425,7 +449,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
     this.physics.system.addSensor(this.portal1);
 
     this.portal2 = new Portal({
-      position: [700, 400],
+      position: [700, 800],
     });
     this.physics.system.addSensor(this.portal2);
 
