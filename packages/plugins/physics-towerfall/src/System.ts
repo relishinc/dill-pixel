@@ -181,38 +181,43 @@ export class System {
     this.sensorOverlaps.push(...overlaps);
   }
 
-  public addActor(actor: Actor): void {
+  public createActor(config: PhysicsEntityConfig): Actor {
+    const actor = new Actor(config);
+    return this.addActor(actor);
+  }
+
+  public addActor(actor: Actor): Actor {
     this.actors.add(actor);
+
     // Add to type index
     if (!this.actorsByType.has(actor.type)) {
       this.actorsByType.set(actor.type, new Set());
     }
     this.actorsByType.get(actor.type)!.add(actor);
-  }
-
-  public createActor(config: PhysicsEntityConfig): Actor {
-    const actor = new Actor(config);
-    this.addActor(actor);
     return actor;
   }
 
   public createSensor(config: PhysicsEntityConfig): Sensor {
     const sensor = new Sensor(config);
-    this.addSensor(sensor);
-    return sensor;
+    return this.addSensor(sensor);
   }
 
-  public addSensor(sensor: Sensor): void {
+  public addSensor(sensor: Sensor): Sensor {
     this.sensors.add(sensor);
     // Add to type index
     if (!this.sensorsByType.has(sensor.type)) {
       this.sensorsByType.set(sensor.type, new Set());
     }
     this.sensorsByType.get(sensor.type)!.add(sensor);
+    return sensor;
   }
 
   public createSolid(config: PhysicsEntityConfig): Solid {
     const solid = new Solid(config);
+    return this.addSolid(solid);
+  }
+
+  public addSolid(solid: Solid): Solid {
     this.solids.add(solid);
     // Add to type index
     if (!this.solidsByType.has(solid.type)) {
@@ -334,6 +339,8 @@ export class System {
       }
     }
 
+    // Create a Set of excluded types for O(1) lookups
+    const excludedTypes = entity.excludeCollisionTypes;
     const result: Solid[] = [];
     const seen = new Set<Solid>();
 
@@ -341,8 +348,8 @@ export class System {
       const solids = this.grid.get(cell);
       if (solids) {
         for (const solid of solids) {
-          // Skip if we've already checked this solid
-          if (seen.has(solid)) continue;
+          // Skip if we've already checked this solid or if its type is excluded
+          if (seen.has(solid) || excludedTypes.has(solid.type)) continue;
           seen.add(solid);
 
           // Only add solids that actually overlap with the entity's bounds

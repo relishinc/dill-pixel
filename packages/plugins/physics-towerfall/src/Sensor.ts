@@ -8,6 +8,7 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   public shouldRemoveOnCull = false;
   public collidableTypes: string[] = [];
   public velocity: Vector2 = { x: 0, y: 0 };
+  public isStatic: boolean = false;
   private overlappingActors: Set<Actor> = new Set();
   private _isRidingSolidCache: boolean | null = null;
 
@@ -65,9 +66,25 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
+   * Force move the sensor, ignoring static state and collisions
+   */
+  public moveStatic(x: number, y: number): void {
+    this._x = x;
+    this._y = y;
+    this._xRemainder = 0;
+    this._yRemainder = 0;
+    this.updateView();
+    this.checkActorOverlaps();
+  }
+
+  /**
    * Move the sensor horizontally - pass through solids
    */
   public moveX(amount: number): void {
+    if (this.isStatic) {
+      return;
+    }
+
     this._xRemainder += amount;
     const move = Math.round(this._xRemainder);
 
@@ -106,6 +123,10 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
    * Move the sensor vertically - collide with solids for riding
    */
   public moveY(amount: number): void {
+    if (this.isStatic) {
+      return;
+    }
+
     this._yRemainder += amount;
     const move = Math.round(this._yRemainder);
 
@@ -154,10 +175,12 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
     if (!this.active) {
       return;
     }
-    // Apply gravity if not riding a solid
-    if (!this.isRidingSolid()) {
+
+    // Only apply gravity if not static and not riding a solid
+    if (!this.isStatic && !this.isRidingSolid()) {
       this.velocity.y += this.system.gravity * deltaTime;
     }
+
     // Move
     if (this.velocity.x !== 0) {
       this.moveX(this.velocity.x * deltaTime);
@@ -207,7 +230,7 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   /**
    * Called when an actor starts overlapping with this sensor
    */
-  protected onActorEnter(actor: Actor): void {
+  public onActorEnter(actor: Actor): void {
     // Override in subclass
     void actor;
   }
@@ -215,7 +238,7 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   /**
    * Called when an actor stops overlapping with this sensor
    */
-  protected onActorExit(actor: Actor): void {
+  public onActorExit(actor: Actor): void {
     // Override in subclass
     void actor;
   }

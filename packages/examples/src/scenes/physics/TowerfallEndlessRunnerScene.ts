@@ -16,8 +16,11 @@ export const debug = {
 export const plugins = ['towerfall-physics'];
 
 class Runner extends Actor<V8Application> {
-  type = 'Runner';
+  excludeCollisionTypes = new Set(['Coin']);
+
   private isJumping = false;
+  private isHit = false;
+  private hitCooldown: any;
   private isDead = false;
   private score = 0;
   public speed = 200;
@@ -55,13 +58,44 @@ class Runner extends Actor<V8Application> {
   }
 
   public onCollide(result: CollisionResult): void {
-    if (result.solid.type === 'Obstacle') {
-      this.die();
+    if (this.excludeCollisionTypes.has(result.solid.type)) {
       return;
     }
-    // If we hit something while moving up, stop upward velocity
-    if (result.normal?.y === 1) {
-      this.velocity.y = 0;
+
+    switch (result.solid.type) {
+      case 'Obstacle': {
+        if (result.normal?.y === -1) {
+          // hit upwards
+          this.isHit = true;
+          this.velocity.y = -800;
+          if (result.normal.x === 0) {
+            this.velocity.x = -800;
+          }
+        } else if (result.normal?.y === 1) {
+          this.velocity.y = 300;
+        }
+        if (result.normal?.x === -1 || result.normal?.x === 1) {
+          this.isHit = true;
+          this.velocity.x = 1000 * result.normal.x;
+        }
+
+        clearTimeout(this.hitCooldown);
+
+        this.hitCooldown = setTimeout(() => {
+          this.isHit = false;
+        }, 150);
+
+        gsap.to(this.view, {
+          alpha: 0.25,
+          duration: 0.3,
+          ease: 'none',
+          yoyo: true,
+          repeat: 3,
+          onComplete: () => {
+            this.view.alpha = 1;
+          },
+        });
+      }
     }
   }
 
@@ -69,7 +103,6 @@ class Runner extends Actor<V8Application> {
     if (this.isDead) return;
     this.isDead = true;
     this.system.removeActor(this);
-
     this.onKilled.emit();
   }
 
@@ -83,14 +116,21 @@ class Runner extends Actor<V8Application> {
   public postUpdate(): void {
     if (this.isRidingSolid()) {
       this.isJumping = false;
+      this.velocity.x *= 0.8;
     }
   }
 
   private _moveRight() {
+    if (this.isHit) {
+      return;
+    }
     this.velocity.x = Math.max(-this.speed * 100, 20);
   }
 
   private _moveLeft() {
+    if (this.isHit) {
+      return;
+    }
     this.velocity.x = this.speed * 110;
   }
   private _stopMoveLeft() {
@@ -111,35 +151,44 @@ class Runner extends Actor<V8Application> {
 }
 
 class Coin extends Sensor<V8Application> {
-  type = 'Coin';
-  collidableTypes = ['Runner'];
+  public type = 'Coin';
+  public collidableTypes = ['Runner'];
+  public collected = false;
+  public shouldRemoveOnCull = false;
+
+  constructor(config?: any) {
+    super(config);
+    this.velocity = { x: 0, y: 0 };
+    this.isStatic = true;
+  }
 
   initialize(): void {
     const sprite = new Graphics();
-    sprite.circle(8, 8, 8);
+    sprite.circle(12, 12, 12);
     sprite.fill({ color: 0xffd700, alpha: 0.75 });
     this.view = sprite;
     this.view.visible = true;
-    this.width = 12;
-    this.height = 12;
+    this.width = 20;
+    this.height = 20;
+  }
+
+  onActorEnter(actor: Actor): void {
+    if (!this.collected && actor.type === 'Runner') {
+      this.collected = true;
+      (actor as Runner).addScore(10);
+      this.system.removeSensor(this);
+    }
   }
 
   public updateView(): void {
     this.view.position.set(this.x - 2, this.y - 2);
-  }
-
-  public onActorEnter(actor: Actor): void {
-    if (actor.type === 'Runner') {
-      (actor as unknown as Runner).addScore(10);
-      this.system.removeSensor(this);
-    }
   }
 }
 
 class Segment {
   public platforms: Solid[] = [];
   public obstacles: Solid[] = [];
-  public coins: Coin[] = [];
+  public coins: Array<{ coin: Coin; offsetX: number; offsetY: number }> = [];
   public width: number;
   public x: number;
   public y: number;
@@ -157,7 +206,6 @@ class Segment {
     this.x = x;
     this.y = y;
     this.width = width;
-    console.log('Segment', x, y, width);
 
     // Create floor platform
     this._createPlatform(0, y, width, 32, false);
@@ -213,23 +261,21 @@ class Segment {
 
     if (isMoving) {
       const dist = bool() ? 100 : -100;
-      const tween = gsap.to(platform, {
+      gsap.to(platform, {
         y: platform.y + dist,
         duration: 1.5,
         repeat: -1,
         yoyo: true,
         ease: 'none',
       });
-      this.tweens.push(tween);
       if (obstacle) {
-        const tween2 = gsap.to(obstacle, {
+        gsap.to(obstacle, {
           y: obstacle!.y + dist,
           duration: 1.5,
           repeat: -1,
           yoyo: true,
           ease: 'none',
         });
-        this.tweens.push(tween2);
       }
     }
 
@@ -257,13 +303,19 @@ class Segment {
     return obstacle;
   }
 
-  private _createCoin(x: number, y: number): Coin {
+  private _createCoin(x: number, y: number): { coin: Coin; offsetX: number; offsetY: number } {
     const coin = new Coin({
-      type: 'Coin',
       position: [this.x + x, y],
     });
     this.physics.system.addSensor(coin);
-    return coin;
+    // Store the coin with its relative offset from segment start
+    const coinData = {
+      coin,
+      offsetX: x,
+      offsetY: y - this.y,
+    };
+    this.coins.push(coinData);
+    return coinData;
   }
 
   public move(x: number, y: number): void {
@@ -271,12 +323,16 @@ class Segment {
 
     this.platforms.forEach((p) => p.move(x, y));
     this.obstacles.forEach((o) => o.move(x, y));
+    // Use absolute positioning for coins based on segment position and their offset
+    this.coins.forEach(({ coin, offsetX, offsetY }) => {
+      coin.moveStatic(this.x + offsetX, this.y + offsetY);
+    });
   }
 
   public destroy(): void {
     this.platforms.forEach((p) => this.physics.system.removeSolid(p, true));
     this.obstacles.forEach((o) => this.physics.system.removeSolid(o, true));
-    this.coins.forEach((c) => this.physics.system.removeSensor(c, true));
+    this.coins.forEach(({ coin }) => this.physics.system.removeSensor(coin, true));
 
     this.platforms = [];
     this.obstacles = [];

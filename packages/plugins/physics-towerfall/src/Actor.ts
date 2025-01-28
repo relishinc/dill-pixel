@@ -147,6 +147,9 @@ export class Actor<T extends Application = Application> extends Entity<T> {
         // Check for collision with any solid
         let collided = false;
         for (const solid of this.getSolidsAt(nextX, this.y)) {
+          if (solid.type === 'Coin') {
+            console.log('Coin');
+          }
           if (solid.collidable) {
             collided = true;
             const result: CollisionResult = {

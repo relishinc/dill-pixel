@@ -116,7 +116,7 @@ class Portal extends Sensor<V8Application> {
   type = 'Portal';
   collidableTypes = ['Player', 'FX'];
   private linkedPortal: Portal | null = null;
-  public active = true;
+  public floating: boolean = false;
   private static PORTAL_SIZE = 48;
 
   constructor(config: any) {

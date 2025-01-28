@@ -6,6 +6,7 @@ import { resolveEntityPosition, resolveEntitySize } from './utils';
 
 export class Entity<A extends Application = Application> {
   public type!: string;
+  public excludeCollisionTypes: Set<string> = new Set();
   public debugColor: number;
   public shouldRemoveOnCull: boolean = false;
   public width: number = 0;
@@ -15,6 +16,7 @@ export class Entity<A extends Application = Application> {
 
   protected _isCulled: boolean = false;
   protected _isDestroyed: boolean = false;
+  protected _isInitialized: boolean = false;
 
   protected _xRemainder: number = 0;
   protected _yRemainder: number = 0;
@@ -56,10 +58,12 @@ export class Entity<A extends Application = Application> {
 
   constructor(config?: PhysicsEntityConfig) {
     bindAllMethods(this);
+
     if (config) {
       this.init(config);
     }
 
+    // Use queueMicrotask to ensure initialization happens after constructor
     this.initialize();
     this.addView();
   }
