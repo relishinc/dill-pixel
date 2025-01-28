@@ -91,7 +91,9 @@ class Player extends Actor<V8Application> {
 }
 
 class FX extends Actor<V8Application> {
-  type = 'FX';
+  static INDEX = 0;
+  debug: boolean = false;
+
   initialize() {
     const sprite = new Graphics();
     const size = Math.round(4 + Math.random() * 4);
@@ -100,6 +102,13 @@ class FX extends Actor<V8Application> {
     sprite.rect(0, 0, size, size);
     sprite.fill({ color: Math.random() * 0xffffff, alpha: 0.5 });
     this.view = sprite;
+  }
+
+  update(dt: number): void {
+    super.update(dt);
+    if (this.isRidingSolid()) {
+      this.velocity.x *= 0.95;
+    }
   }
 }
 
@@ -204,7 +213,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
   private portal1: Portal;
   private portal2: Portal;
 
-  private pool = new Pool<FX>(FX, 1000);
+  private pool = new Pool<FX>(FX, 0);
 
   get physics(): TowerfallPhysicsPlugin {
     return this.app.getPlugin('towerfall-physics') as TowerfallPhysicsPlugin;
@@ -426,10 +435,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
 
       actor.velocity.x = Math.cos(angle) * speed;
       actor.velocity.y = Math.sin(angle) * speed;
-
-      actor.onCollide = () => {
-        actor.velocity.x *= 0.975;
-      };
+      console.log('actor', actor.debug);
 
       actor.onCull = () => {
         this.pool.return(actor);

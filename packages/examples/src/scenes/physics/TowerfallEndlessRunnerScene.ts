@@ -143,6 +143,7 @@ class Segment {
   public width: number;
   public x: number;
   public y: number;
+  public tweens: gsap.core.Tween[] = [];
 
   get app(): Application {
     return Application.getInstance();
@@ -212,22 +213,23 @@ class Segment {
 
     if (isMoving) {
       const dist = bool() ? 100 : -100;
-      gsap.to(platform, {
+      const tween = gsap.to(platform, {
         y: platform.y + dist,
         duration: 1.5,
         repeat: -1,
         yoyo: true,
         ease: 'none',
       });
-
+      this.tweens.push(tween);
       if (obstacle) {
-        gsap.to(obstacle, {
+        const tween2 = gsap.to(obstacle, {
           y: obstacle!.y + dist,
           duration: 1.5,
           repeat: -1,
           yoyo: true,
           ease: 'none',
         });
+        this.tweens.push(tween2);
       }
     }
 
@@ -266,6 +268,7 @@ class Segment {
 
   public move(x: number, y: number): void {
     this.x += x;
+
     this.platforms.forEach((p) => p.move(x, y));
     this.obstacles.forEach((o) => o.move(x, y));
   }

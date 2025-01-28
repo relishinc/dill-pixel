@@ -9,6 +9,7 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   public collidableTypes: string[] = [];
   public velocity: Vector2 = { x: 0, y: 0 };
   private overlappingActors: Set<Actor> = new Set();
+  private _isRidingSolidCache: boolean | null = null;
 
   constructor(config?: PhysicsEntityConfig) {
     super(config);
@@ -25,6 +26,7 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
       this.overlappingActors = new Set();
     }
     this.overlappingActors.clear();
+    this._isRidingSolidCache = null;
   }
 
   /**
@@ -51,8 +53,15 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
    * Check if this sensor is riding any solid
    */
   public isRidingSolid(): boolean {
+    // Return cached value if available
+    if (this._isRidingSolidCache !== null) {
+      return this._isRidingSolidCache;
+    }
+
+    // Calculate and cache the result
     const solids = this.getSolidsAt(this.x, this.system.gravity > 0 ? this.y + 1 : this.y - 1);
-    return solids.some((solid) => this.isRiding(solid));
+    this._isRidingSolidCache = solids.some((solid) => this.isRiding(solid));
+    return this._isRidingSolidCache;
   }
 
   /**
@@ -139,6 +148,9 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
    * Update sensor position and check for overlapping actors
    */
   public update(deltaTime: number): void {
+    // Reset the cache at the start of each update
+    this._isRidingSolidCache = null;
+
     if (!this.active) {
       return;
     }

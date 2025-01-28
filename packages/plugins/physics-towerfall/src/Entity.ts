@@ -91,7 +91,6 @@ export class Entity<A extends Application = Application> {
     if (config.type) {
       this.type = config.type;
     } else {
-      console.log('no type', this.constructor.name);
       if (!this.type) {
         this.type = this.constructor.name;
       }

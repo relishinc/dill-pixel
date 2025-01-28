@@ -7,14 +7,20 @@ export class Actor<T extends Application = Application> extends Entity<T> {
   public velocity: Vector2 = { x: 0, y: 0 };
   public shouldRemoveOnCull: boolean = true;
   public collisions: CollisionResult[] = [];
+  private _isRidingSolidCache: boolean | null = null;
 
   public init(config: PhysicsEntityConfig): void {
     super.init(config);
     // Reset velocity
     this.velocity = { x: 0, y: 0 };
+    this._isRidingSolidCache = null;
   }
   public preUpdate(): void {
+    if (!this.active) return;
+
     this.collisions = [];
+    // Reset the cache at the start of each update
+    this._isRidingSolidCache = null;
   }
 
   public update(dt: number): void {
@@ -44,6 +50,8 @@ export class Actor<T extends Application = Application> extends Entity<T> {
   }
 
   public postUpdate(): void {
+    if (!this.active) return;
+
     if (this.isRidingSolid()) {
       this.velocity.y = 0;
     }
@@ -97,8 +105,15 @@ export class Actor<T extends Application = Application> extends Entity<T> {
    * Check if this actor is riding any solid in the physics system
    */
   public isRidingSolid(): boolean {
+    // Return cached value if available
+    if (this._isRidingSolidCache !== null) {
+      return this._isRidingSolidCache;
+    }
+
+    // Calculate and cache the result
     const solids = this.getSolidsAt(this.x, this.y + 1);
-    return solids.some((solid) => this.isRiding(solid));
+    this._isRidingSolidCache = solids.some((solid) => this.isRiding(solid));
+    return this._isRidingSolidCache;
   }
 
   /**
