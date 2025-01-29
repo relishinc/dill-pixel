@@ -1,5 +1,6 @@
 import { Container, Graphics } from 'pixi.js';
 import { Actor } from './Actor';
+import { Group } from './Group';
 import { Sensor } from './Sensor';
 import { Solid } from './Solid';
 import TowerfallPhysicsPlugin from './TowerfallPhysicsPlugin';
@@ -23,10 +24,12 @@ export class System {
   public actors: Set<Actor> = new Set();
   public solids: Set<Solid> = new Set();
   public sensors: Set<Sensor> = new Set();
+  public groups: Set<Group> = new Set();
   // Type-based lookup maps
   private actorsByType: Map<string, Set<Actor>> = new Map();
   private solidsByType: Map<string, Set<Solid>> = new Map();
   private sensorsByType: Map<string, Set<Sensor>> = new Map();
+  private groupsByType: Map<string, Set<Group>> = new Map();
 
   private grid: Map<string, Set<Solid>> = new Map();
   private collisions: Collision[] = [];
@@ -111,8 +114,16 @@ export class System {
     // Convert delta time to seconds
     const deltaTime = dt / 60;
 
+    // Update containers first
+    for (const group of this.groups) {
+      group.update(deltaTime);
+    }
+
     // Update solids
     for (const solid of this.solids) {
+      solid.preUpdate();
+      solid.update(deltaTime);
+      solid.postUpdate();
       if (solid.moving) {
         // Remove from old grid cells
         this.removeSolidFromGrid(solid);
@@ -176,7 +187,9 @@ export class System {
   }
 
   private updateSensor(sensor: Sensor, dt: number): void {
+    sensor.preUpdate();
     sensor.update(dt);
+    sensor.postUpdate();
     const overlaps = sensor.checkActorOverlaps();
     this.sensorOverlaps.push(...overlaps);
   }
@@ -616,5 +629,48 @@ export class System {
 
   public setCollisionResolver(resolver: (collisions: Collision[]) => void): void {
     this.options.collisionResolver = resolver;
+  }
+
+  public createGroup(config: PhysicsEntityConfig): Group {
+    const group = new Group(config);
+    return this.addGroup(group);
+  }
+
+  public addGroup(group: Group): Group {
+    this.groups.add(group);
+
+    // Add to type index
+    if (!this.groupsByType.has(group.type)) {
+      this.groupsByType.set(group.type, new Set());
+    }
+    this.groupsByType.get(group.type)!.add(group);
+
+    return group;
+  }
+
+  public removeGroup(group: Group, destroyView: boolean = true): void {
+    this.groups.delete(group);
+
+    // Remove from type index
+    const typeSet = this.groupsByType.get(group.type);
+    if (typeSet) {
+      typeSet.delete(group);
+      if (typeSet.size === 0) {
+        this.groupsByType.delete(group.type);
+      }
+    }
+
+    // Remove all children
+    for (const actor of group.getActors()) {
+      this.removeActor(actor, destroyView);
+    }
+    for (const solid of group.getSolids()) {
+      this.removeSolid(solid, destroyView);
+    }
+    for (const sensor of group.getSensors()) {
+      this.removeSensor(sensor, destroyView);
+    }
+
+    group.onRemoved();
   }
 }

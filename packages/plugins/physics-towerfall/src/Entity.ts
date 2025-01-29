@@ -1,11 +1,13 @@
 import { Application, bindAllMethods, SignalConnection, SignalConnections } from 'dill-pixel';
+import { Group } from './Group';
 import { System } from './System';
 import TowerfallPhysicsPlugin from './TowerfallPhysicsPlugin';
-import { PhysicsEntityConfig, PhysicsEntityView, Rectangle } from './types';
+import { EntityData, PhysicsEntityConfig, PhysicsEntityView, Rectangle } from './types';
 import { resolveEntityPosition, resolveEntitySize } from './utils';
 
-export class Entity<A extends Application = Application> {
+export class Entity<A extends Application = Application, D extends EntityData = EntityData> {
   public type!: string;
+
   public excludeCollisionTypes: Set<string> = new Set();
   public debugColor: number;
   public shouldRemoveOnCull: boolean = false;
@@ -13,6 +15,9 @@ export class Entity<A extends Application = Application> {
   public height: number = 0;
   public view!: PhysicsEntityView;
   public active: boolean = true;
+
+  protected _data: Partial<D>;
+  protected _group: Group | null = null;
 
   protected _isCulled: boolean = false;
   protected _isDestroyed: boolean = false;
@@ -25,19 +30,48 @@ export class Entity<A extends Application = Application> {
 
   protected signalConnections: SignalConnections = new SignalConnections();
 
-  get x(): number {
-    return Math.round(this._x);
+  set data(value: Partial<D>) {
+    this._data = value;
   }
+
+  get data(): Partial<D> {
+    return this._data;
+  }
+
+  get group(): Group | null {
+    return this._group;
+  }
+
+  set group(value: Group | null) {
+    this._group = value;
+    if (this._group) {
+      this.onAddedToGroup();
+    } else {
+      this.onRemovedFromGroup();
+    }
+    this.updatePosition();
+  }
+
   set x(value: number) {
     this._x = value;
   }
 
-  get y(): number {
-    return Math.round(this._y);
+  get x(): number {
+    if (this._group) {
+      return Math.round(this._x + this._group.getChildOffset(this).x); // Return world position
+    }
+    return Math.round(this._x);
   }
 
   set y(value: number) {
     this._y = value;
+  }
+
+  get y(): number {
+    if (this._group) {
+      return Math.round(this._y + this._group.getChildOffset(this).y); // Return world position
+    }
+    return Math.round(this._y);
   }
 
   get isCulled(): boolean {
@@ -56,8 +90,10 @@ export class Entity<A extends Application = Application> {
     return this.app.getPlugin('towerfall-physics') as TowerfallPhysicsPlugin;
   }
 
-  constructor(config?: PhysicsEntityConfig) {
+  constructor(config?: PhysicsEntityConfig<D>) {
     bindAllMethods(this);
+
+    this._data = {};
 
     if (config) {
       this.init(config);
@@ -72,9 +108,17 @@ export class Entity<A extends Application = Application> {
     // Override in subclass
   }
 
+  public preUpdate(): void {
+    // Override in subclass
+  }
+
   public update(dt: number): void {
     // Override in subclass
     void dt;
+  }
+
+  public postUpdate(): void {
+    // Override in subclass
   }
 
   protected addView() {
@@ -98,6 +142,10 @@ export class Entity<A extends Application = Application> {
       if (!this.type) {
         this.type = this.constructor.name;
       }
+    }
+
+    if (config.data) {
+      this._data = config.data as Partial<D>;
     }
 
     if (config.position !== undefined || (config.x !== undefined && config.y !== undefined)) {
@@ -136,10 +184,26 @@ export class Entity<A extends Application = Application> {
     // Reset remainders
     this._xRemainder = 0;
     this._yRemainder = 0;
+
+    this._data = {};
   }
 
   get system(): System {
     return this.physics.system;
+  }
+
+  public onAddedToGroup(): void {
+    // Override in subclass
+  }
+
+  public onRemovedFromGroup(): void {
+    // Override in subclass
+  }
+
+  public updatePosition(): void {
+    this.x = this._x;
+    this.y = this._y;
+    this.updateView();
   }
 
   /**

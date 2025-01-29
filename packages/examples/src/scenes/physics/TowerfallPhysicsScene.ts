@@ -1,8 +1,15 @@
 import BaseScene from '@/scenes/BaseScene';
 import { V8Application } from '@/V8Application';
-import TowerfallPhysicsPlugin, { Actor, CollisionResult, Sensor, Solid } from '@dill-pixel/plugin-towerfall-physics';
+import TowerfallPhysicsPlugin, {
+  Actor,
+  CollisionResult,
+  Group,
+  Sensor,
+  Solid,
+} from '@dill-pixel/plugin-towerfall-physics';
 import { ActionDetail, Camera, Container, Signal } from 'dill-pixel';
 import gsap from 'gsap';
+
 import { FederatedPointerEvent, Graphics, Point, Pool, Rectangle } from 'pixi.js';
 
 export const id = 'towerfall-physics';
@@ -158,12 +165,7 @@ class Portal extends Sensor<V8Application> {
     this.system.addView(this.view);
   }
 
-  public linkTo(portal: Portal): void {
-    this.linkedPortal = portal;
-    portal.linkedPortal = this;
-  }
-
-  protected onActorEnter(actor: Player): void {
+  onActorEnter(actor: Player): void {
     if (!this.active) return;
     this.active = false;
     if (this.linkedPortal) {
@@ -182,8 +184,13 @@ class Portal extends Sensor<V8Application> {
     }
   }
 
-  public onActorExit(): void {
+  onActorExit(): void {
     this.active = true;
+  }
+
+  public linkTo(portal: Portal): void {
+    this.linkedPortal = portal;
+    portal.linkedPortal = this;
   }
 }
 
@@ -209,11 +216,15 @@ export default class TowerfallPhysicsScene extends BaseScene {
   private camera: Camera;
 
   private player: Player;
-
+  private pf1: Solid;
+  private pf2: Solid;
+  private pf3: Solid;
   private portal1: Portal;
   private portal2: Portal;
 
   private pool = new Pool<FX>(FX, 0);
+
+  private group: Group;
 
   get physics(): TowerfallPhysicsPlugin {
     return this.app.getPlugin('towerfall-physics') as TowerfallPhysicsPlugin;
@@ -341,31 +352,50 @@ export default class TowerfallPhysicsScene extends BaseScene {
     // celiing
     this.createPlatform(0, 0, this.app.size.width, 32);
 
-    const pf1 = this.createPlatform(100, 600, 200, 32); // Platform 1
-    gsap.to(pf1, {
-      x: 600,
-      duration: 4,
-      repeat: -1,
-      yoyo: true,
-      ease: 'none',
-      delay: 0.5,
-    });
+    this.pf1 = this.createPlatform(100, 600, 200, 32); // Platform 1
+    this.pf1.view.tint = 0xff0000;
+
     // Create moving platform
-    const pf = this.createPlatform(400, 600, 200, 32);
-    gsap.to(pf, {
-      y: 1150,
+    this.pf2 = this.createPlatform(400, 600, 200, 32);
+
+    gsap.to(this.pf2, {
+      x: 500,
+      y: 1000,
       duration: 3,
-      repeat: -1,
-      yoyo: true,
       ease: 'none',
+      modifiers: {
+        x: (value) => value - 10,
+      },
     });
 
     // Platform 2
-    this.createPlatform(200, 200, 200, 32); // Platform 3
+    this.pf3 = this.createPlatform(200, 200, 200, 32); // Platform 3
 
-    console.log('setup');
+    this.group = new Group({
+      type: 'Platforms',
+    });
+
+    this.group.add(this.pf1);
+    this.group.add(this.pf2);
+    this.group.add(this.pf3);
+
+    this.group.data = { direction: -1 };
+
+    this.pf1.update = () => {
+      if (this.pf1.data.direction === 1) {
+        this.pf1.x += 2;
+        if (this.pf1.x > this.group.x + 600) {
+          this.pf1.data.direction = -1;
+        }
+      } else {
+        this.pf1.x -= 2;
+        if (this.pf1.x < this.group.x) {
+          this.pf1.data.direction = 1;
+        }
+      }
+    };
+
     // Setup input handlers
-
     this.eventMode = 'static';
     this.on('click', (event: FederatedPointerEvent) => this._addParticles(new Point(event.globalX, event.globalY)));
 
@@ -435,7 +465,6 @@ export default class TowerfallPhysicsScene extends BaseScene {
 
       actor.velocity.x = Math.cos(angle) * speed;
       actor.velocity.y = Math.sin(angle) * speed;
-      console.log('actor', actor.debug);
 
       actor.onCull = () => {
         this.pool.return(actor);
@@ -469,6 +498,10 @@ export default class TowerfallPhysicsScene extends BaseScene {
     }
     this.player.velocity.x *= 0.3; // Deceleration
     this._subtitle.text = `Particles: ${this.physics.system.getActorsByType('FX')?.length || 0} (click to add more)`;
+
+    if (this.group) {
+      this.group.move(-1 / 60, 0);
+    }
   }
 
   resize() {

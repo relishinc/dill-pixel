@@ -13,17 +13,25 @@ export class Solid<T extends Application = Application> extends Entity<T> {
   private _nextY: number;
 
   public set x(value: number) {
-    this._nextX = Math.round(value);
-    this.moving = true;
-  }
-
-  public set y(value: number) {
-    this._nextY = Math.round(value);
+    if (this.group) {
+      this._nextX = value + this.group.x; // Store position relative to group
+    } else {
+      this._nextX = Math.round(value);
+    }
     this.moving = true;
   }
 
   public get x(): number {
     return this._x;
+  }
+
+  public set y(value: number) {
+    if (this.group) {
+      this._nextY = value + this.group.y; // Store position relative to group
+    } else {
+      this._nextY = Math.round(value);
+    }
+    this.moving = true;
   }
 
   public get y(): number {
@@ -196,13 +204,6 @@ export class Solid<T extends Application = Application> extends Entity<T> {
 
       // Update the view position
       this.updateView();
-    }
-  }
-
-  public updateView(): void {
-    if (this.view) {
-      this.view.x = this._x;
-      this.view.y = this._y;
     }
   }
 

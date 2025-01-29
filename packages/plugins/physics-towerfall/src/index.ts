@@ -1,5 +1,6 @@
 import TowerfallPhysicsPlugin from './TowerfallPhysicsPlugin';
 export * from './Actor';
+export * from './Group';
 export * from './interfaces';
 export * from './Sensor';
 export * from './Solid';

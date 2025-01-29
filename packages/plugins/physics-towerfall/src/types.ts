@@ -17,8 +17,11 @@ export interface Rectangle {
 }
 
 export type CollisionShape = 'rectangle';
+export type EntityData = {
+  [key: string]: any;
+};
 
-export interface PhysicsEntityConfig {
+export interface PhysicsEntityConfig<D extends EntityData = EntityData> {
   type?: PhysicsEntityType;
   position?: PointLike;
   size?: SizeLike;
@@ -28,6 +31,7 @@ export interface PhysicsEntityConfig {
   height?: number;
   restitution?: number;
   view?: PhysicsEntityView;
+  data?: Partial<D>;
 }
 
 export interface CollisionResult {
