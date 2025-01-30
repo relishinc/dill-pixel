@@ -175,7 +175,7 @@ class Portal extends Sensor<V8Application> {
         actor.active = false;
         setTimeout(() => {
           actor.active = true;
-        }, 10);
+        }, 100);
       }
       actor.moveTo(
         this.linkedPortal.x + this.linkedPortal.width / 2 - actor.width / 2,
@@ -188,7 +188,7 @@ class Portal extends Sensor<V8Application> {
     this.active = true;
   }
 
-  public linkTo(portal: Portal): void {
+  linkTo(portal: Portal): void {
     this.linkedPortal = portal;
     portal.linkedPortal = this;
   }
@@ -347,30 +347,29 @@ export default class TowerfallPhysicsScene extends BaseScene {
     this._createPortals();
 
     // Create platforms
-    this.createPlatform(0, this.app.size.height - 32, this.app.size.width, 32); //
+    // ground
+    this.createPlatform(0, this.app.size.height - 32, this.app.size.width, 32);
 
-    // celiing
+    // ceiling
     this.createPlatform(0, 0, this.app.size.width, 32);
 
-    this.pf1 = this.createPlatform(100, 600, 200, 32); // Platform 1
-    this.pf1.view.tint = 0xff0000;
+    // Platform 1
+    this.pf1 = this.createPlatform(100, 600, 200, 32);
 
-    // Create moving platform
+    // Platform 2 (moving)
     this.pf2 = this.createPlatform(400, 600, 200, 32);
-
     gsap.to(this.pf2, {
-      x: 500,
       y: 1000,
       duration: 3,
       ease: 'none',
-      modifiers: {
-        x: (value) => value - 10,
-      },
+      repeat: -1,
+      yoyo: true,
     });
 
-    // Platform 2
-    this.pf3 = this.createPlatform(200, 200, 200, 32); // Platform 3
+    // Platform 3
+    this.pf3 = this.createPlatform(200, 200, 200, 32);
 
+    // Test group
     this.group = new Group({
       type: 'Platforms',
     });
@@ -499,9 +498,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
     this.player.velocity.x *= 0.3; // Deceleration
     this._subtitle.text = `Particles: ${this.physics.system.getActorsByType('FX')?.length || 0} (click to add more)`;
 
-    if (this.group) {
-      this.group.move(-1 / 60, 0);
-    }
+    this.group.move(-0.25 / 60, 0);
   }
 
   resize() {

@@ -380,7 +380,7 @@ export class Entity<A extends Application = Application, D extends EntityData = 
    * Updates the view's position to match the entity's position.
    */
   public updateView(): void {
-    if (this.view) {
+    if (this.view && this.view.visible && this.view.position) {
       this.view.position.set(this.x, this.y);
     }
   }

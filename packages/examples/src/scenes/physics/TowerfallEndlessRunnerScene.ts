@@ -29,7 +29,7 @@ class Runner extends Actor<V8Application> {
   private hitCooldown: any;
   private isDead = false;
   private score = 0;
-  public speed = 200;
+  public speed = -3;
   public jumpForce = Math.max(this.system.gravity * 0.25, 600);
   public onKilled = new Signal<() => void>();
   public active: boolean = false;
@@ -206,6 +206,7 @@ class Segment {
   public x: number;
   public y: number;
   public tweens: gsap.core.Tween[] = [];
+  public animations: Set<gsap.core.Tween> = new Set();
 
   get app(): Application {
     return Application.getInstance();
@@ -234,16 +235,6 @@ class Segment {
       this._createPlatform(platformX, platformY, platformWidth, 32, true);
 
       // Add coins above platform
-      if (Math.random() < 0.8) {
-        const coinCount = Math.floor(Math.random() * 3) + 1;
-        for (let j = 0; j < coinCount; j++) {
-          const coin = this._createCoin(
-            platformX + (platformWidth * (j + 1)) / (coinCount + 1),
-            platformY - 50 - Math.random() * 30,
-          );
-          this.coins.push(coin);
-        }
-      }
     }
   }
 
@@ -271,24 +262,43 @@ class Segment {
       obstacle = this._createObstacle(x + width / 2, y - 32 - Math.random() * 300);
       this.obstacles.push(obstacle);
     }
+    const dist = bool() ? 100 : -100;
+    if (Math.random() < 0.8) {
+      const coinCount = Math.floor(Math.random() * 3) + 1;
+      for (let j = 0; j < coinCount; j++) {
+        const coin = this._createCoin(x + (width * (j + 1)) / (coinCount + 1), y - 50 - Math.random() * 30);
+        if (isMoving) {
+          const coinTween = gsap.to(coin.coin, {
+            y: coin.coin.y + dist,
+            duration: 1.5,
+            repeat: -1,
+            yoyo: true,
+            ease: 'none',
+          });
+          this.animations.add(coinTween);
+        }
+        this.coins.push(coin);
+      }
+    }
 
     if (isMoving) {
-      const dist = bool() ? 100 : -100;
-      gsap.to(platform, {
+      const platformTween = gsap.to(platform, {
         y: platform.y + dist,
         duration: 1.5,
         repeat: -1,
         yoyo: true,
         ease: 'none',
       });
+      this.animations.add(platformTween);
       if (obstacle) {
-        gsap.to(obstacle, {
+        const obstacleTween = gsap.to(obstacle, {
           y: obstacle!.y + dist,
           duration: 1.5,
           repeat: -1,
           yoyo: true,
           ease: 'none',
         });
+        this.animations.add(obstacleTween);
       }
     }
 
@@ -343,6 +353,7 @@ class Segment {
   }
 
   public destroy(): void {
+    this.animations.forEach((a) => a.kill());
     this.platforms.forEach((p) => this.physics.system.removeSolid(p, true));
     this.obstacles.forEach((o) => this.physics.system.removeSolid(o, true));
     this.coins.forEach(({ coin }) => this.physics.system.removeSensor(coin, true));
@@ -393,9 +404,8 @@ export default class TowerfallEndlessRunnerScene extends BaseScene {
       .name('Segment Width');
 
     const physicsFolder = this.gui.addFolder('Physics Settings');
-    physicsFolder.add(this.config, 'gravity', 500, 2000, 100).onChange(() => {
+    physicsFolder.add(this.config, 'gravity', 0, 6000, 1000).onChange(() => {
       this.physics.system.gravity = this.config.gravity;
-      this.runner.jumpForce = Math.max(this.config.gravity * 0.33, 600);
     });
 
     physicsFolder
@@ -425,7 +435,6 @@ export default class TowerfallEndlessRunnerScene extends BaseScene {
     this._createRunner();
     this._createLeftBoundaryWall();
     this._createInitialSegments();
-
     this.physicsContainer.position.set(-this.app.size.width / 2, -this.app.size.height / 2);
   }
 
@@ -480,8 +489,6 @@ export default class TowerfallEndlessRunnerScene extends BaseScene {
     // Move everything left
     const moveAmount = (-this.gameSpeed * (ticker?.deltaTime ?? 0)) / 60;
 
-    this.runner.speed = moveAmount * 2;
-
     for (let i = this.segments.length - 1; i >= 0; i--) {
       const segment = this.segments[i];
       segment.move(moveAmount, 0);
@@ -517,6 +524,7 @@ export default class TowerfallEndlessRunnerScene extends BaseScene {
   }
 
   destroy(): void {
+    this.segments.forEach((s) => s.destroy());
     this.physics.destroy();
     super.destroy();
   }

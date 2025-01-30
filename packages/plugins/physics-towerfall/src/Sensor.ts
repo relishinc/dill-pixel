@@ -82,6 +82,32 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   /** Cache for isRidingSolid check */
   private _isRidingSolidCache: boolean | null = null;
 
+  set x(value: number) {
+    super.x = value;
+    if (this.isStatic) {
+      this._xRemainder = 0;
+      this.updateView();
+      this.checkActorOverlaps();
+    }
+  }
+
+  get x(): number {
+    return super.x;
+  }
+
+  set y(value: number) {
+    super.y = value;
+    if (this.isStatic) {
+      this._yRemainder = 0;
+      this.updateView();
+      this.checkActorOverlaps();
+    }
+  }
+
+  get y(): number {
+    return super.y;
+  }
+
   constructor(config?: PhysicsEntityConfig) {
     super(config);
   }
