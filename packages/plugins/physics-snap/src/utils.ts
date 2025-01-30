@@ -1,8 +1,8 @@
 import { Circle, Point, Rectangle } from 'pixi.js';
-import { ICollider } from './ICollider';
-import { Collision, CollisionDirection } from './types';
 import { Entity } from './Entity';
+import { ICollider } from './ICollider';
 import { System } from './System';
+import { Collision, CollisionDirection } from './types';
 
 export function checkPointIntersection(point: Point, collider: ICollider): boolean {
   return point.x > collider.left && point.x < collider.right && point.y > collider.top && point.y < collider.bottom;
@@ -223,47 +223,54 @@ function circleToCircleCollision(circleA: Circle, circleB: Circle, collision: Co
 
   const r1 = circleA.radius;
   const r2 = circleB.radius;
-  const radiiSum = r1 + r2 - EPSILON;
+  const radiiSum = r1 + r2;
 
-  // One circle is completely within the other
-  if (distance <= Math.abs(r1 - r2) + EPSILON) {
+  // Early exit if no collision
+  if (distance >= radiiSum) {
+    return;
+  }
+
+  // Calculate penetration depth
+  const penetration = radiiSum - distance;
+
+  // Calculate normalized collision normal
+  const nx = dx / distance;
+  const ny = dy / distance;
+
+  // Set collision sides based on the normal vector
+  // We use a larger threshold for circle collisions to ensure proper reflection
+  if (Math.abs(nx) > 0.1) {
+    if (nx > 0) {
+      collision.left = penetration;
+    } else {
+      collision.right = penetration;
+    }
+  }
+  if (Math.abs(ny) > 0.1) {
+    if (ny > 0) {
+      collision.top = penetration;
+    } else {
+      collision.bottom = penetration;
+    }
+  }
+
+  // Calculate intersection area (for collision strength)
+  if (distance <= Math.abs(r1 - r2)) {
+    // One circle contains the other
     const smallerRadius = Math.min(r1, r2);
-    const area = Math.PI * smallerRadius * smallerRadius;
-    collision.overlap = { x: circleA.x, y: circleA.y };
-    collision.area = area;
-  }
-
-  // Calculate intersection area
-  const a = (r1 * r1 - r2 * r2 + distanceSquared) / (2 * distance);
-  const h = Math.sqrt(r1 * r1 - a * a);
-  const area = r1 * r1 * Math.acos(a / r1) + r2 * r2 * Math.acos((distance - a) / r2) - distance * h;
-
-  const cx = circleA.x + (a * dx) / distance;
-  const cy = circleA.y + (a * dy) / distance;
-
-  collision.overlap = { x: cx, y: cy };
-  collision.area = Math.max(0, area);
-  // Determine overlap direction based on the vector between circle centers
-  const overlapX = radiiSum - Math.abs(dx);
-  const overlapY = radiiSum - Math.abs(dy);
-
-  // Reset collision sides
-  collision.top = 0;
-  collision.bottom = 0;
-  collision.left = 0;
-  collision.right = 0;
-
-  // Set collision sides based on overlap distances
-  if (dx > 0) {
-    collision.left = Math.abs(overlapX);
+    collision.area = Math.PI * smallerRadius * smallerRadius;
   } else {
-    collision.right = Math.abs(overlapX);
+    // Partial intersection
+    const a = (r1 * r1 - r2 * r2 + distanceSquared) / (2 * distance);
+    const h = Math.sqrt(r1 * r1 - a * a);
+    collision.area = r1 * r1 * Math.acos(a / r1) + r2 * r2 * Math.acos((distance - a) / r2) - distance * h;
   }
-  if (dy > 0) {
-    collision.top = Math.abs(overlapY);
-  } else {
-    collision.bottom = Math.abs(overlapY);
-  }
+
+  // Set overlap point at the collision point
+  collision.overlap = {
+    x: circleA.x + nx * r1,
+    y: circleA.y + ny * r1,
+  };
 }
 
 function rectToRectCollision(r1: Rectangle, r2: Rectangle, collision: Collision) {
@@ -314,4 +321,13 @@ function rectToRectCollision(r1: Rectangle, r2: Rectangle, collision: Collision)
       collision.top = Math.abs(dy);
     }
   }
+}
+
+export function approach(current: number, target: number, step: number): number {
+  if (current < target) {
+    return Math.min(current + step, target);
+  } else if (current > target) {
+    return Math.max(current - step, target);
+  }
+  return current;
 }

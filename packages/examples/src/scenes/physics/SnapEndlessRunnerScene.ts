@@ -50,7 +50,7 @@ export default class SnapEndlessRunnerScene extends BaseScene {
   }
 
   configureGUI() {
-    this.gui.add(this.config, 'speed', 1, 10, 1).onChange(this._speedChanged).name('Speed');
+    this.gui.add(this.config, 'speed', 0, 10, 0.1).onChange(this._speedChanged).name('Speed');
 
     const spatialHashFolder = this.gui.addFolder('Spatial Hash Collisions');
     spatialHashFolder.open();
@@ -75,8 +75,6 @@ export default class SnapEndlessRunnerScene extends BaseScene {
       position: [-this.app.size.width * 0.5, -this.app.size.height * 0.5],
     });
 
-    this.app.ticker.maxFPS = 60;
-
     this.physics.system.initialize({
       gravity: 10,
       container: this.level,
@@ -88,7 +86,7 @@ export default class SnapEndlessRunnerScene extends BaseScene {
     });
 
     this.physics.system.enabled = true;
-    this.physics.system.updateHooks.add(this.physicsUpdate);
+    this.physics.system.updateHooks.add(this.fixedUpdate);
 
     const bottom = this.app.size.height - 200;
     this._segments = this.createSegments(bottom);
@@ -110,7 +108,7 @@ export default class SnapEndlessRunnerScene extends BaseScene {
     this.app.actionContext = 'game';
   }
 
-  physicsUpdate() {
+  fixedUpdate() {
     if (this._isPaused) return;
     EndlessRunner.update();
 

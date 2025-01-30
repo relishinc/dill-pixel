@@ -1,10 +1,10 @@
 import { Container, Point } from 'pixi.js';
-import type { ContainerLike, PointLike } from '../utils';
-import { bindAllMethods, Logger, resolvePointLike } from '../utils';
-import { Signal } from '../signals';
+import { Application } from '../Application';
 import { IApplication } from '../core';
 import type { KeyboardEventDetail } from '../plugins';
-import { Application } from '../Application';
+import { Signal } from '../signals';
+import type { ContainerLike, PointLike } from '../utils';
+import { bindAllMethods, Logger, resolvePointLike } from '../utils';
 
 type CameraConfig = {
   container: Container;

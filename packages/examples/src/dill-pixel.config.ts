@@ -8,6 +8,8 @@ export const contexts = defineContexts(['default', 'game', 'menu', 'popup']);
 
 export const actions = defineActions(contexts, {
   // keyboard down actions
+  stop_move_left: { context: ['game'] },
+  stop_move_right: { context: ['game'] },
   move_left: { context: ['game'] },
   move_right: { context: ['game'] },
   move_down: { context: ['game'] },
@@ -58,8 +60,8 @@ export const controls = defineControls(actions, buttons, {
     up: {
       toggle_pause: 'P',
       close: 'Escape',
-      back: 'ArrowLeft',
-      next: 'ArrowRight',
+      stop_move_left: 'ArrowLeft',
+      stop_move_right: 'ArrowRight',
       select: ['Enter', 'Space'],
     },
   },
@@ -150,13 +152,9 @@ export const config = defineConfig<Data>({
       },
     ],
     [
-      'arcade-physics',
+      'crunch-physics',
       {
         autoLoad: false,
-        options: {
-          debug: true,
-          useTree: true,
-        },
       },
     ],
     [

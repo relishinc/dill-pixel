@@ -2,7 +2,7 @@ import { CircSolid, Projectile, RectSolid } from '@/entities/snap/entities';
 import BaseScene from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
-import { Container } from 'dill-pixel';
+import { bool, Container } from 'dill-pixel';
 import { FederatedPointerEvent, Point, Pool, Text } from 'pixi.js';
 
 export const id = 'snap-projectiles';
@@ -17,17 +17,136 @@ export const plugins = ['snap-physics'];
 class Ball extends Projectile {
   type = 'Ball';
 
-  update(deltaTime: number) {
-    super.update(deltaTime);
-    if (this.velocity.y < this.system.gravity) {
-      this.velocity.y += this.velocity.y < 0 ? 1 : 0.5;
-      this.velocity.y = Math.min(this.system.gravity, this.velocity.y);
+  private readonly BOUNCE_ENERGY_LOSS = 0.3; // Higher value = more energy loss per bounce
+  private readonly GRAVITY = 1000; // Pixels per second squared (roughly like real gravity)
+  private _canBounce = true;
+
+  fixedUpdate(deltaTime: number) {
+    super.fixedUpdate(deltaTime);
+    // Apply gravity acceleration
+    this.velocity.y += this.GRAVITY * deltaTime;
+    if (Math.abs(this.velocity.y) < 100) {
+      this._canBounce = false;
+    } else {
+      this._canBounce = true;
     }
+  }
+
+  // Override the reflect method for better bouncing
+  reflect(collision: Collision) {
+    if (!this._canBounce) return;
+
+    // Calculate separation vector for circle collisions
+    if (collision.overlap && collision.entity2.isCircle) {
+      const dx = this.x - collision.overlap.x;
+      const dy = this.y - collision.overlap.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist > 0) {
+        // Apply immediate separation to prevent sticking
+        const separationX = (dx / dist) * 2; // Small separation boost
+        const separationY = (dy / dist) * 2;
+        this.x += separationX;
+        this.y += separationY;
+
+        // Adjust velocity based on collision normal
+        const normalX = dx / dist;
+        const normalY = dy / dist;
+        const dotProduct = this.velocity.x * normalX + this.velocity.y * normalY;
+
+        this.velocity.x = (this.velocity.x - 2 * dotProduct * normalX) * (1 - this.BOUNCE_ENERGY_LOSS);
+        this.velocity.y = (this.velocity.y - 2 * dotProduct * normalY) * (1 - this.BOUNCE_ENERGY_LOSS);
+      }
+    } else {
+      // Use default reflection for non-circle collisions
+      super.reflect(collision, this.BOUNCE_ENERGY_LOSS);
+    }
+
+    // Add a minimum velocity threshold to eventually stop bouncing
+    if (Math.abs(this.velocity.y) < 100 && collision.bottom) {
+      this.velocity.y = 0;
+    }
+
+    this.velocity.x *= 0.95;
   }
 }
 
 class Bullet extends Projectile {
   type = 'Bullet';
+  private readonly BOUNCE_ENERGY_LOSS = 0.2; // Less energy loss for bullets
+  private readonly MIN_SPEED = 500; // Minimum speed threshold
+  private readonly COLLISION_BOOST = 1; // Increased boost to ensure separation
+  private readonly SEPARATION_BOOST = 2; // Additional separation on collision
+
+  reflect(collision: Collision) {
+    // Handle circle collisions with proper reflection
+    if (collision.overlap && collision.entity2.isCircle) {
+      const dx = this.x - collision.overlap.x;
+      const dy = this.y - collision.overlap.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist > 0) {
+        // Apply immediate separation to prevent sticking
+        const separationX = (dx / dist) * this.SEPARATION_BOOST;
+        const separationY = (dy / dist) * this.SEPARATION_BOOST;
+        this.x += separationX;
+        this.y += separationY;
+
+        // Calculate reflection using collision normal
+        const normalX = dx / dist;
+        const normalY = dy / dist;
+        const dotProduct = this.velocity.x * normalX + this.velocity.y * normalY;
+
+        // Reflect velocity with minimal energy loss
+        this.velocity.x = (this.velocity.x - 2 * dotProduct * normalX) * (1 - this.BOUNCE_ENERGY_LOSS);
+        this.velocity.y = (this.velocity.y - 2 * dotProduct * normalY) * (1 - this.BOUNCE_ENERGY_LOSS);
+
+        // Maintain minimum speed
+        const currentSpeed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
+        const targetSpeed = Math.max(this.MIN_SPEED, currentSpeed * this.COLLISION_BOOST);
+
+        if (currentSpeed > 0) {
+          const speedScale = targetSpeed / currentSpeed;
+          this.velocity.x *= speedScale;
+          this.velocity.y *= speedScale;
+        }
+      }
+      return;
+    }
+
+    // For non-circle collisions, use the original reflection logic
+    // First, apply immediate separation in the direction of the collision normal
+    if (collision.overlap) {
+      // Move away from the collision point
+      const dx = this.x - collision.overlap.x;
+      const dy = this.y - collision.overlap.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist > 0) {
+        const separationX = (dx / dist) * this.SEPARATION_BOOST;
+        const separationY = (dy / dist) * this.SEPARATION_BOOST;
+        this.x += separationX;
+        this.y += separationY;
+      }
+    }
+
+    // Call parent reflect with energy loss
+    super.reflect(collision, this.BOUNCE_ENERGY_LOSS);
+
+    // Calculate new speed
+    const newSpeed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
+
+    // Apply minimum speed and collision boost
+    const targetSpeed = Math.max(this.MIN_SPEED, newSpeed * this.COLLISION_BOOST);
+
+    const currentSpeed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
+
+    if (currentSpeed > 0) {
+      const speedScale = targetSpeed / currentSpeed;
+      this.velocity.x *= speedScale;
+      this.velocity.y *= speedScale;
+    }
+  }
 }
 
 export default class SnapProjectileScene extends BaseScene {
@@ -62,8 +181,6 @@ export default class SnapProjectileScene extends BaseScene {
   update() {
     this.countText.text = `Balls: ${this._balls.length}\nBullets: ${this._bullets.length}`;
   }
-
-  physicsUpdate() {}
 
   configureGUI() {
     this.gui
@@ -116,16 +233,12 @@ export default class SnapProjectileScene extends BaseScene {
       text: `Balls: ${this._balls.length}`,
     });
 
-    // this.debugGfx = this.level.add.graphics();
-
-    this.app.ticker.maxFPS = 60;
     this.physics.system.initialize({
-      gravity: 30,
+      gravity: 9.8,
       container: this.level,
       debug: this.config.debug,
       useSpatialHashGrid: this.config.useSpatialHash,
       cellSize: this.config.gridCellSize,
-      fps: 60,
       collisionResolver: this._resolveCollision,
       boundary: {
         padding: -5,
@@ -134,10 +247,9 @@ export default class SnapProjectileScene extends BaseScene {
         width: this.app.size.width,
       },
     });
-    this.physics.system.postUpdateHooks.add(this.physicsUpdate);
+
     this.physics.system.enabled = true;
 
-    // solids
     this.obstacleRect = this.level.add.existing(
       new RectSolid({
         size: { width: 400, height: 32 },
@@ -159,20 +271,18 @@ export default class SnapProjectileScene extends BaseScene {
       yoyo: true,
       ease: 'none',
     });
-    //
-    // this.obstacleCirc.animatePosition(this.obstacleCirc.x + 300, this.obstacleCirc.y, {
-    //   duration: 3,
-    //   repeat: -1,
-    //   yoyo: true,
-    //   ease: 'none',
-    // });
 
     this.eventMode = 'static';
     this.on('pointerup', this._handlePointerUp);
+
+    this.addSignalConnection(
+      this.app.actions('toggle_pause').connect(() => {
+        this.physics.system.enabled = this.app.paused ? false : true;
+      }),
+    );
   }
 
   _handlePointerUp(e: FederatedPointerEvent) {
-    // localize the position to level
     const pt = this.level.toLocal(e.global);
     let avail = true;
     for (let i = 0; i < this._obstacles.length; i++) {
@@ -205,10 +315,10 @@ export default class SnapProjectileScene extends BaseScene {
   }
 
   _addBall(pos: Point) {
-    const b = this.ballPool.get({ color: 0x000fff, radius: 20 });
-    const dirX = Math.random() > 0.5 ? -1 : 1;
-    b.velocity.set(Math.random() * 5 * dirX, this.physics.system.gravity);
-    // b.velocity.set(0, 2);
+    const b = this.ballPool.get({ color: 0x000fff, radius: Math.random() * 20 + 10 });
+    const dirX = bool() ? -1 : 1;
+    // Initial velocity for a good bounce height
+    b.velocity.set(Math.random() * 500 * dirX, -50);
     this.level.add.existing(b, {
       position: pos,
     });
@@ -216,11 +326,10 @@ export default class SnapProjectileScene extends BaseScene {
   }
 
   _addBullet(pos: Point) {
-    // const b = new Bullet({ color: 0xff0000, radius: 5 });
     const b = this.bulletPool.get({ color: 0xff0000, radius: 5 });
-    const dirX = Math.random() > 0.5 ? -1 : 1;
-    const dirY = Math.random() > 0.5 ? -1 : 1;
-    b.velocity.set((Math.random() * 10 + 5) * dirX, (Math.random() * 10 + 5) * dirY);
+    const dirX = bool() ? -1 : 1;
+    const dirY = bool() ? -1 : 1;
+    b.velocity.set((Math.random() * 250 + 250) * dirX, (Math.random() * 250 + 250) * dirY);
 
     this.level.add.existing(b, {
       position: pos,
@@ -230,7 +339,6 @@ export default class SnapProjectileScene extends BaseScene {
 
   destroy() {
     this.off('pointerup', this._handlePointerUp);
-    this.app.ticker.maxFPS = 0;
     this.physics.destroy();
     this.level.removeChildren();
     super.destroy();
@@ -254,9 +362,8 @@ export default class SnapProjectileScene extends BaseScene {
       const b: Projectile = collision.entity1 as Bullet;
       b.reflect(collision);
     } else if (collision.type.includes('Ball')) {
-      // find the ball;
       const b: Projectile = collision.entity1 as Ball;
-      b.reflect(collision, 0.1);
+      b.reflect(collision); // Energy loss is now handled in Ball's reflect method
     }
     return true;
   }

@@ -69,12 +69,12 @@ export class Segment {
   }
 
   setPosition(x: number, y: number = 0) {
-    this.x = Math.round(x);
-    this.y = Math.round(y);
+    this.x = x;
+    this.y = y;
 
     this._platforms.forEach((platform) => {
-      platform.x = Math.round(platform.x + x);
-      platform.y = Math.round(platform.y + y);
+      platform.x = platform.x + x;
+      platform.y = platform.y + y;
     });
   }
 

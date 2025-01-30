@@ -1,5 +1,5 @@
-import { Texture } from 'pixi.js';
 import { Actor, Entity, Sensor, Solid, System } from '@dill-pixel/plugin-snap-physics';
+import { Texture } from 'pixi.js';
 
 export type DoorConfig = {
   width: number;
@@ -26,9 +26,9 @@ export class Door extends Sensor<DoorConfig> {
     return System.getNearbyEntities<T>(this, (entity) => !entity.isSensor);
   }
 
-  update(deltaTime: number) {
-    super.update(deltaTime);
-    this.moveY(System.gravity * deltaTime, null);
+  fixedUpdate(deltaTime: number) {
+    super.fixedUpdate(deltaTime);
+    this.moveY(System.gravity * 100 * deltaTime, null);
     const player = System.getNearbyEntities<Actor | Solid>(this, (entity) => entity.type === 'Player')
       .values()
       .next().value;

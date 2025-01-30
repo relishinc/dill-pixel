@@ -1,7 +1,7 @@
 import { Segment, SegmentConfig } from '@/entities/snap/Segment';
-import { Point, Pool } from 'pixi.js';
 import { System } from '@dill-pixel/plugin-snap-physics';
 import { Container, PointLike, resolvePointLike } from 'dill-pixel';
+import { Point, Pool } from 'pixi.js';
 
 export class EndlessRunner {
   static container: Container;
@@ -35,6 +35,7 @@ export class EndlessRunner {
   }
 
   static update() {
+    if (!System.enabled) return;
     EndlessRunner.segments.forEach((segment) => {
       if (segment.x <= -segment.width) {
         EndlessRunner.removeSegment(segment);

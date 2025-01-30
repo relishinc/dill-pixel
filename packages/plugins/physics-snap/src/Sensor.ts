@@ -2,8 +2,8 @@ import { Application } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { System } from './System';
-import { checkCollision } from './utils';
 import { Collision, EntityType } from './types';
+import { checkCollision } from './utils';
 
 export class Sensor<T = any, A extends Application = Application> extends Actor<T, A> {
   type = 'Sensor';
@@ -31,7 +31,7 @@ export class Sensor<T = any, A extends Application = Application> extends Actor<
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(_deltaTime?: number) {
+  fixedUpdate(_deltaTime?: number) {
     this.activeCollisions = this.resolveAllCollisions() || [];
     this.isColliding = this.activeCollisions ? this.activeCollisions.length > 0 : false;
   }

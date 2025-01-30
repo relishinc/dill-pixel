@@ -64,15 +64,14 @@ export class Player extends SnapActor<any, V8Application> {
     }
   }
 
-  public update(deltaTime: number) {
+  public fixedUpdate(deltaTime: number) {
     if (!this._inPlay || !this.system.enabled) {
       return;
     }
 
     this._velocity.y = this.system.gravity - (this._velocity.y < 0 ? this._jumpPower : -this.system.gravity * 0.25);
-
     if (this._moveAmount === 0) {
-      if (!this._isWarping) {
+      if (!this._isWarping && !this._isJumping) {
         if (this.view.getCurrentAnimation() !== 'idle') {
           this.view.setAnimation('idle', true);
         }
@@ -113,8 +112,6 @@ export class Player extends SnapActor<any, V8Application> {
     if (this.mostRiding && this.mostRiding.type === 'Platform') {
       this.mostRiding.view.tint = 0x0;
     }
-
-    this._moveAmount = 0;
   }
 
   public squish(collision: Collision, pushingEntity: Entity, direction?: Point) {
@@ -167,6 +164,7 @@ export class Player extends SnapActor<any, V8Application> {
     if (!this._inPlay) {
       return;
     }
+    this._moveAmount = 0;
     this._inPlay = false;
     this._canJump = this._isJumping = false;
     this._jumpPower = 0;
@@ -215,6 +213,8 @@ export class Player extends SnapActor<any, V8Application> {
       this.app.actions('toggle_pause').connect(this._handleTogglePause),
       this.app.actions('move_left').connect(this._handleAction),
       this.app.actions('move_right').connect(this._handleAction),
+      this.app.actions('stop_move_left').connect(this._handleAction),
+      this.app.actions('stop_move_right').connect(this._handleAction),
       this.app.actions('jump').connect(this._handleAction),
       this.app.actions('warp').connect(this._handleAction),
       Portal.onEnter.connect(this._onEnterPortal),
@@ -259,12 +259,19 @@ export class Player extends SnapActor<any, V8Application> {
     if (!this._inPlay || !this.system.enabled) {
       return;
     }
+
     switch (actionDetail.id) {
       case 'move_left':
         this._moveAmount = -this.speed;
         break;
       case 'move_right':
         this._moveAmount = this.speed;
+        break;
+      case 'stop_move_left':
+        this._moveAmount = 0;
+        break;
+      case 'stop_move_right':
+        this._moveAmount = 0;
         break;
       case 'jump':
         this._jump();
@@ -277,6 +284,7 @@ export class Player extends SnapActor<any, V8Application> {
 
   private _warp() {
     if (!this._isWarping) {
+      this._isWarping = true;
       this._warpAnimation = this.animateX(this.x + 400 * this.view.spine.scale.x, {
         duration: 1,
         ease: 'power3.out',
@@ -284,15 +292,14 @@ export class Player extends SnapActor<any, V8Application> {
           this._isWarping = false;
         },
       });
-      this._isWarping = true;
     }
   }
 
   private _jump() {
     if (!this._isJumping && this._canJump) {
       this.cancelWarp();
-      this._canJump = false;
       this._isJumping = true;
+      this._canJump = false;
       this._jumpPower = this.system.gravity * 3;
       this._velocity.y = this.system.gravity - this._jumpPower;
     }

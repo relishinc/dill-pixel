@@ -1,5 +1,5 @@
-import { Bounds, Circle, Container as PIXIContianer, ObservablePoint, PointData, Rectangle, Sprite } from 'pixi.js';
 import { Application, Container } from 'dill-pixel';
+import { Bounds, Circle, Container as PIXIContianer, Point, Rectangle, Sprite } from 'pixi.js';
 import { ICollider } from './ICollider';
 import { System } from './System';
 import { EntityType, SnapBoundary } from './types';
@@ -21,8 +21,12 @@ export class Entity<T = any, A extends Application = Application> extends Contai
   yRemainder: number = 0;
   config: T;
 
+  protected subpixelX: number = 0;
+  protected subpixelY: number = 0;
+  protected remainder: Point = new Point(0, 0);
+
   constructor(config?: Partial<T>) {
-    super();
+    super({ autoUpdate: true });
     this.config = config as T;
   }
 
@@ -48,32 +52,6 @@ export class Entity<T = any, A extends Application = Application> extends Contai
 
   set cachedBounds(value: Bounds) {
     this._cachedBounds = value;
-  }
-
-  get position(): ObservablePoint {
-    return super.position;
-  }
-
-  set position(value: PointData) {
-    value.x = Math.round(value.x);
-    value.y = Math.round(value.y);
-    super.position = value;
-  }
-
-  get x(): number {
-    return super.x;
-  }
-
-  set x(value: number) {
-    super.x = Math.round(value);
-  }
-
-  get y(): number {
-    return super.y;
-  }
-
-  set y(value: number) {
-    super.y = Math.round(value);
   }
 
   protected _dirtyBounds: boolean = true;
@@ -120,13 +98,13 @@ export class Entity<T = any, A extends Application = Application> extends Contai
     return new Set<T>();
   }
 
-  preUpdate() {}
+  preFixedUpdate() {}
 
-  update(deltaTime?: number) {
+  fixedUpdate(deltaTime?: number) {
     void deltaTime;
   }
 
-  postUpdate() {}
+  postFixedUpdate() {}
 
   getWorldBounds(): SnapBoundary {
     const pos = this.system.container.toLocal(this.view.getGlobalPosition());
@@ -152,22 +130,45 @@ export class Entity<T = any, A extends Application = Application> extends Contai
     return null;
   }
 
-  // Simple collision detection between this solid and an actor
+  moveX(amount: number): void {
+    this.remainder.x += amount;
+    const move = this.remainder.x;
+    if (move !== 0) {
+      this.remainder.x -= move;
+      this.x += move;
+    }
+  }
+
+  moveY(amount: number): void {
+    this.remainder.y += amount;
+    const move = this.remainder.y;
+    if (move !== 0) {
+      this.remainder.y -= move;
+      this.y += move;
+    }
+  }
+
+  // Improved collision detection with subpixel precision
   collidesWith(entity: Entity, dx: number = 0, dy: number = 0): boolean {
     if (!entity) {
       return false;
     }
+
+    // Add subpixel remainders to the collision check
+    const totalDx = dx + this.remainder.x;
+    const totalDy = dy + this.remainder.y;
+
     if (this.isCircle) {
       if (entity.isCircle) {
-        return System.getCircleToCircleIntersection(entity, this, dx, dy);
+        return System.getCircleToCircleIntersection(entity, this, totalDx, totalDy);
       } else {
-        return System.getRectToCircletIntersection(entity, this, dx, dy);
+        return System.getRectToCircletIntersection(entity, this, totalDx, totalDy);
       }
     }
     if (entity.isCircle) {
-      return System.getRectToCircletIntersection(this, entity, dx, dy);
+      return System.getRectToCircletIntersection(this, entity, totalDx, totalDy);
     }
-    return System.getRectangleIntersection(entity, this, dx, dy);
+    return System.getRectangleIntersection(entity, this, totalDx, totalDy);
   }
 
   protected initialize() {

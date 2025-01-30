@@ -4,7 +4,7 @@ title: Snap Physics Plugin
 
 import { Aside, Steps } from '@astrojs/starlight/components';
 
-The Snap Physics Plugin provides a lightweight, deterministic physics system inspired by Maddy Thorson's TowerFall physics engine. It excels at platformer-style games requiring precise collision detection and resolution.
+he Snap Physics Plugin provides a lightweight, deterministic physics system inspired by Maddy Thorson's TowerFall physics engine. It excels at platformer-style games requiring precise collision detection and resolution.
 
 ## Core Concepts
 
@@ -216,6 +216,100 @@ this.physics.system.initialize({
   Larger grid cells mean fewer cells to check but more objects per cell. Smaller cells mean more precise collision
   checks but more overhead. Choose a size that balances performance with your game's needs.
 </Aside>
+
+## Fixed Update System
+
+Unlike other plugins that use Pixi's ticker, the Snap Physics Plugin implements a fixed timestep update loop for deterministic physics simulation. This approach ensures:
+
+- Consistent physics behavior regardless of frame rate
+- Predictable collision detection
+- Frame-rate independent gameplay logic
+
+### How it Works
+
+The system uses `setInterval` to run physics updates at a fixed frequency (default 60 FPS):
+
+```typescript
+static set enabled(value: boolean) {
+  if (value === System._enabled) return;
+  System._enabled = value;
+  if (System._enabled) {
+    // Start fixed update loop
+    System._fixedUpdateInterval = setInterval(() => {
+      System.fixedUpdate(System._fixedTimeStep / 1000);
+    }, System._fixedTimeStep);
+  } else {
+    // Stop fixed update loop
+    if (System._fixedUpdateInterval) {
+      clearInterval(System._fixedUpdateInterval);
+      System._fixedUpdateInterval = null;
+    }
+  }
+}
+```
+
+The fixed update cycle processes entities in a specific order:
+
+1. Pre-update phase for all entities
+2. Custom update hooks
+3. Solids update
+4. Sensors update
+5. Actors update
+6. Post-update phase for all entities
+7. Camera update (if enabled)
+8. Debug drawing (if enabled)
+
+### Configuration
+
+You can configure the update frequency when initializing the plugin:
+
+```typescript
+this.physics.initialize({
+  fps: 60, // Sets the fixed update rate
+  // other options...
+});
+```
+
+<Aside type="tip">
+  The fixed update rate is independent of your game's render frame rate. This means physics will remain consistent even
+  if rendering performance varies.
+</Aside>
+
+<Aside type="caution">
+  While you can adjust the FPS, be cautious about setting it too low (which could make movement choppy) or too high
+  (which could impact performance).
+</Aside>
+
+## Entity Updates
+
+Each entity type (`Actor`, `Solid`, `Sensor`) can implement the following update methods:
+
+```typescript
+class MyEntity extends Actor {
+  // Called before physics update
+  preFixedUpdate() {}
+
+  // Main physics update
+  fixedUpdate(deltaTime: number) {
+    // Implement physics logic
+  }
+
+  // Called after physics update
+  postFixedUpdate() {}
+}
+```
+
+For implementation examples, see:
+
+```typescript:packages/examples/src/entities/snap/Player.ts
+startLine: 67
+endLine: 115
+```
+
+## Cleanup
+
+When destroying the plugin, the fixed update loop is automatically cleaned up.
+
 ## Examples
 
 For implementation examples, see the following:
