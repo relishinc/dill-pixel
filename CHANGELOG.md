@@ -1,5 +1,46 @@
 # Changelog
 
+## [4.5.0](https://github.com/relishinc/dill-pixel/compare/v4.4.4...v4.5.0) (2025-01-30)
+
+
+### Features
+
+* added camera, cleanup ([a932b10](https://github.com/relishinc/dill-pixel/commit/a932b100393bc47f198d7a83e2dc8d6a6cddf53a))
+* added camera, cleanup ([c0028ce](https://github.com/relishinc/dill-pixel/commit/c0028ce13d263874cb83654d1f9db51f569b01fb))
+* added circles, too much complexity ([1e5c65a](https://github.com/relishinc/dill-pixel/commit/1e5c65a56db9509ea3f6ea5cd4699d65a86d0ccc))
+* added docs ([f25f1d0](https://github.com/relishinc/dill-pixel/commit/f25f1d0a1670bc3ae26046eda6bb3254f9536151))
+* added docs, bugfixes ([fe66b0b](https://github.com/relishinc/dill-pixel/commit/fe66b0bd225a63a41fbc5bceb028bd641df5d066))
+* added docs, bugfixes ([042da5a](https://github.com/relishinc/dill-pixel/commit/042da5a91c6403ee2eaf405a8791302f1653d6c7))
+* added global collision resolver and overlap resolver ([8497b3e](https://github.com/relishinc/dill-pixel/commit/8497b3e2f0f5efb4eb39e9dbbbf04de068db55ab))
+* added Group ([c3fce06](https://github.com/relishinc/dill-pixel/commit/c3fce0615618dc1cae817aec27d60ad71913acac))
+* added sensors ([461df72](https://github.com/relishinc/dill-pixel/commit/461df727afc4e70fad452c19f942c2cf489e9568))
+* boundary culling, feat: allow entities to use object pool ([4686429](https://github.com/relishinc/dill-pixel/commit/46864290a95fdca655e7100b09957822cebd2424))
+* cache isRidingSolid ([021c996](https://github.com/relishinc/dill-pixel/commit/021c996a8ff929ee35d5d2715ca0d85b849052bf))
+* crunch physics plugin ([23be7d9](https://github.com/relishinc/dill-pixel/commit/23be7d95e358e062e6fda54ad899de6b9dab7481))
+* fixed circle to rect collisions not working sometimes, fixed animation causing broken collisions ([a3bc58e](https://github.com/relishinc/dill-pixel/commit/a3bc58e1fcb48e79e147c0db99aaeb6a7f6f92fc))
+* fixed time step for snap physics ([4087f7d](https://github.com/relishinc/dill-pixel/commit/4087f7ddf1885924b05e6fafa20d7fcaabf04de4))
+* implemented sweep box system in solids to prevent actor passing through during movement ([f7c4d4c](https://github.com/relishinc/dill-pixel/commit/f7c4d4cf727fa2b0e81bb889a6df4b2ce05d2f8b))
+* initial re-vamp using towerfall physics ([87b1b36](https://github.com/relishinc/dill-pixel/commit/87b1b365f26fcab2ba62ec609b41a0daaef8f66b))
+* new name ([6800bbd](https://github.com/relishinc/dill-pixel/commit/6800bbd99df7a4e4cf50f5077dbe60dd4350662b))
+* readme ([782499e](https://github.com/relishinc/dill-pixel/commit/782499ed4d2e90a5d000c2e297ab49e4d3c172c1))
+* refined sensors, added portal sensors to scene ([10c6962](https://github.com/relishinc/dill-pixel/commit/10c69628ec8e8db599b8d838abd638088483e101))
+* renaming plugin ([19c70d6](https://github.com/relishinc/dill-pixel/commit/19c70d6a54fa152352915e297151df0c522b255d))
+* static sensor property ([58aeec5](https://github.com/relishinc/dill-pixel/commit/58aeec5704238c98341998be6304c585b9b59ca1))
+* stripped it down ([31bd95c](https://github.com/relishinc/dill-pixel/commit/31bd95ce1eba502e9dec6fae1e70634326d9edc9))
+* tweaks to actor update ([ae227fc](https://github.com/relishinc/dill-pixel/commit/ae227fc4814816bb57f116941b14033927f69440))
+* tweaks to actor update ([d5e6854](https://github.com/relishinc/dill-pixel/commit/d5e68549ce48070c3220c861c78e562317322f13))
+
+
+### Bug Fixes
+
+* determinism ([369f295](https://github.com/relishinc/dill-pixel/commit/369f2957991fa002bf4d83ee6b1a817481254dc9))
+* fixed projectile ball a bit ([d538bf6](https://github.com/relishinc/dill-pixel/commit/d538bf68c88f08e10f418f6201e879c52fd34da2))
+* fixed projectile reflection ([4a53cce](https://github.com/relishinc/dill-pixel/commit/4a53ccecd0a85efe2edcbfc92f0de59fe4844e33))
+* refined controls ([9db8fa8](https://github.com/relishinc/dill-pixel/commit/9db8fa883b900c50f7e44d90e3354063e419f797))
+* refined jumping, added collision callbacks ([9bba565](https://github.com/relishinc/dill-pixel/commit/9bba565f9e894bd262b5527944584b9a2e068e6d))
+* snap physics determinism ([ee95bd3](https://github.com/relishinc/dill-pixel/commit/ee95bd37a0898f59d9d630a375e80a5d508e0f0b))
+* updated pixi.js version, fix: removed refernce to accessibility._div ([323d7cf](https://github.com/relishinc/dill-pixel/commit/323d7cf28358a2cb814e9b5ccfdfef16b60b5aa8))
+
 ## [4.4.4](https://github.com/relishinc/dill-pixel/compare/v4.4.3...v4.4.4) (2025-01-22)
 
 
