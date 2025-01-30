@@ -29,7 +29,7 @@
   },
   "peerDependencies": {
     "dill-pixel": "4.4.4",
-    "pixi.js": "8.6.6"
+    "pixi.js": "8.7.3"
   },
   "dependencies": {
     "arcade-physics": "^0.1.0"

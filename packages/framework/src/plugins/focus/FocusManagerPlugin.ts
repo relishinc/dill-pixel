@@ -619,10 +619,10 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
 
   private _updatePixiAccessibility() {
     // @ts-expect-error _div is protected
-    this.app.renderer.accessibility._div.setAttribute('id', 'pixi-accessibility');
+    this.app.renderer.accessibility._div?.setAttribute('id', 'pixi-accessibility');
     if (!this._options.usePixiAccessibility) {
       // @ts-expect-error _div is protected
-      this.app.renderer.accessibility._div.setAttribute('disabled', 'disabled');
+      this.app.renderer.accessibility._div?.setAttribute('disabled', 'disabled');
       this.app.renderer.accessibility.destroy();
       globalThis.addEventListener('keydown', this._onKeyDown, false);
       globalThis.addEventListener('keyup', this._onKeyUp, false);
