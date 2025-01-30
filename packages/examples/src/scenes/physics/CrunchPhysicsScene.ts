@@ -1,26 +1,20 @@
 import BaseScene from '@/scenes/BaseScene';
 import { V8Application } from '@/V8Application';
-import TowerfallPhysicsPlugin, {
-  Actor,
-  CollisionResult,
-  Group,
-  Sensor,
-  Solid,
-} from '@dill-pixel/plugin-towerfall-physics';
+import { Actor, CollisionResult, Group, ICrunchPhysicsPlugin, Sensor, Solid } from '@dill-pixel/plugin-crunch-physics';
 import { ActionDetail, Camera, Container, Signal } from 'dill-pixel';
 import gsap from 'gsap';
 
 import { FederatedPointerEvent, Graphics, Point, Pool, Rectangle } from 'pixi.js';
 
-export const id = 'towerfall-physics';
+export const id = 'crunch-physics';
 
 export const debug = {
   group: 'Physics',
-  label: 'Towerfall - Level & Camera',
+  label: 'Crunch Physics - Level & Camera',
   order: 6,
 };
 
-export const plugins = ['towerfall-physics'];
+export const plugins = ['crunch-physics'];
 export const assets = {
   preload: {
     bundles: ['spine'],
@@ -194,8 +188,8 @@ class Portal extends Sensor<V8Application> {
   }
 }
 
-export default class TowerfallPhysicsScene extends BaseScene {
-  title = 'Towerfall Physics';
+export default class CrunchPhysicsScene extends BaseScene {
+  title = 'Crunch Physics';
   subtitle = 'Particles: 0 (click to add more)';
 
   protected config = {
@@ -226,8 +220,8 @@ export default class TowerfallPhysicsScene extends BaseScene {
 
   private group: Group;
 
-  get physics(): TowerfallPhysicsPlugin {
-    return this.app.getPlugin('towerfall-physics') as TowerfallPhysicsPlugin;
+  get physics(): ICrunchPhysicsPlugin {
+    return this.app.getPlugin('crunch-physics') as ICrunchPhysicsPlugin;
   }
 
   configureGUI() {

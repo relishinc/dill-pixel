@@ -31,7 +31,7 @@
       "path": "../plugins/physics-matter"
     },
     {
-      "path": "../plugins/physics-towerfall"
+      "path": "../plugins/physics-crunch"
     },
     {
       "path": "../plugins/rive"
@@ -49,12 +49,6 @@
       "path": "../storage-adapters/supabase"
     }
   ],
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.json",
-    "../**/*.ts",
-    "../storage-adapters/firebase/generateVersion.mjs"
-  ],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.json", "../**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

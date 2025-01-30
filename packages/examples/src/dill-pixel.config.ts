@@ -152,7 +152,7 @@ export const config = defineConfig<Data>({
       },
     ],
     [
-      'towerfall-physics',
+      'crunch-physics',
       {
         autoLoad: false,
       },

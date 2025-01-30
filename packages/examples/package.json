@@ -37,7 +37,7 @@
     "@dill-pixel/plugin-rive": "workspace:*",
     "@dill-pixel/plugin-rollbar": "workspace:*",
     "@dill-pixel/plugin-snap-physics": "workspace:*",
-    "@dill-pixel/plugin-towerfall-physics": "workspace:*",
+    "@dill-pixel/plugin-crunch-physics": "workspace:*",
     "@dill-pixel/plugin-springroll": "workspace:*",
     "@dill-pixel/storage-adapter-firebase": "workspace:*",
     "@dill-pixel/storage-adapter-supabase": "workspace:*",

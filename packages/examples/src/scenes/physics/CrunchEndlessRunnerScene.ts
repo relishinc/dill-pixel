@@ -1,12 +1,6 @@
 import BaseScene from '@/scenes/BaseScene';
 import { V8Application } from '@/V8Application';
-import TowerfallPhysicsPlugin, {
-  Actor,
-  CollisionResult,
-  ITowerfallPhysicsPlugin,
-  Sensor,
-  Solid,
-} from '@dill-pixel/plugin-towerfall-physics';
+import { Actor, CollisionResult, ICrunchPhysicsPlugin, Sensor, Solid } from '@dill-pixel/plugin-crunch-physics';
 import { Application, bool, Container, Signal } from 'dill-pixel';
 import gsap from 'gsap';
 import { Graphics, Rectangle, Ticker } from 'pixi.js';
@@ -15,11 +9,11 @@ export const id = 'endless-runner';
 
 export const debug = {
   group: 'Physics',
-  label: 'Towerfall - Endless Runner',
+  label: 'Crunch Physics - Endless Runner',
   order: 7,
 };
 
-export const plugins = ['towerfall-physics'];
+export const plugins = ['crunch-physics'];
 
 class Runner extends Actor<V8Application> {
   excludeCollisionTypes = new Set(['Coin']);
@@ -213,7 +207,7 @@ class Segment {
   }
 
   get physics(): ITowerfallPhysicsPlugin {
-    return this.app.getPlugin('towerfall-physics') as ITowerfallPhysicsPlugin;
+    return this.app.getPlugin('crunch-physics') as ITowerfallPhysicsPlugin;
   }
 
   constructor(x: number, y: number, width: number) {
@@ -364,8 +358,8 @@ class Segment {
   }
 }
 
-export default class TowerfallEndlessRunnerScene extends BaseScene {
-  title = 'Endless Runner';
+export default class CrunchEndlessRunnerScene extends BaseScene {
+  title = 'Crunch Physics - Endless Runner';
   subtitle = 'Score: 0';
 
   private runner: Runner;
@@ -382,8 +376,8 @@ export default class TowerfallEndlessRunnerScene extends BaseScene {
     segmentWidth: 800,
   };
 
-  get physics(): TowerfallPhysicsPlugin {
-    return this.app.getPlugin('towerfall-physics') as TowerfallPhysicsPlugin;
+  get physics(): CrunchPhysicsPlugin {
+    return this.app.getPlugin('crunch-physics') as ICrunchPhysicsPlugin;
   }
 
   configureGUI() {
