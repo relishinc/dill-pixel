@@ -21,8 +21,13 @@ lib
 packages/plugins/physics-arcade/lib
 packages/plugins/physics-snap/lib
 packages/plugins/physics-matter/lib
+packages/plugins/physics-crunch/lib
+packages/plugins/google-analytics/lib
 packages/plugins/rive/lib
+packages/plugins/springroll/lib
+packages/plugins/rollbar/lib
 packages/storage-adapters/firebase/lib
+packages/storage-adapters/supabase/lib
 packages/examples/public/assets
 packages/examples/.assetpack
 packages/examples/.cache
