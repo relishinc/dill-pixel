@@ -15,6 +15,8 @@ export interface TowerfallPhysicsOptions {
   shouldCull?: boolean;
   /** Whether to remove entities from the system after culling */
   boundary?: Rectangle;
+  /** Collision resolver */
   collisionResolver?: (collisions: Collision[]) => void;
+  /** Overlap resolver */
   overlapResolver?: (overlaps: SensorOverlap[]) => void;
 }

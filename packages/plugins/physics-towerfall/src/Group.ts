@@ -5,15 +5,71 @@ import { Sensor } from './Sensor';
 import { Solid } from './Solid';
 import { PhysicsEntityConfig } from './types';
 
+/**
+ * A container for managing collections of physics entities that move together.
+ * Groups are useful for creating compound objects, moving platforms with riders,
+ * and other scenarios where multiple entities need to move as one unit.
+ *
+ * Features:
+ * - Maintains relative positioning of child entities
+ * - Supports actors, solids, and sensors as children
+ * - Preserves world positions when adding entities
+ * - Provides type-safe access to children by entity type
+ *
+ * @typeParam T - Application type, defaults to base Application
+ *
+ * @example
+ * ```typescript
+ * // Create a moving platform with obstacles
+ * const platformGroup = physics.createGroup({
+ *   type: 'MovingPlatform',
+ *   position: [100, 300]
+ * });
+ *
+ * // Add platform and spikes
+ * const platform = physics.createSolid({
+ *   type: 'Platform',
+ *   size: [200, 32]
+ * });
+ *
+ * const spikes = physics.createSensor({
+ *   type: 'Spikes',
+ *   position: [0, -32],
+ *   size: [200, 32]
+ * });
+ *
+ * platformGroup.add(platform);
+ * platformGroup.add(spikes);
+ *
+ * // Move the entire group
+ * gsap.to(platformGroup, {
+ *   x: 500,
+ *   duration: 2,
+ *   yoyo: true,
+ *   repeat: -1
+ * });
+ * ```
+ */
 export class Group<T extends Application = Application> extends Entity<T> {
+  /** Set of child entities in this group */
   private children: Set<Entity> = new Set();
+  /** Map of child entities to their relative offsets from the group's position */
   private childOffsets: Map<Entity, { x: number; y: number }> = new Map();
+  /** Whether this group's position is static (not affected by physics) */
   public isStatic: boolean = true;
 
+  /**
+   * Gets the relative offset of a child entity from the group's position.
+   * @param entity - The child entity to get the offset for
+   * @returns The relative {x, y} offset of the entity
+   */
   public getChildOffset(entity: Entity): { x: number; y: number } {
     return this.childOffsets.get(entity) ?? { x: 0, y: 0 };
   }
 
+  /**
+   * Sets the group's X position, affecting all child entities.
+   */
   set x(value: number) {
     this._x = value;
   }
@@ -22,6 +78,9 @@ export class Group<T extends Application = Application> extends Entity<T> {
     return this._x;
   }
 
+  /**
+   * Sets the group's Y position, affecting all child entities.
+   */
   set y(value: number) {
     this._y = value;
   }

@@ -1,6 +1,12 @@
 import BaseScene from '@/scenes/BaseScene';
 import { V8Application } from '@/V8Application';
-import TowerfallPhysicsPlugin, { Actor, CollisionResult, Sensor, Solid } from '@dill-pixel/plugin-towerfall-physics';
+import TowerfallPhysicsPlugin, {
+  Actor,
+  CollisionResult,
+  ITowerfallPhysicsPlugin,
+  Sensor,
+  Solid,
+} from '@dill-pixel/plugin-towerfall-physics';
 import { Application, bool, Container, Signal } from 'dill-pixel';
 import gsap from 'gsap';
 import { Graphics, Rectangle, Ticker } from 'pixi.js';
@@ -95,6 +101,13 @@ class Runner extends Actor<V8Application> {
             this.view.alpha = 1;
           },
         });
+        break;
+      }
+      default: {
+        if (result.normal?.y === 1) {
+          this.velocity.y = 0;
+        }
+        break;
       }
     }
   }
@@ -198,8 +211,8 @@ class Segment {
     return Application.getInstance();
   }
 
-  get physics(): TowerfallPhysicsPlugin {
-    return this.app.getPlugin('towerfall-physics') as TowerfallPhysicsPlugin;
+  get physics(): ITowerfallPhysicsPlugin {
+    return this.app.getPlugin('towerfall-physics') as ITowerfallPhysicsPlugin;
   }
 
   constructor(x: number, y: number, width: number) {

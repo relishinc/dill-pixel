@@ -4,14 +4,62 @@ import { Entity } from './Entity';
 import { Sensor } from './Sensor';
 import { PhysicsEntityConfig } from './types';
 
+/**
+ * Static or moving solid object that other entities can collide with.
+ * Solids are typically used for platforms, walls, and other obstacles.
+ *
+ * Features:
+ * - Static collision boundaries
+ * - Support for moving platforms
+ * - Carries actors and sensors that are riding it
+ * - Pushes overlapping entities out of the way
+ *
+ * @typeParam T - Application type, defaults to base Application
+ *
+ * @example
+ * ```typescript
+ * // Create a static platform
+ * const platform = physics.createSolid({
+ *   type: 'Platform',
+ *   position: [0, 500],
+ *   size: [800, 32],
+ *   view: platformSprite
+ * });
+ *
+ * // Create a moving platform
+ * const movingPlatform = physics.createSolid({
+ *   type: 'Platform',
+ *   position: [100, 300],
+ *   size: [200, 32],
+ *   view: platformSprite
+ * });
+ *
+ * // Move the platform back and forth
+ * gsap.to(movingPlatform, {
+ *   x: 500,
+ *   duration: 2,
+ *   yoyo: true,
+ *   repeat: -1
+ * });
+ * ```
+ */
 export class Solid<T extends Application = Application> extends Entity<T> {
+  /** Whether this solid should be removed when culled (typically false) */
   public shouldRemoveOnCull = false;
+
+  /** Whether this solid can be collided with */
   public collidable: boolean = true;
+
+  /** Whether this solid is currently moving */
   public moving: boolean = false;
 
   private _nextX: number;
   private _nextY: number;
 
+  /**
+   * Sets the solid's X position.
+   * For moving solids, this queues the movement to be applied on next update.
+   */
   public set x(value: number) {
     if (this.group) {
       this._nextX = value + this.group.x; // Store position relative to group
@@ -25,6 +73,10 @@ export class Solid<T extends Application = Application> extends Entity<T> {
     return this._x;
   }
 
+  /**
+   * Sets the solid's Y position.
+   * For moving solids, this queues the movement to be applied on next update.
+   */
   public set y(value: number) {
     if (this.group) {
       this._nextY = value + this.group.y; // Store position relative to group
@@ -38,6 +90,11 @@ export class Solid<T extends Application = Application> extends Entity<T> {
     return this._y;
   }
 
+  /**
+   * Initializes or reinitializes the solid with new configuration.
+   *
+   * @param config - Configuration for the solid
+   */
   public init(config: PhysicsEntityConfig): void {
     super.init(config);
     if (config) {
@@ -46,22 +103,35 @@ export class Solid<T extends Application = Application> extends Entity<T> {
     }
   }
 
+  /** Right edge X coordinate */
   public get right(): number {
     return this.x + this.width;
   }
 
+  /** Left edge X coordinate */
   public get left(): number {
     return this.x;
   }
 
+  /** Top edge Y coordinate */
   public get top(): number {
     return this.y;
   }
 
+  /** Bottom edge Y coordinate */
   public get bottom(): number {
     return this.y + this.height;
   }
 
+  /**
+   * Moves the solid by the specified amount, carrying any riding entities.
+   * Also pushes any overlapping entities out of the way.
+   *
+   * @param x - X distance to move
+   * @param y - Y distance to move
+   * @param actors - Set of actors to check for riding/pushing
+   * @param sensors - Set of sensors to check for riding/pushing
+   */
   public move(
     x: number,
     y: number,
@@ -207,6 +277,12 @@ export class Solid<T extends Application = Application> extends Entity<T> {
     }
   }
 
+  /**
+   * Checks if this solid overlaps with the given entity.
+   *
+   * @param entity - Entity to check for overlap
+   * @returns True if overlapping
+   */
   private overlaps(entity: Actor | Sensor): boolean {
     return (
       this.x < entity.x + entity.width &&

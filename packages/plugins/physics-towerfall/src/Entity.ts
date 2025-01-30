@@ -5,31 +5,85 @@ import TowerfallPhysicsPlugin from './TowerfallPhysicsPlugin';
 import { EntityData, PhysicsEntityConfig, PhysicsEntityView, Rectangle } from './types';
 import { resolveEntityPosition, resolveEntitySize } from './utils';
 
+/**
+ * Base class for all physics entities in the Towerfall physics system.
+ * Provides common functionality for position, size, view management, and lifecycle.
+ *
+ * Entity is the foundation for:
+ * - Actors (dynamic objects)
+ * - Solids (static objects)
+ * - Sensors (trigger zones)
+ *
+ * It handles:
+ * - Position and size management
+ * - View (sprite) management and updates
+ * - Group membership and relative positioning
+ * - Culling and lifecycle states
+ * - Signal connections for event handling
+ *
+ * @typeParam A - Application type, defaults to base Application
+ * @typeParam D - Entity data type, defaults to base EntityData
+ *
+ * @example
+ * ```typescript
+ * // Create a custom entity
+ * class CustomEntity extends Entity {
+ *   constructor() {
+ *     super({
+ *       type: 'Custom',
+ *       position: [100, 100],
+ *       size: [32, 32],
+ *       view: sprite
+ *     });
+ *   }
+ *
+ *   // Override update for custom behavior
+ *   update(dt: number) {
+ *     super.update(dt);
+ *     // Custom update logic
+ *   }
+ * }
+ * ```
+ */
 export class Entity<A extends Application = Application, D extends EntityData = EntityData> {
+  /** Unique type identifier for this entity */
   public type!: string;
 
+  /** Set of entity types this entity should not collide with */
   public excludeCollisionTypes: Set<string> = new Set();
+
+  /** Color to use when rendering debug visuals */
   public debugColor: number;
+
+  /** Whether the entity should be removed when culled (out of bounds) */
   public shouldRemoveOnCull: boolean = false;
+
+  /** Entity width in pixels */
   public width: number = 0;
+
+  /** Entity height in pixels */
   public height: number = 0;
+
+  /** Visual representation (sprite/graphics) of this entity */
   public view!: PhysicsEntityView;
+
+  /** Whether this entity is active and should be updated */
   public active: boolean = true;
 
   protected _data: Partial<D>;
   protected _group: Group | null = null;
-
   protected _isCulled: boolean = false;
   protected _isDestroyed: boolean = false;
   protected _isInitialized: boolean = false;
-
   protected _xRemainder: number = 0;
   protected _yRemainder: number = 0;
   protected _x: number = 0;
   protected _y: number = 0;
-
   protected signalConnections: SignalConnections = new SignalConnections();
 
+  /**
+   * Custom data associated with this entity
+   */
   set data(value: Partial<D>) {
     this._data = value;
   }
@@ -38,6 +92,10 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     return this._data;
   }
 
+  /**
+   * The group this entity belongs to, if any.
+   * Groups allow for collective movement and management of entities.
+   */
   get group(): Group | null {
     return this._group;
   }
@@ -52,6 +110,10 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     this.updatePosition();
   }
 
+  /**
+   * Entity's X position in world space.
+   * If the entity belongs to a group, returns position relative to group.
+   */
   set x(value: number) {
     this._x = value;
   }
@@ -63,6 +125,10 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     return Math.round(this._x);
   }
 
+  /**
+   * Entity's Y position in world space.
+   * If the entity belongs to a group, returns position relative to group.
+   */
   set y(value: number) {
     this._y = value;
   }
@@ -74,22 +140,31 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     return Math.round(this._y);
   }
 
+  /** Whether this entity is currently culled (out of bounds) */
   get isCulled(): boolean {
     return this._isCulled;
   }
 
+  /** Whether this entity has been destroyed */
   get isDestroyed(): boolean {
     return this._isDestroyed;
   }
 
+  /** Reference to the main application instance */
   get app(): A {
     return Application.getInstance() as A;
   }
 
+  /** Reference to the physics plugin */
   get physics(): TowerfallPhysicsPlugin {
     return this.app.getPlugin('towerfall-physics') as TowerfallPhysicsPlugin;
   }
 
+  /**
+   * Creates a new Entity instance.
+   *
+   * @param config - Optional configuration for the entity
+   */
   constructor(config?: PhysicsEntityConfig<D>) {
     bindAllMethods(this);
 
@@ -104,23 +179,44 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     this.addView();
   }
 
+  /**
+   * Called after construction to perform additional initialization.
+   * Override this in subclasses to add custom initialization logic.
+   */
   protected initialize() {
     // Override in subclass
   }
 
+  /**
+   * Called before update to prepare for the next frame.
+   * Override this in subclasses to add pre-update logic.
+   */
   public preUpdate(): void {
     // Override in subclass
   }
 
+  /**
+   * Called every frame to update the entity's state.
+   * Override this in subclasses to add update logic.
+   *
+   * @param dt - Delta time in seconds since last update
+   */
   public update(dt: number): void {
     // Override in subclass
     void dt;
   }
 
+  /**
+   * Called after update to finalize the frame.
+   * Override this in subclasses to add post-update logic.
+   */
   public postUpdate(): void {
     // Override in subclass
   }
 
+  /**
+   * Adds the entity's view to the physics container and updates its position.
+   */
   protected addView() {
     if (this.view) {
       this.view.visible = true;
@@ -131,9 +227,10 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   }
 
   /**
-   * Initialize the entity with new configuration data
-   * Called by Pool when retrieving from pool
-   * @param config Configuration data for the entity
+   * Initializes or reinitializes the entity with new configuration.
+   * Used by object pools when recycling entities.
+   *
+   * @param config - New configuration to apply
    */
   public init(config: PhysicsEntityConfig): void {
     if (config.type) {
@@ -172,9 +269,8 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   }
 
   /**
-   * Reset the entity to its initial state for reuse in object pool
-   * Override this to handle custom reset logic
-   * @param config New configuration to apply
+   * Resets the entity to its initial state for reuse in object pools.
+   * Override this to handle custom reset logic.
    */
   public reset(): void {
     // Reset culling state
@@ -188,18 +284,30 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     this._data = {};
   }
 
+  /** Reference to the physics system */
   get system(): System {
     return this.physics.system;
   }
 
+  /**
+   * Called when the entity is added to a group.
+   * Override this to handle custom group addition logic.
+   */
   public onAddedToGroup(): void {
     // Override in subclass
   }
 
+  /**
+   * Called when the entity is removed from a group.
+   * Override this to handle custom group removal logic.
+   */
   public onRemovedFromGroup(): void {
     // Override in subclass
   }
 
+  /**
+   * Updates the entity's position and view.
+   */
   public updatePosition(): void {
     this.x = this._x;
     this.y = this._y;
@@ -207,8 +315,8 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   }
 
   /**
-   * Called when the entity is culled (goes out of bounds)
-   * Override this to handle culling differently (e.g., hide instead of destroy)
+   * Called when the entity is culled (goes out of bounds).
+   * Override this to handle culling differently.
    */
   public onCull(): void {
     this._isCulled = true;
@@ -219,8 +327,8 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   }
 
   /**
-   * Called when the entity is brought back after being culled
-   * Override this to handle unculling differently
+   * Called when the entity is brought back after being culled.
+   * Override this to handle unculling differently.
    */
   public onUncull(): void {
     this._isCulled = false;
@@ -231,8 +339,8 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   }
 
   /**
-   * Prepare the entity for removal/recycling
-   * Override this to handle custom cleanup
+   * Prepares the entity for removal/recycling.
+   * Override this to handle custom cleanup.
    */
   public destroy(): void {
     if (this._isDestroyed) return;
@@ -249,22 +357,39 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     }
   }
 
+  /**
+   * Called when the entity is removed from the physics system.
+   * Override this to handle custom removal logic.
+   */
   public onRemoved(): void {
     // Override in subclass
     this.destroy();
   }
 
+  /**
+   * Sets a new view for the entity and updates its position.
+   *
+   * @param view - The new view to use
+   */
   public setView(view: PhysicsEntityView): void {
     this.view = view;
     this.updateView();
   }
 
+  /**
+   * Updates the view's position to match the entity's position.
+   */
   public updateView(): void {
     if (this.view) {
       this.view.position.set(this.x, this.y);
     }
   }
 
+  /**
+   * Gets the entity's bounding rectangle.
+   *
+   * @returns Rectangle representing the entity's bounds
+   */
   public getBounds(): Rectangle {
     return {
       x: this.x,
@@ -274,6 +399,12 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     };
   }
 
+  /**
+   * Sets the entity's position, resetting any movement remainders.
+   *
+   * @param x - New X position
+   * @param y - New Y position
+   */
   public setPosition(x: number, y: number): void {
     this._x = x;
     this._y = y;
@@ -282,15 +413,20 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     this.updateView();
   }
 
-  // alias
+  /**
+   * Alias for setPosition.
+   *
+   * @param x - New X position
+   * @param y - New Y position
+   */
   public moveTo(x: number, y: number): void {
     this.setPosition(x, y);
   }
 
-  // signals
   /**
-   * Add signal connections to the container.
-   * @param args - The signal connections to add.
+   * Adds signal connections to the entity.
+   *
+   * @param args - Signal connections to add
    */
   public addSignalConnection(...args: SignalConnection[]) {
     for (const connection of args) {
@@ -298,12 +434,22 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     }
   }
 
+  /**
+   * Alias for addSignalConnection.
+   *
+   * @param args - Signal connections to add
+   */
   public connectSignal(...args: SignalConnection[]) {
     for (const connection of args) {
       this.signalConnections.add(connection);
     }
   }
 
+  /**
+   * Alias for addSignalConnection, specifically for action signals.
+   *
+   * @param args - Action signal connections to add
+   */
   public connectAction(...args: SignalConnection[]) {
     for (const connection of args) {
       this.signalConnections.add(connection);

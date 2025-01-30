@@ -4,18 +4,93 @@ import { Entity } from './Entity';
 import { Solid } from './Solid';
 import { PhysicsEntityConfig, SensorOverlap, Vector2 } from './types';
 
+/**
+ * A trigger zone that can detect overlaps with actors.
+ * Sensors are typically used for collectibles, triggers, and detection zones.
+ *
+ * Features:
+ * - Overlap detection with specific actor types
+ * - Optional gravity and movement
+ * - Can be static or dynamic
+ * - Callbacks for enter/exit events
+ *
+ * @typeParam T - Application type, defaults to base Application
+ *
+ * @example
+ * ```typescript
+ * // Create a coin pickup sensor
+ * class Coin extends Sensor {
+ *   constructor() {
+ *     super({
+ *       type: 'Coin',
+ *       position: [100, 100],
+ *       size: [32, 32],
+ *       view: coinSprite
+ *     });
+ *
+ *     // Only detect overlaps with player
+ *     this.collidableTypes = ['Player'];
+ *   }
+ *
+ *   // Called when a player enters the coin
+ *   onActorEnter(actor: Actor) {
+ *     if (actor.type === 'Player') {
+ *       increaseScore(10);
+ *       this.physics.removeSensor(this);
+ *     }
+ *   }
+ * }
+ *
+ * // Create a damage zone
+ * class Spikes extends Sensor {
+ *   constructor() {
+ *     super({
+ *       type: 'Spikes',
+ *       position: [300, 500],
+ *       size: [100, 32],
+ *       view: spikesSprite
+ *     });
+ *
+ *     this.collidableTypes = ['Player', 'Enemy'];
+ *     this.isStatic = true; // Don't move or fall
+ *   }
+ *
+ *   onActorEnter(actor: Actor) {
+ *     if (actor.type === 'Player') {
+ *       actor.damage(10);
+ *     }
+ *   }
+ * }
+ * ```
+ */
 export class Sensor<T extends Application = Application> extends Entity<T> {
+  /** Whether this sensor should be removed when culled */
   public shouldRemoveOnCull = false;
+
+  /** List of actor types this sensor can detect */
   public collidableTypes: string[] = [];
+
+  /** Current velocity in pixels per second */
   public velocity: Vector2 = { x: 0, y: 0 };
+
+  /** Whether this sensor should stay in place */
   public isStatic: boolean = false;
+
+  /** Set of actors currently overlapping this sensor */
   private overlappingActors: Set<Actor> = new Set();
+
+  /** Cache for isRidingSolid check */
   private _isRidingSolidCache: boolean | null = null;
 
   constructor(config?: PhysicsEntityConfig) {
     super(config);
   }
 
+  /**
+   * Initializes or reinitializes the sensor with new configuration.
+   *
+   * @param config - Configuration for the sensor
+   */
   public init(config: PhysicsEntityConfig): void {
     super.init(config);
     if (!this.velocity) {
@@ -31,7 +106,11 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Check if this sensor is riding the given solid
+   * Checks if this sensor is riding the given solid.
+   * Takes into account gravity direction for proper riding detection.
+   *
+   * @param solid - The solid to check against
+   * @returns True if riding the solid
    */
   public isRiding(solid: Solid): boolean {
     const gravityDirection = Math.sign(this.system.gravity);
@@ -51,7 +130,10 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Check if this sensor is riding any solid
+   * Checks if this sensor is riding any solid.
+   * Uses caching to optimize multiple checks per frame.
+   *
+   * @returns True if riding any solid
    */
   public isRidingSolid(): boolean {
     // Return cached value if available
@@ -66,7 +148,10 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Force move the sensor, ignoring static state and collisions
+   * Force moves the sensor to a new position, ignoring static state and collisions.
+   *
+   * @param x - New X position
+   * @param y - New Y position
    */
   public moveStatic(x: number, y: number): void {
     this._x = x;
@@ -78,7 +163,9 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Move the sensor horizontally - pass through solids
+   * Moves the sensor horizontally, passing through solids.
+   *
+   * @param amount - Distance to move in pixels
    */
   public moveX(amount: number): void {
     if (this.isStatic) {
@@ -120,7 +207,9 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Move the sensor vertically - collide with solids for riding
+   * Moves the sensor vertically, colliding with solids for riding.
+   *
+   * @param amount - Distance to move in pixels
    */
   public moveY(amount: number): void {
     if (this.isStatic) {
@@ -166,7 +255,9 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Update sensor position and check for overlapping actors
+   * Updates the sensor's position and checks for overlapping actors.
+   *
+   * @param deltaTime - Delta time in seconds
    */
   public update(deltaTime: number): void {
     // Reset the cache at the start of each update
@@ -191,7 +282,9 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Check for overlapping actors and trigger callbacks
+   * Checks for overlapping actors and triggers callbacks.
+   *
+   * @returns Set of current overlaps
    */
   public checkActorOverlaps(): Set<SensorOverlap> {
     const currentSensorOverlaps = new Set<SensorOverlap>();
@@ -228,7 +321,10 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Called when an actor starts overlapping with this sensor
+   * Called when an actor starts overlapping with this sensor.
+   * Override this to handle overlap start events.
+   *
+   * @param actor - The actor that entered
    */
   public onActorEnter(actor: Actor): void {
     // Override in subclass
@@ -236,13 +332,22 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Called when an actor stops overlapping with this sensor
+   * Called when an actor stops overlapping with this sensor.
+   * Override this to handle overlap end events.
+   *
+   * @param actor - The actor that exited
    */
   public onActorExit(actor: Actor): void {
     // Override in subclass
     void actor;
   }
 
+  /**
+   * Checks if this sensor overlaps with the given actor.
+   *
+   * @param actor - Actor to check for overlap
+   * @returns True if overlapping
+   */
   private overlaps(actor: Actor): boolean {
     return (
       this.x < actor.x + actor.width &&
@@ -252,6 +357,13 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
     );
   }
 
+  /**
+   * Gets all solids at the specified position.
+   *
+   * @param x - X position to check
+   * @param y - Y position to check
+   * @returns Array of solids at the position
+   */
   protected getSolidsAt(x: number, y: number): Solid[] {
     return this.system.getSolidsAt(x, y, this);
   }

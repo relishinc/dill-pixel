@@ -6,18 +6,86 @@ import { Solid } from './Solid';
 import TowerfallPhysicsPlugin from './TowerfallPhysicsPlugin';
 import { Collision, PhysicsEntityConfig, PhysicsEntityView, Rectangle, SensorOverlap } from './types';
 
+/**
+ * Configuration options for the Towerfall physics system.
+ * These options control the core behavior of the physics simulation.
+ *
+ * @example
+ * ```typescript
+ * const options: PhysicsSystemOptions = {
+ *   plugin: towerfallPlugin,
+ *   gridSize: 32,
+ *   gravity: 980,
+ *   maxVelocity: 1000,
+ *   debug: true,
+ *   boundary: { x: 0, y: 0, width: 800, height: 600 },
+ *   shouldCull: true,
+ *   collisionResolver: (collisions) => {
+ *     for (const collision of collisions) {
+ *       handleCollision(collision);
+ *     }
+ *   }
+ * };
+ * ```
+ */
 export interface PhysicsSystemOptions {
+  /** Reference to the parent Towerfall physics plugin */
   plugin: TowerfallPhysicsPlugin;
+  /** Size of each grid cell for spatial partitioning (in pixels) */
   gridSize: number;
+  /** Gravity strength in pixels per second squared */
   gravity: number;
+  /** Maximum velocity for any entity in pixels per second */
   maxVelocity: number;
+  /** Whether to render debug visualizations */
   debug?: boolean;
+  /** World boundary for culling entities */
   boundary?: Rectangle;
+  /** Whether to automatically cull out-of-bounds entities */
   shouldCull?: boolean;
+  /** Custom handler for resolving collisions */
   collisionResolver?: (collisions: Collision[]) => void;
+  /** Custom handler for resolving sensor overlaps */
   overlapResolver?: (overlaps: SensorOverlap[]) => void;
 }
 
+/**
+ * Core physics system that manages all physics entities and their interactions.
+ * Handles spatial partitioning, collision detection, and entity lifecycle.
+ *
+ * Features:
+ * - Grid-based spatial partitioning for efficient collision checks
+ * - Entity management (actors, solids, sensors, groups)
+ * - Collision and overlap detection
+ * - Debug visualization
+ * - Culling system for out-of-bounds entities
+ *
+ * @example
+ * ```typescript
+ * // Create the physics system
+ * const system = new System({
+ *   plugin: towerfallPlugin,
+ *   gridSize: 32,
+ *   gravity: 980,
+ *   maxVelocity: 1000
+ * });
+ *
+ * // Add entities
+ * const player = system.createActor({
+ *   type: 'Player',
+ *   position: [100, 100]
+ * });
+ *
+ * const platform = system.createSolid({
+ *   type: 'Platform',
+ *   position: [0, 500],
+ *   size: [800, 32]
+ * });
+ *
+ * // Update physics (in game loop)
+ * system.update(deltaTime);
+ * ```
+ */
 export class System {
   private readonly options: PhysicsSystemOptions;
   // Public collections
@@ -30,11 +98,12 @@ export class System {
   private solidsByType: Map<string, Set<Solid>> = new Map();
   private sensorsByType: Map<string, Set<Sensor>> = new Map();
   private groupsByType: Map<string, Set<Group>> = new Map();
-
+  // Spatial partitioning
   private grid: Map<string, Set<Solid>> = new Map();
+  // Collision tracking
   private collisions: Collision[] = [];
   private sensorOverlaps: SensorOverlap[] = [];
-  // debugging
+  // Debugging
   private _debugContainer: Container;
   private _debugGfx: Graphics | null = null;
   private _debug: boolean = false;
@@ -192,6 +261,28 @@ export class System {
     sensor.postUpdate();
     const overlaps = sensor.checkActorOverlaps();
     this.sensorOverlaps.push(...overlaps);
+  }
+
+  public createEntity(config: PhysicsEntityConfig): Actor | Solid | Sensor {
+    if (config.type === 'actor') {
+      return this.createActor(config);
+    } else if (config.type === 'solid') {
+      return this.createSolid(config);
+    } else if (config.type === 'sensor') {
+      return this.createSensor(config);
+    }
+    throw new Error(`Invalid entity type: ${config.type}`);
+  }
+
+  public addEntity(entity: Actor | Solid | Sensor): Actor | Solid | Sensor {
+    if (entity.type === 'actor') {
+      return this.addActor(entity as Actor);
+    } else if (entity.type === 'solid') {
+      return this.addSolid(entity as Solid);
+    } else if (entity.type === 'sensor') {
+      return this.addSensor(entity as Sensor);
+    }
+    throw new Error(`Invalid entity type: ${entity!.type}`);
   }
 
   public createActor(config: PhysicsEntityConfig): Actor {

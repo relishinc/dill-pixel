@@ -3,18 +3,85 @@ import { Entity } from './Entity';
 import { Solid } from './Solid';
 import { CollisionResult, PhysicsEntityConfig, Vector2 } from './types';
 
+/**
+ * Dynamic physics entity that can move and collide with other entities.
+ * Actors are typically used for players, enemies, projectiles, and other moving game objects.
+ *
+ * Features:
+ * - Velocity-based movement with gravity
+ * - Collision detection and response
+ * - Solid surface detection (riding)
+ * - Automatic culling when out of bounds
+ *
+ * @typeParam T - Application type, defaults to base Application
+ *
+ * @example
+ * ```typescript
+ * // Create a player actor
+ * class Player extends Actor {
+ *   constructor() {
+ *     super({
+ *       type: 'Player',
+ *       position: [100, 100],
+ *       size: [32, 64],
+ *       view: playerSprite
+ *     });
+ *   }
+ *
+ *   // Handle collisions
+ *   onCollide(result: CollisionResult) {
+ *     if (result.solid.type === 'Spike') {
+ *       this.die();
+ *     }
+ *   }
+ *
+ *   // Custom movement
+ *   update(dt: number) {
+ *     super.update(dt);
+ *
+ *     // Move left/right
+ *     if (this.app.input.isKeyDown('ArrowLeft')) {
+ *       this.velocity.x = -200;
+ *     } else if (this.app.input.isKeyDown('ArrowRight')) {
+ *       this.velocity.x = 200;
+ *     }
+ *
+ *     // Jump when on ground
+ *     if (this.app.input.isKeyPressed('Space') && this.isRidingSolid()) {
+ *       this.velocity.y = -400;
+ *     }
+ *   }
+ * }
+ * ```
+ */
 export class Actor<T extends Application = Application> extends Entity<T> {
+  /** Current velocity in pixels per second */
   public velocity: Vector2 = { x: 0, y: 0 };
+
+  /** Whether the actor should be removed when culled (out of bounds) */
   public shouldRemoveOnCull: boolean = true;
+
+  /** List of current frame collisions */
   public collisions: CollisionResult[] = [];
+
+  /** Cache for isRidingSolid check */
   private _isRidingSolidCache: boolean | null = null;
 
+  /**
+   * Initialize or reinitialize the actor with new configuration.
+   *
+   * @param config - Configuration for the actor
+   */
   public init(config: PhysicsEntityConfig): void {
     super.init(config);
     // Reset velocity
     this.velocity = { x: 0, y: 0 };
     this._isRidingSolidCache = null;
   }
+
+  /**
+   * Called at the start of each update to prepare for collision checks.
+   */
   public preUpdate(): void {
     if (!this.active) return;
 
@@ -23,6 +90,11 @@ export class Actor<T extends Application = Application> extends Entity<T> {
     this._isRidingSolidCache = null;
   }
 
+  /**
+   * Updates the actor's position based on velocity and handles collisions.
+   *
+   * @param dt - Delta time in seconds
+   */
   public update(dt: number): void {
     if (!this.active) return;
 
@@ -49,6 +121,9 @@ export class Actor<T extends Application = Application> extends Entity<T> {
     this.updateView();
   }
 
+  /**
+   * Called after update to handle post-movement effects.
+   */
   public postUpdate(): void {
     if (!this.active) return;
 
@@ -57,6 +132,9 @@ export class Actor<T extends Application = Application> extends Entity<T> {
     }
   }
 
+  /**
+   * Resets the actor to its initial state.
+   */
   public reset(): void {
     super.reset();
 
@@ -72,8 +150,8 @@ export class Actor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Called when the actor is culled (goes out of bounds)
-   * Override this to handle culling differently (e.g., hide instead of destroy)
+   * Called when the actor is culled (goes out of bounds).
+   * Override this to handle culling differently.
    */
   public onCull(): void {
     // Default behavior: destroy the view
@@ -81,8 +159,10 @@ export class Actor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Called when the actor collides with anything
-   * @param result The collision result containing information about the collision
+   * Called when the actor collides with a solid.
+   * Override this to handle collisions.
+   *
+   * @param result - Information about the collision
    */
   public onCollide(result: CollisionResult): void {
     // Override in subclass
@@ -90,8 +170,11 @@ export class Actor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Check if this actor is riding the given solid
-   * By default, an actor is riding if it's directly above the solid
+   * Checks if this actor is riding the given solid.
+   * An actor is riding if it's directly above the solid.
+   *
+   * @param solid - The solid to check against
+   * @returns True if riding the solid
    */
   public isRiding(solid: Solid): boolean {
     // Must be directly above the solid (within 1 pixel)
@@ -105,7 +188,10 @@ export class Actor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Check if this actor is riding any solid in the physics system
+   * Checks if this actor is riding any solid in the physics system.
+   * Uses caching to optimize multiple checks per frame.
+   *
+   * @returns True if riding any solid
    */
   public isRidingSolid(): boolean {
     // Return cached value if available
@@ -120,8 +206,8 @@ export class Actor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Called when the actor is squeezed between solids
-   * By default, just stops movement
+   * Called when the actor is squeezed between solids.
+   * Override this to handle squishing differently.
    */
   public squish(): void {
     this.velocity.x = 0;
@@ -129,7 +215,11 @@ export class Actor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Move the actor horizontally, checking for collisions with solids
+   * Moves the actor horizontally, checking for collisions with solids.
+   *
+   * @param amount - Distance to move in pixels
+   * @param collisionHandler - Optional callback for handling collisions
+   * @returns Array of collision results
    */
   public moveX(amount: number, collisionHandler?: (result: CollisionResult) => void): CollisionResult[] {
     if (!this.active) return [];
@@ -181,7 +271,11 @@ export class Actor<T extends Application = Application> extends Entity<T> {
   }
 
   /**
-   * Move the actor vertically, checking for collisions with solids
+   * Moves the actor vertically, checking for collisions with solids.
+   *
+   * @param amount - Distance to move in pixels
+   * @param collisionHandler - Optional callback for handling collisions
+   * @returns Array of collision results
    */
   public moveY(amount: number, collisionHandler?: (result: CollisionResult) => void): CollisionResult[] {
     if (!this.active) return [];
@@ -232,6 +326,9 @@ export class Actor<T extends Application = Application> extends Entity<T> {
     return collisions;
   }
 
+  /**
+   * Updates the actor's view position.
+   */
   public updateView(): void {
     if (this.view && this.view.visible) {
       this.view.x = this._x;
@@ -239,7 +336,13 @@ export class Actor<T extends Application = Application> extends Entity<T> {
     }
   }
 
-  // This would be implemented by the physics system to provide the solids at a given position
+  /**
+   * Gets all solids at the specified position that could collide with this actor.
+   *
+   * @param _x - X position to check
+   * @param _y - Y position to check
+   * @returns Array of solids at the position
+   */
   protected getSolidsAt(_x: number, _y: number): Solid[] {
     return this.system.getSolidsAt(_x, _y, this);
   }
