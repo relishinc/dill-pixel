@@ -498,7 +498,7 @@ export default class TowerfallPhysicsScene extends BaseScene {
     this.player.velocity.x *= 0.3; // Deceleration
     this._subtitle.text = `Particles: ${this.physics.system.getActorsByType('FX')?.length || 0} (click to add more)`;
 
-    this.group.move(-0.25 / 60, 0);
+    // this.group.move(-0.25 / 60, 0);
   }
 
   resize() {
