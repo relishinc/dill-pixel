@@ -9,6 +9,7 @@ export const id = 'flex-container';
 export const debug = {
   group: 'UI',
   label: 'Flex Container',
+  order: 3,
 };
 
 const whiteTextStyle = (size: number): Partial<TextStyleOptions> => ({

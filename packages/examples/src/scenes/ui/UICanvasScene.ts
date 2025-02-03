@@ -7,6 +7,7 @@ export const id = 'ui-canvas';
 export const debug = {
   group: 'UI',
   label: 'UI Canvas',
+  order: 4,
 };
 
 const whiteTextStyle = (size: number): Partial<TextStyleOptions> => ({

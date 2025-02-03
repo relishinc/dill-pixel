@@ -5,7 +5,8 @@ import BaseScene from '@/scenes/BaseScene';
 export const id = 'ui-input';
 export const debug = {
   group: 'UI',
-  label: 'Input',
+  label: 'UI Input',
+  order: 6,
 };
 
 const overlaySettings = {
@@ -16,8 +17,8 @@ const overlaySettings = {
 };
 
 export default class UIScene extends BaseScene {
-  public title = 'UI';
-  public subtitle = 'UI components';
+  public title = 'UI Input';
+  public subtitle = 'UI Input components';
 
   protected list: FlexContainer;
 
@@ -32,9 +33,8 @@ export default class UIScene extends BaseScene {
       gap: 20,
       justifyContent: 'center',
       alignItems: 'center',
-      visible:false
+      visible: false,
     });
-
 
     const input = this.list.add.existing(
       new Input({
@@ -132,11 +132,10 @@ export default class UIScene extends BaseScene {
     );
 
     this.app.focus.add([input, tel, input2, input3, input4, input5, withOverlay], this.id);
-    
+
     await wait(0.01);
 
     this.list.layout();
     this.list.visible = true;
   }
 }
-

@@ -1,13 +1,71 @@
 import BaseScene from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
-import { FlexContainer, ToastConfig, Toaster, ToastType, UICanvasEdge } from 'dill-pixel';
-import { TextStyleOptions } from 'pixi.js';
+import { Application, Button, FlexContainer, ToastConfig, Toaster, ToastType, UICanvasEdge } from 'dill-pixel';
+import { Graphics, TextStyleOptions, Texture } from 'pixi.js';
 
 export const id = 'ui-toaster';
 export const debug = {
   group: 'UI',
   label: 'UI Toaster',
+  order: 5,
 };
+
+class ToastCloseButton extends Button {
+  static _texture: Texture;
+
+  static get texture() {
+    if (!ToastCloseButton._texture) {
+      ToastCloseButton._texture = ToastCloseButton.getTexture();
+    }
+    return ToastCloseButton._texture;
+  }
+
+  static getTexture() {
+    const circle = new Graphics().circle(0, 0, 10).fill({ color: 0xffffff, alpha: 1 });
+
+    const texture = Application.getInstance().renderer.generateTexture(circle);
+    ToastCloseButton._texture = texture;
+
+    return texture;
+  }
+
+  // Create circular background
+  constructor() {
+    super({
+      cursor: 'pointer',
+      textures: {
+        default: ToastCloseButton.texture,
+        hover: ToastCloseButton.texture,
+        active: ToastCloseButton.texture,
+        disabled: ToastCloseButton.texture,
+      },
+    });
+
+    // Add X text
+    this.add.text({
+      text: '×',
+      style: {
+        fontFamily: FONT_KUMBH_SANS,
+        fontSize: 20,
+        fill: 0x0,
+        fontWeight: 'bold',
+        align: 'center',
+        lineHeight: 20,
+      },
+      x: 0.5,
+      y: -1.5,
+      anchor: 0.5,
+    });
+
+    this.onOver.connect(() => {
+      this.view.scale = 1.1;
+    });
+
+    this.onOut.connect(() => {
+      this.view.scale = 1;
+    });
+  }
+}
 
 const whiteTextStyle = (size: number): Partial<TextStyleOptions> => ({
   fontFamily: FONT_KUMBH_SANS,
@@ -24,22 +82,32 @@ export default class UIToasterScene extends BaseScene {
   protected buttonContainer: FlexContainer;
   protected config = {
     toaster: {
-      position: 'top right' as UICanvasEdge,
+      position: 'bottom right' as UICanvasEdge,
       maxToasts: 5,
       spacing: 10,
-      offset: 20,
-      stackDirection: 'down' as 'up' | 'down',
+      offset: { x: 20, y: 20 },
+      stackDirection: 'up' as 'up' | 'down',
     },
     toast: {
       duration: 3000,
       width: 300,
-      height: 80,
+      height: 100,
       backgroundColor: 0x000000,
       backgroundAlpha: 0.8,
       cornerRadius: 8,
-      padding: 10,
+      padding: 20,
       autoClose: true,
       fontSize: 16,
+      textColor: 0xffffff,
+    },
+    shadow: {
+      color: 0x000000,
+      alpha: 0.2,
+      offset: { x: 1, y: 3 },
+    },
+    closeButton: {
+      size: 24,
+      offset: 0,
     },
   };
 
@@ -64,13 +132,24 @@ export default class UIToasterScene extends BaseScene {
       this.toaster.config.maxToasts = this.config.toaster.maxToasts;
     });
 
-    toasterFolder.add(this.config.toaster, 'spacing', 0, 50, 1).onChange(() => {
-      this.toaster.config.spacing = this.config.toaster.spacing;
-      this.toaster.positionToasts();
-    });
+    toasterFolder
+      .add(this.config.toaster.offset, 'x', 0, 100, 1)
+      .name('Offset X')
+      .onChange(() => {
+        this.toaster.config.offset = this.config.toaster.offset;
+        this.toaster.positionToasts();
+      });
 
-    toasterFolder.add(this.config.toaster, 'offset', 0, 100, 1).onChange(() => {
-      this.toaster.config.offset = this.config.toaster.offset;
+    toasterFolder
+      .add(this.config.toaster.offset, 'y', 0, 100, 1)
+      .name('Offset Y')
+      .onChange(() => {
+        this.toaster.config.offset = this.config.toaster.offset;
+        this.toaster.positionToasts();
+      });
+
+    toasterFolder.add(this.config.toaster, 'spacing', -50, 50, 1).onChange(() => {
+      this.toaster.config.spacing = this.config.toaster.spacing;
       this.toaster.positionToasts();
     });
 
@@ -79,6 +158,8 @@ export default class UIToasterScene extends BaseScene {
       this.toaster.positionToasts();
     });
 
+    toasterFolder.add({ hideAll: () => this.toaster.hideAll() }, 'hideAll').name('Hide All Toasts');
+
     toasterFolder.open();
 
     // Toast settings
@@ -86,22 +167,42 @@ export default class UIToasterScene extends BaseScene {
     toastFolder.add(this.config.toast, 'duration', 500, 10000, 100).name('Duration (ms)');
     toastFolder.add(this.config.toast, 'width', 100, 800, 10);
     toastFolder.add(this.config.toast, 'height', 40, 200, 5);
-    toastFolder.addColor({ color: this.config.toast.backgroundColor }, 'color').onChange((value: number) => {
-      this.config.toast.backgroundColor = value;
-    });
+    toastFolder
+      .addColor({ color: this.config.toast.backgroundColor }, 'color')
+      .name('BG Color')
+      .onChange((value: number) => {
+        this.config.toast.backgroundColor = value;
+      });
+    toastFolder
+      .addColor({ color: this.config.toast.textColor }, 'color')
+      .name('Text Color')
+      .onChange((value: number) => {
+        this.config.toast.textColor = value;
+      });
     toastFolder.add(this.config.toast, 'backgroundAlpha', 0, 1, 0.1);
     toastFolder.add(this.config.toast, 'cornerRadius', 0, 20, 1);
     toastFolder.add(this.config.toast, 'padding', 0, 30, 1);
     toastFolder.add(this.config.toast, 'autoClose');
     toastFolder.add(this.config.toast, 'fontSize', 8, 32, 1);
+
+    // Shadow settings
+    const shadowFolder = this.gui.addFolder('Shadow Settings');
+    shadowFolder
+      .addColor({ color: this.config.shadow.color }, 'color')
+      .name('Shadow Color')
+      .onChange((value: number) => {
+        this.config.shadow.color = value;
+      });
+    shadowFolder.add(this.config.shadow, 'alpha', 0, 1, 0.05).name('Shadow Alpha');
+    shadowFolder.add(this.config.shadow.offset, 'x', -20, 20, 1).name('Shadow X');
+    shadowFolder.add(this.config.shadow.offset, 'y', -20, 20, 1).name('Shadow Y');
+    shadowFolder.open();
+
     toastFolder.open();
   }
 
   async initialize() {
     await super.initialize();
-
-    // Create toaster with config
-    this.toaster = this.add.existing(new Toaster(this.config.toaster));
 
     // Create button container
     this.buttonContainer = this.add.flexContainer({
@@ -115,11 +216,47 @@ export default class UIToasterScene extends BaseScene {
       y: -this.app.size.height * 0.5,
     });
 
+    const toastConfig: ToastConfig = {
+      message: `This is a toast notification!`,
+      type: 'success',
+      duration: this.config.toast.duration,
+      width: this.config.toast.width,
+      height: this.config.toast.height,
+      backgroundColor: this.config.toast.backgroundColor,
+      backgroundAlpha: this.config.toast.backgroundAlpha,
+      cornerRadius: this.config.toast.cornerRadius,
+      padding: this.config.toast.padding,
+      autoClose: this.config.toast.autoClose,
+      textAlign: 'left',
+      shadow: {
+        color: this.config.shadow.color,
+        alpha: this.config.shadow.alpha,
+        offset: { ...this.config.shadow.offset },
+      },
+      closeButton: {
+        show: true,
+        class: ToastCloseButton,
+        position: 'top-right',
+        size: 12,
+        offset: 8,
+      },
+      style: {
+        fontSize: this.config.toast.fontSize,
+        fill: this.config.toast.textColor,
+        fontFamily: FONT_KUMBH_SANS,
+        fontWeight: 'bold',
+        wordWrap: true,
+      },
+    };
+
+    // Create toaster with config
+    this.toaster = this.add.existing(new Toaster(this.config.toaster, toastConfig));
+
     // Add buttons for different toast types
-    this.addToastButton('Show Info Toast', 'info');
-    this.addToastButton('Show Success Toast', 'success');
-    this.addToastButton('Show Warning Toast', 'warning');
-    this.addToastButton('Show Error Toast', 'error');
+    this.addToastButton('Info Toast', 'info');
+    this.addToastButton('Success Toast', 'success');
+    this.addToastButton('Warning Toast', 'warning');
+    this.addToastButton('Error Toast', 'error');
 
     // Add button for custom toast
     this.addCustomToastButton();
@@ -144,26 +281,8 @@ export default class UIToasterScene extends BaseScene {
 
     this.addSignalConnection(
       button.onClick.connect(() => {
-        this.toaster.show({
-          message: `This is a ${type} toast notification!`,
-          type,
-          duration: this.config.toast.duration,
-          width: this.config.toast.width,
-          height: this.config.toast.height,
-          backgroundColor: this.config.toast.backgroundColor,
-          backgroundAlpha: this.config.toast.backgroundAlpha,
-          cornerRadius: this.config.toast.cornerRadius,
-          padding: this.config.toast.padding,
-          autoClose: this.config.toast.autoClose,
-          style: {
-            fontSize: this.config.toast.fontSize,
-            fill: 0xffffff,
-            fontFamily: FONT_KUMBH_SANS,
-            fontWeight: 'bold',
-            wordWrap: true,
-            wordWrapWidth: this.config.toast.width - this.config.toast.padding * 2,
-          },
-        });
+        const message = `Toast #${this.toaster.size + 1} - A ${type} toast notification!`;
+        this.toaster.show({ type, message, cornerRadius: 10, colorBarWidth: 8 });
       }),
     );
   }
@@ -174,12 +293,12 @@ export default class UIToasterScene extends BaseScene {
       cursor: 'pointer',
       textures: { default: 'btn/blue', hover: 'btn/yellow', disabled: 'btn/grey', active: 'btn/red' },
       sheet: 'ui',
-      accessibleTitle: 'Show Custom Toast',
+      accessibleTitle: 'Custom Toast',
       accessibleHint: 'Click to show a custom toast notification',
     });
 
     button.add.text({
-      text: 'Show Custom Toast',
+      text: 'Custom Toast',
       anchor: 0.5,
       resolution: 2,
       style: whiteTextStyle(48),
@@ -187,17 +306,33 @@ export default class UIToasterScene extends BaseScene {
 
     this.addSignalConnection(
       button.onClick.connect(() => {
+        const showCloseButton = this.config.toast.autoClose === true ? false : true;
+        const index = this.toaster.size;
         const config: ToastConfig = {
-          message: 'This is a custom toast with different styling!',
+          message: `Toast #${index + 1} - This is a custom toast with different styling!`,
           width: 400,
           height: 100,
           backgroundColor: 0x9b59b6,
-          backgroundAlpha: 0.9,
-          cornerRadius: 15,
+          backgroundAlpha: 1,
+          cornerRadius: 0,
+          colorBarWidth: 15,
           duration: 5000,
+          padding: 18,
+          shadow: {
+            color: 0x9b59b6,
+            alpha: 0.3,
+            offset: { x: 2, y: 6 },
+          },
+          closeButton: {
+            show: showCloseButton,
+            class: ToastCloseButton,
+            position: 'top-right',
+            size: 24,
+            offset: 12,
+          },
           style: {
-            fontSize: 20,
-            fill: 0xffffff,
+            fontSize: 24,
+            fill: this.config.toast.textColor,
             fontFamily: FONT_KUMBH_SANS,
             fontWeight: 'bold',
           },

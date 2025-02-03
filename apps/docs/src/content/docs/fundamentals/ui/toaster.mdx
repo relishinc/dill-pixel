@@ -1,0 +1,275 @@
+---
+title: Toaster
+description: Display temporary notifications and feedback messages with the Toaster system.
+---
+
+The Toaster system provides a way to display temporary notifications, alerts, and feedback messages to users. It includes both the `Toaster` manager component and individual `Toast` notifications.
+
+## Basic Usage
+
+```typescript
+// Create a toaster instance
+const toaster = this.add.existing(
+  new Toaster({
+    position: 'top right',
+    maxToasts: 5,
+  }),
+);
+
+// Show a basic toast
+toaster.show({
+  message: 'Operation successful!',
+  type: 'success',
+});
+
+// Show a custom toast
+toaster.show({
+  message: 'Custom notification',
+  backgroundColor: 0x9b59b6,
+  shadow: {
+    color: 0x000000,
+    alpha: 0.2,
+    offset: { x: 4, y: 4 },
+  },
+});
+```
+
+## Toaster Configuration
+
+The `Toaster` component manages the positioning and stacking of toast notifications. It can be configured with the following options:
+
+```typescript
+interface ToasterConfig {
+  // Position of toasts relative to the screen edges
+  position?: 'top right' | 'top left' | 'top center' | 'bottom right' | 'bottom left' | 'bottom center';
+
+  // Maximum number of toasts to show at once
+  maxToasts?: number;
+
+  // Vertical spacing between toasts
+  spacing?: number;
+
+  // Distance from screen edges
+  offset?: { x: number; y: number } | number;
+
+  // Direction in which new toasts should stack
+  stackDirection?: 'up' | 'down';
+}
+```
+
+### Default Toast Configuration
+
+You can set default configurations for all toasts shown by a toaster:
+
+```typescript
+const toaster = new Toaster(
+  { position: 'top right' },
+  {
+    // Default config for all toasts
+    backgroundColor: 0x000000,
+    backgroundAlpha: 0.8,
+    cornerRadius: 8,
+    duration: 3000,
+    autoClose: true,
+  },
+);
+```
+
+## Toast Configuration
+
+Individual toasts can be customized with various visual and behavioral options:
+
+```typescript
+interface ToastConfig {
+  // Required message to display
+  message: string;
+
+  // Type of toast (affects color indicator)
+  type?: 'info' | 'success' | 'warning' | 'error';
+
+  // Visual styling
+  width?: number;
+  height?: number;
+  backgroundColor?: number;
+  backgroundAlpha?: number;
+  cornerRadius?: number;
+  padding?: number;
+
+  // Text styling
+  style?: Partial<TextStyle>;
+  textAlign?: 'left' | 'center' | 'right';
+  verticalAlign?: 'top' | 'middle' | 'bottom';
+
+  // Behavior
+  duration?: number;
+  autoClose?: boolean;
+
+  // Color indicator
+  colorBarWidth?: number;
+  textColors?: {
+    info: number;
+    success: number;
+    warning: number;
+    error: number;
+  };
+
+  // Shadow effect
+  shadow?: {
+    color?: number;
+    alpha?: number;
+    offset?: { x: number; y: number };
+  };
+
+  // Close button
+  closeButton?: {
+    show?: boolean;
+    position?: 'top right' | 'top left';
+    class?: typeof Button;
+    size?: number;
+    offset?: number;
+  };
+}
+```
+
+## Custom Close Button
+
+You can create a custom close button by extending the `Button` class:
+
+```typescript
+class CustomCloseButton extends Button {
+  constructor() {
+    super({
+      cursor: 'pointer',
+      textures: { default: 'close-icon' },
+    });
+
+    this.onOver.connect(() => {
+      this.scale.set(1.1);
+    });
+
+    this.onOut.connect(() => {
+      this.scale.set(1);
+    });
+  }
+}
+
+// Use the custom button in toast config
+toaster.show({
+  message: 'Custom close button',
+  closeButton: {
+    show: true,
+    class: CustomCloseButton,
+    position: 'top right',
+    size: 24,
+    offset: 8,
+  },
+});
+```
+
+## Events
+
+The Toaster system provides several events you can listen to:
+
+```typescript
+// Toaster events
+toaster.onToastAdded.connect((toast) => {
+  console.log('New toast added');
+});
+
+toaster.onToastRemoved.connect((toast) => {
+  console.log('Toast removed');
+});
+
+toaster.onAllToastsRemoved.connect(() => {
+  console.log('All toasts cleared');
+});
+
+// Individual toast events
+toast.onToastClosed.connect(() => {
+  console.log('Toast closed');
+});
+```
+
+## Managing Toasts
+
+The Toaster provides methods to manage active toasts:
+
+```typescript
+// Get current number of visible toasts
+const count = toaster.size;
+
+// Hide all toasts
+await toaster.hideAll();
+// Remove all toasts (alias for hideAll)
+await toaster.removeAll();
+```
+
+## Examples
+
+### Basic Notification
+
+```typescript
+toaster.show({
+  message: 'File saved successfully',
+  type: 'success',
+  duration: 3000,
+  autoClose: true,
+});
+```
+
+### Custom Styled Toast
+
+```typescript
+toaster.show({
+  message: 'Custom notification style',
+  backgroundColor: 0x9b59b6,
+  backgroundAlpha: 1,
+  cornerRadius: 15,
+  colorBarWidth: 8,
+  shadow: {
+    color: 0x000000,
+    alpha: 0.3,
+    offset: { x: 2, y: 4 },
+  },
+  closeButton: {
+    show: true,
+    position: 'top right',
+  },
+  style: {
+    fontSize: 18,
+    fill: 0xffffff,
+    fontWeight: 'bold',
+  },
+});
+```
+
+### Persistent Toast with Close Button
+
+```typescript
+toaster.show({
+  message: 'This message will stay until dismissed',
+  type: 'info',
+  autoClose: false,
+  closeButton: {
+    show: true,
+    position: 'top right',
+  },
+});
+```
+
+### Toast with Custom Animation
+
+```typescript
+const toast = await toaster.show({
+  message: 'Custom animation example',
+  type: 'success',
+});
+
+gsap.to(toast.scale, {
+  x: 1.1,
+  y: 1.1,
+  duration: 0.2,
+  yoyo: true,
+  repeat: 1,
+});
+```

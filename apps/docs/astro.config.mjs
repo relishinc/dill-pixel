@@ -74,6 +74,7 @@ export default defineConfig({
                 { label: 'Button', link: '/fundamentals/ui/button' },
                 { label: 'Joystick', link: '/fundamentals/ui/joystick' },
                 { label: 'Popups', link: '/fundamentals/ui/popups' },
+                { label: 'Toaster', link: '/fundamentals/ui/toaster' },
               ],
             },
             {

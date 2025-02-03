@@ -5,11 +5,37 @@ import { Signal } from '../signals';
 import { Toast, ToastConfig } from './Toast';
 import { UICanvasEdge } from './UICanvas';
 
+/**
+ * Configuration interface for the Toaster component, which manages toast notifications.
+ *
+ * @example
+ * ```typescript
+ * // Basic toaster in top-right corner
+ * const config: ToasterConfig = {
+ *   position: 'top right',
+ *   maxToasts: 3
+ * };
+ *
+ * // Custom toaster with specific spacing and offset
+ * const config: ToasterConfig = {
+ *   position: 'bottom center',
+ *   maxToasts: 5,
+ *   spacing: 15,
+ *   offset: { x: 20, y: 30 },
+ *   stackDirection: 'up'
+ * };
+ * ```
+ */
 export interface ToasterConfig {
+  /** Position of toasts relative to the screen edges */
   position?: UICanvasEdge;
+  /** Maximum number of toasts to show at once */
   maxToasts?: number;
+  /** Vertical spacing between toasts */
   spacing?: number;
-  offset?: number;
+  /** Distance from screen edges, can be a number for equal x/y or an object for different values */
+  offset?: { x: number; y: number } | number;
+  /** Direction in which new toasts should stack */
   stackDirection?: 'up' | 'down';
 }
 
@@ -17,21 +43,110 @@ const defaultConfig: ToasterConfig = {
   position: 'top right',
   maxToasts: 5,
   spacing: 10,
-  offset: 20,
+  offset: { x: 20, y: 20 },
   stackDirection: 'down',
 };
 
+/**
+ * Toaster component that manages the display and positioning of toast notifications.
+ *
+ * @example
+ * ```typescript
+ * // Create a toaster
+ * const toaster = new Toaster({
+ *   position: 'top right',
+ *   maxToasts: 3
+ * });
+ *
+ * // Show a basic toast
+ * toaster.show({
+ *   message: "Operation successful!",
+ *   type: "success"
+ * });
+ *
+ * // Show a custom toast
+ * toaster.show({
+ *   message: "Custom notification",
+ *   backgroundColor: 0x9b59b6,
+ *   shadow: {
+ *     color: 0x000000,
+ *     alpha: 0.2,
+ *     offset: { x: 4, y: 4 }
+ *   }
+ * });
+ *
+ * // Hide all toasts
+ * toaster.hideAll();
+ * ```
+ */
 export class Toaster extends WithSignals(Container) {
+  /** Emitted when a new toast is added */
   public readonly onToastAdded = new Signal<(toast: Toast) => void>();
+  /** Emitted when a toast is removed */
   public readonly onToastRemoved = new Signal<(toast: Toast) => void>();
+  /** Emitted when all toasts are removed */
+  public readonly onAllToastsRemoved = new Signal<() => void>();
 
   public config: ToasterConfig;
+  public defaultToastConfig: Partial<ToastConfig>;
   private toasts: Toast[] = [];
   private container: Container;
 
-  constructor(config: Partial<ToasterConfig> = {}) {
+  /**
+   * Create a new Toaster instance to manage toast notifications.
+   *
+   * @param config - Configuration for the Toaster's position, spacing, and behavior
+   * @param defaultToastConfig - Default configuration applied to all toasts shown by this Toaster
+   *
+   * @example
+   * ```typescript
+   * // Basic toaster with default settings
+   * const toaster = new Toaster();
+   *
+   * // Toaster with custom position and behavior
+   * const toaster = new Toaster({
+   *   position: 'bottom center',
+   *   maxToasts: 3,
+   *   spacing: 15,
+   *   offset: { x: 20, y: 30 },
+   *   stackDirection: 'up'
+   * });
+   *
+   * // Toaster with custom defaults for all toasts
+   * const toaster = new Toaster(
+   *   {
+   *     position: 'top right',
+   *     maxToasts: 5
+   *   },
+   *   {
+   *     backgroundColor: 0x000000,
+   *     backgroundAlpha: 0.8,
+   *     cornerRadius: 8,
+   *     shadow: {
+   *       color: 0x000000,
+   *       alpha: 0.2,
+   *       offset: { x: 4, y: 4 }
+   *     },
+   *     closeButton: {
+   *       show: true,
+   *       position: 'top right'
+   *     }
+   *   }
+   * );
+   *
+   * // The defaultToastConfig will be applied to all toasts,
+   * // but can be overridden per toast:
+   * toaster.show({ message: "Uses default config" });
+   * toaster.show({
+   *   message: "Custom config",
+   *   backgroundColor: 0x9b59b6  // Overrides default
+   * });
+   * ```
+   */
+  constructor(config: Partial<ToasterConfig> = {}, defaultToastConfig: Partial<ToastConfig> = {}) {
     super();
-    this.config = { ...defaultConfig, ...config };
+    this.config = { ...defaultConfig, ...config } as ToasterConfig;
+    this.defaultToastConfig = { ...defaultToastConfig } as Partial<ToastConfig>;
     this.initialize();
   }
 
@@ -39,9 +154,21 @@ export class Toaster extends WithSignals(Container) {
     this.container = this.add.container();
   }
 
-  public async show(config: ToastConfig): Promise<Toast> {
+  /**
+   * Get the current number of visible toasts
+   */
+  public get size(): number {
+    return this.toasts.length;
+  }
+
+  /**
+   * Display a new toast notification
+   * @param config Configuration for the toast to display
+   * @returns Promise that resolves with the created toast
+   */
+  public async show(config: Partial<ToastConfig> = this.defaultToastConfig): Promise<Toast> {
     // Remove oldest toast if we exceed max before creating new one
-    if (this.toasts.length >= this.config.maxToasts!) {
+    if (this.size >= this.config.maxToasts!) {
       const oldestToast = this.toasts[0];
       // Wait for the hide animation to complete
       await oldestToast.hide();
@@ -49,8 +176,12 @@ export class Toaster extends WithSignals(Container) {
       await this.removeToast(oldestToast);
     }
 
+    if (this.defaultToastConfig) {
+      config = { ...this.defaultToastConfig, ...config } as ToastConfig;
+    }
     // Create new toast
-    const toast = new Toast(config);
+    const ToastClass = config.class ?? Toast;
+    const toast = new ToastClass(config);
 
     // Add to container and array first
     this.container.addChild(toast);
@@ -58,7 +189,7 @@ export class Toaster extends WithSignals(Container) {
     this.positionToast(toast, this.toasts.length - 1, false);
 
     // Connect to close signal
-    toast.onClose.connectOnce(() => this.removeToast(toast));
+    toast.onToastClosed.connectOnce(() => this.removeToast(toast));
 
     // Position all toasts including the new one
     this.positionToasts();
@@ -70,12 +201,25 @@ export class Toaster extends WithSignals(Container) {
     return toast.show();
   }
 
+  /**
+   * Hide all currently visible toasts with animation
+   * @returns Promise that resolves when all toasts are hidden
+   */
   public async hideAll(): Promise<void> {
     // Create a copy of the array to avoid modification during iteration
     const toastsToHide = [...this.toasts];
 
     // Hide all toasts simultaneously
     await Promise.all(toastsToHide.map((toast) => toast.hide()));
+
+    this.onAllToastsRemoved.emit();
+  }
+
+  /**
+   * Remove all toasts (alias for hideAll)
+   */
+  public async removeAll(): Promise<void> {
+    return this.hideAll();
   }
 
   protected async removeToast(toast: Toast): Promise<void> {
@@ -100,15 +244,28 @@ export class Toaster extends WithSignals(Container) {
     this.onToastRemoved.emit(toast);
   }
 
-  public positionToasts(animate: boolean = true): void {
+  /**
+   * Update positions of all toasts
+   * @param animate Whether to animate the position changes
+   * @param skipLast Whether to skip positioning the last toast
+   */
+  public positionToasts(animate: boolean = true, skipLast: boolean = false): void {
     // Create a copy of the array to avoid modification during iteration
-    const validToasts = this.toasts.filter((toast) => toast && !toast.destroyed);
+    const validToasts = this.toasts.filter(
+      (toast, index) => toast && !toast.destroyed && (skipLast ? index !== this.toasts.length - 1 : true),
+    );
 
     validToasts.forEach((toast, index) => {
       this.positionToast(toast, index, animate);
     });
   }
 
+  /**
+   * Position a single toast
+   * @param toast The toast to position
+   * @param index The index of the toast in the toasts array
+   * @param animate Whether to animate the position changes
+   */
   protected positionToast(toast: Toast, index: number, animate: boolean = true): void {
     // Early return if toast is destroyed or invalid
     if (!toast?.parent || toast.destroyed) {
@@ -116,40 +273,42 @@ export class Toaster extends WithSignals(Container) {
     }
 
     const { position, spacing, offset, stackDirection } = this.config;
-    let x = 0;
-    let y = 0;
+    const offsetX = typeof offset === 'number' ? offset : offset!.x;
+    const offsetY = typeof offset === 'number' ? offset : offset!.y;
+    let x = this.app.size.width * 0.5;
+    let y = this.app.size.height * 0.5;
 
     // Calculate base position
     switch (position) {
       case 'top right':
       case 'right top':
-        x = this.app.size.width - toast.width - offset!;
-        y = offset!;
+        x += this.app.size.width * 0.5 - toast.width - offsetX;
+        y -= this.app.size.height * 0.5 - offsetY;
         break;
       case 'top left':
       case 'left top':
-        x = offset!;
-        y = offset!;
+        x -= this.app.size.width * 0.5 - offsetX;
+        y -= this.app.size.height * 0.5 - offsetY;
         break;
       case 'bottom right':
       case 'right bottom':
-        x = this.app.size.width - toast.width - offset!;
-        y = this.app.size.height - toast.height - offset!;
+        x += this.app.size.width * 0.5 - toast.width - offsetX;
+        y += this.app.size.height * 0.5 - toast.height - offsetY;
         break;
       case 'bottom left':
       case 'left bottom':
-        x = offset!;
-        y = this.app.size.height - toast.height - offset!;
+        x -= this.app.size.width * 0.5 - offsetX;
+        y += this.app.size.height * 0.5 - toast.height - offsetY;
         break;
       case 'top':
       case 'top center':
-        x = (this.app.size.width - toast.width) / 2;
-        y = offset!;
+        x += -toast.width * 0.5;
+        y -= this.app.size.height * 0.5 - offsetY;
         break;
       case 'bottom':
       case 'bottom center':
-        x = (this.app.size.width - toast.width) / 2;
-        y = this.app.size.height - toast.height - offset!;
+        x += -toast.width * 0.5;
+        y += this.app.size.height * 0.5 - toast.height - offsetY;
         break;
     }
 
@@ -177,6 +336,9 @@ export class Toaster extends WithSignals(Container) {
     }
   }
 
+  /**
+   * Handle window resize events
+   */
   public resize(): void {
     this.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
     this.positionToasts(false); // Don't animate on resize
