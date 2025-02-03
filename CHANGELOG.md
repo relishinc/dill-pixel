@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.6.0](https://github.com/relishinc/dill-pixel/compare/v4.5.2...v4.6.0) (2025-02-03)
+
+
+### Features
+
+* UI Toaster component, docs: UI Toaster Component ([ec66d00](https://github.com/relishinc/dill-pixel/commit/ec66d00a6e26171e348abd923f2db344a90546ec))
+
 ## [4.5.2](https://github.com/relishinc/dill-pixel/compare/v4.5.1...v4.5.2) (2025-02-03)
 
 
