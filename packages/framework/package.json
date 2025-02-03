@@ -1,6 +1,6 @@
 {
   "name": "dill-pixel",
-  "version": "4.5.2",
+  "version": "4.6.0",
   "title": "Dill Pixel V8",
   "description": "Relish framework for HTML games",
   "bin": {
