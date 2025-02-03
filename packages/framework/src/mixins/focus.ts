@@ -1,10 +1,10 @@
-import type {Constructor, PointLike} from '../utils';
-import type {DestroyOptions, PointerEvents} from 'pixi.js';
-import {Container, FederatedEvent} from 'pixi.js';
+import type { DestroyOptions, PointerEvents } from 'pixi.js';
+import { Container, FederatedEvent } from 'pixi.js';
+import type { Constructor, PointLike } from '../utils';
 
-import {Application} from '../Application';
-import type {IFocusable} from '../plugins';
-import {Signal} from '../signals';
+import { Application } from '../Application';
+import type { IFocusable } from '../plugins';
+import { Signal } from '../signals';
 
 /**
  * The Focusable function is a higher-order function that adds focus-related functionality to a given class.
@@ -22,7 +22,7 @@ export function Focusable<TBase extends Constructor<Container>>(Base: TBase): TB
     tabIndex = 0;
     // pixi accessibility options
     accessible = false;
-    accessibleType: 'button' | 'div' | 'heading' = 'button';
+    accessibleType: keyof HTMLElementTagNameMap | undefined = 'button';
     accessibleTitle = 'Focusable';
     accessibleHint = 'Press enter to focus';
     accessiblePointerEvents: PointerEvents = 'auto';

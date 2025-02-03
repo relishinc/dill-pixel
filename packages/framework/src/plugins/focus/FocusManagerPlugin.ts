@@ -22,7 +22,7 @@ export interface IFocusable extends Container {
 
   // pixi accessibility features
   accessible: boolean;
-  accessibleType: string;
+  accessibleType: keyof HTMLElementTagNameMap | undefined;
   accessibleTitle: string;
   accessibleHint: string;
   accessiblePointerEvents?: PointerEvents;

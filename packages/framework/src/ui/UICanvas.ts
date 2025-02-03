@@ -1,4 +1,4 @@
-import { Bounds, Graphics, Container as PIXIContainer, Rectangle } from 'pixi.js';
+import { Bounds, ContainerChild, Graphics, IRenderLayer, Container as PIXIContainer, Rectangle } from 'pixi.js';
 import { Application } from '../Application';
 import { Container } from '../display/Container';
 import { Factory, WithSignals } from '../mixins';
@@ -134,7 +134,7 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
    * Removes a child from the container at the specified index
    * Override because we need to remove from the inner container
    */
-  public removeChildAt = <U extends PIXIContainer>(index: number): U => {
+  public removeChildAt = <U extends PIXIContainer | IRenderLayer>(index: number): U => {
     return this._inner.removeChildAt(index) as U;
   };
 
@@ -142,7 +142,7 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
    * Adds a child to the container at the specified index
    * Override because we need to ensure it sets the child index properly
    */
-  public addChildAt = <U extends PIXIContainer>(child: U, index: number) => {
+  public addChildAt = <U extends PIXIContainer | IRenderLayer>(child: U, index: number) => {
     const newChild = this._inner.add.existing(child);
     this._inner.setChildIndex(newChild, index);
     return newChild;
@@ -169,27 +169,27 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
    * Gets the child at the specified index
    * Override due to re-parenting
    */
-  public getChildAt = <U extends PIXIContainer>(index: number) => {
-    return this._inner.getChildAt(index)?.getChildAt(0) as U;
+  public getChildAt = <U extends PIXIContainer | IRenderLayer>(index: number) => {
+    return (this._inner.getChildAt(index) as PIXIContainer)?.getChildAt(0) as U;
   };
 
-  public addChild<U extends PIXIContainer[]>(...children: PIXIContainer[]): U[0] {
+  public addChild<U extends (ContainerChild | IRenderLayer)[]>(...children: U): U[0] {
     if (this._disableAddChildError) {
-      return super.addChild(...children) as U[0];
+      return super.addChild(...children);
     }
     Logger.warn(
       `UICanvas:: You probably shouldn't add children directly to UICanvas. Use .addElement(child, settings) instead, so you can pass alignment settings.`,
       children,
       `will be added using the default 'top left' alignment'.`,
     );
-    return this._inner.addChild(...children) as U[0];
+    return this._inner.addChild(...children);
   }
 
   /**
    * Removes one or more children from the container
    * Override because we need to ensure it returns the proper re-parented children
    */
-  public removeChild(...children: PIXIContainer[]): PIXIContainer {
+  public removeChild(...children: (PIXIContainer | IRenderLayer)[]): PIXIContainer {
     if (this._reparentAddedChild) {
       children.forEach((child) => {
         const actualChild = this._childMap.get(child as PIXIContainer) as PIXIContainer;
@@ -199,9 +199,9 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
         return undefined;
       });
     } else {
-      return this._inner.removeChild(...children);
+      return this._inner.removeChild(...(children as PIXIContainer[]));
     }
-    return children[0];
+    return children[0] as PIXIContainer;
   }
 
   public resize() {
@@ -305,10 +305,10 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
 
     const firstChild = (child as PIXIContainer).getChildAt(0);
 
-    const childWidth = UICanvas.isFlexContainer(firstChild)
+    const childWidth = UICanvas.isFlexContainer(firstChild as PIXIContainer)
       ? (firstChild as unknown as IFlexContainer).containerWidth || child.width
       : child.width;
-    const childHeight = UICanvas.isFlexContainer(firstChild)
+    const childHeight = UICanvas.isFlexContainer(firstChild as PIXIContainer)
       ? (firstChild as unknown as IFlexContainer).containerHeight || child.height
       : child.height;
 

@@ -1,10 +1,10 @@
 import type { ContainerLike, PointLike } from '../utils';
 import { bindAllMethods, Logger, resolvePointLike } from '../utils';
 
+import type { DestroyOptions, IRenderLayer } from 'pixi.js';
+import { Container as PIXIContainer } from 'pixi.js';
 import { Application } from '../Application';
 import { Container } from '../display/Container';
-import type { DestroyOptions } from 'pixi.js';
-import { Container as PIXIContainer } from 'pixi.js';
 import { Factory, WithSignals } from '../mixins';
 import { Signal } from '../signals';
 
@@ -212,7 +212,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
    * Removes a child from the container at the specified index
    * Override because we need to remove from the inner container
    */
-  public removeChildAt = <U extends PIXIContainer>(index: number): U => {
+  public removeChildAt = <U extends PIXIContainer | IRenderLayer>(index: number): U => {
     return this.removeChild(this.flexChildren[index]) as U;
   };
 
@@ -220,9 +220,9 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
    * Adds a child to the container at the specified index
    * Override because we need to ensure it sets the child index properly
    */
-  public addChildAt = <U extends PIXIContainer>(child: U, index: number) => {
+  public addChildAt = <U extends PIXIContainer | IRenderLayer>(child: U, index: number) => {
     const newChild = this.add.existing(child);
-    this.setChildIndex(newChild, index);
+    this.setChildIndex(newChild as PIXIContainer, index);
     return newChild;
   };
 
@@ -257,8 +257,8 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
    * Gets the child at the specified index
    * Override due to re-parenting
    */
-  public getChildAt = <U extends PIXIContainer>(index: number) => {
-    return super.getChildAt(index)?.getChildAt(0) as U;
+  public getChildAt = <U extends PIXIContainer | IRenderLayer>(index: number) => {
+    return (super.getChildAt(index) as PIXIContainer)?.getChildAt(0) as U;
   };
 
   destroy(_options?: DestroyOptions | boolean) {
@@ -273,19 +273,19 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
    * Override because we need to ensure it returns the proper re-parented children
    * @param children
    */
-  public removeChild(...children: PIXIContainer[]): PIXIContainer {
+  public removeChild(...children: (PIXIContainer | IRenderLayer)[]): PIXIContainer {
     if (this._reparentAddedChild) {
       children.forEach((child) => {
-        const actualChild = this._childMap.get(child);
+        const actualChild = this._childMap.get(child as PIXIContainer);
         if (actualChild) {
           return super.removeChild(actualChild);
         }
         return;
       });
     } else {
-      return super.removeChild(...children);
+      return super.removeChild(...(children as PIXIContainer[]));
     }
-    return children[0];
+    return children[0] as PIXIContainer;
   }
 
   public getChildByLabel(label: RegExp | string, deep: boolean = true): PIXIContainer | null {
