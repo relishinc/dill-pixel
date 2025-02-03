@@ -1,6 +1,7 @@
 import { AssetPack, Logger } from '@assetpack/core';
 import { pixiPipes } from '@assetpack/core/pixi';
 import fs from 'node:fs';
+import path from 'node:path';
 import process from 'node:process';
 const cwd = process.cwd();
 const defaultManifestUrl = 'assets.json';
@@ -75,8 +76,9 @@ export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfi
       mode = resolvedConfig.command;
       if (!resolvedConfig.publicDir) return;
       if (apConfig.output) return;
-      const publicDir = resolvedConfig.publicDir.replace(process.cwd(), '');
-      apConfig.output = `.${publicDir}/assets/`;
+      const publicDir = resolvedConfig.publicDir.replace(cwd, '');
+      apConfig.output = path.join(`.${publicDir}`, 'assets').replace(/\\/g, '/');
+      Logger.info(`Dill Pixel assetpack plugin:: output: ${apConfig.output}`);
     },
     buildStart: async () => {
       if (mode === 'serve') {
@@ -93,7 +95,7 @@ export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfi
 
         if (mode === 'serve') {
           Logger.info(`Dill Pixel assetpack plugin:: watching manifest at ${apConfig.output}${manifestUrl}`);
-          manifestWatcher = fs.watch(`${apConfig.output}${manifestUrl}`, async (eventType) => {
+          manifestWatcher = fs.watch(`${apConfig.output}/${manifestUrl}`, async (eventType) => {
             if (initialBuild && eventType === 'change') {
               debouncedReload();
             }

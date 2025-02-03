@@ -30,14 +30,14 @@
     "@types/dat.gui": "^0.7.13"
   },
   "dependencies": {
-    "@assetpack/core": "^1.2.2",
+    "@assetpack/core": "^1.3.0",
     "@dill-pixel/plugin-arcade-physics": "workspace:*",
+    "@dill-pixel/plugin-crunch-physics": "workspace:*",
     "@dill-pixel/plugin-google-analytics": "workspace:*",
     "@dill-pixel/plugin-matter-physics": "workspace:*",
     "@dill-pixel/plugin-rive": "workspace:*",
     "@dill-pixel/plugin-rollbar": "workspace:*",
     "@dill-pixel/plugin-snap-physics": "workspace:*",
-    "@dill-pixel/plugin-crunch-physics": "workspace:*",
     "@dill-pixel/plugin-springroll": "workspace:*",
     "@dill-pixel/storage-adapter-firebase": "workspace:*",
     "@dill-pixel/storage-adapter-supabase": "workspace:*",
