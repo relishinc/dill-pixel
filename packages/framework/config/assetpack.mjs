@@ -1,8 +1,8 @@
 import { AssetPack, Logger } from '@assetpack/core';
 import { pixiPipes } from '@assetpack/core/pixi';
 import fs from 'node:fs';
-import path from 'node:path';
 import process from 'node:process';
+import path from 'path';
 const cwd = process.cwd();
 const defaultManifestUrl = 'assets.json';
 
@@ -77,7 +77,11 @@ export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfi
       if (!resolvedConfig.publicDir) return;
       if (apConfig.output) return;
       const publicDir = resolvedConfig.publicDir.replace(cwd, '');
-      apConfig.output = path.join(`.${publicDir}`, 'assets').replace(/\\/g, '/');
+      const outputPath = path.join(publicDir, 'assets');
+      apConfig.output = path.isAbsolute(publicDir)
+        ? path.join('.', outputPath).replace(/\\/g, '/')
+        : `./${outputPath}`.replace(/\\/g, '/');
+
       Logger.info(`Dill Pixel assetpack plugin:: output: ${apConfig.output}`);
     },
     buildStart: async () => {
