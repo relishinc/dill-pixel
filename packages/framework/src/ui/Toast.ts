@@ -4,6 +4,7 @@ import { Container } from '../display/Container';
 import { WithSignals } from '../mixins';
 import { Signal } from '../signals';
 import { Button } from './Button';
+import { Toaster } from './Toaster';
 
 /**
  * Types of toasts that can be displayed, each with its own color indicator.
@@ -101,7 +102,7 @@ export interface ToastConfig {
   };
 }
 
-const defaultConfig: Partial<ToastConfig> = {
+export const defaultToastConfig: Partial<ToastConfig> = {
   type: 'info',
   duration: 3000,
   width: 300,
@@ -149,6 +150,18 @@ export class Toast extends WithSignals(Container) {
   protected closeTimeout?: any;
   protected isHiding: boolean = false;
 
+  protected view: Container;
+
+  private _toaster: Toaster;
+
+  set toaster(value: Toaster) {
+    this._toaster = value;
+  }
+
+  get toaster(): Toaster {
+    return this._toaster;
+  }
+
   set text(value: string) {
     this.textDisplay.text = value;
     this.alignText();
@@ -156,14 +169,15 @@ export class Toast extends WithSignals(Container) {
 
   constructor(config: Partial<ToastConfig> = {}) {
     super();
-    this.config = { ...defaultConfig, ...config } as ToastConfig;
+    this.config = { ...defaultToastConfig, ...config } as ToastConfig;
     this.initialize();
   }
 
   protected initialize(): void {
+    this.view = this.add.container();
     // Create shadow first so it's behind everything
     if (this.config.shadow) {
-      this.shadow = this.add
+      this.shadow = this.view.add
         .graphics()
         .roundRect(
           this.config.shadow.offset?.x ?? 4,
@@ -179,7 +193,7 @@ export class Toast extends WithSignals(Container) {
     }
 
     // Create background
-    this.background = this.add
+    this.background = this.view.add
       .graphics()
       .roundRect(0, 0, this.config.width!, this.config.height!, this.config.cornerRadius!)
       .fill({
@@ -195,7 +209,8 @@ export class Toast extends WithSignals(Container) {
         .fill({ color: 0xffffff });
 
       // Create the colored indicator
-      const indicator = new Graphics()
+      const indicator = this.view.add
+        .graphics()
         .rect(0, 0, this.config.colorBarWidth!, this.config.height!)
         .fill({ color: this.config.textColors![this.config.type] });
 
@@ -203,8 +218,8 @@ export class Toast extends WithSignals(Container) {
       indicator.mask = mask;
 
       // Add both the mask and indicator to the container
-      this.add.existing(mask);
-      this.add.existing(indicator);
+      this.view.addChild(mask);
+      this.view.addChild(indicator);
     }
 
     // Add close button if enabled
@@ -219,10 +234,10 @@ export class Toast extends WithSignals(Container) {
         ? this.config.closeButton.size! + this.config.closeButton.offset! * 2
         : this.config.padding!;
 
-    this.textDisplay = this.add.text({
+    this.textDisplay = this.view.add.text({
       text: this.config.message,
       style: {
-        ...defaultConfig.style,
+        ...defaultToastConfig.style,
         ...this.config.style,
         wordWrapWidth: this.config.style?.wordWrapWidth ?? this.config.width! - leftPadding - rightPadding,
       },
@@ -232,8 +247,13 @@ export class Toast extends WithSignals(Container) {
 
     this.alignText();
 
+    this.view.pivot.set(this.config.width! * 0.5, this.config.height! * 0.5);
+
+    this.view.position.set(this.config.width! * 0.5, this.config.height! * 0.5);
     // Set initial state
     this.alpha = 0;
+
+    this.addChild(this.view);
   }
 
   protected addCloseButton(): void {
@@ -242,7 +262,7 @@ export class Toast extends WithSignals(Container) {
     const offset = this.config.closeButton?.offset ?? 4;
     const position = this.config.closeButton?.position ?? 'top right';
 
-    this.closeButton = this.add.existing(
+    this.closeButton = this.view.add.existing(
       new ButtonClass({
         cursor: 'pointer',
       }),
@@ -287,21 +307,37 @@ export class Toast extends WithSignals(Container) {
     }
   }
 
-  public async show(): Promise<Toast> {
-    this.timeline = gsap.timeline();
-    this.timeline.to(this, {
+  public getShowAnimation(): gsap.core.Timeline {
+    const tl = gsap.timeline({ paused: true });
+    tl.to(this, {
       alpha: 1,
-      duration: 0.3,
+      duration: 0.4,
       ease: 'power2.out',
     });
+
+    return tl;
+  }
+
+  public getHideAnimation(): gsap.core.Timeline {
+    const tl = gsap.timeline({ paused: true });
+    tl.to(this, {
+      alpha: 0,
+      duration: 0.25,
+      ease: 'power2.in',
+    });
+
+    return tl;
+  }
+
+  public async show(): Promise<Toast> {
+    this.timeline = this.getShowAnimation();
+    await this.timeline.play();
 
     if (this.config.autoClose) {
       this.closeTimeout = setTimeout(() => {
         void this.hide();
       }, this.config.duration);
     }
-
-    await this.timeline.play();
     return this;
   }
 
@@ -319,17 +355,7 @@ export class Toast extends WithSignals(Container) {
 
     try {
       // Create a new timeline for hiding
-      const tl = gsap.timeline({ paused: true });
-
-      // Store a reference to the promise before starting animation
-      tl.to(this, {
-        alpha: 0,
-        duration: 0.4,
-        ease: 'power2.inOut',
-      });
-      // Start the animation
-
-      // Wait for animation to complete
+      const tl = this.getHideAnimation();
       await tl.play();
       // Only emit if we haven't been destroyed during animation
       if (!this.destroyed) {

@@ -2,7 +2,7 @@ import { gsap } from 'gsap';
 import { Container } from '../display/Container';
 import { WithSignals } from '../mixins';
 import { Signal } from '../signals';
-import { Toast, ToastConfig } from './Toast';
+import { defaultToastConfig, Toast, ToastConfig } from './Toast';
 import { UICanvasEdge } from './UICanvas';
 
 /**
@@ -37,14 +37,17 @@ export interface ToasterConfig {
   offset?: { x: number; y: number } | number;
   /** Direction in which new toasts should stack */
   stackDirection?: 'up' | 'down';
+
+  animationSpeed: number;
 }
 
 const defaultConfig: ToasterConfig = {
-  position: 'top right',
+  position: 'bottom right',
   maxToasts: 5,
   spacing: 10,
   offset: { x: 20, y: 20 },
-  stackDirection: 'down',
+  stackDirection: 'up',
+  animationSpeed: 1,
 };
 
 /**
@@ -91,6 +94,37 @@ export class Toaster extends WithSignals(Container) {
   public defaultToastConfig: Partial<ToastConfig>;
   private toasts: Toast[] = [];
   private container: Container;
+
+  /**
+   * Get the current number of visible toasts
+   */
+  public get size(): number {
+    return this.toasts.length;
+  }
+
+  get toastPosition(): UICanvasEdge {
+    return this.config.position ?? 'top right';
+  }
+
+  get stackDirection(): 'up' | 'down' {
+    return this.config.stackDirection ?? 'up';
+  }
+
+  get spacing(): number {
+    return this.config.spacing ?? 10;
+  }
+
+  get offset(): { x: number; y: number } | number {
+    return this.config.offset ?? { x: 20, y: 20 };
+  }
+
+  get maxToasts(): number {
+    return this.config.maxToasts ?? 5;
+  }
+
+  get toastConfig(): Partial<ToastConfig> {
+    return this.defaultToastConfig ?? {};
+  }
 
   /**
    * Create a new Toaster instance to manage toast notifications.
@@ -144,10 +178,11 @@ export class Toaster extends WithSignals(Container) {
    * ```
    */
   constructor(config: Partial<ToasterConfig> = {}, defaultToastConfig: Partial<ToastConfig> = {}) {
-    super();
+    super({ autoResize: true });
     this.config = { ...defaultConfig, ...config } as ToasterConfig;
     this.defaultToastConfig = { ...defaultToastConfig } as Partial<ToastConfig>;
     this.initialize();
+    this.resize();
   }
 
   protected initialize(): void {
@@ -155,18 +190,14 @@ export class Toaster extends WithSignals(Container) {
   }
 
   /**
-   * Get the current number of visible toasts
-   */
-  public get size(): number {
-    return this.toasts.length;
-  }
-
-  /**
    * Display a new toast notification
    * @param config Configuration for the toast to display
    * @returns Promise that resolves with the created toast
    */
-  public async show(config: Partial<ToastConfig> = this.defaultToastConfig): Promise<Toast> {
+  public async show(
+    config: Partial<ToastConfig> = this.defaultToastConfig,
+    overrideDefaults: boolean = false,
+  ): Promise<Toast> {
     // Remove oldest toast if we exceed max before creating new one
     if (this.size >= this.config.maxToasts!) {
       const oldestToast = this.toasts[0];
@@ -176,12 +207,33 @@ export class Toaster extends WithSignals(Container) {
       await this.removeToast(oldestToast);
     }
 
-    if (this.defaultToastConfig) {
-      config = { ...this.defaultToastConfig, ...config } as ToastConfig;
+    if (!overrideDefaults && this.defaultToastConfig) {
+      config = {
+        ...this.defaultToastConfig,
+        ...config,
+        style:
+          this.defaultToastConfig.style || config.style
+            ? { ...(this.defaultToastConfig.style ?? {}), ...(config.style ?? {}) }
+            : this.defaultToastConfig.style,
+        textColors:
+          this.defaultToastConfig.textColors || config.textColors
+            ? { ...(this.defaultToastConfig.textColors ?? {}), ...(config.textColors ?? {}) }
+            : defaultToastConfig.textColors,
+        shadow:
+          this.defaultToastConfig.shadow || config.shadow
+            ? { ...(this.defaultToastConfig.shadow ?? {}), ...(config.shadow ?? {}) }
+            : this.defaultToastConfig.shadow,
+        closeButton:
+          this.defaultToastConfig.closeButton || config.closeButton
+            ? { ...(this.defaultToastConfig.closeButton ?? {}), ...(config.closeButton ?? {}) }
+            : defaultToastConfig.closeButton,
+      } as ToastConfig;
     }
     // Create new toast
     const ToastClass = config.class ?? Toast;
     const toast = new ToastClass(config);
+
+    toast.toaster = this;
 
     // Add to container and array first
     this.container.addChild(toast);
@@ -325,7 +377,7 @@ export class Toaster extends WithSignals(Container) {
         gsap.to(toast, {
           x,
           y,
-          duration: 0.3,
+          duration: 0.3 / this.config.animationSpeed,
           ease: 'power2.out',
         });
       } else {

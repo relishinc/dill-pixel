@@ -1,3 +1,5 @@
+import { DeepPartial } from './types';
+
 /**
  * Plucks the specified keys from an object and returns a new object with only those keys.
  * @template T The type of the original object.
@@ -22,4 +24,20 @@ export function omitKeys<T extends object, K extends keyof T>(keysToOmit: K[], o
   return Object.entries(obj)
     .filter(([key]) => !keysToOmit.includes(key as K))
     .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as Omit<T, K>);
+}
+
+export function deepMerge<T extends Record<string, any>>(target: T, source: DeepPartial<T>): T {
+  for (const key in source) {
+    if (
+      source[key] !== undefined &&
+      Object.prototype.toString.call(source[key]) === '[object Object]' &&
+      key in target &&
+      typeof target[key] === 'object'
+    ) {
+      target[key] = deepMerge(target[key], source[key] as T[Extract<keyof T, string>]);
+    } else if (source[key] !== undefined) {
+      target[key] = source[key] as T[Extract<keyof T, string>];
+    }
+  }
+  return target;
 }

@@ -1,8 +1,7 @@
 import BaseScene from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
-import { Application, Button, FlexContainer, ToastConfig, Toaster, ToastType, UICanvasEdge } from 'dill-pixel';
+import { Application, Button, FlexContainer, Toast, ToastConfig, Toaster, ToastType, UICanvasEdge } from 'dill-pixel';
 import { Graphics, TextStyleOptions, Texture } from 'pixi.js';
-
 export const id = 'ui-toaster';
 export const debug = {
   group: 'UI',
@@ -74,6 +73,53 @@ const whiteTextStyle = (size: number): Partial<TextStyleOptions> => ({
   fontSize: size ?? 24,
   align: 'right',
 });
+
+/**
+ * Custom toast class that positions the toast based on the toaster's position
+ */
+class CustomToast extends Toast {
+  /**
+   * Get the show animation for the toast
+   * implements custom logic for animating the toast based on the toaster's position
+   * @returns The show animation
+   */
+  public getShowAnimation(): gsap.core.Timeline {
+    const isCenter = this.toaster.toastPosition.indexOf('center') >= 0;
+    const isLeftSide = this.toaster.toastPosition.indexOf('left') >= 0;
+
+    if (isCenter) {
+      const isTop = this.toaster.toastPosition.indexOf('top') >= 0;
+      this.pivot.set(0, isTop ? 10 : -10);
+    } else {
+      this.pivot.set(isLeftSide ? 50 : -50, 0);
+    }
+
+    const tl = super.getShowAnimation();
+    tl.to(
+      this.pivot,
+      {
+        x: 0,
+        y: 0,
+        duration: 0.4,
+        ease: 'power2.out',
+      },
+      '<',
+    );
+    return tl;
+  }
+
+  /**
+   * Get the hide animation for the toast
+   * implements custom logic for closing the toast
+   * scales the toast down to 0.5x its original size using this.view.scale
+   * @returns The hide animation
+   */
+  public getHideAnimation(): gsap.core.Timeline {
+    const tl = super.getHideAnimation();
+    tl.to(this.view.scale, { x: 0.5, y: 0.5, duration: 0.25, ease: 'power2.in' }, '<');
+    return tl;
+  }
+}
 
 export default class UIToasterScene extends BaseScene {
   protected readonly title = 'UI Toaster';
@@ -217,6 +263,7 @@ export default class UIToasterScene extends BaseScene {
     });
 
     const toastConfig: ToastConfig = {
+      class: CustomToast,
       message: `This is a toast notification!`,
       type: 'success',
       duration: this.config.toast.duration,
@@ -236,7 +283,7 @@ export default class UIToasterScene extends BaseScene {
       closeButton: {
         show: true,
         class: ToastCloseButton,
-        position: 'top-right',
+        position: 'top right',
         size: 12,
         offset: 8,
       },
@@ -281,8 +328,16 @@ export default class UIToasterScene extends BaseScene {
 
     this.addSignalConnection(
       button.onClick.connect(() => {
+        const shouldShowCloseButton = this.config.toast.autoClose === true ? false : true;
         const message = `Toast #${this.toaster.size + 1} - A ${type} toast notification!`;
-        this.toaster.show({ type, message, cornerRadius: 10, colorBarWidth: 8 });
+        this.toaster.show({
+          type,
+          message,
+          cornerRadius: 10,
+          colorBarWidth: 8,
+          autoClose: this.config.toast.autoClose,
+          closeButton: { show: shouldShowCloseButton },
+        });
       }),
     );
   }
@@ -318,6 +373,7 @@ export default class UIToasterScene extends BaseScene {
           colorBarWidth: 15,
           duration: 5000,
           padding: 18,
+          autoClose: this.config.toast.autoClose,
           shadow: {
             color: 0x9b59b6,
             alpha: 0.3,
@@ -326,7 +382,7 @@ export default class UIToasterScene extends BaseScene {
           closeButton: {
             show: showCloseButton,
             class: ToastCloseButton,
-            position: 'top-right',
+            position: 'top right',
             size: 24,
             offset: 12,
           },

@@ -282,3 +282,7 @@ export type KeyboardKey =
   | 'ContextMenu';
 
 export type { Spine } from '../plugins/spine/pixi-spine';
+
+export type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};

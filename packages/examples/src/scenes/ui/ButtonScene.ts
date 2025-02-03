@@ -17,6 +17,7 @@ export default class ButtonScene extends BaseScene {
   playSoundLabel: Text;
   enabledButton: Button;
   listenerButton: Button;
+  currentSound: string = 'A';
 
   public async initialize() {
     await super.initialize();
@@ -110,14 +111,16 @@ export default class ButtonScene extends BaseScene {
   // switches between signal-based listeners and event-based listeners
   private onClickCycleListener() {
     // if currently using signal-based listener
-    if (this.playSoundButton.onClick.hasConnections()) {
+    this.currentSound = this.currentSound === 'A' ? 'B' : 'A';
+
+    if (this.currentSound === 'B') {
       // switch to event-based listener
       this.playSoundButton.onClick.disconnectAll();
-      this.playSoundButton.on('pointerup', this.onClickPlaySoundB);
+      this.playSoundButton.onClick.connect(this.onClickPlaySoundB);
       this.playSoundLabel.text = 'Play Sound B';
     } else {
       // otherwise switch back to signal-based listener
-      this.playSoundButton.off('pointerup', this.onClickPlaySoundB);
+      this.playSoundButton.onClick.disconnectAll();
       this.playSoundButton.onClick.connect(this.onClickPlaySoundA);
       this.playSoundLabel.text = 'Play Sound A';
     }

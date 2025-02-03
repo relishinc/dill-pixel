@@ -327,6 +327,9 @@ export class Button extends _Button implements IButton {
   }
 
   protected handleClick() {
+    if (!this._enabled) {
+      return;
+    }
     this.isDown = false;
     this.onClick.emit();
     if (this.config.sounds?.click) {

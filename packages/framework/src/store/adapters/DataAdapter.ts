@@ -1,14 +1,12 @@
 import type { IApplication } from '../../core';
 import { Signal } from '../../signals';
+import { deepMerge, DeepPartial } from '../../utils';
 import { StorageAdapter } from './StorageAdapter';
 
 export type DataSchema = {
   [key: string]: any;
 };
 
-type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
 /**
  * Interface for the options of the LocalStorageAdapter.
  */
@@ -328,20 +326,4 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
     });
     this.onDataChange.emit({ restore: true });
   }
-}
-
-function deepMerge<T extends Record<string, any>>(target: T, source: DeepPartial<T>): T {
-  for (const key in source) {
-    if (
-      source[key] !== undefined &&
-      Object.prototype.toString.call(source[key]) === '[object Object]' &&
-      key in target &&
-      typeof target[key] === 'object'
-    ) {
-      target[key] = deepMerge(target[key], source[key] as T[Extract<keyof T, string>]);
-    } else if (source[key] !== undefined) {
-      target[key] = source[key] as T[Extract<keyof T, string>];
-    }
-  }
-  return target;
 }
