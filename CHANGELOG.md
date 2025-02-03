@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.5.1](https://github.com/relishinc/dill-pixel/compare/v4.5.0...v4.5.1) (2025-02-03)
+
+
+### Bug Fixes
+
+* pathing error for assetpack defaults on Windows ([f2d0b99](https://github.com/relishinc/dill-pixel/commit/f2d0b9937c3d4d573c2b506b450e0a9e91b34556))
+
 ## [4.5.0](https://github.com/relishinc/dill-pixel/compare/v4.4.4...v4.5.0) (2025-01-30)
 
 
