@@ -16,6 +16,7 @@ export const debug = {
 export const plugins = ['crunch-physics'];
 
 class Runner extends Actor<V8Application> {
+  type = 'Runner';
   excludeCollisionTypes = new Set(['Coin']);
 
   private isJumping = false;
@@ -158,7 +159,7 @@ class Runner extends Actor<V8Application> {
 }
 
 class Coin extends Sensor<V8Application> {
-  public type = 'Coin';
+  type = 'Coin';
   public collidableTypes = ['Runner'];
   public collected = false;
   public shouldRemoveOnCull = false;

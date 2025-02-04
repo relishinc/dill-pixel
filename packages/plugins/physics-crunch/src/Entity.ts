@@ -249,10 +249,6 @@ export class Entity<A extends Application = Application, D extends EntityData = 
 
     if (config.type) {
       this.type = config.type;
-    } else {
-      if (!this.type) {
-        this.type = this.constructor.name;
-      }
     }
 
     if (config.data) {

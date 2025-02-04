@@ -92,6 +92,7 @@ class Player extends Actor<V8Application> {
 }
 
 class FX extends Actor<V8Application> {
+  type = 'FX';
   debug: boolean = false;
 
   initialize() {
@@ -159,7 +160,6 @@ class Portal extends Sensor<V8Application> {
   }
 
   onActorEnter(actor: Player): void {
-    console.log('onActorEnter', actor.type);
     if (!this.active) return;
     this.active = false;
     if (this.linkedPortal) {
@@ -493,8 +493,6 @@ export default class CrunchPhysicsScene extends BaseScene {
     }
     this.player.velocity.x *= 0.3; // Deceleration
     this._subtitle.text = `Particles: ${this.physics.system.getActorsByType('FX')?.length || 0} (click to add more)`;
-
-    // this.group.move(-0.25 / 60, 0);
   }
 
   resize() {

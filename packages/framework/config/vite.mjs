@@ -403,7 +403,7 @@ const defaultConfig = {
       targets: [
         {
           src: './node_modules/dill-pixel/src/plugins/captions/font/*.*',
-          dest: './dill-pixel/font',
+          dest: './assets/dill-pixel/font',
         },
       ],
     }),
@@ -421,7 +421,6 @@ const defaultConfig = {
     rollupOptions: {
       output: {
         chunkFileNames: (chunkInfo) => {
-          console.log('NAME: ', chunkInfo.name, chunkInfo.exports);
           // If it's the globals chunk, give it a specific name
           if (chunkInfo.name === '_dill-pixel-globals' || chunkInfo.name === 'dill-pixel-globals') {
             return 'assets/app-[hash].js';
