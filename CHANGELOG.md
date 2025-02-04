@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.6.2](https://github.com/relishinc/dill-pixel/compare/v4.6.1...v4.6.2) (2025-02-04)
+
+
+### Bug Fixes
+
+* sensor detection, riding logic for multiple ([c2bd960](https://github.com/relishinc/dill-pixel/commit/c2bd960a93bbbdcb11f9e2f1b3d2b856f084ebdf))
+
 ## [4.6.1](https://github.com/relishinc/dill-pixel/compare/v4.6.0...v4.6.1) (2025-02-03)
 
 
