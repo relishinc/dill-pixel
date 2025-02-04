@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.6.3](https://github.com/relishinc/dill-pixel/compare/v4.6.2...v4.6.3) (2025-02-04)
+
+
+### Bug Fixes
+
+* not using constructor.name in Crunch physics for types, ([c52097e](https://github.com/relishinc/dill-pixel/commit/c52097e2590199a8878666d786e3093a90f56a03))
+
 ## [4.6.2](https://github.com/relishinc/dill-pixel/compare/v4.6.1...v4.6.2) (2025-02-04)
 
 
