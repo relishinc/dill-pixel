@@ -24,7 +24,7 @@
   "license": "ISC",
   "devDependencies": {
     "dill-pixel": "workspace:*",
-    "vite": "6.0.5",
+    "vite": "6.0.9",
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
