@@ -46,6 +46,8 @@ import { resolveEntityPosition, resolveEntitySize } from './utils';
  * ```
  */
 export class Entity<A extends Application = Application, D extends EntityData = EntityData> {
+  protected _id: string;
+
   /** Unique type identifier for this entity */
   public type!: string;
 
@@ -80,6 +82,14 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   protected _x: number = 0;
   protected _y: number = 0;
   protected signalConnections: SignalConnections = new SignalConnections();
+
+  set id(value: string) {
+    this._id = value;
+  }
+
+  get id(): string {
+    return this._id || this.type;
+  }
 
   /**
    * Custom data associated with this entity
@@ -220,7 +230,7 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   protected addView() {
     if (this.view) {
       this.view.visible = true;
-      this.view.label = this.type;
+      this.view.label = this.id || this.type;
       this.system.container.addChild(this.view);
       this.updateView();
     }
@@ -233,6 +243,10 @@ export class Entity<A extends Application = Application, D extends EntityData = 
    * @param config - New configuration to apply
    */
   public init(config: PhysicsEntityConfig): void {
+    if (config.id) {
+      this._id = config.id;
+    }
+
     if (config.type) {
       this.type = config.type;
     } else {
@@ -373,6 +387,7 @@ export class Entity<A extends Application = Application, D extends EntityData = 
    */
   public setView(view: PhysicsEntityView): void {
     this.view = view;
+
     this.updateView();
   }
 

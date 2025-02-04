@@ -67,6 +67,10 @@ export class Actor<T extends Application = Application> extends Entity<T> {
   /** Cache for isRidingSolid check */
   private _isRidingSolidCache: boolean | null = null;
 
+  /** Tracks which solid is currently carrying this actor in the current frame */
+  private _carriedBy: Solid | null = null;
+  private _carriedByOverlap: number = 0;
+
   /**
    * Initialize or reinitialize the actor with new configuration.
    *
@@ -74,9 +78,11 @@ export class Actor<T extends Application = Application> extends Entity<T> {
    */
   public init(config: PhysicsEntityConfig): void {
     super.init(config);
-    // Reset velocity
+    // Reset velocity and carried state
     this.velocity = { x: 0, y: 0 };
     this._isRidingSolidCache = null;
+    this._carriedBy = null;
+    this._carriedByOverlap = 0;
   }
 
   /**
@@ -88,6 +94,8 @@ export class Actor<T extends Application = Application> extends Entity<T> {
     this.collisions = [];
     // Reset the cache at the start of each update
     this._isRidingSolidCache = null;
+    this._carriedBy = null;
+    this._carriedByOverlap = 0;
   }
 
   /**
@@ -177,14 +185,26 @@ export class Actor<T extends Application = Application> extends Entity<T> {
    * @returns True if riding the solid
    */
   public isRiding(solid: Solid): boolean {
+    // If we're already being carried by a different solid this frame,
+    // we can't be riding this one
+    if (this._carriedBy && this._carriedBy !== solid) {
+      return false;
+    }
+
     // Must be directly above the solid (within 1 pixel)
     const actorBottom = this.y + this.height;
     const onTop = Math.abs(actorBottom - solid.y) <= 1;
 
     // Must be horizontally overlapping
     const overlap = this.x + this.width > solid.x && this.x < solid.x + solid.width;
+    const overlapWidth = Math.min(this.x + this.width, solid.x + solid.width) - Math.max(this.x, solid.x);
 
-    return onTop && overlap;
+    const isRiding = onTop && overlap;
+    if (isRiding && overlapWidth > this._carriedByOverlap) {
+      this._carriedBy = solid;
+      this._carriedByOverlap = overlapWidth;
+    }
+    return isRiding;
   }
 
   /**

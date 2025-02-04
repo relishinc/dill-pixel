@@ -22,6 +22,7 @@ export type EntityData = {
 };
 
 export interface PhysicsEntityConfig<D extends EntityData = EntityData> {
+  id?: string;
   type?: PhysicsEntityType;
   position?: PointLike;
   size?: SizeLike;

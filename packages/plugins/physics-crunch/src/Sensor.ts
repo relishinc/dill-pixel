@@ -82,6 +82,9 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
   /** Cache for isRidingSolid check */
   private _isRidingSolidCache: boolean | null = null;
 
+  private _currentSensorOverlaps = new Set<SensorOverlap>();
+  private _currentOverlaps = new Set<Actor>();
+
   set x(value: number) {
     super.x = value;
     if (this.isStatic) {
@@ -127,7 +130,6 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
     if (!this.overlappingActors) {
       this.overlappingActors = new Set();
     }
-    this.overlappingActors.clear();
     this._isRidingSolidCache = null;
   }
 
@@ -313,22 +315,23 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
    * @returns Set of current overlaps
    */
   public checkActorOverlaps(): Set<SensorOverlap> {
-    const currentSensorOverlaps = new Set<SensorOverlap>();
-    const currentOverlaps = new Set<Actor>();
+    this._currentSensorOverlaps.clear();
+    this._currentOverlaps.clear();
 
     // Get all actors at current position
     const nearbyActors = this.system.getActorsByType(this.collidableTypes);
 
     for (const actor of nearbyActors) {
       if (this.overlaps(actor)) {
-        currentOverlaps.add(actor);
+        this._currentOverlaps.add(actor);
         if (!this.overlappingActors.has(actor)) {
           // New overlap
-          currentSensorOverlaps.add({
+          this._currentSensorOverlaps.add({
             actor,
             sensor: this,
             type: `${actor.type}|${this.type}`,
           });
+
           this.onActorEnter(actor);
         }
       }
@@ -336,14 +339,18 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
 
     // Check for actors that are no longer overlapping
     for (const actor of this.overlappingActors) {
-      if (!currentOverlaps.has(actor)) {
+      if (!this._currentOverlaps.has(actor)) {
         this.onActorExit(actor);
       }
     }
 
-    this.overlappingActors = currentOverlaps;
+    // Swap the sets to avoid unnecessary clear and forEach operations
+    const temp = this.overlappingActors;
+    this.overlappingActors = this._currentOverlaps;
+    this._currentOverlaps = temp;
+    this._currentOverlaps.clear();
 
-    return currentSensorOverlaps;
+    return this._currentSensorOverlaps;
   }
 
   /**

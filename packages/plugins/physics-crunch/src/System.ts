@@ -191,6 +191,7 @@ export class System {
       solid.preUpdate();
       solid.update(deltaTime);
       solid.postUpdate();
+
       if (solid.moving) {
         // Remove from old grid cells
         this.removeSolidFromGrid(solid);
@@ -238,6 +239,7 @@ export class System {
     actor.preUpdate();
     actor.update(dt);
     actor.postUpdate();
+
     for (const result of actor.collisions) {
       this.collisions.push({
         type: `${actor.type}|${result.solid!.type}`,
@@ -257,6 +259,7 @@ export class System {
     sensor.preUpdate();
     sensor.update(dt);
     sensor.postUpdate();
+
     const overlaps = sensor.checkActorOverlaps();
     this.sensorOverlaps.push(...overlaps);
   }

@@ -92,7 +92,6 @@ class Player extends Actor<V8Application> {
 }
 
 class FX extends Actor<V8Application> {
-  static INDEX = 0;
   debug: boolean = false;
 
   initialize() {
@@ -160,6 +159,7 @@ class Portal extends Sensor<V8Application> {
   }
 
   onActorEnter(actor: Player): void {
+    console.log('onActorEnter', actor.type);
     if (!this.active) return;
     this.active = false;
     if (this.linkedPortal) {
@@ -473,11 +473,13 @@ export default class CrunchPhysicsScene extends BaseScene {
     // Create two portals on opposite sides of the scene
     this.portal1 = new Portal({
       position: [200, 400],
+      id: 'portal1',
     });
     this.physics.system.addSensor(this.portal1);
 
     this.portal2 = new Portal({
       position: [700, 800],
+      id: 'portal2',
     });
     this.physics.system.addSensor(this.portal2);
 
