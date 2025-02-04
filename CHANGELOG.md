@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.6.1](https://github.com/relishinc/dill-pixel/compare/v4.6.0...v4.6.1) (2025-02-03)
+
+
+### Bug Fixes
+
+* UI Toaster api, resizing fixes ([b0929b2](https://github.com/relishinc/dill-pixel/commit/b0929b282f6a60aed20781d8f2d41091ef355271))
+
 ## [4.6.0](https://github.com/relishinc/dill-pixel/compare/v4.5.2...v4.6.0) (2025-02-03)
 
 
