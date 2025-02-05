@@ -25,6 +25,7 @@ import { DataAdapter, Store } from '../store';
 import type { ImportList, ImportListItem, Size } from '../utils';
 import { bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from '../utils';
 
+import { createFactoryMethods, defaultFactoryMethods } from '../mixins';
 import type { IActionsPlugin } from '../plugins/actions';
 import type { IVoiceOverPlugin } from '../plugins/audio/VoiceOverPlugin';
 import type { ICaptionsPlugin } from '../plugins/captions';
@@ -107,6 +108,14 @@ export class Application<
   protected _isBooting: boolean = true;
 
   protected _env: Record<string, string> = (import.meta as any).env || {};
+  protected _makeFactory: typeof defaultFactoryMethods;
+
+  get make(): typeof defaultFactoryMethods {
+    if (!this._makeFactory) {
+      this._makeFactory = createFactoryMethods(defaultFactoryMethods, this, false);
+    }
+    return this._makeFactory;
+  }
 
   get env() {
     return this._env;

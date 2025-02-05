@@ -1,4 +1,4 @@
-import { Application, bindAllMethods, SignalConnection, SignalConnections } from 'dill-pixel';
+import { Application, bindAllMethods, defaultFactoryMethods, SignalConnection, SignalConnections } from 'dill-pixel';
 import CrunchPhysicsPlugin from './CrunchPhysicsPlugin';
 import { Group } from './Group';
 import { System } from './System';
@@ -89,6 +89,10 @@ export class Entity<A extends Application = Application, D extends EntityData = 
 
   get id(): string {
     return this._id || this.type;
+  }
+
+  get make(): typeof defaultFactoryMethods {
+    return this.app.make;
   }
 
   /**

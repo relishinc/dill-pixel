@@ -3,7 +3,6 @@
  */
 
 export * from './core';
-export * from './core/Application';
 export * from './display';
 export * from './mixins';
 export * from './plugins';

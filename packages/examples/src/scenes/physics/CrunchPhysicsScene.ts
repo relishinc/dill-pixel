@@ -17,7 +17,7 @@ export const debug = {
 export const plugins = ['crunch-physics'];
 export const assets = {
   preload: {
-    bundles: ['spine'],
+    bundles: ['kenney'],
   },
 };
 
@@ -29,6 +29,12 @@ class Player extends Actor<V8Application> {
   private movingDirection = 0;
 
   initialize(): void {
+    this.view = this.make.animatedSprite({
+      texturePrefix: 'bunny_1',
+      zeroPad: 0,
+      animations: { walk: { numFrames: 2 }, jump: { numFrames: 0 } },
+    });
+
     this.addSignalConnection(
       this.app.actions('jump').connect(this._jump),
       this.app.actions('move_left').connect(this._move),
