@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-rive",
-  "version": "4.7.0",
+  "version": "4.7.1",
   "description": "",
   "files": [
     "lib",
@@ -29,7 +29,7 @@
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
-    "dill-pixel": "4.7.0",
+    "dill-pixel": "4.7.1",
     "pixi.js": "8.7.3"
   },
   "dependencies": {
