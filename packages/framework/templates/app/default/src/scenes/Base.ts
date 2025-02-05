@@ -15,7 +15,7 @@ export const active = false;
  * so you can access the application's properties and methods in all scenes extending this one
  * it also allows you to add custom logic to the scene that can be shared across scenes
  */
-export default class BaseScene extends Scene<__APPLICATION_NAME__> {
+export default class Base extends Scene<__APPLICATION_NAME__> {
   constructor() {
     super();
     this.alpha = 0;

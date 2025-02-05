@@ -1,7 +1,7 @@
 import { DestroyOptions, ParticleContainerOptions, ParticleContainer as PIXIParticleContainer, Ticker } from 'pixi.js';
 
-import { Application } from '../Application';
 import { IApplication } from '../core';
+import { Application } from '../core/Application';
 import { Signal } from '../signals';
 import type { Size } from '../utils';
 import { bindAllMethods } from '../utils';

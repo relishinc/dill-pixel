@@ -1,8 +1,8 @@
+import { IApplication } from '../core';
+import { Application } from '../core/Application';
 import type { SpineProps } from '../mixins';
 import { Factory, WithSignals } from '../mixins';
 import { bindAllMethods, Spine } from '../utils';
-import { Application } from '../Application';
-import { IApplication } from '../core';
 
 const _SpineAnimation = WithSignals(Factory());
 

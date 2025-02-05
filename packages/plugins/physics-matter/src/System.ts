@@ -1,4 +1,4 @@
-import { Application, IApplication } from 'dill-pixel';
+import { Application, IApplication, Logger } from 'dill-pixel';
 import Matter, { Bodies, Body, Engine, Runner, World } from 'matter-js';
 import { Container, Graphics, Rectangle, Ticker } from 'pixi.js';
 
@@ -103,13 +103,28 @@ export class System {
 
   static destroy() {
     System.enabled = false;
-
-    World.clear(System._engine.world, false);
-    Engine.clear(System._engine);
-    Runner.stop(System._runner);
-    System._objects.clear();
-    System._debugGraphics?.destroy({ children: true });
-    System._debugGraphics = null;
+    try {
+      World.clear(System._engine?.world, false);
+    } catch (e) {
+      Logger.warn(e);
+    }
+    try {
+      Engine.clear(System._engine);
+    } catch (e) {
+      Logger.warn(e);
+    }
+    try {
+      Runner.stop(System._runner);
+    } catch (e) {
+      Logger.warn(e);
+    }
+    try {
+      System._objects.clear();
+      System._debugGraphics?.destroy({ children: true });
+      System._debugGraphics = null;
+    } catch (e) {
+      Logger.warn(e);
+    }
   }
 
   static initialize(options: Partial<MatterPhysicsPluginOptions>) {

@@ -102,7 +102,7 @@ export default class MatterPhysicsScene extends BaseScene {
 
   destroy() {
     this.off('pointerup', this._drop);
-    this.physics.destroy();
+    this.physics?.destroy();
     super.destroy();
   }
 

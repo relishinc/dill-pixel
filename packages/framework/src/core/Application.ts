@@ -1,5 +1,5 @@
-import type { AppConfig, IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals } from './core';
-import { coreFunctionRegistry, coreSignalRegistry, generateAdapterList, generatePluginList } from './core';
+import type { AppConfig, IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals } from '.';
+import { coreFunctionRegistry, coreSignalRegistry, generateAdapterList, generatePluginList } from '.';
 import type {
   Action,
   ActionContext,
@@ -16,20 +16,20 @@ import type {
   IResizerPlugin,
   ISceneManagerPlugin,
   IWebEventsPlugin,
-} from './plugins';
+} from '../plugins';
 
 import type { AssetInitOptions, AssetsManifest, DestroyOptions, Renderer, RendererDestroyOptions } from 'pixi.js';
 import { Assets, isMobile, Application as PIXIPApplication, Point } from 'pixi.js';
-import type { DataSchema, IDataAdapter, IStorageAdapter, IStore } from './store';
-import { DataAdapter, Store } from './store';
-import type { ImportList, ImportListItem, Size } from './utils';
-import { bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from './utils';
+import type { DataSchema, IDataAdapter, IStorageAdapter, IStore } from '../store';
+import { DataAdapter, Store } from '../store';
+import type { ImportList, ImportListItem, Size } from '../utils';
+import { bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from '../utils';
 
-import type { IActionsPlugin } from './plugins/actions';
-import type { IVoiceOverPlugin } from './plugins/audio/VoiceOverPlugin';
-import type { ICaptionsPlugin } from './plugins/captions';
-import { defaultPlugins } from './plugins/defaults';
-import { Signal } from './signals';
+import type { IActionsPlugin } from '../plugins/actions';
+import type { IVoiceOverPlugin } from '../plugins/audio/VoiceOverPlugin';
+import type { ICaptionsPlugin } from '../plugins/captions';
+import { defaultPlugins } from '../plugins/defaults';
+import { Signal } from '../signals';
 
 function getDefaultResolution() {
   return typeof window !== 'undefined' ? (window.devicePixelRatio > 1 ? 2 : 1) : 2;
@@ -608,7 +608,7 @@ export class Application<
     if (config.useSpine) {
       await this.loadPlugin({
         id: 'SpinePlugin',
-        module: () => import('./plugins/spine/SpinePlugin'),
+        module: () => import('../plugins/spine/SpinePlugin'),
         namedExport: 'SpinePlugin',
       });
     }
@@ -641,20 +641,20 @@ export class Application<
     if (showStats) {
       await this.loadPlugin({
         id: 'stats',
-        module: () => import('./plugins/StatsPlugin'),
+        module: () => import('../plugins/StatsPlugin'),
         namedExport: 'StatsPlugin',
       });
     }
     if (this.config.useVoiceover) {
       await this.loadPlugin({
         id: 'voiceover',
-        module: () => import('./plugins/audio/VoiceOverPlugin'),
+        module: () => import('../plugins/audio/VoiceOverPlugin'),
         namedExport: 'VoiceOverPlugin',
         options: this.config['voiceover' as keyof IApplicationOptions] || undefined,
       });
       await this.loadPlugin({
         id: 'captions',
-        module: () => import('./plugins/captions/CaptionsPlugin'),
+        module: () => import('../plugins/captions/CaptionsPlugin'),
         namedExport: 'CaptionsPlugin',
         options: this.config['captions' as keyof IApplicationOptions] || undefined,
       });

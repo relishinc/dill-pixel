@@ -395,9 +395,11 @@ export default class CrunchPhysicsPlugin extends Plugin implements ICrunchPhysic
   public destroy(): void {
     this.enabled = false;
     this.app.ticker.remove(this.update);
-    this.system.destroy();
-    // @ts-expect-error system can't be null
-    this.system = null;
+    if (this.system) {
+      this.system.destroy();
+      // @ts-expect-error system can't be null
+      this.system = null;
+    }
     super.destroy();
   }
 

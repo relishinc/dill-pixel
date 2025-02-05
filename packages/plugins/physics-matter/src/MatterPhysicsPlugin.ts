@@ -62,7 +62,7 @@ export class MatterPhysicsPlugin extends Plugin implements IMatterPhysicPlugin {
   }
 
   destroy() {
-    System.destroy();
+    System?.destroy();
     super.destroy();
   }
 }

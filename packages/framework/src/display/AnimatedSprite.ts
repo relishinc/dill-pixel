@@ -1,4 +1,6 @@
 import { AnimatedSprite as PIXIAnimatedSprite, Texture, Ticker } from 'pixi.js';
+import { AnimatedSpriteProps, resolveTexture } from '../mixins';
+import { Signal } from '../signals';
 import {
   bindAllMethods,
   getFirstMapEntry,
@@ -9,8 +11,6 @@ import {
   Logger,
   SpriteSheetLike,
 } from '../utils';
-import { Signal } from '../signals';
-import { AnimatedSpriteProps, resolveTexture } from '../mixins';
 
 export class AnimatedSprite extends PIXIAnimatedSprite {
   onAnimationChange: Signal<(currentAnimation: string) => void> = new Signal();

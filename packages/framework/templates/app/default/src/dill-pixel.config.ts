@@ -55,7 +55,6 @@ export const config = defineConfig<Data>({
     controls,
   },
   assets: {
-    manifest: './assets.json',
     preload: {
       bundles: ['required'],
     },

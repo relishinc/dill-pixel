@@ -3,7 +3,7 @@ import { bindAllMethods, Logger, resolvePointLike } from '../utils';
 
 import type { DestroyOptions, IRenderLayer } from 'pixi.js';
 import { Container as PIXIContainer } from 'pixi.js';
-import { Application } from '../Application';
+import { Application } from '../core/Application';
 import { Container } from '../display/Container';
 import { Factory, WithSignals } from '../mixins';
 import { Signal } from '../signals';

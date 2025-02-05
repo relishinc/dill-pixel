@@ -42,6 +42,198 @@ const debounce = (func, wait) => {
   };
 };
 
+// Function to generate TypeScript types from the manifest
+function generateAssetTypes(manifest) {
+  // Extract all assets from bundles
+  const assetsByType = {
+    textures: new Set(),
+    spritesheets: new Set(),
+    fonts: new Set(),
+    audio: new Set(),
+    json: new Set(),
+    spine: new Set(),
+    rive: new Set(),
+  };
+
+  const bundles = manifest.bundles || [];
+  const bundleNames = new Set();
+
+  // Process each bundle
+  bundles.forEach((bundle) => {
+    bundleNames.add(bundle.name);
+
+    // Process each asset in the bundle
+    bundle.assets.forEach((asset) => {
+      const aliases = asset.alias || [];
+      const srcs = Array.isArray(asset.src) ? asset.src : [asset.src];
+      const firstSrc = srcs[0];
+      const ext = path.extname(firstSrc).toLowerCase();
+
+      // Add to appropriate category based on extension and data tags
+      if (asset.data?.tags?.tps || (ext === '.json' && firstSrc.includes('sheet'))) {
+        aliases.forEach((alias) => assetsByType.spritesheets.add(alias));
+      } else if (ext === '.json' && !firstSrc.includes('atlas')) {
+        aliases.forEach((alias) => assetsByType.json.add(alias));
+      } else if (['.png', '.webp', '.jpg', '.jpeg', '.svg'].includes(ext)) {
+        aliases.forEach((alias) => assetsByType.textures.add(alias));
+      } else if (['.mp3', '.ogg', '.wav'].includes(ext)) {
+        aliases.forEach((alias) => assetsByType.audio.add(alias));
+      } else if (['.ttf', '.woff', '.woff2', '.fnt'].includes(ext) || asset.data?.tags?.wf) {
+        aliases.forEach((alias) => assetsByType.fonts.add(alias));
+      } else if (['.atlas', '.skel', '.json'].some((e) => firstSrc.includes(e)) && firstSrc.includes('spine')) {
+        aliases.forEach((alias) => assetsByType.spine.add(alias));
+      } else if (ext === '.riv') {
+        aliases.forEach((alias) => assetsByType.rive.add(alias));
+      }
+    });
+  });
+
+  // Convert Sets to sorted arrays for consistent output
+  const types = Object.fromEntries(Object.entries(assetsByType).map(([key, value]) => [key, [...value].sort()]));
+
+  return `// This file is auto-generated. Do not edit.
+import type { ResolvedAsset, Texture, Spritesheet } from 'pixi.js';
+
+/**
+ * Available bundle names in the asset manifest
+ * @example
+ * const bundle: AssetBundles = 'game';
+ */
+export type AssetBundles = ${[...bundleNames].length ? `\n  | '${[...bundleNames].sort().join("'\n  | '")}'` : 'never'};
+
+/**
+ * Available texture names in the asset manifest
+ * @example
+ * const texture: AssetTextures = 'game/wordmark';
+ */
+export type AssetTextures = ${types.textures.length ? `\n  | '${types.textures.join("'\n  | '")}'` : 'never'};
+
+/**
+ * Available spritesheet names in the asset manifest
+ * @example
+ * const spritesheet: AssetSpritesheets = 'game/sheet';
+ */
+export type AssetSpritesheets = ${types.spritesheets.length ? `\n  | '${types.spritesheets.join("'\n  | '")}'` : 'never'};
+
+/**
+ * Available font names in the asset manifest
+ * @example
+ * const font: AssetFonts = 'KumbhSans-Regular';
+ */
+export type AssetFonts = ${types.fonts.length ? `\n  | '${types.fonts.join("'\n  | '")}'` : 'never'};
+
+/**
+ * Available audio names in the asset manifest
+ * @example
+ * const audio: AssetAudio = 'click';
+ */
+export type AssetAudio = ${types.audio.length ? `\n  | '${types.audio.join("'\n  | '")}'` : 'never'};
+
+/**
+ * Available JSON file names in the asset manifest
+ * @example
+ * const json: AssetJson = 'locales/en';
+ */
+export type AssetJson = ${types.json.length ? `\n  | '${types.json.join("'\n  | '")}'` : 'never'};
+
+/**
+ * Available Spine animation names in the asset manifest
+ * @example
+ * const spine: AssetSpine = 'spine/hero';
+ */
+export type AssetSpine = ${types.spine.length ? `\n  | '${types.spine.join("'\n  | '")}'` : 'never'};
+
+/**
+ * Available Rive animation names in the asset manifest
+ * @example
+ * const rive: AssetRive = 'static/marty';
+ */
+export type AssetRive = ${types.rive.length ? `\n  | '${types.rive.join("'\n  | '")}'` : 'never'};
+
+/**
+ * Union type of all asset names
+ * @example
+ * const asset: AssetAlias = 'game/wordmark';
+ */
+export type AssetAlias = 
+  | AssetTextures 
+  | AssetSpritesheets 
+  | AssetFonts 
+  | AssetAudio 
+  | AssetJson
+  | AssetSpine
+  | AssetRive;
+
+/**
+ * Type-safe manifest structure
+ */
+export interface AssetManifest {
+  bundles: {
+    [K in AssetBundles]: {
+      name: K;
+      assets: ResolvedAsset[];
+    }
+  };
+}
+
+/**
+ * Type-safe asset types after loading
+ */
+export interface AssetTypes {
+  textures: Record<AssetTextures, Texture>;
+  spritesheets: Record<AssetSpritesheets, Spritesheet>;
+  fonts: Record<AssetFonts, any>;
+  audio: Record<AssetAudio, HTMLAudioElement>;
+  json: Record<AssetJson, any>;
+  spine: Record<AssetSpine, any>;
+  rive: Record<AssetRive, any>;
+}
+
+/**
+ * Helper type to get the asset type for a given alias
+ * @example
+ * type MyTextureType = AssetTypeOf<'game/wordmark'>; // Texture
+ */
+export type AssetTypeOf<T extends AssetAlias> = 
+  T extends AssetTextures ? Texture :
+  T extends AssetSpritesheets ? Spritesheet :
+  T extends AssetFonts ? any :
+  T extends AssetAudio ? HTMLAudioElement :
+  T extends AssetJson ? any :
+  T extends AssetSpine ? any :
+  T extends AssetRive ? any :
+  never;
+
+/**
+ * Get the bundle name for a given asset
+ * @example
+ * type MyBundle = AssetBundleOf<'game/wordmark'>; // 'game'
+ */
+export type AssetBundleOf<T extends AssetAlias> = Extract<AssetBundles, T extends \`\${infer B}/\${string}\` ? B : never>;
+`;
+}
+
+// Function to write types file
+async function writeAssetTypes(manifest, outputDir) {
+  const types = generateAssetTypes(manifest);
+  // Change output path to ./src/types/
+  const srcTypesDir = path.join(process.cwd(), 'src', 'types');
+
+  try {
+    // Ensure the directory exists
+    await fs.promises.mkdir(srcTypesDir, { recursive: true });
+    const typesPath = path.join(srcTypesDir, 'assets.d.ts');
+    await fs.promises.writeFile(typesPath, types, 'utf8');
+    Logger.info(`Dill Pixel assetpack plugin:: Generated types at ${typesPath}`);
+  } catch (error) {
+    Logger.error('Dill Pixel assetpack plugin:: Error writing types file:', error);
+    // Fallback to original location if src folder doesn't exist
+    const typesPath = path.join(outputDir, 'assets.d.ts');
+    await fs.promises.writeFile(typesPath, types, 'utf8');
+    Logger.info(`Dill Pixel assetpack plugin:: Generated types at fallback location ${typesPath}`);
+  }
+}
+
 export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfig = defaultPixiPipesConfig) {
   const apConfig = {
     manifestUrl,
@@ -60,12 +252,19 @@ export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfi
   let manifestWatcher;
   let initialBuild = false;
 
-  function reload() {
-    Logger.info('Dill Pixel assetpack plugin:: manifest changed, reloading browser...');
-    viteServer?.ws?.send({ type: 'full-reload' });
+  async function handleManifestChange() {
+    try {
+      const manifestPath = `${apConfig.output}/${manifestUrl}`;
+      const manifest = JSON.parse(await fs.promises.readFile(manifestPath, 'utf8'));
+      await writeAssetTypes(manifest, path.dirname(manifestPath));
+      Logger.info('Dill Pixel assetpack plugin:: manifest changed, reloading browser...');
+      viteServer?.ws?.send({ type: 'full-reload' });
+    } catch (error) {
+      Logger.error('Dill Pixel assetpack plugin:: Error handling manifest change:', error);
+    }
   }
 
-  const debouncedReload = debounce(reload, 100);
+  const debouncedHandleManifestChange = debounce(handleManifestChange, 100);
 
   return {
     name: 'vite-plugin-assetpack',
@@ -81,14 +280,15 @@ export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfi
       apConfig.output = path.isAbsolute(publicDir)
         ? path.join('.', outputPath).replace(/\\/g, '/')
         : `./${outputPath}`.replace(/\\/g, '/');
-
-      Logger.info(`Dill Pixel assetpack plugin:: output: ${apConfig.output}`);
     },
     buildStart: async () => {
       if (mode === 'serve') {
         if (ap) return;
         ap = new AssetPack(apConfig);
         await ap.run();
+
+        // Generate initial types
+        await handleManifestChange();
 
         // wait for the manifest to be initially created
         setTimeout(() => {
@@ -98,15 +298,17 @@ export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfi
         void ap.watch();
 
         if (mode === 'serve') {
-          Logger.info(`Dill Pixel assetpack plugin:: watching manifest at ${apConfig.output}${manifestUrl}`);
+          Logger.info(`Dill Pixel assetpack plugin:: watching manifest at ${apConfig.output}/${manifestUrl}`);
           manifestWatcher = fs.watch(`${apConfig.output}/${manifestUrl}`, async (eventType) => {
             if (initialBuild && eventType === 'change') {
-              debouncedReload();
+              await debouncedHandleManifestChange();
             }
           });
         }
       } else {
         await new AssetPack(apConfig).run();
+        // Generate types in build mode as well
+        await handleManifestChange();
       }
     },
     buildEnd: async () => {

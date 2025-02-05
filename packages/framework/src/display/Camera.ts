@@ -1,6 +1,6 @@
 import { Container, Point } from 'pixi.js';
-import { Application } from '../Application';
 import { IApplication } from '../core';
+import { Application } from '../core/Application';
 import type { KeyboardEventDetail } from '../plugins';
 import { Signal } from '../signals';
 import type { ContainerLike, PointLike } from '../utils';

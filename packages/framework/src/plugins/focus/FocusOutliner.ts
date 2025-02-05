@@ -1,5 +1,5 @@
 import { Bounds, Container, DestroyOptions, Graphics, PointLike } from 'pixi.js';
-import { Application } from '../../Application';
+import { Application } from '../../core/Application';
 import { bindAllMethods, resolvePointLike } from '../../utils';
 import type { IFocusable } from './FocusManagerPlugin';
 

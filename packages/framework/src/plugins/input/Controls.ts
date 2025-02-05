@@ -1,5 +1,5 @@
-import { Application } from '../../Application';
 import { IApplication } from '../../core';
+import { Application } from '../../core/Application';
 import { bindAllMethods } from '../../utils';
 import { Action } from '../actions';
 import { IControls, UserControls } from './interfaces';

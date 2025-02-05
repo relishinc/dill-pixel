@@ -1,4 +1,4 @@
-import { Application } from '../Application';
+import { Application } from '../core/Application';
 import { Signal } from '../signals';
 import type { Size } from '../utils';
 import { bindAllMethods, debounce } from '../utils';

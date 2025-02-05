@@ -1,6 +1,6 @@
-import { Application } from '../Application';
 import type { IApplication, ICoreFunctions, ICoreSignals } from '../core';
 import { coreFunctionRegistry, coreSignalRegistry } from '../core';
+import { Application } from '../core/Application';
 import { SignalConnection, SignalConnections } from '../signals';
 import { bindAllMethods } from '../utils';
 

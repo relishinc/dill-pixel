@@ -2,7 +2,7 @@ import { bindAllMethods } from '../../../utils';
 import type { ControlsActionMap, JoystickControlsScheme, TouchControlsMap, TouchControlsScheme } from '../types';
 
 import { JoystickDirection } from '..';
-import { Application } from '../../../Application';
+import { Application } from '../../../core/Application';
 import { WithSignals } from '../../../mixins';
 import { type IButton, type IJoystick } from '../../../ui';
 import type { Action } from '../../actions';

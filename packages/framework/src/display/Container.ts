@@ -1,8 +1,8 @@
 import { DestroyOptions, Sprite, Texture, Ticker } from 'pixi.js';
 import { Animated, Factory, WithSignals } from '../mixins';
 
-import { Application } from '../Application';
 import type { IApplication } from '../core';
+import { Application } from '../core/Application';
 import { Signal } from '../signals';
 import { SignalOrder } from '../signals/Signal';
 import type { PointLike, Size } from '../utils';

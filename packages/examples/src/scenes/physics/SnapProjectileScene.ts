@@ -339,8 +339,8 @@ export default class SnapProjectileScene extends BaseScene {
 
   destroy() {
     this.off('pointerup', this._handlePointerUp);
-    this.physics.destroy();
-    this.level.removeChildren();
+    this.physics?.destroy();
+    this.level?.removeChildren();
     super.destroy();
   }
 

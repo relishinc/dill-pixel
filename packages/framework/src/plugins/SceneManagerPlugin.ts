@@ -1,6 +1,6 @@
 import { Container } from 'pixi.js';
-import { Application } from '../Application';
 import type { IApplication } from '../core';
+import { Application } from '../core/Application';
 import type { IScene, ISceneTransition, SceneTransition } from '../display';
 import { Signal } from '../signals';
 import {
@@ -173,7 +173,13 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
     if (this._queue) {
       // TODO: maybe allow halting the queue and starting a fresh scene load
       // for now, just ignore the request until the queue finishes
-      return;
+      this._queue.cancel();
+      this._queue = null;
+      if (this.currentScene) {
+        this._lastScene = this.currentScene;
+        this.currentScene.destroy();
+      }
+      // return;
     }
 
     this._lastScene = null;

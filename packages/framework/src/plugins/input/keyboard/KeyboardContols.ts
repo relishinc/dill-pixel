@@ -1,4 +1,4 @@
-import { Application } from '../../../Application';
+import { Application } from '../../../core/Application';
 import { WithSignals } from '../../../mixins';
 import { bindAllMethods } from '../../../utils';
 import type { Action } from '../../actions';

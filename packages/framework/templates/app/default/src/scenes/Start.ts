@@ -1,10 +1,13 @@
-import BaseScene from '@/scenes/BaseScene';
+import Base from '@/scenes/Base';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
 import { FlexContainer } from 'dill-pixel';
 
-export default class StartScene extends BaseScene {
-  public readonly id = 'StartScene';
+export const id = 'start';
+export const debug = {
+  label: 'Start',
+};
 
+export default class Start extends Base {
   private _layout: FlexContainer;
 
   initialize() {

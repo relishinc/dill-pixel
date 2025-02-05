@@ -275,9 +275,9 @@ export default class SnapEndlessRunnerScene extends BaseScene {
   destroy() {
     this.app.ticker.maxFPS = 0;
     this._isPaused = true;
-    this.physics.destroy();
-    EndlessRunner.destroy();
-    this.level.removeChildren();
+    this.physics?.destroy();
+    EndlessRunner?.destroy();
+    this.level?.removeChildren();
     super.destroy();
   }
 

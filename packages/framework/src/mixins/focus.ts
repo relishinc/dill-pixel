@@ -2,7 +2,7 @@ import type { DestroyOptions, PointerEvents } from 'pixi.js';
 import { Container, FederatedEvent } from 'pixi.js';
 import type { Constructor, PointLike } from '../utils';
 
-import { Application } from '../Application';
+import { Application } from '../core/Application';
 import type { IFocusable } from '../plugins';
 import { Signal } from '../signals';
 

@@ -1,7 +1,7 @@
 import { Cursor, DestroyOptions, FederatedEvent, FederatedPointerEvent, Sprite } from 'pixi.js';
 
-import { Application } from '../Application';
 import type { IApplication } from '../core';
+import { Application } from '../core/Application';
 import { Factory, Focusable, Interactive, WithSignals } from '../mixins';
 import { Signal } from '../signals';
 import { bindAllMethods, SpriteSheetLike, TextureLike } from '../utils';

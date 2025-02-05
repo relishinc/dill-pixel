@@ -1,6 +1,6 @@
-import { Application } from '../Application';
 import { sayHello } from '../hello';
 import { DataSchema } from '../store';
+import { Application } from './Application';
 import { IApplication } from './interfaces';
 import { AppConfig } from './types';
 

@@ -1,5 +1,5 @@
 import { Bounds, ContainerChild, Graphics, IRenderLayer, Container as PIXIContainer, Rectangle } from 'pixi.js';
-import { Application } from '../Application';
+import { Application } from '../core/Application';
 import { Container } from '../display/Container';
 import { Factory, WithSignals } from '../mixins';
 import type { Padding, PointLike, Size, SizeLike } from '../utils';

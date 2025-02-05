@@ -118,8 +118,8 @@ export default class SnapCollisionsScene extends BaseScene {
 
   destroy() {
     this.app.ticker.maxFPS = 0;
-    this.physics.destroy();
-    this.level.removeChildren();
+    this.physics?.destroy();
+    this.level?.removeChildren();
     super.destroy();
   }
 
