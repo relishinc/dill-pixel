@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.7.1](https://github.com/relishinc/dill-pixel/compare/v4.7.0...v4.7.1) (2025-02-05)
+
+
+### Bug Fixes
+
+* application export ([5487708](https://github.com/relishinc/dill-pixel/commit/548770838e3fc946403a046bab95ada7fc477578))
+
 ## [4.7.0](https://github.com/relishinc/dill-pixel/compare/v4.6.3...v4.7.0) (2025-02-05)
 
 
