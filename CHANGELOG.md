@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.7.0](https://github.com/relishinc/dill-pixel/compare/v4.6.3...v4.7.0) (2025-02-05)
+
+
+### Features
+
+* allow halting the loadScene method to load a new scene, ([ac12ac7](https://github.com/relishinc/dill-pixel/commit/ac12ac75e904e6b99bdce015d5d75486c2993017))
+
 ## [4.6.3](https://github.com/relishinc/dill-pixel/compare/v4.6.2...v4.6.3) (2025-02-04)
 
 
