@@ -387,7 +387,6 @@ export class Entity<A extends Application = Application, D extends EntityData = 
    */
   public setView(view: PhysicsEntityView): void {
     this.view = view;
-
     this.updateView();
   }
 

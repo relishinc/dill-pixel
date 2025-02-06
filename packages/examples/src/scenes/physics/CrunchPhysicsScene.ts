@@ -1,10 +1,18 @@
 import BaseScene from '@/scenes/BaseScene';
 import { V8Application } from '@/V8Application';
-import { Actor, CollisionResult, Group, ICrunchPhysicsPlugin, Sensor, Solid } from '@dill-pixel/plugin-crunch-physics';
-import { ActionDetail, Camera, Container, Signal } from 'dill-pixel';
+import {
+  Actor,
+  Collision,
+  CollisionResult,
+  Group,
+  ICrunchPhysicsPlugin,
+  Sensor,
+  Solid,
+} from '@dill-pixel/plugin-crunch-physics';
+import { ActionDetail, AnimatedSprite, Camera, Container, Signal } from 'dill-pixel';
 import gsap from 'gsap';
 
-import { FederatedPointerEvent, Graphics, Point, Pool, Rectangle } from 'pixi.js';
+import { FederatedPointerEvent, Point, Pool, Rectangle } from 'pixi.js';
 
 export const id = 'crunch-physics';
 
@@ -21,19 +29,57 @@ export const assets = {
   },
 };
 
+type PlatformData = {
+  isOneWay: boolean;
+  direction: number;
+};
+
+class Platform extends Solid<V8Application, PlatformData> {
+  type = 'Platform';
+  private _player: Player | null = null;
+
+  set player(player: Player) {
+    this._player = player;
+  }
+
+  public update(dt: number): void {
+    if (this._player) {
+      const shouldPassThroughMe = this._player.y + this._player.height > this.y;
+      if (shouldPassThroughMe) {
+        this.excludeCollisionType('Player');
+      } else {
+        this.addCollisionType('Player');
+      }
+    }
+    super.update(dt);
+  }
+}
+
 class Player extends Actor<V8Application> {
+  declare view: AnimatedSprite;
+
   type = 'Player';
   active = false;
+  debug = false;
+
   public onKilled: Signal<(player: Player) => void> = new Signal();
   private isJumping = false;
-  private movingDirection = 0;
+  private direction = 0;
 
   initialize(): void {
+    this.direction = 1;
     this.view = this.make.animatedSprite({
-      texturePrefix: 'bunny_1',
-      zeroPad: 0,
-      animations: { walk: { numFrames: 2 }, jump: { numFrames: 0 } },
+      animationSpeed: 0.2,
+      sheet: 'jumper',
+      texturePrefix: 'Players/bunny1_',
+      animations: {
+        walk: { startIndex: 1, numFrames: 2, loop: true },
+        jump: { numFrames: 1 },
+        stand: { numFrames: 1 },
+      },
     });
+    this.view.width = 37;
+    this.view.scale.y = this.view.scale.x;
 
     this.addSignalConnection(
       this.app.actions('jump').connect(this._jump),
@@ -57,12 +103,11 @@ class Player extends Actor<V8Application> {
   }
 
   private _move(detail: ActionDetail) {
-    const direction = detail.id === 'move_left' ? -1 : 1;
-    this.movingDirection = direction;
+    this.direction = detail.id === 'move_left' ? -1 : 1;
   }
 
   private _stopMove() {
-    this.movingDirection = 0;
+    this.direction = 0;
   }
 
   public squish(): void {
@@ -70,7 +115,6 @@ class Player extends Actor<V8Application> {
   }
 
   public onCollide(result: CollisionResult): void {
-    // If we hit something while moving up, stop upward velocity
     if (result.normal?.y === 1) {
       this.velocity.y = 0;
     }
@@ -78,6 +122,7 @@ class Player extends Actor<V8Application> {
 
   public onRemoved(): void {
     super.onRemoved();
+    this.direction = 1;
     this.onKilled.emit(this);
   }
 
@@ -88,27 +133,54 @@ class Player extends Actor<V8Application> {
   }
 
   public update(dt: number): void {
-    this.velocity.x = this.movingDirection * 600;
+    this.velocity.x = this.direction * 600;
     if (this.isJumping) {
       this.velocity.y = Math.min(-this.system.gravity * 0.25, -600);
+      this.view.setAnimation('jump');
       this.isJumping = false;
+    } else {
+      if (this.direction === 0) {
+        if (this.view.currentAnimation !== 'stand') {
+          this.view.setAnimation('stand');
+        }
+      } else {
+        if (this.view.currentAnimation !== 'walk') {
+          this.view.setAnimation('walk');
+        }
+      }
     }
     super.update(dt);
+  }
+
+  public updateView(): void {
+    if (this.view && this.view.visible) {
+      this.view.x = this._x;
+      if (this.direction === -1) {
+        this.view.scale.x = -this.view.scale.y;
+        this.view.x += this.view.width;
+      } else {
+        this.view.scale.x = this.view.scale.y;
+      }
+      this.view.y = this._y;
+    }
   }
 }
 
 class FX extends Actor<V8Application> {
+  static ASSETS = ['beige', 'blue', 'brown', 'darkBrown', 'darkGrey', 'green', 'pink'];
+
   type = 'FX';
   debug: boolean = false;
 
-  initialize() {
-    const sprite = new Graphics();
-    const size = Math.round(4 + Math.random() * 4);
-    this.width = size;
-    this.height = size;
-    sprite.rect(0, 0, size, size);
-    sprite.fill({ color: Math.random() * 0xffffff, alpha: 0.5 });
-    this.view = sprite;
+  init(config: any) {
+    super.init(config);
+    const asset = FX.ASSETS[Math.floor(Math.random() * FX.ASSETS.length)];
+    if (!this.view) {
+      this.view = this.make.sprite({ sheet: 'jumper', asset: `Particles/particle_${asset}` });
+    }
+    const size = this.width;
+    this.view.width = size;
+    this.view.scale.y = this.view.scale.x;
   }
 
   update(dt: number): void {
@@ -137,22 +209,34 @@ class Portal extends Sensor<V8Application> {
 
   initialize(): void {
     const container = new Container();
-    // Create a circular portal visual
-    const sprite = new Graphics();
-    sprite.circle(Portal.PORTAL_SIZE / 2, Portal.PORTAL_SIZE / 2, Portal.PORTAL_SIZE / 2);
-    sprite.fill({ color: 0x00ffff, alpha: 0.5 });
 
-    const sprite2 = new Graphics();
-    sprite2.circle(0, 0, Portal.PORTAL_SIZE / 4);
-    sprite2.fill({ color: 0x00ffff, alpha: 0.8 });
-    sprite2.position.set(Portal.PORTAL_SIZE / 2, Portal.PORTAL_SIZE / 2);
+    const sprite = this.make.sprite({
+      position: [Portal.PORTAL_SIZE / 2, Portal.PORTAL_SIZE / 2],
+      sheet: 'jumper',
+      asset: 'Items/portal_orange',
+      anchor: 0.5,
+      angle: 90,
+      height: Portal.PORTAL_SIZE,
+    });
+
+    const sprite2 = this.make.sprite({
+      position: [Portal.PORTAL_SIZE / 2, Portal.PORTAL_SIZE / 2],
+      sheet: 'jumper',
+      asset: 'Items/portal_yellow',
+      anchor: 0.5,
+      angle: 90,
+      height: Portal.PORTAL_SIZE,
+    });
+
+    sprite.scale.x = sprite.scale.y / 2;
+    sprite2.scale.x = sprite2.scale.y / 2;
 
     container.addChild(sprite);
     container.addChild(sprite2);
 
     gsap.to(sprite2.scale, {
-      x: 1.5,
-      y: 1.5,
+      x: sprite2.scale.x * 1.5,
+      y: sprite2.scale.y * 1.5,
       duration: 0.75,
       repeat: -1,
       yoyo: true,
@@ -165,9 +249,9 @@ class Portal extends Sensor<V8Application> {
     this.system.addView(this.view);
   }
 
-  onActorEnter(actor: Player): void {
+  onActorEnter(actor: Actor): void {
     if (!this.active) return;
-    this.active = false;
+    // this.active = false;
     if (this.linkedPortal) {
       this.linkedPortal.active = false;
       if (actor.type === 'Player') {
@@ -199,16 +283,16 @@ export default class CrunchPhysicsScene extends BaseScene {
   subtitle = 'Particles: 0 (click to add more)';
 
   protected config = {
-    debug: true,
+    debug: false,
     itemsToAdd: 100,
     gravity: 6000,
     maxVelocity: 1500,
     gridCellSize: 100,
-    useCamera: true,
+    useCamera: false,
     boundary: {
       width: 800,
       height: 1500,
-      bindToAppSize: false,
+      bindToAppSize: true,
     },
     zoom: 1,
   };
@@ -216,12 +300,12 @@ export default class CrunchPhysicsScene extends BaseScene {
   private camera: Camera;
 
   private player: Player;
-  private pf1: Solid;
-  private pf2: Solid;
-  private pf3: Solid;
+  private pf1: Platform;
+  private pf2: Platform;
+  private pf3: Platform;
   private portal1: Portal;
   private portal2: Portal;
-
+  private portal3: Portal;
   private pool = new Pool<FX>(FX, 0);
 
   private group: Group;
@@ -327,6 +411,7 @@ export default class CrunchPhysicsScene extends BaseScene {
 
     this.app.actionContext = 'game';
     this.physicsContainer = this.add.container();
+    this._addBg();
 
     // Initialize physics with boundary from config
     await this.physics.initialize(this.app, {
@@ -343,23 +428,22 @@ export default class CrunchPhysicsScene extends BaseScene {
       // overlapResolver: this._resolveOverlaps,
     });
 
-    this._createPlayer();
     this._createPortals();
 
     // Create platforms
     // ground
-    this.createPlatform(0, this.app.size.height - 32, this.app.size.width, 32);
+    this.createPlatform(0, this.app.size.height - 32, this.app.size.width, 32, 'ground_grass', true);
 
     // ceiling
-    this.createPlatform(0, 0, this.app.size.width, 32);
+    // this.createPlatform(0, 0, this.app.size.width, 32, 'ground_grass', true);
 
     // Platform 1
-    this.pf1 = this.createPlatform(100, 600, 200, 32);
+    this.pf1 = this.createPlatform(100, 600, 200, 32, 'ground_grass_small');
 
     // Platform 2 (moving)
-    this.pf2 = this.createPlatform(400, 600, 200, 32);
+    this.pf2 = this.createPlatform(400, 600, 200, 32, 'ground_grass');
     gsap.to(this.pf2, {
-      y: 1000,
+      y: 1200,
       duration: 3,
       ease: 'none',
       repeat: -1,
@@ -367,7 +451,7 @@ export default class CrunchPhysicsScene extends BaseScene {
     });
 
     // Platform 3
-    this.pf3 = this.createPlatform(200, 200, 200, 32);
+    this.pf3 = this.createPlatform(200, 200, 200, 32, 'ground_grass');
 
     // Test group
     this.group = new Group({
@@ -394,6 +478,7 @@ export default class CrunchPhysicsScene extends BaseScene {
       }
     };
 
+    this._createPlayer();
     // Setup input handlers
     this.eventMode = 'static';
     this.on('click', (event: FederatedPointerEvent) => this._addParticles(new Point(event.globalX, event.globalY)));
@@ -401,11 +486,12 @@ export default class CrunchPhysicsScene extends BaseScene {
     this._handleUseCameraChanged();
   }
 
-  // private _resolveCollisions(collisions: Collision[]): void {
-  // collisions.forEach((collision) => {
-  //   console.log('collision', collision.type);
-  // });
-  // }
+  private _resolveCollisions(collisions: Collision[]): void {
+    console.log(collisions);
+    collisions.forEach((collision) => {
+      console.log('collision', collision.type);
+    });
+  }
 
   // private _resolveOverlaps(overlaps: SensorOverlap[]): void {
   // overlaps.forEach((overlap) => {
@@ -413,21 +499,28 @@ export default class CrunchPhysicsScene extends BaseScene {
   // });
   // }
 
+  _addBg() {
+    for (let i = 1; i <= 4; i++) {
+      this.physicsContainer.add.sprite({
+        sheet: 'jumper',
+        asset: `Background/bg_layer${i}`,
+        anchor: [0.5, 0],
+      });
+    }
+  }
+
   protected _createPlayer(): void {
     // Create player sprite (circular)
-    const playerSprite = new Graphics();
-    playerSprite.rect(0, 0, 32, 64);
-    playerSprite.fill({ color: 0x00ff00, alpha: 0.5 });
-
-    this.physicsContainer.add.existing(playerSprite);
-
-    // Create player with sprite as view
-    this.player = new Player({ position: [125, this.app.size.height - 300], size: [32, 64], view: playerSprite });
+    this.player = new Player({ position: [125, this.app.size.height - 97], size: [32, 64] });
     this.physics.system.addActor(this.player);
     this.player.onKilled.connectOnce(this._createPlayer);
 
     if (this.camera) {
       this.camera.follow(this.player.view, [this.app.screen.width * 0.25, -this.app.size.height * 0.25]);
+    }
+
+    if (this.pf2) {
+      this.pf2.player = this.player;
     }
   }
 
@@ -439,20 +532,41 @@ export default class CrunchPhysicsScene extends BaseScene {
     this.physics.system.gridSize = this.config.gridCellSize;
   }
 
-  private createPlatform(x: number, y: number, width: number, height: number): Solid {
-    const sprite = new Graphics();
-    sprite.rect(0, 0, width, height);
-    sprite.fill({ color: 0x000fff });
+  private createPlatform(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    asset: string,
+    isGround: boolean = false,
+  ): Platform {
+    const sprite = isGround
+      ? this.physicsContainer.add.tilingSprite({
+          sheet: 'jumper',
+          asset: `Environment/${asset}`,
+          width,
+          height,
+          tileScale: { x: 1, y: 0.4 },
+        })
+      : this.physicsContainer.add.sprite({ sheet: 'jumper', asset: `Environment/${asset}`, width, height });
 
-    this.physicsContainer.add.existing(sprite);
-    return this.physics.createSolid({ type: 'Platform', x, y, width, height, view: sprite });
+    return this.physics.createSolid({
+      class: Platform,
+      type: 'Platform',
+      x,
+      y,
+      width,
+      height,
+      view: sprite,
+    }) as Platform;
   }
 
   private _addParticles(pt: Point) {
     pt = this.physicsContainer.toLocal(pt);
     const amount = this.config.itemsToAdd;
     for (let i = 0; i < amount; i++) {
-      const actor = this.pool.get({ position: pt });
+      const size = Math.round(4 + Math.random() * 10);
+      const actor = this.pool.get({ position: pt, size });
 
       this.physics.system.addActor(actor);
       this.physicsContainer.addChild(actor.view);
@@ -489,8 +603,16 @@ export default class CrunchPhysicsScene extends BaseScene {
     });
     this.physics.system.addSensor(this.portal2);
 
+    this.portal3 = new Portal({
+      position: [275, 80],
+      id: 'portal3',
+    });
+    this.physics.system.addSensor(this.portal3);
+
     // Link the portals together
     this.portal1.linkTo(this.portal2);
+
+    this.portal3.linkTo(this.portal1);
   }
 
   update() {

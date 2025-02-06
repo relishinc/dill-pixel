@@ -21,8 +21,11 @@ export type EntityData = {
   [key: string]: any;
 };
 
+export type PhysicsEntityClass = new (config?: PhysicsEntityConfig) => Actor | Solid | Sensor;
+
 export interface PhysicsEntityConfig<D extends EntityData = EntityData> {
   id?: string;
+  class?: PhysicsEntityClass;
   type?: PhysicsEntityType;
   position?: PointLike;
   size?: SizeLike;
@@ -53,6 +56,7 @@ export interface CollisionResult {
   normal?: Vector2;
   penetration?: number;
   solid: Solid;
+  pushingSolid?: Solid;
 }
 
 export interface Collision {

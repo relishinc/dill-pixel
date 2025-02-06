@@ -46,6 +46,41 @@ export interface SpriteProps extends AbstractProps, TextureProps, ScaleProps, Po
   anchor: PointLike;
 }
 
+export interface TilingSpriteProps extends SpriteProps {
+  tilePosition?: PointLike;
+  /**
+   * Scaling of the image that is being tiled.
+   * @default {x: 1, y: 1}
+   */
+  tileScale?: PointLike;
+  /**
+   * The rotation of the image that is being tiled.
+   * @default 0
+   */
+  tileRotation?: number;
+  /**
+   * The texture to use for the sprite.
+   * @default Texture.WHITE
+   */
+  /**
+   * The width of the tiling sprite. #
+   * @default 256
+   */
+  width?: number;
+  /**
+   * The height of the tiling sprite.
+   * @default 256
+   */
+  height?: number;
+  /**
+   * @todo
+   * @default false
+   */
+  applyAnchorToTexture?: boolean;
+  /** Whether or not to round the x/y position. */
+  roundPixels?: boolean;
+}
+
 export interface AnimatedSpriteAnimationProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps {
   texturePrefix: string;
   sheet: SpriteSheetLike;
@@ -62,12 +97,13 @@ export interface AnimatedSpriteProps extends AbstractProps, ScaleProps, Position
   sheet: SpriteSheetLike;
   texturePrefix: string;
   zeroPad: number;
-  animations: { [animationName: string]: Omit<AnimatedSpriteAnimationProps, 'sheet' | 'autoUpdate'> };
+  animations: { [animationName: string]: Partial<AnimatedSpriteAnimationProps> };
   autoPlay: boolean;
   autoUpdate: boolean;
   defaultAnimation: string;
   reversible: boolean;
   animationSpeed: number;
+  startIndex: number;
 }
 
 export interface TextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {

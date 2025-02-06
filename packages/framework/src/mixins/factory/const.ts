@@ -23,6 +23,7 @@ import {
   SvgProps,
   TextProps,
   TextPropsKeys,
+  TilingSpriteProps,
   UICanvasFactoryProps,
 } from './props';
 import {
@@ -34,7 +35,7 @@ import {
   resolveUnknownKeys,
 } from './utils';
 
-import { BitmapText, Graphics, HTMLText, Sprite, Text } from 'pixi.js';
+import { BitmapText, Graphics, HTMLText, Sprite, Text, TilingSprite } from 'pixi.js';
 import {
   ParticleContainer,
   ParticleContainerConfig,
@@ -81,6 +82,17 @@ export const defaultFactoryMethods = {
   texture: resolveTexture,
   sprite: (props?: Partial<SpriteProps>) => {
     const entity = new Sprite(props ? resolveTexture(props) : undefined);
+    if (!props) return entity;
+    const { position, x, y, anchor, pivot, scale, scaleX, scaleY, ...rest } = props;
+    resolvePosition({ position, x, y }, entity);
+    resolveScale({ scale, scaleX, scaleY }, entity);
+    resolveAnchor(anchor, entity);
+    resolvePivot(pivot, entity);
+    resolveUnknownKeys(rest, entity);
+    return entity;
+  },
+  tilingSprite: (props?: Partial<TilingSpriteProps>) => {
+    const entity = new TilingSprite(props ? resolveTexture(props) : undefined);
     if (!props) return entity;
     const { position, x, y, anchor, pivot, scale, scaleX, scaleY, ...rest } = props;
     resolvePosition({ position, x, y }, entity);

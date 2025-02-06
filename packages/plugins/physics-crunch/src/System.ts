@@ -287,7 +287,7 @@ export class System {
   }
 
   public createActor(config: PhysicsEntityConfig): Actor {
-    const actor = new Actor(config);
+    const actor = config.class ? (new config.class(config) as Actor) : new Actor(config);
     return this.addActor(actor);
   }
 
@@ -303,7 +303,7 @@ export class System {
   }
 
   public createSensor(config: PhysicsEntityConfig): Sensor {
-    const sensor = new Sensor(config);
+    const sensor = config.class ? (new config.class(config) as Sensor) : new Sensor(config);
     return this.addSensor(sensor);
   }
 
@@ -318,7 +318,7 @@ export class System {
   }
 
   public createSolid(config: PhysicsEntityConfig): Solid {
-    const solid = new Solid(config);
+    const solid = config.class ? (new config.class(config) as Solid) : new Solid(config);
     return this.addSolid(solid);
   }
 
@@ -453,8 +453,8 @@ export class System {
       const solids = this.grid.get(cell);
       if (solids) {
         for (const solid of solids) {
-          // Skip if we've already checked this solid or if its type is excluded
-          if (seen.has(solid) || excludedTypes.has(solid.type)) continue;
+          // Skip if we've already checked this solid, if its type is excluded, or if it has no collisions
+          if (seen.has(solid) || excludedTypes.has(solid.type) || !solid.collideable) continue;
           seen.add(solid);
 
           // Only add solids that actually overlap with the entity's bounds

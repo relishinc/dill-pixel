@@ -1,7 +1,7 @@
 import { Application } from 'dill-pixel';
 import { Entity } from './Entity';
 import { Solid } from './Solid';
-import { CollisionResult, PhysicsEntityConfig, Vector2 } from './types';
+import { CollisionResult, EntityData, PhysicsEntityConfig, Vector2 } from './types';
 
 /**
  * Dynamic physics entity that can move and collide with other entities.
@@ -54,7 +54,7 @@ import { CollisionResult, PhysicsEntityConfig, Vector2 } from './types';
  * }
  * ```
  */
-export class Actor<T extends Application = Application> extends Entity<T> {
+export class Actor<T extends Application = Application, D extends EntityData = EntityData> extends Entity<T, D> {
   /** Current velocity in pixels per second */
   public velocity: Vector2 = { x: 0, y: 0 };
 
@@ -185,6 +185,9 @@ export class Actor<T extends Application = Application> extends Entity<T> {
    * @returns True if riding the solid
    */
   public isRiding(solid: Solid): boolean {
+    // Skip if solid has no collisions
+    if (!solid.collideable || !solid.canCollideWith(this.type)) return false;
+
     // If we're already being carried by a different solid this frame,
     // we can't be riding this one
     if (this._carriedBy && this._carriedBy !== solid) {
@@ -229,9 +232,9 @@ export class Actor<T extends Application = Application> extends Entity<T> {
    * Called when the actor is squeezed between solids.
    * Override this to handle squishing differently.
    */
-  public squish(): void {
-    this.velocity.x = 0;
-    this.velocity.y = 0;
+  public squish(result: CollisionResult): void {
+    void result;
+    // do something
   }
 
   /**
@@ -241,7 +244,11 @@ export class Actor<T extends Application = Application> extends Entity<T> {
    * @param collisionHandler - Optional callback for handling collisions
    * @returns Array of collision results
    */
-  public moveX(amount: number, collisionHandler?: (result: CollisionResult) => void): CollisionResult[] {
+  public moveX(
+    amount: number,
+    collisionHandler?: (result: CollisionResult) => void,
+    pushingSolid?: Solid,
+  ): CollisionResult[] {
     if (!this.active) return [];
 
     this._xRemainder += amount;
@@ -260,15 +267,17 @@ export class Actor<T extends Application = Application> extends Entity<T> {
         // Check for collision with any solid
         let collided = false;
         for (const solid of this.getSolidsAt(nextX, this.y)) {
-          if (solid.collidable) {
+          if (solid.canCollide && solid.canCollideWith(this.type)) {
             collided = true;
             const result: CollisionResult = {
               collided: true,
               normal: { x: -sign, y: 0 },
               penetration: Math.abs(nextX - (solid.x + (sign > 0 ? 0 : solid.width))),
               solid,
+              pushingSolid,
             };
             collisions.push(result);
+            this.collisions.push(result);
             this.onCollide(result);
             if (collisionHandler) {
               collisionHandler(result);
@@ -297,7 +306,11 @@ export class Actor<T extends Application = Application> extends Entity<T> {
    * @param collisionHandler - Optional callback for handling collisions
    * @returns Array of collision results
    */
-  public moveY(amount: number, collisionHandler?: (result: CollisionResult) => void): CollisionResult[] {
+  public moveY(
+    amount: number,
+    collisionHandler?: (result: CollisionResult) => void,
+    pushingSolid?: Solid,
+  ): CollisionResult[] {
     if (!this.active) return [];
 
     this._yRemainder += amount;
@@ -316,15 +329,17 @@ export class Actor<T extends Application = Application> extends Entity<T> {
         // Check for collision with any solid
         let collided = false;
         for (const solid of this.getSolidsAt(this.x, nextY)) {
-          if (solid.collidable) {
+          if (solid.canCollide && solid.canCollideWith(this.type)) {
             collided = true;
             const result: CollisionResult = {
               collided: true,
               normal: { x: 0, y: -sign },
               penetration: Math.abs(nextY - (solid.y + (sign > 0 ? 0 : solid.height))),
               solid,
+              pushingSolid,
             };
             collisions.push(result);
+            this.collisions.push(result);
             this.onCollide(result);
             if (collisionHandler) {
               collisionHandler(result);

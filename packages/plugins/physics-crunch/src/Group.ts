@@ -3,7 +3,7 @@ import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { Sensor } from './Sensor';
 import { Solid } from './Solid';
-import { PhysicsEntityConfig } from './types';
+import { EntityData } from './types';
 
 /**
  * A container for managing collections of physics entities that move together.
@@ -50,7 +50,7 @@ import { PhysicsEntityConfig } from './types';
  * });
  * ```
  */
-export class Group<T extends Application = Application> extends Entity<T> {
+export class Group<T extends Application = Application, D extends EntityData = EntityData> extends Entity<T, D> {
   /** Set of child entities in this group */
   private children: Set<Entity> = new Set();
   /** Map of child entities to their relative offsets from the group's position */
@@ -87,10 +87,6 @@ export class Group<T extends Application = Application> extends Entity<T> {
 
   get y(): number {
     return this._y;
-  }
-
-  constructor(config?: PhysicsEntityConfig) {
-    super(config);
   }
 
   /**

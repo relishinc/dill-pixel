@@ -2,7 +2,7 @@ import { Application } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { Sensor } from './Sensor';
-import { PhysicsEntityConfig } from './types';
+import { EntityData, PhysicsEntityConfig, PhysicsEntityType } from './types';
 
 /**
  * Static or moving solid object that other entities can collide with.
@@ -43,12 +43,20 @@ import { PhysicsEntityConfig } from './types';
  * });
  * ```
  */
-export class Solid<T extends Application = Application> extends Entity<T> {
+export class Solid<T extends Application = Application, D extends EntityData = EntityData> extends Entity<T, D> {
   /** Whether this solid should be removed when culled (typically false) */
   public shouldRemoveOnCull = false;
 
   /** Whether this solid can be collided with */
-  public collidable: boolean = true;
+  private _canCollide: boolean = true;
+
+  get canCollide(): boolean {
+    return this._canCollide;
+  }
+
+  /** Whether this solid has collisions enabled */
+  public collideable: boolean = true;
+  private _excludedCollisionTypes: Set<PhysicsEntityType>;
 
   /** Whether this solid is currently moving */
   public moving: boolean = false;
@@ -71,6 +79,37 @@ export class Solid<T extends Application = Application> extends Entity<T> {
 
   public get x(): number {
     return this._x;
+  }
+
+  excludeCollisionType(...types: PhysicsEntityType[]) {
+    if (!this._excludedCollisionTypes) {
+      this._excludedCollisionTypes = new Set(types);
+    }
+    for (const type of types) {
+      this._excludedCollisionTypes.add(type);
+    }
+  }
+
+  addCollisionType(...types: PhysicsEntityType[]) {
+    if (!this._excludedCollisionTypes) {
+      return;
+    }
+    for (const type of types) {
+      this._excludedCollisionTypes.delete(type);
+    }
+  }
+
+  canCollideWith(type: PhysicsEntityType): boolean {
+    if (this.collideable && !this._excludedCollisionTypes) {
+      return true;
+    }
+    if (!this.collideable) {
+      return false;
+    }
+    if (!this._excludedCollisionTypes.has(type)) {
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -141,6 +180,7 @@ export class Solid<T extends Application = Application> extends Entity<T> {
     if (!this.active) {
       return;
     }
+
     // Calculate total movement including remainder
     const totalX = x + (this._nextX - this._x);
     const totalY = y + (this._nextY - this._y);
@@ -152,121 +192,133 @@ export class Solid<T extends Application = Application> extends Entity<T> {
     const moveY = Math.round(this._yRemainder);
 
     if (moveX !== 0 || moveY !== 0) {
-      // Get all riding actors and sensors before movement
-      const ridingActors = new Set<Actor>();
-      const ridingSensors = new Set<Sensor>();
+      if (this.collideable) {
+        // Get all riding actors and sensors before movement
+        const ridingActors = new Set<Actor>();
+        const ridingSensors = new Set<Sensor>();
 
-      for (const actor of actors) {
-        if (actor.isRiding(this)) {
-          ridingActors.add(actor);
-        }
-      }
-
-      for (const sensor of sensors) {
-        if (sensor.isRiding(this)) {
-          ridingSensors.add(sensor);
-        }
-      }
-
-      // Make this solid non-collidable so actors don't get stuck
-      this.collidable = false;
-
-      if (moveX !== 0) {
-        this._xRemainder -= moveX;
-        this._x += moveX;
-
-        if (moveX > 0) {
-          // Moving right
-          for (const actor of actors) {
-            if (this.overlaps(actor)) {
-              // Push right
-              actor.moveX(this.right - actor.x, () => actor.squish());
-            } else if (ridingActors.has(actor)) {
-              // Carry right
-              actor.moveX(moveX);
-            }
-          }
-          for (const sensor of sensors) {
-            if (this.overlaps(sensor)) {
-              // Push right
-              sensor.moveX(this.right - sensor.x);
-            } else if (ridingSensors.has(sensor)) {
-              // Carry right
-              sensor.moveX(moveX);
-            }
-          }
-        } else {
-          // Moving left
-          for (const actor of actors) {
-            if (this.overlaps(actor)) {
-              // Push left
-              actor.moveX(this.left - (actor.x + actor.width), () => actor.squish());
-            } else if (ridingActors.has(actor)) {
-              // Carry left
-              actor.moveX(moveX);
-            }
-          }
-          for (const sensor of sensors) {
-            if (this.overlaps(sensor)) {
-              // Push left
-              sensor.moveX(this.left - (sensor.x + sensor.width));
-            } else if (ridingSensors.has(sensor)) {
-              // Carry left
-              sensor.moveX(moveX);
-            }
+        for (const actor of actors) {
+          if (actor.isRiding(this) && this.canCollideWith(actor.type)) {
+            ridingActors.add(actor);
           }
         }
-      }
 
-      if (moveY !== 0) {
-        this._yRemainder -= moveY;
-        this._y += moveY;
+        for (const sensor of sensors) {
+          if (sensor.isRiding(this) && this.canCollideWith(sensor.type)) {
+            ridingSensors.add(sensor);
+          }
+        }
 
-        if (moveY > 0) {
-          // Moving down
-          for (const actor of actors) {
-            if (this.overlaps(actor)) {
-              // Push down
-              actor.moveY(this.bottom - actor.y, actor.squish);
-            } else if (ridingActors.has(actor)) {
-              // Carry down
-              actor.moveY(moveY);
+        // Make this solid non-collidable so actors don't get stuck
+        this._canCollide = false;
+
+        if (moveX !== 0) {
+          this._xRemainder -= moveX;
+          this._x += moveX;
+
+          if (moveX > 0) {
+            // Moving right
+            for (const actor of actors) {
+              if (this.overlaps(actor) && this.canCollideWith(actor.type)) {
+                // Push right
+                actor.moveX(this.right - actor.x, actor.squish, this);
+              } else if (ridingActors.has(actor)) {
+                // Carry right
+                actor.moveX(moveX);
+              }
             }
-          }
-          for (const sensor of sensors) {
-            if (this.overlaps(sensor)) {
-              // Push down
-              sensor.moveY(this.bottom - sensor.y);
-            } else if (ridingSensors.has(sensor)) {
-              // Carry down
-              sensor.moveY(moveY);
+            for (const sensor of sensors) {
+              if (this.overlaps(sensor) && this.canCollideWith(sensor.type)) {
+                // Push right
+                sensor.moveX(this.right - sensor.x);
+              } else if (ridingSensors.has(sensor)) {
+                // Carry right
+                sensor.moveX(moveX);
+              }
             }
-          }
-        } else {
-          // Moving up
-          for (const actor of actors) {
-            if (this.overlaps(actor)) {
-              // Push up
-              actor.moveY(this.top - (actor.y + actor.height), actor.squish);
-            } else if (ridingActors.has(actor)) {
-              // Carry up
-              actor.moveY(moveY);
+          } else {
+            // Moving left
+            for (const actor of actors) {
+              if (this.overlaps(actor) && this.canCollideWith(actor.type)) {
+                // Push left
+                actor.moveX(this.left - (actor.x + actor.width), actor.squish, this);
+              } else if (ridingActors.has(actor)) {
+                // Carry left
+                actor.moveX(moveX);
+              }
             }
-          }
-          for (const sensor of sensors) {
-            if (this.overlaps(sensor)) {
-              // Push up
-              sensor.moveY(this.top - (sensor.y + sensor.height));
-            } else if (ridingSensors.has(sensor)) {
-              // Carry up
-              sensor.moveY(moveY);
+            for (const sensor of sensors) {
+              if (this.overlaps(sensor) && this.canCollideWith(sensor.type)) {
+                // Push left
+                sensor.moveX(this.left - (sensor.x + sensor.width));
+              } else if (ridingSensors.has(sensor)) {
+                // Carry left
+                sensor.moveX(moveX);
+              }
             }
           }
         }
-      }
 
-      // Re-enable collisions
-      this.collidable = true;
+        if (moveY !== 0) {
+          this._yRemainder -= moveY;
+          this._y += moveY;
+
+          if (moveY > 0) {
+            // Moving down
+            for (const actor of actors) {
+              if (this.overlaps(actor) && this.canCollideWith(actor.type)) {
+                // Push down
+                actor.moveY(this.bottom - actor.y, actor.squish, this);
+              } else if (ridingActors.has(actor)) {
+                // Carry down
+                actor.moveY(moveY);
+              }
+            }
+            for (const sensor of sensors) {
+              if (this.overlaps(sensor) && this.canCollideWith(sensor.type)) {
+                // Push down
+                sensor.moveY(this.bottom - sensor.y);
+              } else if (ridingSensors.has(sensor)) {
+                // Carry down
+                sensor.moveY(moveY);
+              }
+            }
+          } else {
+            // Moving up
+            for (const actor of actors) {
+              if (this.overlaps(actor) && this.canCollideWith(actor.type)) {
+                // Push up
+                actor.moveY(this.top - (actor.y + actor.height), actor.squish, this);
+              } else if (ridingActors.has(actor)) {
+                // Carry up
+                actor.moveY(moveY);
+              }
+            }
+            for (const sensor of sensors) {
+              if (this.overlaps(sensor) && this.canCollideWith(sensor.type)) {
+                // Push up
+                sensor.moveY(this.top - (sensor.y + sensor.height));
+              } else if (ridingSensors.has(sensor)) {
+                // Carry up
+                sensor.moveY(moveY);
+              }
+            }
+          }
+        }
+
+        // Re-enable collisions
+        this._canCollide = true;
+      } else {
+        // When collisions are disabled, just move without affecting other entities
+        if (moveX !== 0) {
+          this._xRemainder -= moveX;
+          this._x += moveX;
+        }
+        if (moveY !== 0) {
+          this._yRemainder -= moveY;
+          this._y += moveY;
+        }
+      }
 
       // Update next positions to match current
       this._nextX = this._x;
@@ -284,6 +336,7 @@ export class Solid<T extends Application = Application> extends Entity<T> {
    * @returns True if overlapping
    */
   private overlaps(entity: Actor | Sensor): boolean {
+    if (!this.canCollideWith(entity.type)) return false;
     return (
       this.x < entity.x + entity.width &&
       this.x + this.width > entity.x &&

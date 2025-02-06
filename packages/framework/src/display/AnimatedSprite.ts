@@ -36,6 +36,7 @@ export class AnimatedSprite extends PIXIAnimatedSprite {
     const defaultSheet = config?.sheet;
     const defaultTexturePrefix = config?.texturePrefix || '';
     const defaultZeroPad = config?.zeroPad;
+    const defaultStartIndex = config?.startIndex ?? 0;
 
     super(
       AnimatedSprite.generateTexturesFromProps(
@@ -44,6 +45,7 @@ export class AnimatedSprite extends PIXIAnimatedSprite {
         defaultTexturePrefix,
         defaultSheet,
         defaultZeroPad,
+        defaultStartIndex,
       ),
       config?.autoUpdate !== false,
     );
@@ -90,12 +92,13 @@ export class AnimatedSprite extends PIXIAnimatedSprite {
     defaultTexturePrefix = '',
     defaultSheet: SpriteSheetLike | undefined = undefined,
     defaultZeroPad?: number,
+    defaultStartIndex?: number,
   ): Texture[] {
     const textures: Texture[] = [];
     let asset = '';
     const sheet = props?.sheet ?? defaultSheet;
     if (props?.numFrames > 1) {
-      const idx = props?.startIndex ?? 0;
+      const idx = props?.startIndex ?? defaultStartIndex ?? 0;
       for (let i = idx; i < idx + props?.numFrames; i++) {
         asset = `${defaultTexturePrefix}${props?.texturePrefix ?? animationName}${getZeroPaddedNumber(i, props?.zeroPad ?? defaultZeroPad)}`;
         textures.push(

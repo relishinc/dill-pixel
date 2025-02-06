@@ -2,7 +2,7 @@ import { Application } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { Solid } from './Solid';
-import { PhysicsEntityConfig, SensorOverlap, Vector2 } from './types';
+import { EntityData, PhysicsEntityConfig, SensorOverlap, Vector2 } from './types';
 
 /**
  * A trigger zone that can detect overlaps with actors.
@@ -63,7 +63,7 @@ import { PhysicsEntityConfig, SensorOverlap, Vector2 } from './types';
  * }
  * ```
  */
-export class Sensor<T extends Application = Application> extends Entity<T> {
+export class Sensor<T extends Application = Application, D extends EntityData = EntityData> extends Entity<T, D> {
   /** Whether this sensor should be removed when culled */
   public shouldRemoveOnCull = false;
 
@@ -109,10 +109,6 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
 
   get y(): number {
     return super.y;
-  }
-
-  constructor(config?: PhysicsEntityConfig) {
-    super(config);
   }
 
   /**
@@ -214,7 +210,7 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
         // Check for collision with any solid
         let collided = false;
         for (const solid of this.getSolidsAt(nextX, this.y)) {
-          if (solid.collidable) {
+          if (solid.canCollide) {
             collided = true;
             break;
           }
@@ -261,7 +257,7 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
         // Only check collisions when moving in the direction of gravity
         if (Math.sign(this.system.gravity) === sign) {
           for (const solid of this.getSolidsAt(this.x, nextY)) {
-            if (solid.collidable) {
+            if (solid.canCollide) {
               collided = true;
               break;
             }
@@ -359,7 +355,7 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
    *
    * @param actor - The actor that entered
    */
-  public onActorEnter(actor: Actor): void {
+  public onActorEnter<A extends Actor = Actor>(actor: A): void {
     // Override in subclass
     void actor;
   }
@@ -370,7 +366,7 @@ export class Sensor<T extends Application = Application> extends Entity<T> {
    *
    * @param actor - The actor that exited
    */
-  public onActorExit(actor: Actor): void {
+  public onActorExit<A extends Actor = Actor>(actor: A): void {
     // Override in subclass
     void actor;
   }
