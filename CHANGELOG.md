@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.9.0](https://github.com/relishinc/dill-pixel/compare/v4.8.0...v4.9.0) (2025-02-07)
+
+
+### Features
+
+* tweak to vite config - working on ensuring bundling is correct ([997a847](https://github.com/relishinc/dill-pixel/commit/997a8470fd89851fc35a72f207dcd14fc4b70ba9))
+
 ## [4.8.0](https://github.com/relishinc/dill-pixel/compare/v4.7.1...v4.8.0) (2025-02-06)
 
 
