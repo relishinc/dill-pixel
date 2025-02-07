@@ -1,5 +1,5 @@
 import { Ticker } from 'pixi.js';
-import { Application } from '../core';
+import { Application } from '../core/Application';
 import { AssetLoadingOptions, Size } from '../utils';
 import type { IContainer } from './Container';
 import { Container } from './Container';

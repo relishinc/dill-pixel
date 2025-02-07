@@ -355,12 +355,10 @@ function createDillPixelGlobalsPlugin() {
             globalThis.__DILL_PIXEL = globalThis.__DILL_PIXEL || {};
             return key ? globalThis.__DILL_PIXEL[key] : globalThis.__DILL_PIXEL;
           };
-
         `;
       }
     },
     config(config) {
-      // Add our virtual entry to the input array
       const input = config.build?.rollupOptions?.input || 'index.html';
       const inputs = Array.isArray(input) ? input : [input];
 
@@ -368,6 +366,14 @@ function createDillPixelGlobalsPlugin() {
         build: {
           rollupOptions: {
             input: [entryId, ...inputs],
+            output: {
+              entryFileNames: (chunkInfo) => {
+                if (chunkInfo.facadeModuleId?.includes('dill-pixel-globals')) {
+                  return 'assets/dill-pixel-[hash].js';
+                }
+                return 'assets/[name]-[hash].js';
+              },
+            },
           },
         },
       };
@@ -415,19 +421,6 @@ const defaultConfig = {
   resolve: {
     alias: {
       '@': path.resolve(cwd, './src'),
-    },
-  },
-  build: {
-    rollupOptions: {
-      output: {
-        chunkFileNames: (chunkInfo) => {
-          // If it's the globals chunk, give it a specific name
-          if (chunkInfo.name === '_dill-pixel-globals' || chunkInfo.name === 'dill-pixel-globals') {
-            return 'assets/app-[hash].js';
-          }
-          return 'assets/[name]-[hash].js';
-        },
-      },
     },
   },
   define: {

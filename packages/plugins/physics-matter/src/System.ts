@@ -14,7 +14,6 @@ export class System {
   private static _objects: Set<IMatterPhysicsObject> = new Set();
   private static _debugGraphics: Graphics | null = null;
   private static _walls: Body[];
-
   private static _debug: boolean = false;
 
   static get debug() {
