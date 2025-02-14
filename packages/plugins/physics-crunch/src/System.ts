@@ -445,7 +445,7 @@ export class System {
     }
 
     // Create a Set of excluded types for O(1) lookups
-    const excludedTypes = entity.excludeCollisionTypes;
+    const excludedTypes = entity.excludedCollisionTypes;
     const result: Solid[] = [];
     const seen = new Set<Solid>();
 

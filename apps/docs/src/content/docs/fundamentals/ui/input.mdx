@@ -1,0 +1,266 @@
+---
+title: Input
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The [Input](/api/classes/input) component provides a highly customizable text input implementation with support for mobile devices, validation, placeholder text, and various styling options.
+
+## Basic Usage
+
+The simplest way to create an input field is:
+
+```ts
+const input = this.add.existing(
+  new Input({
+    minWidth: 400,
+    placeholder: { text: 'Enter text' },
+    padding: [12, 15],
+  }),
+);
+```
+
+## Input Configuration
+
+The input component accepts several configuration options:
+
+```ts
+export interface InputOptions extends Partial<TextProps> {
+  value: string; // Initial value
+  type: 'text' | 'password' | 'number' | 'email' | 'tel' | 'url'; // Input type
+  fixed: boolean; // Whether width is fixed
+  pattern: string; // Validation pattern
+  minWidth: number; // Minimum width
+  padding: Padding; // Padding configuration
+  maxLength?: number; // Maximum length
+  blurOnEnter: boolean; // Whether to blur on Enter key
+  regex?: RegExp; // Custom validation regex
+  bg: Partial<BgStyleOptions>; // Background styling
+  placeholder: Partial<PlaceholderOptions & ColorOptions & ExtraPlaceholderOptions>;
+  selection: Partial<ColorOptions>; // Selection highlight styling
+  caret: Partial<ColorOptions>; // Caret styling
+  focusOverlay: Partial<FocusOverlayOptions>; // Mobile/touch overlay config
+}
+```
+
+## Features
+
+### Input Types
+
+The component supports various input types:
+
+```ts
+const textInput = new Input({
+  type: 'text',
+  minWidth: 400,
+});
+
+const passwordInput = new Input({
+  type: 'password',
+  minWidth: 400,
+  placeholder: { text: 'Enter password' },
+});
+
+const emailInput = new Input({
+  type: 'email',
+  minWidth: 400,
+  placeholder: { text: 'Enter email' },
+});
+```
+
+### Validation
+
+You can validate input using patterns or regular expressions:
+
+```ts
+// Phone number validation
+const phoneInput = new Input({
+  type: 'tel',
+  minWidth: 400,
+  regex: /^1?-?\(?([2-9][0-9]{2})\)?[-. ]?([2-9][0-9]{2})[-. ]?([0-9]{4})$/,
+  placeholder: { text: 'Enter phone number' },
+  error: {
+    input: { fill: 0xff0000 },
+    bg: { fill: 0xf5e0df, stroke: { width: 2, color: 0xff0000 } },
+  },
+});
+
+// Pattern validation (disallow numbers)
+const lettersOnlyInput = new Input({
+  minWidth: 400,
+  pattern: '[^a-z]*',
+  placeholder: { text: 'Letters only' },
+});
+```
+
+### Placeholder Text
+
+The input supports customizable placeholder text with animation:
+
+```ts
+const input = new Input({
+  minWidth: 400,
+  placeholder: {
+    text: 'I am persistent',
+    alpha: 0.4,
+    positionOnType: 'top',
+    scaleOnType: 0.7,
+    animationOnType: {
+      duration: 0.2,
+      alpha: 1,
+      ease: 'sine.out',
+      tint: 0x666666,
+    },
+    offsetOnType: { x: -12, y: 2 },
+  },
+});
+```
+
+### Mobile/Touch Support
+
+The input provides enhanced mobile support with a focus overlay:
+
+```ts
+const mobileInput = new Input({
+  minWidth: 400,
+  placeholder: { text: 'Touch to enter text' },
+  focusOverlay: {
+    activeFilter: ['mobile', 'touch'],
+    marginTop: 60,
+    scale: 2.5,
+    backing: {
+      active: true,
+      options: { color: 0x000000, alpha: 0.8 },
+    },
+  },
+});
+```
+
+<Aside type="tip">
+  The focus overlay automatically scales the input and provides a better touch experience on mobile devices.
+</Aside>
+
+### Styling
+
+The input component offers extensive styling options:
+
+```ts
+const styledInput = new Input({
+  minWidth: 400,
+  style: {
+    align: 'left',
+    fontSize: 32,
+    fill: 0x000000,
+  },
+  padding: [20, 30],
+  bg: {
+    radius: 200,
+    stroke: { width: 6, color: 0x000000 },
+    fill: { color: 0xffffff, alpha: 1 },
+  },
+  selection: { color: 0x00ff00, alpha: 0.5 },
+  caret: { color: 0x000000, alpha: 0.8 },
+});
+```
+
+## Event Handling
+
+The input provides several signals for interaction:
+
+```ts
+// Value change handling
+input.onChange.connect((detail) => {
+  console.log('Value changed:', detail.value);
+});
+
+// Enter key handling
+input.onEnter.connect((detail) => {
+  console.log('Enter pressed:', detail.value);
+});
+
+// Validation error handling
+input.onError.connect((detail) => {
+  console.log('Validation failed:', detail.value);
+});
+```
+
+## Complete Example
+
+Here's a complete example showing various input configurations:
+
+```ts
+export default class UIScene extends BaseScene {
+  public async initialize() {
+    const container = this.add.flexContainer({
+      flexDirection: 'column',
+      gap: 30,
+      justifyContent: 'center',
+      alignItems: 'center',
+    });
+
+    // Large styled input
+    const largeInput = container.add.existing(
+      new Input({
+        style: { align: 'left', fontSize: 32 },
+        placeholder: {
+          text: 'I am huge',
+          alpha: 0.5,
+          color: 0x666666,
+        },
+        minWidth: 400,
+        padding: [20, 30],
+        bg: {
+          radius: 200,
+          stroke: { width: 6, color: 0x0 },
+        },
+      }),
+    );
+
+    // Phone input with validation
+    const phoneInput = container.add.existing(
+      new Input({
+        type: 'tel',
+        minWidth: 400,
+        regex: /^1?-?\(?([2-9][0-9]{2})\)?[-. ]?([2-9][0-9]{2})[-. ]?([0-9]{4})$/,
+        placeholder: { text: 'Enter phone number' },
+        error: {
+          input: { fill: 0xff0000 },
+          bg: { fill: 0xf5e0df },
+        },
+      }),
+    );
+
+    // Password input
+    const passwordInput = container.add.existing(
+      new Input({
+        type: 'password',
+        minWidth: 400,
+        placeholder: { text: 'Enter password' },
+        focusOverlay: {
+          activeFilter: ['mobile', 'touch'],
+          scale: 2.5,
+          marginTop: 60,
+        },
+      }),
+    );
+
+    // Add to focus management
+    this.app.focus.add([largeInput, phoneInput, passwordInput]);
+  }
+}
+```
+
+## Best Practices
+
+1. Always provide meaningful placeholder text to guide users
+2. Use appropriate input types for different data (email, tel, password)
+3. Implement validation when necessary
+4. Configure the focus overlay for better mobile experience
+5. Handle input events appropriately
+6. Consider using persistent placeholders for better UX
+7. Provide visual feedback for errors and validation
+
+<Aside type="caution">
+  Be mindful of input field width on mobile devices. Use the focusOverlay's scale property to ensure the input is large
+  enough for comfortable typing.
+</Aside>{' '}

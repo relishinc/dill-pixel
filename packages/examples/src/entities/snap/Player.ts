@@ -65,6 +65,7 @@ export class Player extends SnapActor<any, V8Application> {
   }
 
   public fixedUpdate(deltaTime: number) {
+    super.fixedUpdate(deltaTime);
     if (!this._inPlay || !this.system.enabled) {
       return;
     }
@@ -213,8 +214,6 @@ export class Player extends SnapActor<any, V8Application> {
       this.app.actions('toggle_pause').connect(this._handleTogglePause),
       this.app.actions('move_left').connect(this._handleAction),
       this.app.actions('move_right').connect(this._handleAction),
-      this.app.actions('stop_move_left').connect(this._handleAction),
-      this.app.actions('stop_move_right').connect(this._handleAction),
       this.app.actions('jump').connect(this._handleAction),
       this.app.actions('warp').connect(this._handleAction),
       Portal.onEnter.connect(this._onEnterPortal),
@@ -280,6 +279,11 @@ export class Player extends SnapActor<any, V8Application> {
         this._warp();
         break;
     }
+  }
+
+  postFixedUpdate() {
+    super.postFixedUpdate();
+    this._moveAmount = 0;
   }
 
   private _warp() {

@@ -4,27 +4,30 @@ title: Physics Overview
 
 import { Aside } from '@astrojs/starlight/components';
 
-Dill Pixel offers two physics plugins:
+Dill Pixel offers three physics plugins:
 
 - **Snap Physics**: A lightweight, AABB and circle-based collision system inspired by Maddy Thorson's TowerFall physics
+- **Crunch Physics**: A robust, grid-based physics system optimized for platformers and endless runners with advanced entity management
 - **Matter Physics**: A full-featured physics engine (using Matter.js) for complex physics simulations
 
 ## Plugin Comparison
 
-| Feature        | Snap Physics                                                                                         | Matter Physics                                                                                      |
-| -------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| Best Use Cases | • Platformers & endless runners<br/>• AABB & circle collisions<br/>• Precise, deterministic movement | • Physics-based puzzles<br/>• Complex body interactions<br/>• Realistic gravity & force simulations |
-| Performance    | Minimal overhead, deterministic                                                                      | More resource-intensive, feature-rich                                                               |
-| Complexity     | Simple, straightforward API                                                                          | Advanced features, steeper learning curve                                                           |
+| Feature        | Snap Physics                                                                                         | Crunch Physics                                                                                    | Matter Physics                                                                                      |
+| -------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Best Use Cases | • Platformers & endless runners<br/>• AABB & circle collisions<br/>• Precise, deterministic movement | • Complex platformers<br/>• Grid-based collision detection<br/>• Entity groups & advanced sensors | • Physics-based puzzles<br/>• Complex body interactions<br/>• Realistic gravity & force simulations |
+| Performance    | Minimal overhead, deterministic                                                                      | Optimized for large numbers of entities, grid-based                                               | More resource-intensive, feature-rich                                                               |
+| Complexity     | Simple, straightforward API                                                                          | Rich feature set, moderate learning curve                                                         | Advanced features, steeper learning curve                                                           |
 
 <Aside type="caution">Only use one physics plugin at a time to avoid performance issues and potential conflicts.</Aside>
 
 <Aside type="tip">
-  For performance-critical projects requiring precise platformer-style physics, start with Snap Physics and only switch
-  to Matter if you need its advanced features.
+  For performance-critical projects: - Use Snap Physics for simple platformers and basic collision detection - Use
+  Crunch Physics for more complex games with many entities and advanced features - Use Matter Physics when you need
+  realistic physics simulation
 </Aside>
 
 For detailed setup and usage instructions, see:
 
 - [Snap Physics Plugin](/fundamentals/physics/snap)
+- [Crunch Physics Plugin](/fundamentals/physics/crunch)
 - [Matter Physics Plugin](/fundamentals/physics/matter)

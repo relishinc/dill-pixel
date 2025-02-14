@@ -1,4 +1,4 @@
-import { FlexContainer, Input, wait } from 'dill-pixel';
+import { FlexContainer, Input } from 'dill-pixel';
 
 import BaseScene from '@/scenes/BaseScene';
 
@@ -30,7 +30,7 @@ export default class UIScene extends BaseScene {
 
     this.list = this.add.flexContainer({
       flexDirection: 'column',
-      gap: 20,
+      gap: 30,
       justifyContent: 'center',
       alignItems: 'center',
       visible: false,
@@ -130,11 +130,33 @@ export default class UIScene extends BaseScene {
       }),
       { label: 'overlay' },
     );
+    const withPersistentPlaceholder = this.list.add.existing(
+      new Input({
+        minWidth: 400,
+        placeholder: {
+          text: 'I am persistent',
+          alpha: 0.4,
+          positionOnType: 'top',
+          scaleOnType: 0.7,
+          animationOnType: { duration: 0.2, alpha: 1 },
+          offsetOnType: { x: -12, y: 2 },
+        },
+        padding: [15, 15],
+        bg: {
+          radius: 0,
+          stroke: {
+            width: 2,
+            color: 0x0,
+          },
+        },
+      }),
+      { label: 'persistent' },
+    );
 
-    this.app.focus.add([input, tel, input2, input3, input4, input5, withOverlay], this.id);
+    this.app.focus.add([input, tel, input2, input3, input4, input5, withOverlay, withPersistentPlaceholder], this.id);
+  }
 
-    await wait(0.01);
-
+  start() {
     this.list.layout();
     this.list.visible = true;
   }

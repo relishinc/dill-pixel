@@ -564,8 +564,15 @@ export class RiveEntity extends WithSignals(Container) {
    */
   private advanceStateMachines(elapsed: number): void {
     this.stateMachines.map((m) => {
-      if (m.reportedEventCount()) {
-        Logger.log(`state machine ${m.name} reported ${m.reportedEventCount()} events`);
+      const numFiredEvents = m.reportedEventCount();
+      if (numFiredEvents) {
+        Logger.log(`state machine ${m.name} reported ${numFiredEvents} events`);
+        for (let i = 0; i < numFiredEvents; i++) {
+          const event = m.reportedEventAt(i);
+          if (event) {
+            Logger.log(`event ${event.name} fired`);
+          }
+        }
       }
       m.advance(elapsed);
 

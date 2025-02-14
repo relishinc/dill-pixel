@@ -250,6 +250,8 @@ export default class UIToasterScene extends BaseScene {
   async initialize() {
     await super.initialize();
 
+    this.app.focus.addFocusLayer(this.id);
+
     // Create button container
     this.buttonContainer = this.add.flexContainer({
       gap: 20,
@@ -297,7 +299,7 @@ export default class UIToasterScene extends BaseScene {
     };
 
     // Create toaster with config
-    this.toaster = this.add.existing(new Toaster(this.config.toaster, toastConfig));
+    this.toaster = this.add.toaster(this.config.toaster, toastConfig);
 
     // Add buttons for different toast types
     this.addToastButton('Info Toast', 'info');
@@ -325,6 +327,8 @@ export default class UIToasterScene extends BaseScene {
       resolution: 2,
       style: whiteTextStyle(48),
     });
+
+    this.app.focus.add(button, this.id);
 
     this.addSignalConnection(
       button.onClick.connect(() => {
@@ -358,6 +362,8 @@ export default class UIToasterScene extends BaseScene {
       resolution: 2,
       style: whiteTextStyle(48),
     });
+
+    this.app.focus.add(button, this.id);
 
     this.addSignalConnection(
       button.onClick.connect(() => {

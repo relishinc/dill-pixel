@@ -1,0 +1,363 @@
+---
+title: Crunch Physics Plugin
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+
+The Crunch Physics Plugin is a robust, grid-based physics system designed for high-performance games with many entities. It excels at platformers, endless runners, and games requiring precise collision detection with efficient spatial partitioning.
+
+## Core Features
+
+- Grid-based spatial partitioning for efficient collision detection
+- Support for dynamic actors, static solids, and trigger sensors
+- Advanced entity grouping and management
+- Built-in culling system for off-screen entities
+- Debug visualization tools
+- Customizable collision and overlap resolution
+
+## Core Concepts
+
+The system is built around three main entity types and a group system:
+
+### Actors (`Actor`)
+
+Dynamic entities that can move and collide with solids. Key features:
+
+- Velocity-based movement with gravity
+- Precise collision detection and response
+- Support for riding moving platforms
+- Sub-pixel movement precision
+- Customizable collision filtering
+
+```ts
+class Player extends Actor {
+  initialize() {
+    // Setup player-specific properties
+    this.velocity = { x: 0, y: 0 };
+    this.excludeCollisionTypes = new Set(['Coin']);
+  }
+
+  update(dt: number) {
+    // Handle movement and physics
+    if (this.isRidingSolid()) {
+      this.velocity.y = 0;
+    }
+    super.update(dt);
+  }
+
+  onCollide(result: CollisionResult) {
+    // Handle collisions
+    if (result.solid.type === 'Spike') {
+      this.die();
+    }
+  }
+}
+```
+
+### Solids (`Solid`)
+
+Static or kinematic objects that block movement. Features:
+
+- Can be static or moving
+- Automatically push overlapping actors
+- Carry riding actors
+- Support for one-way platforms
+- Efficient grid-based collision checks
+
+```ts
+class Platform extends Solid {
+  initialize() {
+    this.collideable = true; // Enable collisions
+    this.moving = true; // Enable movement updates
+  }
+
+  update(dt: number) {
+    // Handle platform-specific logic
+    if (this.data.isOneWay) {
+      // Custom one-way platform logic
+      this.handleOneWayCollisions();
+    }
+    super.update(dt);
+  }
+}
+```
+
+### Sensors (`Sensor`)
+
+Trigger zones that detect but don't block movement. Features:
+
+- Overlap detection with specific actor types
+- Enter/exit event callbacks
+- Optional gravity and movement
+- Can be static or dynamic
+
+```ts
+class Coin extends Sensor {
+  initialize() {
+    this.collidableTypes = ['Player'];
+    this.isStatic = true;
+  }
+
+  onActorEnter(actor: Actor) {
+    if (actor.type === 'Player') {
+      (actor as Player).addScore(10);
+      this.system.removeSensor(this);
+    }
+  }
+}
+```
+
+### Groups (`Group`)
+
+Container for managing collections of related entities:
+
+- Manage multiple entities as a single unit
+- Share common properties and behaviors
+- Efficient batch updates and transformations
+
+```ts
+class PlatformGroup extends Group {
+  initialize() {
+    // Create a group of platforms
+    const platform1 = this.system.createSolid({
+      /*...*/
+    });
+    const platform2 = this.system.createSolid({
+      /*...*/
+    });
+
+    this.add(platform1);
+    this.add(platform2);
+  }
+
+  update(dt: number) {
+    // Update all platforms in the group
+    super.update(dt);
+  }
+}
+```
+
+## Spatial Grid System
+
+The Crunch Physics Plugin uses an efficient grid-based spatial partitioning system:
+
+```ts
+// Configure the physics system
+await physics.initialize(app, {
+  gridSize: 32, // Size of each grid cell
+  gravity: 900,
+  maxVelocity: 1000,
+  debug: true, // Enable debug visualization
+  shouldCull: true, // Enable automatic culling
+  boundary: new Rectangle(0, 0, 800, 600),
+});
+```
+
+### Grid-Based Collision Detection
+
+The system automatically:
+
+1. Divides the world into grid cells
+2. Tracks which solids are in each cell
+3. Only checks collisions with solids in relevant cells
+4. Updates grid assignments when entities move
+
+```ts
+// Internal grid management (handled automatically)
+private addSolidToGrid(solid: Solid): void {
+  const cells = this.getCells(solid.bounds);
+  for (const cell of cells) {
+    if (!this.grid.has(cell)) {
+      this.grid.set(cell, new Set());
+    }
+    this.grid.get(cell)!.add(solid);
+  }
+}
+```
+
+<Aside type="tip">
+  Choose a grid size that roughly matches your smallest moving entity for optimal performance. Too small cells create
+  overhead, while too large cells reduce the benefit of spatial partitioning.
+</Aside>
+
+## Collision Resolution
+
+### Basic Resolution
+
+The system provides flexible collision handling:
+
+```ts
+class MyScene extends Scene {
+  async initialize() {
+    await this.physics.initialize(app, {
+      collisionResolver: (collisions: Collision[]) => {
+        for (const collision of collisions) {
+          switch (collision.type) {
+            case 'Player|Enemy':
+              this.handlePlayerEnemyCollision(collision);
+              break;
+            case 'Player|Coin':
+              this.handleCoinCollection(collision);
+              break;
+          }
+        }
+      },
+    });
+  }
+}
+```
+
+### Advanced Features
+
+1. **Riding Detection**:
+
+```ts
+class Actor {
+  isRidingSolid(): boolean {
+    // Cached check for performance
+    if (this._isRidingSolidCache !== null) {
+      return this._isRidingSolidCache;
+    }
+    return this.checkRiding();
+  }
+}
+```
+
+2. **Moving Platforms**:
+
+```ts
+class MovingPlatform extends Solid {
+  update(dt: number) {
+    // Platform movement automatically:
+    // - Updates grid position
+    // - Pushes overlapping actors
+    // - Carries riding actors
+    this.move(dx, dy);
+  }
+}
+```
+
+3. **Sensor Overlaps**:
+
+```ts
+class TriggerZone extends Sensor {
+  checkActorOverlaps(): Set<SensorOverlap> {
+    // Efficiently check overlaps
+    // Triggers enter/exit callbacks
+    return this._checkOverlaps();
+  }
+}
+```
+
+## Entity Management
+
+### Creation and Initialization
+
+```ts
+// Create an actor
+const player = physics.createActor({
+  type: 'Player',
+  position: [100, 100],
+  size: [32, 64],
+  view: playerSprite,
+});
+
+// Create a solid
+const platform = physics.createSolid({
+  type: 'Platform',
+  position: [0, 500],
+  size: [800, 32],
+  view: platformSprite,
+});
+
+// Create a sensor
+const coin = physics.createSensor({
+  type: 'Coin',
+  position: [400, 300],
+  size: [32, 32],
+  view: coinSprite,
+});
+```
+
+### Lifecycle Management
+
+```ts
+// Remove entities
+physics.removeActor(actor);
+physics.removeSolid(solid);
+physics.removeSensor(sensor);
+
+// Clean up
+physics.destroy(); // Removes all entities and stops updates
+```
+
+## Examples
+
+For implementation examples, see:
+
+- Basic Physics Demo: [Source](https://github.com/relishinc/dill-pixel/blob/main/packages/examples/src/scenes/physics/CrunchPhysicsScene.ts)
+- Endless Runner: [Source](https://github.com/relishinc/dill-pixel/blob/main/packages/examples/src/scenes/physics/CrunchEndlessRunnerScene.ts)
+
+## Performance Tips
+
+1. **Grid Size Optimization**:
+
+```ts
+// Choose grid size based on average entity size
+physics.initialize(app, {
+  gridSize: 32, // Adjust based on your game's needs
+});
+```
+
+2. **Culling**:
+
+```ts
+// Enable automatic culling of off-screen entities
+physics.initialize(app, {
+  shouldCull: true,
+  boundary: new Rectangle(0, 0, width, height),
+});
+```
+
+3. **Entity Pooling**:
+
+```ts
+// Use object pooling for frequently created/destroyed entities
+const pool = new Pool<Actor>(Actor);
+const actor = pool.get(config);
+physics.addActor(actor);
+// Later...
+pool.return(actor);
+```
+
+<Aside type="tip" title="Performance Tips">
+  For best performance:
+  <ul>
+    <li>Use appropriate grid sizes</li>
+    <li>Enable culling for large worlds</li>
+    <li>Pool frequently created entities</li>
+    <li>Minimize the number of moving solids</li>
+    <li>Use sensor overlaps efficiently</li>
+  </ul>
+</Aside>
+
+## Debug Visualization
+
+The plugin includes built-in debug visualization:
+
+```ts
+// Enable debug rendering
+physics.system.debug = true;
+
+// Debug features:
+// - Grid cell visualization
+// - Entity bounds
+// - Collision points
+// - Velocity vectors
+// - Custom debug colors per entity
+```
+
+<Aside type="caution" title="Debug Performance">
+  Debug visualization is invaluable for development but should be disabled in production for optimal performance. (It
+  adds draw calls to create debug graphics that will hinder performance)
+</Aside>

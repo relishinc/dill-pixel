@@ -9,7 +9,7 @@ import {
   Sensor,
   Solid,
 } from '@dill-pixel/plugin-crunch-physics';
-import { ActionDetail, AnimatedSprite, Camera, Container, Signal } from 'dill-pixel';
+import { ActionDetail, AnimatedSprite, Button, Camera, Container, Joystick, Signal, UICanvas } from 'dill-pixel';
 import gsap from 'gsap';
 
 import { FederatedPointerEvent, Point, Pool, Rectangle } from 'pixi.js';
@@ -85,8 +85,6 @@ class Player extends Actor<V8Application> {
       this.app.actions('jump').connect(this._jump),
       this.app.actions('move_left').connect(this._move),
       this.app.actions('move_right').connect(this._move),
-      this.app.actions('stop_move_left').connect(this._stopMove),
-      this.app.actions('stop_move_right').connect(this._stopMove),
     );
 
     gsap.to(this.view, {
@@ -108,6 +106,7 @@ class Player extends Actor<V8Application> {
 
   private _stopMove() {
     this.direction = 0;
+    this.velocity.x = 0;
   }
 
   public squish(): void {
@@ -133,7 +132,7 @@ class Player extends Actor<V8Application> {
   }
 
   public update(dt: number): void {
-    this.velocity.x = this.direction * 600;
+    this.velocity.x = this.direction * 500;
     if (this.isJumping) {
       this.velocity.y = Math.min(-this.system.gravity * 0.25, -600);
       this.view.setAnimation('jump');
@@ -152,16 +151,20 @@ class Player extends Actor<V8Application> {
     super.update(dt);
   }
 
+  public postUpdate(): void {
+    this._stopMove();
+  }
+
   public updateView(): void {
     if (this.view && this.view.visible) {
-      this.view.x = this._x;
+      this.view.x = this._x - 2;
       if (this.direction === -1) {
         this.view.scale.x = -this.view.scale.y;
         this.view.x += this.view.width;
       } else {
         this.view.scale.x = this.view.scale.y;
       }
-      this.view.y = this._y;
+      this.view.y = this._y + 0;
     }
   }
 }
@@ -310,6 +313,8 @@ export default class CrunchPhysicsScene extends BaseScene {
 
   private group: Group;
 
+  ui: UICanvas;
+
   get physics(): ICrunchPhysicsPlugin {
     return this.app.getPlugin('crunch-physics') as ICrunchPhysicsPlugin;
   }
@@ -394,6 +399,9 @@ export default class CrunchPhysicsScene extends BaseScene {
       // @ts-expect-error camera can't be null error
       this.camera = null;
       this.add.existing(this.physicsContainer);
+      this.setChildIndex(this._headerBg, this.getChildIndex(this.physicsContainer));
+      this.setChildIndex(this.titleContainer, this.getChildIndex(this.physicsContainer));
+
       this.physicsContainer.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
       this.physicsContainer.pivot.set(0, 0);
     }
@@ -479,12 +487,63 @@ export default class CrunchPhysicsScene extends BaseScene {
     };
 
     this._createPlayer();
+
+    this.addControls();
     // Setup input handlers
     this.eventMode = 'static';
     this.on('click', (event: FederatedPointerEvent) => this._addParticles(new Point(event.globalX, event.globalY)));
 
     this._handleUseCameraChanged();
   }
+
+  addControls() {
+    this.ui = this.add.uiCanvas({ padding: 10, useAppSize: true });
+    this.ui.zIndex = 100;
+
+    this._joystick = new Joystick({
+      inner: this.make.sprite({
+        asset: 'joystick/handle',
+        sheet: 'ui',
+      }),
+      outer: this.make.sprite({
+        asset: 'joystick/base',
+        sheet: 'ui',
+      }),
+      innerScale: 0.7,
+      outerScale: 0.7,
+    });
+
+    const jumpButton = this._addButton('a', 'jump');
+
+    this.ui.addElement(this._joystick, { align: 'bottom left', padding: { left: 0, bottom: 20 } });
+    this.ui.addElement(jumpButton, { align: 'bottom right', padding: { bottom: 10, right: 10 } });
+
+    this.app.controls.touch.addButton(jumpButton);
+    this.app.controls.touch.joystick = this._joystick;
+
+    if (!this.app.isTouch) {
+      this._joystick.visible = false;
+      jumpButton.visible = false;
+    }
+  }
+
+  private _addButton(buttonId: string, action: string): Button {
+    return this.make.button({
+      cursor: 'pointer',
+      scale: 0.5,
+      textures: {
+        default: `btn_${buttonId}/up`,
+        hover: `btn_${buttonId}/over`,
+        disabled: `btn_${buttonId}/up`,
+        active: `btn_${buttonId}/down`,
+      },
+      sheet: 'ui',
+      accessibleTitle: action,
+      accessibleHint: `Press to ${action}`,
+      id: `${buttonId.toUpperCase()}`,
+    });
+  }
+  private _joystick: Joystick;
 
   private _resolveCollisions(collisions: Collision[]): void {
     console.log(collisions);
@@ -511,7 +570,7 @@ export default class CrunchPhysicsScene extends BaseScene {
 
   protected _createPlayer(): void {
     // Create player sprite (circular)
-    this.player = new Player({ position: [125, this.app.size.height - 97], size: [32, 64] });
+    this.player = new Player({ position: [125, this.app.size.height - 97], size: [32, 62] });
     this.physics.system.addActor(this.player);
     this.player.onKilled.connectOnce(this._createPlayer);
 

@@ -315,8 +315,13 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
   /**
    * Public method to manually trigger a layout
    */
-  public layout() {
-    this.app.ticker.addOnce(this._layout, this);
+  public layout(): Promise<void> {
+    return new Promise((resolve) => {
+      this.app.ticker.addOnce(() => {
+        this._layout();
+        resolve();
+      });
+    });
   }
 
   resize() {

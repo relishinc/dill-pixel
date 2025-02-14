@@ -261,7 +261,7 @@ export default class SnapEndlessRunnerScene extends BaseScene {
     this.app.controls.touch.addButton(warpButton);
     this.app.controls.touch.joystick = this._joystick;
 
-    if (!this.app.isMobile) {
+    if (!this.app.isTouch) {
       this._joystick.visible = false;
       jumpButton.visible = false;
       warpButton.visible = false;

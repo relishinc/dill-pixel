@@ -1,10 +1,11 @@
 import { AnimatedSprite, Container, ContainerConfig, ContainerConfigKeys, SpineAnimation, Svg } from '../../display';
-import type { ButtonConfig, FlexContainerConfig, UICanvasConfig } from '../../ui';
+import type { ButtonConfig, FlexContainerConfig, ToastConfig, ToasterConfig, UICanvasConfig } from '../../ui';
 import {
   Button,
   ButtonConfigKeys,
   FlexContainer,
   FlexContainerConfigKeys,
+  Toaster,
   UICanvas,
   UICanvasConfigKeys,
 } from '../../ui';
@@ -279,6 +280,10 @@ export const defaultFactoryMethods = {
     resolveAnchor(anchor, entity);
     resolvePivot(pivot, entity);
     resolveUnknownKeys(rest, entity);
+    return entity;
+  },
+  toaster: (toasterConfig?: Partial<ToasterConfig>, defaultToastConfig: Partial<ToastConfig> = {}): Toaster => {
+    const entity = new Toaster(toasterConfig, defaultToastConfig);
     return entity;
   },
 };

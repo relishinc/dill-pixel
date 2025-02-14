@@ -34,8 +34,6 @@ class Runner extends Actor<V8Application> {
       this.app.actions('jump').connect(this._jump),
       this.app.actions('move_right').connect(this._moveRight),
       this.app.actions('move_left').connect(this._moveLeft),
-      this.app.actions('stop_move_left').connect(this._stopMoveLeft),
-      this.app.actions('stop_move_right').connect(this._stopMoveRight),
     );
 
     gsap.to(this.view, {
@@ -59,10 +57,6 @@ class Runner extends Actor<V8Application> {
   }
 
   public onCollide(result: CollisionResult): void {
-    if (this.excludeCollisionTypes.has(result.solid.type)) {
-      return;
-    }
-
     switch (result.solid.type) {
       case 'Obstacle': {
         if (result.normal?.y === -1) {
@@ -122,9 +116,12 @@ class Runner extends Actor<V8Application> {
   }
 
   public postUpdate(): void {
+    if (!this.isHit) {
+      this.velocity.x = 0;
+    }
+
     if (this.isRidingSolid()) {
       this.isJumping = false;
-      this.velocity.x *= 0.8;
     }
   }
 
@@ -140,13 +137,6 @@ class Runner extends Actor<V8Application> {
       return;
     }
     this.velocity.x = this.speed * 110;
-  }
-  private _stopMoveLeft() {
-    this.velocity.x = 0;
-  }
-
-  private _stopMoveRight() {
-    this.velocity.x = 0;
   }
 
   public addScore(points: number): void {

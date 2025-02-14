@@ -72,6 +72,7 @@ export default defineConfig({
                 { label: 'Text', link: '/fundamentals/ui/text' },
                 { label: 'Layout', link: '/fundamentals/ui/layout' },
                 { label: 'Button', link: '/fundamentals/ui/button' },
+                { label: 'Input', link: '/fundamentals/ui/input' },
                 { label: 'Joystick', link: '/fundamentals/ui/joystick' },
                 { label: 'Popups', link: '/fundamentals/ui/popups' },
                 { label: 'Toaster', link: '/fundamentals/ui/toaster' },
@@ -82,6 +83,7 @@ export default defineConfig({
               items: [
                 { label: 'Overview', link: '/fundamentals/physics/overview' },
                 { label: 'Snap Physics Plugin', link: '/fundamentals/physics/snap' },
+                { label: 'Crunch Physics Plugin', link: '/fundamentals/physics/crunch' },
                 { label: 'Matter Physics Plugin', link: '/fundamentals/physics/matter' },
               ],
             },
@@ -100,7 +102,6 @@ export default defineConfig({
           label: 'Utilities',
           items: [
             { label: 'Overview', link: '/utilities/overview' },
-
             { label: 'Math', link: '/utilities/math' },
             { label: 'Random', link: '/utilities/random' },
             { label: 'Number Formatting', link: '/utilities/number' },

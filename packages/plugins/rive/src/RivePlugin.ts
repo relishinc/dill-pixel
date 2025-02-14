@@ -21,7 +21,7 @@ export interface IRivePlugin extends IPlugin {
 }
 
 const defaultOptions = {
-  wasmPath: 'https://unpkg.com/@rive-app/canvas-advanced-lite@2.25.4/rive.wasm',
+  wasmPath: 'https://unpkg.com/@rive-app/canvas-advanced-lite@2.26.1/rive.wasm',
 };
 
 export class RivePlugin extends Plugin implements IRivePlugin {
@@ -69,7 +69,6 @@ export class RivePlugin extends Plugin implements IRivePlugin {
           priority: LoaderParserPriority.High,
         },
         test(url: string) {
-          // checkDataUrl(url, 'mime/type');
           return checkExtension(url, '.riv');
         },
         async load(url: string) {

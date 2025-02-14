@@ -81,6 +81,9 @@ export default class RiveScene extends BaseScene {
     });
 
     this.animation.onReady.connect(this._handleReady);
+    this.animation.onPlay.connect((animations) => {
+      console.log('play', animations);
+    });
     this.mainContainer.add.existing(this.animation);
   }
 
@@ -127,11 +130,6 @@ export default class RiveScene extends BaseScene {
     const artboard = this.animation.getAvailableArtboards()[ab];
     this.animation.loadArtboard(artboard);
   }
-
-  // destroy(options?: DestroyOptions) {
-  //      this.app.getPlugin<IRivePlugin>('rive').cleanup(); // causes extreme slowdown for some reason
-  //      super.destroy(options);
-  //    }
 
   _changeAnimation() {
     let anim = this.currentAnimationIndex + 1;

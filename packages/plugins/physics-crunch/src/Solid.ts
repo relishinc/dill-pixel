@@ -56,7 +56,6 @@ export class Solid<T extends Application = Application, D extends EntityData = E
 
   /** Whether this solid has collisions enabled */
   public collideable: boolean = true;
-  private _excludedCollisionTypes: Set<PhysicsEntityType>;
 
   /** Whether this solid is currently moving */
   public moving: boolean = false;
@@ -79,37 +78,6 @@ export class Solid<T extends Application = Application, D extends EntityData = E
 
   public get x(): number {
     return this._x;
-  }
-
-  excludeCollisionType(...types: PhysicsEntityType[]) {
-    if (!this._excludedCollisionTypes) {
-      this._excludedCollisionTypes = new Set(types);
-    }
-    for (const type of types) {
-      this._excludedCollisionTypes.add(type);
-    }
-  }
-
-  addCollisionType(...types: PhysicsEntityType[]) {
-    if (!this._excludedCollisionTypes) {
-      return;
-    }
-    for (const type of types) {
-      this._excludedCollisionTypes.delete(type);
-    }
-  }
-
-  canCollideWith(type: PhysicsEntityType): boolean {
-    if (this.collideable && !this._excludedCollisionTypes) {
-      return true;
-    }
-    if (!this.collideable) {
-      return false;
-    }
-    if (!this._excludedCollisionTypes.has(type)) {
-      return true;
-    }
-    return false;
   }
 
   /**
@@ -160,6 +128,25 @@ export class Solid<T extends Application = Application, D extends EntityData = E
   /** Bottom edge Y coordinate */
   public get bottom(): number {
     return this.y + this.height;
+  }
+
+  /**
+   * Checks if this solid can collide with the given entity type.
+   *
+   * @param type - The type of entity to check for collision
+   * @returns True if collision is allowed, false otherwise
+   */
+  canCollideWith(type: PhysicsEntityType): boolean {
+    if (this.collideable && !this._excludedCollisionTypes) {
+      return true;
+    }
+    if (!this.collideable) {
+      return false;
+    }
+    if (!this._excludedCollisionTypes.has(type)) {
+      return true;
+    }
+    return false;
   }
 
   /**

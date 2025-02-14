@@ -2,7 +2,7 @@ import { Application, bindAllMethods, defaultFactoryMethods, SignalConnection, S
 import CrunchPhysicsPlugin from './CrunchPhysicsPlugin';
 import { Group } from './Group';
 import { System } from './System';
-import { EntityData, PhysicsEntityConfig, PhysicsEntityView, Rectangle } from './types';
+import { EntityData, PhysicsEntityConfig, PhysicsEntityType, PhysicsEntityView, Rectangle } from './types';
 import { resolveEntityPosition, resolveEntitySize } from './utils';
 
 /**
@@ -52,19 +52,23 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   public type!: string;
 
   /** Set of entity types this entity should not collide with */
-  public excludeCollisionTypes: Set<string> = new Set();
+  protected _excludedCollisionTypes: Set<PhysicsEntityType>;
+
+  get excludedCollisionTypes(): Set<PhysicsEntityType> {
+    return this._excludedCollisionTypes;
+  }
 
   /** Color to use when rendering debug visuals */
   public debugColor: number;
 
   /** Whether the entity should be removed when culled (out of bounds) */
-  public shouldRemoveOnCull: boolean = false;
+  public shouldRemoveOnCull: boolean;
 
   /** Entity width in pixels */
-  public width: number = 0;
+  public width: number;
 
   /** Entity height in pixels */
-  public height: number = 0;
+  public height: number;
 
   /** Visual representation (sprite/graphics) of this entity */
   public view!: PhysicsEntityView;
@@ -73,15 +77,15 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   public active: boolean = true;
 
   protected _data: Partial<D>;
-  protected _group: Group | null = null;
-  protected _isCulled: boolean = false;
-  protected _isDestroyed: boolean = false;
-  protected _isInitialized: boolean = false;
-  protected _xRemainder: number = 0;
-  protected _yRemainder: number = 0;
-  protected _x: number = 0;
-  protected _y: number = 0;
-  protected signalConnections: SignalConnections = new SignalConnections();
+  protected _group: Group | null;
+  protected _isCulled: boolean;
+  protected _isDestroyed: boolean;
+  protected _isInitialized: boolean;
+  protected _xRemainder: number;
+  protected _yRemainder: number;
+  protected _x: number;
+  protected _y: number;
+  protected signalConnections: SignalConnections;
 
   set id(value: string) {
     this._id = value;
@@ -182,13 +186,27 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   constructor(config?: PhysicsEntityConfig<D>) {
     bindAllMethods(this);
 
+    this.signalConnections = new SignalConnections();
+    this._excludedCollisionTypes = new Set();
+    this.shouldRemoveOnCull = false;
+    this.width = 0;
+    this.height = 0;
+
     this._data = {};
+    this._group = null;
+    this._isCulled = false;
+    this._isDestroyed = false;
+    this._isInitialized = false;
+    this._xRemainder = 0;
+    this._yRemainder = 0;
+
+    this._x = 0;
+    this._y = 0;
 
     if (config) {
       this.init(config);
     }
 
-    // Use queueMicrotask to ensure initialization happens after constructor
     this.initialize();
     this.addView();
   }
@@ -226,6 +244,31 @@ export class Entity<A extends Application = Application, D extends EntityData = 
    */
   public postUpdate(): void {
     // Override in subclass
+  }
+
+  excludeCollisionType(...types: PhysicsEntityType[]) {
+    if (!this._excludedCollisionTypes) {
+      this._excludedCollisionTypes = new Set();
+    }
+    for (const type of types) {
+      this._excludedCollisionTypes.add(type);
+    }
+  }
+
+  addCollisionType(...types: PhysicsEntityType[]) {
+    if (!this._excludedCollisionTypes) {
+      return;
+    }
+    for (const type of types) {
+      this._excludedCollisionTypes.delete(type);
+    }
+  }
+
+  canCollideWith(type: PhysicsEntityType): boolean {
+    if (!this._excludedCollisionTypes.has(type)) {
+      return true;
+    }
+    return false;
   }
 
   /**

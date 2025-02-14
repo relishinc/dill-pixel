@@ -30,9 +30,9 @@
   },
   "peerDependencies": {
     "dill-pixel": "4.9.0",
-    "pixi.js": "8.7.3"
+    "pixi.js": "8.8.0"
   },
   "dependencies": {
-    "@rive-app/canvas-advanced-lite": "^2.18.0"
+    "@rive-app/canvas-advanced-lite": "^2.26.1"
   }
 }
