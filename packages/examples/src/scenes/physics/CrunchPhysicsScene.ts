@@ -1,14 +1,6 @@
 import BaseScene from '@/scenes/BaseScene';
 import { V8Application } from '@/V8Application';
-import {
-  Actor,
-  Collision,
-  CollisionResult,
-  Group,
-  ICrunchPhysicsPlugin,
-  Sensor,
-  Solid,
-} from '@dill-pixel/plugin-crunch-physics';
+import { Actor, CollisionResult, Group, ICrunchPhysicsPlugin, Sensor, Solid } from '@dill-pixel/plugin-crunch-physics';
 import { ActionDetail, AnimatedSprite, Button, Camera, Container, Joystick, Signal, UICanvas } from 'dill-pixel';
 import gsap from 'gsap';
 
@@ -545,12 +537,12 @@ export default class CrunchPhysicsScene extends BaseScene {
   }
   private _joystick: Joystick;
 
-  private _resolveCollisions(collisions: Collision[]): void {
-    console.log(collisions);
-    collisions.forEach((collision) => {
-      console.log('collision', collision.type);
-    });
-  }
+  // private _resolveCollisions(collisions: Collision[]): void {
+  //   console.log(collisions);
+  //   collisions.forEach((collision) => {
+  //     console.log('collision', collision.type);
+  //   });
+  // }
 
   // private _resolveOverlaps(overlaps: SensorOverlap[]): void {
   // overlaps.forEach((overlap) => {

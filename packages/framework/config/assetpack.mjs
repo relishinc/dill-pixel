@@ -280,6 +280,12 @@ export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfi
       apConfig.output = path.isAbsolute(publicDir)
         ? path.join('.', outputPath).replace(/\\/g, '/')
         : `./${outputPath}`.replace(/\\/g, '/');
+
+      // on windows, for some reason, the output path is ./C:/Users/.../assets
+      // so we need to remove the first two characters
+      if (apConfig.output.indexOf('./C') === 0) {
+        apConfig.output = apConfig.output.substr(2);
+      }
     },
     buildStart: async () => {
       if (mode === 'serve') {

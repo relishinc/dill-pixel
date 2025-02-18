@@ -137,16 +137,13 @@ export class Solid<T extends Application = Application, D extends EntityData = E
    * @returns True if collision is allowed, false otherwise
    */
   canCollideWith(type: PhysicsEntityType): boolean {
-    if (this.collideable && !this._excludedCollisionTypes) {
+    if (this.collideable && !this.system.getCollisionExclusions(this)) {
       return true;
     }
     if (!this.collideable) {
       return false;
     }
-    if (!this._excludedCollisionTypes.has(type)) {
-      return true;
-    }
-    return false;
+    return this.system.canCollideWith(this, type);
   }
 
   /**

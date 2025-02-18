@@ -1,10 +1,18 @@
 import { Container, Graphics } from 'pixi.js';
 import { Actor } from './Actor';
 import CrunchPhysicsPlugin from './CrunchPhysicsPlugin';
+import { Entity } from './Entity';
 import { Group } from './Group';
 import { Sensor } from './Sensor';
 import { Solid } from './Solid';
-import { Collision, PhysicsEntityConfig, PhysicsEntityView, Rectangle, SensorOverlap } from './types';
+import {
+  Collision,
+  PhysicsEntityConfig,
+  PhysicsEntityType,
+  PhysicsEntityView,
+  Rectangle,
+  SensorOverlap,
+} from './types';
 
 /**
  * Configuration options for the Crunch physics system.
@@ -96,6 +104,8 @@ export class System {
   private solidsByType: Map<string, Set<Solid>> = new Map();
   private sensorsByType: Map<string, Set<Sensor>> = new Map();
   private groupsByType: Map<string, Set<Group>> = new Map();
+  // Collision exclusion tracking
+  private collisionExclusions: Map<Entity, Set<PhysicsEntityType>> = new Map();
   // Spatial partitioning
   private grid: Map<string, Set<Solid>> = new Map();
   // Collision tracking
@@ -336,6 +346,7 @@ export class System {
   }
 
   public removeActor(actor: Actor, destroyView: boolean = true): void {
+    this.collisionExclusions.delete(actor);
     this.actors.delete(actor);
     // Remove from type index
     const typeSet = this.actorsByType.get(actor.type);
@@ -353,6 +364,7 @@ export class System {
   }
 
   public removeSolid(solid: Solid, destroyView: boolean = true): void {
+    this.collisionExclusions.delete(solid);
     this.solids.delete(solid);
     // Remove from type index
     const typeSet = this.solidsByType.get(solid.type);
@@ -372,6 +384,7 @@ export class System {
   }
 
   public removeSensor(sensor: Sensor, destroyView: boolean = true): void {
+    this.collisionExclusions.delete(sensor);
     this.sensors.delete(sensor);
     // Remove from type index
     const typeSet = this.sensorsByType.get(sensor.type);
@@ -764,5 +777,44 @@ export class System {
     }
 
     group.onRemoved();
+  }
+
+  /**
+   * Excludes collision types for a specific entity
+   */
+  public excludeCollisionTypes(entity: Entity, ...types: PhysicsEntityType[]): void {
+    if (!this.collisionExclusions.has(entity)) {
+      this.collisionExclusions.set(entity, new Set());
+    }
+    const exclusions = this.collisionExclusions.get(entity)!;
+    types.forEach((type) => exclusions.add(type));
+  }
+
+  /**
+   * Adds back collision types for a specific entity
+   */
+  public includeCollisionTypes(entity: Entity, ...types: PhysicsEntityType[]): void {
+    const exclusions = this.collisionExclusions.get(entity);
+    if (!exclusions) return;
+    types.forEach((type) => exclusions.delete(type));
+    if (exclusions.size === 0) {
+      this.collisionExclusions.delete(entity);
+    }
+  }
+
+  /**
+   * Checks if an entity can collide with a specific type
+   */
+  public canCollideWith(entity: Entity, type: PhysicsEntityType): boolean {
+    const exclusions = this.collisionExclusions.get(entity);
+    if (!exclusions) return true;
+    return !exclusions.has(type);
+  }
+
+  /**
+   * Gets the collision exclusions for an entity
+   */
+  public getCollisionExclusions(entity: Entity): Set<PhysicsEntityType> | undefined {
+    return this.collisionExclusions.get(entity);
   }
 }

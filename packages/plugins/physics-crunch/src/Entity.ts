@@ -52,10 +52,9 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   public type!: string;
 
   /** Set of entity types this entity should not collide with */
-  protected _excludedCollisionTypes: Set<PhysicsEntityType>;
-
   get excludedCollisionTypes(): Set<PhysicsEntityType> {
-    return this._excludedCollisionTypes;
+    const exclusions = this.system.getCollisionExclusions(this);
+    return exclusions || new Set();
   }
 
   /** Color to use when rendering debug visuals */
@@ -187,7 +186,6 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     bindAllMethods(this);
 
     this.signalConnections = new SignalConnections();
-    this._excludedCollisionTypes = new Set();
     this.shouldRemoveOnCull = false;
     this.width = 0;
     this.height = 0;
@@ -247,28 +245,15 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   }
 
   excludeCollisionType(...types: PhysicsEntityType[]) {
-    if (!this._excludedCollisionTypes) {
-      this._excludedCollisionTypes = new Set();
-    }
-    for (const type of types) {
-      this._excludedCollisionTypes.add(type);
-    }
+    this.system.excludeCollisionTypes(this, ...types);
   }
 
-  addCollisionType(...types: PhysicsEntityType[]) {
-    if (!this._excludedCollisionTypes) {
-      return;
-    }
-    for (const type of types) {
-      this._excludedCollisionTypes.delete(type);
-    }
+  includeCollisionType(...types: PhysicsEntityType[]) {
+    this.system.includeCollisionTypes(this, ...types);
   }
 
   canCollideWith(type: PhysicsEntityType): boolean {
-    if (!this._excludedCollisionTypes.has(type)) {
-      return true;
-    }
-    return false;
+    return this.system.canCollideWith(this, type);
   }
 
   /**
