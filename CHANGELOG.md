@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.10.0](https://github.com/relishinc/dill-pixel/compare/v4.9.0...v4.10.0) (2025-02-18)
+
+
+### Features
+
+* crunch physics optimizations, ([72e992d](https://github.com/relishinc/dill-pixel/commit/72e992de61272735d189da0a4f945cea4d4e2b31))
+* input changes, ([72e992d](https://github.com/relishinc/dill-pixel/commit/72e992de61272735d189da0a4f945cea4d4e2b31))
+
+
+### Bug Fixes
+
+* assetpack output path on windows ([b7cc377](https://github.com/relishinc/dill-pixel/commit/b7cc377e9475b31c1d96d16e9367db5d4920c5bc))
+
 ## [4.9.0](https://github.com/relishinc/dill-pixel/compare/v4.8.0...v4.9.0) (2025-02-07)
 
 
