@@ -40,7 +40,7 @@ class Platform extends Solid<V8Application, PlatformData> {
       if (shouldPassThroughMe) {
         this.excludeCollisionType('Player');
       } else {
-        this.addCollisionType('Player');
+        this.includeCollisionType('Player');
       }
     }
     super.update(dt);

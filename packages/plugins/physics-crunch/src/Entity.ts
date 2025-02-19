@@ -244,14 +244,43 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     // Override in subclass
   }
 
+  /**
+   * Exclude collision types from this entity
+   * @param types
+   */
   excludeCollisionType(...types: PhysicsEntityType[]) {
     this.system.excludeCollisionTypes(this, ...types);
   }
 
+  /**
+   * Include collision types for this entity
+   * @param types
+   */
   includeCollisionType(...types: PhysicsEntityType[]) {
     this.system.includeCollisionTypes(this, ...types);
   }
 
+  /**
+   * Alias for excludeCollisionType
+   * @param types
+   */
+  removeCollisionType(...types: PhysicsEntityType[]) {
+    this.excludeCollisionType(...types);
+  }
+
+  /**
+   * Alias for includeCollisionType
+   * @param types
+   */
+  addCollisionType(...types: PhysicsEntityType[]) {
+    this.includeCollisionType(...types);
+  }
+
+  /**
+   * Check if this entity can collide with another entity
+   * @param type
+   * @returns
+   */
   canCollideWith(type: PhysicsEntityType): boolean {
     return this.system.canCollideWith(this, type);
   }
