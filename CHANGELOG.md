@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.10.1](https://github.com/relishinc/dill-pixel/compare/v4.10.0...v4.10.1) (2025-02-19)
+
+
+### Bug Fixes
+
+* collision type exclusions in crunch physics ([cdeb65a](https://github.com/relishinc/dill-pixel/commit/cdeb65a37dd60a63688c7801bcf8447585d91c29))
+* version bumps for vite, vite-plugin-dts ([9e09147](https://github.com/relishinc/dill-pixel/commit/9e09147dbe41edf6cb914d587153dda8aab7edc5))
+
 ## [4.10.0](https://github.com/relishinc/dill-pixel/compare/v4.9.0...v4.10.0) (2025-02-18)
 
 
