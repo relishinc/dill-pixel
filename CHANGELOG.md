@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.10.2](https://github.com/relishinc/dill-pixel/compare/v4.10.1...v4.10.2) (2025-02-19)
+
+
+### Bug Fixes
+
+* enter / exit animations, title in index.html for default application package ([f9d3356](https://github.com/relishinc/dill-pixel/commit/f9d33565ff16fe198f791a6bc55f88e430d24072))
+
 ## [4.10.1](https://github.com/relishinc/dill-pixel/compare/v4.10.0...v4.10.1) (2025-02-19)
 
 
