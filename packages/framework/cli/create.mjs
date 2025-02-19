@@ -63,6 +63,11 @@ function write_template_files(template, applicationNameForPkg, name, application
   pkg = pkg.replace(/~PACKAGE_MANAGER~/g, mgr);
   fs.writeFileSync(`${cwd}/package.json`, pkg);
 
+  // find index.html and replace ~NAME~ with the application's origin al name
+  const index_file = `${cwd}/index.html`;
+  const index_contents = fs.readFileSync(index_file, 'utf-8');
+  fs.writeFileSync(index_file, index_contents.replace(/~NAME~/g, name), 'utf-8');
+
   // find __APPLICATION_NAME__.ts and replace it with the application name, then delete ~Application.ts
   const app_file = `${cwd}/src/__APPLICATION_NAME__.ts`;
   const app_contents = fs.readFileSync(app_file, 'utf-8');
