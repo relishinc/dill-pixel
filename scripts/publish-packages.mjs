@@ -21,7 +21,7 @@ async function publishPackages(patterns) {
       process.chdir(resolve(cwd, packageDir));
       console.log(`Publishing package in ${packageDir}...`);
       try {
-        const { stdout, stderr } = await execAsync('npm publish');
+        const { stdout, stderr } = await execAsync('npm publish --access public');
         console.log(stdout);
         console.error(stderr);
       } catch (err) {
