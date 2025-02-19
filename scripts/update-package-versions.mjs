@@ -15,7 +15,8 @@ const { version: dillPixelVersion } = mainPackageJson;
 const frameworkPackageJsonPath = resolve(__dirname, './packages/framework/package.json');
 const frameworkPackageJson = JSON.parse(readFileSync(frameworkPackageJsonPath, 'utf8'));
 const {
-  dependencies: { 'pixi.js': pixiJsVersion, '@pixi/sound': pixiSoundVersion },
+  dependencies: { 'pixi.js': pixiJsVersion, '@pixi/sound': pixiSoundVersion, vite: viteVersion },
+  devDependencies: { 'vite-plugin-dts': vitePluginDtsVersion },
 } = frameworkPackageJson;
 
 // Function to update package.json files
@@ -34,6 +35,9 @@ function updatePackageJson(packageJsonPath) {
     if (packageJson.dependencies['dill-pixel'] && !packageJson.dependencies['dill-pixel']?.includes('workspace')) {
       packageJson.dependencies['dill-pixel'] = dillPixelVersion;
     }
+    if (packageJson.dependencies['vite'] && !packageJson.dependencies['vite']?.includes('workspace')) {
+      packageJson.dependencies['vite'] = viteVersion;
+    }
   }
   if (packageJson.peerDependencies) {
     if (packageJson.peerDependencies['pixi.js']) {
@@ -44,6 +48,21 @@ function updatePackageJson(packageJsonPath) {
     }
     if (packageJson.peerDependencies['dill-pixel']) {
       packageJson.peerDependencies['dill-pixel'] = dillPixelVersion;
+    }
+    if (packageJson.peerDependencies['vite']) {
+      packageJson.peerDependencies['vite'] = viteVersion;
+    }
+  }
+
+  if (packageJson.devDependencies) {
+    if (packageJson.devDependencies['vite-plugin-dts']) {
+      packageJson.devDependencies['vite-plugin-dts'] = vitePluginDtsVersion;
+    }
+    if (packageJson.devDependencies['dill-pixel']) {
+      packageJson.devDependencies['dill-pixel'] = dillPixelVersion;
+    }
+    if (packageJson.devDependencies['vite']) {
+      packageJson.devDependencies['vite'] = viteVersion;
     }
   }
 

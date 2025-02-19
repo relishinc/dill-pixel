@@ -50,7 +50,7 @@
     "pixi.js": "8.8.0",
     "rimraf": "5.0.5",
     "stats.js": "0.17.0",
-    "vite": "6.0.5",
+    "vite": "6.1.1",
     "vite-bundle-visualizer": "1.2.1",
     "vite-plugin-html": "3.2.2",
     "vite-plugin-singlefile": "2.0.3",
