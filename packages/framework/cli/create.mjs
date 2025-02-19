@@ -65,8 +65,16 @@ function write_template_files(template, applicationNameForPkg, name, application
 
   // find index.html and replace ~NAME~ with the application's origin al name
   const index_file = `${cwd}/index.html`;
-  const index_contents = fs.readFileSync(index_file, 'utf-8');
-  fs.writeFileSync(index_file, index_contents.replace(/~NAME~/g, name), 'utf-8');
+  let index_contents = fs.readFileSync(index_file, 'utf-8');
+  index_contents = index_contents.replace(/~NAME~/g, name);
+  fs.writeFileSync(index_file, index_contents, 'utf-8');
+
+  // find readme.md and replace ~NAME~ with the application's origin al name
+  const readme_file = `${cwd}/README.md`;
+  let readme_contents = fs.readFileSync(readme_file, 'utf-8');
+  readme_contents = readme_contents.replace(/~NAME~/g, name);
+  readme_contents = readme_contents.replace(/~PACKAGE_MANAGER~/g, mgr);
+  fs.writeFileSync(readme_file, readme_contents, 'utf-8');
 
   // find __APPLICATION_NAME__.ts and replace it with the application name, then delete ~Application.ts
   const app_file = `${cwd}/src/__APPLICATION_NAME__.ts`;
