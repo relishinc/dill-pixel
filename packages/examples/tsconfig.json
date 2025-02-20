@@ -7,7 +7,6 @@
       "@/*": ["src/*"],
       "dill-pixel/*": ["../framework/src/*"],
       "@dill-pixel/plugin-snap-physics/*": ["../plugins/physics-snap/src/*"],
-      "@dill-pixel/plugin-arcade-physics/*": ["../plugins/physics-arcade/src/*"],
       "@dill-pixel/plugin-matter-physics/*": ["../plugins/physics-matter/src/*"],
       "@dill-pixel/plugin-springroll/*": ["../plugins/springroll/src/*"],
       "@dill-pixel/plugin-google-analytics/*": ["../plugins/google-analytics/src/*"],

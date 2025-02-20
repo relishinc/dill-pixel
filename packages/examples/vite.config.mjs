@@ -10,7 +10,6 @@ export default extendConfig({
     alias: {
       'dill-pixel': path.resolve(__dirname, '../framework/src'),
       '@dill-pixel/plugin-snap-physics': path.resolve(__dirname, '../plugins/physics-snap/src'),
-      '@dill-pixel/plugin-arcade-physics': path.resolve(__dirname, '../plugins/physics-arcade/src'),
       '@dill-pixel/plugin-matter-physics': path.resolve(__dirname, '../plugins/physics-matter/src'),
       '@dill-pixel/plugin-crunch-physics': path.resolve(__dirname, '../plugins/physics-crunch/src'),
       '@dill-pixel/plugin-springroll': path.resolve(__dirname, '../plugins/springroll/src'),
