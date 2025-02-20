@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.12.0](https://github.com/relishinc/dill-pixel/compare/v4.11.0...v4.12.0) (2025-02-20)
+
+
+### Features
+
+* add plugins / storage adapters via the cli, chore: remove unnecessary stuff from the template ([9156df5](https://github.com/relishinc/dill-pixel/commit/9156df598f6826b8a7f61ce6715a8a68741aeb3f))
+
 ## [4.11.0](https://github.com/relishinc/dill-pixel/compare/v4.10.2...v4.11.0) (2025-02-20)
 
 
