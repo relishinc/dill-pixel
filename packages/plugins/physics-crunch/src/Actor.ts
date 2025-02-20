@@ -148,15 +148,12 @@ export class Actor<T extends Application = Application, D extends EntityData = E
   public reset(): void {
     super.reset();
 
-    this.group = null;
+    this._isRidingSolidCache = null;
+    this._carriedBy = null;
+    this._carriedByOverlap = 0;
+    this.velocity = { x: 0, y: 0 };
+
     this.updatePosition();
-
-    this._x = -Number.MAX_SAFE_INTEGER;
-    this._y = -Number.MAX_SAFE_INTEGER;
-
-    if (this.view) {
-      this.view.visible = false;
-    }
   }
 
   /**

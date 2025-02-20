@@ -86,6 +86,7 @@ export class Entity<A extends Application = Application, D extends EntityData = 
 
   protected _data: Partial<D>;
   protected _group: Group | null;
+  protected _groupOffset: { x: number; y: number };
   protected _isCulled: boolean;
   protected _isDestroyed: boolean;
   protected _isInitialized: boolean;
@@ -96,6 +97,9 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   protected signalConnections: SignalConnections;
   protected _following: Entity | null;
   protected _followOffset: { x: number; y: number };
+
+  public updatedFollowPosition: boolean = false;
+  public updatedGroupPosition: boolean = false;
 
   set id(value: string) {
     this._id = value;
@@ -151,14 +155,26 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     return this._group;
   }
 
-  set group(value: Group | null) {
-    this._group = value;
+  set groupOffset(value: { x: number; y: number }) {
+    this._groupOffset = resolvePointLike(value);
+  }
+
+  get groupOffset(): { x: number; y: number } {
+    return this._groupOffset || { x: 0, y: 0 };
+  }
+
+  setGroup(group: Group | null, offset: PointLike = { x: 0, y: 0 }) {
+    this._groupOffset = resolvePointLike(offset);
+    // if we're already in a group, remove ourselves first
     if (this._group) {
-      this.onAddedToGroup();
-    } else {
+      this.system.removeFromGroup(this);
       this.onRemovedFromGroup();
     }
-    this.updatePosition();
+    this._group = group;
+    if (group) {
+      this.system.addToGroup(group, this);
+      this.onAddedToGroup();
+    }
   }
 
   set position(value: PointLike) {
@@ -378,6 +394,17 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     if (config.view) {
       this.view = config.view;
     }
+
+    if (config.group) {
+      this.setGroup(config.group ?? null, config.groupOffset ? resolvePointLike(config.groupOffset) : { x: 0, y: 0 });
+    }
+
+    if (config.follows) {
+      this.setFollowing(
+        config.follows ?? null,
+        config.followOffset ? resolvePointLike(config.followOffset) : { x: 0, y: 0 },
+      );
+    }
     // Show and update view if it exists
     this.addView();
   }
@@ -395,7 +422,20 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     this._xRemainder = 0;
     this._yRemainder = 0;
 
+    this._followOffset = { x: 0, y: 0 };
+    this._following = null;
+
+    this._groupOffset = { x: 0, y: 0 };
+    this._group = null;
+
     this._data = {};
+
+    this._x = -Number.MAX_SAFE_INTEGER;
+    this._y = -Number.MAX_SAFE_INTEGER;
+
+    if (this.view) {
+      this.view.visible = false;
+    }
   }
 
   /** Reference to the physics system */
@@ -478,8 +518,9 @@ export class Entity<A extends Application = Application, D extends EntityData = 
    * Override this to handle custom removal logic.
    */
   public onRemoved(): void {
-    // Override in subclass
-    this.destroy();
+    if (!this._isDestroyed) {
+      this.destroy();
+    }
   }
 
   /**

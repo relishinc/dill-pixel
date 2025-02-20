@@ -504,30 +504,6 @@ export default class CrunchPhysicsScene extends BaseScene {
     this.pf3 = this.createPlatform(200, 200, 200, 32, 'ground_grass');
 
     // Test group
-    this.group = new Group({
-      type: 'Platforms',
-    });
-
-    this.group.add(this.pf1);
-    this.group.add(this.pf2);
-    this.group.add(this.pf3);
-
-    this.group.data = { direction: -1 };
-
-    this.pf1.update = () => {
-      if (this.pf1.data.direction === 1) {
-        this.pf1.x += 2;
-        if (this.pf1.x > this.group.x + 600) {
-          this.pf1.data.direction = -1;
-        }
-      } else {
-        this.pf1.x -= 2;
-        if (this.pf1.x < this.group.x) {
-          this.pf1.data.direction = 1;
-        }
-      }
-    };
-
     this._createPlayer();
 
     this.addControls();

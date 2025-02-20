@@ -1,7 +1,7 @@
 import BaseScene from '@/scenes/BaseScene';
 import { V8Application } from '@/V8Application';
-import { Actor, CollisionResult, ICrunchPhysicsPlugin, Sensor, Solid } from '@dill-pixel/plugin-crunch-physics';
-import { Application, bool, Container, Signal } from 'dill-pixel';
+import { Actor, CollisionResult, Group, ICrunchPhysicsPlugin, Sensor, Solid } from '@dill-pixel/plugin-crunch-physics';
+import { bool, Container, PointLike, Signal } from 'dill-pixel';
 import gsap from 'gsap';
 import { Graphics, Rectangle, Ticker } from 'pixi.js';
 
@@ -183,31 +183,18 @@ class Coin extends Sensor<V8Application> {
   }
 }
 
-class Segment {
-  public platforms: Solid[] = [];
-  public obstacles: Solid[] = [];
+class Segment extends Group<V8Application> {
   public coins: Array<{ coin: Coin; offsetX: number; offsetY: number }> = [];
   public width: number;
-  public x: number;
-  public y: number;
-  public tweens: gsap.core.Tween[] = [];
   public animations: Set<gsap.core.Tween> = new Set();
 
-  get app(): Application {
-    return Application.getInstance();
-  }
-
-  get physics(): ICrunchPhysicsPlugin {
-    return this.app.getPlugin('crunch-physics') as ICrunchPhysicsPlugin;
-  }
-
   constructor(x: number, y: number, width: number) {
+    super();
     this.x = x;
     this.y = y;
     this.width = width;
-
     // Create floor platform
-    this._createPlatform(0, y, width, 32, false);
+    this._createPlatform(0, 0, width, 32, false);
 
     // Add random elevated platforms
     const platformCount = Math.floor(Math.random() * 3) + 1;
@@ -215,7 +202,7 @@ class Segment {
     for (let i = 0; i < platformCount; i++) {
       const platformWidth = 100 + Math.random() * 100;
       const platformX = (width * i) / platformCount + Math.random() * 50;
-      const platformY = y - 100 - Math.random() * 100;
+      const platformY = -100 - Math.random() * 100;
 
       this._createPlatform(platformX, platformY, platformWidth, 32, true);
     }
@@ -227,37 +214,37 @@ class Segment {
     sprite.fill({ color: 0x0000ff });
     const platform = this.physics.createSolid({
       type: 'Platform',
-      x: this.x + x,
-      y,
       width,
       height,
+      group: this,
+      groupOffset: { x, y },
       view: sprite,
     });
 
     const isMoving = canMove && bool();
 
     platform.moving = true;
-    this.platforms.push(platform);
 
     // Add obstacles on platform
-    let obstacle: Solid | null = null;
     if (Math.random() < 0.7) {
-      obstacle = this._createObstacle(x, y);
-      this.obstacles.push(obstacle);
+      this._createObstacle(platform, { x: width / 2, y: -32 - Math.random() * 300 });
     }
     const dist = bool() ? 100 : -100;
     if (Math.random() < 0.8) {
       const coinCount = Math.floor(Math.random() * 3) + 1;
       for (let j = 0; j < coinCount; j++) {
-        const coin = this._createCoin(x, y);
-        coin.coin.setFollowing(platform, { x: (width * (j + 1)) / (coinCount + 1), y: -50 - Math.random() * 30 });
-        this.coins.push(coin);
+        this._createCoin(platform, {
+          x: (width * (j + 1)) / (coinCount + 1),
+          y: -50 - Math.random() * 30,
+        });
       }
     }
 
     if (isMoving) {
-      const platformTween = gsap.to(platform, {
-        y: platform.y + dist,
+      const xDist = bool() ? 100 : 0;
+      const platformTween = gsap.to(platform.groupOffset, {
+        x: platform.groupOffset.x + xDist,
+        y: xDist ? platform.groupOffset.y : platform.groupOffset.y + dist,
         duration: 1.5,
         repeat: -1,
         yoyo: true,
@@ -265,24 +252,23 @@ class Segment {
       });
       this.animations.add(platformTween);
     }
-    if (obstacle) {
-      obstacle.setFollowing(platform, { x: width / 2, y: -32 - Math.random() * 300 });
-    }
+
     return platform;
   }
 
-  private _createObstacle(x: number, y: number): Solid {
+  private _createObstacle(platform: Solid, offset: PointLike): Solid {
     const sprite = new Graphics();
     sprite.rect(0, 0, 32, 32);
     sprite.fill({ color: 0xff0000, alpha: 0.75 });
 
     const obstacle = this.physics.createSolid({
       type: 'Obstacle',
-      x: this.x + x,
-      y,
       width: 28,
       height: 28,
       view: sprite,
+      group: this,
+      follows: platform,
+      followOffset: offset,
     });
 
     obstacle.updateView = () => {
@@ -294,35 +280,19 @@ class Segment {
     return obstacle;
   }
 
-  private _createCoin(x: number, y: number): { coin: Coin; offsetX: number; offsetY: number } {
+  private _createCoin(platform: Solid, offset: PointLike): Coin {
     const coin = new Coin({
-      position: [this.x + x, y],
+      group: this,
+      follows: platform,
+      followOffset: offset,
     });
     this.physics.system.addSensor(coin);
-    // Store the coin with its relative offset from segment start
-    const coinData = {
-      coin,
-      offsetX: x,
-      offsetY: y - this.y,
-    };
-    this.coins.push(coinData);
-    return coinData;
-  }
-
-  public move(x: number, y: number): void {
-    this.x += x;
-    this.platforms.forEach((p) => p.move(x, y));
+    return coin;
   }
 
   public destroy(): void {
     this.animations.forEach((a) => a.kill());
-    this.platforms.forEach((p) => this.physics.system.removeSolid(p, true));
-    this.obstacles.forEach((o) => this.physics.system.removeSolid(o, true));
-    this.coins.forEach(({ coin }) => this.physics.system.removeSensor(coin, true));
-
-    this.platforms = [];
-    this.obstacles = [];
-    this.coins = [];
+    super.destroy();
   }
 }
 
@@ -483,6 +453,8 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
   resize() {
     super.resize();
     this.physicsContainer.position.set(-this.app.size.width / 2, -this.app.size.height / 2);
+    this.physics.system.boundary = new Rectangle(-100, -100, this.app.size.width + 200, this.app.size.height + 200);
+    this.segments.forEach((s) => (s.y = this.app.size.height - 60));
   }
 
   destroy(): void {

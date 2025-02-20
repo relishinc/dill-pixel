@@ -1,6 +1,7 @@
 import { Application, IPlugin, Plugin } from 'dill-pixel';
 import { Container as PIXIContainer, Ticker } from 'pixi.js';
 import { Actor } from './Actor';
+import { Group } from './Group';
 import { CrunchPhysicsOptions } from './interfaces';
 import { Sensor } from './Sensor';
 import { Solid } from './Solid';
@@ -122,7 +123,7 @@ export interface ICrunchPhysicsPlugin extends IPlugin {
    * const entity = physics.createEntity(entityConfig);
    * ```
    */
-  createEntity(config: PhysicsEntityConfig): Actor | Solid | Sensor;
+  createEntity(config: PhysicsEntityConfig): Actor | Solid | Sensor | Group;
 
   /**
    * Adds an existing physics entity to the system.
@@ -143,7 +144,7 @@ export interface ICrunchPhysicsPlugin extends IPlugin {
    * physics.addEntity(customActor);
    * ```
    */
-  addEntity(entity: Actor | Solid | Sensor): Actor | Solid | Sensor;
+  addEntity(entity: Actor | Solid | Sensor | Group): Actor | Solid | Sensor | Group;
 
   /**
    * Creates a dynamic physics actor that can move and collide with other entities.
@@ -232,6 +233,16 @@ export interface ICrunchPhysicsPlugin extends IPlugin {
    * ```
    */
   createSensor(config: PhysicsEntityConfig): Sensor;
+
+  createGroup(config: PhysicsEntityConfig): Group;
+
+  addActor(actor: Actor): Actor;
+
+  addSolid(solid: Solid): Solid;
+
+  addSensor(sensor: Sensor): Sensor;
+
+  addGroup(group: Group): Group;
 
   /**
    * Removes an actor from the physics system.
@@ -355,11 +366,11 @@ export default class CrunchPhysicsPlugin extends Plugin implements ICrunchPhysic
     this.system.setCollisionResolver(resolver);
   }
 
-  public createEntity(config: PhysicsEntityConfig): Actor | Solid | Sensor {
+  public createEntity(config: PhysicsEntityConfig): Actor | Solid | Sensor | Group {
     return this.system.createEntity(config);
   }
 
-  public addEntity(entity: Actor | Solid | Sensor): Actor | Solid | Sensor {
+  public addEntity(entity: Actor | Solid | Sensor | Group): Actor | Solid | Sensor | Group {
     return this.system.addEntity(entity);
   }
 
@@ -375,6 +386,26 @@ export default class CrunchPhysicsPlugin extends Plugin implements ICrunchPhysic
     return this.system.createSensor(config);
   }
 
+  public createGroup(config: PhysicsEntityConfig): Group {
+    return this.system.createGroup(config);
+  }
+
+  public addActor(actor: Actor): Actor {
+    return this.system.addActor(actor);
+  }
+
+  public addSolid(solid: Solid): Solid {
+    return this.system.addSolid(solid);
+  }
+
+  public addSensor(sensor: Sensor): Sensor {
+    return this.system.addSensor(sensor);
+  }
+
+  public addGroup(group: Group): Group {
+    return this.system.addGroup(group);
+  }
+
   public removeActor(actor: Actor): void {
     this.system.removeActor(actor);
   }
@@ -387,9 +418,8 @@ export default class CrunchPhysicsPlugin extends Plugin implements ICrunchPhysic
     this.system.removeSensor(sensor);
   }
 
-  public updateSolidPosition(solid: Solid, x: number, y: number): void {
-    solid.x = x;
-    solid.y = y;
+  public removeGroup(group: Group): void {
+    this.system.removeGroup(group);
   }
 
   public destroy(): void {

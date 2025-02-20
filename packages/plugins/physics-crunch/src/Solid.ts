@@ -74,11 +74,7 @@ export class Solid<T extends Application = Application, D extends EntityData = E
    * For moving solids, this queues the movement to be applied on next update.
    */
   public set x(value: number) {
-    if (this.group) {
-      this._nextX = value + this.group.x; // Store position relative to group
-    } else {
-      this._nextX = Math.round(value);
-    }
+    this._nextX = Math.round(value);
     this.moving = true;
   }
 
@@ -91,11 +87,7 @@ export class Solid<T extends Application = Application, D extends EntityData = E
    * For moving solids, this queues the movement to be applied on next update.
    */
   public set y(value: number) {
-    if (this.group) {
-      this._nextY = value + this.group.y; // Store position relative to group
-    } else {
-      this._nextY = Math.round(value);
-    }
+    this._nextY = Math.round(value);
     this.moving = true;
   }
 

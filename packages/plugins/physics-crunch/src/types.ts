@@ -1,6 +1,8 @@
 import { PointLike, SizeLike } from 'dill-pixel';
 import { Container } from 'pixi.js';
 import { Actor } from './Actor';
+import { Entity } from './Entity';
+import { Group } from './Group';
 import { Sensor } from './Sensor';
 import { Solid } from './Solid';
 
@@ -36,6 +38,10 @@ export interface PhysicsEntityConfig<D extends EntityData = EntityData> {
   restitution?: number;
   view?: PhysicsEntityView;
   data?: Partial<D>;
+  group?: Group;
+  groupOffset?: PointLike;
+  follows?: Entity;
+  followOffset?: PointLike;
 }
 
 export interface CollisionResult {
@@ -67,4 +73,4 @@ export interface Collision {
 }
 
 export type PhysicsEntityView = Container;
-export type PhysicsEntityType = 'Actor' | 'Solid' | string;
+export type PhysicsEntityType = 'Actor' | 'Solid' | 'Sensor' | 'Group' | (string & {});

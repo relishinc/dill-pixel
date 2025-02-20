@@ -24,9 +24,6 @@
       "path": "../plugins/physics-snap"
     },
     {
-      "path": "../plugins/physics-arcade"
-    },
-    {
       "path": "../plugins/physics-matter"
     },
     {

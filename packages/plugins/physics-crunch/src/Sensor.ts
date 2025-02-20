@@ -363,6 +363,15 @@ export class Sensor<T extends Application = Application, D extends EntityData = 
     return this._currentSensorOverlaps;
   }
 
+  public reset(): void {
+    super.reset();
+    this._currentSensorOverlaps.clear();
+    this._currentOverlaps.clear();
+    this._isRidingSolidCache = null;
+    this.velocity = { x: 0, y: 0 };
+    this.overlappingActors = new Set();
+  }
+
   /**
    * Called when an actor starts overlapping with this sensor.
    * Override this to handle overlap start events.

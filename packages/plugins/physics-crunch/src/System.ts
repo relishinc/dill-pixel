@@ -95,6 +95,9 @@ export interface PhysicsSystemOptions {
 export class System {
   private readonly options: PhysicsSystemOptions;
   // Public collections
+  public entities: Set<Entity> = new Set();
+  private _flaggedEntities: Set<Entity> = new Set();
+  // Type-based lookup maps
   public actors: Set<Actor> = new Set();
   public solids: Set<Solid> = new Set();
   public sensors: Set<Sensor> = new Set();
@@ -109,6 +112,9 @@ export class System {
 
   // Followers tracking
   private followers: Map<Entity, Set<Entity>> = new Map();
+
+  // groups tracking
+  private groupWithEntities: Map<Group, Set<Entity>> = new Map();
 
   // Spatial partitioning
   private grid: Map<string, Set<Solid>> = new Map();
@@ -186,6 +192,11 @@ export class System {
     this.debug = options.debug ?? false;
   }
 
+  private _resetPositionFlags(entity: Entity): void {
+    entity.updatedFollowPosition = false;
+    entity.updatedGroupPosition = false;
+  }
+
   public update(dt: number): void {
     if (!this.options.plugin.enabled) return;
     // Clear collisions from previous frame
@@ -226,13 +237,58 @@ export class System {
       this.updateActor(actor, deltaTime);
     }
 
-    // Update followers
+    this._flaggedEntities.clear();
+    // Update followers and group entities in a single pass
     for (const [entity, followers] of this.followers) {
       for (const follower of followers) {
-        follower.setPosition(entity.x + follower.followOffset.x, entity.y + follower.followOffset.y);
+        if (!follower.updatedFollowPosition) {
+          // Get the base position of the entity we're following
+          let followX = entity.x;
+          let followY = entity.y;
+
+          // If the follower and followed entity are in the same group,
+          // we need to use local coordinates to avoid double-counting the group position
+          if (follower.group && follower.group === entity.group) {
+            // Get the entity's position relative to its group using the offset
+            const entityGroupOffset = entity.groupOffset;
+            followX = follower.group.x + entityGroupOffset.x;
+            followY = follower.group.y + entityGroupOffset.y;
+
+            // Set position using combined offsets relative to group
+            follower.setPosition(followX + follower.followOffset.x, followY + follower.followOffset.y);
+          } else if (follower.group) {
+            // Different groups or followed entity not in a group
+            follower.setPosition(
+              followX + follower.followOffset.x + follower.group.x + follower.groupOffset.x,
+              followY + follower.followOffset.y + follower.group.y + follower.groupOffset.y,
+            );
+          } else {
+            // No group, just following
+            follower.setPosition(followX + follower.followOffset.x, followY + follower.followOffset.y);
+          }
+
+          follower.updatedFollowPosition = true;
+          this._flaggedEntities.add(follower);
+          if (follower.group) {
+            follower.updatedGroupPosition = true;
+            this._flaggedEntities.add(follower);
+          }
+        }
       }
     }
 
+    // Update remaining group entities that aren't followers
+    for (const [group, groupEntities] of this.groupWithEntities) {
+      for (const entity of groupEntities) {
+        if (!entity.updatedGroupPosition && !entity.updatedFollowPosition) {
+          entity.setPosition(group.x + entity.groupOffset.x, group.y + entity.groupOffset.y);
+          entity.updatedGroupPosition = true;
+          this._flaggedEntities.add(entity);
+        }
+      }
+    }
+
+    this._flaggedEntities.forEach(this._resetPositionFlags);
     // Process overlaps if resolver is set
     if (this.options.overlapResolver && this.sensorOverlaps.length > 0) {
       this.options.overlapResolver(this.sensorOverlaps);
@@ -283,18 +339,20 @@ export class System {
     this.sensorOverlaps.push(...overlaps);
   }
 
-  public createEntity(config: PhysicsEntityConfig): Actor | Solid | Sensor {
+  public createEntity(config: PhysicsEntityConfig): Actor | Solid | Sensor | Group {
     if (config.type === 'actor') {
       return this.createActor(config);
     } else if (config.type === 'solid') {
       return this.createSolid(config);
     } else if (config.type === 'sensor') {
       return this.createSensor(config);
+    } else if (config.type === 'group') {
+      return this.createGroup(config);
     }
     throw new Error(`Invalid entity type: ${config.type}`);
   }
 
-  public addEntity(entity: Actor | Solid | Sensor): Actor | Solid | Sensor {
+  public addEntity(entity: Actor | Solid | Sensor | Group): Actor | Solid | Sensor | Group {
     if (!entity || !entity.entityType) {
       throw new Error('Entity is required');
     }
@@ -304,6 +362,8 @@ export class System {
       return this.addSolid(entity as Solid);
     } else if (entity.entityType === 'Sensor') {
       return this.addSensor(entity as Sensor);
+    } else if (entity.entityType === 'Group') {
+      return this.addGroup(entity as Group);
     }
     throw new Error(`Invalid entity type: ${entity!.entityType}`);
   }
@@ -314,6 +374,7 @@ export class System {
   }
 
   public addActor(actor: Actor): Actor {
+    this.entities.add(actor);
     this.actors.add(actor);
 
     // Add to type index
@@ -330,6 +391,7 @@ export class System {
   }
 
   public addSensor(sensor: Sensor): Sensor {
+    this.entities.add(sensor);
     this.sensors.add(sensor);
     // Add to type index
     if (!this.sensorsByType.has(sensor.type)) {
@@ -345,6 +407,7 @@ export class System {
   }
 
   public addSolid(solid: Solid): Solid {
+    this.entities.add(solid);
     this.solids.add(solid);
     // Add to type index
     if (!this.solidsByType.has(solid.type)) {
@@ -358,6 +421,7 @@ export class System {
   }
 
   public removeActor(actor: Actor, destroyView: boolean = true): void {
+    this.entities.delete(actor);
     this.collisionExclusions.delete(actor);
     this.actors.delete(actor);
     // Remove from type index
@@ -376,6 +440,7 @@ export class System {
   }
 
   public removeSolid(solid: Solid, destroyView: boolean = true): void {
+    this.entities.delete(solid);
     this.collisionExclusions.delete(solid);
     this.solids.delete(solid);
     // Remove from type index
@@ -396,6 +461,7 @@ export class System {
   }
 
   public removeSensor(sensor: Sensor, destroyView: boolean = true): void {
+    this.entities.delete(sensor);
     this.collisionExclusions.delete(sensor);
     this.sensors.delete(sensor);
     // Remove from type index
@@ -528,6 +594,34 @@ export class System {
       set.clear();
       this.followers.delete(entity);
     }
+  }
+
+  public addToGroup(group: Group, entity: Entity): Entity {
+    if (!this.groupWithEntities.has(group)) {
+      this.groupWithEntities.set(group, new Set());
+    }
+    this.groupWithEntities.get(group)!.add(entity);
+    return entity;
+  }
+
+  public removeFromGroup(entity: Entity): Entity {
+    for (const group of this.groupWithEntities.values()) {
+      group.delete(entity);
+    }
+    return entity;
+  }
+
+  public getEntitiesInGroup(group: Group): Entity[] {
+    return Array.from(this.groupWithEntities.get(group) || []);
+  }
+
+  public removeEntitiesOfGroup(group: Group): Entity[] {
+    const entities = Array.from(this.groupWithEntities.get(group) || []) || [];
+    entities.forEach((entity) => {
+      entity.setGroup(null);
+    });
+    this.groupWithEntities.delete(group);
+    return entities;
   }
 
   private overlaps(a: Rectangle, b: Rectangle): boolean {
@@ -683,6 +777,7 @@ export class System {
 
   public clearAll(destroy: boolean = true) {
     this.grid.clear();
+    this.entities.clear();
 
     if (destroy) {
       this.solids.forEach((solid) => {
@@ -803,6 +898,7 @@ export class System {
   }
 
   public addGroup(group: Group): Group {
+    this.entities.add(group);
     this.groups.add(group);
 
     // Add to type index
@@ -815,6 +911,7 @@ export class System {
   }
 
   public removeGroup(group: Group, destroyView: boolean = true): void {
+    this.entities.delete(group);
     this.groups.delete(group);
 
     // Remove from type index
