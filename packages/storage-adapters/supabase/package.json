@@ -1,7 +1,7 @@
 {
   "name": "@dill-pixel/storage-adapter-supabase",
   "version": "4.11.0",
-  "description": "",
+  "description": "Supabase Storage Adapter",
   "files": [
     "lib",
     "src"
@@ -19,7 +19,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate-version": "node generateVersion.mjs"
   },
-  "keywords": [],
+  "keywords": [
+    "supabase",
+    "storage",
+    "storage-adapter",
+    "dill-pixel",
+    "dillpixel"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {

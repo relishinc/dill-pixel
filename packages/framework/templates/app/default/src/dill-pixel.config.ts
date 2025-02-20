@@ -36,12 +36,6 @@ export type Data = {
 
 export const config = defineConfig<Data>({
   id: '__APPLICATION_NAME__',
-  defaultSceneLoadMethod: 'immediate',
-  useSpine: true,
-  showStats: true,
-  showSceneDebugMenu: true,
-  useHash: true,
-  useVoiceover: false,
   data: {
     initial: {
       dill: 'pixel',

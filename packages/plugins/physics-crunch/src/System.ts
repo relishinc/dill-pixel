@@ -197,17 +197,11 @@ export class System {
 
     // Update containers first
     for (const group of this.groups) {
-      if (group.following) {
-        continue;
-      }
       group.update(deltaTime);
     }
 
     // Update solids
     for (const solid of this.solids) {
-      if (solid.following) {
-        continue;
-      }
       solid.preUpdate();
       solid.update(deltaTime);
       solid.postUpdate();
@@ -215,10 +209,8 @@ export class System {
       if (solid.moving) {
         // Remove from old grid cells
         this.removeSolidFromGrid(solid);
-
         // Move the solid (which will handle pushing/carrying actors and sensors)
-        solid.move(0, 0, this.actors, this.sensors);
-
+        solid.move(0, 0, this.actors, this.sensors, true);
         // Add to new grid cells
         this.addSolidToGrid(solid);
       }
@@ -226,10 +218,12 @@ export class System {
 
     // Update sensors (before actors so they can detect entry/exit in the same frame)
     for (const sensor of this.sensors) {
-      if (sensor.following) {
-        continue;
-      }
       this.updateSensor(sensor, deltaTime);
+    }
+
+    // Update actors
+    for (const actor of this.actors) {
+      this.updateActor(actor, deltaTime);
     }
 
     // Update followers
@@ -237,14 +231,6 @@ export class System {
       for (const follower of followers) {
         follower.setPosition(entity.x + follower.followOffset.x, entity.y + follower.followOffset.y);
       }
-    }
-
-    // Update actors
-    for (const actor of this.actors) {
-      if (actor.following) {
-        continue;
-      }
-      this.updateActor(actor, deltaTime);
     }
 
     // Process overlaps if resolver is set
@@ -515,6 +501,7 @@ export class System {
   }
 
   public addFollower(entity: Entity, follower: Entity): void {
+    // Logger.log('adding follower', entity.type, follower.type);
     if (!this.followers.has(entity)) {
       this.followers.set(entity, new Set());
     }

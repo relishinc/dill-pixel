@@ -1,7 +1,14 @@
 {
   "name": "@dill-pixel/plugin-crunch-physics",
+  "description": "Crunch Physics",
+  "keywords": [
+    "physics",
+    "crunch",
+    "physics-crunch",
+    "dill-pixel",
+    "dillpixel"
+  ],
   "version": "4.11.0",
-  "description": "",
   "files": [
     "lib",
     "src"
@@ -20,7 +27,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate-version": "node generateVersion.mjs"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {

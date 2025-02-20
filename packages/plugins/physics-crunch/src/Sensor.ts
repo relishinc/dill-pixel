@@ -86,6 +86,19 @@ export class Sensor<T extends Application = Application, D extends EntityData = 
   private _currentSensorOverlaps = new Set<SensorOverlap>();
   private _currentOverlaps = new Set<Actor>();
 
+  public setPosition(x: number, y: number): void {
+    if (this.isStatic) {
+      this._x = x;
+      this._y = y;
+      this._xRemainder = 0;
+      this._yRemainder = 0;
+      this.updateView();
+      this.checkActorOverlaps();
+    } else {
+      super.setPosition(x, y);
+    }
+  }
+
   set x(value: number) {
     super.x = value;
     if (this.isStatic) {

@@ -10,14 +10,33 @@ import { copy, dist, mkdirp, package_manager } from './utils.mjs';
 
 let packageManager = package_manager;
 
+/**
+ * Ensures a version string has the ^ prefix unless it's a URL or specific commit
+ * @param {string} version
+ * @returns {string}
+ */
+function ensureCaretPrefix(version) {
+  // Skip if version is a URL, git repo, or specific commit
+  if (version.includes('://') || version.includes('github:') || version.includes('#')) {
+    return version;
+  }
+  // Skip if version already has a prefix
+  if (version.startsWith('^') || version.startsWith('~') || version.startsWith('>') || version.startsWith('<')) {
+    return version;
+  }
+  return `^${version}`;
+}
+
 async function write(cwd, options) {
   await mkdirp(cwd);
   await write_template_files(
+    cwd,
     options.template,
     options.applicationNameForPkg,
-    options.name,
     options.applicationName,
-    cwd,
+    options.defaultName,
+    options.plugins,
+    options.storageAdapters,
   );
 }
 
@@ -39,11 +58,22 @@ function getFiles(dirPath) {
 
 /**
  * @param {string} template
- * @param {'typescript' | 'checkjs' | null} types
+ * @param {string} applicationNameForPkg
  * @param {string} name
+ * @param {string} applicationName
  * @param {string} cwd
+ * @param {string[]} plugins
+ * @param {string[]} storageAdapters
  */
-function write_template_files(template, applicationNameForPkg, name, applicationName, cwd) {
+function write_template_files(
+  cwd,
+  template,
+  applicationNameForPkg,
+  applicationName,
+  defaultName,
+  plugins,
+  storageAdapters,
+) {
   const dir = dist(`templates/${template}`);
   copy(`${dir}/package.template.json`, `${cwd}/package.json`);
 
@@ -61,18 +91,96 @@ function write_template_files(template, applicationNameForPkg, name, application
   }
   pkg = pkg.replace(/~NAME~/g, applicationNameForPkg);
   pkg = pkg.replace(/~PACKAGE_MANAGER~/g, mgr);
+
+  // Get the framework version from package.json
+  const frameworkPkg = JSON.parse(fs.readFileSync(dist('package.json'), 'utf-8'));
+  const pkgJson = JSON.parse(pkg);
+
+  // Set the dill-pixel dependency version
+  if (pkgJson.dependencies && pkgJson.dependencies['dill-pixel']) {
+    pkgJson.dependencies['dill-pixel'] = ensureCaretPrefix(frameworkPkg.version);
+    pkg = JSON.stringify(pkgJson, null, 2);
+  }
+
+  // Add framework peer dependencies to the template's peerDependencies
+  if (frameworkPkg.peerDependencies) {
+    if (!pkgJson.peerDependencies) {
+      pkgJson.peerDependencies = {};
+    }
+
+    // Add each peer dependency with its version
+    Object.entries(frameworkPkg.peerDependencies).forEach(([name, version]) => {
+      if (!pkgJson.peerDependencies[name]) {
+        pkgJson.peerDependencies[name] = ensureCaretPrefix(version);
+      }
+    });
+
+    pkg = JSON.stringify(pkgJson, null, 2);
+  }
+
+  // Add selected plugins to dependencies
+  if (plugins && plugins.length > 0) {
+    const pkgJson = JSON.parse(pkg);
+    if (!pkgJson.dependencies) {
+      pkgJson.dependencies = {};
+    }
+
+    plugins.forEach((pluginName) => {
+      try {
+        const pluginDir = fs.readdirSync(dist('../plugins')).find((dir) => {
+          const plugin = JSON.parse(fs.readFileSync(dist(`../plugins/${dir}/package.json`), 'utf8'));
+          return plugin.name === pluginName;
+        });
+
+        if (pluginDir) {
+          const pluginPkg = JSON.parse(fs.readFileSync(dist(`../plugins/${pluginDir}/package.json`), 'utf8'));
+          pkgJson.dependencies[pluginName] = ensureCaretPrefix(pluginPkg.version);
+        }
+      } catch (e) {
+        console.warn(`Failed to add plugin ${pluginName} to dependencies:`, e);
+      }
+    });
+
+    pkg = JSON.stringify(pkgJson, null, 2);
+  }
+
+  if (storageAdapters && storageAdapters.length > 0) {
+    const pkgJson = JSON.parse(pkg);
+    if (!pkgJson.dependencies) {
+      pkgJson.dependencies = {};
+    }
+
+    storageAdapters.forEach((storageAdapterName) => {
+      try {
+        const saDir = fs.readdirSync(dist('../storage-adapters')).find((dir) => {
+          const sa = JSON.parse(fs.readFileSync(dist(`../storage-adapters/${dir}/package.json`), 'utf8'));
+          return sa.name === storageAdapterName;
+        });
+
+        if (saDir) {
+          const saPkg = JSON.parse(fs.readFileSync(dist(`../storage-adapters/${saDir}/package.json`), 'utf8'));
+          pkgJson.dependencies[storageAdapterName] = ensureCaretPrefix(saPkg.version);
+        }
+      } catch (e) {
+        console.warn(`Failed to add plugin ${storageAdapterName} to dependencies:`, e);
+      }
+    });
+
+    pkg = JSON.stringify(pkgJson, null, 2);
+  }
+
   fs.writeFileSync(`${cwd}/package.json`, pkg);
 
   // find index.html and replace ~NAME~ with the application's origin al name
   const index_file = `${cwd}/index.html`;
   let index_contents = fs.readFileSync(index_file, 'utf-8');
-  index_contents = index_contents.replace(/~NAME~/g, name);
+  index_contents = index_contents.replace(/~NAME~/g, defaultName);
   fs.writeFileSync(index_file, index_contents, 'utf-8');
 
   // find readme.md and replace ~NAME~ with the application's origin al name
   const readme_file = `${cwd}/README.md`;
   let readme_contents = fs.readFileSync(readme_file, 'utf-8');
-  readme_contents = readme_contents.replace(/~NAME~/g, name);
+  readme_contents = readme_contents.replace(/~NAME~/g, defaultName);
   readme_contents = readme_contents.replace(/~PACKAGE_MANAGER~/g, mgr);
   fs.writeFileSync(readme_file, readme_contents, 'utf-8');
 
@@ -88,6 +196,41 @@ function write_template_files(template, applicationNameForPkg, name, application
     const contents = fs.readFileSync(file.name, 'utf-8');
     fs.writeFileSync(file.name, contents.replace(/__APPLICATION_NAME__/g, applicationName));
   });
+
+  // Update dill-pixel.config.ts with selected plugins and storage adapters
+  const configPath = `${cwd}/src/dill-pixel.config.ts`;
+  let configContents = fs.readFileSync(configPath, 'utf-8');
+
+  if (plugins && plugins.length > 0) {
+    // Convert plugin names to config format
+    const pluginConfigs = plugins.map((pluginName) => {
+      // Remove @dill-pixel/plugin- prefix
+      const shortName = pluginName.replace('@dill-pixel/plugin-', '');
+      return `['${shortName}', { autoLoad: false }]`;
+    });
+
+    // Replace empty plugins array with configured plugins
+    configContents = configContents.replace(
+      /plugins:\s*\[\s*\]/,
+      `plugins: [\n    ${pluginConfigs.join(',\n    ')}\n  ]`,
+    );
+  }
+
+  if (storageAdapters && storageAdapters.length > 0) {
+    // Convert storage adapter names to config format
+    const adapterIds = storageAdapters.map((adapterName) => {
+      // Remove @dill-pixel/plugin- prefix and -storage suffix if present
+      return `'${adapterName.replace('@dill-pixel/storage-adapter-', '').replace('-storage-adapter', '')}'`;
+    });
+
+    // Replace empty storage adapters array with configured adapters
+    configContents = configContents.replace(
+      /storageAdapters:\s*\[\s*\]/,
+      `storageAdapters: [\n    ${adapterIds.join(',\n    ')}\n  ]`,
+    );
+  }
+
+  fs.writeFileSync(configPath, configContents, 'utf-8');
 
   try {
     fs.rmSync(`${cwd}/.meta.json`);
@@ -158,6 +301,51 @@ export async function create(cwd = '.', packageManagerOverride) {
           })
           .filter(Boolean),
       }),
+    plugins: () =>
+      p.multiselect({
+        required: false,
+        message: 'Which plugins would you like to add (Enter to skip)?',
+        options: fs
+          .readdirSync(dist('../plugins'))
+          .map((dir) => {
+            try {
+              const pkg = JSON.parse(fs.readFileSync(dist(`../plugins/${dir}/package.json`), 'utf8'));
+              return {
+                label: pkg.description || pkg.name,
+                value: pkg.name,
+              };
+            } catch (e) {
+              return null;
+            }
+          })
+          .filter(Boolean),
+      }),
+    storageAdapters: () =>
+      p.multiselect({
+        required: false,
+        message: 'Which storage adapters would you like to add (Enter to skip)?',
+        options: fs
+          .readdirSync(dist('../storage-adapters'))
+          .map((dir) => {
+            try {
+              const pkg = JSON.parse(fs.readFileSync(dist(`../storage-adapters/${dir}/package.json`), 'utf8'));
+              // Only include plugins that are storage adapters (have 'storage' in their name or description)
+              if (
+                pkg.name.includes('storage-adapter') ||
+                (pkg.description && pkg.description.toLowerCase().includes('storage-adapter'))
+              ) {
+                return {
+                  label: pkg.description || pkg.name,
+                  value: pkg.name,
+                };
+              }
+              return null;
+            } catch (e) {
+              return null;
+            }
+          })
+          .filter(Boolean),
+      }),
   });
 
   // get a name from the cwd provided
@@ -196,11 +384,14 @@ export async function create(cwd = '.', packageManagerOverride) {
     name,
     applicationNameForPkg,
     applicationName,
+    defaultName,
     template: /** @type {'default' | 'react'} */ (options.template),
+    plugins: options.plugins,
+    storageAdapters: options.storageAdapters,
   });
 
   const s = p.spinner();
-  s.start('Installing dependencies...');
+  s.start(`Installing dependencies...`);
   const exec = promisify(shell.exec);
   await exec(`${packageManager} install`, { silent: true, cwd }).catch(() => ({ code: 1 }));
   // const message = command.code === 0 ? 'Installtion successful' : 'Installation failed';

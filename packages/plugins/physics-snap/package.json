@@ -1,7 +1,7 @@
 {
   "name": "@dill-pixel/plugin-snap-physics",
   "version": "4.11.0",
-  "description": "",
+  "description": "Snap Physics",
   "files": [
     "lib",
     "src"
@@ -20,7 +20,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate-version": "node generateVersion.mjs"
   },
-  "keywords": [],
+  "keywords": [
+    "snap",
+    "physics",
+    "snap-physics",
+    "dill-pixel",
+    "dillpixel"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {

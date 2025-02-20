@@ -1,7 +1,7 @@
 {
   "name": "@dill-pixel/plugin-colyseus",
   "version": "4.11.0",
-  "description": "",
+  "description": "Colyseus",
   "files": [
     "lib",
     "src"
@@ -19,7 +19,12 @@
     "build": "vite build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "colyseus",
+    "colyseus.js",
+    "dill-pixel",
+    "dillpixel"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {

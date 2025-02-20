@@ -1,7 +1,7 @@
 {
   "name": "@dill-pixel/plugin-springroll",
   "version": "4.11.0",
-  "description": "SpringRoll plugin for Dill Pixel",
+  "description": "SpringRoll (PBS)",
   "files": [
     "lib",
     "src"
@@ -20,7 +20,12 @@
     "version": "node generateVersion.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "springroll",
+    "pbs",
+    "dill-pixel",
+    "dillpixel"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {

@@ -1,7 +1,7 @@
 {
   "name": "@dill-pixel/plugin-rive",
   "version": "4.11.0",
-  "description": "",
+  "description": "Rive",
   "files": [
     "lib",
     "src"
@@ -20,7 +20,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate-version": "node generateVersion.mjs"
   },
-  "keywords": [],
+  "keywords": [
+    "rive",
+    "rive.js",
+    "dill-pixel",
+    "dillpixel",
+    "animation",
+    "vector"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {

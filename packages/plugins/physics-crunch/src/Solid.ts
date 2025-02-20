@@ -64,6 +64,11 @@ export class Solid<T extends Application = Application, D extends EntityData = E
   private _nextX: number;
   private _nextY: number;
 
+  public setPosition(x: number, y: number): void {
+    this.x = x;
+    this.y = y;
+  }
+
   /**
    * Sets the solid's X position.
    * For moving solids, this queues the movement to be applied on next update.
@@ -161,6 +166,7 @@ export class Solid<T extends Application = Application, D extends EntityData = E
     y: number,
     actors: Set<Actor> = this.system.actors,
     sensors: Set<Sensor> = this.system.sensors,
+    force: boolean = false,
   ): void {
     if (!this.active) {
       return;
@@ -176,7 +182,10 @@ export class Solid<T extends Application = Application, D extends EntityData = E
     const moveX = Math.round(this._xRemainder);
     const moveY = Math.round(this._yRemainder);
 
-    if (moveX !== 0 || moveY !== 0) {
+    if (this.type === 'Obstacle') {
+      // console.log('move', this.collideable);
+    }
+    if (moveX !== 0 || moveY !== 0 || force) {
       if (this.collideable) {
         // Get all riding actors and sensors before movement
         const ridingActors = new Set<Actor>();

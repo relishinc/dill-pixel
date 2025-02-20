@@ -14,7 +14,8 @@
     "plugin:create": "node ./scripts/create-plugin.mjs",
     "storage-adapter:create": "node ./scripts/create-storage-adapter.mjs",
     "build-publish-all": "npm run packages:update && npm run framework:build && npm run framework:publish && npm run packages:build && npm run packages:publish",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cli:create": "node ./packages/framework/cli.mjs create ../test-app --use-pnpm"
   },
   "keywords": [],
   "author": "",

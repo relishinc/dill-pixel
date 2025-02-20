@@ -1,7 +1,7 @@
 {
   "name": "@dill-pixel/storage-adapter-firebase",
   "version": "4.11.0",
-  "description": "",
+  "description": "Firebase Storage Adapter",
   "files": [
     "lib",
     "src"
@@ -19,7 +19,13 @@
     "version": "node generateVersion.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "firebase",
+    "storage",
+    "storage-adapter",
+    "dill-pixel",
+    "dillpixel"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {

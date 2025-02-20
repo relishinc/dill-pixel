@@ -125,8 +125,8 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     if (this._following) {
       this.system.removeFollower(this);
     }
+    this._following = entityToFollow;
     if (entityToFollow) {
-      this._following = entityToFollow;
       this.system.addFollower(entityToFollow, this);
     }
   }
