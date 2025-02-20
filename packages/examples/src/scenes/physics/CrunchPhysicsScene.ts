@@ -1,7 +1,17 @@
 import BaseScene from '@/scenes/BaseScene';
 import { V8Application } from '@/V8Application';
 import { Actor, CollisionResult, Group, ICrunchPhysicsPlugin, Sensor, Solid } from '@dill-pixel/plugin-crunch-physics';
-import { ActionDetail, AnimatedSprite, Button, Camera, Container, Joystick, Signal, UICanvas } from 'dill-pixel';
+import {
+  ActionDetail,
+  AnimatedSprite,
+  Button,
+  Camera,
+  Container,
+  intBetween,
+  Joystick,
+  Signal,
+  UICanvas,
+} from 'dill-pixel';
 import gsap from 'gsap';
 
 import { FederatedPointerEvent, Point, Pool, Rectangle } from 'pixi.js';
@@ -90,6 +100,8 @@ class Player extends Actor<V8Application> {
         this.active = true;
       },
     });
+
+    this.view.zIndex = 10;
   }
 
   private _move(detail: ActionDetail) {
@@ -113,6 +125,7 @@ class Player extends Actor<V8Application> {
 
   public onRemoved(): void {
     super.onRemoved();
+    this.system.removeFollowersOf(this);
     this.direction = 1;
     this.onKilled.emit(this);
   }
@@ -141,6 +154,43 @@ class Player extends Actor<V8Application> {
       }
     }
     super.update(dt);
+
+    // Update each follower's position in a spherical orbit
+    this.followers.forEach((follower) => {
+      // Initialize follower data if not already set
+      if (!follower.data.orbitAngle) {
+        follower.data.orbitAngle = Math.random() * Math.PI * 2;
+        follower.data.orbitSpeed = 1 + Math.random() * 0.5;
+        follower.data.orbitRadius = 40 + Math.random() * 5;
+        follower.data.verticalOffset = Math.random() * Math.PI * 2;
+        follower.data.orbitDirection = 1;
+        follower.data.verticalDirection = 1;
+      }
+
+      // Update orbit angles with direction
+      follower.data.orbitAngle += follower.data.orbitSpeed * 0.05 * follower.data.orbitDirection;
+      follower.data.verticalOffset += follower.data.orbitSpeed * 0.03 * follower.data.verticalDirection;
+
+      // Reverse directions at boundaries
+      if (follower.data.orbitAngle >= Math.PI * 2 || follower.data.orbitAngle <= 0) {
+        follower.data.orbitDirection *= -1;
+      }
+      if (follower.data.verticalOffset >= Math.PI * 2 || follower.data.verticalOffset <= 0) {
+        follower.data.verticalDirection *= -1;
+      }
+
+      // Calculate new position on sphere
+      const x = Math.cos(follower.data.orbitAngle) * follower.data.orbitRadius;
+      const y = Math.sin(follower.data.verticalOffset) * follower.data.orbitRadius * 0.5;
+
+      // Update follower position relative to player
+      follower.followOffset.x = x + 10;
+      follower.followOffset.y = y + 20;
+
+      // Determine if particle is in front or behind based on its position
+      const isFront = Math.cos(follower.data.orbitAngle) > 0;
+      follower.view.zIndex = isFront ? 11 : 9;
+    });
   }
 
   public postUpdate(): void {
@@ -573,6 +623,20 @@ export default class CrunchPhysicsScene extends BaseScene {
     if (this.pf2) {
       this.pf2.player = this.player;
     }
+
+    for (let i = 0; i < 20; i++) {
+      const fx = this.pool.get({ position: new Point(this.player.x, this.player.y), size: 10 });
+      this.physics.system.addActor(fx);
+      this.physicsContainer.addChild(fx.view);
+      fx.setFollowing(this.player, { x: intBetween(-50, 50), y: intBetween(-50, 50) });
+    }
+
+    // const pf = this.createPlatform(100, 85, 75, 25, 'ground_grass');
+    // pf.setFollowing(this.player, { x: intBetween(-50, 50), y: intBetween(-50, 50) });
+
+    // const portal = new Portal({ position: [100, 85] });
+    // this.physics.system.addSensor(portal);
+    // portal.setFollowing(this.player, { x: intBetween(-50, 50), y: intBetween(-50, 50) });
   }
 
   protected _handleDebugChanged() {
