@@ -197,8 +197,8 @@ class Segment {
     return Application.getInstance();
   }
 
-  get physics(): ITowerfallPhysicsPlugin {
-    return this.app.getPlugin('crunch-physics') as ITowerfallPhysicsPlugin;
+  get physics(): ICrunchPhysicsPlugin {
+    return this.app.getPlugin('crunch-physics') as ICrunchPhysicsPlugin;
   }
 
   constructor(x: number, y: number, width: number) {
@@ -218,8 +218,6 @@ class Segment {
       const platformY = y - 100 - Math.random() * 100;
 
       this._createPlatform(platformX, platformY, platformWidth, 32, true);
-
-      // Add coins above platform
     }
   }
 
@@ -244,24 +242,15 @@ class Segment {
     // Add obstacles on platform
     let obstacle: Solid | null = null;
     if (Math.random() < 0.7) {
-      obstacle = this._createObstacle(x + width / 2, y - 32 - Math.random() * 300);
+      obstacle = this._createObstacle(x, y);
       this.obstacles.push(obstacle);
     }
     const dist = bool() ? 100 : -100;
     if (Math.random() < 0.8) {
       const coinCount = Math.floor(Math.random() * 3) + 1;
       for (let j = 0; j < coinCount; j++) {
-        const coin = this._createCoin(x + (width * (j + 1)) / (coinCount + 1), y - 50 - Math.random() * 30);
-        if (isMoving) {
-          const coinTween = gsap.to(coin.coin, {
-            y: coin.coin.y + dist,
-            duration: 1.5,
-            repeat: -1,
-            yoyo: true,
-            ease: 'none',
-          });
-          this.animations.add(coinTween);
-        }
+        const coin = this._createCoin(x, y);
+        coin.coin.setFollowing(platform, { x: (width * (j + 1)) / (coinCount + 1), y: -50 - Math.random() * 30 });
         this.coins.push(coin);
       }
     }
@@ -275,18 +264,10 @@ class Segment {
         ease: 'none',
       });
       this.animations.add(platformTween);
-      if (obstacle) {
-        const obstacleTween = gsap.to(obstacle, {
-          y: obstacle!.y + dist,
-          duration: 1.5,
-          repeat: -1,
-          yoyo: true,
-          ease: 'none',
-        });
-        this.animations.add(obstacleTween);
-      }
     }
-
+    if (obstacle) {
+      obstacle.setFollowing(platform, { x: width / 2, y: -32 - Math.random() * 300 });
+    }
     return platform;
   }
 
@@ -305,7 +286,9 @@ class Segment {
     });
 
     obstacle.updateView = () => {
-      obstacle.view.position.set(obstacle.x - 2, obstacle.y - 2);
+      if (obstacle.view && obstacle.view.visible && obstacle.view.position) {
+        obstacle.view.position.set(obstacle.x - 2, obstacle.y - 2);
+      }
     };
     obstacle.moving = true;
     return obstacle;
@@ -328,13 +311,7 @@ class Segment {
 
   public move(x: number, y: number): void {
     this.x += x;
-
     this.platforms.forEach((p) => p.move(x, y));
-    this.obstacles.forEach((o) => o.move(x, y));
-    // Use absolute positioning for coins based on segment position and their offset
-    this.coins.forEach(({ coin, offsetX, offsetY }) => {
-      coin.moveStatic(this.x + offsetX, this.y + offsetY);
-    });
   }
 
   public destroy(): void {
@@ -367,7 +344,7 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
     segmentWidth: 800,
   };
 
-  get physics(): CrunchPhysicsPlugin {
+  get physics(): ICrunchPhysicsPlugin {
     return this.app.getPlugin('crunch-physics') as ICrunchPhysicsPlugin;
   }
 

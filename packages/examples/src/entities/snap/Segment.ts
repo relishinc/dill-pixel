@@ -15,6 +15,7 @@ export class Segment {
   static pool: Pool<Platform> = new Pool(Platform, 50);
 
   position: Point = new Point();
+
   private _platforms: Platform[] = [];
   private _config: SegmentConfig;
   private _container: Container;
