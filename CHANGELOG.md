@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.11.0](https://github.com/relishinc/dill-pixel/compare/v4.10.2...v4.11.0) (2025-02-20)
+
+
+### Features
+
+* crunch physics  entities logic ([a8aff8a](https://github.com/relishinc/dill-pixel/commit/a8aff8a5029b50cb3efbabcf749fc06527eed8c4))
+* crunch physics  entities logic ([d0ade95](https://github.com/relishinc/dill-pixel/commit/d0ade95a66202b96ad97bfff729a131c07c5295f))
+
+
+### Bug Fixes
+
+* dill-pixel create now modifies the readme, added  to the .gitignore in the default template ([c3e2787](https://github.com/relishinc/dill-pixel/commit/c3e27874b55138602463a20f1c5b6a72e0dd424c))
+* following logic in Crunch Physics, updated demo scenes ([567de6a](https://github.com/relishinc/dill-pixel/commit/567de6abb062f99633de4412e917e2d930ab9700))
+
 ## [4.10.2](https://github.com/relishinc/dill-pixel/compare/v4.10.1...v4.10.2) (2025-02-19)
 
 
