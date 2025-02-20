@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.13.0](https://github.com/relishinc/dill-pixel/compare/v4.12.0...v4.13.0) (2025-02-20)
+
+
+### Features
+
+* crunch physics groups, group offsets ([5e0a1e9](https://github.com/relishinc/dill-pixel/commit/5e0a1e97517f01926e7bbcd7cd753c69445a5c63))
+
 ## [4.12.0](https://github.com/relishinc/dill-pixel/compare/v4.11.0...v4.12.0) (2025-02-20)
 
 
