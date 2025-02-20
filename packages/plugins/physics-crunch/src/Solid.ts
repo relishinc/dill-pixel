@@ -44,6 +44,7 @@ import { EntityData, PhysicsEntityConfig, PhysicsEntityType } from './types';
  * ```
  */
 export class Solid<T extends Application = Application, D extends EntityData = EntityData> extends Entity<T, D> {
+  public readonly entityType: PhysicsEntityType = 'Solid';
   /** Whether this solid should be removed when culled (typically false) */
   public shouldRemoveOnCull = false;
 

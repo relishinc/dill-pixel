@@ -1,4 +1,12 @@
-import { Application, bindAllMethods, defaultFactoryMethods, SignalConnection, SignalConnections } from 'dill-pixel';
+import {
+  Application,
+  bindAllMethods,
+  defaultFactoryMethods,
+  PointLike,
+  resolvePointLike,
+  SignalConnection,
+  SignalConnections,
+} from 'dill-pixel';
 import CrunchPhysicsPlugin from './CrunchPhysicsPlugin';
 import { Group } from './Group';
 import { System } from './System';
@@ -46,6 +54,7 @@ import { resolveEntityPosition, resolveEntitySize } from './utils';
  * ```
  */
 export class Entity<A extends Application = Application, D extends EntityData = EntityData> {
+  public readonly entityType: PhysicsEntityType;
   protected _id: string;
 
   /** Unique type identifier for this entity */
@@ -85,6 +94,8 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   protected _x: number;
   protected _y: number;
   protected signalConnections: SignalConnections;
+  protected _following: Entity | null;
+  protected _followOffset: { x: number; y: number };
 
   set id(value: string) {
     this._id = value;
@@ -109,6 +120,29 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     return this._data;
   }
 
+  setFollowing(entityToFollow: Entity | null, offset: PointLike = { x: 0, y: 0 }) {
+    this._followOffset = resolvePointLike(offset);
+    if (this._following) {
+      this.system.removeFollower(this);
+    }
+    if (entityToFollow) {
+      this._following = entityToFollow;
+      this.system.addFollower(entityToFollow, this);
+    }
+  }
+
+  get followOffset(): { x: number; y: number } {
+    return this._followOffset || { x: 0, y: 0 };
+  }
+
+  get following(): Entity | null {
+    return this._following;
+  }
+
+  get followers(): Entity[] {
+    return this.system.getFollowersOf(this);
+  }
+
   /**
    * The group this entity belongs to, if any.
    * Groups allow for collective movement and management of entities.
@@ -125,6 +159,15 @@ export class Entity<A extends Application = Application, D extends EntityData = 
       this.onRemovedFromGroup();
     }
     this.updatePosition();
+  }
+
+  set position(value: PointLike) {
+    const { x, y } = resolvePointLike(value);
+    this.setPosition(x, y);
+  }
+
+  get position(): PointLike {
+    return { x: this.x, y: this.y };
   }
 
   /**
@@ -426,6 +469,8 @@ export class Entity<A extends Application = Application, D extends EntityData = 
       this.view.visible = false;
       this.view.removeFromParent();
     }
+
+    this.system.removeFollower(this);
   }
 
   /**

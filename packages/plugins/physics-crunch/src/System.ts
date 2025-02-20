@@ -106,6 +106,10 @@ export class System {
   private groupsByType: Map<string, Set<Group>> = new Map();
   // Collision exclusion tracking
   private collisionExclusions: Map<Entity, Set<PhysicsEntityType>> = new Map();
+
+  // Followers tracking
+  private followers: Map<Entity, Set<Entity>> = new Map();
+
   // Spatial partitioning
   private grid: Map<string, Set<Solid>> = new Map();
   // Collision tracking
@@ -193,11 +197,17 @@ export class System {
 
     // Update containers first
     for (const group of this.groups) {
+      if (group.following) {
+        continue;
+      }
       group.update(deltaTime);
     }
 
     // Update solids
     for (const solid of this.solids) {
+      if (solid.following) {
+        continue;
+      }
       solid.preUpdate();
       solid.update(deltaTime);
       solid.postUpdate();
@@ -216,11 +226,24 @@ export class System {
 
     // Update sensors (before actors so they can detect entry/exit in the same frame)
     for (const sensor of this.sensors) {
+      if (sensor.following) {
+        continue;
+      }
       this.updateSensor(sensor, deltaTime);
+    }
+
+    // Update followers
+    for (const [entity, followers] of this.followers) {
+      for (const follower of followers) {
+        follower.setPosition(entity.x + follower.followOffset.x, entity.y + follower.followOffset.y);
+      }
     }
 
     // Update actors
     for (const actor of this.actors) {
+      if (actor.following) {
+        continue;
+      }
       this.updateActor(actor, deltaTime);
     }
 
@@ -286,14 +309,17 @@ export class System {
   }
 
   public addEntity(entity: Actor | Solid | Sensor): Actor | Solid | Sensor {
-    if (entity.type === 'actor') {
+    if (!entity || !entity.entityType) {
+      throw new Error('Entity is required');
+    }
+    if (entity.entityType === 'Actor') {
       return this.addActor(entity as Actor);
-    } else if (entity.type === 'solid') {
+    } else if (entity.entityType === 'Solid') {
       return this.addSolid(entity as Solid);
-    } else if (entity.type === 'sensor') {
+    } else if (entity.entityType === 'Sensor') {
       return this.addSensor(entity as Sensor);
     }
-    throw new Error(`Invalid entity type: ${entity!.type}`);
+    throw new Error(`Invalid entity type: ${entity!.entityType}`);
   }
 
   public createActor(config: PhysicsEntityConfig): Actor {
@@ -488,6 +514,35 @@ export class System {
     return result;
   }
 
+  public addFollower(entity: Entity, follower: Entity): void {
+    if (!this.followers.has(entity)) {
+      this.followers.set(entity, new Set());
+    }
+    this.followers.get(entity)!.add(follower);
+  }
+
+  public removeFollower(entity: Entity): void {
+    // remove the entity from any set in the followers map
+    for (const followers of this.followers.values()) {
+      followers.delete(entity);
+    }
+  }
+
+  public getFollowersOf(entity: Entity): Entity[] {
+    return Array.from(this.followers.get(entity) || []);
+  }
+
+  public removeFollowersOf(entity: Entity): void {
+    const set = this.followers.get(entity);
+    if (set) {
+      set.forEach((follower) => {
+        follower.destroy();
+      });
+      set.clear();
+      this.followers.delete(entity);
+    }
+  }
+
   private overlaps(a: Rectangle, b: Rectangle): boolean {
     return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
   }
@@ -635,12 +690,23 @@ export class System {
     return Array.from(this.sensorsByType.get(type) || new Set());
   }
 
-  public destroy(): void {
-    this.debug = false;
-    this.gravity = 0;
-    this.maxVelocity = 0;
-
+  public clearGrid(): void {
     this.grid.clear();
+  }
+
+  public clearAll(destroy: boolean = true) {
+    this.grid.clear();
+
+    if (destroy) {
+      this.solids.forEach((solid) => {
+        solid.destroy();
+      });
+      this.actors.forEach((actor) => {
+        actor.destroy();
+      });
+      this.sensors.forEach((sensor) => sensor.destroy());
+    }
+
     this.solids.clear();
     this.actors.clear();
     this.sensors.clear();
@@ -648,6 +714,14 @@ export class System {
     this.solidsByType.clear();
     this.actorsByType.clear();
     this.sensorsByType.clear();
+  }
+
+  public destroy(): void {
+    this.debug = false;
+    this.gravity = 0;
+    this.maxVelocity = 0;
+
+    this.clearAll();
   }
 
   private cullOutOfBounds(): void {

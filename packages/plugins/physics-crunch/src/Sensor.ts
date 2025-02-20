@@ -2,7 +2,7 @@ import { Application } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { Solid } from './Solid';
-import { EntityData, PhysicsEntityConfig, SensorOverlap, Vector2 } from './types';
+import { EntityData, PhysicsEntityConfig, PhysicsEntityType, SensorOverlap, Vector2 } from './types';
 
 /**
  * A trigger zone that can detect overlaps with actors.
@@ -64,6 +64,7 @@ import { EntityData, PhysicsEntityConfig, SensorOverlap, Vector2 } from './types
  * ```
  */
 export class Sensor<T extends Application = Application, D extends EntityData = EntityData> extends Entity<T, D> {
+  public readonly entityType: PhysicsEntityType = 'Sensor';
   /** Whether this sensor should be removed when culled */
   public shouldRemoveOnCull = false;
 

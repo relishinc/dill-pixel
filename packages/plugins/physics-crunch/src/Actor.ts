@@ -1,7 +1,7 @@
 import { Application } from 'dill-pixel';
 import { Entity } from './Entity';
 import { Solid } from './Solid';
-import { CollisionResult, EntityData, PhysicsEntityConfig, Vector2 } from './types';
+import { CollisionResult, EntityData, PhysicsEntityConfig, PhysicsEntityType, Vector2 } from './types';
 
 /**
  * Dynamic physics entity that can move and collide with other entities.
@@ -55,6 +55,8 @@ import { CollisionResult, EntityData, PhysicsEntityConfig, Vector2 } from './typ
  * ```
  */
 export class Actor<T extends Application = Application, D extends EntityData = EntityData> extends Entity<T, D> {
+  public readonly entityType: PhysicsEntityType = 'Actor';
+
   /** Current velocity in pixels per second */
   public velocity: Vector2 = { x: 0, y: 0 };
 
