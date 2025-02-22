@@ -32,6 +32,8 @@ export interface IAudioManagerPlugin<C extends ChannelName = ChannelName> extend
   voiceover: IAudioChannel;
   vo: IAudioChannel;
 
+  readonly paused: boolean;
+
   createChannel(name: string): void;
 
   play(soundId: string, channelName: C, options?: PlayOptions): Promise<IAudioInstance>;
@@ -296,6 +298,10 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
     this._setPaused();
   }
 
+  get paused(): boolean {
+    return this._paused;
+  }
+
   /**
    * Adds all sound assets from the specified manifest.
    * @param {AssetsManifest} manifest
@@ -376,6 +382,7 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
 
   isPlaying(soundId: string, channelName: C): boolean {
     const channel = this._channels.get(channelName);
+    console.log('ISPLAYING', channel, channel?.get(soundId));
     if (channel) {
       return channel.get(soundId)?.isPlaying === true;
     }

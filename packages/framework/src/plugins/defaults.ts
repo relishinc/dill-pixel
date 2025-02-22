@@ -5,6 +5,7 @@ import type { IPlugin } from './Plugin';
 import { PopupManagerPlugin } from './PopupManagerPlugin';
 import { ResizerPlugin } from './ResizerPlugin';
 import { SceneManagerPlugin } from './SceneManagerPlugin';
+import { TimerPlugin } from './TimerPlugin';
 import { WebEventsPlugin } from './WebEventsPlugin';
 import { ActionsPlugin } from './actions';
 import { AudioManagerPlugin } from './audio';
@@ -68,5 +69,9 @@ export const defaultPlugins: ImportList<IPlugin> = [
     module: i18nPlugin,
     namedExport: 'i18nPlugin',
   },
-  
+  {
+    id: 'timers',
+    module: TimerPlugin,
+    namedExport: 'TimerPlugin',
+  },
 ] as const;

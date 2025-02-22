@@ -9,4 +9,5 @@ export * from './Plugin';
 export * from './PopupManagerPlugin';
 export * from './ResizerPlugin';
 export * from './SceneManagerPlugin';
+export * from './TimerPlugin';
 export * from './WebEventsPlugin';

@@ -1,4 +1,5 @@
-import type { AppConfig, IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals } from '.';
+import { gsap } from 'gsap';
+import type { AppConfig, IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals, PauseConfig } from '.';
 import { coreFunctionRegistry, coreSignalRegistry, generateAdapterList, generatePluginList } from '.';
 import type {
   Action,
@@ -30,6 +31,7 @@ import type { IActionsPlugin } from '../plugins/actions';
 import type { IVoiceOverPlugin } from '../plugins/audio/VoiceOverPlugin';
 import type { ICaptionsPlugin } from '../plugins/captions';
 import { defaultPlugins } from '../plugins/defaults';
+import { ITimerPlugin } from '../plugins/TimerPlugin';
 import { Signal } from '../signals';
 
 function getDefaultResolution() {
@@ -71,6 +73,13 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   },
 };
 
+const defaultPauseConfig: PauseConfig = {
+  pauseAudio: false,
+  pauseAnimations: false,
+  pauseTicker: false,
+  pauseTimers: false,
+};
+
 export class Application<
     D extends DataSchema = DataSchema,
     C extends ActionContext = ActionContext,
@@ -88,8 +97,8 @@ export class Application<
   public plugins: ImportList<IPlugin>;
   public storageAdapters: ImportList<IStorageAdapter>;
   public manifest: string | AssetsManifest | undefined;
-  public onPause = new Signal<() => void>();
-  public onResume = new Signal<() => void>();
+  public onPause = new Signal<(config: PauseConfig) => void>();
+  public onResume = new Signal<(config: PauseConfig) => void>();
   // signals
   public onResize = new Signal<(size: Size) => void>();
   // plugins
@@ -101,6 +110,7 @@ export class Application<
   protected _keyboardManager: IKeyboardPlugin;
   protected _focusManager: IFocusManagerPlugin;
   protected _popupManager: IPopupManagerPlugin;
+  protected _timerPlugin: ITimerPlugin;
   protected _audioManager: IAudioManagerPlugin;
   protected _voiceoverPlugin: IVoiceOverPlugin;
   protected _captionsPlugin: ICaptionsPlugin;
@@ -122,29 +132,60 @@ export class Application<
   }
 
   protected _paused: boolean = false;
+  protected _pauseConfig: Partial<PauseConfig> = {};
+
   public get paused(): boolean {
     return this._paused;
   }
 
-  public set paused(paused: boolean) {
-    this._paused = paused;
-    if (this._paused) {
-      this.onPause.emit();
-    } else {
-      this.onResume.emit();
+  public pause(config?: Partial<PauseConfig>) {
+    this._paused = true;
+    this._pauseConfig = { ...defaultPauseConfig, ...config };
+    if (config?.pauseAudio) {
+      this.audio.pause();
     }
+    if (config?.pauseAnimations) {
+      gsap?.globalTimeline?.pause();
+    }
+    if (config?.pauseTicker) {
+      this.ticker.stop();
+    }
+    if (config?.pauseTimers) {
+      this.timers.pauseAllTimers();
+    }
+    this.onPause.emit(this._pauseConfig);
   }
 
   public resume() {
-    this.paused = false;
+    this._paused = false;
+    if (this._pauseConfig.pauseAudio) {
+      if (this.audio.paused) {
+        this.audio.resume();
+      }
+    }
+    if (this._pauseConfig.pauseAnimations) {
+      if (gsap?.globalTimeline?.paused()) {
+        gsap?.globalTimeline?.resume();
+      }
+    }
+    if (this._pauseConfig.pauseTicker) {
+      if (!this.ticker.started) {
+        this.ticker.start();
+      }
+    }
+    if (this._pauseConfig.pauseTimers) {
+      this.timers.resumeAllTimers();
+    }
+    this.onResume.emit(this._pauseConfig);
   }
 
-  public pause() {
-    this._paused = true;
-  }
-
-  public togglePause() {
+  public togglePause(config?: Partial<PauseConfig>) {
     this._paused = !this._paused;
+    if (this._paused) {
+      this.pause(config);
+    } else {
+      this.resume();
+    }
   }
 
   constructor() {
@@ -281,6 +322,13 @@ export class Application<
       this._popupManager = this.getPlugin<IPopupManagerPlugin>('popups');
     }
     return this._popupManager;
+  }
+
+  public get timers(): ITimerPlugin {
+    if (!this._timerPlugin) {
+      this._timerPlugin = this.getPlugin<ITimerPlugin>('timers');
+    }
+    return this._timerPlugin;
   }
 
   public get audio(): IAudioManagerPlugin {
@@ -487,8 +535,10 @@ export class Application<
     this.webEvents.onVisibilityChanged.connect((visible) => {
       if (visible) {
         this.audio.restore();
+        this.timers.resumeAllTimers();
       } else {
         this.audio.suspend();
+        this.timers.pauseAllTimers();
       }
     });
   }

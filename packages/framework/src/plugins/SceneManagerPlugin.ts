@@ -1,5 +1,5 @@
 import { Container } from 'pixi.js';
-import type { IApplication } from '../core';
+import type { IApplication, PauseConfig } from '../core';
 import { Application } from '../core/Application';
 import type { IScene, ISceneTransition, SceneTransition } from '../display';
 import { Signal } from '../signals';
@@ -153,7 +153,19 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
     if (this._useHash) {
       this._listenForHashChange();
     }
+
+    this.app.onPause.connect(this._onPause, 'highest');
+    this.app.onResume.connect(this._onResume, 'highest');
+
     return Promise.resolve(undefined);
+  }
+
+  private _onPause(config: PauseConfig) {
+    this.currentScene.onPause(config);
+  }
+
+  private _onResume(config: PauseConfig) {
+    this.currentScene.onResume(config);
   }
 
   public async loadDefaultScene(): Promise<void> {

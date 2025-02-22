@@ -1,0 +1,297 @@
+---
+title: Timers
+description: Create and manage timers for your game with support for countdown, count-up, and worker-based timers.
+---
+
+import { Aside, TabItem, Tabs } from '@astrojs/starlight/components';
+
+The Timer Plugin provides a robust system for managing time-based events in your game. It supports both countdown and count-up timers, with options to run them either on the main thread or in a web worker for better performance.
+
+## Features
+
+- Create countdown or count-up timers
+- Run timers in web workers for better performance (and independence from the pixi.js update loop)
+- Pause, resume, and reset functionality
+- Loop option for repeating timers
+- Format time output in various formats
+- Global timer management
+- Automatic pause/resume when page visibility changes
+
+## Basic Usage
+
+### Creating a Timer
+
+You can create timers using `this.app.timers.createTimer()`. Here are some common examples:
+
+<Tabs>
+<TabItem label="Countdown Timer">
+```typescript
+// Create a 5-second countdown timer
+const timer = this.app.timers.createTimer({
+  duration: 5000, // 5 seconds in milliseconds
+  autoStart: true,
+  onTick: (remaining) => {
+    console.log(`Time remaining: ${remaining / 1000} seconds`);
+  },
+  onComplete: () => {
+    console.log('Timer completed!');
+  }
+});
+```
+</TabItem>
+<TabItem label="Count-up Timer">
+```typescript
+// Create a count-up timer (stopwatch)
+const stopwatch = this.app.timers.createTimer({
+  autoStart: true,
+  onTick: (elapsed) => {
+    console.log(`Time elapsed: ${elapsed / 1000} seconds`);
+  }
+});
+```
+</TabItem>
+<TabItem label="Looping Timer">
+```typescript
+// Create a timer that repeats every second
+const loopingTimer = this.app.timers.createTimer({
+  duration: 1000,
+  loop: true,
+  autoStart: true,
+  onTick: (remaining) => {
+    console.log(`Loop cycle: ${remaining / 1000} seconds`);
+  },
+  onComplete: () => {
+    console.log('Loop cycle completed!');
+  }
+});
+```
+</TabItem>
+</Tabs>
+
+### Timer Control
+
+Each timer instance provides methods for controlling its state:
+
+```typescript
+const timer = this.app.timers.createTimer({
+  duration: 3000,
+  autoStart: false,
+});
+
+// Start or resume the timer
+timer.start();
+
+// Pause the timer
+timer.pause();
+
+// Reset the timer to its initial state
+timer.reset();
+
+// Get current time value
+const currentTime = timer.getTime();
+
+// Get remaining time (for countdown timers)
+const remaining = timer.getRemainingTime();
+
+// Destroy the timer when no longer needed
+timer.destroy();
+```
+
+## Advanced Features
+
+### Web Worker Timers
+
+For better performance, especially with multiple timers, you can run timers in a web worker:
+
+```typescript
+const workerTimer = this.app.timers.createTimer({
+  duration: 10000,
+  useWorker: true,
+  workerInterval: 100, // Update every 100ms
+  onTick: (remaining) => {
+    console.log(`Worker timer: ${remaining / 1000} seconds`);
+  },
+});
+```
+
+<Aside type="caution" title="Web Worker Support">
+  If web workers are not supported in the environment or if worker creation fails, the timer will automatically fall
+  back to running on the main thread. A warning message will be logged to the console when this happens. The timer will
+  continue to function normally, just without the performance benefits of running in a separate thread.
+</Aside>
+
+### Time Formatting
+
+The Timer Plugin includes a utility function for formatting time values:
+
+```typescript
+import { formatTime } from 'dill-pixel';
+
+// Format as mm:ss
+const timeString = formatTime(150000); // "02:30"
+
+// Format as hh:mm:ss
+const longTimeString = formatTime(5430000, 'hh:mm:ss'); // "01:30:30"
+
+// Format with milliseconds
+const preciseTime = formatTime(90500, 'ms'); // "90.50"
+
+// Get time components as object
+const timeObject = formatTime(5430000, 'hh:mm:ss', 'object');
+// Returns: { h: 1, m: 30, s: 30, ms: 0 }
+```
+
+### Global Timer Management
+
+The Timer Plugin provides methods for managing all timers at once:
+
+```typescript
+// Pause all active timers
+this.app.timers.pauseAllTimers();
+
+// Resume all paused timers
+this.app.timers.resumeAllTimers();
+```
+
+### Timer Events
+
+You can listen for timer-related events using signals:
+
+```typescript
+// Listen for timer creation
+this.app.timers.onTimerCreated.connect((timer) => {
+  console.log(`New timer created with ID: ${timer.getId()}`);
+});
+
+// Listen for timer destruction
+this.app.timers.onTimerDestroyed.connect((timer) => {
+  console.log(`Timer destroyed: ${timer.getId()}`);
+});
+
+// Listen for global pause/resume events
+this.app.timers.onAllTimersPaused.connect(() => {
+  console.log('All timers paused');
+});
+
+this.app.timers.onAllTimersResumed.connect(() => {
+  console.log('All timers resumed');
+});
+```
+
+## Common Use Cases
+
+### Game Countdown
+
+```typescript
+import { Scene, Timer, formatTime } from 'dill-pixel';
+import { Text } from 'pixi.js';
+
+export class CountdownScene extends Scene {
+  private countdownDisplay: Text;
+  private countdownTimer: Timer;
+
+  protected initialize(): void {
+    this.countdownDisplay = this.add.text({
+      style: { fill: 0xffffff, fontWeight: 'bold', fontSize: 48, align: 'left' },
+    });
+
+    this.countdownTimer = this.app.timers.createTimer({
+      duration: 3000,
+      autoStart: true,
+      onTick: this._updateCountdownDisplay,
+      onComplete: this._startGame,
+    });
+  }
+
+  private _updateCountdownDisplay(remaining: number): void {
+    // Update your UI
+    this.countdownDisplay.text = formatTime(remaining, 'mm:ss');
+  }
+
+  private _startGame(): void {
+    // Start your game
+  }
+
+  private _cleanup(): void {
+    this.countdownTimer.destroy();
+  }
+}
+```
+
+### Power-up Duration
+
+```typescript
+import { Scene, Timer, formatTime } from 'dill-pixel';
+import { Text } from 'pixi.js';
+
+export class PowerUpManager extends Scene {
+  private powerUpTimer: Timer;
+  private powerUpDisplay: Text;
+
+  initialize() {
+    this.powerUpDisplay = this.add.text({
+      style: { fill: 0xffffff, fontWeight: 'bold', fontSize: 24, align: 'left' },
+    });
+  }
+
+  public activatePowerUp(duration: number): void {
+    // Clean up existing timer if any
+    this.powerUpTimer?.destroy();
+    // Create new power-up timer
+    this.powerUpTimer = this.app.timers.createTimer({
+      duration: 5000, // 5 seconds
+      autoStart: true,
+      onTick: this._updatePowerUpUI,
+      onComplete: this._deactivatePowerUp,
+    });
+  }
+
+  private _updatePowerUpUI(remaining: number): void {
+    // Update power-up UI with remaining time
+    this.powerUpDisplay.text = formatTime(remaining, 'mm:ss');
+  }
+
+  private _deactivatePowerUp(): void {
+    // Remove power-up effects
+  }
+}
+```
+
+### Game Stopwatch
+
+```typescript
+export class StopwatchManager {
+  private stopwatch: Timer;
+  private bestTime: number = Infinity;
+
+  public startStopwatch(): void {
+    this.stopwatch = this.app.timers.createTimer({
+      useWorker: true, // Use worker for better performance
+      workerInterval: 100,
+      autoStart: true,
+      onTick: (elapsed) => {
+        const timeString = formatTime(elapsed, 'mm:ss');
+        this.updateStopwatchDisplay(timeString);
+      },
+    });
+  }
+
+  // Stop the stopwatch and check if it's the best time
+  public stopAndCheck(): void {
+    const finalTime = this.stopwatch.getTime();
+    if (finalTime < this.bestTime) {
+      this.bestTime = finalTime;
+      this.updateBestTime();
+    }
+    this.stopwatch.destroy();
+  }
+
+  private updateStopwatchDisplay(time: string): void {
+    // Update stopwatch display
+  }
+
+  private updateBestTime(): void {
+    // Update best time display
+  }
+}
+```

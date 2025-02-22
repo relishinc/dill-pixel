@@ -1,4 +1,5 @@
 import { Ticker } from 'pixi.js';
+import { PauseConfig } from '../core';
 import { Application } from '../core/Application';
 import { AssetLoadingOptions, Size } from '../utils';
 import type { IContainer } from './Container';
@@ -19,6 +20,10 @@ export interface IScene extends IContainer {
   initialize(): Promise<void> | void;
 
   start(): Promise<void> | void;
+
+  onPause(config: PauseConfig): void;
+
+  onResume(config: PauseConfig): void;
 }
 
 export interface SceneListItem {
@@ -125,5 +130,13 @@ export class Scene<T extends Application = Application> extends Container<T> imp
   public destroy() {
     this.app.ticker.remove(this.update);
     super.destroy({ children: true });
+  }
+
+  public onPause(config: PauseConfig): void {
+    void config;
+  }
+
+  public onResume(config: PauseConfig): void {
+    void config;
   }
 }

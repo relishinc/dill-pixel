@@ -59,6 +59,8 @@ export default defineConfig({
             { label: 'Data', link: '/fundamentals/data' },
             { label: 'Copy and Content', link: '/fundamentals/copy' },
             { label: 'Audio', link: '/fundamentals/audio' },
+            { label: 'Timers', link: '/fundamentals/timers' },
+            { label: 'Pausing / Resuming', link: '/fundamentals/pausing' },
             {
               label: 'Animation',
               items: [

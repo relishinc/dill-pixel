@@ -1,0 +1,383 @@
+---
+title: Pausing / Resuming Your App
+description: Learn how to pause and resume your game application, including audio, animations, timers, and the game loop.
+---
+
+The dill pixel framework provides robust pause and resume functionality through the application instance. This allows you to control various aspects of your game's state, including audio playback, animations, timers, and the game loop.
+
+## Basic Usage
+
+The simplest way to pause and resume your game is to use the `pause()` and `resume()` methods:
+
+```typescript
+// Pause the game
+this.app.pause();
+
+// Resume the game
+this.app.resume();
+
+// Toggle pause state
+this.app.togglePause();
+
+// Check if game is paused
+if (this.app.paused) {
+  // Game is paused
+}
+```
+
+## Configuring Pause Behavior
+
+You can customize what gets paused by passing a configuration object to the `pause()` method. The configuration supports the following options:
+
+```typescript
+interface PauseConfig {
+  pauseAudio: boolean; // Pause all audio playback
+  pauseAnimations: boolean; // Pause GSAP animations
+  pauseTicker: boolean; // Pause the game loop/ticker
+  pauseTimers: boolean; // Pause all game timers
+}
+```
+
+### Examples
+
+Here are some common pause configurations:
+
+```typescript
+// Pause everything
+this.app.pause({
+  pauseAudio: true,
+  pauseAnimations: true,
+  pauseTicker: true,
+  pauseTimers: true,
+});
+
+// Pause only audio and animations (game loop continues)
+this.app.pause({
+  pauseAudio: true,
+  pauseAnimations: true,
+  pauseTicker: false,
+  pauseTimers: false,
+});
+
+// Pause only the game loop
+this.app.pause({
+  pauseAudio: false,
+  pauseAnimations: false,
+  pauseTicker: true,
+  pauseTimers: false,
+});
+```
+
+## Default Behavior
+
+If no configuration is provided, the default behavior is:
+
+```typescript
+const defaultPauseConfig = {
+  pauseAudio: false,
+  pauseAnimations: false,
+  pauseTicker: false,
+  pauseTimers: false,
+};
+```
+
+## Listening for Pause Events
+
+You can listen for pause and resume events using the application's signals:
+
+```typescript
+// Listen for pause events
+this.app.onPause.connect((config) => {
+  console.log('Game paused with config:', config);
+  // Handle pause
+});
+
+// Listen for resume events
+this.app.onResume.connect((config) => {
+  console.log('Game resumed from config:', config);
+  // Handle resume
+});
+```
+
+## Document Visibility Handling
+
+The framework automatically handles document visibility changes (when the user switches tabs or minimizes the window). By default:
+
+- When the document becomes hidden:
+
+  - Audio is suspended
+  - All timers are paused
+
+- When the document becomes visible:
+  - Audio is restored
+  - All timers are resumed
+
+This behavior is handled through the WebEvents plugin and can be observed in your code:
+
+```typescript
+// Listen for visibility changes
+this.app.webEvents.onVisibilityChanged.connect((isVisible) => {
+  if (isVisible) {
+    // Document is visible
+    console.log('Game window is visible');
+  } else {
+    // Document is hidden
+    console.log('Game window is hidden');
+  }
+});
+```
+
+## Best Practices
+
+1. **Consistent State Management**: When pausing, ensure all game systems are in a consistent state. This might include:
+
+   - Disabling user input
+   - Showing a pause menu
+   - Saving the current game state
+
+2. **Selective Pausing**: Consider what should and shouldn't be paused. For example:
+
+   - Background music might continue during pause
+   - UI animations might still run
+   - Particle effects might freeze
+
+3. **Resume Handling**: When resuming, make sure to:
+   - Restore the correct game state
+   - Re-enable user input
+   - Hide pause UI
+   - Resume from the correct point in time
+
+## Example Implementation
+
+Here's a complete example of implementing a pause system:
+
+```typescript
+import { Scene } from 'dill-pixel';
+class GameScene extends Scene {
+  private isPauseMenuVisible = false;
+
+  constructor() {
+    super();
+
+    // Listen for ESC key to toggle pause
+    this.app.keyboard.onKeyDown('Escape').connect(this.togglePause);
+  }
+
+  private togglePause = () => {
+    if (this.app.paused) {
+      this.resumeGame();
+    } else {
+      this.pauseGame();
+    }
+  };
+
+  private pauseGame() {
+    // Pause game systems
+    this.app.pause({
+      pauseAudio: true,
+      pauseAnimations: true,
+      pauseTicker: true,
+      pauseTimers: true,
+    });
+
+    // Show pause menu
+    this.showPauseMenu();
+  }
+
+  private resumeGame() {
+    // Hide pause menu first
+    this.hidePauseMenu();
+
+    // Resume game systems
+    this.app.resume();
+  }
+
+  private showPauseMenu() {
+    this.isPauseMenuVisible = true;
+    // Implement your pause menu display logic
+  }
+
+  private hidePauseMenu() {
+    this.isPauseMenuVisible = false;
+    // Implement your pause menu hide logic
+  }
+}
+```
+
+## Practical Examples
+
+Let's look at some practical scenarios and how different pause configurations affect game elements:
+
+### Scenario: Manually Pause your Scene's update loop:
+
+When `pauseTicker` is true, the game loop will pause:
+
+```typescript
+class GameScene extends Scene {
+  initialize() {
+    // listen for the pause events
+    this.addSignalConnection(this.app.onPause.connect(this._onPause), this.app.onResume.connect(this._onResume));
+
+    setTimeout(() => {
+      this._pause();
+    }, 5000);
+  }
+
+  update() {
+    // check if the game is paused
+    if (this.app.paused) {
+      return;
+    }
+    // Your update logic here (this will not run if the game is paused)
+  }
+
+  private _pause() {
+    // call pause method with no config to pause the game, and control the pause state from the scene
+    this.app.pause();
+
+    setTimeout(() => {
+      this._resume();
+    }, 5000);
+  }
+
+  private _resume() {
+    this.app.resume();
+  }
+
+  private _onPause() {
+    console.log('Game paused');
+  }
+
+  private _onResume() {
+    console.log('Game resumed');
+  }
+}
+```
+
+### Scenario: GSAP Animations
+
+When `pauseAnimations` is true, GSAP animations like this will pause:
+
+```typescript
+// GSAP animation that will pause when pauseAnimations is true
+gsap.to(sprite.pivot, {
+  x: 200,
+  duration: 1,
+  ease: 'power2.inOut',
+  yoyo: true,
+  repeat: -1,
+});
+
+// Pause configuration that will stop the animation
+this.app.pause({
+  pauseAnimations: true,
+  pauseAudio: false,
+  pauseTicker: false,
+  pauseTimers: false,
+});
+```
+
+### Scenario: Ticker-Based Animations
+
+When `pauseTicker` is true, any animations using Pixi's ticker will pause:
+
+```typescript
+class GameScene extends Scene {
+  private sprite: Sprite;
+  private direction = 1;
+
+  update() {
+    // This animation will pause when pauseTicker is true
+    this.sprite.x += 5 * this.direction;
+    if (this.sprite.x >= 500) {
+      this.direction = -1;
+    } else if (this.sprite.x <= 0) {
+      this.direction = 1;
+    }
+  }
+}
+
+// Pause configuration that will stop ticker-based animations
+this.app.pause({
+  pauseTicker: true,
+  pauseAnimations: false,
+  pauseAudio: false,
+  pauseTimers: false,
+});
+```
+
+### Scenario: Timers and Audio
+
+When using timers and audio together, you might want to pause both:
+
+```typescript
+class GameScene extends Scene {
+  initialize() {
+    // Create a countdown timer
+    const countdown = this.app.timers.createTimer({
+      duration: 5000, // 5 seconds
+      autoStart: true,
+      useWorker: true,
+      loop: true,
+      onTick: (remaining) => {
+        this.updateCountdown(remaining);
+      },
+    });
+
+    // Play background music
+    await this.app.audio.play('backgroundMusic', 'music', {
+      singleInstance: true,
+      loop: true,
+    });
+  }
+
+  // Pause both timers and audio
+  pauseGameAndAudio() {
+    this.app.pause({
+      pauseTimers: true,
+      pauseAudio: true,
+      pauseAnimations: false,
+      pauseTicker: false,
+    });
+  }
+}
+```
+
+### Tips for Different Game Types
+
+1. **Action Games**
+
+   ```typescript
+   // Pause everything for action games where timing is critical
+   this.app.pause({
+     pauseAudio: true,
+     pauseAnimations: true,
+     pauseTicker: true,
+     pauseTimers: true,
+   });
+   ```
+
+2. **Puzzle Games**
+
+   ```typescript
+   // Maybe keep animations running but pause timers and gameplay
+   this.app.pause({
+     pauseAudio: false, // Keep background music
+     pauseAnimations: false, // Keep UI animations
+     pauseTicker: true, // Pause gameplay
+     pauseTimers: true, // Pause level timer
+   });
+   ```
+
+3. **Menu Screens**
+   ```typescript
+   // Pause gameplay but keep UI responsive
+   this.app.pause({
+     pauseAudio: false,
+     pauseAnimations: true,
+     pauseTicker: false,
+     pauseTimers: true,
+   });
+   ```
+
+Remember to always consider the user experience when choosing what to pause. For example, you might want to keep UI animations running during pause to maintain responsiveness, while pausing gameplay elements to prevent any game state changes.
