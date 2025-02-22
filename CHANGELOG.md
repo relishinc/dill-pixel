@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.14.0](https://github.com/relishinc/dill-pixel/compare/v4.13.0...v4.14.0) (2025-02-22)
+
+
+### Features
+
+* pausing / resuming app with configuration ([55f4bbf](https://github.com/relishinc/dill-pixel/commit/55f4bbfff7bf77e8c9221b8ae8d3157030a15634))
+* TimerPlugin - game timer creation plugin ([55f4bbf](https://github.com/relishinc/dill-pixel/commit/55f4bbfff7bf77e8c9221b8ae8d3157030a15634))
+
 ## [4.13.0](https://github.com/relishinc/dill-pixel/compare/v4.12.0...v4.13.0) (2025-02-20)
 
 
