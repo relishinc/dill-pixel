@@ -2,7 +2,7 @@ import { Application, IPlugin, isDev, Logger, Plugin, version } from 'dill-pixel
 import { Container as PIXIContainer, Rectangle, Ticker } from 'pixi.js';
 import { Actor } from './Actor';
 import { Group } from './Group';
-import { CrunchPhysicsOptions } from './interfaces';
+import { AABBLike, CrunchPhysicsOptions } from './interfaces';
 import { Sensor } from './Sensor';
 import { Solid } from './Solid';
 import { System } from './System';
@@ -728,5 +728,16 @@ export default class CrunchPhysicsPlugin extends Plugin implements ICrunchPhysic
   public clearCollisionLayers(): void {
     const registry = CollisionLayers.getRegistry();
     registry.clear();
+  }
+
+  /**
+   * Checks if two AABB rectangles overlap.
+   *
+   * @param a - The first AABB rectangle
+   * @param b - The second AABB rectangle
+   * @returns True if the rectangles overlap, false otherwise
+   */
+  public aabbOverlap(a: AABBLike, b: AABBLike): boolean {
+    return this.system.aabbOverlap(a, b);
   }
 }

@@ -373,8 +373,8 @@ export default class CrunchPhysicsScene extends BaseScene {
     debug: false,
     itemsToAdd: 100,
     gravity: 6000,
-    maxVelocity: 1500,
-    gridCellSize: 150,
+    maxVelocity: 2000,
+    gridCellSize: 250,
     useCamera: false,
     boundary: {
       width: 800,
@@ -532,6 +532,10 @@ export default class CrunchPhysicsScene extends BaseScene {
 
     // Platform 2 (moving)
     this.pf2 = this.createPlatform(400, 600, 200, 32, 'ground_grass');
+
+    // animate a point around a circle
+    const point = new Point(this.pf2.x, this.pf2.y);
+
     gsap.to(this.pf2, {
       y: 1200,
       duration: 3,

@@ -353,12 +353,7 @@ export class Sensor<T extends Application = Application, D extends EntityData = 
       }
 
       // Fast AABB check before detailed overlap
-      if (
-        this.x < actor.x + actor.width &&
-        this.x + this.width > actor.x &&
-        this.y < actor.y + actor.height &&
-        this.y + this.height > actor.y
-      ) {
+      if (this.system.aabbOverlap(this, actor)) {
         this._currentOverlaps.add(actor);
         if (!this.overlappingActors.has(actor)) {
           // New overlap
@@ -418,27 +413,6 @@ export class Sensor<T extends Application = Application, D extends EntityData = 
   public onActorExit<A extends Actor = Actor>(actor: A): void {
     // Override in subclass
     void actor;
-  }
-
-  /**
-   * Checks if this sensor overlaps with the given actor.
-   *
-   * @param actor - Actor to check for overlap
-   * @returns True if overlapping
-   */
-  private overlaps(actor: Actor): boolean {
-    // Check collision layers and masks
-    if ((this.collisionLayer & actor.collisionMask) === 0 || (actor.collisionLayer & this.collisionMask) === 0) {
-      return false;
-    }
-
-    // Check for AABB overlap
-    return (
-      this.x < actor.x + actor.width &&
-      this.x + this.width > actor.x &&
-      this.y < actor.y + actor.height &&
-      this.y + this.height > actor.y
-    );
   }
 
   /**

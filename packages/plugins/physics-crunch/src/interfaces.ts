@@ -24,3 +24,10 @@ export interface CrunchPhysicsOptions {
   /** Whether to enable actor-to-actor collisions */
   enableActorCollisions?: boolean;
 }
+
+export interface AABBLike {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}

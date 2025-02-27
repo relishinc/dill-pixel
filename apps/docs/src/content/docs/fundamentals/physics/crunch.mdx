@@ -14,6 +14,7 @@ The Crunch Physics Plugin is a robust, grid-based physics system designed for hi
 - Built-in culling system for off-screen entities
 - Debug visualization tools
 - Customizable collision layers and masks for fine-grained collision control
+- Pixel-based physics system optimized for 2D games
 
 ## Core Concepts
 
@@ -23,7 +24,7 @@ The system is built around three main entity types and a group system:
 
 Dynamic entities that can move and collide with solids. Key features:
 
-- Velocity-based movement with gravity
+- Velocity-based movement with gravity (in pixels/second²)
 - Precise collision detection and response
 - Support for riding moving platforms
 - Sub-pixel movement precision
@@ -33,7 +34,7 @@ Dynamic entities that can move and collide with solids. Key features:
 class Player extends Actor {
   initialize() {
     // Setup player-specific properties
-    this.velocity = { x: 0, y: 0 };
+    this.velocity = { x: 0, y: 0 }; // Velocity in pixels/second
     // Set collision layer and mask
     this.collisionLayer = CollisionLayer.PLAYER;
     this.collisionMask = CollisionLayer.PLATFORM | CollisionLayer.WALL | CollisionLayer.ENEMY;
@@ -246,12 +247,12 @@ The Crunch Physics Plugin uses an efficient grid-based spatial partitioning syst
 ```ts
 // Configure the physics system
 await physics.initialize(app, {
-  gridSize: 32, // Size of each grid cell
-  gravity: 900,
-  maxVelocity: 1000,
+  gridSize: 32, // Size of each grid cell in pixels
+  gravity: 900, // Gravity in pixels/second²
+  maxVelocity: 1000, // Maximum velocity in pixels/second
   debug: true, // Enable debug visualization
   culling: true, // Enable automatic culling
-  boundary: new Rectangle(0, 0, 800, 600),
+  boundary: new Rectangle(0, 0, 800, 600), // Boundary in pixels
 });
 ```
 
@@ -276,6 +277,12 @@ private addSolidToGrid(solid: Solid): void {
   }
 }
 ```
+
+<Aside type="tip" title="Physics Units">
+  The physics system uses pixel-based units for all measurements: - Positions and sizes are in pixels - Velocities are
+  in pixels/second - Acceleration (including gravity) is in pixels/second² - For a more realistic feel, typical gravity
+  values range from 800 to 1200 pixels/second²
+</Aside>
 
 <Aside type="tip">
   Choose a grid size that roughly matches your smallest moving entity for optimal performance. Too small cells create
@@ -309,6 +316,91 @@ class MyScene extends Scene {
 }
 ```
 
+### Actor-to-Actor Collisions
+
+By default, actors only collide with solids. However, you can enable actor-to-actor collisions for specific scenarios:
+
+```ts
+// Enable actor-to-actor collisions
+physics.setActorCollisionsEnabled(true);
+
+// Set up a custom resolver for actor collisions
+physics.setActorCollisionResolver((collisions: ActorCollision[]) => {
+  for (const collision of collisions) {
+    // Example: Bullets colliding with enemies
+    const isBulletEnemyCollision =
+      CollisionLayers.isLayerInMask(CollisionLayer.PROJECTILE, collision.actor1.collisionLayer) &&
+      CollisionLayers.isLayerInMask(CollisionLayer.ENEMY, collision.actor2.collisionLayer);
+
+    if (isBulletEnemyCollision) {
+      handleBulletEnemyCollision(collision);
+    }
+  }
+});
+```
+
+#### Use Cases
+
+Actor-to-actor collisions are useful for:
+
+- Projectile-based combat systems
+- Enemy-enemy collision avoidance
+- Player vs player interactions in multiplayer games
+- Physics-based puzzles with multiple moving objects
+- Particle system interactions
+
+<Aside type="caution" title="Performance Impact">
+  Actor-to-actor collisions can significantly impact performance:
+  <ul>
+    <li>Each actor must check against all other actors in nearby grid cells</li>
+    <li>Collision checks scale quadratically with the number of actors</li>
+    <li>Memory usage increases due to additional collision data storage</li>
+    <li>Can cause frame drops with many simultaneous collisions</li>
+  </ul>
+</Aside>
+
+#### Best Practices
+
+To minimize performance impact when using actor-to-actor collisions:
+
+1. **Use Selective Collision Masks**:
+
+```ts
+// Only check collisions between relevant actors
+const bullet = physics.createActor({
+  type: 'Bullet',
+  collisionLayer: CollisionLayer.PROJECTILE,
+  collisionMask: CollisionLayer.ENEMY, // Only collide with enemies
+});
+
+const enemy = physics.createActor({
+  type: 'Enemy',
+  collisionLayer: CollisionLayer.ENEMY,
+  collisionMask: CollisionLayer.PROJECTILE | CollisionLayer.PLAYER, // Only collide with bullets and player
+});
+```
+
+2. **Implement Early Exit Conditions**:
+
+```ts
+physics.setActorCollisionResolver((collisions: ActorCollision[]) => {
+  for (const collision of collisions) {
+    // Skip processing if either actor is already destroyed
+    if (!collision.actor1.active || !collision.actor2.active) continue;
+
+    // Process only necessary collisions
+    handleActorCollision(collision);
+  }
+});
+```
+
+3. **Consider Alternatives**:
+
+- Use sensors for overlap detection when collision response isn't needed
+- Implement spatial awareness systems for enemy AI instead of physical collisions
+- Use simplified collision shapes for performance-critical interactions
+- Consider disabling actor collisions in areas with many entities
+
 ### Advanced Features
 
 1. **Riding Detection**:
@@ -338,6 +430,49 @@ class MovingPlatform extends Solid {
   }
 }
 ```
+
+### Animating Platforms
+
+You can create smooth platform movements using GSAP:
+
+```ts
+// Create a moving platform
+const platform = physics.createSolid({
+  type: 'Platform',
+  position: [100, 300],
+  size: [200, 32],
+  view: platformSprite,
+  collisionLayer: CollisionLayer.PLATFORM,
+  collisionMask: CollisionLayer.PLAYER | CollisionLayer.ENEMY,
+});
+
+// Horizontal movement
+gsap.to(platform, {
+  x: 500, // Target x position
+  duration: 2,
+  ease: 'power1.inOut',
+  yoyo: true, // Reverse the animation
+  repeat: -1, // Repeat infinitely
+});
+
+// Vertical movement
+gsap.to(platform, {
+  y: platform.y - 200, // Move up 200 pixels
+  duration: 3,
+  ease: 'power1.inOut',
+  yoyo: true,
+  repeat: -1,
+});
+```
+
+<Aside type="tip" title="Platform Animation Best Practices">
+  <ul>
+    <li>Use `ease` functions to create smooth acceleration and deceleration</li>
+    <li>Keep movement speeds reasonable to allow players to land on platforms</li>
+    <li>Consider using `yoyo` for back-and-forth movements</li>
+    <li>Remember that riding actors will inherit the platform's movement</li>
+  </ul>
+</Aside>
 
 3. **Sensor Overlaps**:
 
@@ -411,9 +546,10 @@ For implementation examples, see:
 1. **Grid Size Optimization**:
 
 ```ts
-// Choose grid size based on average entity size
+// Choose grid size based on average entity size (in pixels)
 physics.initialize(app, {
   gridSize: 32, // Adjust based on your game's needs
+  gravity: 900, // Typical platformer gravity (pixels/second²)
 });
 ```
 

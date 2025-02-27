@@ -3,6 +3,7 @@ import { Actor } from './Actor';
 import CrunchPhysicsPlugin from './CrunchPhysicsPlugin';
 import { Entity } from './Entity';
 import { Group } from './Group';
+import { AABBLike } from './interfaces';
 import { Sensor } from './Sensor';
 import { Solid } from './Solid';
 import {
@@ -1530,5 +1531,16 @@ export class System {
     }
 
     return Array.from(this.groupsByType.get(type) || new Set());
+  }
+
+  /**
+   * Checks if two AABB rectangles overlap.
+   *
+   * @param a - The first AABB rectangle
+   * @param b - The second AABB rectangle
+   * @returns True if the rectangles overlap, false otherwise
+   */
+  public aabbOverlap(a: AABBLike, b: AABBLike): boolean {
+    return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
   }
 }
