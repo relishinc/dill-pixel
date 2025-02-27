@@ -397,7 +397,7 @@ export default class CrunchPhysicsScene extends BaseScene {
   ui: UICanvas;
 
   get physics(): ICrunchPhysicsPlugin {
-    return this.app.getPlugin('crunch-physics') as ICrunchPhysicsPlugin;
+    return this.app.getPlugin('crunch-physics') as unknown as ICrunchPhysicsPlugin;
   }
 
   configureGUI() {
