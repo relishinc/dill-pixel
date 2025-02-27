@@ -224,8 +224,8 @@ class Player extends Actor<V8Application> {
 
   public onActorCollide(result: ActorCollisionResult): void {
     if (result.actor.type === 'FX') {
-      if (result.normal?.x) {
-        result.actor.velocity.x = -result.normal.x * result.actor.velocity.x;
+      if (result.normal?.x !== undefined) {
+        result.actor.velocity.x = this.velocity.x * 100 + result.normal.x * -1000;
       }
       result.actor.velocity.y = -2000;
     }
@@ -510,7 +510,7 @@ export default class CrunchPhysicsScene extends BaseScene {
       gridSize: this.config.gridCellSize,
       debug: this.config.debug,
       culling: true,
-      enableActorCollisions: false,
+      enableActorCollisions: true,
       boundary: this.config.boundary.bindToAppSize
         ? new Rectangle(0, 0, this.app.size.width, this.app.size.height)
         : new Rectangle(0, 0, this.config.boundary.width, this.config.boundary.height),
