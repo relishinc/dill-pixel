@@ -392,7 +392,7 @@ export default class CrunchPhysicsScene extends BaseScene {
   private portal1: Portal;
   private portal2: Portal;
   private portal3: Portal;
-  private pool = new Pool<FX>(FX, 0);
+  private pool = new Pool<FX>(FX, 10000);
 
   ui: UICanvas;
 
@@ -510,7 +510,7 @@ export default class CrunchPhysicsScene extends BaseScene {
       gridSize: this.config.gridCellSize,
       debug: this.config.debug,
       culling: true,
-      enableActorCollisions: true,
+      enableActorCollisions: false,
       boundary: this.config.boundary.bindToAppSize
         ? new Rectangle(0, 0, this.app.size.width, this.app.size.height)
         : new Rectangle(0, 0, this.config.boundary.width, this.config.boundary.height),
