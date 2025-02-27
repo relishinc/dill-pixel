@@ -9,12 +9,15 @@ alwaysApply: false
 Use knowledge of:
 - Framework in ./packages/framework/src/*
 - CLI in ./packages/framework/cli.mjs
+- Plugins in ./packages/plugins/**/*
+- Documentation site in ./apps/docs
 - Vite
 - (p)npm
 - TypeScript
 - Starlight
 - Astro
 - Tailwind
+- MDX
 
 ## Documentation Structure
 - Organize documentation by feature and functionality
@@ -33,3 +36,8 @@ Use knowledge of:
 - Include code examples and snippets
 - Document edge cases and limitations
 - Keep documentation in sync with code changes
+
+## Documentation site
+- Uses Astro Starlight
+- Remember to update ./apps/docs/astro.config.mjs when adding new pages
+- Use existing content in ./apps/docs/src/content/docs/fundamentals/**/*.mdx when adding new documentation files and updating existing files.
