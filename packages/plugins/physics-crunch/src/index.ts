@@ -2,6 +2,7 @@ import CrunchPhysicsPlugin from './CrunchPhysicsPlugin';
 
 export * from './Actor';
 // Don't export from collision-layers.d.ts as it's a declaration file
+export * from './Entity';
 export * from './Group';
 export * from './interfaces';
 export * from './Sensor';

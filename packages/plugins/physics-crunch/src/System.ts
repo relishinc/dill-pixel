@@ -66,6 +66,14 @@ export interface PhysicsSystemOptions {
 }
 
 /**
+ * Represents a cell in the spatial partitioning grid that can contain both solids and actors
+ */
+interface GridCell {
+  solids: Set<Solid>;
+  actors: Set<Actor>;
+}
+
+/**
  * Core physics system that manages all physics entities and their interactions.
  * Handles spatial partitioning, collision detection, and entity lifecycle.
  *
@@ -123,16 +131,31 @@ export class System {
   // groups tracking
   private groupWithEntities: Map<Group, Set<Entity>> = new Map();
 
-  // Spatial partitioning
-  private grid: Map<string, Set<Solid>> = new Map();
+  // Single grid for both solids and actors
+  private grid: Map<string, GridCell> = new Map();
+
   // Collision tracking
   private collisions: Collision[] = [];
   private sensorOverlaps: SensorOverlap[] = [];
   private actorCollisions: ActorCollision[] = [];
+
+  // Reusable data structures for actor collision detection
+  private _checkedPairs: Set<string> = new Set();
+
+  // Object pools for collision results to reduce GC pressure
+  private _collisionResultPool: ActorCollisionResult[] = [];
+  private _collisionResultPoolIndex: number = 0;
+  private _actorCollisionPool: ActorCollision[] = [];
+  private _actorCollisionPoolIndex: number = 0;
+
   // Debugging
   private _debugContainer: Container;
   private _debugGfx: Graphics | null = null;
   private _debug: boolean = false;
+
+  private _movedActors: Set<Actor> = new Set();
+  private _activeGridCells: Set<string> = new Set();
+  private _potentialCollisions: Map<string, [Actor, Actor]> = new Map();
 
   set debug(value: boolean) {
     this._debug = value;
@@ -215,6 +238,9 @@ export class System {
     this.sensorOverlaps.length = 0;
     this.actorCollisions.length = 0;
 
+    // Reset object pools
+    this.resetCollisionPools();
+
     // Convert delta time to seconds (cache this calculation)
     const deltaTime = dt / 60;
 
@@ -229,6 +255,13 @@ export class System {
     // Update sensors (before actors so they can detect entry/exit in the same frame)
     for (const sensor of this.sensors) {
       this.updateSensor(sensor, deltaTime);
+    }
+
+    // Clear actor collision lists before updating actors
+    for (const actor of this.actors) {
+      if (actor.actorCollisions.length > 0) {
+        actor.actorCollisions.length = 0;
+      }
     }
 
     // Update actors with potential batching
@@ -620,6 +653,12 @@ export class System {
       this.actorsByType.set(actor.type, new Set());
     }
     this.actorsByType.get(actor.type)!.add(actor);
+
+    // Add to actor grid if actor collisions are enabled
+    if (this.options.enableActorCollisions) {
+      actor.updateGridCells();
+    }
+
     return actor;
   }
 
@@ -689,6 +728,11 @@ export class System {
 
     if (destroyView) {
       actor.view?.removeFromParent();
+    }
+
+    // Remove from actor grid
+    if (this.options.enableActorCollisions) {
+      this.removeActorFromGrid(actor);
     }
   }
 
@@ -799,9 +843,9 @@ export class System {
     const entityMask = entity.collisionMask;
 
     for (const cell of cells) {
-      const solids = this.grid.get(cell);
-      if (solids) {
-        for (const solid of solids) {
+      const gridCell = this.grid.get(cell);
+      if (gridCell) {
+        for (const solid of gridCell.solids) {
           // Skip already seen solids
           if (seen.has(solid)) continue;
 
@@ -929,9 +973,9 @@ export class System {
 
     for (const cell of cells) {
       if (!this.grid.has(cell)) {
-        this.grid.set(cell, new Set());
+        this.grid.set(cell, { solids: new Set(), actors: new Set() });
       }
-      this.grid.get(cell)!.add(solid);
+      this.grid.get(cell)!.solids.add(solid);
     }
   }
 
@@ -945,10 +989,10 @@ export class System {
     const cells = this.getCells(bounds);
 
     for (const cell of cells) {
-      const solids = this.grid.get(cell);
-      if (solids) {
-        solids.delete(solid);
-        if (solids.size === 0) {
+      const gridCell = this.grid.get(cell);
+      if (gridCell) {
+        gridCell.solids.delete(solid);
+        if (gridCell.solids.size === 0 && gridCell.actors.size === 0) {
           this.grid.delete(cell);
         }
       }
@@ -1076,129 +1120,257 @@ export class System {
   }
 
   /**
+   * Gets a collision result object from the pool or creates a new one if needed
+   */
+  private getCollisionResult(): ActorCollisionResult {
+    if (this._collisionResultPoolIndex < this._collisionResultPool.length) {
+      const result = this._collisionResultPool[this._collisionResultPoolIndex++];
+      result.collided = false;
+      result.actor = null as any;
+      result.normal = undefined;
+      result.penetration = 0;
+      return result;
+    }
+
+    // Create a new object and add it to the pool
+    const newResult: ActorCollisionResult = {
+      collided: false,
+      actor: null as any,
+      normal: undefined,
+      penetration: 0,
+    };
+
+    this._collisionResultPool.push(newResult);
+    this._collisionResultPoolIndex++;
+    return newResult;
+  }
+
+  /**
+   * Gets an actor collision object from the pool or creates a new one if needed
+   */
+  private getActorCollision(): ActorCollision {
+    if (this._actorCollisionPoolIndex < this._actorCollisionPool.length) {
+      return this._actorCollisionPool[this._actorCollisionPoolIndex++];
+    }
+
+    // Create a new object and add it to the pool
+    const newCollision: ActorCollision = {
+      type: 'unknown|unknown' as `${string}|${string}`,
+      actor1: null as any,
+      actor2: null as any,
+      result: null as any,
+    };
+
+    this._actorCollisionPool.push(newCollision);
+    this._actorCollisionPoolIndex++;
+    return newCollision;
+  }
+
+  /**
+   * Resets the collision result pools for the next frame
+   */
+  private resetCollisionPools(): void {
+    this._collisionResultPoolIndex = 0;
+    this._actorCollisionPoolIndex = 0;
+  }
+
+  /**
+   * Updates an actor's position in the grid.
+   * This is called when an actor moves or when its size changes.
+   *
+   * @param actor - The actor to update in the grid
+   */
+  public updateActorInGrid(actor: Actor): void {
+    // Skip if actor collisions are disabled
+    if (!this.options.enableActorCollisions) return;
+
+    // Skip if actor can't collide
+    if (!actor.active || actor.collisionLayer === 0 || actor.collisionMask === 0) {
+      // If actor has cells, remove it from them
+      if (actor.currentGridCells.length > 0) {
+        this.removeActorFromGrid(actor);
+      }
+      return;
+    }
+
+    // First remove from current cells
+    this.removeActorFromGrid(actor);
+
+    // Calculate new cells
+    const bounds = {
+      x: actor.x,
+      y: actor.y,
+      width: actor.width,
+      height: actor.height,
+    };
+
+    const cells = this.getCells(bounds);
+
+    // Store new cells in actor
+    actor.currentGridCells = cells;
+
+    // Add to new cells
+    for (const cell of cells) {
+      if (!this.grid.has(cell)) {
+        this.grid.set(cell, { solids: new Set(), actors: new Set() });
+      }
+
+      const gridCell = this.grid.get(cell)!;
+      gridCell.actors.add(actor);
+    }
+  }
+
+  /**
+   * Removes an actor from its current grid cells.
+   *
+   * @param actor - The actor to remove from the grid
+   */
+  public removeActorFromGrid(actor: Actor): void {
+    const currentCells = actor.currentGridCells;
+
+    for (const cell of currentCells) {
+      const gridCell = this.grid.get(cell);
+
+      if (gridCell) {
+        gridCell.actors.delete(actor);
+
+        // Remove the cell if it's empty
+        if (gridCell.actors.size === 0 && gridCell.solids.size === 0) {
+          this.grid.delete(cell);
+        }
+      }
+    }
+
+    // Clear the actor's cells
+    actor.currentGridCells = [];
+  }
+
+  /**
    * Checks for collisions between all active actors.
    * This is an O(n²) operation, so it can be expensive with many actors.
    */
   private checkActorCollisions(): void {
     // Skip if there are no actors or only one actor
-    if (this.actors.size <= 1) return;
+    if (this.actors.size <= 1 || !this.options.enableActorCollisions) return;
 
-    const actorArray = Array.from(this.actors);
-    const actorCount = actorArray.length;
+    // Clear the checked pairs set and potential collisions
+    this._checkedPairs.clear();
+    this._potentialCollisions.clear();
+    this._activeGridCells.clear();
 
-    // Create a temporary grid for spatial partitioning of actors
-    // This avoids checking every actor against every other actor
-    const actorGrid = new Map<string, Actor[]>();
-    const { gridSize } = this.options;
+    // First pass: Mark cells with moving actors as active
+    for (const [cellKey, gridCell] of this.grid.entries()) {
+      for (const actor of gridCell.actors) {
+        if (!actor.active) continue;
 
-    // Place actors in grid cells
-    for (let i = 0; i < actorCount; i++) {
-      const actor = actorArray[i];
-
-      // Skip inactive actors
-      if (!actor.active || actor.collisionLayer === 0 || actor.collisionMask === 0) continue;
-
-      // Calculate grid cells this actor occupies
-      const startX = Math.floor(actor.x / gridSize);
-      const startY = Math.floor(actor.y / gridSize);
-      const endX = Math.ceil((actor.x + actor.width) / gridSize);
-      const endY = Math.ceil((actor.y + actor.height) / gridSize);
-
-      // Add actor to all cells it overlaps
-      for (let x = startX; x < endX; x++) {
-        for (let y = startY; y < endY; y++) {
-          const cellKey = `${x},${y}`;
-          if (!actorGrid.has(cellKey)) {
-            actorGrid.set(cellKey, []);
-          }
-          actorGrid.get(cellKey)!.push(actor);
+        // If actor is moving or recently moved
+        if (actor.velocity.x !== 0 || actor.velocity.y !== 0) {
+          this._activeGridCells.add(cellKey);
+          break;
         }
       }
     }
 
-    // Set to track which actor pairs we've already checked
-    const checkedPairs = new Set<string>();
+    // Second pass: Generate potential collision pairs from active cells
+    for (const cellKey of this._activeGridCells) {
+      const gridCell = this.grid.get(cellKey);
+      if (!gridCell || gridCell.actors.size <= 1) continue;
 
-    // Check collisions within each cell
-    for (const actorsInCell of actorGrid.values()) {
+      const actorsInCell = Array.from(gridCell.actors);
       const cellActorCount = actorsInCell.length;
-
-      // Skip cells with only one actor
-      if (cellActorCount <= 1) continue;
 
       // Check each actor against others in the same cell
       for (let i = 0; i < cellActorCount; i++) {
         const actor1 = actorsInCell[i];
+        if (!actor1.active) continue;
 
         for (let j = i + 1; j < cellActorCount; j++) {
           const actor2 = actorsInCell[j];
+          if (!actor2.active) continue;
 
-          // Create a unique key for this actor pair to avoid duplicate checks
-          // Use actor IDs or memory addresses to ensure uniqueness
+          // Create a unique key for this actor pair
           const pairKey = actor1.id < actor2.id ? `${actor1.id}|${actor2.id}` : `${actor2.id}|${actor1.id}`;
 
           // Skip if we've already checked this pair
-          if (checkedPairs.has(pairKey)) continue;
-          checkedPairs.add(pairKey);
+          if (this._checkedPairs.has(pairKey)) continue;
+          this._checkedPairs.add(pairKey);
 
-          // Check if the actors can collide based on collision layers
+          // Fast collision layer check
           if (
-            (actor1.collisionLayer & actor2.collisionMask) === 0 ||
+            (actor1.collisionLayer & actor2.collisionMask) === 0 &&
             (actor2.collisionLayer & actor1.collisionMask) === 0
-          ) {
+          )
             continue;
-          }
 
-          // Fast AABB check before detailed collision
+          // Fast AABB check
           if (
             actor1.x < actor2.x + actor2.width &&
             actor1.x + actor1.width > actor2.x &&
             actor1.y < actor2.y + actor2.height &&
             actor1.y + actor1.height > actor2.y
           ) {
-            // Check for collision
-            const result = actor1.checkActorCollision(actor2);
-            if (result.collided) {
-              // Add to actor1's collision list
-              actor1.actorCollisions.push(result);
-
-              // Create a mirrored result for actor2
-              const mirroredResult: ActorCollisionResult = {
-                collided: true,
-                actor: actor1,
-                normal: result.normal ? { x: -result.normal.x, y: -result.normal.y } : undefined,
-                penetration: result.penetration,
-              };
-
-              // Add to actor2's collision list
-              actor2.actorCollisions.push(mirroredResult);
-
-              // Add to system's collision list
-              const actorCollision: ActorCollision = {
-                type: `${actor1.type}|${actor2.type}`,
-                actor1,
-                actor2,
-                result,
-              };
-              this.actorCollisions.push(actorCollision);
-
-              // Call collision handlers
-              actor1.onActorCollide(result);
-              actor2.onActorCollide(mirroredResult);
-
-              // Resolve the collision
-              actor1.resolveActorCollision(result, true);
-              actor2.resolveActorCollision(mirroredResult, true);
-
-              // Call the resolver if provided
-              if (this.options.actorCollisionResolver) {
-                this.options.actorCollisionResolver([actorCollision]);
-              }
-            }
+            // Store potential collision pair
+            this._potentialCollisions.set(pairKey, [actor1, actor2]);
           }
         }
       }
     }
+
+    // Final pass: Detailed collision checks for potential pairs
+    for (const [actor1, actor2] of this._potentialCollisions.values()) {
+      // Check for collision
+      const collisionResult = actor1.checkActorCollision(actor2);
+
+      if (collisionResult.collided) {
+        // Add to actor1's collision list
+        actor1.actorCollisions.push(collisionResult);
+
+        // Get a mirrored result from the pool
+        const mirroredResult = this.getCollisionResult();
+        mirroredResult.collided = true;
+        mirroredResult.actor = actor1;
+
+        if (collisionResult.normal) {
+          if (!mirroredResult.normal) {
+            mirroredResult.normal = { x: 0, y: 0 };
+          }
+          mirroredResult.normal.x = -collisionResult.normal.x;
+          mirroredResult.normal.y = -collisionResult.normal.y;
+        } else {
+          mirroredResult.normal = undefined;
+        }
+
+        mirroredResult.penetration = collisionResult.penetration;
+
+        // Add to actor2's collision list
+        actor2.actorCollisions.push(mirroredResult);
+
+        // Get an actor collision from the pool and add to system's collision list
+        const actorCollision = this.getActorCollision();
+        actorCollision.type = `${actor1.type}|${actor2.type}`;
+        actorCollision.actor1 = actor1;
+        actorCollision.actor2 = actor2;
+        actorCollision.result = collisionResult;
+        this.actorCollisions[this._actorCollisionPoolIndex++] = actorCollision;
+
+        // Call collision handlers
+        actor1.onActorCollide(collisionResult);
+        actor2.onActorCollide(mirroredResult);
+
+        // Resolve the collision
+        actor1.resolveActorCollision(collisionResult);
+        actor2.resolveActorCollision(mirroredResult);
+      }
+    }
+
+    // Process collisions with resolver if provided
+    if (this._actorCollisionPoolIndex > 0 && this.options.actorCollisionResolver) {
+      this.options.actorCollisionResolver(this.actorCollisions.slice(0, this._actorCollisionPoolIndex));
+    }
+  }
+
+  setCollisionResolver(resolver: (collisions: Collision[]) => void): void {
+    this.options.collisionResolver = resolver;
   }
 
   /**
@@ -1211,12 +1383,38 @@ export class System {
   }
 
   /**
+   * Returns whether actor-to-actor collision detection is enabled.
+   *
+   * @returns True if actor collisions are enabled
+   */
+  public get enableActorCollisions(): boolean {
+    return !!this.options.enableActorCollisions;
+  }
+
+  /**
    * Enables or disables actor-to-actor collision detection.
+   * When enabled, it initializes the grid for all existing actors.
    *
    * @param enabled - Whether to enable actor-to-actor collisions
    */
   public setActorCollisionsEnabled(enabled: boolean): void {
+    const wasEnabled = this.options.enableActorCollisions;
     this.options.enableActorCollisions = enabled;
+
+    // If newly enabled, add all actors to the grid
+    if (enabled && !wasEnabled) {
+      for (const actor of this.actors) {
+        actor.updateGridCells();
+      }
+    } else if (!enabled && wasEnabled) {
+      // If newly disabled, clear the actor grid
+      this.grid.clear();
+
+      // Clear all actors' grid cells
+      for (const actor of this.actors) {
+        actor.currentGridCells = [];
+      }
+    }
   }
 
   public createGroup(config: PhysicsEntityConfig): Group {

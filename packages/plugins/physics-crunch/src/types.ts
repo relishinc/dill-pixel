@@ -280,6 +280,8 @@ export interface PhysicsEntityConfig<D extends EntityData = EntityData> {
   collisionLayer?: number;
   /** Collision mask defining which layers this entity collides with (bitwise) */
   collisionMask?: number;
+  /** Whether to disable actor-to-actor collisions for this entity */
+  disableActorCollisions?: boolean;
 }
 
 export interface CollisionResult {

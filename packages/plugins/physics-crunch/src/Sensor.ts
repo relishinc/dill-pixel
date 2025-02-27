@@ -130,7 +130,7 @@ export class Sensor<T extends Application = Application, D extends EntityData = 
    *
    * @param config - Configuration for the sensor
    */
-  public init(config: PhysicsEntityConfig): void {
+  public init(config: PhysicsEntityConfig<D>): void {
     super.init(config);
     if (!this.velocity) {
       this.velocity = { x: 0, y: 0 };

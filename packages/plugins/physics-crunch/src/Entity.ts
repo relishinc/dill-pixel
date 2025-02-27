@@ -3,6 +3,7 @@ import {
   bindAllMethods,
   defaultFactoryMethods,
   PointLike,
+  randomUUID,
   resolvePointLike,
   SignalConnection,
   SignalConnections,
@@ -103,7 +104,7 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   protected signalConnections: SignalConnections;
   protected _following: Entity | null;
   protected _followOffset: { x: number; y: number };
-  protected _config: PhysicsEntityConfig<D>;
+  protected _config: PhysicsEntityConfig<D> | undefined;
   protected _active: boolean = true;
 
   public updatedFollowPosition: boolean = false;
@@ -389,6 +390,8 @@ export class Entity<A extends Application = Application, D extends EntityData = 
 
     if (config.id) {
       this._id = config.id;
+    } else {
+      this._id = randomUUID();
     }
 
     if (config.type) {

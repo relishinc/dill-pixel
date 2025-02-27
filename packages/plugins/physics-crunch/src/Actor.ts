@@ -75,6 +75,9 @@ export class Actor<T extends Application = Application, D extends EntityData = E
   /** Current velocity in pixels per second */
   public velocity: Vector2 = { x: 0, y: 0 };
 
+  /** Whether actor-to-actor collisions are disabled for this actor */
+  public disableActorCollisions: boolean = false;
+
   /** Whether the actor should be removed when culled (out of bounds) */
   public shouldRemoveOnCull: boolean = true;
 
@@ -91,12 +94,15 @@ export class Actor<T extends Application = Application, D extends EntityData = E
   private _carriedBy: Solid | null = null;
   private _carriedByOverlap: number = 0;
 
+  /** Tracks the grid cells this actor currently occupies */
+  private _currentGridCells: string[] = [];
+
   /**
    * Initialize or reinitialize the actor with new configuration.
    *
    * @param config - Configuration for the actor
    */
-  public init(config: PhysicsEntityConfig): void {
+  public init(config: PhysicsEntityConfig<D>): void {
     super.init(config);
     // Reset velocity and carried state
     this.velocity = { x: 0, y: 0 };
@@ -104,6 +110,16 @@ export class Actor<T extends Application = Application, D extends EntityData = E
     this._carriedBy = null;
     this._carriedByOverlap = 0;
     this.actorCollisions = [];
+    this._currentGridCells = [];
+
+    if (config.disableActorCollisions !== undefined) {
+      this.disableActorCollisions = config.disableActorCollisions;
+    }
+
+    // Add actor to grid initially if actor collisions are enabled
+    if (this.system.enableActorCollisions && !this.disableActorCollisions) {
+      this.updateGridCells();
+    }
   }
 
   /**
@@ -145,6 +161,10 @@ export class Actor<T extends Application = Application, D extends EntityData = E
     // Move vertically
     if (this.velocity.y !== 0) {
       this.moveY(this.velocity.y * dt);
+    }
+
+    if (this.system.enableActorCollisions) {
+      this.updateGridCells();
     }
 
     // Update view
@@ -277,6 +297,31 @@ export class Actor<T extends Application = Application, D extends EntityData = E
   }
 
   /**
+   * Updates the actor's grid cells in the spatial partitioning system.
+   * This is called when the actor moves or when its size changes.
+   */
+  public updateGridCells(): void {
+    // Skip if actor collisions are disabled system-wide or for this actor specifically
+    if (this.disableActorCollisions) return;
+
+    this.system.updateActorInGrid(this);
+  }
+
+  /**
+   * Gets the current grid cells this actor occupies
+   */
+  public get currentGridCells(): string[] {
+    return this._currentGridCells;
+  }
+
+  /**
+   * Sets the current grid cells this actor occupies
+   */
+  public set currentGridCells(cells: string[]) {
+    this._currentGridCells = cells;
+  }
+
+  /**
    * Moves the actor horizontally, checking for collisions with solids.
    *
    * @param amount - Distance to move in pixels
@@ -309,6 +354,7 @@ export class Actor<T extends Application = Application, D extends EntityData = E
       this._xRemainder -= move;
       this._x += move;
       this.updateView();
+
       return [];
     }
 
@@ -404,60 +450,108 @@ export class Actor<T extends Application = Application, D extends EntityData = E
     collisionHandler?: (result: CollisionResult) => void,
     pushingSolid?: Solid,
   ): CollisionResult[] {
-    if (!this.active) return [];
+    // Early return if inactive or zero movement
+    if (!this.active || amount === 0) return [];
 
     this._yRemainder += amount;
     const move = Math.round(this._yRemainder);
+
+    // Early return if rounded movement is zero
+    if (move === 0) return [];
+
     const collisions: CollisionResult[] = [];
 
-    if (move !== 0) {
+    // Cache collision layer and mask for faster access
+    const actorLayer = this.collisionLayer;
+    const actorMask = this.collisionMask;
+
+    // Skip collision checks if no collision mask
+    if (actorMask === 0) {
+      // Just move without checking collisions
       this._yRemainder -= move;
-      const sign = Math.sign(move);
+      this._y += move;
+      this.updateView();
 
-      let remaining = Math.abs(move);
-      while (remaining > 0) {
-        const step = sign;
-        const nextY = this.y + step;
+      return [];
+    }
 
-        // Check for collision with any solid
-        let collided = false;
-        const solidsAtPosition = this.getSolidsAt(this.x, nextY);
+    this._yRemainder -= move;
+    const sign = Math.sign(move);
+    let remaining = Math.abs(move);
+    const step = sign;
 
-        // Debug log for collision detection
+    // If we're being pushed by a solid, temporarily make it non-collidable
+    if (pushingSolid) {
+      pushingSolid.collideable = false;
+    }
 
-        for (const solid of solidsAtPosition) {
-          // Check if the solid can collide with this actor based on collision layers/masks
-          if (
-            solid.canCollide &&
-            (this.collisionLayer & solid.collisionMask) !== 0 &&
-            (solid.collisionLayer & this.collisionMask) !== 0
-          ) {
-            collided = true;
-            const result: CollisionResult = {
-              collided: true,
-              normal: { x: 0, y: -sign },
-              penetration: Math.abs(nextY - (solid.y + (sign > 0 ? 0 : solid.height))),
-              solid,
-              pushingSolid,
-            };
-            collisions.push(result);
-            this.collisions.push(result);
-            this.onCollide(result);
-            if (collisionHandler) {
-              collisionHandler(result);
-            }
-            break;
-          }
+    // Move one pixel at a time, checking for collisions
+    while (remaining > 0) {
+      const nextY = this._y + step;
+
+      // Get solids at the next position
+      const solids = this.getSolidsAt(this._x, nextY);
+      let collided = false;
+
+      // Check for collisions with each solid
+      for (const solid of solids) {
+        // Skip if solid can't collide
+        if (!solid.canCollide) continue;
+
+        // Skip if collision layers don't match
+        if ((actorLayer & solid.collisionMask) === 0 || (solid.collisionLayer & actorMask) === 0) {
+          continue;
         }
 
-        if (!collided) {
-          this._y = nextY;
-          remaining--;
+        // Calculate collision details
+        const result: CollisionResult = {
+          collided: true,
+          solid,
+          normal: { x: 0, y: -sign },
+          penetration: step > 0 ? this.y + this.height - solid.y : solid.y + solid.height - this.y,
+          pushingSolid,
+        };
+
+        // Add to collisions array
+        collisions.push(result);
+
+        // Call collision handler if provided
+        if (collisionHandler) {
+          collisionHandler(result);
+        }
+
+        // Call actor's collision handler
+        this.onCollide(result);
+
+        collided = true;
+      }
+
+      if (collided) {
+        // Stop movement on collision
+        break;
+      } else {
+        // Move to next position
+        this._y = nextY;
+        remaining--;
+
+        // Update view every few pixels for better performance
+        // This reduces the number of view updates during movement
+        if (remaining % 4 === 0 || remaining === 0) {
           this.updateView();
-        } else {
-          break;
         }
       }
+    }
+
+    // Restore solid's collidable state
+    if (pushingSolid) {
+      pushingSolid.collideable = true;
+    }
+
+    // Final view update if we moved
+    if (Math.abs(move) - remaining > 0) {
+      this.updateView();
+
+      // Update grid cells if actor moved and actor collisions are enabled
     }
 
     return collisions;
@@ -486,6 +580,12 @@ export class Actor<T extends Application = Application, D extends EntityData = E
 
   /**
    * Checks if this actor is colliding with another actor.
+   * The collision will only occur if:
+   * 1. Both actors are active
+   * 2. Neither actor has disabled actor collisions
+   * 3. The collision layers and masks match:
+   *    - (this.collisionLayer & other.collisionMask) !== 0
+   *    - (other.collisionLayer & this.collisionMask) !== 0
    *
    * @param actor - The actor to check collision with
    * @returns Collision result with information about the collision
@@ -493,6 +593,11 @@ export class Actor<T extends Application = Application, D extends EntityData = E
   public checkActorCollision(actor: Actor): ActorCollisionResult {
     // Skip if either actor is not active
     if (!this.active || !actor.active) {
+      return { collided: false, actor };
+    }
+
+    // Skip if either actor has disabled actor collisions
+    if (this.disableActorCollisions || actor.disableActorCollisions) {
       return { collided: false, actor };
     }
 
@@ -554,7 +659,7 @@ export class Actor<T extends Application = Application, D extends EntityData = E
    * @param shouldMove - Whether this actor should move to resolve the collision
    * @returns The updated collision result
    */
-  public resolveActorCollision(result: ActorCollisionResult, shouldMove: boolean = true): ActorCollisionResult {
+  public resolveActorCollision(result: ActorCollisionResult): ActorCollisionResult {
     if (!result.collided || !result.normal || !result.penetration) {
       return result;
     }
@@ -562,12 +667,61 @@ export class Actor<T extends Application = Application, D extends EntityData = E
     // Call the collision handler
     this.onActorCollide(result);
 
-    // Move this actor to resolve the collision if requested
-    if (shouldMove) {
-      this.x += result.normal.x * result.penetration * 0.5;
-      this.y += result.normal.y * result.penetration * 0.5;
-    }
+    // Example:
+    // Move this actor to resolve the collision
+    // this.x += result.normal.x * result.penetration * 0.5;
+    // this.y += result.normal.y * result.penetration * 0.5;
 
     return result;
+  }
+
+  /**
+   * Sets the actor's size and updates grid cells if needed.
+   *
+   * @param width - New width in pixels
+   * @param height - New height in pixels
+   */
+  public setSize(width: number, height: number): void {
+    const sizeChanged = this.width !== width || this.height !== height;
+
+    this.width = width;
+    this.height = height;
+
+    // Update grid cells if size changed and actor collisions are enabled
+    if (sizeChanged && this.system.enableActorCollisions) {
+      this.updateGridCells();
+    }
+  }
+
+  /**
+   * Sets the actor's width and updates grid cells if needed.
+   *
+   * @param value - New width in pixels
+   */
+  public setWidth(value: number): void {
+    if (this.width !== value) {
+      this.width = value;
+
+      // Update grid cells if size changed and actor collisions are enabled
+      if (this.system.enableActorCollisions) {
+        this.updateGridCells();
+      }
+    }
+  }
+
+  /**
+   * Sets the actor's height and updates grid cells if needed.
+   *
+   * @param value - New height in pixels
+   */
+  public setHeight(value: number): void {
+    if (this.height !== value) {
+      this.height = value;
+
+      // Update grid cells if size changed and actor collisions are enabled
+      if (this.system.enableActorCollisions) {
+        this.updateGridCells();
+      }
+    }
   }
 }

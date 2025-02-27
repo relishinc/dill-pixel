@@ -100,7 +100,7 @@ export class Solid<T extends Application = Application, D extends EntityData = E
    *
    * @param config - Configuration for the solid
    */
-  public init(config: PhysicsEntityConfig): void {
+  public init(config: PhysicsEntityConfig<D>): void {
     super.init(config);
     if (config) {
       this._nextX = this._x;
