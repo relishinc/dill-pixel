@@ -83,7 +83,6 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   public view!: PhysicsEntityView;
 
   /** Whether this entity is active and should be updated */
-  public active: boolean = true;
 
   /** Collision layer this entity belongs to (bitwise) */
   public collisionLayer: number = CollisionLayer.NONE;
@@ -104,9 +103,19 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   protected signalConnections: SignalConnections;
   protected _following: Entity | null;
   protected _followOffset: { x: number; y: number };
+  protected _config: PhysicsEntityConfig<D>;
+  protected _active: boolean = true;
 
   public updatedFollowPosition: boolean = false;
   public updatedGroupPosition: boolean = false;
+
+  set active(value: boolean) {
+    this._active = value;
+  }
+
+  get active(): boolean {
+    return this._active;
+  }
 
   set id(value: string) {
     this._id = value;
@@ -251,6 +260,8 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   constructor(config?: PhysicsEntityConfig<D>) {
     bindAllMethods(this);
 
+    this._config = config;
+
     this.signalConnections = new SignalConnections();
     this.shouldRemoveOnCull = false;
     this.width = 0;
@@ -372,8 +383,9 @@ export class Entity<A extends Application = Application, D extends EntityData = 
    *
    * @param config - New configuration to apply
    */
-  public init(config: PhysicsEntityConfig): void {
+  public init(config: PhysicsEntityConfig<D>): void {
     if (!config) return;
+    this._config = config as PhysicsEntityConfig<D>;
 
     if (config.id) {
       this._id = config.id;

@@ -1,4 +1,5 @@
 import BaseScene from '@/scenes/BaseScene';
+import { FONT_KUMBH_SANS } from '@/utils/Constants';
 import { V8Application } from '@/V8Application';
 import {
   Actor,
@@ -251,11 +252,23 @@ class FX extends Actor<V8Application> {
 }
 
 class Portal extends Sensor<V8Application> {
+  private static PORTAL_SIZE = 48;
   type = 'Portal';
   collidableTypes = ['Player', 'FX'];
+  declare view: Container;
+  private _anim: gsap.core.Tween;
   private linkedPortal: Portal | null = null;
   public floating: boolean = false;
-  private static PORTAL_SIZE = 48;
+
+  private _canEnter: boolean = true;
+
+  set canEnter(value: boolean) {
+    this._canEnter = value;
+  }
+
+  get canEnter(): boolean {
+    return this._canEnter;
+  }
 
   constructor(config: any) {
     super({
@@ -293,7 +306,7 @@ class Portal extends Sensor<V8Application> {
     container.addChild(sprite);
     container.addChild(sprite2);
 
-    gsap.to(sprite2.scale, {
+    this._anim = gsap.to(sprite2.scale, {
       x: sprite2.scale.x * 1.5,
       y: sprite2.scale.y * 1.5,
       duration: 0.75,
@@ -304,16 +317,29 @@ class Portal extends Sensor<V8Application> {
 
     container.scale.y = 1.5;
 
+    if ((this._config as any).text) {
+      container.add.text({
+        text: (this._config as any).text,
+        style: {
+          fontFamily: FONT_KUMBH_SANS,
+          fontSize: 32,
+          fill: 0x000000,
+        },
+        position: [23, -25],
+        scale: 1 / container.scale.y,
+        anchor: [0.5, 0.5],
+      });
+    }
+
     this.view = container;
     this.system.addView(this.view);
   }
 
   onActorEnter(actor: Actor): void {
-    console.log('onActorEnter', actor.type);
-    if (!this.active) return;
+    if (!this._canEnter) return;
     // this.active = false;
     if (this.linkedPortal) {
-      this.linkedPortal.active = false;
+      this.linkedPortal.canEnter = false;
       if (actor.type === 'Player') {
         actor.velocity = { x: 0, y: 0 };
         actor.active = false;
@@ -328,13 +354,29 @@ class Portal extends Sensor<V8Application> {
     }
   }
 
+  set active(value: boolean) {
+    super.active = value;
+    if (this._active) {
+      if (this._anim) {
+        this._anim.resume();
+      }
+    } else {
+      if (this._anim) {
+        this._anim.pause();
+      }
+    }
+  }
+
+  get active(): boolean {
+    return super.active;
+  }
+
   onActorExit(): void {
-    this.active = true;
+    this.canEnter = true;
   }
 
   linkTo(portal: Portal): void {
     this.linkedPortal = portal;
-    portal.linkedPortal = this;
   }
 }
 
@@ -710,6 +752,7 @@ export default class CrunchPhysicsScene extends BaseScene {
     this.portal1 = new Portal({
       position: [200, 400],
       id: 'portal1',
+      text: '1',
       collisionLayer: CollisionLayer.TRIGGER,
       collisionMask: this.physics.createCollisionMask(
         CollisionLayer.PLAYER,
@@ -722,6 +765,7 @@ export default class CrunchPhysicsScene extends BaseScene {
     this.portal2 = new Portal({
       position: [700, 800],
       id: 'portal2',
+      text: '2',
       collisionLayer: CollisionLayer.TRIGGER,
       collisionMask: this.physics.createCollisionMask(
         CollisionLayer.PLAYER,
@@ -734,6 +778,7 @@ export default class CrunchPhysicsScene extends BaseScene {
     this.portal3 = new Portal({
       position: [275, 80],
       id: 'portal3',
+      text: '3',
       collisionLayer: CollisionLayer.TRIGGER,
       collisionMask: this.physics.createCollisionMask(
         CollisionLayer.PLAYER,
@@ -745,7 +790,7 @@ export default class CrunchPhysicsScene extends BaseScene {
 
     // Link the portals together
     this.portal1.linkTo(this.portal2);
-
+    this.portal2.linkTo(this.portal3);
     this.portal3.linkTo(this.portal1);
   }
 
