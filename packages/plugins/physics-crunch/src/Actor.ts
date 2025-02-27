@@ -1,7 +1,14 @@
 import { Application } from 'dill-pixel';
 import { Entity } from './Entity';
 import { Solid } from './Solid';
-import { CollisionResult, EntityData, PhysicsEntityConfig, PhysicsEntityType, Vector2 } from './types';
+import {
+  ActorCollisionResult,
+  CollisionResult,
+  EntityData,
+  PhysicsEntityConfig,
+  PhysicsEntityType,
+  Vector2,
+} from './types';
 
 /**
  * Dynamic physics entity that can move and collide with other entities.
@@ -12,6 +19,7 @@ import { CollisionResult, EntityData, PhysicsEntityConfig, PhysicsEntityType, Ve
  * - Collision detection and response
  * - Solid surface detection (riding)
  * - Automatic culling when out of bounds
+ * - Actor-to-actor collision detection
  *
  * @typeParam T - Application type, defaults to base Application
  *
@@ -32,6 +40,13 @@ import { CollisionResult, EntityData, PhysicsEntityConfig, PhysicsEntityType, Ve
  *   onCollide(result: CollisionResult) {
  *     if (result.solid.type === 'Spike') {
  *       this.die();
+ *     }
+ *   }
+ *
+ *   // Handle actor-to-actor collisions
+ *   onActorCollide(result: ActorCollisionResult) {
+ *     if (result.actor.type === 'Enemy') {
+ *       this.takeDamage(10);
  *     }
  *   }
  *
@@ -66,6 +81,9 @@ export class Actor<T extends Application = Application, D extends EntityData = E
   /** List of current frame collisions */
   public collisions: CollisionResult[] = [];
 
+  /** List of current frame actor-to-actor collisions */
+  public actorCollisions: ActorCollisionResult[] = [];
+
   /** Cache for isRidingSolid check */
   private _isRidingSolidCache: boolean | null = null;
 
@@ -85,6 +103,7 @@ export class Actor<T extends Application = Application, D extends EntityData = E
     this._isRidingSolidCache = null;
     this._carriedBy = null;
     this._carriedByOverlap = 0;
+    this.actorCollisions = [];
   }
 
   /**
@@ -94,6 +113,7 @@ export class Actor<T extends Application = Application, D extends EntityData = E
     if (!this.active) return;
 
     this.collisions = [];
+    this.actorCollisions = [];
     // Reset the cache at the start of each update
     this._isRidingSolidCache = null;
     this._carriedBy = null;
@@ -166,13 +186,26 @@ export class Actor<T extends Application = Application, D extends EntityData = E
   }
 
   /**
-   * Called when the actor collides with a solid.
-   * Override this to handle collisions.
+   * Called when this actor collides with a solid.
+   * Override this method to implement custom collision response.
    *
    * @param result - Information about the collision
    */
   public onCollide(result: CollisionResult): void {
-    // Override in subclass
+    // Default implementation does nothing
+    // Override this in your actor subclass to handle collisions
+    void result;
+  }
+
+  /**
+   * Called when this actor collides with another actor.
+   * Override this method to implement custom actor-to-actor collision response.
+   *
+   * @param result - Information about the actor collision
+   */
+  public onActorCollide(result: ActorCollisionResult): void {
+    // Default implementation does nothing
+    // Override this in your actor subclass to handle actor-to-actor collisions
     void result;
   }
 
@@ -185,7 +218,13 @@ export class Actor<T extends Application = Application, D extends EntityData = E
    */
   public isRiding(solid: Solid): boolean {
     // Skip if solid has no collisions
-    if (!solid.collideable || !solid.canCollideWith(this.type)) return false;
+    if (!solid.collideable) return false;
+
+    // Check collision layers and masks
+    // An actor can only ride a solid if their collision layers/masks allow interaction
+    if ((this.collisionLayer & solid.collisionMask) === 0 || (solid.collisionLayer & this.collisionMask) === 0) {
+      return false;
+    }
 
     // If we're already being carried by a different solid this frame,
     // we can't be riding this one
@@ -202,6 +241,7 @@ export class Actor<T extends Application = Application, D extends EntityData = E
     const overlapWidth = Math.min(this.x + this.width, solid.x + solid.width) - Math.max(this.x, solid.x);
 
     const isRiding = onTop && overlap;
+
     if (isRiding && overlapWidth > this._carriedByOverlap) {
       this._carriedBy = solid;
       this._carriedByOverlap = overlapWidth;
@@ -248,51 +288,105 @@ export class Actor<T extends Application = Application, D extends EntityData = E
     collisionHandler?: (result: CollisionResult) => void,
     pushingSolid?: Solid,
   ): CollisionResult[] {
-    if (!this.active) return [];
+    // Early return if inactive or zero movement
+    if (!this.active || amount === 0) return [];
 
     this._xRemainder += amount;
     const move = Math.round(this._xRemainder);
+
+    // Early return if rounded movement is zero
+    if (move === 0) return [];
+
     const collisions: CollisionResult[] = [];
 
-    if (move !== 0) {
+    // Cache collision layer and mask for faster access
+    const actorLayer = this.collisionLayer;
+    const actorMask = this.collisionMask;
+
+    // Skip collision checks if no collision mask
+    if (actorMask === 0) {
+      // Just move without checking collisions
       this._xRemainder -= move;
-      const sign = Math.sign(move);
+      this._x += move;
+      this.updateView();
+      return [];
+    }
 
-      let remaining = Math.abs(move);
-      while (remaining > 0) {
-        const step = sign;
-        const nextX = this.x + step;
+    this._xRemainder -= move;
+    const sign = Math.sign(move);
+    let remaining = Math.abs(move);
+    const step = sign;
 
-        // Check for collision with any solid
-        let collided = false;
-        for (const solid of this.getSolidsAt(nextX, this.y)) {
-          if (solid.canCollide && solid.canCollideWith(this.type)) {
-            collided = true;
-            const result: CollisionResult = {
-              collided: true,
-              normal: { x: -sign, y: 0 },
-              penetration: Math.abs(nextX - (solid.x + (sign > 0 ? 0 : solid.width))),
-              solid,
-              pushingSolid,
-            };
-            collisions.push(result);
-            this.collisions.push(result);
-            this.onCollide(result);
-            if (collisionHandler) {
-              collisionHandler(result);
-            }
-            break;
-          }
+    // If we're being pushed by a solid, temporarily make it non-collidable
+    if (pushingSolid) {
+      pushingSolid.collideable = false;
+    }
+
+    // Move one pixel at a time, checking for collisions
+    while (remaining > 0) {
+      const nextX = this._x + step;
+
+      // Get solids at the next position
+      const solids = this.getSolidsAt(nextX, this._y);
+      let collided = false;
+
+      // Check for collisions with each solid
+      for (const solid of solids) {
+        // Skip if solid can't collide
+        if (!solid.canCollide) continue;
+
+        // Skip if collision layers don't match
+        if ((actorLayer & solid.collisionMask) === 0 || (solid.collisionLayer & actorMask) === 0) {
+          continue;
         }
 
-        if (!collided) {
-          this._x = nextX;
-          remaining--;
+        // Calculate collision details
+        const result: CollisionResult = {
+          collided: true,
+          solid,
+          normal: { x: -sign, y: 0 },
+          penetration: step > 0 ? this.x + this.width - solid.x : solid.x + solid.width - this.x,
+          pushingSolid,
+        };
+
+        // Add to collisions array
+        collisions.push(result);
+
+        // Call collision handler if provided
+        if (collisionHandler) {
+          collisionHandler(result);
+        }
+
+        // Call actor's collision handler
+        this.onCollide(result);
+
+        collided = true;
+      }
+
+      if (collided) {
+        // Stop movement on collision
+        break;
+      } else {
+        // Move to next position
+        this._x = nextX;
+        remaining--;
+
+        // Update view every few pixels for better performance
+        // This reduces the number of view updates during movement
+        if (remaining % 4 === 0 || remaining === 0) {
           this.updateView();
-        } else {
-          break;
         }
       }
+    }
+
+    // Restore solid's collidable state
+    if (pushingSolid) {
+      pushingSolid.collideable = true;
+    }
+
+    // Final view update if we moved
+    if (Math.abs(move) - remaining > 0) {
+      this.updateView();
     }
 
     return collisions;
@@ -327,8 +421,17 @@ export class Actor<T extends Application = Application, D extends EntityData = E
 
         // Check for collision with any solid
         let collided = false;
-        for (const solid of this.getSolidsAt(this.x, nextY)) {
-          if (solid.canCollide && solid.canCollideWith(this.type)) {
+        const solidsAtPosition = this.getSolidsAt(this.x, nextY);
+
+        // Debug log for collision detection
+
+        for (const solid of solidsAtPosition) {
+          // Check if the solid can collide with this actor based on collision layers/masks
+          if (
+            solid.canCollide &&
+            (this.collisionLayer & solid.collisionMask) !== 0 &&
+            (solid.collisionLayer & this.collisionMask) !== 0
+          ) {
             collided = true;
             const result: CollisionResult = {
               collided: true,
@@ -379,5 +482,92 @@ export class Actor<T extends Application = Application, D extends EntityData = E
    */
   protected getSolidsAt(_x: number, _y: number): Solid[] {
     return this.system.getSolidsAt(_x, _y, this);
+  }
+
+  /**
+   * Checks if this actor is colliding with another actor.
+   *
+   * @param actor - The actor to check collision with
+   * @returns Collision result with information about the collision
+   */
+  public checkActorCollision(actor: Actor): ActorCollisionResult {
+    // Skip if either actor is not active
+    if (!this.active || !actor.active) {
+      return { collided: false, actor };
+    }
+
+    // Skip if the actors can't collide based on collision layers
+    if ((this.collisionLayer & actor.collisionMask) === 0 || (actor.collisionLayer & this.collisionMask) === 0) {
+      return { collided: false, actor };
+    }
+
+    // Simple AABB collision check
+    const thisLeft = this.x;
+    const thisRight = this.x + this.width;
+    const thisTop = this.y;
+    const thisBottom = this.y + this.height;
+
+    const otherLeft = actor.x;
+    const otherRight = actor.x + actor.width;
+    const otherTop = actor.y;
+    const otherBottom = actor.y + actor.height;
+
+    // Check if the bounding boxes overlap
+    if (thisRight > otherLeft && thisLeft < otherRight && thisBottom > otherTop && thisTop < otherBottom) {
+      // Calculate penetration and normal
+      const overlapX = Math.min(thisRight - otherLeft, otherRight - thisLeft);
+      const overlapY = Math.min(thisBottom - otherTop, otherBottom - thisTop);
+
+      let normal: Vector2;
+      let penetration: number;
+
+      // Determine the collision normal based on the smallest overlap
+      if (overlapX < overlapY) {
+        penetration = overlapX;
+        normal = {
+          x: thisLeft < otherLeft ? -1 : 1,
+          y: 0,
+        };
+      } else {
+        penetration = overlapY;
+        normal = {
+          x: 0,
+          y: thisTop < otherTop ? -1 : 1,
+        };
+      }
+
+      return {
+        collided: true,
+        actor,
+        normal,
+        penetration,
+      };
+    }
+
+    return { collided: false, actor };
+  }
+
+  /**
+   * Resolves a collision with another actor.
+   *
+   * @param result - The collision result to resolve
+   * @param shouldMove - Whether this actor should move to resolve the collision
+   * @returns The updated collision result
+   */
+  public resolveActorCollision(result: ActorCollisionResult, shouldMove: boolean = true): ActorCollisionResult {
+    if (!result.collided || !result.normal || !result.penetration) {
+      return result;
+    }
+
+    // Call the collision handler
+    this.onActorCollide(result);
+
+    // Move this actor to resolve the collision if requested
+    if (shouldMove) {
+      this.x += result.normal.x * result.penetration * 0.5;
+      this.y += result.normal.y * result.penetration * 0.5;
+    }
+
+    return result;
   }
 }

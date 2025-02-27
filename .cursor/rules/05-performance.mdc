@@ -1,0 +1,31 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ # Performance Optimization
+
+## Runtime Performance
+- Minimize object creation during gameplay to reduce garbage collection pauses
+- Implement efficient particle systems and sprite batching for complex visual effects
+- Use texture atlases to reduce draw calls and improve rendering performance
+- Implement level streaming or chunking for large game worlds to manage memory usage
+- Use Pixi.js's ticker for smooth animations and game loop management
+
+## Asset Management
+- Optimize asset loading with progressive loading techniques and asset compression
+- Use smaller, low-res textures for older mobile devices
+- Implement proper bounds management to avoid unnecessary calculations
+- Use caching for all the data that is needed multiple times
+
+## Loading Strategies
+- Implement lazy loading where appropriate
+- Use pre-fetching for critical data and assets
+- Optimize initial load time with progressive asset loading
+- Implement asset bundling and compression strategies
+
+## Scene Management
+- Be mindful of the complexity of your scene and optimize draw order
+- Implement object pooling for frequently created/destroyed objects
+- Use proper scene cleanup to prevent memory leaks
+- Implement efficient scene transitions

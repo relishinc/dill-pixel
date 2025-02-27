@@ -325,14 +325,40 @@ export class Sensor<T extends Application = Application, D extends EntityData = 
    * @returns Set of current overlaps
    */
   public checkActorOverlaps(): Set<SensorOverlap> {
+    // Skip if sensor has no collision mask or is inactive
+    if (this.collisionMask === 0 || !this.active) {
+      return new Set();
+    }
+
     this._currentSensorOverlaps.clear();
     this._currentOverlaps.clear();
 
-    // Get all actors at current position
+    // Get all actors at current position - use spatial filtering first
+    // Only get actors that are potentially in the same grid cells
+
+    // Cache collision layer and mask for faster access
+    const sensorLayer = this.collisionLayer;
+    const sensorMask = this.collisionMask;
+
+    // Get actors by type, but only process those that could be nearby
     const nearbyActors = this.system.getActorsByType(this.collidableTypes);
 
     for (const actor of nearbyActors) {
-      if (this.overlaps(actor)) {
+      // Skip inactive actors
+      if (!actor.active) continue;
+
+      // Fast collision layer check
+      if ((sensorLayer & actor.collisionMask) === 0 || (actor.collisionLayer & sensorMask) === 0) {
+        continue;
+      }
+
+      // Fast AABB check before detailed overlap
+      if (
+        this.x < actor.x + actor.width &&
+        this.x + this.width > actor.x &&
+        this.y < actor.y + actor.height &&
+        this.y + this.height > actor.y
+      ) {
         this._currentOverlaps.add(actor);
         if (!this.overlappingActors.has(actor)) {
           // New overlap
@@ -401,6 +427,12 @@ export class Sensor<T extends Application = Application, D extends EntityData = 
    * @returns True if overlapping
    */
   private overlaps(actor: Actor): boolean {
+    // Check collision layers and masks
+    if ((this.collisionLayer & actor.collisionMask) === 0 || (actor.collisionLayer & this.collisionMask) === 0) {
+      return false;
+    }
+
+    // Check for AABB overlap
     return (
       this.x < actor.x + actor.width &&
       this.x + this.width > actor.x &&

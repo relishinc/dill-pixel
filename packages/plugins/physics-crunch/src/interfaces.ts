@@ -1,5 +1,5 @@
 import { Container, Rectangle } from 'pixi.js';
-import { Collision, SensorOverlap } from './types';
+import { ActorCollision, Collision, SensorOverlap } from './types';
 
 export interface CrunchPhysicsOptions {
   container: Container;
@@ -12,11 +12,15 @@ export interface CrunchPhysicsOptions {
   /** Whether to enable debug rendering */
   debug?: boolean;
   /** Whether to cull out-of-bounds entities */
-  shouldCull?: boolean;
+  culling?: boolean;
   /** Whether to remove entities from the system after culling */
   boundary?: Rectangle;
   /** Collision resolver */
   collisionResolver?: (collisions: Collision[]) => void;
   /** Overlap resolver */
   overlapResolver?: (overlaps: SensorOverlap[]) => void;
+  /** Actor-to-actor collision resolver */
+  actorCollisionResolver?: (collisions: ActorCollision[]) => void;
+  /** Whether to enable actor-to-actor collisions */
+  enableActorCollisions?: boolean;
 }

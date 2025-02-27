@@ -1,6 +1,13 @@
 import BaseScene from '@/scenes/BaseScene';
 import { V8Application } from '@/V8Application';
-import { Actor, CollisionResult, Group, ICrunchPhysicsPlugin, Sensor, Solid } from '@dill-pixel/plugin-crunch-physics';
+import {
+  Actor,
+  CollisionLayer,
+  CollisionResult,
+  ICrunchPhysicsPlugin,
+  Sensor,
+  Solid,
+} from '@dill-pixel/plugin-crunch-physics';
 import {
   ActionDetail,
   AnimatedSprite,
@@ -48,9 +55,9 @@ class Platform extends Solid<V8Application, PlatformData> {
     if (this._player) {
       const shouldPassThroughMe = this._player.y + this._player.height > this.y;
       if (shouldPassThroughMe) {
-        this.excludeCollisionType('Player');
+        this.removeCollisionMask(CollisionLayer.PLAYER);
       } else {
-        this.includeCollisionType('Player');
+        this.addCollisionMask(CollisionLayer.PLAYER);
       }
     }
     super.update(dt);
@@ -69,6 +76,8 @@ class Player extends Actor<V8Application> {
   private direction = 0;
 
   initialize(): void {
+    this.setCollisionLayer(CollisionLayer.PLAYER);
+    this.setCollisionMask(CollisionLayer.PLATFORM, CollisionLayer.TRIGGER);
     this.direction = 1;
     this.view = this.make.animatedSprite({
       animationSpeed: 0.2,
@@ -234,6 +243,11 @@ class FX extends Actor<V8Application> {
       this.velocity.x *= 0.95;
     }
   }
+
+  reset() {
+    super.reset();
+    this.view.visible = false;
+  }
 }
 
 class Portal extends Sensor<V8Application> {
@@ -295,6 +309,7 @@ class Portal extends Sensor<V8Application> {
   }
 
   onActorEnter(actor: Actor): void {
+    console.log('onActorEnter', actor.type);
     if (!this.active) return;
     // this.active = false;
     if (this.linkedPortal) {
@@ -332,7 +347,7 @@ export default class CrunchPhysicsScene extends BaseScene {
     itemsToAdd: 100,
     gravity: 6000,
     maxVelocity: 1500,
-    gridCellSize: 100,
+    gridCellSize: 150,
     useCamera: false,
     boundary: {
       width: 800,
@@ -347,13 +362,10 @@ export default class CrunchPhysicsScene extends BaseScene {
   private player: Player;
   private pf1: Platform;
   private pf2: Platform;
-  private pf3: Platform;
   private portal1: Portal;
   private portal2: Portal;
   private portal3: Portal;
   private pool = new Pool<FX>(FX, 0);
-
-  private group: Group;
 
   ui: UICanvas;
 
@@ -470,7 +482,8 @@ export default class CrunchPhysicsScene extends BaseScene {
       maxVelocity: this.config.maxVelocity,
       gridSize: this.config.gridCellSize,
       debug: this.config.debug,
-      shouldCull: true,
+      culling: true,
+      enableActorCollisions: false,
       boundary: this.config.boundary.bindToAppSize
         ? new Rectangle(0, 0, this.app.size.width, this.app.size.height)
         : new Rectangle(0, 0, this.config.boundary.width, this.config.boundary.height),
@@ -501,7 +514,7 @@ export default class CrunchPhysicsScene extends BaseScene {
     });
 
     // Platform 3
-    this.pf3 = this.createPlatform(200, 200, 200, 32, 'ground_grass');
+    this.createPlatform(200, 200, 200, 32, 'ground_grass');
 
     // Test group
     this._createPlayer();
@@ -601,7 +614,12 @@ export default class CrunchPhysicsScene extends BaseScene {
     }
 
     for (let i = 0; i < 20; i++) {
-      const fx = this.pool.get({ position: new Point(this.player.x, this.player.y), size: 10 });
+      const fx = this.pool.get({
+        position: [this.player.x, this.player.y],
+        size: 10,
+        collisionLayer: CollisionLayer.PLAYER,
+        collisionMask: this.physics.createCollisionMask(CollisionLayer.PLATFORM, CollisionLayer.TRIGGER),
+      });
       this.physics.system.addActor(fx);
       this.physicsContainer.addChild(fx.view);
       fx.setFollowing(this.player, { x: intBetween(-50, 50), y: intBetween(-50, 50) });
@@ -649,6 +667,8 @@ export default class CrunchPhysicsScene extends BaseScene {
       width,
       height,
       view: sprite,
+      collisionLayer: CollisionLayer.PLATFORM,
+      collisionMask: this.physics.createCollisionMask(CollisionLayer.PLAYER, CollisionLayer.FX, CollisionLayer.TRIGGER),
     }) as Platform;
   }
 
@@ -657,7 +677,12 @@ export default class CrunchPhysicsScene extends BaseScene {
     const amount = this.config.itemsToAdd;
     for (let i = 0; i < amount; i++) {
       const size = Math.round(4 + Math.random() * 10);
-      const actor = this.pool.get({ position: pt, size });
+      const actor = this.pool.get({
+        position: pt,
+        size,
+        collisionLayer: CollisionLayer.FX,
+        collisionMask: this.physics.createCollisionMask(CollisionLayer.PLATFORM, CollisionLayer.TRIGGER),
+      });
 
       this.physics.system.addActor(actor);
       this.physicsContainer.addChild(actor.view);
@@ -685,18 +710,36 @@ export default class CrunchPhysicsScene extends BaseScene {
     this.portal1 = new Portal({
       position: [200, 400],
       id: 'portal1',
+      collisionLayer: CollisionLayer.TRIGGER,
+      collisionMask: this.physics.createCollisionMask(
+        CollisionLayer.PLAYER,
+        CollisionLayer.FX,
+        CollisionLayer.PLATFORM,
+      ),
     });
     this.physics.system.addSensor(this.portal1);
 
     this.portal2 = new Portal({
       position: [700, 800],
       id: 'portal2',
+      collisionLayer: CollisionLayer.TRIGGER,
+      collisionMask: this.physics.createCollisionMask(
+        CollisionLayer.PLAYER,
+        CollisionLayer.FX,
+        CollisionLayer.PLATFORM,
+      ),
     });
     this.physics.system.addSensor(this.portal2);
 
     this.portal3 = new Portal({
       position: [275, 80],
       id: 'portal3',
+      collisionLayer: CollisionLayer.TRIGGER,
+      collisionMask: this.physics.createCollisionMask(
+        CollisionLayer.PLAYER,
+        CollisionLayer.FX,
+        CollisionLayer.PLATFORM,
+      ),
     });
     this.physics.system.addSensor(this.portal3);
 

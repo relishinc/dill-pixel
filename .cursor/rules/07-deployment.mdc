@@ -1,0 +1,30 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ # Web Deployment (Vercel/Cloudflare)
+
+## Caching Strategy
+- Implement proper caching strategies for static assets
+- Use appropriate cache headers for different asset types
+- Implement versioning for cache busting
+- Set up proper CDN configuration
+
+## CDN Implementation
+- Utilize CDN capabilities for faster asset delivery
+- Configure proper CDN routing and caching rules
+- Implement fallback strategies for CDN failures
+- Use appropriate CDN purging strategies
+
+## Loading Optimization
+- Implement progressive loading techniques
+- Optimize initial load time and time-to-interactivity
+- Use proper asset preloading strategies
+- Implement efficient code splitting
+
+## Monitoring and Analytics
+- Set up proper monitoring for deployment health
+- Implement analytics for performance tracking
+- Monitor CDN performance and availability
+- Track user experience metrics

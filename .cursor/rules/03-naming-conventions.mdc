@@ -1,0 +1,17 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ # Naming Conventions
+
+## Case Styles
+- **camelCase**: functions, variables (e.g., 'createSprite', 'playerHealth')
+- **kebab-case**: file names (e.g., 'game-scene.ts', 'player-component.ts')
+- **PascalCase**: classes and Pixi.js objects (e.g., 'PlayerSprite', 'GameScene')
+- **UPPERCASE**: constants and global variables (e.g., 'MAX_PLAYERS', 'GRAVITY')
+
+## Boolean Naming
+- Use prefixes like 'should', 'has', 'is' (e.g., 'shouldRespawn', 'isGameOver')
+- Make boolean names descriptive of their state
+- Use positive naming when possible (e.g., 'isEnabled' vs 'isNotDisabled')

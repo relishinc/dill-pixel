@@ -1,0 +1,35 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ # Documentation Guidelines
+
+## Framework Documentation
+Use knowledge of:
+- Framework in ./packages/framework/src/*
+- CLI in ./packages/framework/cli.mjs
+- Vite
+- (p)npm
+- TypeScript
+- Starlight
+- Astro
+- Tailwind
+
+## Documentation Structure
+- Organize documentation by feature and functionality
+- Provide clear examples and use cases
+- Include API references and type definitions
+- Document performance considerations and best practices
+
+## Code Documentation
+- Use clear and consistent commenting style
+- Document complex algorithms and business logic
+- Include performance implications in documentation
+- Maintain up-to-date API documentation
+
+## Technical Writing
+- Write clear, concise documentation
+- Include code examples and snippets
+- Document edge cases and limitations
+- Keep documentation in sync with code changes

@@ -130,18 +130,18 @@ export class Solid<T extends Application = Application, D extends EntityData = E
 
   /**
    * Checks if this solid can collide with the given entity type.
+   * This method is kept for backward compatibility.
    *
-   * @param type - The type of entity to check for collision
-   * @returns True if collision is allowed, false otherwise
+   * @returns Always returns true as we're now using only collision layers/masks
    */
-  canCollideWith(type: PhysicsEntityType): boolean {
-    if (this.collideable && !this.system.getCollisionExclusions(this)) {
-      return true;
-    }
+  canCollideWith(): boolean {
+    // First check if collisions are enabled at all
     if (!this.collideable) {
       return false;
     }
-    return this.system.canCollideWith(this, type);
+
+    // We're now using only collision layers/masks, so this method is simplified
+    return true;
   }
 
   /**
@@ -174,9 +174,6 @@ export class Solid<T extends Application = Application, D extends EntityData = E
     const moveX = Math.round(this._xRemainder);
     const moveY = Math.round(this._yRemainder);
 
-    if (this.type === 'Obstacle') {
-      // console.log('move', this.collideable);
-    }
     if (moveX !== 0 || moveY !== 0 || force) {
       if (this.collideable) {
         // Get all riding actors and sensors before movement
@@ -184,13 +181,23 @@ export class Solid<T extends Application = Application, D extends EntityData = E
         const ridingSensors = new Set<Sensor>();
 
         for (const actor of actors) {
-          if (actor.isRiding(this) && this.canCollideWith(actor.type)) {
+          // Check if actor can collide with this solid based on collision layers/masks
+          if (
+            (actor.collisionLayer & this.collisionMask) !== 0 &&
+            (this.collisionLayer & actor.collisionMask) !== 0 &&
+            actor.isRiding(this)
+          ) {
             ridingActors.add(actor);
           }
         }
 
         for (const sensor of sensors) {
-          if (sensor.isRiding(this) && this.canCollideWith(sensor.type)) {
+          // Check if sensor can collide with this solid based on collision layers/masks
+          if (
+            (sensor.collisionLayer & this.collisionMask) !== 0 &&
+            (this.collisionLayer & sensor.collisionMask) !== 0 &&
+            sensor.isRiding(this)
+          ) {
             ridingSensors.add(sensor);
           }
         }
@@ -205,7 +212,12 @@ export class Solid<T extends Application = Application, D extends EntityData = E
           if (moveX > 0) {
             // Moving right
             for (const actor of actors) {
-              if (this.overlaps(actor) && this.canCollideWith(actor.type)) {
+              // Check if actor can collide with this solid based on collision layers/masks
+              if (
+                this.overlaps(actor) &&
+                (actor.collisionLayer & this.collisionMask) !== 0 &&
+                (this.collisionLayer & actor.collisionMask) !== 0
+              ) {
                 // Push right
                 actor.moveX(this.right - actor.x, actor.squish, this);
               } else if (ridingActors.has(actor)) {
@@ -214,7 +226,12 @@ export class Solid<T extends Application = Application, D extends EntityData = E
               }
             }
             for (const sensor of sensors) {
-              if (this.overlaps(sensor) && this.canCollideWith(sensor.type)) {
+              // Check if sensor can collide with this solid based on collision layers/masks
+              if (
+                this.overlaps(sensor) &&
+                (sensor.collisionLayer & this.collisionMask) !== 0 &&
+                (this.collisionLayer & sensor.collisionMask) !== 0
+              ) {
                 // Push right
                 sensor.moveX(this.right - sensor.x);
               } else if (ridingSensors.has(sensor)) {
@@ -225,7 +242,12 @@ export class Solid<T extends Application = Application, D extends EntityData = E
           } else {
             // Moving left
             for (const actor of actors) {
-              if (this.overlaps(actor) && this.canCollideWith(actor.type)) {
+              // Check if actor can collide with this solid based on collision layers/masks
+              if (
+                this.overlaps(actor) &&
+                (actor.collisionLayer & this.collisionMask) !== 0 &&
+                (this.collisionLayer & actor.collisionMask) !== 0
+              ) {
                 // Push left
                 actor.moveX(this.left - (actor.x + actor.width), actor.squish, this);
               } else if (ridingActors.has(actor)) {
@@ -234,7 +256,12 @@ export class Solid<T extends Application = Application, D extends EntityData = E
               }
             }
             for (const sensor of sensors) {
-              if (this.overlaps(sensor) && this.canCollideWith(sensor.type)) {
+              // Check if sensor can collide with this solid based on collision layers/masks
+              if (
+                this.overlaps(sensor) &&
+                (sensor.collisionLayer & this.collisionMask) !== 0 &&
+                (this.collisionLayer & sensor.collisionMask) !== 0
+              ) {
                 // Push left
                 sensor.moveX(this.left - (sensor.x + sensor.width));
               } else if (ridingSensors.has(sensor)) {
@@ -252,7 +279,12 @@ export class Solid<T extends Application = Application, D extends EntityData = E
           if (moveY > 0) {
             // Moving down
             for (const actor of actors) {
-              if (this.overlaps(actor) && this.canCollideWith(actor.type)) {
+              // Check if actor can collide with this solid based on collision layers/masks
+              if (
+                this.overlaps(actor) &&
+                (actor.collisionLayer & this.collisionMask) !== 0 &&
+                (this.collisionLayer & actor.collisionMask) !== 0
+              ) {
                 // Push down
                 actor.moveY(this.bottom - actor.y, actor.squish, this);
               } else if (ridingActors.has(actor)) {
@@ -261,7 +293,12 @@ export class Solid<T extends Application = Application, D extends EntityData = E
               }
             }
             for (const sensor of sensors) {
-              if (this.overlaps(sensor) && this.canCollideWith(sensor.type)) {
+              // Check if sensor can collide with this solid based on collision layers/masks
+              if (
+                this.overlaps(sensor) &&
+                (sensor.collisionLayer & this.collisionMask) !== 0 &&
+                (this.collisionLayer & sensor.collisionMask) !== 0
+              ) {
                 // Push down
                 sensor.moveY(this.bottom - sensor.y);
               } else if (ridingSensors.has(sensor)) {
@@ -272,7 +309,12 @@ export class Solid<T extends Application = Application, D extends EntityData = E
           } else {
             // Moving up
             for (const actor of actors) {
-              if (this.overlaps(actor) && this.canCollideWith(actor.type)) {
+              // Check if actor can collide with this solid based on collision layers/masks
+              if (
+                this.overlaps(actor) &&
+                (actor.collisionLayer & this.collisionMask) !== 0 &&
+                (this.collisionLayer & actor.collisionMask) !== 0
+              ) {
                 // Push up
                 actor.moveY(this.top - (actor.y + actor.height), actor.squish, this);
               } else if (ridingActors.has(actor)) {
@@ -281,7 +323,12 @@ export class Solid<T extends Application = Application, D extends EntityData = E
               }
             }
             for (const sensor of sensors) {
-              if (this.overlaps(sensor) && this.canCollideWith(sensor.type)) {
+              // Check if sensor can collide with this solid based on collision layers/masks
+              if (
+                this.overlaps(sensor) &&
+                (sensor.collisionLayer & this.collisionMask) !== 0 &&
+                (this.collisionLayer & sensor.collisionMask) !== 0
+              ) {
                 // Push up
                 sensor.moveY(this.top - (sensor.y + sensor.height));
               } else if (ridingSensors.has(sensor)) {
@@ -322,7 +369,13 @@ export class Solid<T extends Application = Application, D extends EntityData = E
    * @returns True if overlapping
    */
   private overlaps(entity: Actor | Sensor): boolean {
-    if (!this.canCollideWith(entity.type)) return false;
+    // Check collision layers and masks
+    // A collision occurs when (A.layer & B.mask) !== 0 && (B.layer & A.mask) !== 0
+    if ((this.collisionLayer & entity.collisionMask) === 0 || (entity.collisionLayer & this.collisionMask) === 0) {
+      return false;
+    }
+
+    // Check for AABB overlap
     return (
       this.x < entity.x + entity.width &&
       this.x + this.width > entity.x &&

@@ -6,9 +6,10 @@ import { Group } from './Group';
 import { Sensor } from './Sensor';
 import { Solid } from './Solid';
 import {
+  ActorCollision,
+  ActorCollisionResult,
   Collision,
   PhysicsEntityConfig,
-  PhysicsEntityType,
   PhysicsEntityView,
   Rectangle,
   SensorOverlap,
@@ -26,7 +27,7 @@ import {
  *   maxVelocity: 1000,
  *   debug: true,
  *   boundary: { x: 0, y: 0, width: 800, height: 600 },
- *   shouldCull: true,
+ *   culling: true,
  *   collisionResolver: (collisions) => {
  *     for (const collision of collisions) {
  *       handleCollision(collision);
@@ -49,11 +50,19 @@ export interface PhysicsSystemOptions {
   /** World boundary for culling entities */
   boundary?: Rectangle;
   /** Whether to automatically cull out-of-bounds entities */
-  shouldCull?: boolean;
+  culling?: boolean;
   /** Custom handler for resolving collisions */
   collisionResolver?: (collisions: Collision[]) => void;
   /** Custom handler for resolving sensor overlaps */
   overlapResolver?: (overlaps: SensorOverlap[]) => void;
+  /** Custom handler for resolving actor-to-actor collisions */
+  actorCollisionResolver?: (collisions: ActorCollision[]) => void;
+  /** Whether to enable actor-to-actor collisions */
+  enableActorCollisions?: boolean;
+  /** Default collision layer for new entities */
+  defaultCollisionLayer?: number;
+  /** Default collision mask for new entities */
+  defaultCollisionMask?: number;
 }
 
 /**
@@ -107,8 +116,6 @@ export class System {
   private solidsByType: Map<string, Set<Solid>> = new Map();
   private sensorsByType: Map<string, Set<Sensor>> = new Map();
   private groupsByType: Map<string, Set<Group>> = new Map();
-  // Collision exclusion tracking
-  private collisionExclusions: Map<Entity, Set<PhysicsEntityType>> = new Map();
 
   // Followers tracking
   private followers: Map<Entity, Set<Entity>> = new Map();
@@ -121,6 +128,7 @@ export class System {
   // Collision tracking
   private collisions: Collision[] = [];
   private sensorOverlaps: SensorOverlap[] = [];
+  private actorCollisions: ActorCollision[] = [];
   // Debugging
   private _debugContainer: Container;
   private _debugGfx: Graphics | null = null;
@@ -187,9 +195,11 @@ export class System {
   constructor(options: PhysicsSystemOptions) {
     this.options = {
       ...options,
-      shouldCull: options.shouldCull ?? false,
+      culling: options.culling ?? false,
     };
     this.debug = options.debug ?? false;
+    this._debugContainer = new Container();
+    options.plugin.container.addChild(this._debugContainer);
   }
 
   private _resetPositionFlags(entity: Entity): void {
@@ -199,108 +209,39 @@ export class System {
 
   public update(dt: number): void {
     if (!this.options.plugin.enabled) return;
-    // Clear collisions from previous frame
-    this.collisions = [];
-    this.sensorOverlaps = [];
 
-    // Convert delta time to seconds
+    // Clear collections at the start with pre-allocated capacity
+    this.collisions.length = 0;
+    this.sensorOverlaps.length = 0;
+    this.actorCollisions.length = 0;
+
+    // Convert delta time to seconds (cache this calculation)
     const deltaTime = dt / 60;
 
-    // Update containers first
+    // Update containers first (groups)
     for (const group of this.groups) {
       group.update(deltaTime);
     }
 
-    // Update solids
-    for (const solid of this.solids) {
-      solid.preUpdate();
-      solid.update(deltaTime);
-      solid.postUpdate();
-
-      if (solid.moving) {
-        // Remove from old grid cells
-        this.removeSolidFromGrid(solid);
-        // Move the solid (which will handle pushing/carrying actors and sensors)
-        solid.move(0, 0, this.actors, this.sensors, true);
-        // Add to new grid cells
-        this.addSolidToGrid(solid);
-      }
-    }
+    // Update solids with optimized grid management
+    this.updateSolids(deltaTime);
 
     // Update sensors (before actors so they can detect entry/exit in the same frame)
     for (const sensor of this.sensors) {
       this.updateSensor(sensor, deltaTime);
     }
 
-    // Update actors
-    for (const actor of this.actors) {
-      this.updateActor(actor, deltaTime);
-    }
+    // Update actors with potential batching
+    this.updateActors(deltaTime);
 
-    this._flaggedEntities.clear();
-    // Update followers and group entities in a single pass
-    for (const [entity, followers] of this.followers) {
-      for (const follower of followers) {
-        if (!follower.updatedFollowPosition) {
-          // Get the base position of the entity we're following
-          let followX = entity.x;
-          let followY = entity.y;
+    // Process position updates for followers and group entities
+    this.updateEntityPositions();
 
-          // If the follower and followed entity are in the same group,
-          // we need to use local coordinates to avoid double-counting the group position
-          if (follower.group && follower.group === entity.group) {
-            // Get the entity's position relative to its group using the offset
-            const entityGroupOffset = entity.groupOffset;
-            followX = follower.group.x + entityGroupOffset.x;
-            followY = follower.group.y + entityGroupOffset.y;
-
-            // Set position using combined offsets relative to group
-            follower.setPosition(followX + follower.followOffset.x, followY + follower.followOffset.y);
-          } else if (follower.group) {
-            // Different groups or followed entity not in a group
-            follower.setPosition(
-              followX + follower.followOffset.x + follower.group.x + follower.groupOffset.x,
-              followY + follower.followOffset.y + follower.group.y + follower.groupOffset.y,
-            );
-          } else {
-            // No group, just following
-            follower.setPosition(followX + follower.followOffset.x, followY + follower.followOffset.y);
-          }
-
-          follower.updatedFollowPosition = true;
-          this._flaggedEntities.add(follower);
-          if (follower.group) {
-            follower.updatedGroupPosition = true;
-            this._flaggedEntities.add(follower);
-          }
-        }
-      }
-    }
-
-    // Update remaining group entities that aren't followers
-    for (const [group, groupEntities] of this.groupWithEntities) {
-      for (const entity of groupEntities) {
-        if (!entity.updatedGroupPosition && !entity.updatedFollowPosition) {
-          entity.setPosition(group.x + entity.groupOffset.x, group.y + entity.groupOffset.y);
-          entity.updatedGroupPosition = true;
-          this._flaggedEntities.add(entity);
-        }
-      }
-    }
-
-    this._flaggedEntities.forEach(this._resetPositionFlags);
-    // Process overlaps if resolver is set
-    if (this.options.overlapResolver && this.sensorOverlaps.length > 0) {
-      this.options.overlapResolver(this.sensorOverlaps);
-    }
-
-    // Process collisions if resolver is set
-    if (this.options.collisionResolver && this.collisions.length > 0) {
-      this.options.collisionResolver(this.collisions);
-    }
+    // Process overlaps, collisions, and culling in batch operations
+    this.processCollisionsAndOverlaps();
 
     // Cull out-of-bounds entities if enabled and boundary is set
-    if (this.options.shouldCull && this.options.boundary) {
+    if (this.options.culling && this.options.boundary) {
       this.cullOutOfBounds();
     }
 
@@ -310,23 +251,300 @@ export class System {
     }
   }
 
-  private updateActor(actor: Actor, dt: number): void {
-    actor.preUpdate();
-    actor.update(dt);
-    actor.postUpdate();
+  // New optimized methods to break up the update loop
+  private updateSolids(deltaTime: number): void {
+    // Fast path if no solids are moving
+    let hasMovingSolids = false;
 
-    for (const result of actor.collisions) {
-      this.collisions.push({
-        type: `${actor.type}|${result.solid!.type}`,
-        entity1: actor,
-        entity2: result.solid!,
-        result: {
-          collided: result.collided,
-          normal: result.normal,
-          penetration: result.penetration,
-          solid: result.solid,
-        },
-      });
+    for (const solid of this.solids) {
+      solid.preUpdate();
+      solid.update(deltaTime);
+      solid.postUpdate();
+
+      if (solid.moving) {
+        hasMovingSolids = true;
+      }
+    }
+
+    // Skip grid updates if nothing is moving
+    if (!hasMovingSolids) return;
+
+    // Batch grid updates for moving solids
+    const movedSolids = new Set<Solid>();
+
+    for (const solid of this.solids) {
+      if (solid.moving) {
+        // Remove from old grid cells
+        this.removeSolidFromGrid(solid);
+        // Move the solid (which will handle pushing/carrying actors and sensors)
+        solid.move(0, 0, this.actors, this.sensors, true);
+        // Track for batch grid update
+        movedSolids.add(solid);
+      }
+    }
+
+    // Batch add to grid after all movements are complete
+    for (const solid of movedSolids) {
+      this.addSolidToGrid(solid);
+    }
+  }
+
+  private updateActors(deltaTime: number): void {
+    // Skip if no active actors
+    if (this.actors.size === 0) return;
+
+    // Use for...of instead of forEach for better performance
+    for (const actor of this.actors) {
+      if (actor.active) {
+        actor.preUpdate();
+        actor.update(deltaTime);
+        actor.postUpdate();
+
+        // Collect collisions in batch
+        const actorCollisions = actor.collisions;
+        if (actorCollisions.length > 0) {
+          for (const result of actorCollisions) {
+            this.collisions.push({
+              type: `${actor.type}|${result.solid!.type}`,
+              entity1: actor,
+              entity2: result.solid!,
+              result: {
+                collided: result.collided,
+                normal: result.normal,
+                penetration: result.penetration,
+                solid: result.solid,
+              },
+            });
+          }
+        }
+      }
+    }
+  }
+
+  private updateEntityPositions(): void {
+    this._flaggedEntities.clear();
+
+    // Process followers first (most dependent)
+    for (const [entity, followers] of this.followers) {
+      const followX = entity.x;
+      const followY = entity.y;
+
+      for (const follower of followers) {
+        if (!follower.updatedFollowPosition) {
+          // Cache group checks to avoid repeated property access
+          const hasGroup = follower.group !== null;
+          const sameGroup = hasGroup && follower.group === entity.group;
+
+          if (sameGroup) {
+            // Get the entity's position relative to its group using the offset
+            const entityGroupOffset = entity.groupOffset;
+            const groupX = follower.group!.x;
+            const groupY = follower.group!.y;
+
+            // Set position using combined offsets relative to group
+            follower.setPosition(
+              groupX + entityGroupOffset.x + follower.followOffset.x,
+              groupY + entityGroupOffset.y + follower.followOffset.y,
+            );
+          } else if (hasGroup) {
+            // Different groups or followed entity not in a group
+            follower.setPosition(
+              followX + follower.followOffset.x + follower.group!.x + follower.groupOffset.x,
+              followY + follower.followOffset.y + follower.group!.y + follower.groupOffset.y,
+            );
+          } else {
+            // No group, just following
+            follower.setPosition(followX + follower.followOffset.x, followY + follower.followOffset.y);
+          }
+
+          follower.updatedFollowPosition = true;
+          this._flaggedEntities.add(follower);
+
+          if (hasGroup) {
+            follower.updatedGroupPosition = true;
+          }
+        }
+      }
+    }
+
+    // Process remaining group entities
+    for (const [group, groupEntities] of this.groupWithEntities) {
+      const groupX = group.x;
+      const groupY = group.y;
+
+      for (const entity of groupEntities) {
+        if (!entity.updatedGroupPosition && !entity.updatedFollowPosition) {
+          entity.setPosition(groupX + entity.groupOffset.x, groupY + entity.groupOffset.y);
+          entity.updatedGroupPosition = true;
+          this._flaggedEntities.add(entity);
+        }
+      }
+    }
+
+    // Reset flags in batch
+    this._flaggedEntities.forEach(this._resetPositionFlags);
+  }
+
+  private processCollisionsAndOverlaps(): void {
+    // Process overlaps if resolver is set and we have overlaps
+    if (this.options.overlapResolver && this.sensorOverlaps.length > 0) {
+      this.options.overlapResolver(this.sensorOverlaps);
+    }
+
+    // Check actor-to-actor collisions if enabled and we have multiple actors
+    if (this.options.enableActorCollisions && this.actors.size > 1) {
+      this.checkActorCollisions();
+    }
+
+    // Process collisions if resolver is set and we have collisions
+    if (this.collisions.length > 0 && this.options.collisionResolver) {
+      this.options.collisionResolver(this.collisions);
+    }
+
+    // Process actor-to-actor collisions if resolver is set and we have collisions
+    if (this.actorCollisions.length > 0 && this.options.actorCollisionResolver) {
+      this.options.actorCollisionResolver(this.actorCollisions);
+    }
+  }
+
+  // Optimize the cullOutOfBounds method
+  private cullOutOfBounds(): void {
+    // Skip if no boundary
+    if (!this.options.boundary) return;
+
+    const boundary = this.options.boundary;
+    // Pre-allocate removal arrays with reasonable capacity
+    const toRemoveActors: Actor[] = [];
+    const toRemoveSolids: Solid[] = [];
+    const toRemoveSensors: Sensor[] = [];
+    const toRemoveGroups: Group[] = [];
+
+    // Cache boundary values to avoid repeated property access
+    const boundX = boundary.x;
+    const boundY = boundary.y;
+    const boundRight = boundX + boundary.width;
+    const boundBottom = boundY + boundary.height;
+
+    // Check actors with optimized bounds check
+    for (const actor of this.actors) {
+      const actorRight = actor.x + actor.width;
+      const actorBottom = actor.y + actor.height;
+
+      const inBounds = !(
+        actor.x >= boundRight || // Completely to the right
+        actorRight <= boundX || // Completely to the left
+        actor.y >= boundBottom || // Completely below
+        actorBottom <= boundY // Completely above
+      );
+
+      if (!inBounds) {
+        if (!actor.isCulled) {
+          actor.onCull();
+        }
+        if (actor.shouldRemoveOnCull) {
+          toRemoveActors.push(actor);
+        }
+      } else if (actor.isCulled) {
+        // Uncull if back in bounds
+        actor.onUncull();
+      }
+    }
+
+    // Check solids with the same optimized bounds check
+    for (const solid of this.solids) {
+      const solidRight = solid.x + solid.width;
+      const solidBottom = solid.y + solid.height;
+
+      const inBounds = !(
+        solid.x >= boundRight ||
+        solidRight <= boundX ||
+        solid.y >= boundBottom ||
+        solidBottom <= boundY
+      );
+
+      if (!inBounds) {
+        if (!solid.isCulled) {
+          solid.onCull();
+        }
+        if (solid.shouldRemoveOnCull) {
+          toRemoveSolids.push(solid);
+        }
+      } else if (solid.isCulled) {
+        solid.onUncull();
+      }
+    }
+
+    // Check sensors with the same optimized bounds check
+    for (const sensor of this.sensors) {
+      const sensorRight = sensor.x + sensor.width;
+      const sensorBottom = sensor.y + sensor.height;
+
+      const inBounds = !(
+        sensor.x >= boundRight ||
+        sensorRight <= boundX ||
+        sensor.y >= boundBottom ||
+        sensorBottom <= boundY
+      );
+
+      if (!inBounds) {
+        if (!sensor.isCulled) {
+          sensor.onCull();
+        }
+        if (sensor.shouldRemoveOnCull) {
+          toRemoveSensors.push(sensor);
+        }
+      } else if (sensor.isCulled) {
+        sensor.onUncull();
+      }
+    }
+
+    // Check groups with the same optimized bounds check
+    for (const group of this.groups) {
+      const groupRight = group.x + group.width;
+      const groupBottom = group.y + group.height;
+
+      const inBounds = !(
+        group.x >= boundRight ||
+        groupRight <= boundX ||
+        group.y >= boundBottom ||
+        groupBottom <= boundY
+      );
+
+      if (!inBounds) {
+        if (!group.isCulled) {
+          group.onCull();
+        }
+        if (group.shouldRemoveOnCull) {
+          toRemoveGroups.push(group);
+        }
+      } else if (group.isCulled) {
+        group.onUncull();
+      }
+    }
+
+    // Batch remove culled entities if any exist
+    const actorCount = toRemoveActors.length;
+    const solidCount = toRemoveSolids.length;
+    const sensorCount = toRemoveSensors.length;
+    const groupCount = toRemoveGroups.length;
+
+    if (actorCount + solidCount + sensorCount + groupCount === 0) return;
+
+    // Use for loops instead of forEach for better performance
+    for (let i = 0; i < actorCount; i++) {
+      this.removeActor(toRemoveActors[i]);
+    }
+
+    for (let i = 0; i < solidCount; i++) {
+      this.removeSolid(toRemoveSolids[i]);
+    }
+
+    for (let i = 0; i < sensorCount; i++) {
+      this.removeSensor(toRemoveSensors[i]);
+    }
+
+    for (let i = 0; i < groupCount; i++) {
+      this.removeGroup(toRemoveGroups[i]);
     }
   }
 
@@ -352,7 +570,7 @@ export class System {
     throw new Error(`Invalid entity type: ${config.type}`);
   }
 
-  public addEntity(entity: Actor | Solid | Sensor | Group): Actor | Solid | Sensor | Group {
+  public addEntity(entity: Entity | Actor | Solid | Sensor | Group): Actor | Solid | Sensor | Group {
     if (!entity || !entity.entityType) {
       throw new Error('Entity is required');
     }
@@ -368,7 +586,27 @@ export class System {
     throw new Error(`Invalid entity type: ${entity!.entityType}`);
   }
 
+  public removeEntity(entity: Entity | Actor | Solid | Sensor | Group): void {
+    if (entity.entityType === 'Actor') {
+      this.removeActor(entity as Actor);
+    } else if (entity.entityType === 'Solid') {
+      this.removeSolid(entity as Solid);
+    } else if (entity.entityType === 'Sensor') {
+      this.removeSensor(entity as Sensor);
+    } else if (entity.entityType === 'Group') {
+      this.removeGroup(entity as Group);
+    }
+  }
+
   public createActor(config: PhysicsEntityConfig): Actor {
+    // Apply default collision settings if not specified in config
+    if (this.options.defaultCollisionLayer !== undefined && config.collisionLayer === undefined) {
+      config.collisionLayer = this.options.defaultCollisionLayer;
+    }
+    if (this.options.defaultCollisionMask !== undefined && config.collisionMask === undefined) {
+      config.collisionMask = this.options.defaultCollisionMask;
+    }
+
     const actor = config.class ? (new config.class(config) as Actor) : new Actor(config);
     return this.addActor(actor);
   }
@@ -386,6 +624,14 @@ export class System {
   }
 
   public createSensor(config: PhysicsEntityConfig): Sensor {
+    // Apply default collision settings if not specified in config
+    if (this.options.defaultCollisionLayer !== undefined && config.collisionLayer === undefined) {
+      config.collisionLayer = this.options.defaultCollisionLayer;
+    }
+    if (this.options.defaultCollisionMask !== undefined && config.collisionMask === undefined) {
+      config.collisionMask = this.options.defaultCollisionMask;
+    }
+
     const sensor = config.class ? (new config.class(config) as Sensor) : new Sensor(config);
     return this.addSensor(sensor);
   }
@@ -402,6 +648,14 @@ export class System {
   }
 
   public createSolid(config: PhysicsEntityConfig): Solid {
+    // Apply default collision settings if not specified in config
+    if (this.options.defaultCollisionLayer !== undefined && config.collisionLayer === undefined) {
+      config.collisionLayer = this.options.defaultCollisionLayer;
+    }
+    if (this.options.defaultCollisionMask !== undefined && config.collisionMask === undefined) {
+      config.collisionMask = this.options.defaultCollisionMask;
+    }
+
     const solid = config.class ? (new config.class(config) as Solid) : new Solid(config);
     return this.addSolid(solid);
   }
@@ -422,7 +676,6 @@ export class System {
 
   public removeActor(actor: Actor, destroyView: boolean = true): void {
     this.entities.delete(actor);
-    this.collisionExclusions.delete(actor);
     this.actors.delete(actor);
     // Remove from type index
     const typeSet = this.actorsByType.get(actor.type);
@@ -441,7 +694,6 @@ export class System {
 
   public removeSolid(solid: Solid, destroyView: boolean = true): void {
     this.entities.delete(solid);
-    this.collisionExclusions.delete(solid);
     this.solids.delete(solid);
     // Remove from type index
     const typeSet = this.solidsByType.get(solid.type);
@@ -462,7 +714,6 @@ export class System {
 
   public removeSensor(sensor: Sensor, destroyView: boolean = true): void {
     this.entities.delete(sensor);
-    this.collisionExclusions.delete(sensor);
     this.sensors.delete(sensor);
     // Remove from type index
     const typeSet = this.sensorsByType.get(sensor.type);
@@ -494,6 +745,9 @@ export class System {
   }
 
   public getSolidsAt(x: number, y: number, entity: Actor | Sensor): Solid[] {
+    // Early return if entity has no collision mask
+    if (entity.collisionMask === 0) return [];
+
     const bounds = {
       x,
       y,
@@ -536,16 +790,24 @@ export class System {
     }
 
     // Create a Set of excluded types for O(1) lookups
-    const excludedTypes = entity.excludedCollisionTypes;
+    // Pre-allocate result array with a reasonable size to avoid resizing
     const result: Solid[] = [];
     const seen = new Set<Solid>();
+
+    // Cache entity collision layer and mask for faster access
+    const entityLayer = entity.collisionLayer;
+    const entityMask = entity.collisionMask;
 
     for (const cell of cells) {
       const solids = this.grid.get(cell);
       if (solids) {
         for (const solid of solids) {
-          // Skip if we've already checked this solid, if its type is excluded, or if it has no collisions
-          if (seen.has(solid) || excludedTypes.has(solid.type) || !solid.collideable) continue;
+          // Skip already seen solids
+          if (seen.has(solid)) continue;
+
+          // Fast collision layer check
+          if ((entityLayer & solid.collisionMask) === 0 || (solid.collisionLayer & entityMask) === 0) continue;
+
           seen.add(solid);
 
           // Only add solids that actually overlap with the entity's bounds
@@ -638,11 +900,18 @@ export class System {
     const endX = Math.ceil((bounds.x + bounds.width) / gridSize);
     const endY = Math.ceil((bounds.y + bounds.height) / gridSize);
 
+    // Pre-allocate array with exact size to avoid resizing
+    cells.length = (endX - startX) * (endY - startY);
+
+    // Use a single index counter to avoid array.push() operations
+    let index = 0;
+
     // Only check one additional cell in the direction of movement for actors
     // For solids or static bounds, just use the exact cells
     for (let x = startX; x < endX; x++) {
       for (let y = startY; y < endY; y++) {
-        cells.push(`${x},${y}`);
+        // Use template string only once per iteration
+        cells[index++] = `${x},${y}`;
       }
     }
 
@@ -806,94 +1075,160 @@ export class System {
     this.clearAll();
   }
 
-  private cullOutOfBounds(): void {
-    const boundary = this.options.boundary!;
-    const toRemoveActors: Actor[] = [];
-    const toRemoveSolids: Solid[] = [];
-    const toRemoveSensors: Sensor[] = [];
-    // Check actors
-    for (const actor of this.actors) {
-      if (!this.isInBounds(actor, boundary)) {
-        if (!actor.isCulled) {
-          actor.onCull();
+  /**
+   * Checks for collisions between all active actors.
+   * This is an O(n²) operation, so it can be expensive with many actors.
+   */
+  private checkActorCollisions(): void {
+    // Skip if there are no actors or only one actor
+    if (this.actors.size <= 1) return;
+
+    const actorArray = Array.from(this.actors);
+    const actorCount = actorArray.length;
+
+    // Create a temporary grid for spatial partitioning of actors
+    // This avoids checking every actor against every other actor
+    const actorGrid = new Map<string, Actor[]>();
+    const { gridSize } = this.options;
+
+    // Place actors in grid cells
+    for (let i = 0; i < actorCount; i++) {
+      const actor = actorArray[i];
+
+      // Skip inactive actors
+      if (!actor.active || actor.collisionLayer === 0 || actor.collisionMask === 0) continue;
+
+      // Calculate grid cells this actor occupies
+      const startX = Math.floor(actor.x / gridSize);
+      const startY = Math.floor(actor.y / gridSize);
+      const endX = Math.ceil((actor.x + actor.width) / gridSize);
+      const endY = Math.ceil((actor.y + actor.height) / gridSize);
+
+      // Add actor to all cells it overlaps
+      for (let x = startX; x < endX; x++) {
+        for (let y = startY; y < endY; y++) {
+          const cellKey = `${x},${y}`;
+          if (!actorGrid.has(cellKey)) {
+            actorGrid.set(cellKey, []);
+          }
+          actorGrid.get(cellKey)!.push(actor);
         }
-        if (actor.shouldRemoveOnCull) {
-          toRemoveActors.push(actor);
-        }
-      } else if (actor.isCulled) {
-        // Uncull if back in bounds
-        actor.onUncull();
       }
     }
 
-    // Check solids
-    for (const solid of this.solids) {
-      if (!this.isInBounds(solid, boundary)) {
-        if (!solid.isCulled) {
-          solid.onCull();
-        }
-        if (solid.shouldRemoveOnCull) {
-          toRemoveSolids.push(solid);
-        }
-      } else if (solid.isCulled) {
-        // Uncull if back in bounds
-        solid.onUncull();
-      }
-    }
+    // Set to track which actor pairs we've already checked
+    const checkedPairs = new Set<string>();
 
-    // check sensors
-    for (const sensor of this.sensors) {
-      if (!this.isInBounds(sensor, boundary)) {
-        if (!sensor.isCulled) {
-          sensor.onCull();
-        }
-        if (sensor.shouldRemoveOnCull) {
-          toRemoveSensors.push(sensor);
-        }
-      } else if (sensor.isCulled) {
-        // Uncull if back in bounds
-        sensor.onUncull();
-      }
-    }
+    // Check collisions within each cell
+    for (const actorsInCell of actorGrid.values()) {
+      const cellActorCount = actorsInCell.length;
 
-    // Remove culled entities that should be removed
-    for (const actor of toRemoveActors) {
-      this.removeActor(actor);
-    }
-    for (const solid of toRemoveSolids) {
-      this.removeSolid(solid);
-    }
-    for (const sensor of toRemoveSensors) {
-      this.removeSensor(sensor);
+      // Skip cells with only one actor
+      if (cellActorCount <= 1) continue;
+
+      // Check each actor against others in the same cell
+      for (let i = 0; i < cellActorCount; i++) {
+        const actor1 = actorsInCell[i];
+
+        for (let j = i + 1; j < cellActorCount; j++) {
+          const actor2 = actorsInCell[j];
+
+          // Create a unique key for this actor pair to avoid duplicate checks
+          // Use actor IDs or memory addresses to ensure uniqueness
+          const pairKey = actor1.id < actor2.id ? `${actor1.id}|${actor2.id}` : `${actor2.id}|${actor1.id}`;
+
+          // Skip if we've already checked this pair
+          if (checkedPairs.has(pairKey)) continue;
+          checkedPairs.add(pairKey);
+
+          // Check if the actors can collide based on collision layers
+          if (
+            (actor1.collisionLayer & actor2.collisionMask) === 0 ||
+            (actor2.collisionLayer & actor1.collisionMask) === 0
+          ) {
+            continue;
+          }
+
+          // Fast AABB check before detailed collision
+          if (
+            actor1.x < actor2.x + actor2.width &&
+            actor1.x + actor1.width > actor2.x &&
+            actor1.y < actor2.y + actor2.height &&
+            actor1.y + actor1.height > actor2.y
+          ) {
+            // Check for collision
+            const result = actor1.checkActorCollision(actor2);
+            if (result.collided) {
+              // Add to actor1's collision list
+              actor1.actorCollisions.push(result);
+
+              // Create a mirrored result for actor2
+              const mirroredResult: ActorCollisionResult = {
+                collided: true,
+                actor: actor1,
+                normal: result.normal ? { x: -result.normal.x, y: -result.normal.y } : undefined,
+                penetration: result.penetration,
+              };
+
+              // Add to actor2's collision list
+              actor2.actorCollisions.push(mirroredResult);
+
+              // Add to system's collision list
+              const actorCollision: ActorCollision = {
+                type: `${actor1.type}|${actor2.type}`,
+                actor1,
+                actor2,
+                result,
+              };
+              this.actorCollisions.push(actorCollision);
+
+              // Call collision handlers
+              actor1.onActorCollide(result);
+              actor2.onActorCollide(mirroredResult);
+
+              // Resolve the collision
+              actor1.resolveActorCollision(result, true);
+              actor2.resolveActorCollision(mirroredResult, true);
+
+              // Call the resolver if provided
+              if (this.options.actorCollisionResolver) {
+                this.options.actorCollisionResolver([actorCollision]);
+              }
+            }
+          }
+        }
+      }
     }
   }
 
   /**
-   * Force uncull an entity if it was culled
-   * @param entity The entity to uncull
+   * Sets a custom resolver for actor-to-actor collisions.
+   *
+   * @param resolver - Function to handle actor-to-actor collisions
    */
-  public uncullEntity(entity: Actor | Solid): void {
-    if (entity.isCulled) {
-      entity.onUncull();
-    }
+  public setActorCollisionResolver(resolver: (collisions: ActorCollision[]) => void): void {
+    this.options.actorCollisionResolver = resolver;
   }
 
-  private isInBounds(entity: Actor | Solid | Sensor, boundary: Rectangle): boolean {
-    // Only consider entity out of bounds if it's completely outside the boundary
-    return !(
-      entity.x >= boundary.x + boundary.width || // Completely to the right
-      entity.x + entity.width <= boundary.x || // Completely to the left
-      entity.y >= boundary.y + boundary.height || // Completely below
-      entity.y + entity.height <= boundary.y // Completely above
-    );
-  }
-
-  public setCollisionResolver(resolver: (collisions: Collision[]) => void): void {
-    this.options.collisionResolver = resolver;
+  /**
+   * Enables or disables actor-to-actor collision detection.
+   *
+   * @param enabled - Whether to enable actor-to-actor collisions
+   */
+  public setActorCollisionsEnabled(enabled: boolean): void {
+    this.options.enableActorCollisions = enabled;
   }
 
   public createGroup(config: PhysicsEntityConfig): Group {
-    const group = new Group(config);
+    // Apply default collision settings if not specified in config
+    if (this.options.defaultCollisionLayer !== undefined && config.collisionLayer === undefined) {
+      config.collisionLayer = this.options.defaultCollisionLayer;
+    }
+    if (this.options.defaultCollisionMask !== undefined && config.collisionMask === undefined) {
+      config.collisionMask = this.options.defaultCollisionMask;
+    }
+
+    const group = config.class ? (new config.class(config) as unknown as Group) : new Group(config);
     return this.addGroup(group);
   }
 
@@ -911,6 +1246,9 @@ export class System {
   }
 
   public removeGroup(group: Group, destroyView: boolean = true): void {
+    // Early return if group doesn't exist
+    if (!this.groups.has(group)) return;
+
     this.entities.delete(group);
     this.groups.delete(group);
 
@@ -923,56 +1261,76 @@ export class System {
       }
     }
 
-    // Remove all children
-    for (const actor of group.getActors()) {
-      this.removeActor(actor, destroyView);
+    // Get all entities in the group before removing them
+    const groupEntities = this.groupWithEntities.get(group);
+    if (groupEntities && groupEntities.size > 0) {
+      // Create arrays for each entity type to batch process
+      const actors: Actor[] = [];
+      const solids: Solid[] = [];
+      const sensors: Sensor[] = [];
+
+      // Sort entities by type for batch processing
+      for (const entity of groupEntities) {
+        if (entity.entityType === 'Actor') {
+          actors.push(entity as Actor);
+        } else if (entity.entityType === 'Solid') {
+          solids.push(entity as Solid);
+        } else if (entity.entityType === 'Sensor') {
+          sensors.push(entity as Sensor);
+        }
+      }
+
+      // Batch remove entities by type
+      for (const actor of actors) {
+        this.removeActor(actor, destroyView);
+      }
+
+      for (const solid of solids) {
+        this.removeSolid(solid, destroyView);
+      }
+
+      for (const sensor of sensors) {
+        this.removeSensor(sensor, destroyView);
+      }
     }
-    for (const solid of group.getSolids()) {
-      this.removeSolid(solid, destroyView);
-    }
-    for (const sensor of group.getSensors()) {
-      this.removeSensor(sensor, destroyView);
-    }
+
+    // Clean up the group's entry in the tracking map
+    this.groupWithEntities.delete(group);
 
     group.onRemoved();
   }
 
   /**
-   * Excludes collision types for a specific entity
+   * Get all groups of a specific type
+   * @param type The type to look for
+   * @returns Array of groups matching the type
    */
-  public excludeCollisionTypes(entity: Entity, ...types: PhysicsEntityType[]): void {
-    if (!this.collisionExclusions.has(entity)) {
-      this.collisionExclusions.set(entity, new Set());
+  public getGroupsByType(type: string | string[]): Group[] {
+    if (Array.isArray(type)) {
+      // Pre-calculate total size to avoid array resizing
+      let totalSize = 0;
+      for (const t of type) {
+        const set = this.groupsByType.get(t);
+        if (set) totalSize += set.size;
+      }
+
+      // Pre-allocate result array
+      const result = new Array<Group>(totalSize);
+      let index = 0;
+
+      // Fill array without using flatMap (more efficient)
+      for (const t of type) {
+        const set = this.groupsByType.get(t);
+        if (set) {
+          for (const group of set) {
+            result[index++] = group;
+          }
+        }
+      }
+
+      return result;
     }
-    const exclusions = this.collisionExclusions.get(entity)!;
-    types.forEach((type) => exclusions.add(type));
-  }
 
-  /**
-   * Adds back collision types for a specific entity
-   */
-  public includeCollisionTypes(entity: Entity, ...types: PhysicsEntityType[]): void {
-    const exclusions = this.collisionExclusions.get(entity);
-    if (!exclusions) return;
-    types.forEach((type) => exclusions.delete(type));
-    if (exclusions.size === 0) {
-      this.collisionExclusions.delete(entity);
-    }
-  }
-
-  /**
-   * Checks if an entity can collide with a specific type
-   */
-  public canCollideWith(entity: Entity, type: PhysicsEntityType): boolean {
-    const exclusions = this.collisionExclusions.get(entity);
-    if (!exclusions) return true;
-    return !exclusions.has(type);
-  }
-
-  /**
-   * Gets the collision exclusions for an entity
-   */
-  public getCollisionExclusions(entity: Entity): Set<PhysicsEntityType> | undefined {
-    return this.collisionExclusions.get(entity);
+    return Array.from(this.groupsByType.get(type) || new Set());
   }
 }

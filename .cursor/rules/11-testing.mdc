@@ -1,0 +1,39 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ # Testing and Quality Assurance
+
+## Performance Testing
+- Implement performance profiling and monitoring tools
+- Identify and resolve performance bottlenecks
+- Create automated performance tests
+- Monitor frame rates and memory usage
+
+## Cross-Platform Testing
+- Use cross-device testing for consistent performance
+- Test on various browsers and devices
+- Verify mobile-specific features
+- Test different screen sizes and orientations
+
+## Error Handling
+- Implement error logging and crash reporting
+- Set up proper debugging tools
+- Handle browser-specific issues
+- Implement appropriate workarounds
+
+## Testing Strategy
+- Write comprehensive unit tests for game logic
+- Implement integration tests for game scenes
+- Create automated performance tests
+- Use mocks for external services
+- Implement playtesting tools
+- Set up analytics for gameplay balance
+
+## CI/CD Integration
+- Set up automated builds and testing
+- Implement continuous integration
+- Configure deployment pipelines
+- Use global error and alert handlers
+- Integrate crash reporting services

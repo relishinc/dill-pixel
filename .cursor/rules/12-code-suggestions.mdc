@@ -1,0 +1,34 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ # Code Suggestions Guidelines
+
+## Analysis Process
+When suggesting code or solutions:
+1. First, analyze the existing code structure and performance implications
+2. Provide a step-by-step plan for implementing changes or new features
+3. Offer code snippets that demonstrate best practices for Pixi.js and TypeScript
+4. Always consider the performance impact of suggestions, especially for mobile devices
+5. Provide explanations for why certain approaches are more performant or efficient
+6. Be aware of potential Pixi.js gotchas and hacks, and suggest appropriate solutions
+
+## Implementation Focus
+- Maintain focus on performance optimization
+- Ensure cross-platform compatibility
+- Consider mobile device limitations
+- Follow TypeScript best practices
+
+## Documentation Requirements
+- Include clear explanations of implementation details
+- Document performance implications
+- Provide usage examples
+- Note any potential limitations or gotchas
+
+## Best Practices
+- Follow established naming conventions
+- Maintain consistent code style
+- Consider scalability and maintainability
+- Implement proper error handling
+- Follow security best practices

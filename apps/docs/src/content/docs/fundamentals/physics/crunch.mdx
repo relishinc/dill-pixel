@@ -148,7 +148,7 @@ await physics.initialize(app, {
   gravity: 900,
   maxVelocity: 1000,
   debug: true, // Enable debug visualization
-  shouldCull: true, // Enable automatic culling
+  culling: true, // Enable automatic culling
   boundary: new Rectangle(0, 0, 800, 600),
 });
 ```
@@ -314,7 +314,7 @@ physics.initialize(app, {
 ```ts
 // Enable automatic culling of off-screen entities
 physics.initialize(app, {
-  shouldCull: true,
+  culling: true,
   boundary: new Rectangle(0, 0, width, height),
 });
 ```

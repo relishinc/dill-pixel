@@ -10,7 +10,14 @@ import {
 import CrunchPhysicsPlugin from './CrunchPhysicsPlugin';
 import { Group } from './Group';
 import { System } from './System';
-import { EntityData, PhysicsEntityConfig, PhysicsEntityType, PhysicsEntityView, Rectangle } from './types';
+import {
+  CollisionLayer,
+  EntityData,
+  PhysicsEntityConfig,
+  PhysicsEntityType,
+  PhysicsEntityView,
+  Rectangle,
+} from './types';
 import { resolveEntityPosition, resolveEntitySize } from './utils';
 
 /**
@@ -60,12 +67,6 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   /** Unique type identifier for this entity */
   public type!: string;
 
-  /** Set of entity types this entity should not collide with */
-  get excludedCollisionTypes(): Set<PhysicsEntityType> {
-    const exclusions = this.system.getCollisionExclusions(this);
-    return exclusions || new Set();
-  }
-
   /** Color to use when rendering debug visuals */
   public debugColor: number;
 
@@ -83,6 +84,12 @@ export class Entity<A extends Application = Application, D extends EntityData = 
 
   /** Whether this entity is active and should be updated */
   public active: boolean = true;
+
+  /** Collision layer this entity belongs to (bitwise) */
+  public collisionLayer: number = CollisionLayer.NONE;
+
+  /** Collision mask defining which layers this entity collides with (bitwise) */
+  public collisionMask: number = CollisionLayer.NONE;
 
   protected _data: Partial<D>;
   protected _group: Group | null;
@@ -304,44 +311,47 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   }
 
   /**
-   * Exclude collision types from this entity
-   * @param types
+   * Excludes collision types for this entity
+   * @deprecated Use setCollisionMask instead
    */
-  excludeCollisionType(...types: PhysicsEntityType[]) {
-    this.system.excludeCollisionTypes(this, ...types);
+  excludeCollisionType() {
+    console.warn('excludeCollisionType is deprecated. Use setCollisionMask instead.');
+    // No-op as we're removing this functionality
   }
 
   /**
-   * Include collision types for this entity
-   * @param types
+   * Includes collision types for this entity
+   * @deprecated Use setCollisionMask instead
    */
-  includeCollisionType(...types: PhysicsEntityType[]) {
-    this.system.includeCollisionTypes(this, ...types);
+  includeCollisionType() {
+    console.warn('includeCollisionType is deprecated. Use setCollisionMask instead.');
+    // No-op as we're removing this functionality
   }
 
   /**
-   * Alias for excludeCollisionType
-   * @param types
+   * Removes collision types for this entity
+   * @deprecated Use removeCollisionMask instead
    */
-  removeCollisionType(...types: PhysicsEntityType[]) {
-    this.excludeCollisionType(...types);
+  removeCollisionType() {
+    console.warn('removeCollisionType is deprecated. Use removeCollisionMask instead.');
+    // No-op as we're removing this functionality
   }
 
   /**
-   * Alias for includeCollisionType
-   * @param types
+   * Adds collision types for this entity
+   * @deprecated Use addCollisionMask instead
    */
-  addCollisionType(...types: PhysicsEntityType[]) {
-    this.includeCollisionType(...types);
+  addCollisionType() {
+    console.warn('addCollisionType is deprecated. Use addCollisionMask instead.');
+    // No-op as we're removing this functionality
   }
 
   /**
-   * Check if this entity can collide with another entity
-   * @param type
-   * @returns
+   * Checks if this entity can collide with a specific type
    */
-  canCollideWith(type: PhysicsEntityType): boolean {
-    return this.system.canCollideWith(this, type);
+  canCollideWith(): boolean {
+    // Always return true as we're now using only collision layers/masks
+    return true;
   }
 
   /**
@@ -363,6 +373,8 @@ export class Entity<A extends Application = Application, D extends EntityData = 
    * @param config - New configuration to apply
    */
   public init(config: PhysicsEntityConfig): void {
+    if (!config) return;
+
     if (config.id) {
       this._id = config.id;
     }
@@ -375,16 +387,21 @@ export class Entity<A extends Application = Application, D extends EntityData = 
       this._data = config.data as Partial<D>;
     }
 
-    if (config.position !== undefined || (config.x !== undefined && config.y !== undefined)) {
-      const { x, y } = resolveEntityPosition(config);
-      this._x = Math.round(x);
-      this._y = Math.round(y);
+    const position = resolveEntityPosition(config);
+    this._x = position.x;
+    this._y = position.y;
+
+    const size = resolveEntitySize(config);
+    this.width = size.width;
+    this.height = size.height;
+
+    // Initialize collision layers
+    if (config.collisionLayer !== undefined) {
+      this.collisionLayer = config.collisionLayer;
     }
 
-    if (config.size !== undefined || (config.width !== undefined && config.height !== undefined)) {
-      const { width, height } = resolveEntitySize(config);
-      this.width = Math.round(width);
-      this.height = Math.round(height);
+    if (config.collisionMask !== undefined) {
+      this.collisionMask = config.collisionMask;
     }
 
     // Reset physics properties
@@ -392,7 +409,7 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     this._yRemainder = 0;
 
     if (config.view) {
-      this.view = config.view;
+      this.setView(config.view);
     }
 
     if (config.group) {
@@ -436,6 +453,8 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     if (this.view) {
       this.view.visible = false;
     }
+
+    this.system.removeEntity(this);
   }
 
   /** Reference to the physics system */
@@ -611,5 +630,116 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     for (const connection of args) {
       this.signalConnections.add(connection);
     }
+  }
+
+  /**
+   * Checks if this entity can collide with another entity
+   */
+  public canCollideWithEntity(entity: Entity): boolean {
+    // Check if the entities can collide based on their collision layers and masks
+    // A collision occurs when (A.layer & B.mask) !== 0 && (B.layer & A.mask) !== 0
+    return (this.collisionLayer & entity.collisionMask) !== 0 && (entity.collisionLayer & this.collisionMask) !== 0;
+  }
+
+  /**
+   * Sets the collision layer for this entity
+   *
+   * @param layer The collision layer or layers (can be combined with bitwise OR)
+   */
+  public setCollisionLayer(layer: number): void {
+    this.collisionLayer = layer;
+  }
+
+  /**
+   * Adds the specified layers to this entity's collision layer
+   *
+   * @param layers The layers to add (can be combined with bitwise OR)
+   */
+  public addCollisionLayer(layers: number): void {
+    this.collisionLayer |= layers;
+  }
+
+  /**
+   * Removes the specified layers from this entity's collision layer
+   *
+   * @param layers The layers to remove (can be combined with bitwise OR)
+   */
+  public removeCollisionLayer(layers: number): void {
+    this.collisionLayer &= ~layers;
+  }
+
+  /**
+   * Sets the collision mask for this entity
+   *
+   * @param mask The collision mask (can be combined with bitwise OR)
+   */
+  public setCollisionMask(...mask: number[]): void {
+    this.collisionMask = this.physics.createCollisionMask(...mask);
+  }
+
+  /**
+   * Adds the specified layers to this entity's collision mask
+   *
+   * @param layers The layers to add to the mask (can be combined with bitwise OR)
+   */
+  public addCollisionMask(layers: number): void {
+    this.collisionMask |= layers;
+  }
+
+  /**
+   * Removes the specified layers from this entity's collision mask
+   *
+   * @param layers The layers to remove from the mask (can be combined with bitwise OR)
+   */
+  public removeCollisionMask(layers: number): void {
+    this.collisionMask &= ~layers;
+  }
+
+  /**
+   * Checks if this entity belongs to a specific collision layer
+   *
+   * @param layer The layer to check
+   * @returns True if the entity belongs to the specified layer
+   *
+   * @example
+   * ```typescript
+   * // Check if entity is on the PLAYER layer
+   * if (entity.hasCollisionLayer(CollisionLayer.PLAYER)) {
+   *   console.log('Entity is a player');
+   * }
+   *
+   * // Check if entity is on a custom layer
+   * const WATER_LAYER = CollisionLayers.createLayer(0);
+   * if (entity.hasCollisionLayer(WATER_LAYER)) {
+   *   console.log('Entity is water');
+   * }
+   * ```
+   */
+  public hasCollisionLayer(layer: number): boolean {
+    return (this.collisionLayer & layer) !== 0;
+  }
+
+  /**
+   * Checks if this entity can collide with a specific collision layer
+   *
+   * @param layer The layer to check
+   * @returns True if the entity can collide with the specified layer
+   *
+   * @example
+   * ```typescript
+   * // Check if entity can collide with players
+   * if (entity.canCollideWithLayer(CollisionLayer.PLAYER)) {
+   *   console.log('Entity can collide with players');
+   * }
+   *
+   * // Check if entity can collide with a custom layer
+   * const WATER_LAYER = CollisionLayers.createLayer(0);
+   * if (entity.canCollideWithLayer(WATER_LAYER)) {
+   *   console.log('Entity can collide with water');
+   * }
+   * ```
+   */
+  public canCollideWithLayer(layer: number): boolean {
+    return (this.collisionMask & layer) !== 0;
   }
 }

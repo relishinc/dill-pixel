@@ -1,6 +1,14 @@
 import BaseScene from '@/scenes/BaseScene';
 import { V8Application } from '@/V8Application';
-import { Actor, CollisionResult, Group, ICrunchPhysicsPlugin, Sensor, Solid } from '@dill-pixel/plugin-crunch-physics';
+import {
+  Actor,
+  CollisionLayer,
+  CollisionResult,
+  Group,
+  ICrunchPhysicsPlugin,
+  Sensor,
+  Solid,
+} from '@dill-pixel/plugin-crunch-physics';
 import { bool, Container, PointLike, Signal } from 'dill-pixel';
 import gsap from 'gsap';
 import { Graphics, Rectangle, Ticker } from 'pixi.js';
@@ -30,6 +38,12 @@ class Runner extends Actor<V8Application> {
   public active: boolean = false;
 
   initialize(): void {
+    // Set the collision layer to PLAYER (bit 1)
+    this.collisionLayer = CollisionLayer.PLAYER;
+
+    // Note: We don't set the collision mask here anymore
+    // It's now handled by the scene's _updateCollisionRestrictions method
+
     this.addSignalConnection(
       this.app.actions('jump').connect(this._jump),
       this.app.actions('move_right').connect(this._moveRight),
@@ -188,15 +202,21 @@ class Segment extends Group<V8Application> {
   public width: number;
   public animations: Set<gsap.core.Tween> = new Set();
 
-  constructor(x: number, y: number, width: number) {
+  constructor(
+    x: number,
+    y: number,
+    width: number,
+    public floorLayer?: number,
+  ) {
     super();
     this.x = x;
     this.y = y;
     this.width = width;
-    // Create floor platform
-    this._createPlatform(0, 0, width, 32, false);
 
-    // Add random elevated platforms
+    // Create floor platform - only this one should be on the FLOOR layer
+    this._createPlatform(0, 0, width, 32, false, true);
+
+    // Add random elevated platforms - these should NOT be on the FLOOR layer
     const platformCount = Math.floor(Math.random() * 3) + 1;
 
     for (let i = 0; i < platformCount; i++) {
@@ -204,22 +224,48 @@ class Segment extends Group<V8Application> {
       const platformX = (width * i) / platformCount + Math.random() * 50;
       const platformY = -100 - Math.random() * 100;
 
-      this._createPlatform(platformX, platformY, platformWidth, 32, true);
+      // Pass false to indicate this is not a floor platform
+      this._createPlatform(platformX, platformY, platformWidth, 32, true, false);
     }
   }
 
-  private _createPlatform(x: number, y: number, width: number, height: number, canMove: boolean = false): Solid {
+  private _createPlatform(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    canMove: boolean = false,
+    isFloor: boolean = false,
+  ): Solid {
     const sprite = new Graphics();
     sprite.rect(0, 0, width, height);
-    sprite.fill({ color: 0x0000ff });
+
+    // Use different colors for floor vs elevated platforms
+    // Floor platforms (collidable) are blue, non-floor platforms are light blue
+    sprite.fill({ color: isFloor ? 0x0000ff : 0x00aaff });
+
+    // Add a border to indicate collision status
+    sprite.rect(0, 0, width, height).stroke({ color: isFloor ? 0xffff00 : 0x999999, width: 2 });
+
     const platform = this.physics.createSolid({
-      type: 'Platform',
+      type: isFloor ? 'Floor' : 'Platform',
       width,
       height,
       group: this,
       groupOffset: { x, y },
       view: sprite,
+      // Set the collision layer based on whether it's a floor or platform
+      collisionLayer: isFloor ? this.floorLayer : CollisionLayer.PLATFORM,
+      // IMPORTANT: Always set the collision mask to include PLAYER
+      // This ensures the platform can be collided with when the player's mask includes this layer
+      collisionMask: CollisionLayer.PLAYER,
     });
+
+    // Add debug logging for the first platform in each segment
+    if (x === 0 && y === 0) {
+      console.log(`Floor platform collision layer: ${platform.collisionLayer} (${isFloor ? 'FLOOR' : 'PLATFORM'})`);
+      console.log(`Floor platform collision mask: ${platform.collisionMask} (PLAYER)`);
+    }
 
     const isMoving = canMove && bool();
 
@@ -227,8 +273,9 @@ class Segment extends Group<V8Application> {
 
     // Add obstacles on platform
     if (Math.random() < 0.7) {
-      this._createObstacle(platform, { x: width / 2, y: -32 - Math.random() * 300 });
+      this._createObstacle(platform, { x: width / 2, y: -32 - Math.random() * 300 }, isFloor);
     }
+
     const dist = bool() ? 100 : -100;
     if (Math.random() < 0.8) {
       const coinCount = Math.floor(Math.random() * 3) + 1;
@@ -256,10 +303,14 @@ class Segment extends Group<V8Application> {
     return platform;
   }
 
-  private _createObstacle(platform: Solid, offset: PointLike): Solid {
+  private _createObstacle(platform: Solid, offset: PointLike, isOnFloor: boolean): Solid {
     const sprite = new Graphics();
-    sprite.rect(0, 0, 32, 32);
-    sprite.fill({ color: 0xff0000, alpha: 0.75 });
+    // Use different colors for obstacles based on whether they're on floor platforms
+    // Add a border to indicate collision status
+    sprite
+      .rect(0, 0, 32, 32)
+      .fill({ color: isOnFloor ? 0xff0000 : 0xff9999, alpha: 0.75 })
+      .stroke({ color: isOnFloor ? 0xffff00 : 0x999999, width: 2 });
 
     const obstacle = this.physics.createSolid({
       type: 'Obstacle',
@@ -269,7 +320,17 @@ class Segment extends Group<V8Application> {
       group: this,
       follows: platform,
       followOffset: offset,
+      // Only obstacles on floor platforms should be on the FLOOR layer
+      collisionLayer: isOnFloor ? this.floorLayer : CollisionLayer.PLATFORM,
+      // IMPORTANT: Always set the collision mask to include PLAYER
+      collisionMask: CollisionLayer.PLAYER,
     });
+
+    // Add debug logging for the first obstacle
+    if (isOnFloor) {
+      console.log('Floor obstacle collision layer:', obstacle.collisionLayer);
+      console.log('Floor obstacle collision mask:', obstacle.collisionMask);
+    }
 
     obstacle.updateView = () => {
       if (obstacle.view && obstacle.view.visible && obstacle.view.position) {
@@ -277,6 +338,7 @@ class Segment extends Group<V8Application> {
       }
     };
     obstacle.moving = true;
+
     return obstacle;
   }
 
@@ -305,6 +367,8 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
   private segments: Segment[] = [];
   private gameSpeed = 100;
   private segmentWidth = 800;
+  private floorLayer: CollisionLayer;
+  private debugText: any;
 
   protected config = {
     debug: true,
@@ -312,6 +376,8 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
     maxVelocity: 3000,
     gameSpeed: 100,
     segmentWidth: 800,
+    showCollisionInfo: true,
+    restrictCollisions: true,
   };
 
   get physics(): ICrunchPhysicsPlugin {
@@ -346,6 +412,22 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
         this.physics.system.debug = this.config.debug;
       })
       .name('Debug Physics');
+
+    physicsFolder
+      .add(this.config, 'showCollisionInfo')
+      .onChange(() => {
+        if (this.debugText) {
+          this.debugText.visible = this.config.showCollisionInfo;
+        }
+      })
+      .name('Show Collision Info');
+
+    physicsFolder
+      .add(this.config, 'restrictCollisions')
+      .onChange(() => {
+        this._updateCollisionRestrictions();
+      })
+      .name('Restrict Collisions');
   }
 
   async initialize() {
@@ -360,14 +442,138 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
       maxVelocity: this.config.maxVelocity,
       gridSize: 200,
       debug: this.config.debug,
-      shouldCull: true,
+      culling: true,
       boundary: new Rectangle(-100, -100, this.app.size.width + 200, this.app.size.height + 200),
     });
+
+    // Register the FLOOR collision layer - this is a custom layer (bits 16-31)
+    // The value will be 1 << (0 + 16) = 65536 (bit 16 set)
+    const FLOOR = this.physics.registerCollisionLayer('FLOOR', 0, 'the floor platforms');
+
+    // Store the FLOOR layer as a class property for use in other methods
+    this.floorLayer = FLOOR;
+
+    // Debug the collision layers
+    this._debugCollisionLayers();
+
+    // Add debug text to explain collision layers
+    this.debugText = this.add.text({
+      text:
+        'Collision Layers Test:\n' +
+        '- Yellow border: On FLOOR layer (player can collide)\n' +
+        '- Gray border: On PLATFORM layer (player cannot collide)\n' +
+        `- FLOOR layer value: ${FLOOR}\n` +
+        `- PLAYER layer value: ${CollisionLayer.PLAYER}\n` +
+        `- PLATFORM layer value: ${CollisionLayer.PLATFORM}`,
+      x: 20,
+      y: 20,
+      style: {
+        fontSize: 16,
+        fill: 0xffffff,
+      },
+    });
+    this.debugText.visible = this.config.showCollisionInfo;
 
     this._createRunner();
     this._createLeftBoundaryWall();
     this._createInitialSegments();
     this.physicsContainer.position.set(-this.app.size.width / 2, -this.app.size.height / 2);
+  }
+
+  /**
+   * Debug method to help understand collision layers
+   */
+  private _debugCollisionLayers(): void {
+    console.log('===== COLLISION LAYERS DEBUG =====');
+    console.log('FLOOR layer value:', this.floorLayer);
+    console.log('PLAYER layer value:', CollisionLayer.PLAYER);
+    console.log('PLATFORM layer value:', CollisionLayer.PLATFORM);
+
+    // Check if bitwise operations work as expected
+    console.log('FLOOR & PLAYER =', this.floorLayer & CollisionLayer.PLAYER);
+    console.log('FLOOR & PLATFORM =', this.floorLayer & CollisionLayer.PLATFORM);
+
+    // Log all registered collision layers
+    console.log('All registered layers:', this.physics.getCollisionLayers());
+
+    // Test collision detection logic
+    this._testCollisionDetection();
+
+    console.log('================================');
+  }
+
+  /**
+   * Test if the collision detection logic works as expected
+   */
+  private _testCollisionDetection(): void {
+    console.log('===== TESTING COLLISION DETECTION =====');
+
+    // Create test entities
+    const testRunner = {
+      collisionLayer: CollisionLayer.PLAYER,
+      collisionMask: this.floorLayer,
+    };
+
+    const testFloorPlatform = {
+      collisionLayer: this.floorLayer,
+      collisionMask: CollisionLayer.PLAYER,
+    };
+
+    const testElevatedPlatform = {
+      collisionLayer: CollisionLayer.PLATFORM,
+      collisionMask: CollisionLayer.PLAYER,
+    };
+
+    // Test collision detection
+    const runnerCollidesWithFloor =
+      (testRunner.collisionLayer & testFloorPlatform.collisionMask) !== 0 &&
+      (testFloorPlatform.collisionLayer & testRunner.collisionMask) !== 0;
+
+    const runnerCollidesWithElevated =
+      (testRunner.collisionLayer & testElevatedPlatform.collisionMask) !== 0 &&
+      (testElevatedPlatform.collisionLayer & testRunner.collisionMask) !== 0;
+
+    console.log('Runner collides with floor platform?', runnerCollidesWithFloor);
+    console.log('Runner collides with elevated platform?', runnerCollidesWithElevated);
+
+    // Log the binary values to understand what's happening
+    console.log('Runner layer (binary):', testRunner.collisionLayer.toString(2));
+    console.log('Runner mask (binary):', testRunner.collisionMask.toString(2));
+    console.log('Floor platform layer (binary):', testFloorPlatform.collisionLayer.toString(2));
+    console.log('Floor platform mask (binary):', testFloorPlatform.collisionMask.toString(2));
+    console.log('Elevated platform layer (binary):', testElevatedPlatform.collisionLayer.toString(2));
+    console.log('Elevated platform mask (binary):', testElevatedPlatform.collisionMask.toString(2));
+
+    // Test with actual entities
+    if (this.runner) {
+      // Create a test floor platform
+      const testFloor = this.physics.createSolid({
+        type: 'TestFloor',
+        position: [0, 0],
+        size: [10, 10],
+        collisionLayer: this.floorLayer,
+        collisionMask: CollisionLayer.PLAYER,
+      });
+
+      // Create a test elevated platform
+      const testPlatform = this.physics.createSolid({
+        type: 'TestPlatform',
+        position: [0, 0],
+        size: [10, 10],
+        collisionLayer: CollisionLayer.PLATFORM,
+        collisionMask: CollisionLayer.PLAYER,
+      });
+
+      // Test with actual entities
+      console.log('Runner can collide with floor?', this.runner.canCollideWithEntity(testFloor));
+      console.log('Runner can collide with platform?', this.runner.canCollideWithEntity(testPlatform));
+
+      // Clean up test entities
+      this.physics.system.removeSolid(testFloor);
+      this.physics.system.removeSolid(testPlatform);
+    }
+
+    console.log('================================');
   }
 
   private _createLeftBoundaryWall(): void {
@@ -382,6 +588,8 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
       width: 32,
       height: this.app.size.height,
       view: sprite,
+      collisionLayer: this.floorLayer,
+      collisionMask: CollisionLayer.PLAYER,
     });
   }
 
@@ -401,6 +609,12 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
 
     this.physics.system.addActor(this.runner);
     this.runner.onKilled.connectOnce(this._createRunner);
+
+    // Apply collision restrictions based on config
+    this._updateCollisionRestrictions();
+
+    // Run the collision detection test after the runner is created
+    this._testCollisionDetection();
   }
 
   private _createInitialSegments(): void {
@@ -409,7 +623,7 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
     let totalWidth = 0;
 
     while (totalWidth < minRequiredWidth) {
-      const segment = new Segment(totalWidth, this.app.size.height - 60, this.segmentWidth);
+      const segment = new Segment(totalWidth, this.app.size.height - 60, this.segmentWidth, this.floorLayer);
       this.segments.push(segment);
       totalWidth += this.segmentWidth;
     }
@@ -441,6 +655,7 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
         Math.round(lastSegment.x + lastSegment.width),
         this.app.size.height - 60,
         this.segmentWidth,
+        this.floorLayer,
       );
       this.segments.push(newSegment);
       totalWidth += this.segmentWidth;
@@ -461,5 +676,78 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
     this.segments.forEach((s) => s.destroy());
     this.physics.destroy();
     super.destroy();
+  }
+
+  /**
+   * Test if the riding logic works correctly with collision layers
+   */
+  private _testRidingLogic(): void {
+    console.log('===== TESTING RIDING LOGIC =====');
+
+    if (!this.runner) return;
+
+    // Create a test floor platform (should be rideable)
+    const testFloor = this.physics.createSolid({
+      type: 'TestFloor',
+      position: [this.runner.x, this.runner.y + this.runner.height],
+      size: [100, 10],
+      collisionLayer: this.floorLayer,
+      collisionMask: CollisionLayer.PLAYER,
+    });
+
+    // Create a test elevated platform (should not be rideable when restrictions are enabled)
+    const testPlatform = this.physics.createSolid({
+      type: 'TestPlatform',
+      position: [this.runner.x + 150, this.runner.y + this.runner.height],
+      size: [100, 10],
+      collisionLayer: CollisionLayer.PLATFORM,
+      collisionMask: CollisionLayer.PLAYER,
+    });
+
+    // Test riding logic
+    console.log('Runner can ride floor platform?', this.runner.isRiding(testFloor));
+    console.log('Runner can ride elevated platform?', this.runner.isRiding(testPlatform));
+
+    // Clean up test entities
+    this.physics.system.removeSolid(testFloor);
+    this.physics.system.removeSolid(testPlatform);
+
+    console.log('================================');
+  }
+
+  /**
+   * Update collision restrictions based on the config
+   */
+  private _updateCollisionRestrictions(): void {
+    if (!this.runner) return;
+
+    if (this.config.restrictCollisions) {
+      // Restrict collisions to only FLOOR layer
+      this.runner.collisionMask = this.floorLayer;
+      console.log('Restricted collisions: Runner will only collide with FLOOR layer');
+      console.log('Runner collision mask (binary):', this.runner.collisionMask.toString(2));
+      console.log('FLOOR layer (binary):', this.floorLayer.toString(2));
+      console.log('PLATFORM layer (binary):', CollisionLayer.PLATFORM.toString(2));
+    } else {
+      // Allow collisions with all layers
+      this.runner.collisionMask = CollisionLayer.ALL;
+      console.log('Unrestricted collisions: Runner will collide with all layers');
+      console.log('Runner collision mask (binary):', this.runner.collisionMask.toString(2));
+    }
+
+    // Update the debug text
+    if (this.debugText) {
+      this.debugText.text =
+        'Collision Layers Test:\n' +
+        '- Yellow border: On FLOOR layer (player can collide)\n' +
+        '- Gray border: On PLATFORM layer (player cannot collide)\n' +
+        `- Player ${this.config.restrictCollisions ? 'only collides with FLOOR layer' : 'collides with ALL layers'}\n` +
+        `- FLOOR layer value: ${this.floorLayer}\n` +
+        `- PLAYER layer value: ${CollisionLayer.PLAYER}\n` +
+        `- PLATFORM layer value: ${CollisionLayer.PLATFORM}`;
+    }
+
+    // Test riding logic after updating collision restrictions
+    this._testRidingLogic();
   }
 }

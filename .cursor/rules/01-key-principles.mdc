@@ -1,0 +1,7 @@
+# Key Principles
+
+- Write concise, technically accurate TypeScript code with a focus on performance.
+- Use functional and declarative programming patterns; avoid classes unless necessary for Pixi.js specific implementations.
+- Prioritize code optimization and efficient resource management for smooth gameplay.
+- Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasRendered).
+- Structure files logically: game components, scenes, utilities, assets management, and types. 

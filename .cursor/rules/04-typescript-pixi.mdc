@@ -1,0 +1,30 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ # TypeScript and Pixi.js Best Practices
+
+## TypeScript Guidelines
+- Leverage TypeScript's strong typing for all game objects and Pixi.js elements
+- Use strict mode and enable all strict type checking options
+- Define interfaces for all game objects and components
+- Utilize type guards for runtime type checking when necessary
+
+## Pixi.js Implementation
+- Use Pixi.js best practices for rendering and object pooling to minimize garbage collection
+- Implement efficient asset loading and management techniques
+- Utilize Pixi.js WebGPU renderer for optimal performance on supported browsers
+- Fall back to WebGL for broader compatibility, especially for Ionic Capacitor builds
+- Implement proper game loop using Pixi's ticker system for consistent updates and rendering
+
+## Pixi.js Optimizations
+- Use sprite batching and container nesting wisely to reduce draw calls
+- Implement texture atlases to optimize rendering and reduce texture swaps
+- Utilize Pixi.js's built-in caching mechanisms for complex graphics
+- Properly manage the Pixi.js scene graph
+- Remove unused objects and use object pooling for frequently created/destroyed objects
+- Use Pixi.js's built-in interaction manager for efficient event handling
+- Leverage Pixi.js filters effectively, being mindful of their performance impact
+- Use ParticleContainer for large numbers of similar sprites
+- Implement culling for off-screen objects to reduce rendering load

@@ -1,0 +1,31 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ # Advanced Techniques
+
+## Pixi.js Advanced Features
+- Understand and use Pixi.js hacks when necessary
+- Implement custom blending modes
+- Create shader modifications for special effects
+- Handle the 65k vertices limitation in graphics
+- Implement workarounds for known limitations
+
+## Advanced Rendering
+- Utilize custom filters for complex effects
+- Implement multi-pass rendering techniques
+- Create custom shaders for specialized effects
+- Optimize complex particle systems
+
+## Performance Optimization
+- Implement advanced memory management techniques
+- Create efficient object pooling systems
+- Optimize complex scene graphs
+- Handle edge cases in rendering pipeline
+
+## Advanced Game Features
+- Implement complex physics systems
+- Create advanced animation systems
+- Handle complex user interactions
+- Optimize for multiple rendering contexts

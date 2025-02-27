@@ -6,7 +6,15 @@ import { CrunchPhysicsOptions } from './interfaces';
 import { Sensor } from './Sensor';
 import { Solid } from './Solid';
 import { System } from './System';
-import { Collision, PhysicsEntityConfig, SensorOverlap } from './types';
+import {
+  ActorCollision,
+  Collision,
+  CollisionLayer,
+  CollisionLayers,
+  PhysicsEntityConfig,
+  RegisteredCollisionLayer,
+  SensorOverlap,
+} from './types';
 
 /**
  * Interface for the Crunch physics plugin, providing a simple yet powerful 2D physics system
@@ -75,7 +83,7 @@ export interface ICrunchPhysicsPlugin extends IPlugin {
    *   maxVelocity: 400,
    *   gridSize: 32,
    *   debug: true,
-   *   shouldCull: true,
+   *   culling: true,
    *   boundary: new Rectangle(0, 0, 800, 600),
    *   collisionResolver: (collisions) => {
    *     collisions.forEach(collision => {
@@ -104,6 +112,40 @@ export interface ICrunchPhysicsPlugin extends IPlugin {
    * ```
    */
   setCollisionResolver(resolver: (collisions: Collision[]) => void): void;
+
+  /**
+   * Sets a custom resolver for actor-to-actor collisions.
+   *
+   * @param resolver - Function to handle actor-to-actor collisions
+   *
+   * @example
+   * ```typescript
+   * physics.setActorCollisionResolver((collisions) => {
+   *   collisions.forEach(collision => {
+   *     if (collision.actor1.type === 'Player' && collision.actor2.type === 'Enemy') {
+   *       player.takeDamage(10);
+   *     }
+   *   });
+   * });
+   * ```
+   */
+  setActorCollisionResolver(resolver: (collisions: ActorCollision[]) => void): void;
+
+  /**
+   * Enables or disables actor-to-actor collision detection.
+   *
+   * @param enabled - Whether to enable actor-to-actor collisions
+   *
+   * @example
+   * ```typescript
+   * // Enable actor-to-actor collisions
+   * physics.setActorCollisionsEnabled(true);
+   *
+   * // Disable actor-to-actor collisions for performance
+   * physics.setActorCollisionsEnabled(false);
+   * ```
+   */
+  setActorCollisionsEnabled(enabled: boolean): void;
 
   /**
    * Creates a generic physics entity based on the provided configuration.
@@ -307,6 +349,131 @@ export interface ICrunchPhysicsPlugin extends IPlugin {
    * ```
    */
   destroy(): void;
+
+  /**
+   * Creates a custom collision layer.
+   *
+   * @param index Index from 0-15 representing which user bit to use (gets shifted to bits 16-31)
+   * @returns A unique collision layer value
+   *
+   * @example
+   * ```typescript
+   * // Create custom collision layers
+   * const WATER_LAYER = physics.createCollisionLayer(0);
+   * const LAVA_LAYER = physics.createCollisionLayer(1);
+   *
+   * // Use in entity creation
+   * const waterEntity = physics.createActor({
+   *   type: 'Water',
+   *   position: [100, 400],
+   *   size: [800, 100],
+   *   collisionLayer: WATER_LAYER,
+   *   collisionMask: CollisionLayer.PLAYER | CollisionLayer.ENEMY
+   * });
+   * ```
+   */
+  createCollisionLayer(index: number): number;
+
+  /**
+   * Creates a collision mask from multiple layers.
+   *
+   * @param layers Array of collision layers to combine
+   * @returns A combined collision mask
+   *
+   * @example
+   * ```typescript
+   * // Create a mask that collides with players, enemies and projectiles
+   * const mask = physics.createCollisionMask([
+   *   CollisionLayer.PLAYER,
+   *   CollisionLayer.ENEMY,
+   *   CollisionLayer.PROJECTILE
+   * ]);
+   * ```
+   */
+  createCollisionMask(...layers: number[]): number;
+
+  /**
+   * Registers a named collision layer for better intellisense support.
+   *
+   * @param name Name of the collision layer (used for intellisense)
+   * @param indexOrDescription Index or description of the layer
+   * @param description Optional description of the layer
+   * @returns The numeric value of the registered collision layer
+   *
+   * @example
+   * ```typescript
+   * // Register named collision layers
+   * const WATER = physics.registerCollisionLayer('WATER', 0, 'Water surfaces');
+   * const LAVA = physics.registerCollisionLayer('LAVA', 1, 'Lava surfaces that damage players');
+   *
+   * // Use in entity creation
+   * const waterEntity = physics.createActor({
+   *   type: 'Water',
+   *   position: [100, 400],
+   *   size: [800, 100],
+   *   collisionLayer: WATER,
+   *   collisionMask: CollisionLayer.PLAYER | CollisionLayer.ENEMY
+   * });
+   * ```
+   */
+  registerCollisionLayer(name: string, indexOrDescription?: number | string, description?: string): number;
+
+  /**
+   * Gets a registered collision layer by name.
+   *
+   * @param name Name of the collision layer
+   * @returns The numeric value of the registered collision layer or undefined if not found
+   *
+   * @example
+   * ```typescript
+   * // Get a registered collision layer
+   * const waterLayer = physics.getCollisionLayer('WATER');
+   * if (waterLayer !== undefined) {
+   *   // Use the layer
+   *   entity.setCollisionLayer(waterLayer);
+   * }
+   * ```
+   */
+  getCollisionLayer(name: string): number | undefined;
+
+  /**
+   * Gets all registered collision layers.
+   *
+   * @returns Array of all registered collision layers
+   *
+   * @example
+   * ```typescript
+   * // Get all registered collision layers
+   * const layers = physics.getCollisionLayers();
+   * console.log(`Registered layers: ${layers.map(l => l.name).join(', ')}`);
+   * ```
+   */
+  getCollisionLayers(): RegisteredCollisionLayer[];
+
+  /**
+   * Removes a registered collision layer.
+   *
+   * @param name Name of the collision layer to remove
+   * @returns True if the layer was removed, false if it didn't exist
+   *
+   * @example
+   * ```typescript
+   * // Remove a registered collision layer
+   * physics.removeCollisionLayer('WATER');
+   * ```
+   */
+  removeCollisionLayer(name: string): boolean;
+
+  /**
+   * Clears all registered collision layers.
+   *
+   * @example
+   * ```typescript
+   * // Clear all registered collision layers
+   * physics.clearCollisionLayers();
+   * ```
+   */
+  clearCollisionLayers(): void;
 }
 
 /**
@@ -319,44 +486,47 @@ export default class CrunchPhysicsPlugin extends Plugin implements ICrunchPhysic
   public enabled = false;
   private collisionResolver?: (collisions: Collision[]) => void;
   private overlapResolver?: (overlaps: SensorOverlap[]) => void;
+  private actorCollisionResolver?: (collisions: ActorCollision[]) => void;
 
   constructor() {
     super('crunch-physics');
   }
 
-  public async initialize(
-    app: Application,
-    options: Partial<CrunchPhysicsOptions> = { container: app.stage },
-  ): Promise<void> {
-    const { gridSize = 8, gravity = 900, maxVelocity = 400, debug = false } = options;
-
-    this.container = options.container!;
-    this.collisionResolver = options.collisionResolver;
-    this.overlapResolver = options.overlapResolver;
-
-    if (this.system) {
-      app.ticker.remove(this.update);
-      this.system.destroy();
-      // @ts-expect-error system can't be null
-      this.system = null;
+  public async initialize(app: Application, options: Partial<CrunchPhysicsOptions>): Promise<void> {
+    if (this.enabled || !options) {
+      return;
     }
 
+    this.enabled = true;
+    this.container = options.container || app.stage;
+
+    // Create the physics system
+    const gridSize = options.gridSize ?? 32;
+    const gravity = options.gravity ?? 900;
+    const maxVelocity = options.maxVelocity ?? 400;
+    const debug = options.debug ?? false;
+    const enableActorCollisions = options.enableActorCollisions ?? false;
+
+    // Create the system with default collision layers set to NONE for better performance
     this.system = new System({
       gridSize,
       gravity,
       maxVelocity,
       boundary: options.boundary,
-      shouldCull: options.shouldCull,
+      culling: options.culling,
       plugin: this,
       collisionResolver: this.collisionResolver,
       overlapResolver: this.overlapResolver,
+      actorCollisionResolver: this.actorCollisionResolver,
+      enableActorCollisions,
+      defaultCollisionLayer: CollisionLayer.NONE,
+      defaultCollisionMask: CollisionLayer.NONE,
     });
 
     if (debug) {
       this.system.debug = true;
     }
 
-    this.enabled = true;
     // Register update loop
     app.ticker.add(this.update);
   }
@@ -364,6 +534,15 @@ export default class CrunchPhysicsPlugin extends Plugin implements ICrunchPhysic
   public setCollisionResolver(resolver: (collisions: Collision[]) => void): void {
     this.collisionResolver = resolver;
     this.system.setCollisionResolver(resolver);
+  }
+
+  public setActorCollisionResolver(resolver: (collisions: ActorCollision[]) => void): void {
+    this.actorCollisionResolver = resolver;
+    this.system.setActorCollisionResolver(resolver);
+  }
+
+  public setActorCollisionsEnabled(enabled: boolean): void {
+    this.system.setActorCollisionsEnabled(enabled);
   }
 
   public createEntity(config: PhysicsEntityConfig): Actor | Solid | Sensor | Group {
@@ -436,5 +615,97 @@ export default class CrunchPhysicsPlugin extends Plugin implements ICrunchPhysic
   private update(_ticker: Ticker) {
     if (!this.enabled) return;
     this.system.update(_ticker.deltaTime);
+  }
+
+  /**
+   * Creates a custom collision layer.
+   *
+   * @param index Index from 0-15 representing which user bit to use (gets shifted to bits 16-31)
+   * @returns A unique collision layer value
+   */
+  public createCollisionLayer(index: number): number {
+    return CollisionLayers.createLayer(index);
+  }
+
+  /**
+   * Creates a collision mask from multiple layers.
+   *
+   * @param layers Array of collision layers to combine
+   * @returns A combined collision mask
+   */
+  public createCollisionMask(...layers: number[]): number {
+    return CollisionLayers.createMask(layers);
+  }
+
+  /**
+   * Registers a named collision layer for better intellisense support.
+   *
+   * @param name Name of the collision layer (used for intellisense)
+   * @param indexOrDescription Index or description of the layer
+   * @param description Optional description of the layer
+   * @returns The numeric value of the registered collision layer
+   */
+  public registerCollisionLayer(name: string, indexOrDescription?: number | string, description?: string): number {
+    const registry = CollisionLayers.getRegistry();
+
+    // Handle overloaded method signature
+    if (typeof indexOrDescription === 'number') {
+      // First overload: registerCollisionLayer(name, index, description?)
+      const index = indexOrDescription;
+      const layer = registry.register(name, index, description);
+      return layer.value;
+    } else {
+      // Second overload: registerCollisionLayer(name, description?)
+      const layerDescription = indexOrDescription;
+      const nextIndex = registry.getNextAvailableIndex();
+
+      if (nextIndex === -1) {
+        throw new Error('No more collision layer indices available (maximum 16)');
+      }
+
+      const layer = registry.register(name, nextIndex, layerDescription);
+      return layer.value;
+    }
+  }
+
+  /**
+   * Gets a registered collision layer by name.
+   *
+   * @param name Name of the collision layer
+   * @returns The numeric value of the registered collision layer or undefined if not found
+   */
+  public getCollisionLayer(name: string): number | undefined {
+    const registry = CollisionLayers.getRegistry();
+    const layer = registry.get(name);
+    return layer?.value;
+  }
+
+  /**
+   * Gets all registered collision layers.
+   *
+   * @returns Array of all registered collision layers
+   */
+  public getCollisionLayers(): RegisteredCollisionLayer[] {
+    const registry = CollisionLayers.getRegistry();
+    return registry.getAll();
+  }
+
+  /**
+   * Removes a registered collision layer.
+   *
+   * @param name Name of the collision layer to remove
+   * @returns True if the layer was removed, false if it didn't exist
+   */
+  public removeCollisionLayer(name: string): boolean {
+    const registry = CollisionLayers.getRegistry();
+    return registry.remove(name);
+  }
+
+  /**
+   * Clears all registered collision layers.
+   */
+  public clearCollisionLayers(): void {
+    const registry = CollisionLayers.getRegistry();
+    registry.clear();
   }
 }

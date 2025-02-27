@@ -1,0 +1,31 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ # Mobile Optimization (Ionic Capacitor)
+
+## Touch Controls
+- Implement touch controls and gestures optimized for mobile devices
+- Use responsive design techniques for UI elements
+- Implement proper touch event handling and debouncing
+- Consider multi-touch scenarios where appropriate
+
+## Display Optimization
+- Adapt the game UI for various screen sizes and orientations
+- Use responsive design techniques for different device form factors
+- Implement proper scaling for different pixel densities
+- Handle notches and safe areas appropriately
+
+## Performance Considerations
+- Optimize asset quality and size for mobile devices
+- Reduce load times and conserve bandwidth
+- Implement efficient power management techniques
+- Preserve battery life through optimized rendering
+- Consider using the 'legacy:true' option for older mobile devices
+
+## Native Features
+- Utilize Capacitor plugins for accessing native device features
+- Implement proper permissions handling
+- Handle device-specific features gracefully
+- Provide fallbacks for unsupported features
