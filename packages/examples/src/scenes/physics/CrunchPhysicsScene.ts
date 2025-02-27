@@ -3,8 +3,10 @@ import { FONT_KUMBH_SANS } from '@/utils/Constants';
 import { V8Application } from '@/V8Application';
 import {
   Actor,
+  ActorCollisionResult,
   CollisionLayer,
   CollisionResult,
+  Entity,
   ICrunchPhysicsPlugin,
   Sensor,
   Solid,
@@ -67,18 +69,18 @@ class Platform extends Solid<V8Application, PlatformData> {
 
 class Player extends Actor<V8Application> {
   declare view: AnimatedSprite;
-
   type = 'Player';
-  active = false;
+  _active = false;
   debug = false;
 
   public onKilled: Signal<(player: Player) => void> = new Signal();
+
   private isJumping = false;
   private direction = 0;
 
   initialize(): void {
     this.setCollisionLayer(CollisionLayer.PLAYER);
-    this.setCollisionMask(CollisionLayer.PLATFORM, CollisionLayer.TRIGGER);
+    this.setCollisionMask(CollisionLayer.PLATFORM, CollisionLayer.TRIGGER, CollisionLayer.PLAYER, CollisionLayer.FX);
     this.direction = 1;
     this.view = this.make.animatedSprite({
       animationSpeed: 0.2,
@@ -219,6 +221,15 @@ class Player extends Actor<V8Application> {
       this.view.y = this._y + 0;
     }
   }
+
+  public onActorCollide(result: ActorCollisionResult): void {
+    if (result.actor.type === 'FX') {
+      if (result.normal?.x) {
+        result.actor.velocity.x = -result.normal.x * result.actor.velocity.x;
+      }
+      result.actor.velocity.y = -2000;
+    }
+  }
 }
 
 class FX extends Actor<V8Application> {
@@ -256,19 +267,10 @@ class Portal extends Sensor<V8Application> {
   type = 'Portal';
   collidableTypes = ['Player', 'FX'];
   declare view: Container;
-  private _anim: gsap.core.Tween;
   private linkedPortal: Portal | null = null;
   public floating: boolean = false;
 
-  private _canEnter: boolean = true;
-
-  set canEnter(value: boolean) {
-    this._canEnter = value;
-  }
-
-  get canEnter(): boolean {
-    return this._canEnter;
-  }
+  public banned: Set<Entity> = new Set<Entity>();
 
   constructor(config: any) {
     super({
@@ -306,7 +308,7 @@ class Portal extends Sensor<V8Application> {
     container.addChild(sprite);
     container.addChild(sprite2);
 
-    this._anim = gsap.to(sprite2.scale, {
+    gsap.to(sprite2.scale, {
       x: sprite2.scale.x * 1.5,
       y: sprite2.scale.y * 1.5,
       duration: 0.75,
@@ -336,10 +338,10 @@ class Portal extends Sensor<V8Application> {
   }
 
   onActorEnter(actor: Actor): void {
-    if (!this._canEnter) return;
+    if (this.banned.has(actor)) return;
     // this.active = false;
     if (this.linkedPortal) {
-      this.linkedPortal.canEnter = false;
+      this.linkedPortal.banned.add(actor);
       if (actor.type === 'Player') {
         actor.velocity = { x: 0, y: 0 };
         actor.active = false;
@@ -354,25 +356,8 @@ class Portal extends Sensor<V8Application> {
     }
   }
 
-  set active(value: boolean) {
-    super.active = value;
-    if (this._active) {
-      if (this._anim) {
-        this._anim.resume();
-      }
-    } else {
-      if (this._anim) {
-        this._anim.pause();
-      }
-    }
-  }
-
-  get active(): boolean {
-    return super.active;
-  }
-
-  onActorExit(): void {
-    this.canEnter = true;
+  onActorExit(actor: Actor): void {
+    this.banned.delete(actor);
   }
 
   linkTo(portal: Portal): void {
@@ -660,7 +645,7 @@ export default class CrunchPhysicsScene extends BaseScene {
         position: [this.player.x, this.player.y],
         size: 10,
         collisionLayer: CollisionLayer.PLAYER,
-        collisionMask: this.physics.createCollisionMask(CollisionLayer.PLATFORM, CollisionLayer.TRIGGER),
+        collisionMask: this.physics.createCollisionMask(CollisionLayer.PLATFORM),
       });
       this.physics.system.addActor(fx);
       this.physicsContainer.addChild(fx.view);
@@ -723,7 +708,11 @@ export default class CrunchPhysicsScene extends BaseScene {
         position: pt,
         size,
         collisionLayer: CollisionLayer.FX,
-        collisionMask: this.physics.createCollisionMask(CollisionLayer.PLATFORM, CollisionLayer.TRIGGER),
+        collisionMask: this.physics.createCollisionMask(
+          CollisionLayer.PLAYER,
+          CollisionLayer.PLATFORM,
+          CollisionLayer.TRIGGER,
+        ),
       });
 
       this.physics.system.addActor(actor);
@@ -752,7 +741,7 @@ export default class CrunchPhysicsScene extends BaseScene {
     this.portal1 = new Portal({
       position: [200, 400],
       id: 'portal1',
-      text: '1',
+      // text: '1',
       collisionLayer: CollisionLayer.TRIGGER,
       collisionMask: this.physics.createCollisionMask(
         CollisionLayer.PLAYER,
@@ -765,7 +754,7 @@ export default class CrunchPhysicsScene extends BaseScene {
     this.portal2 = new Portal({
       position: [700, 800],
       id: 'portal2',
-      text: '2',
+      // text: '2',
       collisionLayer: CollisionLayer.TRIGGER,
       collisionMask: this.physics.createCollisionMask(
         CollisionLayer.PLAYER,
@@ -778,7 +767,7 @@ export default class CrunchPhysicsScene extends BaseScene {
     this.portal3 = new Portal({
       position: [275, 80],
       id: 'portal3',
-      text: '3',
+      // text: '3',
       collisionLayer: CollisionLayer.TRIGGER,
       collisionMask: this.physics.createCollisionMask(
         CollisionLayer.PLAYER,
