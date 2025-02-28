@@ -28,12 +28,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "dill-pixel": "4.14.0",
+    "dill-pixel": "workspace:*",
     "vite": "6.1.1",
     "vite-plugin-dts": "^4.3.0"
   },
   "peerDependencies": {
-    "dill-pixel": "4.14.0"
+    "dill-pixel": "workspace:*"
   },
   "dependencies": {
     "@colyseus/schema": "^2.0.34",

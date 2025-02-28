@@ -6,8 +6,8 @@ import { FederatedPointerEvent, Particle, ParticleOptions, Rectangle, Text, Text
 
 export const id = 'matter-physics';
 export const debug = {
-  group: 'Physics',
-  label: 'Matter',
+  group: 'Matter Physics',
+  label: 'Object Creation',
   order: 4,
 };
 
@@ -57,7 +57,7 @@ class Particles extends ParticleContainer {
         p.speed += 0.25;
       }
       if (p.alpha > 0) {
-        p.alpha -= 0.005; // doesn't seem to work
+        p.alpha -= 0.025; // doesn't seem to work
       }
       p.renderCount++;
       if (p.renderCount > 200) {

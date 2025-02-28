@@ -1,6 +1,6 @@
 import type { AssetsPreferences, ResolvedAsset, UnresolvedAsset } from 'pixi.js';
 import { Assets } from 'pixi.js';
-import { IApplication } from '../core';
+import { Application } from '../core/Application';
 import type { IScene } from '../display';
 import { Signal } from '../signals';
 import { AssetLike, AssetLoadingOptions, AssetTypes, BundleTypes, isDev, Logger, SceneImportListItem } from '../utils';
@@ -77,7 +77,7 @@ function getAssetList(assets: AssetTypes): UnresolvedAsset[] | string[] {
   });
 }
 
-export class AssetsPlugin extends Plugin implements IAssetsPlugin {
+export class AssetsPlugin extends Plugin<Application, AssetLoadingOptions> implements IAssetsPlugin {
   public readonly id: string = 'assets';
   public onLoadStart: Signal<() => void> = new Signal();
   public onLoadProgress: Signal<(progress: number) => void> = new Signal();
@@ -93,7 +93,7 @@ export class AssetsPlugin extends Plugin implements IAssetsPlugin {
   private _required: { assets?: AssetTypes; bundles?: BundleTypes } = {};
   private _background: { assets?: AssetTypes; bundles?: BundleTypes } = {};
 
-  public initialize(_app: IApplication, options?: AssetLoadingOptions): Promise<void> | void {
+  public initialize(options?: AssetLoadingOptions): Promise<void> | void {
     if (options?.preload) {
       this._required = options.preload;
     }

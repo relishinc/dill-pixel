@@ -29,8 +29,8 @@ import { FederatedPointerEvent, Point, Pool, Rectangle } from 'pixi.js';
 export const id = 'crunch-physics';
 
 export const debug = {
-  group: 'Physics',
-  label: 'Crunch Physics - Level & Camera',
+  group: 'Crunch Physics',
+  label: 'Level & Camera',
   order: 6,
 };
 
@@ -503,7 +503,7 @@ export default class CrunchPhysicsScene extends BaseScene {
     this._addBg();
 
     // Initialize physics with boundary from config
-    await this.physics.initialize(this.app, {
+    await this.physics.initialize({
       container: this.physicsContainer,
       gravity: this.config.gravity,
       maxVelocity: this.config.maxVelocity,

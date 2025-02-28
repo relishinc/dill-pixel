@@ -1,5 +1,6 @@
 import { Bounds, Container, Point, PointerEvents } from 'pixi.js';
 import { IApplication } from '../../core';
+import { Application } from '../../core/Application';
 import { Signal } from '../../signals';
 import type { Constructor, PointLike as DillPixelPointLike } from '../../utils';
 import { bindMethods, getLastMapEntry, getPreviousMapEntry, Logger } from '../../utils';
@@ -272,7 +273,7 @@ export interface IFocusManagerPlugin extends IPlugin {
   sortFocusablesByPosition(): void;
 }
 
-export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
+export class FocusManagerPlugin extends Plugin<Application, FocusManagerPluginOptions> implements IFocusManagerPlugin {
   public override readonly id: string = 'focus';
   public readonly view = new Container();
   // signals
@@ -286,8 +287,6 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
   private _focusOutliner: IFocusOutliner;
   private _focusTarget: IFocusable | null = null;
   private _keyboardActive: boolean = false;
-  private _options: FocusManagerPluginOptions;
-
   private _layers: Map<string | number, IFocusLayer> = new Map();
 
   public get layers(): Map<string | number, IFocusLayer> {
@@ -331,7 +330,7 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
     this._getCurrentLayer()?.sortFocusablesByPosition();
   }
 
-  public initialize(app: IApplication): void {
+  public initialize(_options: Partial<FocusManagerPluginOptions>, app: IApplication): void {
     bindMethods(this, 'removeAllFocusLayers', '_handleGlobalMouseMove', '_handleGlobalPointerDown');
     const options: Partial<FocusManagerPluginOptions> = app.config?.focus || {};
     options.usePixiAccessibility = options.usePixiAccessibility ?? false;
@@ -619,11 +618,17 @@ export class FocusManagerPlugin extends Plugin implements IFocusManagerPlugin {
 
   private _updatePixiAccessibility() {
     // @ts-expect-error _div is protected
-    this.app.renderer.accessibility._div?.setAttribute('id', 'pixi-accessibility');
+    if (this.app.renderer.accessibility?._div) {
+      // @ts-expect-error _div is protected
+      this.app.renderer.accessibility._div.setAttribute('id', 'pixi-accessibility');
+    }
     if (!this._options.usePixiAccessibility) {
       // @ts-expect-error _div is protected
-      this.app.renderer.accessibility._div?.setAttribute('disabled', 'disabled');
-      this.app.renderer.accessibility.destroy();
+      if (this.app.renderer.accessibility?._div) {
+        // @ts-expect-error _div is protected
+        this.app.renderer.accessibility._div.setAttribute('disabled', 'disabled');
+      }
+      this.app.renderer.accessibility?.destroy();
       globalThis.addEventListener('keydown', this._onKeyDown, false);
       globalThis.addEventListener('keyup', this._onKeyUp, false);
     }

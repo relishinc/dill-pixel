@@ -116,7 +116,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
 
   public destroy(): void {}
 
-  public async initialize(app: IApplication): Promise<void> {
+  public async initialize(_options: any, app: IApplication): Promise<void> {
     this._debugVisible =
       this.app.config?.showSceneDebugMenu === true || (isDev && this.app.config?.showSceneDebugMenu !== false);
     this._useHash = app.config?.useHash === true || this._debugVisible;

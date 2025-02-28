@@ -1,10 +1,29 @@
 import { exec } from 'child_process';
+import fs from 'fs';
 import { glob } from 'glob';
 import { resolve } from 'path';
 import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 const globAsync = promisify(glob);
+
+function updateDependencyVersions(packageJson, version) {
+  const sections = ['dependencies', 'devDependencies', 'peerDependencies'];
+  let modified = false;
+
+  for (const section of sections) {
+    if (packageJson[section]) {
+      for (const [dep, depVersion] of Object.entries(packageJson[section])) {
+        if (dep.startsWith('dill-pixel') && depVersion === 'workspace:*') {
+          packageJson[section][dep] = version;
+          modified = true;
+        }
+      }
+    }
+  }
+
+  return modified;
+}
 
 async function publishPackages(patterns) {
   const cwd = process.cwd();
@@ -20,12 +39,30 @@ async function publishPackages(patterns) {
     for (const packageDir of allDirectories) {
       process.chdir(resolve(cwd, packageDir));
       console.log(`Publishing package in ${packageDir}...`);
+
+      const packageJsonPath = 'package.json';
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+      const originalContent = fs.readFileSync(packageJsonPath, 'utf8');
+
+      // Update workspace dependencies to current version
+      const wasModified = updateDependencyVersions(packageJson, packageJson.version);
+
+      if (wasModified) {
+        // Write temporary package.json with updated versions
+        fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+      }
+
       try {
         const { stdout, stderr } = await execAsync('npm publish --access public');
         console.log(stdout);
         console.error(stderr);
       } catch (err) {
         console.error(`Failed to publish package in ${packageDir}:`, err);
+      } finally {
+        // Restore original package.json
+        if (wasModified) {
+          fs.writeFileSync(packageJsonPath, originalContent);
+        }
       }
     }
   } catch (err) {

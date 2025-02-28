@@ -11,8 +11,8 @@ import BaseScene from '@/scenes/BaseScene';
 
 export const id = 'snap-endless-runner';
 export const debug = {
-  group: 'Physics',
-  label: 'Snap - Endless Runner',
+  group: 'Snap Physics',
+  label: 'Endless Runner',
   order: 3,
 };
 

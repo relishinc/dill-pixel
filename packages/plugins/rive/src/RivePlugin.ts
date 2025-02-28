@@ -1,9 +1,9 @@
 import Rive, { RiveCanvas } from '@rive-app/canvas-advanced-lite';
-import { IApplication, IPlugin, Plugin } from 'dill-pixel';
+import { Application, IPlugin, Plugin } from 'dill-pixel';
 import { BrowserAdapter, checkExtension, extensions, ExtensionType, LoaderParserPriority } from 'pixi.js';
 import { riveVersion, version } from './version';
 
-export interface IRivePlugin extends IPlugin {
+export interface IRivePlugin extends IPlugin<RivePluginOptions> {
   rive: RiveCanvas;
   cleanup(): void;
 }
@@ -16,18 +16,15 @@ export type RivePluginOptions = {
   wasmPath: string;
 };
 
-export interface IRivePlugin extends IPlugin {
-  cleanup(): void;
-}
-
 const defaultOptions = {
   wasmPath: 'https://unpkg.com/@rive-app/canvas-advanced-lite@2.26.1/rive.wasm',
 };
 
-export class RivePlugin extends Plugin implements IRivePlugin {
+export class RivePlugin extends Plugin<Application, RivePluginOptions> implements IRivePlugin {
   public static ID: string;
-  public options: RivePluginOptions;
+  public readonly id = 'rive';
   public rive: RiveCanvas;
+  protected _options: RivePluginOptions = defaultOptions;
 
   private _addedExtensions: boolean = false;
 
@@ -40,13 +37,13 @@ export class RivePlugin extends Plugin implements IRivePlugin {
     );
   }
 
-  async initialize(_app: IApplication, options: RivePluginOptions) {
-    this.options = { ...defaultOptions, ...options };
+  async initialize(options: RivePluginOptions): Promise<void> {
+    this._options = { ...defaultOptions, ...options };
     this.hello();
     RivePlugin.ID = this.id;
     this._addLoaderExtensions();
     if (!this.rive) {
-      this.rive = await Rive({ locateFile: () => this.options.wasmPath });
+      this.rive = await Rive({ locateFile: () => this._options.wasmPath });
     }
   }
 

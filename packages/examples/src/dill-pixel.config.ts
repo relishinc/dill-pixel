@@ -110,7 +110,18 @@ export const config = defineConfig<Data>({
   showSceneDebugMenu: true,
   useVoiceover: true,
   defaultScene: 'assets',
-  sceneGroupOrder: ['Framework', 'Display', 'Audio', 'UI', 'Accessibility', 'Physics', 'Rive', 'Storage Adapters'],
+  sceneGroupOrder: [
+    'Framework',
+    'Display',
+    'Audio',
+    'UI',
+    'Accessibility',
+    'Snap Physics',
+    'Crunch Physics',
+    'Matter Physics',
+    'Rive',
+    'Storage Adapters',
+  ],
   data: {
     initial: {
       bar: 5,

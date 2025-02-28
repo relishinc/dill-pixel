@@ -1,6 +1,6 @@
 import { Graphics } from 'pixi.js';
 
-import type { IApplication } from '../core';
+import { Application } from '../core/Application';
 import { Container } from '../display';
 import type { Size } from '../utils';
 import type { IPlugin } from './Plugin';
@@ -45,9 +45,8 @@ const defaultOptions: ResizerPluginOptions = {
   debug: false,
 };
 
-export class ResizerPlugin extends Plugin implements IResizerPlugin {
+export class ResizerPlugin extends Plugin<Application, ResizerPluginOptions> implements IResizerPlugin {
   public readonly id = 'resizer';
-  private _options: ResizerPluginOptions;
   private _debugContainer: Container;
   private _gfx: Graphics;
   private _size: Size;
@@ -65,7 +64,7 @@ export class ResizerPlugin extends Plugin implements IResizerPlugin {
   /**
    * Initializes the Resizer module.
    */
-  async initialize(_app: IApplication, options: Partial<ResizerPluginOptions> = {}) {
+  async initialize(options: Partial<ResizerPluginOptions>) {
     this._options = { ...defaultOptions, ...options };
   }
 

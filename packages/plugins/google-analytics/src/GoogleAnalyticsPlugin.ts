@@ -1,4 +1,4 @@
-import type { IApplication, IPlugin } from 'dill-pixel';
+import type { Application, IApplication, IPlugin } from 'dill-pixel';
 import { isDev, Logger, omitKeys, Plugin } from 'dill-pixel';
 import { version } from './version';
 
@@ -12,18 +12,22 @@ export type GoogleAnalyticsPluginOptions = ConfigParams & {
 
 export type GAEvents = Record<string, unknown>;
 
-export interface IGoogleAnalyticsPlugin<E extends GAEvents = GAEvents> extends IPlugin {
-  initialize(app: IApplication, options?: Partial<GoogleAnalyticsPluginOptions>): void;
+export interface IGoogleAnalyticsPlugin<E extends GAEvents = GAEvents>
+  extends IPlugin<Application, GoogleAnalyticsPluginOptions> {
+  initialize(options: Partial<GoogleAnalyticsPluginOptions>, app: IApplication): void;
   gtag(...args: any[]): void;
   trackEvent<K extends keyof E>(eventName: K, eventData?: E[K]): void;
 }
 
-export class GoogleAnalyticsPlugin<E extends GAEvents = GAEvents> extends Plugin implements IGoogleAnalyticsPlugin<E> {
+export class GoogleAnalyticsPlugin<E extends GAEvents = GAEvents>
+  extends Plugin<Application, GoogleAnalyticsPluginOptions>
+  implements IGoogleAnalyticsPlugin<E>
+{
   private _options: GoogleAnalyticsPluginOptions;
   private _dataLayer: { push: (args: any) => void };
   private _queue: any[] = [];
 
-  async initialize(_app: IApplication, options: Partial<GoogleAnalyticsPluginOptions>) {
+  async initialize(options: Partial<GoogleAnalyticsPluginOptions>, _app: IApplication) {
     this._options = {
       debug: isDev,
       trackingId: _app.env.VITE_GOOGLE_ANALYTICS_TRACKING_ID || _app.env.GOOGLE_ANALYTICS_TRACKING_ID,

@@ -1,11 +1,11 @@
-import { IApplication, IPlugin, Plugin } from 'dill-pixel';
+import { Application, IPlugin, Plugin } from 'dill-pixel';
 import { IEngineDefinition, IRunnerOptions } from 'matter-js';
 import { Container, Rectangle } from 'pixi.js';
 import { System } from './System';
 import { matterVersion, version } from './version';
 export interface IMatterPhysicPlugin extends IPlugin {}
 
-export interface IMatterPhysicsPlugin extends IMatterPhysicPlugin {
+export interface IMatterPhysicsPlugin extends IPlugin<MatterPhysicsPluginOptions> {
   get system(): typeof System;
 }
 
@@ -30,9 +30,10 @@ const defaultOptions = {
   },
 };
 
-export class MatterPhysicsPlugin extends Plugin implements IMatterPhysicPlugin {
-  private _options: MatterPhysicsPluginOptions;
-
+export class MatterPhysicsPlugin
+  extends Plugin<Application, MatterPhysicsPluginOptions>
+  implements IMatterPhysicPlugin
+{
   get system(): typeof System {
     return System;
   }
@@ -45,8 +46,7 @@ export class MatterPhysicsPlugin extends Plugin implements IMatterPhysicPlugin {
       'background: rgba(31, 41, 55, 1);color: #e91e63',
     );
   }
-
-  initialize(_app: IApplication, options?: Partial<MatterPhysicsPluginOptions>): void | Promise<void> {
+  initialize(options?: Partial<MatterPhysicsPluginOptions>): void | Promise<void> {
     this._options = {
       ...defaultOptions,
       ...options,
@@ -54,15 +54,17 @@ export class MatterPhysicsPlugin extends Plugin implements IMatterPhysicPlugin {
       engine: { ...defaultOptions.engine, ...options?.engine },
     };
 
-    this.hello();
-
     if (this._options.autoInit) {
-      System.initialize(this._options);
+      this.system.initialize(this._options);
     }
+
+    this.hello();
   }
 
   destroy() {
-    System?.destroy();
+    if (this.system) {
+      this.system.destroy();
+    }
     super.destroy();
   }
 }

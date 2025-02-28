@@ -223,8 +223,7 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
    * @param {IApplication} app
    * @returns {Promise<void>}
    */
-  public initialize(app: IApplication): Promise<void> {
-    void app;
+  public initialize(_options: any, app: IApplication): Promise<void> {
     sound.disableAutoPause = true;
     // TODO: investigate why this causes a console.assert error during load because audio files are already added.
     if (typeof app?.manifest === 'object') {

@@ -1,4 +1,4 @@
-import { IApplication, IPlugin, isDev, Logger, Plugin } from 'dill-pixel';
+import { Application, IApplication, IPlugin, isDev, Logger, Plugin } from 'dill-pixel';
 import Rollbar from 'rollbar';
 import { rollbarVersion, version } from './version';
 
@@ -7,7 +7,7 @@ export interface RollbarPluginOptions extends Rollbar.Configuration {
   debug?: boolean;
 }
 
-export interface IRollbarPlugin extends IPlugin {
+export interface IRollbarPlugin extends IPlugin<Application, RollbarPluginOptions> {
   readonly rollbar: Rollbar;
 }
 
@@ -19,7 +19,7 @@ const defaultOptions = {
   debug: isDev,
 };
 
-export class RollbarPlugin extends Plugin implements IRollbarPlugin {
+export class RollbarPlugin extends Plugin<Application, RollbarPluginOptions> implements IRollbarPlugin {
   private _options: RollbarPluginOptions;
   private _rollbar: Rollbar;
 
@@ -41,7 +41,7 @@ export class RollbarPlugin extends Plugin implements IRollbarPlugin {
     }
   }
 
-  async initialize(_app: IApplication, options: RollbarPluginOptions) {
+  async initialize(options: Partial<RollbarPluginOptions>, _app: IApplication) {
     this._options = {
       accessToken: _app.env.VITE_ROLLBAR_ACCESS_TOKEN || _app.env.ROLLBAR_ACCESS_TOKEN,
       ...defaultOptions,

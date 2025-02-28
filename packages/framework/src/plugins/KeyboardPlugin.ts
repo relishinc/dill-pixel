@@ -56,7 +56,7 @@ export class KeyboardPlugin extends Plugin implements IKeyboardPlugin {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public initialize(_app: IApplication): void {
+  public initialize(_options: any, _app: IApplication): void {
     // track which keys are down
     document.addEventListener('keydown', this._handleKeyDown);
     document.addEventListener('keyup', this._handleKeyUp);

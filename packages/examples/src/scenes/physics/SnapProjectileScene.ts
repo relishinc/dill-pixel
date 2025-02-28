@@ -7,8 +7,8 @@ import { FederatedPointerEvent, Point, Pool, Text } from 'pixi.js';
 
 export const id = 'snap-projectiles';
 export const debug = {
-  group: 'Physics',
-  label: 'Snap - Projectiles',
+  group: 'Snap Physics',
+  label: 'Projectiles',
   order: 2,
 };
 

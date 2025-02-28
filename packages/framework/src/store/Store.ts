@@ -1,6 +1,6 @@
-import type {IApplication} from '../core';
-import {Logger} from '../utils';
-import type {IStorageAdapter} from './adapters';
+import type { IApplication } from '../core';
+import { Logger } from '../utils';
+import type { IStorageAdapter } from './adapters';
 
 /**
  * Configuration for saving data with an adapter.
@@ -53,7 +53,7 @@ export class Store implements IStore {
       return Promise.resolve();
     }
     this._adapters.set(adapter.id, adapter);
-    await adapter.initialize(this._app, adapterOptions);
+    await adapter.initialize(adapterOptions, this._app);
   }
 
   /**

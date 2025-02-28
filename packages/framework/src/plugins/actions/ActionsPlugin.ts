@@ -1,5 +1,6 @@
 import { Action, ActionContext, ActionDetail, ActionMap, ActionSignal } from '.';
 import { IApplication } from '../../core';
+import { Application } from '../../core/Application';
 import { Signal } from '../../signals';
 import { Logger } from '../../utils';
 import { IPlugin, Plugin } from '../Plugin';
@@ -7,7 +8,7 @@ import { IPlugin, Plugin } from '../Plugin';
 export interface IActionsPlugin<C extends ActionContext = ActionContext> extends IPlugin {
   context: C;
   onActionContextChanged: Signal<(context: C) => void>;
-  initialize(app: IApplication): void;
+  initialize(options: Partial<IActionsPluginOptions>, app: IApplication): void;
   getAction<TActionData = any>(action: Action | string): ActionSignal<TActionData>;
   getActions(): ActionMap;
   sendAction<TActionData = any>(actionId: Action | string, data?: TActionData): void;
@@ -19,7 +20,7 @@ export interface IActionsPluginOptions {
   actions: Partial<ActionMap>;
 }
 
-export class ActionsPlugin extends Plugin implements IActionsPlugin {
+export class ActionsPlugin extends Plugin<Application, IActionsPluginOptions> implements IActionsPlugin {
   public readonly id = 'actions';
   // signals
   public onActionContextChanged: Signal<(context: string | ActionContext) => void> = new Signal<
@@ -51,7 +52,7 @@ export class ActionsPlugin extends Plugin implements IActionsPlugin {
     this.onActionContextChanged.emit(context);
   }
 
-  initialize(app: IApplication): void {
+  initialize(_options: Partial<IActionsPluginOptions>, app: IApplication): void {
     this._actions = app?.config?.actions ? app.config.actions || {} : {};
   }
 

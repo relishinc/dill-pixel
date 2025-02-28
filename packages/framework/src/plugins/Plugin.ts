@@ -4,12 +4,14 @@ import { Application } from '../core/Application';
 import { SignalConnection, SignalConnections } from '../signals';
 import { bindAllMethods } from '../utils';
 
-export interface IPlugin {
+export interface IPlugin<O = any> {
   id: string;
 
   app: IApplication;
 
-  initialize(_app: IApplication, options?: any): Promise<void> | void;
+  readonly options: Partial<O>;
+
+  initialize(options: Partial<O>, app: IApplication): Promise<void> | void;
 
   postInitialize(_app: IApplication): Promise<void> | void;
 
@@ -24,36 +26,42 @@ export interface IPlugin {
   registerCoreSignals(): void;
 }
 
-export interface PluginListItem {
+export interface PluginListItem<O = any> {
   id: string;
   path: string;
-  module: () => Promise<new () => IPlugin>;
+  module: () => Promise<new () => IPlugin<O>>;
   assets?: string[];
   plugins?: string[];
 }
 
-export class Plugin<T extends Application = Application> implements IPlugin {
+export class Plugin<A extends Application = Application, O = any> implements IPlugin<O> {
   // A collection of signal connections.
   __dill_pixel_method_binding_root: boolean;
   protected _signalConnections: SignalConnections = new SignalConnections();
+
+  protected _options: O;
+
+  get options(): O {
+    return this._options;
+  }
 
   constructor(public id: string = 'Plugin') {
     bindAllMethods(this);
     this.__dill_pixel_method_binding_root = true;
   }
 
-  public get app(): T {
-    return Application.getInstance<T>();
+  public get app(): A {
+    return Application.getInstance<A>();
   }
 
   public destroy(): void {
     this._signalConnections.disconnectAll();
   }
 
-  public initialize(_app: IApplication, options?: any): Promise<void> | void;
+  public initialize(options?: Partial<O>, _app?: IApplication): Promise<void> | void;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async initialize(_app: IApplication, _options?: any): Promise<void> {
+  public async initialize(_options: Partial<O>, _app?: IApplication): Promise<void> {
     return Promise.resolve(undefined);
   }
 

@@ -3,6 +3,7 @@ import { Action, DefaultActions } from '../actions';
 import { Controls } from './Controls';
 
 import { IApplication } from '../../core';
+import { Application } from '../../core/Application';
 import { Signal } from '../../signals';
 import type { IPlugin } from '../Plugin';
 import { Plugin } from '../Plugin';
@@ -14,7 +15,7 @@ export type InputManagerOptions = {
   controls?: UserControls;
 };
 
-export interface IInputPlugin extends IPlugin {
+export interface IInputPlugin extends IPlugin<InputManagerOptions> {
   readonly controls: Controls;
   activeGamepads: Map<string, Gamepad>;
   activeControllers: Set<string>;
@@ -35,7 +36,7 @@ const defaultOptions = {
   actions: DefaultActions,
 };
 
-export class InputPlugin extends Plugin implements IInputPlugin {
+export class InputPlugin extends Plugin<Application, InputManagerOptions> implements IInputPlugin {
   public readonly id = 'input';
 
   // controls
@@ -44,7 +45,6 @@ export class InputPlugin extends Plugin implements IInputPlugin {
   // properties
   public activeGamepads = new Map<string, Gamepad>();
   public activeControllers = new Set<string>([]);
-  public options: InputManagerOptions;
   // signals
   public onGamepadConnected: Signal<(gamepad: Gamepad) => void> = new Signal<(gamepad: Gamepad) => void>();
   public onGamepadDisconnected: Signal<(gamepad: Gamepad) => void> = new Signal<(gamepad: Gamepad) => void>();
@@ -55,8 +55,8 @@ export class InputPlugin extends Plugin implements IInputPlugin {
     return this.controls.isActionActive(action);
   }
 
-  async initialize(app: IApplication, options: InputManagerOptions = defaultOptions): Promise<void> {
-    this.options = { ...defaultOptions, ...options };
+  async initialize(options: Partial<InputManagerOptions> = defaultOptions, app: IApplication): Promise<void> {
+    this._options = { ...defaultOptions, ...options };
 
     app.stage.eventMode = 'static';
     app.stage.on('touchstart', this._onTouchStart);
@@ -65,8 +65,8 @@ export class InputPlugin extends Plugin implements IInputPlugin {
     window.addEventListener('gamepadconnected', this._onGamepadConnected);
     window.addEventListener('gamepaddisconnected', this._onGamepadDisconnected);
 
-    if (this.options.controls) {
-      this.controls.initialize(this.options.controls);
+    if (this._options.controls) {
+      this.controls.initialize(this._options.controls);
     }
   }
 

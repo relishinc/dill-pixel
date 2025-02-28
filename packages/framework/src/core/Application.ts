@@ -683,12 +683,12 @@ export class Application<
   protected async registerPlugin(plugin: IPlugin, options?: any) {
     if (this._plugins.has(plugin.id)) {
       Logger.error(`Plugin with id "${plugin.id}" already registered. Not registering.`);
-      return plugin.initialize(this as unknown as IApplication<DataSchema>, options);
+      return plugin.initialize(options, this as unknown as IApplication<DataSchema>);
     }
     plugin.registerCoreFunctions();
     plugin.registerCoreSignals();
     this._plugins.set(plugin.id, plugin);
-    return plugin.initialize(this as unknown as IApplication<DataSchema>, options);
+    return plugin.initialize(options, this as unknown as IApplication<DataSchema>);
   }
 
   protected async registerDefaultPlugins() {

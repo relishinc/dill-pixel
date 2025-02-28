@@ -11,8 +11,8 @@ import { gsap } from 'gsap';
 
 export const id = 'snap-physics';
 export const debug = {
-  group: 'Physics',
-  label: 'Snap - Level & Camera',
+  group: 'Snap Physics',
+  label: 'Level & Camera',
   order: 1,
 };
 

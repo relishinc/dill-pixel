@@ -1,5 +1,5 @@
 import { Assets } from 'pixi.js';
-import { IApplication } from '../core';
+import { Application } from '../core/Application';
 import { Signal } from '../signals';
 import type { ImportListItem, ImportListItemModule } from '../utils';
 import { getDynamicModuleFromImportListItem, Logger } from '../utils';
@@ -68,12 +68,11 @@ export interface Ii18nPlugin extends IPlugin {
 /**
  * i18n module class.
  */
-export class i18nPlugin extends Plugin implements Ii18nPlugin {
+export class i18nPlugin extends Plugin<Application, i18nOptions> implements Ii18nPlugin {
   public readonly id = 'i18n';
   public onLocaleChanged: Signal<(locale: string) => void> = new Signal<(locale: string) => void>();
 
   private _dicts: Record<string, i18nDict> = {};
-  private _options: i18nOptions;
 
   private _locale: string;
 
@@ -95,8 +94,7 @@ export class i18nPlugin extends Plugin implements Ii18nPlugin {
    * @param options The i18n options.
    * @returns Promise<void>
    */
-  public async initialize(app: IApplication, options: Partial<i18nOptions>): Promise<void> {
-    super.initialize(app);
+  public async initialize(options: Partial<i18nOptions>): Promise<void> {
     this._options = { ...defaultOptions, ...options };
     this._locale = this._options.defaultLocale;
     if (this._options.loadAll && this._options.files.length > 0) {

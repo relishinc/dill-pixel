@@ -1,4 +1,4 @@
-import { IApplication, isDev, IStorageAdapter, Logger, StorageAdapter } from 'dill-pixel';
+import { Application, IApplication, isDev, IStorageAdapter, Logger, StorageAdapter } from 'dill-pixel';
 import type { FirebaseApp, FirebaseOptions } from 'firebase/app';
 import { initializeApp } from 'firebase/app';
 import type { DocumentData, Firestore, QueryConstraint } from 'firebase/firestore';
@@ -21,11 +21,11 @@ interface DocumentResult extends DocumentData {
   [key: string]: unknown;
 }
 
-export interface IFirebaseAdapter extends IStorageAdapter {
+export interface IFirebaseAdapter extends IStorageAdapter<Application, FirebaseOptions> {
   db: Firestore;
   firebaseApp: FirebaseApp;
 
-  initialize(app: IApplication, options?: Partial<FirebaseOptions>): void;
+  initialize(options: Partial<FirebaseOptions>, app: IApplication): void;
 
   save<DocumentResult>(collectionName: string, data: DocumentData, id?: string): Promise<DocumentResult>;
 
@@ -94,7 +94,7 @@ export class FirebaseAdapter extends StorageAdapter implements IFirebaseAdapter 
    * @param {FirebaseOptions} options The options to initialize the adapter with.
    * @returns {void}
    */
-  public initialize(_app: IApplication, options: Partial<IFirebaseAdapterOptions> = {}): void {
+  public initialize(options: Partial<IFirebaseAdapterOptions>, _app: IApplication): void {
     const defaultConfig: IFirebaseAdapterOptions = {
       debug: isDev,
       apiKey: _app.env.VITE_FIREBASE_API_KEY || _app.env.FIREBASE_API_KEY,

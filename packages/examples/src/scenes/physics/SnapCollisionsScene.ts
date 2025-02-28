@@ -6,8 +6,8 @@ import { Container } from 'dill-pixel';
 export const id = 'snap-collisions';
 
 export const debug = {
-  group: 'Physics',
-  label: 'Snap - Bodies & Collisions',
+  group: 'Snap Physics',
+  label: 'Bodies & Collisions',
   order: 0,
 };
 

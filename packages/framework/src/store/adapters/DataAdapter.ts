@@ -1,4 +1,3 @@
-import type { IApplication } from '../../core';
 import { Signal } from '../../signals';
 import { deepMerge, DeepPartial } from '../../utils';
 import { StorageAdapter } from './StorageAdapter';
@@ -145,8 +144,8 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
    * @param {IApplication} _app The application that the adapter belongs to.
    * @param {Partial<ILocalStorageAdapterOptions>} options The options to initialize the adapter with.
    */
-  public initialize(_app: IApplication, options?: Partial<IDataAdapterOptions<D>>): void {
-    this.namespace = options?.namespace || _app.config?.id || 'data';
+  public initialize(options?: Partial<IDataAdapterOptions<D>>): void {
+    this.namespace = options?.namespace || 'data';
     this.data = (options?.initial as D) || ({} as D);
     this.backupKeys = options?.backupKeys || [];
     this.backupAll = options?.backupAll || false;

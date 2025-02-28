@@ -19,7 +19,10 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "allowJs": true,
-    "composite": true
+    "composite": true,
+    "paths": {
+      "dill-pixel/*": ["../../../src/*"]
+    }
   },
   "typeRoots": ["./node_modules/@types"],
   "include": ["./src/**/*.ts", "../../../src/**/*.ts"],

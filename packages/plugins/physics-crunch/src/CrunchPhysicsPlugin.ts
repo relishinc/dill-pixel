@@ -1,4 +1,4 @@
-import { Application, IPlugin, isDev, Logger, Plugin, version } from 'dill-pixel';
+import { Application, IApplication, IPlugin, isDev, Logger, Plugin, version } from 'dill-pixel';
 import { Container as PIXIContainer, Rectangle, Ticker } from 'pixi.js';
 import { Actor } from './Actor';
 import { Group } from './Group';
@@ -60,40 +60,15 @@ import {
  * });
  * ```
  */
-export interface ICrunchPhysicsPlugin extends IPlugin {
+export interface ICrunchPhysicsPlugin extends IPlugin<CrunchPhysicsOptions> {
   system: System;
   container: PIXIContainer;
   enabled: boolean;
 
   /**
    * Initializes the physics system with the specified options.
-   *
-   * @param app - The main application instance
-   * @param options - Configuration options for the physics system
-   *
-   * @example
-   * ```typescript
-   * // Basic initialization
-   * await physics.initialize(app);
-   *
-   * // Advanced initialization with custom options
-   * await physics.initialize(app, {
-   *   container: customContainer,
-   *   gravity: 900,
-   *   maxVelocity: 400,
-   *   gridSize: 32,
-   *   debug: true,
-   *   culling: true,
-   *   boundary: new Rectangle(0, 0, 800, 600),
-   *   collisionResolver: (collisions) => {
-   *     collisions.forEach(collision => {
-   *       console.log(`${collision.actor.type} collided with ${collision.solid.type}`);
-   *     });
-   *   }
-   * });
-   * ```
    */
-  initialize(app: Application, options: Partial<CrunchPhysicsOptions>): Promise<void>;
+  initialize(options?: Partial<CrunchPhysicsOptions>, app?: IApplication): Promise<void>;
 
   /**
    * Sets a custom collision resolver function that will be called when collisions occur.
@@ -489,15 +464,16 @@ const defaultOptions: Partial<CrunchPhysicsOptions> = {
  * Implementation of the Crunch physics plugin.
  * See {@link ICrunchPhysicsPlugin} for detailed API documentation and examples.
  */
-export default class CrunchPhysicsPlugin extends Plugin implements ICrunchPhysicsPlugin {
+export default class CrunchPhysicsPlugin
+  extends Plugin<Application, CrunchPhysicsOptions>
+  implements ICrunchPhysicsPlugin
+{
   public system: System;
   public container: PIXIContainer;
   public enabled = false;
   private collisionResolver?: (collisions: Collision[]) => void;
   private overlapResolver?: (overlaps: SensorOverlap[]) => void;
   private actorCollisionResolver?: (collisions: ActorCollision[]) => void;
-
-  public options: CrunchPhysicsOptions;
 
   constructor() {
     super('crunch-physics');
@@ -506,19 +482,23 @@ export default class CrunchPhysicsPlugin extends Plugin implements ICrunchPhysic
   private hello() {
     const hello = `%c Dill Pixel Crunch Physics Plugin v${version}`;
     console.log(hello, 'background: rgba(31, 41, 55, 1);color: #74b64c');
-
-    if (isDev) {
-      Logger.log(this.options);
-    }
   }
 
-  public async initialize(app: Application, options: Partial<CrunchPhysicsOptions>): Promise<void> {
-    if (this.enabled || !options) {
+  public async initialize(options?: Partial<CrunchPhysicsOptions>, app?: IApplication): Promise<void> {
+    this.hello();
+    if (!options) {
       return;
     }
-    this.options = { ...defaultOptions, ...options } as CrunchPhysicsOptions;
+
+    console.log({ options, app });
+    this._options = { ...defaultOptions, ...options } as CrunchPhysicsOptions;
+
     this.enabled = true;
-    this.container = options.container || app.stage;
+    this.container = options.container || this.app.stage;
+
+    if (isDev) {
+      Logger.log(this._options);
+    }
 
     // Create the physics system
     const gridSize = options.gridSize ?? 32;
@@ -548,8 +528,7 @@ export default class CrunchPhysicsPlugin extends Plugin implements ICrunchPhysic
     }
 
     // Register update loop
-    app.ticker.add(this.update);
-    this.hello();
+    this.app.ticker.add(this.update);
   }
 
   public setCollisionResolver(resolver: (collisions: Collision[]) => void): void {

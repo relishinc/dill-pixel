@@ -16,8 +16,8 @@ import { Graphics, Rectangle, Ticker } from 'pixi.js';
 export const id = 'endless-runner';
 
 export const debug = {
-  group: 'Physics',
-  label: 'Crunch Physics - Endless Runner',
+  group: 'Crunch Physics',
+  label: 'Endless Runner',
   order: 7,
 };
 
@@ -436,7 +436,7 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
     this.app.actionContext = 'game';
     this.physicsContainer = this.add.container();
 
-    await this.physics.initialize(this.app, {
+    await this.physics.initialize({
       container: this.physicsContainer,
       gravity: this.config.gravity,
       maxVelocity: this.config.maxVelocity,

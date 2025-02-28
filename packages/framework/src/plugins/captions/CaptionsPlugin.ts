@@ -1,5 +1,5 @@
 import { Assets, Container, Ticker } from 'pixi.js';
-import type { IApplication } from '../../core';
+import { Application } from '../../core/Application';
 import type { ImportListItem, ImportListItemModule, Padding, PointLike } from '../../utils';
 import { ensurePadding, getDynamicModuleFromImportListItem, isDev, Logger } from '../../utils';
 import type { IAudioInstance } from '../audio';
@@ -108,7 +108,7 @@ export interface ICaptionsPlugin extends IPlugin {
 /**
  * i18n module class.
  */
-export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
+export class CaptionsPlugin extends Plugin<Application, CaptionsOptions> implements ICaptionsPlugin {
   public readonly id = 'captions';
   public view: Container = new Container();
   public renderer: ICaptionRenderer;
@@ -126,7 +126,6 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
     return this._locale;
   }
 
-  private _options: CaptionsOptions;
   private _originalOptions: CaptionsOptions;
 
   get options(): CaptionsOptions {
@@ -254,7 +253,7 @@ export class CaptionsPlugin extends Plugin implements ICaptionsPlugin {
    * @param options The i18n options.
    * @returns Promise<void>
    */
-  public async initialize(_app: IApplication, options: Partial<CaptionsOptions> = {}): Promise<void> {
+  public async initialize(options: Partial<CaptionsOptions>): Promise<void> {
     this._options = {
       ...defaultOptions,
       ...options,

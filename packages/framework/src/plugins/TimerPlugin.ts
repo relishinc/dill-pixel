@@ -1,4 +1,3 @@
-import { IApplication } from '../core';
 import { Signal } from '../signals';
 import { randomUUID } from '../utils';
 import { Logger } from '../utils/console/Logger';
@@ -566,9 +565,9 @@ export class TimerPlugin extends Plugin implements ITimerPlugin {
     return ['onTimerCreated', 'onTimerDestroyed', 'onAllTimersPaused', 'onAllTimersResumed'];
   }
 
-  public async initialize(app: IApplication): Promise<void> {
+  public postInitialize() {
     // Set up update loop for main thread timers only
-    app.ticker.add(this.update);
+    this.app.ticker.add(this.update);
 
     // Initialize worker if needed
     this.initWorker();

@@ -1,4 +1,3 @@
-import type { IApplication } from '../core';
 import { Container } from '../display';
 import { Signal } from '../signals';
 import type { IPopup, PopupConfig, PopupConstructor } from '../ui';
@@ -74,7 +73,7 @@ export class PopupManagerPlugin extends Plugin implements IPopupManagerPlugin {
    * @param _app
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  initialize(_app: IApplication): void {
+  initialize(): void {
     bindAllMethods(this);
     this.view.label = 'PopupManager';
     this._setupAppListeners();
