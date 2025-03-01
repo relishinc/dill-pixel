@@ -20,7 +20,7 @@ import type {
 } from '../plugins';
 
 import type { AssetInitOptions, AssetsManifest, DestroyOptions, Renderer, RendererDestroyOptions } from 'pixi.js';
-import { Assets, isMobile, Application as PIXIPApplication, Point } from 'pixi.js';
+import { Assets, isMobile, Application as PIXIPApplication, Point, TextStyle } from 'pixi.js';
 import type { DataSchema, IDataAdapter, IStorageAdapter, IStore } from '../store';
 import { DataAdapter, Store } from '../store';
 import type { ImportList, ImportListItem, Size } from '../utils';
@@ -56,6 +56,26 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   sharedTicker: true,
   view: undefined,
   autoDensity: false,
+  defaultTextStyle: {
+    fontFamily: 'Arial',
+    fontSize: 20,
+    fontWeight: 'normal',
+    fontStyle: 'normal',
+    align: 'left',
+    breakWords: false,
+    fill: 0,
+    fontVariant: 'normal',
+    leading: 0,
+    letterSpacing: 0,
+    lineHeight: 0,
+    padding: 0,
+    stroke: undefined,
+    textBaseline: 'alphabetic',
+    trim: false,
+    whiteSpace: 'pre',
+    wordWrap: false,
+    wordWrapWidth: 100,
+  },
   resolution: getDefaultResolution(), // must be 1 or 2
   // dill pixel options
   useHash: isDev,
@@ -460,6 +480,13 @@ export class Application<
     // initialize the pixi application
     await this.init(this.config);
 
+    if (this.config.defaultTextStyle) {
+      const style = { ...defaultApplicationOptions.defaultTextStyle, ...this.config.defaultTextStyle };
+      TextStyle.defaultTextStyle = style;
+    }
+    if (this.config.defaultDropShadow) {
+      TextStyle.defaultDropShadow = this.config.defaultDropShadow;
+    }
     if (el) {
       el.appendChild(this.canvas as HTMLCanvasElement);
       this.setContainer(el);

@@ -2,6 +2,7 @@ import EN from '@/locales/en';
 import { Transition } from '@/Transition';
 import { ExampleOutliner } from '@/ui/ExampleOutliner';
 import { defineActions, defineButtons, defineConfig, defineContexts, defineControls } from 'dill-pixel';
+import { FONT_KUMBH_SANS } from './utils/Constants';
 
 /** Default template */
 export const contexts = defineContexts(['default', 'game', 'menu', 'popup']);
@@ -110,6 +111,10 @@ export const config = defineConfig<Data>({
   showSceneDebugMenu: true,
   useVoiceover: true,
   defaultScene: 'assets',
+  defaultTextStyle: {
+    fontFamily: FONT_KUMBH_SANS,
+    fill: 0xffffff,
+  },
   sceneGroupOrder: [
     'Framework',
     'Display',

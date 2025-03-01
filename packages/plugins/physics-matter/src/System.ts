@@ -16,6 +16,31 @@ export class System {
   private static _walls: Body[];
   private static _debug: boolean = false;
 
+  private static _ceiling: Body;
+  private static _floor: Body;
+  private static _leftWall: Body;
+  private static _rightWall: Body;
+
+  static get ceiling() {
+    return System._ceiling;
+  }
+
+  static get floor() {
+    return System._floor;
+  }
+
+  static get leftWall() {
+    return System._leftWall;
+  }
+
+  static get rightWall() {
+    return System._rightWall;
+  }
+
+  static get walls() {
+    return System._walls;
+  }
+
   static get debug() {
     return System._debug;
   }
@@ -143,36 +168,45 @@ export class System {
       const thickness = System._options.createWalls.thickness ?? 10;
       const { width, height } = System.bounds;
       const walls = [];
+      const wallOptions = {
+        isStatic: true,
+        density: 1000,
+        friction: 0,
+        frictionStatic: 0,
+      };
+
       if (System._options.createWalls.top) {
-        walls.push(
-          Bodies.rectangle(width / 2, -thickness / 2, width, thickness, {
-            isStatic: true,
-          }),
-        );
+        const ceiling = Bodies.rectangle(width / 2, -thickness / 2, width, thickness, wallOptions);
+        walls.push(ceiling);
+        System._ceiling = ceiling;
       }
       if (System._options.createWalls.bottom) {
-        walls.push(
-          Bodies.rectangle(width / 2, height + thickness / 2, width, thickness, {
-            isStatic: true,
-          }),
-        );
+        const floor = Bodies.rectangle(width / 2, height + thickness / 2, width, thickness, wallOptions);
+        walls.push(floor);
+        System._floor = floor;
       }
       if (System._options.createWalls.left) {
-        walls.push(
-          Bodies.rectangle(-thickness / 2, height / 2, thickness, height + thickness, {
-            isStatic: true,
-          }),
-        );
+        const leftWall = Bodies.rectangle(-thickness / 2, height / 2, thickness, height + thickness, wallOptions);
+        walls.push(leftWall);
+        System._leftWall = leftWall;
       }
       if (System._options.createWalls.right) {
-        walls.push(
-          Bodies.rectangle(width + thickness / 2, height / 2, thickness, height + thickness, {
-            isStatic: true,
-          }),
+        const rightWall = Bodies.rectangle(
+          width + thickness / 2,
+          height / 2,
+          thickness,
+          height + thickness,
+          wallOptions,
         );
+        walls.push(rightWall);
+        System._rightWall = rightWall;
       }
       System._walls = walls;
       System.addToWorld(...walls);
+    }
+
+    if (System._options.debug) {
+      System.debug = true;
     }
   }
 
@@ -221,17 +255,38 @@ export class System {
     System._objects.forEach((obj) => {
       const body = obj.body as Body;
       const color = obj?.debugColor || 0x29c5f6;
-      const vertices = body.vertices;
-      if (System._debugGraphics && vertices.length > 0) {
-        System._debugGraphics.moveTo(vertices[0].x, vertices[0].y);
 
-        for (let j = 1; j < vertices.length; j++) {
-          System._debugGraphics.lineTo(vertices[j].x, vertices[j].y);
+      // For compound bodies, draw each part
+      if (body.parts && body.parts.length > 1) {
+        // Skip index 0 as it's the parent body
+        for (let i = 1; i < body.parts.length; i++) {
+          const part = body.parts[i];
+          if (System._debugGraphics && part.vertices.length > 0) {
+            System._debugGraphics.moveTo(part.vertices[0].x, part.vertices[0].y);
+
+            for (let j = 1; j < part.vertices.length; j++) {
+              System._debugGraphics.lineTo(part.vertices[j].x, part.vertices[j].y);
+            }
+
+            System._debugGraphics.lineTo(part.vertices[0].x, part.vertices[0].y);
+            System._debugGraphics.fill({ color, alpha: 0.25 });
+            System._debugGraphics.stroke({ color: 0xff0000, pixelLine: true });
+          }
         }
+      } else {
+        // Original single body drawing
+        const vertices = body.vertices;
+        if (System._debugGraphics && vertices.length > 0) {
+          System._debugGraphics.moveTo(vertices[0].x, vertices[0].y);
 
-        System._debugGraphics.lineTo(vertices[0].x, vertices[0].y);
-        System._debugGraphics.fill({ color, alpha: 0.25 });
-        System._debugGraphics.stroke({ color: 0xff0000, pixelLine: true });
+          for (let j = 1; j < vertices.length; j++) {
+            System._debugGraphics.lineTo(vertices[j].x, vertices[j].y);
+          }
+
+          System._debugGraphics.lineTo(vertices[0].x, vertices[0].y);
+          System._debugGraphics.fill({ color, alpha: 0.25 });
+          System._debugGraphics.stroke({ color: 0xff0000, pixelLine: true });
+        }
       }
     });
     System._walls?.forEach((wall) => {

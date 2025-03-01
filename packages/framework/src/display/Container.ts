@@ -146,6 +146,7 @@ export class Container<A extends Application = Application>
 
   destroy(options?: DestroyOptions): void {
     if (this.__config.autoUpdate) {
+      console.log(this, 'remove update');
       this.app.ticker.remove(this.update, this);
     }
     this.onDestroy.emit();

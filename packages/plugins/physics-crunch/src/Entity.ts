@@ -64,7 +64,6 @@ import { resolveEntityPosition, resolveEntitySize } from './utils';
 export class Entity<A extends Application = Application, D extends EntityData = EntityData> {
   public readonly entityType: PhysicsEntityType;
   protected _id: string;
-
   /** Unique type identifier for this entity */
   public type!: string;
 
@@ -373,8 +372,10 @@ export class Entity<A extends Application = Application, D extends EntityData = 
     if (this.view) {
       this.view.visible = true;
       this.view.label = this.id || this.type;
-      this.system.container.addChild(this.view);
-      this.updateView();
+      if (this.system.container) {
+        this.system.container.addChild(this.view);
+        this.updateView();
+      }
     }
   }
 
@@ -412,11 +413,11 @@ export class Entity<A extends Application = Application, D extends EntityData = 
 
     // Initialize collision layers
     if (config.collisionLayer !== undefined) {
-      this.collisionLayer = config.collisionLayer;
+      this.setCollisionLayer(config.collisionLayer);
     }
 
     if (config.collisionMask !== undefined) {
-      this.collisionMask = config.collisionMask;
+      this.setCollisionMask(config.collisionMask);
     }
 
     // Reset physics properties

@@ -1,6 +1,6 @@
 import { Graphics, Sprite, Text, Texture } from 'pixi.js';
 
-import { COLOR_SLATE, FONT_KUMBH_SANS } from '@/utils/Constants';
+import { COLOR_SLATE } from '@/utils/Constants';
 import { V8Application } from '@/V8Application';
 import { GUI } from 'dat.gui';
 import { FlexContainer, Scene, Size } from 'dill-pixel';
@@ -52,16 +52,12 @@ export default class BaseScene extends Scene<V8Application> {
 
     this._title = this.titleContainer.add.text({
       text: this.title ?? this.id,
-      resolution: 2,
-      style: { fill: 'white', fontSize: 36, fontFamily: FONT_KUMBH_SANS },
+      style: { fontSize: 36 },
     });
 
     this._subtitle = this.titleContainer.add.text({
       text: this.subtitle,
-      resolution: 2,
       style: {
-        fill: 'white',
-        fontFamily: FONT_KUMBH_SANS,
         fontSize: 16,
       },
     });

@@ -1,4 +1,4 @@
-import { Application, IPlugin, Plugin } from 'dill-pixel';
+import { Application, Container as DillPixelContainer, IPlugin, Plugin } from 'dill-pixel';
 import { IEngineDefinition, IRunnerOptions } from 'matter-js';
 import { Container, Rectangle } from 'pixi.js';
 import { System } from './System';
@@ -36,6 +36,17 @@ export class MatterPhysicsPlugin
 {
   get system(): typeof System {
     return System;
+  }
+
+  get add() {
+    if (!this.system.container) {
+      throw new Error('Container not set');
+    }
+    try {
+      return (this.system.container as DillPixelContainer).add;
+    } catch (e) {
+      throw new Error('Container is not a Dill Pixel Container');
+    }
   }
 
   private hello() {

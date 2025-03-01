@@ -9,7 +9,7 @@ import {
 } from '../../plugins';
 import type { AssetLoadingOptions, LoggerMode, SceneImportList, SceneImportListItem } from '../../utils';
 
-import type { ApplicationOptions } from 'pixi.js';
+import type { ApplicationOptions, TextDropShadow, TextStyle } from 'pixi.js';
 import type { IScene, ISceneTransition, SceneTransition } from '../../display';
 import type { CaptionsOptions } from '../../plugins/captions';
 import type { DataSchema, IDataAdapterOptions } from '../../store';
@@ -23,6 +23,8 @@ export interface IApplicationOptions<D extends DataSchema = DataSchema> extends 
   useStore: boolean;
   useSpine: boolean;
   useVoiceover: boolean;
+  defaultTextStyle: Partial<TextStyle>;
+  defaultDropShadow: TextDropShadow;
   storageAdapters: PluginOrAdapterConfig[];
   data: Partial<IDataAdapterOptions<D>>;
   plugins: PluginOrAdapterConfig[];
