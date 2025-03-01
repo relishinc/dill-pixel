@@ -1,5 +1,21 @@
 # Changelog
 
+## [4.15.0](https://github.com/relishinc/dill-pixel/compare/v4.14.0...v4.15.0) (2025-03-01)
+
+
+### Features
+
+* added crunch physics actor to actor collisions + some optimizations ([88d870f](https://github.com/relishinc/dill-pixel/commit/88d870fd634dc955f53d136ee5c181213ffa4b8c))
+* working actor to actor collisions ([8ffd909](https://github.com/relishinc/dill-pixel/commit/8ffd9095156bd8b8f1b8ddc886804ef1c7fbd2f1))
+
+
+### Bug Fixes
+
+* more perf gains using bitwise ([0385778](https://github.com/relishinc/dill-pixel/commit/0385778d0be1e84eaa406bcc1c9308314cc38579))
+* optimizing actor to actor collisions ([a4d654a](https://github.com/relishinc/dill-pixel/commit/a4d654a02bf46afdcd040ff8406935ed6b2a1af2))
+* overhauled plugins to not need the app parameter when calling initialize ([88c6e90](https://github.com/relishinc/dill-pixel/commit/88c6e90a3ee56ff079a05ef1e1269903268519b7))
+* removed collision exclusions system in favour of bitwise collision masks / layers ([6a91087](https://github.com/relishinc/dill-pixel/commit/6a91087467255b11a26f18a551944a49c4cac59c))
+
 ## [4.14.0](https://github.com/relishinc/dill-pixel/compare/v4.13.0...v4.14.0) (2025-02-22)
 
 
