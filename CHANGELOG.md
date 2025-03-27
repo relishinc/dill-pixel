@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.15.3](https://github.com/relishinc/dill-pixel/compare/v4.15.2...v4.15.3) (2025-03-27)
+
+
+### Bug Fixes
+
+* updated deps ([9286fb5](https://github.com/relishinc/dill-pixel/commit/9286fb5133e7579236b5df691f38cdf712f7cc83))
+
 ## [4.15.2](https://github.com/relishinc/dill-pixel/compare/v4.15.1...v4.15.2) (2025-03-27)
 
 
