@@ -1,12 +1,14 @@
 import { Application, Container as DillPixelContainer, IPlugin, Plugin } from 'dill-pixel';
-import { IEngineDefinition, IRunnerOptions } from 'matter-js';
+import Matter, { IEngineDefinition, IRunnerOptions } from 'matter-js';
 import { Container, Rectangle } from 'pixi.js';
 import { System } from './System';
 import { matterVersion, version } from './version';
 export interface IMatterPhysicPlugin extends IPlugin {}
-
 export interface IMatterPhysicsPlugin extends IPlugin<MatterPhysicsPluginOptions> {
-  get system(): typeof System;
+  readonly system: typeof System;
+  readonly matter: typeof Matter;
+  pause(): void;
+  resume(): void;
 }
 
 export type MatterPhysicsPluginOptions = {
@@ -38,6 +40,20 @@ export class MatterPhysicsPlugin
     return System;
   }
 
+  get matter(): typeof Matter {
+    return Matter;
+  }
+
+  pause() {
+    this.matter.Runner.stop(this.system.runner);
+    this.system.enabled = false;
+  }
+
+  resume() {
+    this.matter.Runner.start(this.system.runner, this.system.engine);
+    this.system.enabled = true;
+  }
+
   get add() {
     if (!this.system.container) {
       throw new Error('Container not set');
@@ -57,6 +73,7 @@ export class MatterPhysicsPlugin
       'background: rgba(31, 41, 55, 1);color: #e91e63',
     );
   }
+
   initialize(options?: Partial<MatterPhysicsPluginOptions>): void | Promise<void> {
     this._options = {
       ...defaultOptions,

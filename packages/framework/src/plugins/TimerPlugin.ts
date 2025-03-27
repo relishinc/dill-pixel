@@ -298,6 +298,11 @@ export class Timer {
    * A destroyed timer cannot be restarted.
    */
   public destroy(): void {
+    this._destroy();
+    this.plugin.destroyTimer(this);
+  }
+
+  private _destroy(): void {
     this.isDestroyed = true;
     this.pause();
   }
@@ -643,16 +648,6 @@ export class TimerPlugin extends Plugin implements ITimerPlugin {
       timerId,
     });
   }
-
-  private handleVisibilityChange = (): void => {
-    this.isPageVisible = document.visibilityState === 'visible';
-
-    if (this.isPageVisible) {
-      this.resumeAllTimers();
-    } else {
-      this.pauseAllTimers();
-    }
-  };
 
   public destroy(): void {
     this.app.ticker.remove(this.update);

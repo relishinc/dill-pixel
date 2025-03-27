@@ -193,7 +193,7 @@ export default class PauseScene extends BaseScene {
     // Create a countdown timer
     const countdownContainer = this.container.add.container();
     const countdown = this.app.timers.createTimer({
-      duration: 5000, // 5 seconds
+      duration: 100000, // 5 seconds
       autoStart: true,
       useWorker: true,
       loop: true,

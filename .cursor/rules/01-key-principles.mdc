@@ -1,3 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
 # Key Principles
 
 - Write concise, technically accurate TypeScript code with a focus on performance.

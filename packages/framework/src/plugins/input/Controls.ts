@@ -33,7 +33,6 @@ export class Controls implements IControls {
   }
 
   initialize(scheme: UserControls) {
-    console.log('initialize', scheme);
     if (scheme.keyboard) {
       this.keyboard = new KeyboardControls();
       this.keyboard.initialize(scheme.keyboard);

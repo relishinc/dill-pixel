@@ -315,7 +315,7 @@ export class System {
       if (System.debug) {
         System.drawDebug();
       }
-      Engine.update(System._engine, 16.666666666666668, ticker.deltaTime);
+      Engine.update(System._engine, 16.666666666666667, ticker.deltaTime);
     }
   }
 }

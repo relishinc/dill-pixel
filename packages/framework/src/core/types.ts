@@ -9,4 +9,6 @@ export type PauseConfig = {
   pauseAnimations?: boolean;
   pauseTimers?: boolean;
   pauseTicker?: boolean;
+  pauseOther?: any[];
+  clearOnResume?: boolean;
 };

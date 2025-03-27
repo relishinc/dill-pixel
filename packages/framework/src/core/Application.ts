@@ -173,6 +173,13 @@ export class Application<
     if (config?.pauseTimers) {
       this.timers.pauseAllTimers();
     }
+    if (config?.pauseOther) {
+      config.pauseOther.forEach((thing) => {
+        if (typeof thing?.pause === 'function') {
+          thing.pause();
+        }
+      });
+    }
     this.onPause.emit(this._pauseConfig);
   }
 
@@ -195,6 +202,16 @@ export class Application<
     }
     if (this._pauseConfig.pauseTimers) {
       this.timers.resumeAllTimers();
+    }
+    if (this._pauseConfig.pauseOther) {
+      this._pauseConfig.pauseOther.forEach((thing) => {
+        if (typeof thing?.resume === 'function') {
+          thing.resume();
+        }
+      });
+    }
+    if (this._pauseConfig.clearOnResume) {
+      this._pauseConfig = {};
     }
     this.onResume.emit(this._pauseConfig);
   }
@@ -560,6 +577,7 @@ export class Application<
     });
 
     this.webEvents.onVisibilityChanged.connect((visible) => {
+      Logger.log('onVisibilityChanged', visible);
       if (visible) {
         this.audio.restore();
         this.timers.resumeAllTimers();
