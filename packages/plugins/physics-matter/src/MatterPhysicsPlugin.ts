@@ -50,8 +50,8 @@ export class MatterPhysicsPlugin
   }
 
   resume() {
-    this.matter.Runner.start(this.system.runner, this.system.engine);
     this.system.enabled = true;
+    this.matter.Runner.start(this.system.runner, this.system.engine);
   }
 
   get add() {
