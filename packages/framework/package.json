@@ -118,7 +118,7 @@
     "stats.js": "^0.17.0",
     "typed-signals": "^2.5.0",
     "typescript": "^5.4.3",
-    "vite": "6.1.1",
+    "vite": "6.0.12",
     "vite-bundle-visualizer": "1.2.1",
     "vite-plugin-html": "3.2.2",
     "vite-plugin-singlefile": "2.2.0",
