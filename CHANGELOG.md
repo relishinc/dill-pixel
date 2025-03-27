@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.15.6](https://github.com/relishinc/dill-pixel/compare/v4.15.5...v4.15.6) (2025-03-27)
+
+
+### Bug Fixes
+
+* matter physics resuming ([e735e2d](https://github.com/relishinc/dill-pixel/commit/e735e2da8fb023c09ded8dcf2cb1b9df29f5b7e1))
+
 ## [4.15.5](https://github.com/relishinc/dill-pixel/compare/v4.15.4...v4.15.5) (2025-03-27)
 
 
