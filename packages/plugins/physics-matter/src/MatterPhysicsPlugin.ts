@@ -45,13 +45,11 @@ export class MatterPhysicsPlugin
   }
 
   pause() {
-    this.matter.Runner.stop(this.system.runner);
     this.system.enabled = false;
   }
 
   resume() {
     this.system.enabled = true;
-    this.matter.Runner.start(this.system.runner, this.system.engine);
   }
 
   get add() {
