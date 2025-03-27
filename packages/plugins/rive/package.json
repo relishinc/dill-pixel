@@ -32,7 +32,7 @@
   "license": "ISC",
   "devDependencies": {
     "dill-pixel": "4.15.6",
-    "vite": "6.1.1",
+    "vite": "6.1.2",
     "vite-plugin-dts": "^4.5.3"
   },
   "peerDependencies": {
