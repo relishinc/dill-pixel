@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.15.1](https://github.com/relishinc/dill-pixel/compare/v4.15.0...v4.15.1) (2025-03-27)
+
+
+### Bug Fixes
+
+* tweak to Application pause functionality, ([2399234](https://github.com/relishinc/dill-pixel/commit/23992342596f0736f347a126a71040356dd494f9))
+* tweak to MatterPhysicsPlugin, ([2399234](https://github.com/relishinc/dill-pixel/commit/23992342596f0736f347a126a71040356dd494f9))
+* tweak to TimerPlugin, ([2399234](https://github.com/relishinc/dill-pixel/commit/23992342596f0736f347a126a71040356dd494f9))
+
 ## [4.15.0](https://github.com/relishinc/dill-pixel/compare/v4.14.0...v4.15.0) (2025-03-01)
 
 
