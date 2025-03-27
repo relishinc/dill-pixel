@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.15.2](https://github.com/relishinc/dill-pixel/compare/v4.15.1...v4.15.2) (2025-03-27)
+
+
+### Bug Fixes
+
+* peer dep ([0586a7f](https://github.com/relishinc/dill-pixel/commit/0586a7f3398fd48b48926e20be0c8a436a565efc))
+* reverted example ([e7de94b](https://github.com/relishinc/dill-pixel/commit/e7de94b0ea5a549c9e0c4ee0bba0ebee6bca981a))
+
 ## [4.15.1](https://github.com/relishinc/dill-pixel/compare/v4.15.0...v4.15.1) (2025-03-27)
 
 
