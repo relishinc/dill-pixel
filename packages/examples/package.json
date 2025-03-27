@@ -1,6 +1,6 @@
 {
   "name": "dill-pixel-examples-v8",
-  "version": "4.15.4",
+  "version": "4.15.5",
   "description": "Examples of Dill Pixel Features (V8)",
   "main": "index.html",
   "scripts": {
