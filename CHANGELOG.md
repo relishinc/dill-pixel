@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.15.4](https://github.com/relishinc/dill-pixel/compare/v4.15.3...v4.15.4) (2025-03-27)
+
+
+### Bug Fixes
+
+* timer destroying issue ([f81430f](https://github.com/relishinc/dill-pixel/commit/f81430fcd9314e782300714be852659dae0c9257))
+
 ## [4.15.3](https://github.com/relishinc/dill-pixel/compare/v4.15.2...v4.15.3) (2025-03-27)
 
 
