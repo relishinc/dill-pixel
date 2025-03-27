@@ -298,6 +298,7 @@ export class Timer {
    * A destroyed timer cannot be restarted.
    */
   public destroy(): void {
+    if (this.isDestroyed) return;
     this._destroy();
     this.plugin.destroyTimer(this);
   }

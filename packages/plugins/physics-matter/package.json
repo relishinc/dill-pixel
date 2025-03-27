@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-matter-physics",
-  "version": "4.15.3",
+  "version": "4.15.31",
   "description": "Matter Physics",
   "files": [
     "lib",
