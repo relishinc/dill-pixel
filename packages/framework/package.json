@@ -91,8 +91,8 @@
     "husky": "^8.0.3",
     "standard-version": "^9.5.0",
     "turbo": "^2.0.3",
-    "typedoc": "^0.25.13",
-    "vite-plugin-dts": "^4.3.0"
+    "typedoc": "^0.28.1",
+    "vite-plugin-dts": "^4.5.3"
   },
   "peerDependencies": {
     "@pixi/sound": "^6.0.1",
@@ -121,9 +121,9 @@
     "vite": "6.1.1",
     "vite-bundle-visualizer": "1.2.1",
     "vite-plugin-html": "3.2.2",
-    "vite-plugin-singlefile": "2.1.0",
-    "vite-plugin-static-copy": "2.2.0",
-    "vite-plugin-top-level-await": "1.4.4",
-    "vite-plugin-wasm": "3.3.0"
+    "vite-plugin-singlefile": "2.2.0",
+    "vite-plugin-static-copy": "2.3.0",
+    "vite-plugin-top-level-await": "1.5.0",
+    "vite-plugin-wasm": "3.4.1"
   }
 }
