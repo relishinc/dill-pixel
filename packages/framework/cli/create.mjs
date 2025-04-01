@@ -305,46 +305,58 @@ export async function create(cwd = '.', packageManagerOverride) {
       p.multiselect({
         required: false,
         message: 'Which plugins would you like to add (Enter to skip)?',
-        options: fs
-          .readdirSync(dist('../plugins'))
-          .map((dir) => {
-            try {
-              const pkg = JSON.parse(fs.readFileSync(dist(`../plugins/${dir}/package.json`), 'utf8'));
-              return {
-                label: pkg.description || pkg.name,
-                value: pkg.name,
-              };
-            } catch (e) {
-              return null;
-            }
-          })
-          .filter(Boolean),
+        options: (() => {
+          const pluginsDir = dist('../plugins');
+          if (!fs.existsSync(pluginsDir)) {
+            return [];
+          }
+          return fs
+            .readdirSync(pluginsDir)
+            .map((dir) => {
+              try {
+                const pkg = JSON.parse(fs.readFileSync(dist(`../plugins/${dir}/package.json`), 'utf8'));
+                return {
+                  label: pkg.description || pkg.name,
+                  value: pkg.name,
+                };
+              } catch (e) {
+                return null;
+              }
+            })
+            .filter(Boolean);
+        })(),
       }),
     storageAdapters: () =>
       p.multiselect({
         required: false,
         message: 'Which storage adapters would you like to add (Enter to skip)?',
-        options: fs
-          .readdirSync(dist('../storage-adapters'))
-          .map((dir) => {
-            try {
-              const pkg = JSON.parse(fs.readFileSync(dist(`../storage-adapters/${dir}/package.json`), 'utf8'));
-              // Only include plugins that are storage adapters (have 'storage' in their name or description)
-              if (
-                pkg.name.includes('storage-adapter') ||
-                (pkg.description && pkg.description.toLowerCase().includes('storage-adapter'))
-              ) {
-                return {
-                  label: pkg.description || pkg.name,
-                  value: pkg.name,
-                };
+        options: (() => {
+          const adaptersDir = dist('../storage-adapters');
+          if (!fs.existsSync(adaptersDir)) {
+            return [];
+          }
+          return fs
+            .readdirSync(adaptersDir)
+            .map((dir) => {
+              try {
+                const pkg = JSON.parse(fs.readFileSync(dist(`../storage-adapters/${dir}/package.json`), 'utf8'));
+                // Only include plugins that are storage adapters (have 'storage' in their name or description)
+                if (
+                  pkg.name.includes('storage-adapter') ||
+                  (pkg.description && pkg.description.toLowerCase().includes('storage-adapter'))
+                ) {
+                  return {
+                    label: pkg.description || pkg.name,
+                    value: pkg.name,
+                  };
+                }
+                return null;
+              } catch (e) {
+                return null;
               }
-              return null;
-            } catch (e) {
-              return null;
-            }
-          })
-          .filter(Boolean),
+            })
+            .filter(Boolean);
+        })(),
       }),
   });
 

@@ -421,8 +421,32 @@ const defaultConfig = {
           gsap: ['gsap'],
           'dill-pixel': ['dill-pixel'],
         },
-        chunkFileNames: 'assets/[name]-[hash].js',
-        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: (chunkInfo) => {
+          const name = chunkInfo.name.replace('index-', '');
+          // Check for plugin or storage adapter pattern
+          const pluginMatch = name.match(/plugin-(.+)/i);
+          const adapterMatch = name.match(/storage-adapter-(.+)/i);
+          if (pluginMatch) {
+            return `assets/plugin-${pluginMatch[1]}-[hash].js`;
+          }
+          if (adapterMatch) {
+            return `assets/storage-adapter-${adapterMatch[1]}-[hash].js`;
+          }
+          return `assets/${name}-[hash].js`;
+        },
+        entryFileNames: (chunkInfo) => {
+          const name = chunkInfo.name === 'index' ? 'main' : chunkInfo.name.replace('index-', '');
+          // Check for plugin or storage adapter pattern
+          const pluginMatch = name.match(/plugin-(.+)/i);
+          const adapterMatch = name.match(/storage-adapter-(.+)/i);
+          if (pluginMatch) {
+            return `assets/plugin-${pluginMatch[1]}-[hash].js`;
+          }
+          if (adapterMatch) {
+            return `assets/storage-adapter-${adapterMatch[1]}-[hash].js`;
+          }
+          return `assets/${name}-[hash].js`;
+        },
         assetFileNames: 'assets/[name]-[hash][extname]',
       },
     },
