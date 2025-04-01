@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.15.8](https://github.com/relishinc/dill-pixel/compare/v4.15.7...v4.15.8) (2025-04-01)
+
+
+### Bug Fixes
+
+* cli error ([c232912](https://github.com/relishinc/dill-pixel/commit/c23291233a0cd25ac980f56defd01ae6f49f8723))
+* more work on chunking ([c232912](https://github.com/relishinc/dill-pixel/commit/c23291233a0cd25ac980f56defd01ae6f49f8723))
+
 ## [4.15.7](https://github.com/relishinc/dill-pixel/compare/v4.15.6...v4.15.7) (2025-04-01)
 
 
