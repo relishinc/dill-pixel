@@ -404,49 +404,22 @@ const defaultConfig = {
   build: {
     minify: 'esbuild',
     sourcemap: env === 'development',
-    terserOptions: {
-      compress: {
-        unused: env === 'production',
-        dead_code: env === 'production',
-        drop_console: env === 'production',
-        drop_debugger: env === 'production',
-        pure_funcs: env === 'production',
-      },
-    },
+    // terserOptions: {
+    //   compress: {
+    //     unused: env === 'production',
+    //     dead_code: env === 'production',
+    //     drop_console: env === 'production',
+    //     drop_debugger: env === 'production',
+    //     pure_funcs: env === 'production',
+    //   },
+    // },
     rollupOptions: {
       output: {
         manualChunks: {
-          pixi: ['pixi.js'],
-          pixisound: ['@pixi/sound'],
           gsap: ['gsap'],
-          'dill-pixel': ['dill-pixel'],
         },
-        chunkFileNames: (chunkInfo) => {
-          const name = chunkInfo.name.replace('index-', '');
-          // Check for plugin or storage adapter pattern
-          const pluginMatch = name.match(/plugin-(.+)/i);
-          const adapterMatch = name.match(/storage-adapter-(.+)/i);
-          if (pluginMatch) {
-            return `assets/plugin-${pluginMatch[1]}-[hash].js`;
-          }
-          if (adapterMatch) {
-            return `assets/storage-adapter-${adapterMatch[1]}-[hash].js`;
-          }
-          return `assets/${name}-[hash].js`;
-        },
-        entryFileNames: (chunkInfo) => {
-          const name = chunkInfo.name === 'index' ? 'main' : chunkInfo.name.replace('index-', '');
-          // Check for plugin or storage adapter pattern
-          const pluginMatch = name.match(/plugin-(.+)/i);
-          const adapterMatch = name.match(/storage-adapter-(.+)/i);
-          if (pluginMatch) {
-            return `assets/plugin-${pluginMatch[1]}-[hash].js`;
-          }
-          if (adapterMatch) {
-            return `assets/storage-adapter-${adapterMatch[1]}-[hash].js`;
-          }
-          return `assets/${name}-[hash].js`;
-        },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash][extname]',
       },
     },
