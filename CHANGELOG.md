@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.15.9](https://github.com/relishinc/dill-pixel/compare/v4.15.8...v4.15.9) (2025-04-01)
+
+
+### Bug Fixes
+
+* chunk naming ([eb3ed1b](https://github.com/relishinc/dill-pixel/commit/eb3ed1b42073638173da636d529f362790294c50))
+
 ## [4.15.8](https://github.com/relishinc/dill-pixel/compare/v4.15.7...v4.15.8) (2025-04-01)
 
 
