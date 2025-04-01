@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.15.7](https://github.com/relishinc/dill-pixel/compare/v4.15.6...v4.15.7) (2025-04-01)
+
+
+### Bug Fixes
+
+* added offset to Matter physics entities ([2a6fb4d](https://github.com/relishinc/dill-pixel/commit/2a6fb4d28f1bbe73d2da588f1a32850f0185d93b))
+* vite config default chunking, ([2a6fb4d](https://github.com/relishinc/dill-pixel/commit/2a6fb4d28f1bbe73d2da588f1a32850f0185d93b))
+
 ## [4.15.6](https://github.com/relishinc/dill-pixel/compare/v4.15.5...v4.15.6) (2025-03-27)
 
 
