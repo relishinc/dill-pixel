@@ -1,4 +1,4 @@
-import { IApplication, Logger, Plugin } from 'dill-pixel';
+import { Application, IApplication, Logger, Plugin } from 'dill-pixel';
 import { Point } from 'pixi.js';
 import { pointExtras } from './extras';
 import { System } from './System';
@@ -28,9 +28,8 @@ const defaultOptions = {
   debug: false,
 };
 
-export class SnapPhysicsPlugin extends Plugin {
+export class SnapPhysicsPlugin extends Plugin<Application, SnapPhysicsPluginOptions> {
   public readonly id = 'SnapPhysicsPlugin';
-  public options: SnapPhysicsPluginOptions;
 
   get gridCellSize(): number {
     return this.options.gridCellSize;
@@ -65,6 +64,7 @@ export class SnapPhysicsPlugin extends Plugin {
   public get system(): typeof System {
     return System;
   }
+
   private hello() {
     const hello = `%c Dill Pixel Snap Physics Plugin v${version}`;
     console.log(hello, 'background: rgba(31, 41, 55, 1);color: #74b64c');
@@ -73,6 +73,7 @@ export class SnapPhysicsPlugin extends Plugin {
       Logger.log(this.options);
     }
   }
+
   destroy() {
     Logger.log('SnapPhysicsPlugin:: destroy');
     this.system.enabled = false;
@@ -82,7 +83,7 @@ export class SnapPhysicsPlugin extends Plugin {
 
   public async initialize(app: IApplication, options?: Partial<SnapPhysicsPluginOptions>) {
     this._addMathExtras();
-    this.options = { ...defaultOptions, ...options };
+    this._options = { ...defaultOptions, ...options };
     this.system.app = app;
     this.system.plugin = this;
 

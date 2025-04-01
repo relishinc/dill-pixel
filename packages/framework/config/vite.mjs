@@ -380,6 +380,7 @@ function createDillPixelGlobalsPlugin() {
     },
   };
 }
+
 /** END PLUGINS */
 
 /** CONFIG */
@@ -399,6 +400,32 @@ const defaultConfig = {
   preview: {
     host: true,
     port: 8080,
+  },
+  build: {
+    minify: 'esbuild',
+    sourcemap: env === 'development',
+    terserOptions: {
+      compress: {
+        unused: env === 'production',
+        dead_code: env === 'production',
+        drop_console: env === 'production',
+        drop_debugger: env === 'production',
+        pure_funcs: env === 'production',
+      },
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          pixi: ['pixi.js'],
+          pixisound: ['@pixi/sound'],
+          gsap: ['gsap'],
+          'dill-pixel': ['dill-pixel'],
+        },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash][extname]',
+      },
+    },
   },
   plugins: [
     wasm(),

@@ -14,6 +14,7 @@ export type PartConfig = {
   y: number;
   width: number;
   height: number;
+
   bodyDefinition?: Partial<IBodyDefinition>;
 };
 
@@ -25,6 +26,7 @@ export type EntityConfig = {
   debugColor?: number;
   parts?: PartConfig[];
   rotationBehavior?: 'none' | 'follow' | 'firstPart';
+  offset?: PointLike;
 };
 
 export class Entity<T extends Application = Application> extends Container<T> implements IMatterPhysicsObject {
@@ -34,6 +36,7 @@ export class Entity<T extends Application = Application> extends Container<T> im
   public bodyType: MatterBodyType;
   public bodyDefinition: Partial<IBodyDefinition> = {};
   public debugColor: number;
+  protected _offset: { x: number; y: number };
   protected _isDestroyed: boolean = false;
   protected isGrounded: boolean = false;
   protected onLandCallbacks: CollisionCallback[] = [];
@@ -50,6 +53,14 @@ export class Entity<T extends Application = Application> extends Container<T> im
 
   public get matter(): typeof Matter {
     return Matter;
+  }
+
+  public set offset(value: PointLike) {
+    this._offset = resolvePointLike(value);
+  }
+
+  public get offset(): { x: number; y: number } {
+    return this._offset;
   }
 
   constructor(public config: Partial<EntityConfig> = {}) {
@@ -69,6 +80,12 @@ export class Entity<T extends Application = Application> extends Container<T> im
     }
     if (config.rotationBehavior) {
       this.rotationBehavior = config.rotationBehavior;
+    }
+
+    if (config.offset) {
+      this.offset = config.offset;
+    } else {
+      this.offset = { x: 0, y: 0 };
     }
   }
 
@@ -250,8 +267,8 @@ export class Entity<T extends Application = Application> extends Container<T> im
   update() {
     if (this._isDestroyed) return;
     if (this.view && this.body) {
-      this.x = this.body.position.x;
-      this.y = this.body.position.y;
+      this.x = this.body.position.x + this.offset.x;
+      this.y = this.body.position.y + this.offset.y;
 
       // Handle rotation based on configuration
       if (this.rotationBehavior !== 'none') {
