@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.15.10](https://github.com/relishinc/dill-pixel/compare/v4.15.9...v4.15.10) (2025-04-04)
+
+
+### Bug Fixes
+
+* data adapter localStorage namespace now set to  by default ([161b550](https://github.com/relishinc/dill-pixel/commit/161b55016dd5f6f183953c02676f21aa3c8e8ee0))
+
 ## [4.15.9](https://github.com/relishinc/dill-pixel/compare/v4.15.8...v4.15.9) (2025-04-01)
 
 
