@@ -145,7 +145,7 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
    * @param {Partial<ILocalStorageAdapterOptions>} options The options to initialize the adapter with.
    */
   public initialize(options?: Partial<IDataAdapterOptions<D>>): void {
-    this.namespace = options?.namespace || 'data';
+    this.namespace = options?.namespace || this.app.appName;
     this.data = (options?.initial as D) || ({} as D);
     this.backupKeys = options?.backupKeys || [];
     this.backupAll = options?.backupAll || false;
