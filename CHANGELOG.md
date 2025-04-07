@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.15.11](https://github.com/relishinc/dill-pixel/compare/v4.15.10...v4.15.11) (2025-04-07)
+
+
+### Bug Fixes
+
+* matter physics Entity - account for rotation in body positioning with offset ([6b11ce8](https://github.com/relishinc/dill-pixel/commit/6b11ce885ea691f85777da6cb3e5c6fdf42364f9))
+* matter physics Entity - account for rotation in body positioning with offset ([544c5cf](https://github.com/relishinc/dill-pixel/commit/544c5cfa0c1389dbac3b842ac53661eded81bc64))
+
 ## [4.15.10](https://github.com/relishinc/dill-pixel/compare/v4.15.9...v4.15.10) (2025-04-04)
 
 
