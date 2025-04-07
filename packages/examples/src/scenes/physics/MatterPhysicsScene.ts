@@ -209,7 +209,7 @@ export default class MatterPhysicsScene extends BaseScene {
               }),
         });
       }
-
+      entity.offset = [0, 50];
       entity.position.set(pos.x, pos.y);
       this.level.add.existing(entity);
       this._entities.push(entity);

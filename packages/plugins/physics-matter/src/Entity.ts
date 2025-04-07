@@ -267,8 +267,15 @@ export class Entity<T extends Application = Application> extends Container<T> im
   update() {
     if (this._isDestroyed) return;
     if (this.view && this.body) {
-      this.x = this.body.position.x + this.offset.x;
-      this.y = this.body.position.y + this.offset.y;
+      // Calculate rotated offset
+      const angle = this.body.angle;
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      const rotatedOffsetX = this.offset.x * cos - this.offset.y * sin;
+      const rotatedOffsetY = this.offset.x * sin + this.offset.y * cos;
+
+      this.x = this.body.position.x + rotatedOffsetX;
+      this.y = this.body.position.y + rotatedOffsetY;
 
       // Handle rotation based on configuration
       if (this.rotationBehavior !== 'none') {
