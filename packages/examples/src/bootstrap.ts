@@ -1,9 +1,23 @@
-import { create } from 'dill-pixel';
+import { create, DillPixelEvent } from 'dill-pixel';
 import 'dill-pixel-globals';
 import { V8Application } from './V8Application';
 import { config } from './dill-pixel.config';
 
 async function bootstrap() {
+  // add progress event listener (can be done before app creation for splash)
+  // window.addEventListener(DillPixelEvent.REQUIRED_ASSETS_START, () => {
+  //   console.log('assets start');
+  // });
+
+  // window.addEventListener(DillPixelEvent.REQUIRED_ASSETS_PROGRESS, (event) => {
+  //   const e = event as DillPixelProgressEvent;
+  //   console.log('assets progress', e.detail.progress);
+  // });
+
+  // window.addEventListener(DillPixelEvent.REQUIRED_ASSETS_COMPLETE, () => {
+  //   console.log('ASSETS COMPLETE');
+  // });
+
   const app = await create<V8Application>(config, V8Application);
 
   /*
@@ -36,6 +50,7 @@ async function bootstrap() {
   app.data.append('saved', 'adsf;kjdfgj', ' ');
   app.data.append('saved', 'more', '-');
   */
+  console.log('DillPixelEvent', DillPixelEvent);
 
   function populateSidebar() {
     // populate sidebar

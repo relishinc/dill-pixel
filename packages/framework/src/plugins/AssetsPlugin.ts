@@ -3,7 +3,16 @@ import { Assets } from 'pixi.js';
 import { Application } from '../core/Application';
 import type { IScene } from '../display';
 import { Signal } from '../signals';
-import { AssetLike, AssetLoadingOptions, AssetTypes, BundleTypes, isDev, Logger, SceneImportListItem } from '../utils';
+import {
+  AssetLike,
+  AssetLoadingOptions,
+  AssetTypes,
+  BundleTypes,
+  DillPixelEvent,
+  isDev,
+  Logger,
+  SceneImportListItem,
+} from '../utils';
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
 
@@ -11,6 +20,18 @@ export interface IAssetsPlugin extends IPlugin {
   onLoadStart: Signal<() => void>;
   onLoadProgress: Signal<(progress: number) => void>;
   onLoadComplete: Signal<() => void>;
+
+  onLoadRequiredStart: Signal<() => void>;
+  onLoadRequiredProgress: Signal<(progress: number) => void>;
+  onLoadRequiredComplete: Signal<() => void>;
+
+  webStartEvent: Event;
+  webProgressEvent: CustomEvent<{ progress: number }>;
+  webCompleteEvent: Event;
+
+  webRequiredStartEvent: Event;
+  webRequiredProgressEvent: CustomEvent<{ progress: number }>;
+  webRequiredCompleteEvent: Event;
 
   loadAssets(assets: string | string[] | UnresolvedAsset | UnresolvedAsset[] | AssetLike | AssetLike[]): Promise<void>;
 
@@ -82,6 +103,10 @@ export class AssetsPlugin extends Plugin<Application, AssetLoadingOptions> imple
   public onLoadStart: Signal<() => void> = new Signal();
   public onLoadProgress: Signal<(progress: number) => void> = new Signal();
   public onLoadComplete: Signal<() => void> = new Signal();
+  // required loading signals
+  public onLoadRequiredStart: Signal<() => void> = new Signal();
+  public onLoadRequiredProgress: Signal<(progress: number) => void> = new Signal();
+  public onLoadRequiredComplete: Signal<() => void> = new Signal();
 
   public onBackgroundLoadStart: Signal<() => void> = new Signal();
   public onBackgroundAssetLoaded: Signal<(asset: string) => void> = new Signal();
@@ -92,6 +117,46 @@ export class AssetsPlugin extends Plugin<Application, AssetLoadingOptions> imple
 
   private _required: { assets?: AssetTypes; bundles?: BundleTypes } = {};
   private _background: { assets?: AssetTypes; bundles?: BundleTypes } = {};
+
+  private _isLoadingRequired: boolean = false;
+
+  public webRequiredStartEvent: Event = new Event(DillPixelEvent.REQUIRED_ASSETS_START, {
+    bubbles: true,
+    cancelable: false,
+  });
+  public webRequiredProgressEvent: CustomEvent<{ progress: number }> = new CustomEvent<{ progress: number }>(
+    DillPixelEvent.REQUIRED_ASSETS_PROGRESS,
+    {
+      bubbles: true,
+      cancelable: false,
+      detail: {
+        progress: 0,
+      },
+    },
+  );
+  public webRequiredCompleteEvent: Event = new Event(DillPixelEvent.REQUIRED_ASSETS_COMPLETE, {
+    bubbles: true,
+    cancelable: false,
+  });
+
+  public webStartEvent: Event = new Event(DillPixelEvent.ASSETS_START, {
+    bubbles: true,
+    cancelable: false,
+  });
+  public webProgressEvent: CustomEvent<{ progress: number }> = new CustomEvent<{ progress: number }>(
+    DillPixelEvent.ASSETS_PROGRESS,
+    {
+      bubbles: true,
+      cancelable: false,
+      detail: {
+        progress: 0,
+      },
+    },
+  );
+  public webCompleteEvent: Event = new Event(DillPixelEvent.ASSETS_COMPLETE, {
+    bubbles: true,
+    cancelable: false,
+  });
 
   public initialize(options?: AssetLoadingOptions): Promise<void> | void {
     if (options?.preload) {
@@ -104,6 +169,7 @@ export class AssetsPlugin extends Plugin<Application, AssetLoadingOptions> imple
   }
 
   public async loadRequired() {
+    this._isLoadingRequired = true;
     this._handleLoadStart();
     this._handleLoadProgress(0);
     if (this._required) {
@@ -115,6 +181,7 @@ export class AssetsPlugin extends Plugin<Application, AssetLoadingOptions> imple
       }
     }
     this._handleLoadComplete();
+    this._isLoadingRequired = false;
     return Promise.resolve();
   }
 
@@ -286,14 +353,46 @@ export class AssetsPlugin extends Plugin<Application, AssetLoadingOptions> imple
 
   private _handleLoadStart() {
     this.onLoadStart.emit();
+    this.dispatchWebEvent(this.webStartEvent);
+    if (this._isLoadingRequired) {
+      this.onLoadRequiredStart.emit();
+      this.dispatchWebEvent(this.webRequiredStartEvent);
+    }
   }
 
   private _handleLoadProgress(progress: number) {
     this.onLoadProgress.emit(progress);
+    this.dispatchWebEvent(this.webProgressEvent, { progress });
+    if (this._isLoadingRequired) {
+      this.onLoadRequiredProgress.emit(progress);
+      this.dispatchWebEvent(this.webRequiredProgressEvent, { progress });
+    }
   }
 
   private _handleLoadComplete() {
     this._handleLoadProgress(1);
     this.onLoadComplete.emit();
+    this.dispatchWebEvent(this.webCompleteEvent);
+    console.log('webCompleteEvent', this.webCompleteEvent);
+
+    if (this._isLoadingRequired) {
+      console.log('webRequiredCompleteEvent', this.webRequiredCompleteEvent);
+      this.onLoadRequiredComplete.emit();
+      this.dispatchWebEvent(this.webRequiredCompleteEvent);
+    }
+  }
+
+  private dispatchWebEvent(event: Event | CustomEvent, detail?: any) {
+    if (detail) {
+      for (const key in detail) {
+        const e = event as CustomEvent<any>;
+        e.detail[key] = detail[key];
+      }
+    }
+    try {
+      this.app.canvas.dispatchEvent(event);
+    } catch (error) {
+      Logger.error('Error dispatching web event', error);
+    }
   }
 }
