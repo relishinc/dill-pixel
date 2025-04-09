@@ -385,17 +385,14 @@ export class Application<
 
   public get voiceover(): IVoiceOverPlugin {
     if (!this._voiceoverPlugin) {
-      this._voiceoverPlugin = this.getPlugin<IVoiceOverPlugin>(
-        'voiceover',
-        this._isBooting || this.config.useVoiceover,
-      );
+      this._voiceoverPlugin = this.getPlugin<IVoiceOverPlugin>('voiceover', this.config.useVoiceover);
     }
     return this._voiceoverPlugin;
   }
 
   public get captions(): ICaptionsPlugin {
     if (!this._captionsPlugin) {
-      this._captionsPlugin = this.getPlugin<ICaptionsPlugin>('captions', this._isBooting || this.config.useVoiceover);
+      this._captionsPlugin = this.getPlugin<ICaptionsPlugin>('captions', this.config.useVoiceover);
     }
     return this._captionsPlugin;
   }

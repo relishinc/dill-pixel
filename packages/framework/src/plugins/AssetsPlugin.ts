@@ -286,7 +286,6 @@ export class AssetsPlugin extends Plugin<Application, AssetLoadingOptions> imple
           : [scene.assets.preload.bundles];
         bundles = bundles.filter((bundle) => !this._isBundleLoaded(bundle));
         if (bundles.length) {
-          Logger.log('loading bundles', bundles);
           await Assets.loadBundle(bundles, this._handleLoadProgress);
           this._markBundlesLoaded(bundles);
         }
@@ -373,10 +372,8 @@ export class AssetsPlugin extends Plugin<Application, AssetLoadingOptions> imple
     this._handleLoadProgress(1);
     this.onLoadComplete.emit();
     this.dispatchWebEvent(this.webCompleteEvent);
-    console.log('webCompleteEvent', this.webCompleteEvent);
 
     if (this._isLoadingRequired) {
-      console.log('webRequiredCompleteEvent', this.webRequiredCompleteEvent);
       this.onLoadRequiredComplete.emit();
       this.dispatchWebEvent(this.webRequiredCompleteEvent);
     }
