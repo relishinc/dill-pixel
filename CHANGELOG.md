@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.18.1](https://github.com/relishinc/dill-pixel/compare/v4.18.0...v4.18.1) (2025-04-09)
+
+
+### Bug Fixes
+
+* pwa config ([de0e9af](https://github.com/relishinc/dill-pixel/commit/de0e9af9c1cf103ca87670f95005a25700211b06))
+
 ## [4.18.0](https://github.com/relishinc/dill-pixel/compare/v4.17.0...v4.18.0) (2025-04-09)
 
 
