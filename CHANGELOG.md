@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.17.0](https://github.com/relishinc/dill-pixel/compare/v4.16.1...v4.17.0) (2025-04-09)
+
+
+### Features
+
+* fullscreen api ([0539d9d](https://github.com/relishinc/dill-pixel/commit/0539d9d58c4b44a27674deba130c886f90bfcbcc))
+
 ## [4.16.1](https://github.com/relishinc/dill-pixel/compare/v4.16.0...v4.16.1) (2025-04-09)
 
 
