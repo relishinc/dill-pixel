@@ -496,6 +496,7 @@ const defaultPWAConfig = {
 function withPWA(userPWAConfig = {}, userConfig = {}) {
   const pwaConfig = {
     ...defaultPWAConfig,
+    ...userPWAConfig,
     devOptions: { ...defaultPWAConfig.devOptions, ...userPWAConfig.devOptions },
     manifest: {
       ...defaultPWAConfig.manifest,
