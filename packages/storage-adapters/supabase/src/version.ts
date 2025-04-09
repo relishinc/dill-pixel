@@ -1,3 +1,3 @@
-export const version = '4.15.12';
+export const version = '4.16.0';
 export const supabaseVersion = '2.49.3';
 export const supabasePostgresVersion = '1.19.3';
