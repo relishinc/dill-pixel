@@ -31,6 +31,7 @@ import type { IActionsPlugin } from '../plugins/actions';
 import type { IVoiceOverPlugin } from '../plugins/audio/VoiceOverPlugin';
 import type { ICaptionsPlugin } from '../plugins/captions';
 import { defaultPlugins } from '../plugins/defaults';
+import { IFullScreenPlugin } from '../plugins/FullScreenPlugin';
 import { ITimerPlugin } from '../plugins/TimerPlugin';
 import { Signal } from '../signals';
 
@@ -127,6 +128,7 @@ export class Application<
   protected _assetManager: IAssetsPlugin;
   protected _sceneManager: ISceneManagerPlugin;
   protected _webEventsManager: IWebEventsPlugin;
+  protected _fullScreenPlugin: IFullScreenPlugin;
   protected _keyboardManager: IKeyboardPlugin;
   protected _focusManager: IFocusManagerPlugin;
   protected _popupManager: IPopupManagerPlugin;
@@ -139,6 +141,9 @@ export class Application<
 
   protected _env: Record<string, string> = (import.meta as any).env || {};
   protected _makeFactory: typeof defaultFactoryMethods;
+
+  protected _isFullScreen: boolean = false;
+  protected _fullScreenElement: HTMLElement | Window | null = null;
 
   get make(): typeof defaultFactoryMethods {
     if (!this._makeFactory) {
@@ -396,6 +401,38 @@ export class Application<
     }
     return this._captionsPlugin;
   }
+  /** Fullscreen plugin */
+  public get fullScreen(): IFullScreenPlugin {
+    if (!this._fullScreenPlugin) {
+      this._fullScreenPlugin = this.getPlugin<IFullScreenPlugin>('fullscreen');
+    }
+    return this._fullScreenPlugin;
+  }
+
+  get fullScreenElement(): HTMLElement | Window | null {
+    return this.fullScreen.fullScreenElement;
+  }
+
+  get isFullScreen(): boolean {
+    return this.fullScreen.isFullScreen;
+  }
+
+  get canFullscreen(): boolean {
+    return this.fullScreen.canFullscreen;
+  }
+
+  public setFullScreenElement(value: HTMLElement | Window | null) {
+    this.fullScreen.setFullScreenElement(value);
+  }
+
+  public setFullScreen(value: boolean) {
+    this.fullScreen.setFullScreen(value);
+  }
+
+  public toggleFullScreen() {
+    this.fullScreen.toggleFullScreen();
+  }
+  /** End Fullscreen plugin */
 
   get isMobile() {
     return isMobile.any;

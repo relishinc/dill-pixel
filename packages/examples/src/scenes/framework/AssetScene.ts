@@ -47,7 +47,6 @@ export default class AssetScene extends BaseScene {
     });
     this.container.add.sprite({ asset: 'static/jar', scale: 0.4 });
     this.container.add.sprite({ asset: 'zilla' });
-    this.container.add.svg({ ctx: 'logo', scale: 0.5, resolution: 2 });
   }
 
   resize() {

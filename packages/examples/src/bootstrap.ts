@@ -20,6 +20,13 @@ async function bootstrap() {
 
   const app = await create<V8Application>(config, V8Application);
 
+  // full screen on pointer down
+  // app.stage.eventMode = 'static';
+  // app.stage.on('pointerdown', () => {
+  //   app.setFullScreenElement(document.body);
+  //   app.setFullScreen(true);
+  // });
+
   /*
   // test data adapter
   app.data.clear();

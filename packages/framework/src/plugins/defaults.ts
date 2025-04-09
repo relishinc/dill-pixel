@@ -1,5 +1,6 @@
 import type { ImportList } from '../utils';
 import { AssetsPlugin } from './AssetsPlugin';
+import { FullScreenPlugin } from './FullScreenPlugin';
 import { KeyboardPlugin } from './KeyboardPlugin';
 import type { IPlugin } from './Plugin';
 import { PopupManagerPlugin } from './PopupManagerPlugin';
@@ -18,6 +19,11 @@ export const defaultPlugins: ImportList<IPlugin> = [
     id: 'webEvents',
     module: WebEventsPlugin,
     namedExport: 'WebEventsPlugin',
+  },
+  {
+    id: 'fullscreen',
+    module: FullScreenPlugin,
+    namedExport: 'FullScreenPlugin',
   },
   {
     id: 'resizer',
