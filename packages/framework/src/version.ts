@@ -1,3 +1,3 @@
 // This file is auto-generated during the build process.
-export const version: string = '4.15.11';
+export const version: string = '4.15.12';
 export const pixiVersion: string = '8.9.1';
