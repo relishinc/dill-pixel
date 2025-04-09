@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.15.12](https://github.com/relishinc/dill-pixel/compare/v4.15.11...v4.15.12) (2025-04-09)
+
+
+### Bug Fixes
+
+* default assetpack config includes cacheBust option, now cacheBusts in production by default ([f56efa8](https://github.com/relishinc/dill-pixel/commit/f56efa8d2dbc55849f269ecc3f982b5aa9ffa4e9))
+
 ## [4.15.11](https://github.com/relishinc/dill-pixel/compare/v4.15.10...v4.15.11) (2025-04-07)
 
 
