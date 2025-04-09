@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.16.0](https://github.com/relishinc/dill-pixel/compare/v4.15.12...v4.16.0) (2025-04-09)
+
+
+### Features
+
+* custom web events from asset loader ([6753b51](https://github.com/relishinc/dill-pixel/commit/6753b51175272e6525bbcb112cd136a487f83a5b))
+
 ## [4.15.12](https://github.com/relishinc/dill-pixel/compare/v4.15.11...v4.15.12) (2025-04-09)
 
 
