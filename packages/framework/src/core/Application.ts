@@ -750,7 +750,6 @@ export class Application<
         namedExport: 'SpinePlugin',
       });
     }
-
     if (this.config.useStore) {
       this._store = new Store();
       this._store.initialize(this as unknown as IApplication<DataSchema>);

@@ -108,6 +108,7 @@ export const config = defineConfig<Data>({
   sceneTransition: Transition,
   defaultSceneLoadMethod: 'transitionExitEnter',
   useSpine: true,
+  usePWA: true,
   showSceneDebugMenu: true,
   useVoiceover: true,
   defaultScene: 'assets',

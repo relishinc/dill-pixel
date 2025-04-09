@@ -4,6 +4,7 @@ import path from 'node:path';
 import process from 'node:process';
 import { mergeConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
+import { VitePWA } from 'vite-plugin-pwa';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import topLevelAwait from 'vite-plugin-top-level-await';
 import wasm from 'vite-plugin-wasm';
@@ -385,7 +386,7 @@ function createDillPixelGlobalsPlugin() {
 
 /** CONFIG */
 /**
- * @type {import('vite').UserConfig}
+ * @type {Partial<import('vite').UserConfig>}
  */
 const defaultConfig = {
   cacheDir: '.cache',
@@ -458,10 +459,63 @@ const noAssetpackConfig = { ...defaultConfig };
 // remove assetpack plugin
 noAssetpackConfig.plugins = noAssetpackConfig.plugins.filter((plugin) => plugin.name !== 'vite-plugin-assetpack');
 
+// withPWA
+const injectRegister = process.env.SW_INLINE ?? 'auto';
+const selfDestroying = process.env.SW_DESTROY === 'true';
+/**
+ * @type {Partial<import('vite-plugin-pwa').VitePWAOptions>}
+ */
+const defaultPWAConfig = {
+  base: '/',
+  buildBase: './',
+  registerType: 'autoUpdate',
+  injectRegister,
+  selfDestroying,
+  devOptions: {
+    enabled: process.env.SW_DEV === 'true',
+    navigateFallback: 'index.html',
+    suppressWarnings: true,
+  },
+  manifest: {
+    name: process.env.npm_package_name,
+    short_name: process.env.npm_package_name,
+    description: process.env.npm_package_description,
+    theme_color: '#ffffff',
+    background_color: '#000000',
+    display: 'fullscreen',
+    orientation: 'portrait',
+    categories: ['game', 'application'],
+  },
+};
+
+/**
+ * @param {Partial<import('vite-plugin-pwa').VitePWAOptions>} userPWAConfig
+ * @param {Partial<import('vite').UserConfig>} userConfig
+ * @returns {import('vite').UserConfig}
+ */
+function withPWA(userPWAConfig = {}, userConfig = {}) {
+  const pwaConfig = {
+    ...defaultPWAConfig,
+    devOptions: { ...defaultPWAConfig.devOptions, ...userPWAConfig.devOptions },
+    manifest: {
+      ...defaultPWAConfig.manifest,
+      ...(userPWAConfig?.manifest ?? {}),
+      icons: [...(userPWAConfig?.manifest?.icons ?? [])],
+    },
+  };
+  const config = mergeConfig(defaultConfig, userConfig);
+  config.plugins.push(VitePWA(pwaConfig));
+  return config;
+}
+
+/**
+ * @param {Partial<import('vite').UserConfig>} userConfig
+ * @returns {import('vite').UserConfig}
+ */
 function extendConfig(userConfig = {}) {
   return mergeConfig(defaultConfig, userConfig);
 }
 
-export { extendConfig, noAssetpackConfig };
+export { extendConfig, noAssetpackConfig, withPWA };
 
 export default defaultConfig;

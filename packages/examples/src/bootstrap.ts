@@ -1,7 +1,29 @@
-import { create, DillPixelEvent } from 'dill-pixel';
-import 'dill-pixel-globals';
+import { create } from 'dill-pixel';
+import 'dill-pixel-globals'; // required for globals like the scenes list
+
 import { V8Application } from './V8Application';
 import { config } from './dill-pixel.config';
+
+/**
+ * PWA
+ */
+import { pwaInfo } from 'virtual:pwa-info';
+import { registerSW } from 'virtual:pwa-register';
+
+registerSW({
+  immediate: true,
+  onNeedRefresh() {
+    console.log('onNeedRefresh message should not appear');
+  },
+  onOfflineReady() {
+    console.log('onOfflineReady message should not appear');
+  },
+});
+
+console.log({ pwa: pwaInfo });
+/**
+ * PWA
+ */
 
 async function bootstrap() {
   // add progress event listener (can be done before app creation for splash)
@@ -57,7 +79,6 @@ async function bootstrap() {
   app.data.append('saved', 'adsf;kjdfgj', ' ');
   app.data.append('saved', 'more', '-');
   */
-  console.log('DillPixelEvent', DillPixelEvent);
 
   function populateSidebar() {
     // populate sidebar
