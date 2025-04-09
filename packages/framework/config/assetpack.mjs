@@ -6,8 +6,11 @@ import path from 'path';
 const cwd = process.cwd();
 const defaultManifestUrl = 'assets.json';
 
+const env = process.env.NODE_ENV;
+const isProduction = env === 'production';
+
 const defaultPixiPipesConfig = {
-  cacheBust: false,
+  cacheBust: isProduction,
   resolutions: { default: 1, low: 0.5 },
   compression: { jpg: true, png: true, webp: true },
   texturePacker: {
@@ -19,17 +22,23 @@ const defaultPixiPipesConfig = {
   webfont: {},
   manifest: { trimExtensions: true, createShortcuts: true, output: defaultManifestUrl },
 };
-export const assetpackConfig = (manifestUrl = defaultManifestUrl, pixiPipesConfig = defaultPixiPipesConfig) => ({
-  manifestUrl,
-  entry: './assets',
-  logLevel: 'info',
-  cache: false,
-  pipes: [
-    ...pixiPipes({
-      ...pixiPipesConfig,
-    }),
-  ],
-});
+
+export const assetpackConfig = (manifestUrl = defaultManifestUrl, pixiPipesConfig = {}, cacheBust) => {
+  pixiPipesConfig = { ...defaultPixiPipesConfig, ...pixiPipesConfig };
+  if (cacheBust !== undefined) {
+    pixiPipesConfig.cacheBust = cacheBust;
+  }
+  return {
+    manifestUrl,
+    entry: './assets',
+    logLevel: 'info',
+    pipes: [
+      ...pixiPipes({
+        ...pixiPipesConfig,
+      }),
+    ],
+  };
+};
 
 export default assetpackConfig;
 
