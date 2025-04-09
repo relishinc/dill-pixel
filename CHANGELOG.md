@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.18.0](https://github.com/relishinc/dill-pixel/compare/v4.17.0...v4.18.0) (2025-04-09)
+
+
+### Features
+
+* pwa suppoer via vita-plugin-pwa (with workbox) ([b94f08c](https://github.com/relishinc/dill-pixel/commit/b94f08cb73282b8b59361e4bb93421c095c3862b))
+
 ## [4.17.0](https://github.com/relishinc/dill-pixel/compare/v4.16.1...v4.17.0) (2025-04-09)
 
 
