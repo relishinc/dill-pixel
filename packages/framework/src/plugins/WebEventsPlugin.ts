@@ -94,6 +94,7 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
    */
   private _onPageShow() {
     this._emitVisibilityChanged(true);
+    this._onResize();
   }
 
   private _emitVisibilityChanged(value: boolean) {
