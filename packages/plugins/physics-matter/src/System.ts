@@ -127,8 +127,8 @@ export class System {
   }
 
   static destroy() {
-    System.enabled = false;
     Logger.warn('MatterPhysicsPlugin:: Destroying Matter Physics System');
+    System.enabled = false;
     try {
       World.clear(System._engine?.world, false);
     } catch (e) {
