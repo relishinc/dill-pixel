@@ -528,6 +528,17 @@ export interface ITimerPlugin extends IPlugin {
   resumeAllTimers(): void;
 
   /**
+   * Destroys all active timers, both main thread and worker timers     .
+   * This will remove all timers from the plugin and stop them.
+   *
+   * @example
+   * ```typescript
+   * this.app.timers.destroyAllTimers();
+   * ```
+   */
+  destroyAllTimers(): void;
+
+  /**
    * Resets a worker timer to its initial state.
    * This is primarily used internally by the Timer class.
    *
@@ -709,5 +720,11 @@ export class TimerPlugin extends Plugin implements ITimerPlugin {
       timer.start();
     }
     this.onAllTimersResumed.emit();
+  }
+
+  public destroyAllTimers(): void {
+    for (const timer of [...this.mainThreadTimers, ...this.workerTimers]) {
+      this.destroyTimer(timer);
+    }
   }
 }
