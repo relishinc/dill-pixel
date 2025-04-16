@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.18.4](https://github.com/relishinc/dill-pixel/compare/v4.18.3...v4.18.4) (2025-04-16)
+
+
+### Bug Fixes
+
+* matter physics double update ([34e0b36](https://github.com/relishinc/dill-pixel/commit/34e0b36f621015b38a57ad3537142e6b92e2504c))
+* matter physics double update ([d03f655](https://github.com/relishinc/dill-pixel/commit/d03f655159363077d037ede43a68d54feeddb379))
+* timerPlugin destroyAllTimers ([5561806](https://github.com/relishinc/dill-pixel/commit/556180620463b655c372768284ddac4011e572e3))
+
 ## [4.18.3](https://github.com/relishinc/dill-pixel/compare/v4.18.2...v4.18.3) (2025-04-16)
 
 
