@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.18.2](https://github.com/relishinc/dill-pixel/compare/v4.18.1...v4.18.2) (2025-04-15)
+
+
+### Bug Fixes
+
+* emit resize signal when app regains visibility ([8b3ff9a](https://github.com/relishinc/dill-pixel/commit/8b3ff9a4018bbaf0716920a08872031819b68c0d))
+
 ## [4.18.1](https://github.com/relishinc/dill-pixel/compare/v4.18.0...v4.18.1) (2025-04-09)
 
 
