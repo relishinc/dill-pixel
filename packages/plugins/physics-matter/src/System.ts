@@ -62,6 +62,7 @@ export class System {
 
   static set enabled(value: boolean) {
     System._enabled = value;
+    System.app.ticker.remove(System.update);
     if (System._enabled) {
       if (System._engine) {
         Runner.run(System._engine);
@@ -127,6 +128,7 @@ export class System {
 
   static destroy() {
     System.enabled = false;
+    Logger.warn('MatterPhysicsPlugin:: Destroying Matter Physics System');
     try {
       World.clear(System._engine?.world, false);
     } catch (e) {
@@ -315,7 +317,7 @@ export class System {
       if (System.debug) {
         System.drawDebug();
       }
-      Engine.update(System._engine, 16.666666666666667, ticker.deltaTime);
+      Engine.update(System._engine, 16.67, ticker.deltaTime);
     }
   }
 }
