@@ -65,13 +65,13 @@ export class System {
     if (System._enabled) {
       if (System._engine) {
         Runner.run(System._engine);
-        System.app.ticker.add(System.update);
       }
+      System.app.ticker.add(System.update);
     } else {
       if (System._runner) {
         Runner.stop(System._runner);
-        System.app.ticker.remove(System.update);
       }
+      System.app.ticker.remove(System.update);
     }
   }
 
