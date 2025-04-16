@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.18.3](https://github.com/relishinc/dill-pixel/compare/v4.18.2...v4.18.3) (2025-04-16)
+
+
+### Bug Fixes
+
+* matter physics double update ([3aaf787](https://github.com/relishinc/dill-pixel/commit/3aaf787525ba79ff5aa9e24b7783c8dbd4e774d6))
+
 ## [4.18.2](https://github.com/relishinc/dill-pixel/compare/v4.18.1...v4.18.2) (2025-04-15)
 
 
