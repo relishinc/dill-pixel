@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.18.5](https://github.com/relishinc/dill-pixel/compare/v4.18.4...v4.18.5) (2025-04-17)
+
+
+### Bug Fixes
+
+* cli create install plugins && adapters ([ff814c4](https://github.com/relishinc/dill-pixel/commit/ff814c475a7f0d8c0b1f60bcf77e99bc03c0e21d))
+
 ## [4.18.4](https://github.com/relishinc/dill-pixel/compare/v4.18.3...v4.18.4) (2025-04-16)
 
 
