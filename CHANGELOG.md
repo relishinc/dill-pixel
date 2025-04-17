@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.18.6](https://github.com/relishinc/dill-pixel/compare/v4.18.5...v4.18.6) (2025-04-17)
+
+
+### Bug Fixes
+
+* cli create, using proper plugin versions ([a709b92](https://github.com/relishinc/dill-pixel/commit/a709b92e0d8bd112a9be2e05c9684137eba084e7))
+
 ## [4.18.5](https://github.com/relishinc/dill-pixel/compare/v4.18.4...v4.18.5) (2025-04-17)
 
 
