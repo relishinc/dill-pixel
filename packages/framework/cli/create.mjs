@@ -10,6 +10,57 @@ import { copy, dist, mkdirp, package_manager } from './utils.mjs';
 
 let packageManager = package_manager;
 
+const AVAILABLE_PLUGINS = [
+  {
+    name: '@dill-pixel/plugin-rollbar',
+    displayName: 'Rollbar',
+    description: 'Rollbar error tracking and monitoring',
+  },
+  {
+    name: '@dill-pixel/plugin-springroll',
+    displayName: 'SpringRoll (PBS)',
+    description: 'Springroll integration for analytics and tracking',
+  },
+  {
+    name: '@dill-pixel/plugin-rive',
+    displayName: 'Rive',
+    description: 'Rive animation integration',
+  },
+  {
+    name: '@dill-pixel/plugin-colyseus',
+    displayName: 'Colyseus',
+    description: 'Colyseus multiplayer game server integration',
+  },
+  {
+    name: '@dill-pixel/plugin-google-analytics',
+    displayName: 'Google Analytics',
+    description: 'Google Analytics integration',
+  },
+  {
+    name: '@dill-pixel/plugin-physics-crunch',
+    displayName: 'Crunch Physics',
+    description: 'Crunch physics engine integration',
+  },
+  {
+    name: '@dill-pixel/plugin-physics-matter',
+    displayName: 'Matter Physics',
+    description: 'Matter.js physics engine integration',
+  },
+];
+
+const AVAILABLE_STORAGE_ADAPTERS = [
+  {
+    name: '@dill-pixel/storage-adapter-firebase',
+    displayName: 'Firebase Storage',
+    description: 'Firebase storage adapter for cloud data persistence',
+  },
+  {
+    name: '@dill-pixel/storage-adapter-supabase',
+    displayName: 'Supabase Storage',
+    description: 'Supabase storage adapter for cloud data persistence',
+  },
+];
+
 /**
  * Ensures a version string has the ^ prefix unless it's a URL or specific commit
  * @param {string} version
@@ -187,20 +238,10 @@ function write_template_files(
     }
 
     plugins.forEach((pluginName) => {
-      try {
-        const pluginDir = fs.readdirSync(dist('../plugins')).find((dir) => {
-          const plugin = JSON.parse(fs.readFileSync(path.join(dist('../plugins'), dir, 'package.json'), 'utf8'));
-          return plugin.name === pluginName;
-        });
-
-        if (pluginDir) {
-          const pluginPkg = JSON.parse(
-            fs.readFileSync(path.join(dist('../plugins'), pluginDir, 'package.json'), 'utf8'),
-          );
-          pkgJson.dependencies[pluginName] = ensureCaretPrefix(pluginPkg.version);
-        }
-      } catch (e) {
-        console.warn(`Failed to add plugin ${pluginName} to dependencies:`, e);
+      const plugin = AVAILABLE_PLUGINS.find((p) => p.name === pluginName);
+      if (plugin) {
+        // Use the framework version as the plugin version
+        pkgJson.dependencies[pluginName] = ensureCaretPrefix(frameworkPkg.version);
       }
     });
   }
@@ -212,20 +253,10 @@ function write_template_files(
     }
 
     storageAdapters.forEach((storageAdapterName) => {
-      try {
-        const saDir = fs.readdirSync(dist('../storage-adapters')).find((dir) => {
-          const sa = JSON.parse(fs.readFileSync(path.join(dist('../storage-adapters'), dir, 'package.json'), 'utf8'));
-          return sa.name === storageAdapterName;
-        });
-
-        if (saDir) {
-          const saPkg = JSON.parse(
-            fs.readFileSync(path.join(dist('../storage-adapters'), saDir, 'package.json'), 'utf8'),
-          );
-          pkgJson.dependencies[storageAdapterName] = ensureCaretPrefix(saPkg.version);
-        }
-      } catch (e) {
-        console.warn(`Failed to add storage adapter ${storageAdapterName} to dependencies:`, e);
+      const adapter = AVAILABLE_STORAGE_ADAPTERS.find((a) => a.name === storageAdapterName);
+      if (adapter) {
+        // Use the framework version as the adapter version
+        pkgJson.dependencies[storageAdapterName] = ensureCaretPrefix(frameworkPkg.version);
       }
     });
   }
@@ -305,51 +336,19 @@ export async function create(cwd = '.', packageManagerOverride) {
       p.multiselect({
         required: false,
         message: 'Which plugins would you like to add (Enter to skip)?',
-        options: (() => {
-          const pluginsDir = dist('../plugins');
-          if (!fs.existsSync(pluginsDir)) {
-            return [];
-          }
-          return fs
-            .readdirSync(pluginsDir)
-            .map((dir) => {
-              try {
-                const pkg = JSON.parse(fs.readFileSync(path.join(pluginsDir, dir, 'package.json'), 'utf8'));
-                return {
-                  label: pkg.description || pkg.name,
-                  value: pkg.name, // This will be @dill-pixel/plugin-*
-                };
-              } catch (e) {
-                return null;
-              }
-            })
-            .filter(Boolean);
-        })(),
+        options: AVAILABLE_PLUGINS.map((plugin) => ({
+          label: `${plugin.displayName} - ${plugin.description}`,
+          value: plugin.name,
+        })),
       }),
     storageAdapters: () =>
       p.multiselect({
         required: false,
         message: 'Which storage adapters would you like to add (Enter to skip)?',
-        options: (() => {
-          const adaptersDir = dist('../storage-adapters');
-          if (!fs.existsSync(adaptersDir)) {
-            return [];
-          }
-          return fs
-            .readdirSync(adaptersDir)
-            .map((dir) => {
-              try {
-                const pkg = JSON.parse(fs.readFileSync(path.join(adaptersDir, dir, 'package.json'), 'utf8'));
-                return {
-                  label: pkg.description || pkg.name,
-                  value: pkg.name, // This will be @dill-pixel/storage-adapter-*
-                };
-              } catch (e) {
-                return null;
-              }
-            })
-            .filter(Boolean);
-        })(),
+        options: AVAILABLE_STORAGE_ADAPTERS.map((adapter) => ({
+          label: `${adapter.displayName} - ${adapter.description}`,
+          value: adapter.name,
+        })),
       }),
   });
 
