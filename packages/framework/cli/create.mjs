@@ -84,22 +84,22 @@ function write_template_files(
     copy(file.name, dest);
   });
 
-  let pkg = fs.readFileSync(`${cwd}/package.json`, 'utf-8');
+  let pkgJson = JSON.parse(fs.readFileSync(`${cwd}/package.json`, 'utf-8'));
   let mgr = packageManager;
   if (mgr.indexOf('npm') === 0) {
     mgr = 'npm run';
   }
-  pkg = pkg.replace(/~NAME~/g, applicationNameForPkg);
-  pkg = pkg.replace(/~PACKAGE_MANAGER~/g, mgr);
+  pkgJson.name = applicationNameForPkg;
+  pkgJson.scripts = Object.fromEntries(
+    Object.entries(pkgJson.scripts || {}).map(([key, value]) => [key, value.replace(/~PACKAGE_MANAGER~/g, mgr)]),
+  );
 
   // Get the framework version from package.json
   const frameworkPkg = JSON.parse(fs.readFileSync(dist('package.json'), 'utf-8'));
-  const pkgJson = JSON.parse(pkg);
 
   // Set the dill-pixel dependency version
   if (pkgJson.dependencies && pkgJson.dependencies['dill-pixel']) {
     pkgJson.dependencies['dill-pixel'] = ensureCaretPrefix(frameworkPkg.version);
-    pkg = JSON.stringify(pkgJson, null, 2);
   }
 
   // Add framework peer dependencies to the template's peerDependencies
@@ -114,62 +114,10 @@ function write_template_files(
         pkgJson.peerDependencies[name] = ensureCaretPrefix(version);
       }
     });
-
-    pkg = JSON.stringify(pkgJson, null, 2);
   }
 
-  // Add selected plugins to dependencies
-  if (plugins && plugins.length > 0) {
-    const pkgJson = JSON.parse(pkg);
-    if (!pkgJson.dependencies) {
-      pkgJson.dependencies = {};
-    }
-
-    plugins.forEach((pluginName) => {
-      try {
-        const pluginDir = fs.readdirSync(dist('../plugins')).find((dir) => {
-          const plugin = JSON.parse(fs.readFileSync(dist(`../plugins/${dir}/package.json`), 'utf8'));
-          return plugin.name === pluginName;
-        });
-
-        if (pluginDir) {
-          const pluginPkg = JSON.parse(fs.readFileSync(dist(`../plugins/${pluginDir}/package.json`), 'utf8'));
-          pkgJson.dependencies[pluginName] = ensureCaretPrefix(pluginPkg.version);
-        }
-      } catch (e) {
-        console.warn(`Failed to add plugin ${pluginName} to dependencies:`, e);
-      }
-    });
-
-    pkg = JSON.stringify(pkgJson, null, 2);
-  }
-
-  if (storageAdapters && storageAdapters.length > 0) {
-    const pkgJson = JSON.parse(pkg);
-    if (!pkgJson.dependencies) {
-      pkgJson.dependencies = {};
-    }
-
-    storageAdapters.forEach((storageAdapterName) => {
-      try {
-        const saDir = fs.readdirSync(dist('../storage-adapters')).find((dir) => {
-          const sa = JSON.parse(fs.readFileSync(dist(`../storage-adapters/${dir}/package.json`), 'utf8'));
-          return sa.name === storageAdapterName;
-        });
-
-        if (saDir) {
-          const saPkg = JSON.parse(fs.readFileSync(dist(`../storage-adapters/${saDir}/package.json`), 'utf8'));
-          pkgJson.dependencies[storageAdapterName] = ensureCaretPrefix(saPkg.version);
-        }
-      } catch (e) {
-        console.warn(`Failed to add plugin ${storageAdapterName} to dependencies:`, e);
-      }
-    });
-
-    pkg = JSON.stringify(pkgJson, null, 2);
-  }
-
-  fs.writeFileSync(`${cwd}/package.json`, pkg);
+  // Write the initial package.json with template replacements
+  fs.writeFileSync(`${cwd}/package.json`, JSON.stringify(pkgJson, null, 2));
 
   // find index.html and replace ~NAME~ with the application's origin al name
   const index_file = `${cwd}/index.html`;
@@ -232,6 +180,59 @@ function write_template_files(
 
   fs.writeFileSync(configPath, configContents, 'utf-8');
 
+  // Add selected plugins to dependencies
+  if (plugins && plugins.length > 0) {
+    if (!pkgJson.dependencies) {
+      pkgJson.dependencies = {};
+    }
+
+    plugins.forEach((pluginName) => {
+      try {
+        const pluginDir = fs.readdirSync(dist('../plugins')).find((dir) => {
+          const plugin = JSON.parse(fs.readFileSync(path.join(dist('../plugins'), dir, 'package.json'), 'utf8'));
+          return plugin.name === pluginName;
+        });
+
+        if (pluginDir) {
+          const pluginPkg = JSON.parse(
+            fs.readFileSync(path.join(dist('../plugins'), pluginDir, 'package.json'), 'utf8'),
+          );
+          pkgJson.dependencies[pluginName] = ensureCaretPrefix(pluginPkg.version);
+        }
+      } catch (e) {
+        console.warn(`Failed to add plugin ${pluginName} to dependencies:`, e);
+      }
+    });
+  }
+
+  // Add selected storage adapters to dependencies
+  if (storageAdapters && storageAdapters.length > 0) {
+    if (!pkgJson.dependencies) {
+      pkgJson.dependencies = {};
+    }
+
+    storageAdapters.forEach((storageAdapterName) => {
+      try {
+        const saDir = fs.readdirSync(dist('../storage-adapters')).find((dir) => {
+          const sa = JSON.parse(fs.readFileSync(path.join(dist('../storage-adapters'), dir, 'package.json'), 'utf8'));
+          return sa.name === storageAdapterName;
+        });
+
+        if (saDir) {
+          const saPkg = JSON.parse(
+            fs.readFileSync(path.join(dist('../storage-adapters'), saDir, 'package.json'), 'utf8'),
+          );
+          pkgJson.dependencies[storageAdapterName] = ensureCaretPrefix(saPkg.version);
+        }
+      } catch (e) {
+        console.warn(`Failed to add storage adapter ${storageAdapterName} to dependencies:`, e);
+      }
+    });
+  }
+
+  // Write the final package.json with all dependencies
+  fs.writeFileSync(`${cwd}/package.json`, JSON.stringify(pkgJson, null, 2));
+
   try {
     fs.rmSync(`${cwd}/.meta.json`);
     fs.rmSync(`${cwd}/package.template.json`);
@@ -286,7 +287,6 @@ export async function create(cwd = '.', packageManagerOverride) {
     template: () =>
       p.select({
         message: 'Which template?',
-        // @ts-expect-error i have no idea what is going on here
         options: fs
           .readdirSync(dist('templates/app'))
           .map((dir) => {
@@ -314,10 +314,10 @@ export async function create(cwd = '.', packageManagerOverride) {
             .readdirSync(pluginsDir)
             .map((dir) => {
               try {
-                const pkg = JSON.parse(fs.readFileSync(dist(`../plugins/${dir}/package.json`), 'utf8'));
+                const pkg = JSON.parse(fs.readFileSync(path.join(pluginsDir, dir, 'package.json'), 'utf8'));
                 return {
                   label: pkg.description || pkg.name,
-                  value: pkg.name,
+                  value: pkg.name, // This will be @dill-pixel/plugin-*
                 };
               } catch (e) {
                 return null;
@@ -339,18 +339,11 @@ export async function create(cwd = '.', packageManagerOverride) {
             .readdirSync(adaptersDir)
             .map((dir) => {
               try {
-                const pkg = JSON.parse(fs.readFileSync(dist(`../storage-adapters/${dir}/package.json`), 'utf8'));
-                // Only include plugins that are storage adapters (have 'storage' in their name or description)
-                if (
-                  pkg.name.includes('storage-adapter') ||
-                  (pkg.description && pkg.description.toLowerCase().includes('storage-adapter'))
-                ) {
-                  return {
-                    label: pkg.description || pkg.name,
-                    value: pkg.name,
-                  };
-                }
-                return null;
+                const pkg = JSON.parse(fs.readFileSync(path.join(adaptersDir, dir, 'package.json'), 'utf8'));
+                return {
+                  label: pkg.description || pkg.name,
+                  value: pkg.name, // This will be @dill-pixel/storage-adapter-*
+                };
               } catch (e) {
                 return null;
               }
