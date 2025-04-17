@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.18.7](https://github.com/relishinc/dill-pixel/compare/v4.18.6...v4.18.7) (2025-04-17)
+
+
+### Bug Fixes
+
+* changed delta in Matter JS Plugin to match default ([4947294](https://github.com/relishinc/dill-pixel/commit/4947294311229c917f4bc6517a49c979e42f7cf0))
+
 ## [4.18.6](https://github.com/relishinc/dill-pixel/compare/v4.18.5...v4.18.6) (2025-04-17)
 
 
