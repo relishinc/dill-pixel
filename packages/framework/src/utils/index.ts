@@ -22,3 +22,4 @@ export * from './set';
 export * from './string';
 export * from './text';
 export * from './types';
+export * from './web';

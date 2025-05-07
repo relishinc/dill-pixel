@@ -1,7 +1,7 @@
 import { Schema } from '@colyseus/schema';
 import * as Colyseus from 'colyseus.js';
 import { Room } from 'colyseus.js';
-import type { IApplication, IPlugin } from 'dill-pixel';
+import type { Application, IApplication, IPlugin } from 'dill-pixel';
 import { Logger, Plugin } from 'dill-pixel';
 
 export type SchemaConstructor<T = Schema> = new (...args: any[]) => T;
@@ -13,7 +13,7 @@ export type ColyseusPluginOptions = {
 export interface IColyseusPlugin extends IPlugin {
   readonly client: Colyseus.Client;
 
-  initialize(app: IApplication, options?: Partial<ColyseusPluginOptions>): void;
+  initialize(options?: Partial<ColyseusPluginOptions>, app?: IApplication): void;
 
   joinOrCreate<T>(
     roomName: string,
@@ -28,24 +28,25 @@ export interface IColyseusPlugin extends IPlugin {
   joinById<T>(roomId: string, options?: Colyseus.JoinOptions, rootSchema?: SchemaConstructor<T>): Promise<Room<T>>;
 }
 
-export class ColyseusPlugin extends Plugin implements IColyseusPlugin {
-  private _options: ColyseusPluginOptions;
-
+export class ColyseusPlugin extends Plugin<Application, ColyseusPluginOptions> implements IColyseusPlugin {
   private _client: Colyseus.Client;
 
   get client(): Colyseus.Client {
     return this._client;
   }
 
-  async initialize(_app: IApplication, options: Partial<ColyseusPluginOptions>) {
+  async initialize(options?: Partial<ColyseusPluginOptions>, app?: IApplication) {
+    if (!app) {
+      throw new Error('Application instance is required for ColyseusPlugin initialization.');
+    }
     this._options = {
-      port: _app.env.VITE_COLYSEUS_PORT || _app.env.COLYSEUS_PORT || '2567',
-      ...options,
+      port: app.env.VITE_COLYSEUS_PORT || app.env.COLYSEUS_PORT || '2567',
+      ...(options || {}),
     };
     Logger.log(`Colyseus plugin initialized`);
 
     if (!this._client) {
-      this._client = new Colyseus.Client(`ws://localhost:${this._options.port}`);
+      this._client = new Colyseus.Client(`ws://localhost:${this.options.port}`);
     }
   }
 

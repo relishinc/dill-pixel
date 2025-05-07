@@ -1,13 +1,16 @@
 import { Application } from '../core/Application';
 import { Signal } from '../signals';
 import type { Size } from '../utils';
-import { bindAllMethods, debounce } from '../utils';
+import { bindAllMethods, debounce, getOrientation, type Orientation } from '../utils';
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
 
 export interface IWebEventsPlugin extends IPlugin {
   onResize: Signal<(size: { width: number; height: number }) => void>;
   onVisibilityChanged: Signal<(visible: boolean) => void>;
+  onOrientationChanged: Signal<
+    ({ orientation, screenOrientation }: { orientation: Orientation; screenOrientation: ScreenOrientation }) => void
+  >;
 }
 
 /**
@@ -19,7 +22,11 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
   // signals
   public onResize: Signal<(size: Size) => void> = new Signal<(size: Size) => void>();
   public onVisibilityChanged: Signal<(visible: boolean) => void> = new Signal<(visible: boolean) => void>();
-
+  public onOrientationChanged: Signal<
+    ({ orientation, screenOrientation }: { orientation: Orientation; screenOrientation: ScreenOrientation }) => void
+  > = new Signal<
+    ({ orientation, screenOrientation }: { orientation: Orientation; screenOrientation: ScreenOrientation }) => void
+  >();
   private _debouncedEmitVisibility = debounce((value: boolean) => {
     this.onVisibilityChanged.emit(value);
   }, 1);
@@ -42,6 +49,7 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
     window.addEventListener('pageshow', this._onPageShow, false);
     window.addEventListener('resize', this._onResize);
     document.addEventListener('fullscreenchange', this._onResize);
+    window.addEventListener('orientationchange', this._onOrientationChanged);
   }
 
   public destroy() {
@@ -53,7 +61,7 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
   }
 
   protected getCoreSignals(): string[] {
-    return ['onVisibilityChanged'];
+    return ['onVisibilityChanged', 'onOrientationChanged'];
   }
 
   /**
@@ -99,5 +107,26 @@ export class WebEventsPlugin extends Plugin implements IWebEventsPlugin {
 
   private _emitVisibilityChanged(value: boolean) {
     this._debouncedEmitVisibility(value);
+  }
+
+  private _onOrientationChanged(e: any) {
+    let orientation: Orientation | null = null;
+    const screenOrientation = e?.target?.screen?.orientation;
+    const screenOrientationType = screenOrientation?.type;
+
+    if (screenOrientationType) {
+      if (screenOrientationType.includes('landscape')) {
+        orientation = 'landscape';
+      } else {
+        orientation = 'portrait';
+      }
+      this.onOrientationChanged.emit({ orientation, screenOrientation });
+      return;
+    }
+
+    setTimeout(() => {
+      orientation = getOrientation();
+      this.onOrientationChanged.emit({ orientation, screenOrientation });
+    }, 10);
   }
 }

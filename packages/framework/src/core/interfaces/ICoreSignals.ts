@@ -10,7 +10,7 @@ import type {
 import { ActionContext } from '../../plugins';
 import { Signal } from '../../signals';
 import type { DataChangeSignalDetail } from '../../store/adapters/DataAdapter';
-import type { Size } from '../../utils';
+import type { Orientation, Size } from '../../utils';
 
 export interface ICoreSignals {
   // Application;
@@ -53,7 +53,9 @@ export interface ICoreSignals {
   onSceneChangeStart: Signal<(detail: { exiting: string | null; entering: string }) => void>;
   onSceneChangeComplete: Signal<(detail: { current: string }) => void>;
   // WebEventsManager;
-
+  onOrientationChanged: Signal<
+    ({ orientation, screenOrientation }: { orientation: Orientation; screenOrientation: ScreenOrientation }) => void
+  >;
   onVisibilityChanged: Signal<(visible: boolean) => void>;
   // AssetPlugin
   onLoadProgress: Signal<(progress: number) => void>;
