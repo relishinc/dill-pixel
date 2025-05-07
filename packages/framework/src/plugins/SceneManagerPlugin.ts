@@ -4,7 +4,9 @@ import { Application } from '../core/Application';
 import type { IScene, ISceneTransition, SceneTransition } from '../display';
 import { Signal } from '../signals';
 import {
+  AssetTypes,
   bindAllMethods,
+  BundleTypes,
   Constructor,
   createQueue,
   getDynamicModuleFromImportListItem,
@@ -53,6 +55,10 @@ export type SplashOptions = {
   view: ISceneTransition | typeof SceneTransition | null;
   zOrder: SplashZOrder;
   hideWhen: SplashHideWhen;
+  preload?: {
+    assets?: AssetTypes;
+    bundles?: BundleTypes;
+  };
 };
 
 export type LoadSceneConfig = {
@@ -64,6 +70,10 @@ const defaultSplashOptions: SplashOptions = {
   view: null,
   hideWhen: 'firstSceneEnter',
   zOrder: 'top',
+  preload: {
+    assets: [],
+    bundles: [],
+  },
 };
 
 export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
@@ -74,7 +84,12 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
   public onSceneChangeComplete: Signal<(detail: { current: string }) => void> = new Signal<
     (detail: { current: string }) => void
   >();
-  public splash: { view: ISceneTransition | null; hideWhen: SplashHideWhen; zOrder: SplashZOrder };
+  public splash: {
+    view: ISceneTransition | null;
+    hideWhen: SplashHideWhen;
+    zOrder: SplashZOrder;
+    preload?: { assets?: AssetTypes; bundles?: BundleTypes };
+  };
   public transition?: ISceneTransition;
   // view container - gets added to the stage
   public view: Container = new Container();
@@ -136,6 +151,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
         this.splash.view =
           typeof splash.view === 'function' ? new (splash.view as Constructor<ISceneTransition>)() : splash.view;
       }
+      this.splash.preload = splash.preload;
     }
 
     this.defaultScene = this.defaultScene || app.config?.defaultScene || this.list?.[0]?.id;
@@ -489,6 +505,17 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
   }
 
   private async _showSplash() {
+    console.log('splash', this.splash);
+    if (this.splash.preload) {
+      if (this.splash.preload.assets) {
+        await this.app.assets.loadAssets(this.splash.preload.assets);
+      }
+      if (this.splash.preload.bundles) {
+        console.log('loading bundles', this.splash.preload.bundles);
+        await this.app.assets.loadBundles(this.splash.preload.bundles);
+      }
+    }
+    console.log('HIHIHIHI');
     await this.splash.view?.enter();
   }
 

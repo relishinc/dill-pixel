@@ -1,13 +1,13 @@
-import { Container } from './Container';
 import { Sprite } from 'pixi.js';
+import { Container } from './Container';
 
 export interface ISceneTransition extends Container {
   progress: number;
   active: boolean;
+  destroy(): void;
 
-  enter(): Promise<any>;
-
-  exit(): Promise<any>;
+  enter(): Promise<any> | void;
+  exit(): Promise<any> | void;
 }
 
 export class SceneTransition extends Container {
@@ -46,7 +46,8 @@ export class SceneTransition extends Container {
    * Called to animate the scene in
    * @returns {Promise<void>}
    */
-  public enter(): Promise<any> {
+  public enter(): void;
+  public async enter(): Promise<any> {
     return Promise.resolve();
   }
 
@@ -54,7 +55,8 @@ export class SceneTransition extends Container {
    * Called to animate the scene out
    * @returns {Promise<void>}
    */
-  public exit(): Promise<any> {
+  public exit(): void;
+  public async exit(): Promise<any> {
     return Promise.resolve();
   }
 
