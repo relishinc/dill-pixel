@@ -105,12 +105,6 @@ export type AnalyticsEvents = {
 
 export const config = defineConfig<Data>({
   id: 'V8Application',
-  splash: {
-    view: Transition,
-    preload: {
-      bundles: ['required'],
-    },
-  },
   sceneTransition: Transition,
   defaultSceneLoadMethod: 'transitionExitEnter',
   useSpine: true,
