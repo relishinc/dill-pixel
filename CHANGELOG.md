@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.19.1](https://github.com/relishinc/dill-pixel/compare/v4.19.0...v4.19.1) (2025-05-07)
+
+
+### Bug Fixes
+
+* added initialize method to SceneTransition ([23416f1](https://github.com/relishinc/dill-pixel/commit/23416f15abc50a5f04ce9c37408bd194a9893fd2))
+
 ## [4.19.0](https://github.com/relishinc/dill-pixel/compare/v4.18.7...v4.19.0) (2025-05-07)
 
 
