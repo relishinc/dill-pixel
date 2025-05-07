@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.19.0](https://github.com/relishinc/dill-pixel/compare/v4.18.7...v4.19.0) (2025-05-07)
+
+
+### Features
+
+* added orientation change signal ([23f5006](https://github.com/relishinc/dill-pixel/commit/23f500653846a9e15fa31095ef3b934c90339b8c))
+* added preloading splash assets ([885d3c0](https://github.com/relishinc/dill-pixel/commit/885d3c0953081ec2fabf8180140139043ab92d9b))
+* added preloading splash assets ([8c10a0e](https://github.com/relishinc/dill-pixel/commit/8c10a0ed5a8b838e47ccad2441e6b1071abd13ce))
+
 ## [4.18.7](https://github.com/relishinc/dill-pixel/compare/v4.18.6...v4.18.7) (2025-04-17)
 
 
