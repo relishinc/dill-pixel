@@ -2,25 +2,18 @@ import { Sprite } from 'pixi.js';
 import { Container } from './Container';
 
 export interface ISceneTransition extends Container {
+  initialized: boolean;
   progress: number;
   active: boolean;
   destroy(): void;
-
   enter(): Promise<any> | void;
   exit(): Promise<any> | void;
+  initialize(): void;
 }
 
 export class SceneTransition extends Container {
+  public initialized: boolean = false;
   protected __background: Sprite;
-
-  constructor(autoUpdate: boolean = false) {
-    super({ autoResize: true, autoUpdate, priority: -9999 });
-    this.addSignalConnection(
-      this.app.assets.onLoadStart.connect(this.handleLoadStart),
-      this.app.assets.onLoadProgress.connect(this.handleLoadProgress),
-      this.app.assets.onLoadProgress.connect(this.handleLoadComplete),
-    );
-  }
 
   private _active: boolean = false;
 
@@ -30,6 +23,10 @@ export class SceneTransition extends Container {
 
   set active(value: boolean) {
     this._active = value;
+    if (this._active && !this.initialized) {
+      this.initialize();
+      this.initialized = true;
+    }
   }
 
   private _progress: number;
@@ -40,6 +37,19 @@ export class SceneTransition extends Container {
 
   set progress(value: number) {
     this._progress = value;
+  }
+
+  constructor(autoUpdate: boolean = false) {
+    super({ autoResize: true, autoUpdate, priority: -9999 });
+    this.addSignalConnection(
+      this.app.assets.onLoadStart.connect(this.handleLoadStart),
+      this.app.assets.onLoadProgress.connect(this.handleLoadProgress),
+      this.app.assets.onLoadProgress.connect(this.handleLoadComplete),
+    );
+  }
+
+  public initialize() {
+    // set up the transition
   }
 
   /**

@@ -505,25 +505,28 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
   }
 
   private async _showSplash() {
-    console.log('splash', this.splash);
     if (this.splash.preload) {
       if (this.splash.preload.assets) {
         await this.app.assets.loadAssets(this.splash.preload.assets);
       }
       if (this.splash.preload.bundles) {
-        console.log('loading bundles', this.splash.preload.bundles);
         await this.app.assets.loadBundles(this.splash.preload.bundles);
       }
     }
-    console.log('HIHIHIHI');
-    await this.splash.view?.enter();
+    if (this.splash.view) {
+      this.splash.view.active = true;
+      await this.splash.view?.enter();
+    }
   }
 
   private async _hideSplash(): Promise<void> {
-    await this.splash.view?.exit();
-    this.splash.view?.destroy();
-    this.splash.view?.parent?.removeChild(this.splash.view);
-    this.splash.view = null;
+    if (this.splash.view) {
+      await this.splash.view?.exit();
+      this.splash.view.active = false;
+      this.splash.view.destroy();
+      this.splash.view.parent?.removeChild(this.splash.view);
+      this.splash.view = null;
+    }
   }
 
   private _createDebugMenu() {
