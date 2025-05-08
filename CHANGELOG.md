@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.19.3](https://github.com/relishinc/dill-pixel/compare/v4.19.2...v4.19.3) (2025-05-08)
+
+
+### Bug Fixes
+
+* allow asset initOptions in config ([50ca91b](https://github.com/relishinc/dill-pixel/commit/50ca91bb69f274f1ddaff193ad46468076dbc88f))
+
 ## [4.19.2](https://github.com/relishinc/dill-pixel/compare/v4.19.1...v4.19.2) (2025-05-08)
 
 
