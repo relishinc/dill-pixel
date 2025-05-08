@@ -81,6 +81,7 @@ export function defineConfig<D extends DataSchema = DataSchema>(config: Partial<
       background: assets?.background || {
         bundles: [],
       },
+      initOptions: assets?.initOptions || {},
     },
   };
 
