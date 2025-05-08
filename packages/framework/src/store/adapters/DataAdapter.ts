@@ -318,9 +318,25 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
   private restoreFromLocalStorage(keys?: Array<keyof D>): void {
     const keysToRestore = keys && keys?.length > 0 ? keys : (Object.keys(this.data) as Array<keyof D>);
     keysToRestore.forEach((key) => {
-      const loadedData = localStorage.getItem(`${this.namespace}-${key as string}`);
-      if (loadedData !== null) {
-        this.data[key] = JSON.parse(loadedData);
+      try {
+        const loadedData = localStorage.getItem(`${this.namespace}-${String(key)}`);
+        if (loadedData !== null) {
+          try {
+            const parsedData = JSON.parse(loadedData);
+            this.data[key] = parsedData;
+          } catch (parseError) {
+            console.warn(
+              `Failed to parse data for key "${String(key)}" in namespace "${this.namespace}". Using default value.`,
+            );
+            // Keep the existing value in this.data[key] if parsing fails
+          }
+        }
+      } catch (storageError) {
+        console.error(
+          `Error accessing localStorage for key "${String(key)}" in namespace "${this.namespace}":`,
+          storageError,
+        );
+        // Keep the existing value in this.data[key] if storage access fails
       }
     });
     this.onDataChange.emit({ restore: true });
