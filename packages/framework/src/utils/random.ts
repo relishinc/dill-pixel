@@ -19,41 +19,45 @@ export function randomUUID(): string {
 }
 
 /**
- * Find a float between two numbers, inclusive of {@param min} and exclusive of {@param max}.
- * @param min
- * @param max
+ * Find a float between two numbers, inclusive of {@param min} and optionally inclusive of {@param max}.
+ * @param min The minimum value (inclusive)
+ * @param max The maximum value (exclusive by default)
+ * @param includeMax Whether the max value should be inclusive (default: false)
  * @returns number
  */
-export function floatBetween(min: number, max: number): number {
-  return min + Math.random() * (max - min);
+export function floatBetween(min: number, max: number, includeMax = false): number {
+  return min + Math.random() * (max - min + (includeMax ? 1 : 0));
 }
 
 /**
  * Find a float between the x,y of a Point
- * @param pt
+ * @param pt The point containing min (x) and max (y) values
+ * @param includeMax Whether the max value should be inclusive (default: false)
  * @returns number
  */
-export function floatBetweenPoint(pt: Point): number {
-  return floatBetween(pt.x, pt.y);
+export function floatBetweenPoint(pt: Point, includeMax = false): number {
+  return floatBetween(pt.x, pt.y, includeMax);
 }
 
 /**
- * Find an integer between two numbers, inclusive of {@param min} and exclusive of {@param max}.
- * @param min
- * @param max
+ * Find an integer between two numbers, inclusive of {@param min} and optionally inclusive of {@param max}.
+ * @param min The minimum value (inclusive)
+ * @param max The maximum value (exclusive by default)
+ * @param includeMax Whether the max value should be inclusive (default: false)
  * @returns number
  */
-export function intBetween(min: number, max: number): number {
-  return Math.floor(floatBetween(min, max));
+export function intBetween(min: number, max: number, includeMax = false): number {
+  return Math.floor(floatBetween(min, max, includeMax));
 }
 
 /**
  * Find an int between the x,y of a Point
- * @param pt
+ * @param pt The point containing min (x) and max (y) values
+ * @param includeMax Whether the max value should be inclusive (default: false)
  * @returns number
  */
-export function intBetweenPoint(pt: Point): number {
-  return intBetween(pt.x, pt.y);
+export function intBetweenPoint(pt: Point, includeMax = false): number {
+  return intBetween(pt.x, pt.y, includeMax);
 }
 
 /**

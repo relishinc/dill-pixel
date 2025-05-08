@@ -1,4 +1,4 @@
-import {intBetween} from './random';
+import { intBetween } from './random';
 
 /**
  * Shuffle an array.
