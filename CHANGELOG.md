@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.19.2](https://github.com/relishinc/dill-pixel/compare/v4.19.1...v4.19.2) (2025-05-08)
+
+
+### Bug Fixes
+
+* failsafe in DataAdapter for data restoration ([1a1cd99](https://github.com/relishinc/dill-pixel/commit/1a1cd99a0b9e6e77e6cdb641243518fa5fd1c289))
+
 ## [4.19.1](https://github.com/relishinc/dill-pixel/compare/v4.19.0...v4.19.1) (2025-05-07)
 
 
