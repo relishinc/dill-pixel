@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.19.4](https://github.com/relishinc/dill-pixel/compare/v4.19.3...v4.19.4) (2025-05-08)
+
+
+### Bug Fixes
+
+* examples config ([c1b2365](https://github.com/relishinc/dill-pixel/commit/c1b23651335829b73d1db594669c8ba53714195c))
+
 ## [4.19.3](https://github.com/relishinc/dill-pixel/compare/v4.19.2...v4.19.3) (2025-05-08)
 
 
