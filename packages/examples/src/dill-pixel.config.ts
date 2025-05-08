@@ -145,9 +145,6 @@ export const config = defineConfig<Data>({
     controls,
   },
   assets: {
-    initOptions: {
-      basePath: '/foo',
-    },
     preload: {
       bundles: ['required', 'game'],
     },
