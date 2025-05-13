@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.20.0](https://github.com/relishinc/dill-pixel/compare/v4.19.4...v4.20.0) (2025-05-13)
+
+
+### Features
+
+* added domReady check in create method ([f11b52f](https://github.com/relishinc/dill-pixel/commit/f11b52fd576bae9a43dff3bd58d289bf72965751))
+* added webGL checker ([f11b52f](https://github.com/relishinc/dill-pixel/commit/f11b52fd576bae9a43dff3bd58d289bf72965751))
+
 ## [4.19.4](https://github.com/relishinc/dill-pixel/compare/v4.19.3...v4.19.4) (2025-05-08)
 
 
