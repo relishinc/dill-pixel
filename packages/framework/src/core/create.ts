@@ -1,5 +1,6 @@
 import { sayHello } from '../hello';
 import { DataSchema } from '../store';
+import { checkWebGL } from '../webgl-check';
 import { Application } from './Application';
 import { IApplication } from './interfaces';
 import { AppConfig } from './types';
@@ -13,12 +14,26 @@ export function createContainer(id: string) {
   return container;
 }
 
+export async function documentReady() {
+  return new Promise((resolve) => {
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      resolve(true);
+    } else {
+      document.addEventListener('DOMContentLoaded', () => {
+        resolve(true);
+      });
+    }
+  });
+}
+
 export async function create<T extends IApplication = Application, D extends DataSchema = DataSchema>(
   config: AppConfig<D> = { id: 'DillPixelApplication' },
   ApplicationClass: new () => IApplication = Application,
   domElement: string | Window | HTMLElement = DEFAULT_GAME_CONTAINER_ID,
   speak: boolean = true,
 ): Promise<T> {
+  await documentReady();
+  checkWebGL();
   if (speak) {
     sayHello();
   }
