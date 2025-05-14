@@ -528,6 +528,7 @@ export class Application<
     await this.boot(this.config);
     await this.preInitialize(this.config);
     await this.initAssets();
+
     // initialize the pixi application
     await this.init(this.config);
 
@@ -547,6 +548,8 @@ export class Application<
 
     // register the default plugins
     await this.registerDefaultPlugins();
+
+    this.signals.onLoadRequiredComplete.connectOnce(this.requiredAssetsLoaded);
 
     // internal setup
     await this._setup();
@@ -820,6 +823,16 @@ export class Application<
     return this.store.registerAdapter(adapter, adapterOptions);
   }
 
+  /**
+   * This is called after the required assets are loaded
+   * You can be sure that all the assets on the assets.preload from dill-pixel.config are loaded
+   * @protected
+   */
+  protected requiredAssetsLoaded(): Promise<void> | void;
+
+  protected async requiredAssetsLoaded(): Promise<void> {
+    // override me
+  }
   /**
    * This is called after the application is initialized
    * You can be sure that
