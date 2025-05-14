@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.21.2](https://github.com/relishinc/dill-pixel/compare/v4.21.1...v4.21.2) (2025-05-14)
+
+
+### Bug Fixes
+
+* pwa registration flow ([cadcd91](https://github.com/relishinc/dill-pixel/commit/cadcd919231641c7775e12a272c38eb491b3f49b))
+* pwa registration flow, Dill Pixel globals ([4d2e829](https://github.com/relishinc/dill-pixel/commit/4d2e82927dad638e6f0de2f8bac957e8c7862952))
+
 ## [4.21.1](https://github.com/relishinc/dill-pixel/compare/v4.21.0...v4.21.1) (2025-05-14)
 
 
