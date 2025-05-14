@@ -21,6 +21,6 @@
     "allowJs": true,
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
-  "include": ["./src/**/*.ts", "./src/**/*.d.ts"],
+  "include": ["./src/**/*.ts", "./src/**/*.d.ts", "./src/ types/**/*.d.ts"],
   "exclude": ["./lib/index.d.ts", "./node_modules", "./.cache", ".pnpm"]
 }

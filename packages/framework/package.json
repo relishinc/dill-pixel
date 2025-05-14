@@ -21,15 +21,14 @@
     "templates",
     "types"
   ],
-  "main": "lib/dill-pixel.mjs",
-  "types": "lib/index.d.ts",
   "exports": {
     ".": {
-      "default": "./lib/dill-pixel.mjs",
       "types": [
         "./lib/index.d.ts",
-        "./src/dillpixel.d.ts"
-      ]
+        "./src/dill-pixel-env.d.ts",
+        "./src/dill-pixel-virtual-modules.d.ts"
+      ],
+      "default": "./lib/dill-pixel.mjs"
     },
     "./config/assetpack": {
       "default": "./config/assetpack.mjs"

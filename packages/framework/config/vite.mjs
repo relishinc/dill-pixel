@@ -328,6 +328,7 @@ export function sceneListPlugin(isProject = true) {
     },
   };
 }
+
 function createDillPixelGlobalsPlugin() {
   const entryId = 'dill-pixel-globals';
   const resolvedEntryId = '\0' + entryId;
@@ -370,6 +371,64 @@ function createDillPixelGlobalsPlugin() {
             output: {
               entryFileNames: (chunkInfo) => {
                 if (chunkInfo.facadeModuleId?.includes('dill-pixel-globals')) {
+                  return 'assets/dill-pixel-[hash].js';
+                }
+                return 'assets/[name]-[hash].js';
+              },
+            },
+          },
+        },
+      };
+    },
+  };
+}
+
+function createDillPixelPWAPlugin() {
+  const entryId = 'dill-pixel-pwa';
+  const resolvedEntryId = '\0' + entryId;
+
+  return {
+    name: 'vite-virtual-entry',
+    enforce: 'pre',
+    resolveId(id) {
+      if (id === entryId) {
+        return resolvedEntryId;
+      }
+    },
+    load(id) {
+      if (id === resolvedEntryId) {
+        return `
+          import {pwaInfo} from 'virtual:pwa-info';
+          import {registerSW} from 'virtual:pwa-register';
+
+          window.__DILL_PIXEL = window.__DILL_PIXEL || {};
+          window.__DILL_PIXEL.pwaInfo = pwaInfo;
+          window.__DILL_PIXEL.pwaNeedRefresh = false;
+          window.__DILL_PIXEL.pwaOfflineReady = false;
+
+          window.__DILL_PIXEL.registerSW = registerSW({
+            immediate: true,
+            onNeedRefresh: () => {
+              window.__DILL_PIXEL.pwaNeedRefresh = true;
+            },
+            onOfflineReady: () => {
+              window.__DILL_PIXEL.pwaOfflineReady = true;
+            },
+          });
+        `;
+      }
+    },
+    config(config) {
+      const input = config.build?.rollupOptions?.input || 'index.html';
+      const inputs = Array.isArray(input) ? input : [input];
+
+      return {
+        build: {
+          rollupOptions: {
+            input: [entryId, ...inputs],
+            output: {
+              entryFileNames: (chunkInfo) => {
+                if (chunkInfo.facadeModuleId?.includes('dill-pixel-pqa')) {
                   return 'assets/dill-pixel-[hash].js';
                 }
                 return 'assets/[name]-[hash].js';
@@ -506,6 +565,7 @@ function withPWA(userPWAConfig = {}, userConfig = {}) {
   };
   const config = mergeConfig(defaultConfig, userConfig);
   config.plugins.push(VitePWA(pwaConfig));
+  config.plugins.push(createDillPixelPWAPlugin());
   return config;
 }
 

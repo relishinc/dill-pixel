@@ -15,5 +15,5 @@ export default defineConfig({
       external: ['pixi.js', 'gsap'],
     },
   },
-  plugins: [dts()],
+  plugins: [dts({ copyDtsFiles: true })],
 });

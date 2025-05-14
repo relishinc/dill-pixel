@@ -1,26 +1,10 @@
 import { create } from 'dill-pixel';
 import 'dill-pixel-globals'; // required for globals like the scenes list
+import 'dill-pixel-pwa'; // required for pwa
 
 import { V8Application } from './V8Application';
 import { config } from './dill-pixel.config';
 
-/**
- * PWA
- */
-import { pwaInfo } from 'virtual:pwa-info';
-import { registerSW } from 'virtual:pwa-register';
-
-registerSW({
-  immediate: true,
-  onNeedRefresh() {
-    console.log('onNeedRefresh message should not appear');
-  },
-  onOfflineReady() {
-    console.log('onOfflineReady message should not appear');
-  },
-});
-
-console.log({ pwa: pwaInfo });
 /**
  * PWA
  */
@@ -118,11 +102,13 @@ async function bootstrap() {
     // update active nav item
     const setActiveNavItem = (state: string | undefined) => {
       const active = nav?.querySelector('.active');
+
       if (active) {
         active.classList.remove('active');
       }
 
       const a = nav?.querySelector(`a[href="#${state}"]`);
+
       if (a) {
         a.classList.add('active');
       }
@@ -135,6 +121,7 @@ async function bootstrap() {
     };
 
     window.addEventListener('hashchange', checkHash);
+
     checkHash();
   }
   populateSidebar();

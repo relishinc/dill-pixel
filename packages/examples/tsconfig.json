@@ -13,8 +13,7 @@
       "@dill-pixel/storage-adapter-firebase/*": ["../storage-adapters/firebase/src/*"],
       "@dill-pixel/storage-adapter-supabase/*": ["../storage-adapters/supabase/src/*"]
     },
-    "types": ["vite/client"]
-    // added this to resolve errors when using import.meta.env
+    "types": ["vite/client", "../framework/src/dill-pixel-env.d.ts", "../framework/src/dill-pixel-virtual-modules.d.ts"]
   },
   "references": [
     {
@@ -45,6 +44,6 @@
       "path": "../storage-adapters/supabase"
     }
   ],
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.json", "../**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.json"],
   "exclude": ["node_modules", "dist"]
 }
