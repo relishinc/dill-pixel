@@ -1,4 +1,4 @@
-import { PlayOptions, Sound, sound, SoundSourceMap } from '@pixi/sound';
+import { Options, PlayOptions, Sound, sound, SoundMap, SoundSourceMap } from '@pixi/sound';
 import { gsap } from 'gsap';
 import { Assets, AssetsManifest, UnresolvedAsset } from 'pixi.js';
 import { Signal } from '../../signals';
@@ -15,6 +15,41 @@ export type SoundDetail = { id: string; instance: IAudioInstance; channelName: s
 export type ChannelVolumeDetail = { channel: IAudioChannel; volume: number };
 export type ChannelMutedDetail = { channel: IAudioChannel; muted: boolean };
 export type ChannelName = 'music' | 'sfx' | 'voiceover' | (string & {});
+
+// patch sound.add to fix console.assert error
+sound.add = function (
+  source: string | SoundSourceMap,
+  sourceOptions?: Options | string | ArrayBuffer | AudioBuffer | HTMLAudioElement | Sound,
+): any {
+  if (typeof source === 'object') {
+    const results: SoundMap = {};
+
+    for (const alias in source) {
+      // @ts-expect-error _getOptions is private
+      const options: Options = this._getOptions(source[alias], sourceOptions as Options);
+
+      results[alias] = this.add(alias, options);
+    }
+
+    return results;
+  }
+
+  // eslint-disable-next-line no-console
+
+  if (sourceOptions instanceof Sound) {
+    // @ts-expect-error _sounds is private
+    this._sounds[source] = sourceOptions;
+
+    return sourceOptions;
+  }
+  // @ts-expect-error _getOptions is private
+  const options: Options = this._getOptions(sourceOptions);
+  const sound: Sound = Sound.from(options);
+  // @ts-expect-error _sounds is private
+  this._sounds[source] = sound;
+
+  return sound;
+};
 
 export interface IAudioManagerPlugin<C extends ChannelName = ChannelName> extends IPlugin {
   onSoundStarted: Signal<(detail: SoundDetail) => void>;
@@ -227,7 +262,7 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
     sound.disableAutoPause = true;
     // TODO: investigate why this causes a console.assert error during load because audio files are already added.
     if (typeof app?.manifest === 'object') {
-      //this.addAllFromManifest(app.manifest);
+      this.addAllFromManifest(app.manifest);
     }
     return Promise.resolve();
   }
@@ -368,6 +403,7 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
     if (alias) {
       const obj: SoundSourceMap = {};
       (alias as string[]).forEach((a: string) => {
+        Logger.log('exists', a, sound.exists(a));
         if (a === undefined || sound.exists(a)) {
           return;
         }

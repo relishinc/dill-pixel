@@ -1,4 +1,4 @@
-import { ActionDetail, Button, ButtonAction, ButtonConfig, FlexContainer, SceneAssets } from 'dill-pixel';
+import { ActionDetail, Button, ButtonAction, ButtonConfig, FlexContainer } from 'dill-pixel';
 
 import BaseScene from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
@@ -25,14 +25,6 @@ export default class AudioScene extends BaseScene {
 
   constructor() {
     super();
-  }
-
-  get assets(): SceneAssets {
-    return {
-      preload: {
-        bundles: ['audio'],
-      },
-    };
   }
 
   public async initialize() {
