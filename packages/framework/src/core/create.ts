@@ -6,19 +6,15 @@ import { checkWebGL } from '../webgl-check';
 import { Application } from './Application';
 import { IApplication } from './interfaces';
 import { AppConfig } from './types';
-interface RegisterSWOptions {
-  immediate?: boolean;
-  onNeedRefresh?: () => void;
-  onOfflineReady?: () => void;
-}
 interface DillPixelGlobal {
   readonly sceneList: SceneImportListItem<any>[];
   readonly pluginsList: PluginListItem[];
   readonly storageAdaptersList: StorageAdapterListItem[];
+  // pwa
   readonly pwaInfo: any;
-  pwaNeedRefresh: boolean;
-  pwaOfflineReady: boolean;
-  registerSW: (options: RegisterSWOptions) => void;
+  pwaNeedRefresh: () => void;
+  pwaOfflineReady: () => void;
+  pwaRegister: () => void;
 }
 
 declare global {

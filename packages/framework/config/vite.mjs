@@ -403,18 +403,28 @@ function createDillPixelPWAPlugin() {
 
           window.__DILL_PIXEL = window.__DILL_PIXEL || {};
           window.__DILL_PIXEL.pwaInfo = pwaInfo;
-          window.__DILL_PIXEL.pwaNeedRefresh = false;
-          window.__DILL_PIXEL.pwaOfflineReady = false;
+          
+          window.__DILL_PIXEL.pwaNeedRefresh = function(){
+            if (confirm('A new version is available. Refresh?')) {
+              window.location.reload();
+            }
+          }
 
-          window.__DILL_PIXEL.registerSW = registerSW({
-            immediate: true,
-            onNeedRefresh: () => {
-              window.__DILL_PIXEL.pwaNeedRefresh = true;
-            },
-            onOfflineReady: () => {
-              window.__DILL_PIXEL.pwaOfflineReady = true;
-            },
-          });
+          window.__DILL_PIXEL.pwaOfflineReady = function(){
+            console.log('PWA is ready for offline use');
+          }
+
+          window.__DILL_PIXEL.pwaRegister = function(){
+            registerSW({
+              immediate: true,
+              onNeedRefresh: () => {
+                window.__DILL_PIXEL.pwaNeedRefresh()
+              },
+              onOfflineReady: () => {
+                window.__DILL_PIXEL.pwaOfflineReady()
+              },
+            });
+          }
         `;
       }
     },
