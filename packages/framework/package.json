@@ -26,12 +26,6 @@
       "types": "./lib/index.d.ts",
       "default": "./lib/dill-pixel.mjs"
     },
-    "./env": {
-      "types": "./lib/dill-pixel-env.d.ts"
-    },
-    "./virtual": {
-      "types": "./lib/dill-pixel-virtual-modules.d.ts"
-    },
     "./config/assetpack": {
       "default": "./config/assetpack.mjs"
     },

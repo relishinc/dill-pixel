@@ -61,6 +61,14 @@ export interface ICoreSignals {
   onLoadProgress: Signal<(progress: number) => void>;
   onLoadComplete: Signal<() => void>;
   onError: Signal<(error: Error) => void>;
+
+  onBackgroundLoadStart: Signal<() => void>;
+  onBackgroundAssetsLoaded: Signal<(assets: string[]) => void>;
+  onBackgroundBundlesLoaded: Signal<(bundles: string[]) => void>;
+
+  onLoadRequiredStart: Signal<() => void>;
+  onLoadRequiredProgress: Signal<(progress: number) => void>;
+  onLoadRequiredComplete: Signal<() => void>;
   // DataAdapter;
   onDataChange: Signal<(detail: DataChangeSignalDetail) => void>;
 }

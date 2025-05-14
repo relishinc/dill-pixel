@@ -25,6 +25,10 @@ export interface IAssetsPlugin extends IPlugin {
   onLoadRequiredProgress: Signal<(progress: number) => void>;
   onLoadRequiredComplete: Signal<() => void>;
 
+  onBackgroundLoadStart: Signal<() => void>;
+  onBackgroundAssetLoaded: Signal<(asset: string) => void>;
+  onBackgroundBundlesLoaded: Signal<(bundles: BundleTypes) => void>;
+
   webStartEvent: Event;
   webProgressEvent: CustomEvent<{ progress: number }>;
   webCompleteEvent: Event;
@@ -110,7 +114,7 @@ export class AssetsPlugin extends Plugin<Application, AssetLoadingOptions> imple
 
   public onBackgroundLoadStart: Signal<() => void> = new Signal();
   public onBackgroundAssetLoaded: Signal<(asset: string) => void> = new Signal();
-  public onBackgroundBundlesLoaded: Signal<() => void> = new Signal();
+  public onBackgroundBundlesLoaded: Signal<(bundles: BundleTypes) => void> = new Signal();
 
   private _loadedBundles: Set<string> = new Set();
   private _loadedAssets: Set<string | UnresolvedAsset> = new Set();
@@ -209,7 +213,7 @@ export class AssetsPlugin extends Plugin<Application, AssetLoadingOptions> imple
       }
       if (this._background.bundles) {
         void Assets.backgroundLoadBundle(this._background.bundles).then(() => {
-          this.onBackgroundBundlesLoaded.emit();
+          this.onBackgroundBundlesLoaded.emit(this._background.bundles as BundleTypes);
         });
       }
     }
@@ -311,6 +315,9 @@ export class AssetsPlugin extends Plugin<Application, AssetLoadingOptions> imple
       'onBackgroundLoadStart',
       'onBackgroundAssetLoaded',
       'onBackgroundBundlesLoaded',
+      'onLoadRequiredStart',
+      'onLoadRequiredProgress',
+      'onLoadRequiredComplete',
     ];
   }
 
