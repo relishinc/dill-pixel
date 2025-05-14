@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.21.3](https://github.com/relishinc/dill-pixel/compare/v4.21.2...v4.21.3) (2025-05-14)
+
+
+### Bug Fixes
+
+* pwa variables in Dill Pixel globals ([74cfdf6](https://github.com/relishinc/dill-pixel/commit/74cfdf65eb25999d296af573ea28968b0e7181ac))
+
 ## [4.21.2](https://github.com/relishinc/dill-pixel/compare/v4.21.1...v4.21.2) (2025-05-14)
 
 
