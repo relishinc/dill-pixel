@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.20.1](https://github.com/relishinc/dill-pixel/compare/v4.20.0...v4.20.1) (2025-05-14)
+
+
+### Bug Fixes
+
+* added virtual types & globals types ([d0f6c9d](https://github.com/relishinc/dill-pixel/commit/d0f6c9d7d958e549fa044dd61f9e9db2184eda78))
+* removed redundant types ([bac3b4c](https://github.com/relishinc/dill-pixel/commit/bac3b4c7e603f08c1e61bbed9a8fc795c327314b))
+
 ## [4.20.0](https://github.com/relishinc/dill-pixel/compare/v4.19.4...v4.20.0) (2025-05-13)
 
 
