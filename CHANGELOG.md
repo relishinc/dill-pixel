@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.21.1](https://github.com/relishinc/dill-pixel/compare/v4.21.0...v4.21.1) (2025-05-14)
+
+
+### Bug Fixes
+
+* removed load progress reporting for splash assets ([ce34439](https://github.com/relishinc/dill-pixel/commit/ce34439c47baa40b9e51b07b46af581c0d026bd9))
+* removed log in AudioManager ([38acbd4](https://github.com/relishinc/dill-pixel/commit/38acbd47d1d8252a44335728cce730c50a4543e1))
+
 ## [4.21.0](https://github.com/relishinc/dill-pixel/compare/v4.20.2...v4.21.0) (2025-05-14)
 
 
