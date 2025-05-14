@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-colyseus",
-  "version": "4.20.1",
+  "version": "4.20.2",
   "description": "Colyseus",
   "files": [
     "lib",
@@ -28,12 +28,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "dill-pixel": "4.20.1",
+    "dill-pixel": "4.20.2",
     "vite": "6.1.1",
     "vite-plugin-dts": "^4.5.3"
   },
   "peerDependencies": {
-    "dill-pixel": "4.20.1"
+    "dill-pixel": "4.20.2"
   },
   "dependencies": {
     "@colyseus/schema": "^2.0.34",
