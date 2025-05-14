@@ -1,3 +1,4 @@
+import { type RegisterSWOptions } from 'vite-plugin-pwa/types';
 import { sayHello } from '../hello';
 import type { PluginListItem } from '../plugins';
 import { DataSchema, type StorageAdapterListItem } from '../store';
@@ -8,12 +9,10 @@ import { IApplication } from './interfaces';
 import { AppConfig } from './types';
 
 interface DillPixelPWA {
-  readonly pwaInfo: any;
-  newVersionMessage: string;
-  offlineReadyMessage: string;
-  needRefresh: () => void;
-  offlineReady: () => void;
+  readonly info: any;
   register: () => void;
+  onRegisteredSW: (swScriptUrl: string) => void;
+  offlineReady: () => void;
 }
 interface DillPixelGlobal {
   APP_NAME: string;
@@ -24,7 +23,6 @@ interface DillPixelGlobal {
   readonly storageAdaptersList: StorageAdapterListItem[];
 
   get: (key?: string) => any;
-
   // pwa
   pwa: DillPixelPWA;
 }
@@ -34,6 +32,7 @@ declare global {
   const __DILL_PIXEL_APP_VERSION: string | number;
 
   const DillPixel: DillPixelGlobal;
+  const registerSW: (options: RegisterSWOptions) => void;
   interface Window {
     DillPixel: DillPixelGlobal;
   }
