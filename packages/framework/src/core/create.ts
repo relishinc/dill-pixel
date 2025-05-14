@@ -13,6 +13,8 @@ interface DillPixelPWA {
   register: () => void;
   onRegisteredSW: (swScriptUrl: string) => void;
   offlineReady: () => void;
+  onNeedRefresh?: () => void;
+  onRegisterError?: (error: any) => void;
 }
 interface DillPixelGlobal {
   APP_NAME: string;
