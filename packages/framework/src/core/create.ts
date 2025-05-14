@@ -9,6 +9,8 @@ import { AppConfig } from './types';
 
 interface DillPixelPWA {
   readonly pwaInfo: any;
+  newVersionMessage: string;
+  offlineReadyMessage: string;
   needRefresh: () => void;
   offlineReady: () => void;
   register: () => void;
