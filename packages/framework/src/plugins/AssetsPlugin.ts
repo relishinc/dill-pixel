@@ -37,9 +37,12 @@ export interface IAssetsPlugin extends IPlugin {
   webRequiredProgressEvent: CustomEvent<{ progress: number }>;
   webRequiredCompleteEvent: Event;
 
-  loadAssets(assets: string | string[] | UnresolvedAsset | UnresolvedAsset[] | AssetLike | AssetLike[]): Promise<void>;
+  loadAssets(
+    assets: string | string[] | UnresolvedAsset | UnresolvedAsset[] | AssetLike | AssetLike[],
+    reportProgress?: boolean,
+  ): Promise<void>;
 
-  loadBundles(bundle: string | string[]): Promise<void>;
+  loadBundles(bundle: string | string[], reportProgress?: boolean): Promise<void>;
 
   loadSceneAssets(scene: IScene | SceneImportListItem<any>, background?: boolean): Promise<void>;
 
@@ -219,16 +222,15 @@ export class AssetsPlugin extends Plugin<Application, AssetLoadingOptions> imple
     }
   }
 
-  public async loadAssets(assets: AssetTypes) {
+  public async loadAssets(assets: AssetTypes, reportProgress: boolean = true) {
     assets = getAssetList(assets);
-
-    await Assets.load(assets, this._handleLoadProgress);
+    await Assets.load(assets, reportProgress ? this._handleLoadProgress : undefined);
     this._markAssetsLoaded(assets as UnresolvedAsset[] | string[]);
     return Promise.resolve();
   }
 
-  public async loadBundles(bundles: string | string[]) {
-    await Assets.loadBundle(bundles, this._handleLoadProgress);
+  public async loadBundles(bundles: string | string[], reportProgress: boolean = true) {
+    await Assets.loadBundle(bundles, reportProgress ? this._handleLoadProgress : undefined);
     this._markBundlesLoaded(bundles);
     return Promise.resolve();
   }

@@ -507,10 +507,10 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
   private async _showSplash() {
     if (this.splash.preload) {
       if (this.splash.preload.assets) {
-        await this.app.assets.loadAssets(this.splash.preload.assets);
+        await this.app.assets.loadAssets(this.splash.preload.assets, false);
       }
       if (this.splash.preload.bundles) {
-        await this.app.assets.loadBundles(this.splash.preload.bundles);
+        await this.app.assets.loadBundles(this.splash.preload.bundles, false);
       }
     }
     if (this.splash.view) {
