@@ -177,6 +177,11 @@ export class AssetsPlugin extends Plugin<Application, AssetLoadingOptions> imple
         await Assets.load(getAssetList(this._required.assets), this._handleLoadProgress);
       }
       if (this._required.bundles) {
+        let bundles = this._required.bundles;
+        if (!Array.isArray(bundles)) {
+          bundles = [bundles];
+        }
+        bundles = bundles.filter((bundle) => !this._isBundleLoaded(bundle));
         await Assets.loadBundle(this._required.bundles, this._handleLoadProgress);
       }
     }

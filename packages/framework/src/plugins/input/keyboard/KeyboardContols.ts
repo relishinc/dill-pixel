@@ -68,7 +68,6 @@ export class KeyboardControls extends WithSignals(AbstractControls) {
     keys.forEach((key) => {
       const item = this._keyDownMap[key];
       const action = actions[key];
-      console.log('action', action, key);
       if (
         action.context !== '*' &&
         action.context !== this.app.actionContext &&

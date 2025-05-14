@@ -227,9 +227,9 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
     sound.disableAutoPause = true;
     // TODO: investigate why this causes a console.assert error during load because audio files are already added.
     if (typeof app?.manifest === 'object') {
-      this.addAllFromManifest(app.manifest);
+      //this.addAllFromManifest(app.manifest);
     }
-    return Promise.resolve(undefined);
+    return Promise.resolve();
   }
 
   /**
@@ -368,10 +368,9 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
     if (alias) {
       const obj: SoundSourceMap = {};
       (alias as string[]).forEach((a: string) => {
-        if (a === undefined) {
+        if (a === undefined || sound.exists(a)) {
           return;
         }
-
         // @ts-expect-error soundAsset is not a string error
         obj[a] = soundAsset.src;
       });
@@ -381,7 +380,6 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
 
   isPlaying(soundId: string, channelName: C): boolean {
     const channel = this._channels.get(channelName);
-    console.log('ISPLAYING', channel, channel?.get(soundId));
     if (channel) {
       return channel.get(soundId)?.isPlaying === true;
     }
