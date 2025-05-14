@@ -418,13 +418,11 @@ function createDillPixelPWAPlugin() {
           window.DillPixel.pwa.offlineReadyMessage = 'PWA is ready for offline use';
 
           window.DillPixel.pwa.needRefresh = function(){
-            if (confirm(window.DillPixel.pwa.newVersionMessage)) {
-              window.location.reload();
-            }
+            console.warn('DillPixel PWA: need refresh -- you should defin your refresh function using window.DillPixel.pwa.needRefresh = function(){...}');
           }
 
           window.DillPixel.pwa.offlineReady = function(){
-            console.log(window.DillPixel.pwa.offlineReadyMessage);
+            console.warn('DillPixel PWA: offline ready -- you should defin your offline ready function using window.DillPixel.pwa.offlineReady = function(){...}');
           }
 
           window.DillPixel.pwa.register = function(){
