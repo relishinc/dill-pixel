@@ -6,23 +6,34 @@ import { checkWebGL } from '../webgl-check';
 import { Application } from './Application';
 import { IApplication } from './interfaces';
 import { AppConfig } from './types';
+
+interface DillPixelPWA {
+  readonly pwaInfo: any;
+  needRefresh: () => void;
+  offlineReady: () => void;
+  register: () => void;
+}
 interface DillPixelGlobal {
+  APP_NAME: string;
+  APP_VERSION: string | number;
+
   readonly sceneList: SceneImportListItem<any>[];
   readonly pluginsList: PluginListItem[];
   readonly storageAdaptersList: StorageAdapterListItem[];
+
+  get: (key?: string) => any;
+
   // pwa
-  readonly pwaInfo: any;
-  pwaNeedRefresh: () => void;
-  pwaOfflineReady: () => void;
-  pwaRegister: () => void;
+  pwa: DillPixelPWA;
 }
 
 declare global {
   const __DILL_PIXEL_APP_NAME: string;
   const __DILL_PIXEL_APP_VERSION: string | number;
-  const __DILL_PIXEL: DillPixelGlobal;
+
+  const DillPixel: DillPixelGlobal;
   interface Window {
-    __DILL_PIXEL: DillPixelGlobal;
+    DillPixel: DillPixelGlobal;
   }
 }
 

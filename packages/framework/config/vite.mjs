@@ -347,15 +347,24 @@ function createDillPixelGlobalsPlugin() {
           import {sceneList} from 'virtual:dill-pixel-scenes';
           import {pluginsList} from 'virtual:dill-pixel-plugins';
           import {storageAdaptersList} from 'virtual:dill-pixel-storage-adapters';
+          
 
-          globalThis.__DILL_PIXEL = globalThis.__DILL_PIXEL || {};
-          globalThis.__DILL_PIXEL.sceneList = sceneList;
-          globalThis.__DILL_PIXEL.pluginsList = pluginsList;
-          globalThis.__DILL_PIXEL.storageAdaptersList = storageAdaptersList;
+          globalThis.DillPixel = globalThis.DillPixel || {};
 
-          globalThis.getDillPixel = function(key) {
-            globalThis.__DILL_PIXEL = globalThis.__DILL_PIXEL || {};
-            return key ? globalThis.__DILL_PIXEL[key] : globalThis.__DILL_PIXEL;
+          try {
+            globalThis.DillPixel.APP_NAME = __DILL_PIXEL_APP_NAME;
+            globalThis.DillPixel.APP_VERSION = __DILL_PIXEL_APP_VERSION;
+          } catch (e) {
+            console.error('Failed to set app name and version', e);
+          }
+
+          globalThis.DillPixel.sceneList = sceneList;
+          globalThis.DillPixel.pluginsList = pluginsList;
+          globalThis.DillPixel.storageAdaptersList = storageAdaptersList;
+
+          globalThis.DillPixel.get = function(key) {
+            globalThis.DillPixel = globalThis.DillPixel || {};
+            return key ? globalThis.DillPixel[key] : globalThis.DillPixel;
           };
         `;
       }
@@ -401,27 +410,31 @@ function createDillPixelPWAPlugin() {
           import {pwaInfo} from 'virtual:pwa-info';
           import {registerSW} from 'virtual:pwa-register';
 
-          window.__DILL_PIXEL = window.__DILL_PIXEL || {};
-          window.__DILL_PIXEL.pwaInfo = pwaInfo;
-          
-          window.__DILL_PIXEL.pwaNeedRefresh = function(){
-            if (confirm('A new version is available. Refresh?')) {
+          window.DillPixel = window.DillPixel || {};
+          window.DillPixel.pwa = window.DillPixel.pwa || {};
+
+          window.DillPixel.pwa.info = pwaInfo;
+          window.DillPixel.pwa.newVersionMessage = 'A new version is available. Refresh?';
+          window.DillPixel.pwa.offlineReadyMessage = 'PWA is ready for offline use';
+
+          window.DillPixel.pwa.needRefresh = function(){
+            if (confirm(window.DillPixel.pwa.newVersionMessage)) {
               window.location.reload();
             }
           }
 
-          window.__DILL_PIXEL.pwaOfflineReady = function(){
-            console.log('PWA is ready for offline use');
+          window.DillPixel.pwa.offlineReady = function(){
+            console.log(window.DillPixel.pwa.offlineReadyMessage);
           }
 
-          window.__DILL_PIXEL.pwaRegister = function(){
+          window.DillPixel.pwa.register = function(){
             registerSW({
               immediate: true,
               onNeedRefresh: () => {
-                window.__DILL_PIXEL.pwaNeedRefresh()
+                window.DillPixel.pwa.needRefresh()
               },
               onOfflineReady: () => {
-                window.__DILL_PIXEL.pwaOfflineReady()
+                window.DillPixel.pwa.offlineReady()
               },
             });
           }

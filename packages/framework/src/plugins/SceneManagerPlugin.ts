@@ -136,8 +136,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
       this.app.config?.showSceneDebugMenu === true || (isDev && this.app.config?.showSceneDebugMenu !== false);
     this._useHash = app.config?.useHash === true || this._debugVisible;
     this.view.sortableChildren = true;
-    const globalThisAsAny = globalThis as any;
-    const sceneList: SceneImportListItem<IScene>[] = globalThisAsAny.getDillPixel('sceneList') || [];
+    const sceneList: SceneImportListItem<IScene>[] = DillPixel.get('sceneList') || [];
     this.list = sceneList.filter((scene) => scene.active !== false);
     this.groupOrder = app.config?.sceneGroupOrder || [];
 

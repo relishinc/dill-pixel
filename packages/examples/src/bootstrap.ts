@@ -2,6 +2,8 @@ import { create } from 'dill-pixel';
 import 'dill-pixel-globals'; // required for globals like the scenes list
 import 'dill-pixel-pwa'; // required for pwa
 
+DillPixel.pwa.register();
+
 import { V8Application } from './V8Application';
 import { config } from './dill-pixel.config';
 

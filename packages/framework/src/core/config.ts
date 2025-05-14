@@ -9,8 +9,7 @@ export type PluginOrAdapterConfig = string | [string, { autoLoad?: boolean; opti
 export async function generatePluginList<T extends IPlugin = IPlugin>(
   plugins: PluginOrAdapterConfig[],
 ): Promise<ImportList<T>> {
-  const globalThisAsAny = globalThis as any;
-  const pluginsList: PluginListItem[] = globalThisAsAny.getDillPixel('pluginsList') || [];
+  const pluginsList: PluginListItem[] = DillPixel.get('pluginsList') || [];
 
   return plugins
     .map((plugin) => {
@@ -34,8 +33,7 @@ export async function generatePluginList<T extends IPlugin = IPlugin>(
 export async function generateAdapterList<T extends IStorageAdapter = IStorageAdapter>(
   adapters: PluginOrAdapterConfig[],
 ): Promise<ImportList<T>> {
-  const globalThisAsAny = globalThis as any;
-  const storageAdaptersList: StorageAdapterListItem[] = globalThisAsAny.getDillPixel('storageAdaptersList') || [];
+  const storageAdaptersList: StorageAdapterListItem[] = DillPixel.get('storageAdaptersList') || [];
 
   return adapters
     .map((adapter) => {
