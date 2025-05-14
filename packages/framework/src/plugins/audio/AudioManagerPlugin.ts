@@ -403,7 +403,6 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
     if (alias) {
       const obj: SoundSourceMap = {};
       (alias as string[]).forEach((a: string) => {
-        Logger.log('exists', a, sound.exists(a));
         if (a === undefined || sound.exists(a)) {
           return;
         }
