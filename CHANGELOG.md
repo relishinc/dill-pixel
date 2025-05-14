@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.21.0](https://github.com/relishinc/dill-pixel/compare/v4.20.2...v4.21.0) (2025-05-14)
+
+
+### Features
+
+* add requiredAssetsLoaded handler in Applicationchore: fixed package.json exports ([bb3d686](https://github.com/relishinc/dill-pixel/commit/bb3d686cc925db78b2627157306edda0097688a4))
+
+
+### Bug Fixes
+
+* add requiredAssetsLoaded handler in Application ([e146d72](https://github.com/relishinc/dill-pixel/commit/e146d72c8c2f3795b00b8451eaf264de4bf7d10f))
+
 ## [4.20.2](https://github.com/relishinc/dill-pixel/compare/v4.20.1...v4.20.2) (2025-05-14)
 
 
