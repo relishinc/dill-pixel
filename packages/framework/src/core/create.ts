@@ -1,9 +1,34 @@
 import { sayHello } from '../hello';
-import { DataSchema } from '../store';
+import type { PluginListItem } from '../plugins';
+import { DataSchema, type StorageAdapterListItem } from '../store';
+import type { SceneImportListItem } from '../utils';
 import { checkWebGL } from '../webgl-check';
 import { Application } from './Application';
 import { IApplication } from './interfaces';
 import { AppConfig } from './types';
+interface RegisterSWOptions {
+  immediate?: boolean;
+  onNeedRefresh?: () => void;
+  onOfflineReady?: () => void;
+}
+interface DillPixelGlobal {
+  readonly sceneList: SceneImportListItem<any>[];
+  readonly pluginsList: PluginListItem[];
+  readonly storageAdaptersList: StorageAdapterListItem[];
+  readonly pwaInfo: any;
+  pwaNeedRefresh: boolean;
+  pwaOfflineReady: boolean;
+  registerSW: (options: RegisterSWOptions) => void;
+}
+
+declare global {
+  const __DILL_PIXEL_APP_NAME: string;
+  const __DILL_PIXEL_APP_VERSION: string | number;
+  const __DILL_PIXEL: DillPixelGlobal;
+  interface Window {
+    __DILL_PIXEL: DillPixelGlobal;
+  }
+}
 
 export const DEFAULT_GAME_CONTAINER_ID = 'dill-pixel-game-container';
 
