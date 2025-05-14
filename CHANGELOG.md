@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.20.2](https://github.com/relishinc/dill-pixel/compare/v4.20.1...v4.20.2) (2025-05-14)
+
+
+### Bug Fixes
+
+* audio assert errors in console at bootup ([6e31713](https://github.com/relishinc/dill-pixel/commit/6e3171355bd571d2917525cf344f43e5facfcb4d))
+* dill pixel globals type safety ([6edbdaf](https://github.com/relishinc/dill-pixel/commit/6edbdaf835e347bb0fadfbe9e9f82bf9da344f51))
+
 ## [4.20.1](https://github.com/relishinc/dill-pixel/compare/v4.20.0...v4.20.1) (2025-05-14)
 
 
