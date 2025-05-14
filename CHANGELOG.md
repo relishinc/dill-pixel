@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.21.5](https://github.com/relishinc/dill-pixel/compare/v4.21.4...v4.21.5) (2025-05-14)
+
+
+### Bug Fixes
+
+* pwa settings ([5e6f34a](https://github.com/relishinc/dill-pixel/commit/5e6f34ab6a740d1e840f70db5a7e492a40802fad))
+* pwa settings ([4c5e540](https://github.com/relishinc/dill-pixel/commit/4c5e540fad70b60d450c01a4a3ae6bb36bc6595c))
+
 ## [4.21.4](https://github.com/relishinc/dill-pixel/compare/v4.21.3...v4.21.4) (2025-05-14)
 
 
