@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.22.0](https://github.com/relishinc/dill-pixel/compare/v4.21.5...v4.22.0) (2025-05-21)
+
+
+### Features
+
+* revamped SpineAnimation class ([a2756bc](https://github.com/relishinc/dill-pixel/commit/a2756bcdebe680db84149d664cf94d53cfab230c))
+
 ## [4.21.5](https://github.com/relishinc/dill-pixel/compare/v4.21.4...v4.21.5) (2025-05-14)
 
 
