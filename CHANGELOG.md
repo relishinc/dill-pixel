@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.22.1](https://github.com/relishinc/dill-pixel/compare/v4.22.0...v4.22.1) (2025-05-26)
+
+
+### Bug Fixes
+
+* removed logs in Application and Container ([c363123](https://github.com/relishinc/dill-pixel/commit/c36312326bdcfa2eabb68dbc2e00268078253be4))
+
 ## [4.22.0](https://github.com/relishinc/dill-pixel/compare/v4.21.5...v4.22.0) (2025-05-21)
 
 
