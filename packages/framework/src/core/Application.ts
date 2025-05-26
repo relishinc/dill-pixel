@@ -614,7 +614,6 @@ export class Application<
     });
 
     this.webEvents.onVisibilityChanged.connect((visible) => {
-      Logger.log('onVisibilityChanged', visible);
       if (visible) {
         this.audio.restore();
         this.timers.resumeAllTimers();
