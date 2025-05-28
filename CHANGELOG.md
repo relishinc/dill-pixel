@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.23.0](https://github.com/relishinc/dill-pixel/compare/v4.22.1...v4.23.0) (2025-05-28)
+
+
+### Features
+
+* added addTime and removeTime methods to Timer, ([c494b69](https://github.com/relishinc/dill-pixel/commit/c494b696ab0d8fd9849500ebc58cac2d0287a993))
+
+
+### Bug Fixes
+
+* bug in Timer ([c494b69](https://github.com/relishinc/dill-pixel/commit/c494b696ab0d8fd9849500ebc58cac2d0287a993))
+
 ## [4.22.1](https://github.com/relishinc/dill-pixel/compare/v4.22.0...v4.22.1) (2025-05-26)
 
 
