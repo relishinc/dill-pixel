@@ -25,9 +25,10 @@ export interface TimerOptions {
 
 // Web Worker message types
 interface WorkerMessage {
-  type: 'tick' | 'complete' | 'reset';
+  type: 'tick' | 'complete' | 'reset' | 'adjustTime';
   timerId: string;
   time: number;
+  timeAdjustment?: number;
 }
 
 export type TimeFormat = 'mm:ss' | 'hh:mm:ss' | 'ms';
@@ -39,7 +40,7 @@ function createTimerWorker() {
     const timers = new Map();
 
     self.onmessage = (e) => {
-      const { type, timerId, options } = e.data;
+      const { type, timerId, options, timeAdjustment } = e.data;
       
       switch (type) {
         case 'start': {
@@ -80,6 +81,20 @@ function createTimerWorker() {
             timer.startTime = performance.now();
             timer.loopCount = 0;
             timer.pausedTime = 0;
+          }
+          break;
+        }
+
+        case 'adjustTime': {
+          const timer = timers.get(timerId);
+          if (timer) {
+            if (timer.duration !== undefined) {
+              // For countdown timers, adjust the duration
+              timer.duration = Math.max(0, timer.duration + timeAdjustment);
+            } else {
+              // For count-up timers, adjust the start time
+              timer.startTime -= timeAdjustment;
+            }
           }
           break;
         }
@@ -224,7 +239,7 @@ export function formatTime(
  * ```
  */
 export class Timer {
-  private startTime: number = 0;
+  private startTime: number = performance.now();
   private pausedTime: number = 0;
   private isPaused: boolean = true;
   private isDestroyed: boolean = false;
@@ -377,6 +392,61 @@ export class Timer {
    */
   public isWorker(): boolean {
     return this.isWorkerTimer;
+  }
+
+  /**
+   * Adds time to the timer. For countdown timers, this increases the duration.
+   * For count-up timers, this effectively adds time to the elapsed time.
+   *
+   * @param ms - Time to add in milliseconds
+   * @returns The new time value after adjustment
+   *
+   * @example
+   * ```typescript
+   * // Add 5 seconds to a countdown timer
+   * timer.addTime(5000);
+   *
+   * // Add 5 seconds to a count-up timer
+   * timer.addTime(5000);
+   * ```
+   */
+  public addTime(ms: number): number {
+    if (this.isDestroyed) return 0;
+
+    if (this.isWorkerTimer) {
+      this.plugin.adjustWorkerTimer(this.timerId, ms);
+      return this.getTime();
+    }
+
+    if (this.options.duration !== undefined) {
+      // For countdown timers, increase the duration
+      this.options.duration = Math.max(0, this.options.duration + ms);
+      return this.getRemainingTime();
+    } else {
+      // For count-up timers, adjust the start time to add time
+      this.startTime -= ms;
+      return this.getTime();
+    }
+  }
+
+  /**
+   * Removes time from the timer. For countdown timers, this decreases the duration.
+   * For count-up timers, this effectively removes time from the elapsed time.
+   *
+   * @param ms - Time to remove in milliseconds
+   * @returns The new time value after adjustment
+   *
+   * @example
+   * ```typescript
+   * // Remove 5 seconds from a countdown timer
+   * timer.removeTime(5000);
+   *
+   * // Remove 5 seconds from a count-up timer
+   * timer.removeTime(5000);
+   * ```
+   */
+  public removeTime(ms: number): number {
+    return this.addTime(-ms);
   }
 }
 
@@ -551,6 +621,21 @@ export interface ITimerPlugin extends IPlugin {
    * ```
    */
   resetWorkerTimer(timerId: string): void;
+
+  /**
+   * Adjusts the time of a worker timer.
+   * This is primarily used internally by the Timer class.
+   *
+   * @param timerId - The ID of the worker timer to adjust
+   * @param timeAdjustment - The amount of time to add (positive) or remove (negative) in milliseconds
+   *
+   * @example
+   * ```typescript
+   * // This is typically called internally by the Timer class
+   * this.app.timers.adjustWorkerTimer(timer.getId(), 5000); // Add 5 seconds
+   * ```
+   */
+  adjustWorkerTimer(timerId: string, timeAdjustment: number): void;
 }
 
 export class TimerPlugin extends Plugin implements ITimerPlugin {
@@ -575,7 +660,14 @@ export class TimerPlugin extends Plugin implements ITimerPlugin {
   }
 
   protected getCoreFunctions(): string[] {
-    return ['createTimer', 'destroyTimer', 'pauseAllTimers', 'resumeAllTimers', 'resetWorkerTimer'];
+    return [
+      'createTimer',
+      'destroyTimer',
+      'pauseAllTimers',
+      'resumeAllTimers',
+      'resetWorkerTimer',
+      'adjustWorkerTimer',
+    ];
   }
 
   protected getCoreSignals(): string[] {
@@ -607,7 +699,7 @@ export class TimerPlugin extends Plugin implements ITimerPlugin {
   }
 
   private handleWorkerMessage = (e: MessageEvent<WorkerMessage>): void => {
-    const { type, timerId, time } = e.data;
+    const { type, timerId, time, timeAdjustment } = e.data;
     const options = this.timerCallbacks.get(timerId);
 
     if (!options) return;
@@ -622,6 +714,15 @@ export class TimerPlugin extends Plugin implements ITimerPlugin {
         // Only remove callbacks if not looping
         if (!options.loop) {
           this.timerCallbacks.delete(timerId);
+        }
+        break;
+      case 'adjustTime':
+        if (timeAdjustment !== undefined) {
+          if (options.duration !== undefined) {
+            // For countdown timers, adjust the duration
+            options.duration = Math.max(0, options.duration + timeAdjustment);
+          }
+          // Note: We don't need to handle count-up timers here as they're handled in the worker
         }
         break;
     }
@@ -726,5 +827,15 @@ export class TimerPlugin extends Plugin implements ITimerPlugin {
     for (const timer of [...this.mainThreadTimers, ...this.workerTimers]) {
       this.destroyTimer(timer);
     }
+  }
+
+  public adjustWorkerTimer(timerId: string, timeAdjustment: number): void {
+    if (!this.worker) return;
+
+    this.worker.postMessage({
+      type: 'adjustTime',
+      timerId,
+      timeAdjustment,
+    });
   }
 }

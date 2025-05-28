@@ -8,7 +8,7 @@ const __dirname = dirname(__filename);
 export default withPWA(
   {
     devOptions: {
-      enabled: true,
+      enabled: false,
     },
   },
   {
