@@ -2,8 +2,8 @@ import { ColorSource, DestroyOptions, Container as PIXIContainer, Sprite, Textur
 
 import type { IContainer } from '../display/Container';
 import { Container } from '../display/Container';
-import type { IFocusable } from '../plugins';
-import type { Size } from '../utils';
+import type { ActionContext, IFocusable } from '../plugins';
+import { Logger, type Size } from '../utils';
 
 /**
  * Interface for Popup
@@ -17,9 +17,13 @@ export interface IPopup<T = any> extends IContainer {
   firstFocusableEntity?: IFocusable; // The first focusable entity in the popup
   data: T;
 
+  readonly actionContext: ActionContext | undefined; // The action context of the popup
+
   close(): void;
 
   initialize(): void; // Initialize the popup
+
+  beforeShow(): void; // Show the popup
 
   show(): void | Promise<any>; // Show the popup
 
@@ -32,6 +36,8 @@ export interface IPopup<T = any> extends IContainer {
   start(): void | Promise<any>; // Start the popup
 
   end(): void; // End the popup
+
+  restoreActionContext(): void; // Restore the action context
 }
 
 export type PopupConstructor<T = any> = new (id: string | number, config?: Partial<PopupConfig<T>>) => IPopup<T>;
@@ -58,9 +64,15 @@ export type PopupConfig<T = any> = {
   closeOnPointerDownOutside: boolean;
   backing: boolean | Partial<BackingConfig>;
   data?: T;
+  actionContext?: ActionContext;
 };
 
-const defaultPopupConfig = { backing: true, closeOnEscape: true, closeOnPointerDownOutside: true };
+const defaultPopupConfig = {
+  backing: true,
+  closeOnEscape: true,
+  closeOnPointerDownOutside: true,
+  actionContext: 'popup',
+};
 
 /**
  * Class representing a Popup
@@ -71,6 +83,12 @@ export class Popup<T = any> extends Container implements IPopup<T> {
   public view: Container;
   public backing?: Sprite;
   public config: PopupConfig<T>;
+
+  protected _storedActionContext: ActionContext | undefined = undefined;
+
+  get actionContext(): ActionContext | undefined {
+    return this.config.actionContext;
+  }
 
   /**
    * Create a new Popup
@@ -90,7 +108,6 @@ export class Popup<T = any> extends Container implements IPopup<T> {
   get data(): T {
     return this.config.data as T;
   }
-
   /**
    * Create a backing for the popup
    * @param config - The configuration for the backing
@@ -114,12 +131,18 @@ export class Popup<T = any> extends Container implements IPopup<T> {
 
   initialize() {}
 
+  public beforeShow() {
+    this.storeActionContext();
+    this.setActionContext();
+  }
+
   public beforeHide() {
     this.app.focus.removeFocusLayer(this.id);
   }
 
   destroy(options?: boolean | DestroyOptions): void {
     this.app.focus.removeFocusLayer(this.id);
+    this._storedActionContext = undefined;
     super.destroy(options);
   }
 
@@ -158,7 +181,6 @@ export class Popup<T = any> extends Container implements IPopup<T> {
       this.app.focus.setFocus(this.firstFocusableEntity);
     }
   }
-
   /**
    * End the popup
    */
@@ -183,6 +205,7 @@ export class Popup<T = any> extends Container implements IPopup<T> {
     if (this.config.backing) {
       this.backing = this.add.existing(Popup.makeBacking(this.config.backing, this.app.size));
       this.backing.eventMode = 'static';
+
       if (this.config.closeOnPointerDownOutside) {
         this.backing.once('click', this.close);
         this.backing.once('tap', this.close);
@@ -191,5 +214,26 @@ export class Popup<T = any> extends Container implements IPopup<T> {
 
     this.view = this.add.container();
     this.view.eventMode = 'static';
+  }
+
+  // store and restore the action context
+  protected setActionContext() {
+    if (this.actionContext) {
+      this.app.actionContext = this.actionContext;
+      Logger.log('Popup', 'Setting action context', this.app.actionContext);
+    }
+  }
+
+  protected storeActionContext() {
+    this._storedActionContext = this.app.actionContext;
+    Logger.log('Popup', 'Storing action context', this._storedActionContext);
+  }
+
+  public restoreActionContext() {
+    if (this._storedActionContext) {
+      Logger.log('Popup', 'Restoring action context', this._storedActionContext);
+      this.app.actionContext = this._storedActionContext;
+    }
+    this._storedActionContext = undefined;
   }
 }

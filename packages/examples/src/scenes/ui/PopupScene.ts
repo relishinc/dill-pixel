@@ -1,4 +1,4 @@
-import { ActionDetail, Button, FlexContainer, PopupConfig } from 'dill-pixel';
+import { ActionDetail, Button, FlexContainer, PopupConfig, wait } from 'dill-pixel';
 
 import { ExamplePopup } from '@/popups/ExamplePopup';
 import BaseScene from '@/scenes/BaseScene';
@@ -55,7 +55,7 @@ export default class PopupScene extends BaseScene {
     );
     this.addButton('Popup 3', () =>
       this.app.action('show_popup', {
-        id: 'one',
+        id: 'three',
         data: { title: "Example Popup 3:\nWon't close on click outside" },
         closeOnPointerDownOutside: false,
         backing: { color: 'red' },
@@ -73,13 +73,15 @@ export default class PopupScene extends BaseScene {
     this.app.focus.add(this.buttons, this.id, true);
   }
 
-  _handleShowPopup(action: ActionDetail<PopupConfig<{ title: string }>>) {
-    if (action.context === 'popup') {
-      return;
-    }
-    this.app.func.setActionContext('popup');
+  async _handleShowPopup(action: ActionDetail<PopupConfig<{ title: string }>>) {
     if (action.data?.id) {
       this.showPopup(action.data?.id, action.data);
+      if (action.data?.id === 'one') {
+        await wait(2);
+        this.app.func.showPopup('two', {
+          data: { title: `Example Popup 2` },
+        });
+      }
     }
   }
 

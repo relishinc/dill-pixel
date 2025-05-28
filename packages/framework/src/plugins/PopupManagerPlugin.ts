@@ -103,13 +103,15 @@ export class PopupManagerPlugin extends Plugin implements IPopupManagerPlugin {
    * @returns a promise resolving to the popup, if it exists
    */
   async showPopup<T = any>(id: string | number, config: Partial<PopupConfig<T>> = {}): Promise<IPopup<T> | undefined> {
+    console.log('showPopup', id, config);
+
     const popup: PopupConstructor<T> | undefined = this._popups.get(id);
     if (popup) {
       config.id = id;
       const instance = this.view.add.existing(new popup(id, config));
       instance.initialize();
       this.app.focus.clearFocus();
-
+      instance.beforeShow();
       await instance.show();
 
       this.app.focus.setFocusLayer(id);
@@ -150,6 +152,7 @@ export class PopupManagerPlugin extends Plugin implements IPopupManagerPlugin {
           popup.end();
           this.onPopupChanged.emit({ id, data });
           resolve(popup);
+          popup.restoreActionContext();
         });
       });
     }
