@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.24.0](https://github.com/relishinc/dill-pixel/compare/v4.23.0...v4.24.0) (2025-05-28)
+
+
+### Features
+
+* automatically set and restore action contexts when opening / closing popups ([67310c3](https://github.com/relishinc/dill-pixel/commit/67310c3d5814758afd76221bdbf6272e174c6451))
+
 ## [4.23.0](https://github.com/relishinc/dill-pixel/compare/v4.22.1...v4.23.0) (2025-05-28)
 
 
