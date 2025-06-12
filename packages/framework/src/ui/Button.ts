@@ -1,8 +1,18 @@
-import { Cursor, DestroyOptions, FederatedEvent, FederatedPointerEvent, Sprite } from 'pixi.js';
+import {
+  BitmapText,
+  Cursor,
+  DestroyOptions,
+  FederatedEvent,
+  FederatedPointerEvent,
+  HTMLText,
+  Sprite,
+  Text,
+} from 'pixi.js';
 
+import { type LayoutOptions } from '@pixi/layout';
 import type { IApplication } from '../core';
 import { Application } from '../core/Application';
-import { Factory, Focusable, Interactive, WithSignals } from '../mixins';
+import { Factory, Focusable, Interactive, type TextProps, WithSignals } from '../mixins';
 import { Signal } from '../signals';
 import { bindAllMethods, SpriteSheetLike, TextureLike } from '../utils';
 
@@ -60,6 +70,7 @@ export type ButtonConfig = {
   disabledCursor: Cursor;
   sheet: SpriteSheetLike;
   enabled: boolean;
+  layout?: Partial<LayoutOptions>; // Allow layout configuration to be passed through
 };
 
 export const ButtonConfigKeys: (keyof ButtonConfig)[] = [
@@ -70,6 +81,7 @@ export const ButtonConfigKeys: (keyof ButtonConfig)[] = [
   'disabledCursor',
   'sheet',
   'enabled',
+  'layout',
 ];
 
 // Create a new class that extends Container and includes the Interactive and Focusable mixins.
@@ -105,6 +117,7 @@ export class Button extends _Button implements IButton {
   protected _isDownCallbacks: Map<string, () => void> = new Map();
   private _isDownListenerAdded: boolean = false;
   private _pointerId?: number;
+  private _textLabel?: Text | HTMLText | BitmapText;
 
   /**
    * @constructor
@@ -129,11 +142,26 @@ export class Button extends _Button implements IButton {
 
     this.id = this.config.id;
 
+    // Allow layout to be set via config, but default to false
+    if (config.layout !== undefined) {
+      this.layout = config.layout;
+    } else {
+      this.layout = false;
+    }
+
     // Create a sprite with the default texture and add it to the container.
-    this.view = this.add.sprite({ asset: this.config.textures.default, sheet: this.config.sheet, anchor: 0.5 });
+    this.view = this.add.sprite({
+      asset: this.config.textures.default,
+      sheet: this.config.sheet,
+    });
 
     this.cursor = this.config.cursor;
     this.enabled = config.enabled !== false;
+
+    if (this.layout?.style.transformOrigin !== 'top left') {
+      this.layout = { transformOrigin: 'top left' };
+      this.app.renderer.layout.update(this);
+    }
 
     // Set up interaction handlers.
     // make them high priority so they run before any other interaction handlers
@@ -173,6 +201,25 @@ export class Button extends _Button implements IButton {
         sheet: this.config.sheet,
       });
       this.onDisabled.emit();
+    }
+  }
+
+  public addLabel<T extends Text | HTMLText | BitmapText>(config: Partial<TextProps> | T): T {
+    if (config instanceof Text || config instanceof HTMLText || config instanceof BitmapText) {
+      this._textLabel = this.add.existing(config);
+      this._textLabel.layout = false;
+    } else {
+      this._textLabel = this.add.text({ ...config, layout: false });
+    }
+
+    this.positionLabel();
+
+    return this._textLabel as T;
+  }
+
+  public positionLabel() {
+    if (this._textLabel) {
+      this._textLabel.position.set(this.view.width * 0.5, this.view.height * 0.5);
     }
   }
 
@@ -226,6 +273,8 @@ export class Button extends _Button implements IButton {
         sheet: this.config.sheet,
       });
     }
+
+    this.positionLabel();
   }
 
   /**
@@ -259,7 +308,7 @@ export class Button extends _Button implements IButton {
    * @description Handles the pointer out event.
    * Sets the texture of the button to the default texture and emits the onOut event.
    */
-  protected handlePointerOut(e: FederatedEvent) {
+  protected handlePointerOut() {
     this.isOver = false;
     if (!this._enabled) {
       return;
@@ -298,9 +347,7 @@ export class Button extends _Button implements IButton {
         void this.app.audio.play(this.config.sounds.down, 'sfx');
       }
       if (this.config.actions?.down) {
-        if (this.config.actions?.down) {
-          this._doAction(this.config.actions.down);
-        }
+        this._doAction(this.config.actions.down);
       }
     }
   }

@@ -43,6 +43,14 @@ export class Scene<T extends Application = Application> extends Container<T> imp
   public readonly id: string;
   public autoUnloadAssets: boolean = false;
 
+  protected _animationContext: string;
+  public get animationContext(): string {
+    return this._animationContext ?? `__scene_${this.id}`;
+  }
+  public set animationContext(value: string) {
+    this._animationContext = value;
+  }
+
   constructor() {
     super({ autoResize: true, autoUpdate: true, priority: 'highest' });
   }

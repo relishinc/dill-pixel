@@ -84,7 +84,7 @@ export default class UICanvasScene extends BaseScene {
 
   async start() {
     // added using incorrect method - works, but will align the element to the top left
-    this.ui.add.text({ text: 'top left', style: whiteTextStyle(24) });
+    this.ui.addElement(this.make.text({ text: 'top left', style: whiteTextStyle(24) }), { align: 'top left' });
 
     // adds elements the correct way
     this.ui.addElement(this.make.text({ text: 'top center', resolution: 2, style: whiteTextStyle(24) }), {
@@ -127,23 +127,28 @@ export default class UICanvasScene extends BaseScene {
     // probably want to add width / height to flexContainer
     // when doing any flex lignment
     // as it adjusts the pivot of inner containers
-    const flex = this.make.flexContainer({
+    let flex = this.make.flexContainer({
       gap: 20,
-      alignItems: 'center',
+      alignItems: 'flex-end',
       height: 48,
+      width: 500,
     });
     flex.add.text({ text: 'bottom 1', style: whiteTextStyle(24) });
     flex.add.text({ text: 'bottom 2', style: whiteTextStyle(48) });
     flex.add.text({ text: 'bottom 3', style: whiteTextStyle(24) });
     this.ui.addElement(flex, { align: 'bottom' });
 
-    this.ui.addElement(
-      this.make.text({
-        text: 'center',
-        style: whiteTextStyle(24),
-      }),
-      { align: 'center' },
-    );
+    flex = this.make.flexContainer({
+      gap: 30,
+      alignItems: 'center',
+      flexDirection: 'column',
+      height: 48,
+      width: 500,
+    });
+    flex.add.text({ text: 'center 1', style: whiteTextStyle(24) });
+    flex.add.text({ text: 'center 2', style: whiteTextStyle(24) });
+    flex.add.text({ text: 'center 3', style: whiteTextStyle(24) });
+    this.ui.addElement(flex, { align: 'center' });
   }
 
   setSize() {
@@ -153,6 +158,7 @@ export default class UICanvasScene extends BaseScene {
 
   resize() {
     super.resize();
+
     if (!this._sizeChanged) {
       this._isResizing = true;
       this.gui.__folders.Size.__controllers[0].setValue(this.app.renderer.screen.width);

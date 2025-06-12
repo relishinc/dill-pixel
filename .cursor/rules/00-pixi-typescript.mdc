@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Pixi.js & TypeScript
+- use Pixi.js V8
+- cater towards creating functionality that streamlines both developer experience for game creation, and app performance. 

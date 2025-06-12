@@ -254,14 +254,12 @@ export default class UIToasterScene extends BaseScene {
 
     // Create button container
     this.buttonContainer = this.add.flexContainer({
-      gap: 20,
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: this.app.size.width,
-      height: this.app.size.height,
-      x: -this.app.size.width * 0.5,
-      y: -this.app.size.height * 0.5,
+      x: -128,
+      layout: {
+        flexDirection: 'column',
+        gap: 20,
+        width: 0,
+      },
     });
 
     const toastConfig: ToastConfig = {
@@ -319,9 +317,10 @@ export default class UIToasterScene extends BaseScene {
       sheet: 'ui',
       accessibleTitle: label,
       accessibleHint: `Click to show a ${type} toast notification`,
+      layout: { height: 70, width: 256 },
     });
 
-    button.add.text({
+    button.addLabel({
       text: label,
       anchor: 0.5,
       resolution: 2,
@@ -354,9 +353,10 @@ export default class UIToasterScene extends BaseScene {
       sheet: 'ui',
       accessibleTitle: 'Custom Toast',
       accessibleHint: 'Click to show a custom toast notification',
+      layout: { height: 70, width: 256 },
     });
 
-    button.add.text({
+    button.addLabel({
       text: 'Custom Toast',
       anchor: 0.5,
       resolution: 2,
@@ -406,9 +406,6 @@ export default class UIToasterScene extends BaseScene {
 
   resize() {
     super.resize();
-    if (this.buttonContainer) {
-      this.buttonContainer.size = [this.app.size.width, this.app.size.height];
-      this.buttonContainer.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
-    }
+    this.buttonContainer.position.set(-128, -250);
   }
 }

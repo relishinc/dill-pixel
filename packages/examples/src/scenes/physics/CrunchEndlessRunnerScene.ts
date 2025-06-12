@@ -242,10 +242,10 @@ class Segment extends Group<V8Application> {
 
     // Use different colors for floor vs elevated platforms
     // Floor platforms (collidable) are blue, non-floor platforms are light blue
-    sprite.fill({ color: isFloor ? 0x0000ff : 0x00aaff });
+    sprite.fill({ color: isFloor ? 0x0000ff : 0x0f0f0f });
 
     // Add a border to indicate collision status
-    sprite.rect(0, 0, width, height).stroke({ color: isFloor ? 0xffff00 : 0x999999, width: 2 });
+    sprite.rect(0, 0, width, height).stroke({ color: 0xffff00, width: 2 });
 
     const platform = this.physics.createSolid({
       type: isFloor ? 'Floor' : 'Platform',
@@ -307,10 +307,7 @@ class Segment extends Group<V8Application> {
     const sprite = new Graphics();
     // Use different colors for obstacles based on whether they're on floor platforms
     // Add a border to indicate collision status
-    sprite
-      .rect(0, 0, 32, 32)
-      .fill({ color: isOnFloor ? 0xff0000 : 0xff9999, alpha: 0.75 })
-      .stroke({ color: isOnFloor ? 0xffff00 : 0x999999, width: 2 });
+    sprite.rect(0, 0, 32, 32).fill({ color: 0xff0000, alpha: 0.75 }).stroke({ color: 0xffff00, width: 2 });
 
     const obstacle = this.physics.createSolid({
       type: 'Obstacle',
@@ -321,7 +318,7 @@ class Segment extends Group<V8Application> {
       follows: platform,
       followOffset: offset,
       // Only obstacles on floor platforms should be on the FLOOR layer
-      collisionLayer: isOnFloor ? this.floorLayer : CollisionLayer.PLATFORM,
+      collisionLayer: CollisionLayer.PLATFORM,
       // IMPORTANT: Always set the collision mask to include PLAYER
       collisionMask: CollisionLayer.PLAYER,
     });
@@ -347,6 +344,8 @@ class Segment extends Group<V8Application> {
       group: this,
       follows: platform,
       followOffset: offset,
+      collisionLayer: CollisionLayer.TRIGGER,
+      collisionMask: CollisionLayer.PLAYER,
     });
     this.physics.system.addSensor(coin);
     return coin;
@@ -368,7 +367,6 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
   private gameSpeed = 100;
   private segmentWidth = 800;
   private floorLayer: CollisionLayer;
-  private debugText: any;
 
   protected config = {
     debug: true,
@@ -376,8 +374,8 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
     maxVelocity: 3000,
     gameSpeed: 100,
     segmentWidth: 800,
-    showCollisionInfo: true,
-    restrictCollisions: true,
+    // showCollisionInfo: false,
+    restrictCollisions: false,
   };
 
   get physics(): ICrunchPhysicsPlugin {
@@ -413,14 +411,14 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
       })
       .name('Debug Physics');
 
-    physicsFolder
-      .add(this.config, 'showCollisionInfo')
-      .onChange(() => {
-        if (this.debugText) {
-          this.debugText.visible = this.config.showCollisionInfo;
-        }
-      })
-      .name('Show Collision Info');
+    // physicsFolder
+    //   .add(this.config, 'showCollisionInfo')
+    //   .onChange(() => {
+    //     // if (this.debugText) {
+    //     //   this.debugText.visible = this.config.showCollisionInfo;
+    //     // }
+    //   })
+    //   .name('Show Collision Info');
 
     physicsFolder
       .add(this.config, 'restrictCollisions')
@@ -457,22 +455,22 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
     this._debugCollisionLayers();
 
     // Add debug text to explain collision layers
-    this.debugText = this.add.text({
-      text:
-        'Collision Layers Test:\n' +
-        '- Yellow border: On FLOOR layer (player can collide)\n' +
-        '- Gray border: On PLATFORM layer (player cannot collide)\n' +
-        `- FLOOR layer value: ${FLOOR}\n` +
-        `- PLAYER layer value: ${CollisionLayer.PLAYER}\n` +
-        `- PLATFORM layer value: ${CollisionLayer.PLATFORM}`,
-      x: 20,
-      y: 20,
-      style: {
-        fontSize: 16,
-        fill: 0xffffff,
-      },
-    });
-    this.debugText.visible = this.config.showCollisionInfo;
+    // this.debugText = this.add.text({
+    //   text:
+    //     'Collision Layers Test:\n' +
+    //     '- Yellow border: On FLOOR layer (player can collide)\n' +
+    //     '- Gray border: On PLATFORM layer (player cannot collide)\n' +
+    //     `- FLOOR layer value: ${FLOOR}\n` +
+    //     `- PLAYER layer value: ${CollisionLayer.PLAYER}\n` +
+    //     `- PLATFORM layer value: ${CollisionLayer.PLATFORM}`,
+    //   x: 20,
+    //   y: 20,
+    //   style: {
+    //     fontSize: 16,
+    //     fill: 0xffffff,
+    //   },
+    // });
+    // this.debugText.visible = this.config.showCollisionInfo;
 
     this._createRunner();
     this._createLeftBoundaryWall();
@@ -736,16 +734,16 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
     }
 
     // Update the debug text
-    if (this.debugText) {
-      this.debugText.text =
-        'Collision Layers Test:\n' +
-        '- Yellow border: On FLOOR layer (player can collide)\n' +
-        '- Gray border: On PLATFORM layer (player cannot collide)\n' +
-        `- Player ${this.config.restrictCollisions ? 'only collides with FLOOR layer' : 'collides with ALL layers'}\n` +
-        `- FLOOR layer value: ${this.floorLayer}\n` +
-        `- PLAYER layer value: ${CollisionLayer.PLAYER}\n` +
-        `- PLATFORM layer value: ${CollisionLayer.PLATFORM}`;
-    }
+    // if (this.debugText) {
+    //   this.debugText.text =
+    //     'Collision Layers Test:\n' +
+    //     '- Yellow border: On FLOOR layer (player can collide)\n' +
+    //     '- Gray border: On PLATFORM layer (player cannot collide)\n' +
+    //     `- Player ${this.config.restrictCollisions ? 'only collides with FLOOR layer and OBSTACLES' : 'collides with ALL layers'}\n` +
+    //     `- FLOOR layer value: ${this.floorLayer}\n` +
+    //     `- PLAYER layer value: ${CollisionLayer.PLAYER}\n` +
+    //     `- PLATFORM layer value: ${CollisionLayer.PLATFORM}`;
+    // }
 
     // Test riding logic after updating collision restrictions
     this._testRidingLogic();

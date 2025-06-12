@@ -12,6 +12,7 @@ import type { AssetLoadingOptions, LoggerMode, SceneImportList, SceneImportListI
 import type { ApplicationOptions, TextDropShadow, TextStyle } from 'pixi.js';
 import type { IScene, ISceneTransition, SceneTransition } from '../../display';
 import type { CaptionsOptions } from '../../plugins/captions';
+import { GSAPPluginOptions } from '../../plugins/GSAPPlugin';
 import type { DataSchema, IDataAdapterOptions } from '../../store';
 import type { PluginOrAdapterConfig } from '../config';
 
@@ -22,10 +23,12 @@ export interface IApplicationOptions<D extends DataSchema = DataSchema> extends 
   logger: LoggerMode;
   useStore: boolean;
   useSpine: boolean;
+  useLayout: boolean;
   useVoiceover: boolean;
   defaultTextStyle: Partial<TextStyle>;
   defaultDropShadow: TextDropShadow;
   storageAdapters: PluginOrAdapterConfig[];
+  gsap: Partial<GSAPPluginOptions>;
   data: Partial<IDataAdapterOptions<D>>;
   plugins: PluginOrAdapterConfig[];
   assets: AssetLoadingOptions;

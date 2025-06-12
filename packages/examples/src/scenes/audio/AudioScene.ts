@@ -42,20 +42,33 @@ export default class AudioScene extends BaseScene {
       gap: 50,
       justifyContent: 'center',
       flexWrap: 'wrap',
-      width: this.app.size.width,
+      layout: { width: this.app.size.width * 0.5 },
+      label: 'Audio Buttons',
     });
+
     this.musicButtons = this.buttonContainer.add.flexContainer({
       gap: 10,
-      width: 256,
       flexDirection: 'column',
       alignItems: 'center',
+      layout: { width: 270 },
+      label: 'Music Buttons',
+    });
+
+    this.sfxButtons = this.buttonContainer.add.flexContainer({
+      gap: 10,
+      flexDirection: 'column',
+      alignItems: 'center',
+      layout: { width: 270 },
+      label: 'SFX Buttons',
     });
 
     this.musicButtons.add.text({
       text: 'MUSIC',
       resolution: 2,
-      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontSize: 36, fontWeight: 'bold' },
+      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontSize: 36, fontWeight: 'bold', align: 'center' },
+      layout: { height: 70 },
     });
+
     this.addButton(this.musicButtons, 'Cheer', {
       sounds: { hover: 'hover' },
       actions: {
@@ -87,17 +100,11 @@ export default class AudioScene extends BaseScene {
       },
     });
 
-    this.sfxButtons = this.buttonContainer.add.flexContainer({
-      gap: 10,
-      width: 256,
-      flexDirection: 'column',
-      alignItems: 'center',
-    });
-
     this.sfxButtons.add.text({
       text: 'SFX',
       resolution: 2,
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontSize: 36, fontWeight: 'bold' },
+      layout: { height: 70 },
     });
     this.addButton(this.sfxButtons, 'Click', { sounds: { hover: 'hover', click: 'click' } });
     this.addSignalConnection(
@@ -115,9 +122,9 @@ export default class AudioScene extends BaseScene {
 
   resize() {
     super.resize();
-    this.buttonContainer.containerWidth = this.app.size.width;
+    this.buttonContainer.layoutWidth = this.app.size.width * 0.5;
     this.app.ticker.addOnce(() => {
-      this.buttonContainer.position.set(-this.app.size.width * 0.5, -this.buttonContainer.height * 0.5);
+      this.buttonContainer.position.set(-this.app.size.width * 0.25, -this.buttonContainer.height * 0.5);
     });
   }
 
@@ -141,14 +148,16 @@ export default class AudioScene extends BaseScene {
       sheet: 'required/ui',
       accessibleTitle: label,
       accessibleHint: `Press me to play a sound`,
+      layout: { height: 70, width: 256 },
       ...config,
     });
 
-    btn.add.text({
+    btn.addLabel({
       text: label,
       anchor: 0.5,
       resolution: 2,
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
+      layout: false,
     });
 
     if (callback) {

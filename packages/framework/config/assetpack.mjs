@@ -3,11 +3,42 @@ import { pixiPipes } from '@assetpack/core/pixi';
 import fs from 'node:fs';
 import process from 'node:process';
 import path from 'path';
+
+// Check if user config exists (synchronously)
+function hasUserAssetpackConfig() {
+  const configPath = path.join(process.cwd(), '.assetpack.mjs');
+  try {
+    return fs.existsSync(configPath);
+  } catch {
+    return false;
+  }
+}
+
+// Async function to load user config
+async function loadUserAssetpackConfig() {
+  if (!hasUserAssetpackConfig()) {
+    return null;
+  }
+
+  try {
+    const configPath = path.join(process.cwd(), '.assetpack.mjs');
+    const userConfig = await import(configPath);
+    Logger.info('Dill Pixel assetpack plugin:: Using user assetpack config from .assetpack.mjs');
+    return userConfig.default || userConfig;
+  } catch (error) {
+    Logger.error('Dill Pixel assetpack plugin:: Error loading user assetpack config:', error);
+    return null;
+  }
+}
+
 const cwd = process.cwd();
+
 const defaultManifestUrl = 'assets.json';
 
 const env = process.env.NODE_ENV;
 const isProduction = env === 'production';
+
+// import the assetpack config from the user's cwd
 
 const defaultPixiPipesConfig = {
   cacheBust: isProduction,
@@ -25,6 +56,7 @@ const defaultPixiPipesConfig = {
 
 export const assetpackConfig = (manifestUrl = defaultManifestUrl, pixiPipesConfig = {}, cacheBust) => {
   pixiPipesConfig = { ...defaultPixiPipesConfig, ...pixiPipesConfig };
+
   if (cacheBust !== undefined) {
     pixiPipesConfig.cacheBust = cacheBust;
   }
@@ -244,22 +276,12 @@ async function writeAssetTypes(manifest, outputDir) {
 }
 
 export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfig = defaultPixiPipesConfig) {
-  const apConfig = {
-    manifestUrl,
-    entry: './assets',
-    logLevel: 4,
-    cache: false,
-    pipes: [
-      ...pixiPipes({
-        ...pixiPipesConfig,
-      }),
-    ],
-  };
   let mode;
   let ap;
   let viteServer;
   let manifestWatcher;
   let initialBuild = false;
+  let apConfig;
 
   async function handleManifestChange() {
     try {
@@ -280,16 +302,19 @@ export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfi
     configureServer(server) {
       viteServer = server;
     },
-    configResolved(resolvedConfig) {
+    async configResolved(resolvedConfig) {
       mode = resolvedConfig.command;
       if (!resolvedConfig.publicDir) return;
+      if (!apConfig) {
+        const userConfig = await loadUserAssetpackConfig();
+        apConfig = userConfig || assetpackConfig(manifestUrl, pixiPipesConfig);
+      }
       if (apConfig.output) return;
       const publicDir = resolvedConfig.publicDir.replace(cwd, '');
       const outputPath = path.join(publicDir, 'assets');
       apConfig.output = path.isAbsolute(publicDir)
         ? path.join('.', outputPath).replace(/\\/g, '/')
         : `./${outputPath}`.replace(/\\/g, '/');
-
       // on windows, for some reason, the output path is ./C:/Users/.../assets
       // so we need to remove the first two characters
       if (apConfig.output.indexOf('./C') === 0) {
@@ -297,6 +322,12 @@ export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfi
       }
     },
     buildStart: async () => {
+      // Load config if not already loaded
+      if (!apConfig) {
+        const userConfig = await loadUserAssetpackConfig();
+        apConfig = userConfig || assetpackConfig(manifestUrl, pixiPipesConfig);
+      }
+
       if (mode === 'serve') {
         if (ap) return;
         ap = new AssetPack(apConfig);

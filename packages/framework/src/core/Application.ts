@@ -23,7 +23,7 @@ import type { AssetInitOptions, AssetsManifest, DestroyOptions, Renderer, Render
 import { Assets, isMobile, Application as PIXIPApplication, Point, TextStyle } from 'pixi.js';
 import type { DataSchema, IDataAdapter, IStorageAdapter, IStore } from '../store';
 import { DataAdapter, Store } from '../store';
-import type { ImportList, ImportListItem, Size } from '../utils';
+import type { Ease, ImportList, ImportListItem, Size } from '../utils';
 import { bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from '../utils';
 
 import { createFactoryMethods, defaultFactoryMethods } from '../mixins';
@@ -31,7 +31,9 @@ import type { IActionsPlugin } from '../plugins/actions';
 import type { IVoiceOverPlugin } from '../plugins/audio/VoiceOverPlugin';
 import type { ICaptionsPlugin } from '../plugins/captions';
 import { defaultPlugins } from '../plugins/defaults';
+import { type IDevToolsPlugin } from '../plugins/DevToolsPlugin';
 import { IFullScreenPlugin } from '../plugins/FullScreenPlugin';
+import { type IGSAPPlugin } from '../plugins/GSAPPlugin';
 import { ITimerPlugin } from '../plugins/TimerPlugin';
 import { Signal } from '../signals';
 
@@ -84,6 +86,7 @@ const defaultApplicationOptions: Partial<IApplicationOptions> = {
   showStats: isDev,
   useStore: true,
   useSpine: false,
+  useLayout: false,
   useVoiceover: false,
   storageAdapters: [],
   plugins: [],
@@ -306,6 +309,48 @@ export class Application<
     return this._input.controls;
   }
 
+  // animation
+  /**
+   * The GSAP plugin.
+   * @returns The GSAP plugin.
+   */
+  public get animation(): IGSAPPlugin {
+    return this.getPlugin<IGSAPPlugin>('GSAPPlugin');
+  }
+
+  /**
+   * The GSAP instance.
+   * @returns The GSAP instance.
+   */
+  public get anim(): typeof gsap {
+    return this.getPlugin<IGSAPPlugin>('GSAPPlugin').anim;
+  }
+  /**
+   * Adds one or more GSAP tweens or timelines to a specified animation context.
+   * This uses the GSAPPlugin's custom animation context (a Set of tweens/timelines),
+   * not a `gsap.Context` instance. If no contextId is provided, animations are added
+   * to the plugin's global collection.
+   * @param animation - A single GSAP tween/timeline or an array of them.
+   * @param contextId - Optional ID of the animation context. Defaults to the global context.
+   * @returns The animation(s) that were added.
+   */
+  public addAnimation(
+    animation: gsap.core.Tween | gsap.core.Timeline | (gsap.core.Tween | gsap.core.Timeline)[],
+    contextId?: string,
+  ): gsap.core.Tween | gsap.core.Timeline | (gsap.core.Tween | gsap.core.Timeline)[] {
+    return this.getPlugin<IGSAPPlugin>('GSAPPlugin').addAnimation(animation, contextId);
+  }
+
+  /**
+   * Returns the registered eases or ease names.
+   * @param namesOnly - If true, returns only the ease names.
+   * @returns The registered eases or ease names.
+   */
+  public eases(namesOnly: boolean = false): Ease | string[] {
+    const plugin = this.getPlugin<IGSAPPlugin>('GSAPPlugin');
+    return namesOnly ? plugin.easeNames : plugin.eases;
+  }
+
   // store
   protected _store: IStore;
 
@@ -315,7 +360,6 @@ export class Application<
 
   // size
   protected _center = new Point(0, 0);
-
   public get center(): Point {
     return this._center;
   }
@@ -531,6 +575,12 @@ export class Application<
 
     // initialize the pixi application
     await this.init(this.config);
+    this.stage.label = 'Stage';
+
+    if (isDev) {
+      Logger.log('Initializing DevTools');
+      this.getPlugin<IDevToolsPlugin>('DevToolsPlugin').initializeDevTools(this);
+    }
 
     if (this.config.defaultTextStyle) {
       const style = { ...defaultApplicationOptions.defaultTextStyle, ...this.config.defaultTextStyle };
@@ -606,7 +656,6 @@ export class Application<
   }
 
   async postInitialize(): Promise<void> {
-    (globalThis as any).__PIXI_APP__ = this;
     await this._resize();
 
     this._plugins.forEach((plugin) => {
@@ -745,6 +794,25 @@ export class Application<
    * @protected
    */
   protected async preInitialize(config: Partial<IApplicationOptions<D>>): Promise<void> {
+    if (isDev) {
+      await this.loadPlugin({
+        id: 'DevToolsPlugin',
+        module: () => import('../plugins/DevToolsPlugin'),
+        namedExport: 'DevToolsPlugin',
+      });
+    }
+    if (config.useLayout) {
+      await this.loadPlugin({
+        id: 'LayoutPlugin',
+        module: () => import('../plugins/LayoutPlugin'),
+        namedExport: 'LayoutPlugin',
+      });
+    }
+    await this.loadPlugin({
+      id: 'GSAPPlugin',
+      module: () => import('../plugins/GSAPPlugin'),
+      namedExport: 'GSAPPlugin',
+    });
     if (config.useSpine) {
       await this.loadPlugin({
         id: 'SpinePlugin',
@@ -878,6 +946,7 @@ export class Application<
     return new Promise((resolve) => {
       this.resizer.resize().then((size) => {
         this._center.set(size.width * 0.5, size.height * 0.5);
+
         this.views.forEach((view) => {
           if (!view || !view.position) {
             return;
@@ -896,10 +965,6 @@ export class Application<
    * @private
    */
   private async _setup(): Promise<void> {
-    // register for PIXI DevTools extension
-    if (isDev) {
-      (globalThis as any).__PIXI_APP__ = this;
-    }
     // connect onResize signal
     this.webEvents.onResize.connect(this._resize, -1);
 

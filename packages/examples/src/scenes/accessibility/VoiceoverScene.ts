@@ -59,7 +59,11 @@ export default class VoiceoverScene extends BaseScene {
     this.app.focus.addFocusLayer(this.id);
     this.app.audio.muted = this.config.muted;
 
-    this.buttonContainer = this.add.flexContainer({ gap: 30, justifyContent: 'center' });
+    this.buttonContainer = this.add.flexContainer({
+      gap: 30,
+      justifyContent: 'center',
+      layout: { width: this.app.size.width, flexWrap: 'wrap' },
+    });
     this.buttonContainer.debug = true;
     this.buttonContainer.label = 'ButtonContainer';
 
@@ -67,13 +71,14 @@ export default class VoiceoverScene extends BaseScene {
       gap: 10,
       flexDirection: 'column',
       alignItems: 'center',
-      width: 256,
+      layout: { width: 256, flexGrow: 0, flexShrink: 0 },
     });
+
     this.captionsButtons = this.buttonContainer.add.flexContainer({
       gap: 10,
       flexDirection: 'column',
       alignItems: 'center',
-      width: 256,
+      layout: { width: 256, flexGrow: 0, flexShrink: 0 },
     });
 
     this.voButtons.add.text({ text: 'VO', style: { fill: 0xffffff, fontSize: 36, fontWeight: 'bold' } });
@@ -143,7 +148,8 @@ export default class VoiceoverScene extends BaseScene {
 
   resize() {
     super.resize();
-    this.buttonContainer.position.set(0, -this.buttonContainer.height / 2);
+    this.buttonContainer.layoutWidth = this.app.size.width;
+    this.buttonContainer.position.set(-this.app.size.width * 0.5, -this.buttonContainer.height / 2);
   }
 
   addButton(container: FlexContainer, label: string = 'Button', callback: () => void) {
@@ -154,9 +160,10 @@ export default class VoiceoverScene extends BaseScene {
       sheet: 'ui',
       accessibleTitle: label,
       accessibleHint: `Press me to play a sound`,
+      layout: { width: 256, height: 70 },
     });
 
-    btn.add.text({
+    btn.addLabel({
       text: label,
       anchor: 0.5,
       style: { fill: 0xffffff, fontWeight: 'bold', fontSize: 48, align: 'center' },

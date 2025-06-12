@@ -38,6 +38,7 @@ export default class PopupScene extends BaseScene {
       alignItems: 'center',
       width: this.app.size.width,
       x: -this.app.size.width * 0.5,
+      label: 'Popup Buttons',
     });
 
     this.addButton('Popup 1', () => {
@@ -93,9 +94,11 @@ export default class PopupScene extends BaseScene {
       sheet: 'ui',
       accessibleTitle: label,
       accessibleHint: `Press me to show a popup`,
+      layout: { width: 256, height: 70 },
+      label,
     });
 
-    btn.add.text({
+    btn.addLabel({
       text: label,
       anchor: 0.5,
       resolution: 2,
@@ -125,5 +128,7 @@ export default class PopupScene extends BaseScene {
     super.resize();
     this.buttonContainer.containerWidth = this.app.size.width;
     this.buttonContainer.x = -this.app.size.width * 0.5;
+
+    console.log(this.buttonContainer.getChildAt(0).getFastGlobalBounds());
   }
 }

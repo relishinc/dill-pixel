@@ -22,11 +22,27 @@ export type AssetBundles =
  */
 export type AssetTextures = 
   | 'KumbhSansBlack.png'
+  | 'bg_layer1'
+  | 'bg_layer1.png'
+  | 'bg_layer2'
+  | 'bg_layer2.png'
+  | 'bg_layer3'
+  | 'bg_layer3.png'
+  | 'bg_layer4'
+  | 'bg_layer4.png'
   | 'game/wordmark'
   | 'game/wordmark.svg'
+  | 'kenney/background/bg_layer1'
+  | 'kenney/background/bg_layer1.png'
+  | 'kenney/background/bg_layer2'
+  | 'kenney/background/bg_layer2.png'
+  | 'kenney/background/bg_layer3'
+  | 'kenney/background/bg_layer3.png'
+  | 'kenney/background/bg_layer4'
+  | 'kenney/background/bg_layer4.png'
   | 'logo'
   | 'logo.svg'
-  | 'required/fonts/KumbhSansBlack.png'
+  | 'required/bitmap-fonts/KumbhSansBlack.png'
   | 'required/jar'
   | 'required/jar.png'
   | 'static/jar'
@@ -57,15 +73,16 @@ export type AssetSpritesheets =
  * const font: AssetFonts = 'KumbhSans-Regular';
  */
 export type AssetFonts = 
-  | 'KumbhSans-Bold'
   | 'KumbhSans-Bold.ttf'
-  | 'KumbhSans-Medium'
+  | 'KumbhSans-Bold.woff2'
   | 'KumbhSans-Medium.ttf'
-  | 'KumbhSans-Regular'
+  | 'KumbhSans-Medium.woff2'
   | 'KumbhSans-Regular.ttf'
-  | 'KumbhSans-SemiBold'
+  | 'KumbhSans-Regular.woff2'
   | 'KumbhSans-SemiBold.ttf'
+  | 'KumbhSans-SemiBold.woff2'
   | 'KumbhSansBlack.fnt'
+  | 'required/bitmap-fonts/KumbhSansBlack.fnt'
   | 'required/fonts/KumbhSans-Bold'
   | 'required/fonts/KumbhSans-Bold.ttf'
   | 'required/fonts/KumbhSans-Medium'
@@ -74,7 +91,14 @@ export type AssetFonts =
   | 'required/fonts/KumbhSans-Regular.ttf'
   | 'required/fonts/KumbhSans-SemiBold'
   | 'required/fonts/KumbhSans-SemiBold.ttf'
-  | 'required/fonts/KumbhSansBlack.fnt';
+  | 'static/fonts/KumbhSans-Bold'
+  | 'static/fonts/KumbhSans-Bold.woff2'
+  | 'static/fonts/KumbhSans-Medium'
+  | 'static/fonts/KumbhSans-Medium.woff2'
+  | 'static/fonts/KumbhSans-Regular'
+  | 'static/fonts/KumbhSans-Regular.woff2'
+  | 'static/fonts/KumbhSans-SemiBold'
+  | 'static/fonts/KumbhSans-SemiBold.woff2';
 
 /**
  * Available audio names in the asset manifest

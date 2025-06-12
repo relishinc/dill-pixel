@@ -40,20 +40,25 @@ export default class AudioScene extends BaseScene {
       gap: 50,
       justifyContent: 'center',
       flexWrap: 'wrap',
-      width: this.app.size.width,
+      layout: { width: this.app.size.width * 0.5 },
+      label: 'Audio Buttons',
     });
+
     this.musicButtons = this.buttonContainer.add.flexContainer({
       gap: 10,
-      width: 256,
       flexDirection: 'column',
       alignItems: 'center',
+      layout: { width: 270 },
+      label: 'Music Buttons',
     });
 
     this.musicButtons.add.text({
       text: 'MUSIC',
       resolution: 2,
-      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontSize: 36, fontWeight: 'bold' },
+      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontSize: 36, fontWeight: 'bold', align: 'center' },
+      layout: { height: 70 },
     });
+
     this.addButton(this.musicButtons, 'Beach', {
       sounds: { hover: 'hover' },
       actions: {
@@ -92,9 +97,10 @@ export default class AudioScene extends BaseScene {
       accessibleTitle: label,
       accessibleHint: `Press me to play a sound`,
       ...config,
+      layout: { height: 70, width: 256 },
     });
 
-    btn.add.text({
+    btn.addLabel({
       text: label,
       anchor: 0.5,
       resolution: 2,
@@ -153,5 +159,11 @@ export default class AudioScene extends BaseScene {
     this.app.audio.play(action.data.id, 'music', { singleInstance: true, loop: true });
 
     button.setTexture('default', 'btn/red');
+  }
+
+  resize() {
+    super.resize();
+    this.buttonContainer.layoutWidth = this.app.size.width * 0.5;
+    this.buttonContainer.position.set(-this.app.size.width * 0.25, -this.buttonContainer.height * 0.5);
   }
 }

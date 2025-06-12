@@ -17,7 +17,6 @@ export default class TimerScene extends BaseScene {
   buttonContainer: FlexContainer;
   stopwatchContainer: FlexContainer;
   countdownContainer: FlexContainer;
-
   stopwatchDisplay: Text;
   countdownDisplay: Text;
   stopwatchTimer: Timer;
@@ -35,13 +34,14 @@ export default class TimerScene extends BaseScene {
 
   public async initialize() {
     await super.initialize();
+
     this.ui = this.add.uiCanvas({ useAppSize: true });
 
     this.container = this.ui.addElement(
       this.make.flexContainer({
         flexDirection: 'column',
         gap: 50,
-        width: this.app.size.width,
+        layout: { width: '100%' },
       }),
       { align: 'center' },
     );
@@ -51,18 +51,20 @@ export default class TimerScene extends BaseScene {
       gap: 20,
       alignItems: 'center',
       justifyContent: 'center',
-      width: this.app.size.width,
+      width: '100%',
     });
 
     stopwatchContainer.add.text({
       text: 'Stopwatch',
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 24, align: 'right' },
+      layout: { applySizeDirectly: true },
     });
 
     this.stopwatchDisplay = stopwatchContainer.add.text({
       text: '00:00:00',
       anchor: 0.5,
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
+      layout: { width: 300 },
     });
 
     // Countdown Section
@@ -70,7 +72,7 @@ export default class TimerScene extends BaseScene {
       gap: 20,
       alignItems: 'center',
       justifyContent: 'center',
-      width: this.app.size.width,
+      width: '100%',
     });
 
     countdownContainer.add.text({
@@ -81,20 +83,17 @@ export default class TimerScene extends BaseScene {
     this.countdownDisplay = countdownContainer.add.text({
       text: '00:00:00',
       anchor: 0.5,
-      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
+      style: {
+        fill: 0xffffff,
+        fontFamily: FONT_KUMBH_SANS,
+        fontWeight: 'bold',
+        fontSize: 48,
+        align: 'center',
+      },
+      layout: { width: 300 },
     });
 
-    // Button Container
-    this.buttonContainer = this.ui.addElement(
-      this.make.flexContainer({
-        flexDirection: 'column',
-        gap: 20,
-      }),
-      { align: 'bottom right', padding: { bottom: 60, right: 20 } },
-    );
-
     // Stopwatch Controls
-
     const addStopwatchBtn = stopwatchContainer.add.button({
       scale: 0.5,
       cursor: 'pointer',
@@ -105,13 +104,20 @@ export default class TimerScene extends BaseScene {
       sheet: 'required/ui',
       accessibleTitle: 'Add 5 seconds to stopwatch',
       accessibleHint: 'Press to add 5 seconds to the stopwatch',
+      layout: { width: 256, height: 70 },
     });
 
-    addStopwatchBtn.add.text({
+    addStopwatchBtn.addLabel({
       text: '+5s',
       anchor: 0.5,
       resolution: 2,
-      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
+      style: {
+        fill: 0xffffff,
+        fontFamily: FONT_KUMBH_SANS,
+        fontWeight: 'bold',
+        fontSize: 48,
+        align: 'center',
+      },
     });
 
     const removeStopwatchBtn = stopwatchContainer.add.button({
@@ -124,9 +130,10 @@ export default class TimerScene extends BaseScene {
       sheet: 'required/ui',
       accessibleTitle: 'Remove 5 seconds from stopwatch',
       accessibleHint: 'Press to remove 5 seconds from the stopwatch',
+      layout: { width: 256, height: 70 },
     });
 
-    removeStopwatchBtn.add.text({
+    removeStopwatchBtn.addLabel({
       text: '-5s',
       anchor: 0.5,
       resolution: 2,
@@ -145,9 +152,10 @@ export default class TimerScene extends BaseScene {
       sheet: 'required/ui',
       accessibleTitle: 'Add 5 seconds to countdown',
       accessibleHint: 'Press to add 5 seconds to the countdown',
+      layout: { width: 256, height: 70 },
     });
 
-    addCountdownBtn.add.text({
+    addCountdownBtn.addLabel({
       text: '+5s',
       anchor: 0.5,
       resolution: 2,
@@ -164,9 +172,10 @@ export default class TimerScene extends BaseScene {
       sheet: 'required/ui',
       accessibleTitle: 'Remove 5 seconds from countdown',
       accessibleHint: 'Press to remove 5 seconds from the countdown',
+      layout: { width: 256, height: 70 },
     });
 
-    removeCountdownBtn.add.text({
+    removeCountdownBtn.addLabel({
       text: '-5s',
       anchor: 0.5,
       resolution: 2,
@@ -223,6 +232,8 @@ export default class TimerScene extends BaseScene {
 
     this.stopwatchContainer = stopwatchContainer;
     this.countdownContainer = countdownContainer;
+
+    this.ui.updateLayout();
   }
 
   async start() {
@@ -261,17 +272,11 @@ export default class TimerScene extends BaseScene {
 
   update() {
     if (this._paused) return;
-    this.logTime();
+    // this.logTime();
   }
 
   resize() {
     super.resize();
-    this.container.containerWidth = this.app.size.width;
-    this.stopwatchContainer.containerWidth = this.app.size.width;
-    this.countdownContainer.containerWidth = this.app.size.width;
-    this.stopwatchContainer.layout();
-    this.countdownContainer.layout();
-    this.container.layout();
   }
 
   destroy() {

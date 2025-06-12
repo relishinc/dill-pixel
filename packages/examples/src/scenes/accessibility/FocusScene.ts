@@ -42,16 +42,20 @@ export default class FocusScene extends BaseScene {
       alignItems: 'center',
       justifyContent: 'center',
       y: -200,
+      label: 'Actor List',
+      layout: { width: this.app.size.width },
     });
 
     this.actor1 = this.actorList.add.existing<Actor>(new Actor(), {
       accessibleTitle: 'Actor  1',
       accessibleHint: 'one',
+      layout: { isLeaf: true, width: 100, height: 100, transformOrigin: 'center center' },
     });
 
     this.actor2 = this.actorList.add.existing<Actor>(new Actor(0x00fff0), {
       accessibleTitle: 'Actor 2',
       accessibleHint: 'two',
+      layout: { isLeaf: true, width: 100, height: 100 },
     });
 
     this.actor1.onInteraction('pointerdown').connect(() => {
@@ -66,21 +70,49 @@ export default class FocusScene extends BaseScene {
       alignItems: 'center',
       justifyContent: 'center',
       y: 100,
+      layout: { width: this.app.size.width },
+      label: 'List',
     });
 
     this.list.add.sprite({
       asset: 'required/jar.png',
       scale: 0.5,
+      layout: {
+        width: 295,
+        height: 332,
+        flexGrow: 0,
+        flexShrink: 0,
+        applySizeDirectly: true,
+        transformOrigin: 'top left',
+      },
     });
+
     this.list.add.sprite({
       asset: 'jar',
       sheet: 'game/sheet',
       scale: 0.5,
+      layout: {
+        width: 295,
+        height: 332,
+        flexGrow: 0,
+        flexShrink: 0,
+        applySizeDirectly: true,
+        transformOrigin: 'top left',
+      },
     });
+
     this.list.add.sprite({
       asset: 'jar2',
       sheet: 'game/sheet',
       scale: 0.5,
+      layout: {
+        width: 295,
+        height: 332,
+        flexGrow: 0,
+        flexShrink: 0,
+        applySizeDirectly: true,
+        transformOrigin: 'top left',
+      },
     });
 
     this.button = this.list.add.button({
@@ -91,6 +123,13 @@ export default class FocusScene extends BaseScene {
       accessible: true,
       accessibleTitle: 'Button',
       accessibleHint: 'HI!',
+      layout: {
+        flexGrow: 0,
+        flexShrink: 0,
+        width: 295,
+        height: 332,
+        transformOrigin: 'top left',
+      },
     });
 
     this.button.onClick.connect(() => {
@@ -148,6 +187,12 @@ export default class FocusScene extends BaseScene {
 
   resize() {
     super.resize();
+
+    this.actorList.layoutWidth = this.app.size.width;
+    this.list.layoutWidth = this.app.size.width;
+
+    this.actorList.x = -this.app.size.width * 0.5;
+    this.list.x = -this.app.size.width * 0.5;
   }
 
   private _updateFocusLayerLabel() {

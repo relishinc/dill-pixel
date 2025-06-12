@@ -36,6 +36,8 @@ export type BackgroundConfig = {
 export interface IContainer {
   app: IApplication;
 
+  animationContext: string | undefined;
+
   onDestroy: Signal<() => void>;
 
   destroy(options?: DestroyOptions): void;
@@ -60,6 +62,15 @@ export class Container<A extends Application = Application>
   onDestroy: Signal<() => void> = new Signal();
   __dill_pixel_method_binding_root = true;
   protected __background: Sprite;
+
+  protected _animationContext: string | undefined;
+  public get animationContext(): string | undefined {
+    return this._animationContext;
+  }
+  public set animationContext(value: string) {
+    this._animationContext = value;
+  }
+
   private __config: ContainerConfig;
 
   /**
@@ -145,6 +156,7 @@ export class Container<A extends Application = Application>
   public added() {}
 
   destroy(options?: DestroyOptions): void {
+    this.app.animation.killAll(this.animationContext);
     if (this.__config.autoUpdate) {
       this.app.ticker.remove(this.update, this);
     }
@@ -183,5 +195,12 @@ export class Container<A extends Application = Application>
     }
 
     this.removed();
+  }
+
+  protected addAnimation(
+    anim: gsap.core.Tween | gsap.core.Timeline | (gsap.core.Tween | gsap.core.Timeline)[],
+    contextId?: string,
+  ): gsap.core.Tween | gsap.core.Timeline | (gsap.core.Tween | gsap.core.Timeline)[] {
+    return this.app.addAnimation(anim, contextId ?? this.animationContext);
   }
 }

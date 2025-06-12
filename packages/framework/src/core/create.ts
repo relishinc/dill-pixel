@@ -92,10 +92,29 @@ export async function create<T extends IApplication = Application, D extends Dat
   if (config.resizeToContainer) {
     config.resizeTo = el;
   }
+
+  if (config.useLayout) {
+    config.layout = {
+      // @ts-expect-error some config stuff isn't typed right in @pixi/layout
+      autoUpdate: false,
+      enableDebug: false,
+      debugModificationCount: 0,
+      throttle: 100,
+    };
+  }
+
   config.container = el;
   const instance = new ApplicationClass();
 
   await instance.initialize(config as AppConfig<DataSchema>, el);
+  if (config.useLayout) {
+    instance.stage.layout = {
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+    };
+  }
+
   // ensure all plugins are initialized
   // call postInitialize on the instance
   await instance.postInitialize();

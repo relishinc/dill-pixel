@@ -33,7 +33,8 @@ export default class UIScene extends BaseScene {
       gap: 30,
       justifyContent: 'center',
       alignItems: 'center',
-      visible: false,
+      alpha: 0,
+      layout: { width: this.app.size.width },
     });
 
     const input = this.list.add.existing(
@@ -44,6 +45,7 @@ export default class UIScene extends BaseScene {
         padding: [20, 30],
         bg: { radius: 200, stroke: { width: 6, color: 0x0 } },
         selectionColor: 0x00ff00,
+        layout: { width: 412, height: 70 },
       }),
       { label: 'input' },
     );
@@ -65,6 +67,7 @@ export default class UIScene extends BaseScene {
             color: 0x0,
           },
         },
+        layout: { width: 404, height: 48 },
       }),
       { label: 'tel' },
     );
@@ -75,6 +78,7 @@ export default class UIScene extends BaseScene {
         style: { align: 'center' },
         placeholder: { text: 'Align center' },
         padding: [12, 15],
+        layout: { width: 404, height: 48 },
       }),
       { label: 'input2' },
     );
@@ -86,6 +90,7 @@ export default class UIScene extends BaseScene {
         placeholder: { text: 'Align right' },
         padding: [12, 15],
         focusOverlay: overlaySettings,
+        layout: { width: 404, height: 48 },
       }),
       { label: 'input3' },
     );
@@ -98,6 +103,7 @@ export default class UIScene extends BaseScene {
         padding: [12, 15],
         pattern: '[^a-z]*',
         focusOverlay: overlaySettings,
+        layout: { width: 404, height: 48 },
       }),
       { label: 'input4' },
     );
@@ -110,6 +116,7 @@ export default class UIScene extends BaseScene {
         padding: [12, 15],
         focusOverlay: overlaySettings,
         type: 'password',
+        layout: { width: 404, height: 48 },
       }),
       { label: 'input5' },
     );
@@ -127,6 +134,7 @@ export default class UIScene extends BaseScene {
             color: 0x0,
           },
         },
+        layout: { width: 404, height: 48 },
       }),
       { label: 'overlay' },
     );
@@ -140,6 +148,7 @@ export default class UIScene extends BaseScene {
           scaleOnType: 0.7,
           animationOnType: { duration: 0.2, alpha: 1 },
           offsetOnType: { x: -12, y: 2 },
+          layout: { width: 400, height: 70, transformOrigin: 'top left' },
         },
         padding: [15, 15],
         bg: {
@@ -149,6 +158,7 @@ export default class UIScene extends BaseScene {
             color: 0x0,
           },
         },
+        layout: { width: 404, height: 48 },
       }),
       { label: 'persistent' },
     );
@@ -156,8 +166,17 @@ export default class UIScene extends BaseScene {
     this.app.focus.add([input, tel, input2, input3, input4, input5, withOverlay, withPersistentPlaceholder], this.id);
   }
 
-  start() {
-    this.list.layout();
-    this.list.visible = true;
+  async start() {
+    this.list.updateLayout();
+
+    this.app.ticker.addOnce(() => {
+      this.list.alpha = 1;
+    });
+  }
+
+  resize() {
+    super.resize();
+    this.list.layout = { width: this.app.size.width, paddingTop: 150 };
+    this.list.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
   }
 }

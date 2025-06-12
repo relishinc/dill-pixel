@@ -1,6 +1,6 @@
 import BaseScene from '@/scenes/BaseScene';
 import { Button, FlexContainer } from 'dill-pixel';
-import { Text } from 'pixi.js';
+import { type Text } from 'pixi.js';
 
 export const id = 'buttons';
 export const debug = {
@@ -25,10 +25,12 @@ export default class ButtonScene extends BaseScene {
     this.app.focus.addFocusLayer(this.id);
 
     this.container = this.add.flexContainer({
-      gap: 50,
+      gap: 25,
+      flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      flexWrap: 'wrap',
+      label: 'Button Container',
+      width: this.app.size.width,
     });
 
     // create 'play sound' button
@@ -38,9 +40,10 @@ export default class ButtonScene extends BaseScene {
         hover: 'btn/yellow',
         disabled: 'btn/red',
       },
+      layout: { height: 91, width: 332 },
       scale: 0.65,
     });
-    this.playSoundLabel = this.playSoundButton.add.text({
+    this.playSoundLabel = this.playSoundButton.addLabel<Text>({
       text: 'Play Sound A',
       anchor: 0.5,
       style: {
@@ -56,10 +59,10 @@ export default class ButtonScene extends BaseScene {
         default: 'btn/purple',
         hover: 'btn/yellow',
       },
-      anchor: [0.5, 0.5],
       scale: 0.65,
+      layout: { height: 91, width: 332 },
     });
-    this.enabledButton.add.text({
+    this.enabledButton.addLabel({
       text: 'Toggle Enabled',
       anchor: 0.5,
       style: {
@@ -75,10 +78,10 @@ export default class ButtonScene extends BaseScene {
         default: 'btn/purple',
         hover: 'btn/yellow',
       },
-      anchor: [0.5, 0.5],
       scale: 0.65,
+      layout: { height: 91, width: 332 },
     });
-    this.listenerButton.add.text({
+    this.listenerButton.addLabel({
       text: 'Cycle Listener',
       anchor: 0.5,
       style: {
@@ -124,5 +127,11 @@ export default class ButtonScene extends BaseScene {
       this.playSoundButton.onClick.connect(this.onClickPlaySoundA);
       this.playSoundLabel.text = 'Play Sound A';
     }
+  }
+
+  resize() {
+    super.resize();
+    this.container.layoutWidth = this.app.size.width;
+    this.container.position.set(-this.app.size.width * 0.5, -this.container.height * 0.5);
   }
 }

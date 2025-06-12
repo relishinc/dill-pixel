@@ -51,6 +51,8 @@ import { EntityData, PhysicsEntityType } from './types';
  * ```
  */
 export class Group<T extends Application = Application, D extends EntityData = EntityData> extends Entity<T, D> {
+  protected _visible: boolean = true;
+
   public entityType: PhysicsEntityType = 'Group';
   /** Map of child entities to their relative offsets from the group's position */
   private childOffsets: Map<Entity, { x: number; y: number }> = new Map();
@@ -64,6 +66,16 @@ export class Group<T extends Application = Application, D extends EntityData = E
    */
   public getChildOffset(entity: Entity): { x: number; y: number } {
     return this.childOffsets.get(entity) ?? { x: 0, y: 0 };
+  }
+
+  set visible(value: boolean) {
+    this.system.getEntitiesInGroup(this).forEach((entity) => {
+      entity.view.visible = value;
+    });
+  }
+
+  get visible(): boolean {
+    return this._visible;
   }
 
   /**
@@ -164,7 +176,7 @@ export class Group<T extends Application = Application, D extends EntityData = E
   }
 
   public destroy(): void {
-    super.destroy();
     this.system.removeGroup(this);
+    super.destroy();
   }
 }

@@ -50,7 +50,14 @@ export default class AnimatedSpriteScene extends BaseScene {
 
   async initialize() {
     await super.initialize();
-    this.list = this.add.flexContainer({ gap: 50, justifyContent: 'center', alignItems: 'center' });
+    this.list = this.add.flexContainer({
+      gap: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      layout: { width: this.app.size.width },
+      x: -this.app.size.width * 0.5,
+      y: -200,
+    });
     this.male = this._addAnimation('male', 'character_maleAdventurer', 'Sprite 1');
     this.female = this._addAnimation('female', 'character_femaleAdventurer', 'Sprite 2');
   }
@@ -116,7 +123,12 @@ export default class AnimatedSpriteScene extends BaseScene {
     sprite.on('pointerup', () => {
       sprite.nextAnimation();
     });
-
     return sprite;
+  }
+
+  resize() {
+    super.resize();
+    this.list.layoutWidth = this.app.size.width;
+    this.list.position.set(-this.app.size.width * 0.5, -200);
   }
 }

@@ -3,6 +3,7 @@ import { Transition } from '@/Transition';
 import { ExampleOutliner } from '@/ui/ExampleOutliner';
 import { defineActions, defineButtons, defineConfig, defineContexts, defineControls } from 'dill-pixel';
 import { FONT_KUMBH_SANS } from './utils/Constants';
+import { Eases } from './utils/Easing';
 
 /** Default template */
 export const contexts = defineContexts(['default', 'game', 'menu', 'popup']);
@@ -108,6 +109,7 @@ export const config = defineConfig<Data>({
   sceneTransition: Transition,
   defaultSceneLoadMethod: 'transitionExitEnter',
   useSpine: true,
+  useLayout: true,
   showSceneDebugMenu: true,
   useVoiceover: true,
   defaultScene: 'assets',
@@ -127,6 +129,9 @@ export const config = defineConfig<Data>({
     'Rive',
     'Storage Adapters',
   ],
+  gsap: {
+    eases: Eases,
+  },
   data: {
     initial: {
       bar: 5,
@@ -210,8 +215,8 @@ export const config = defineConfig<Data>({
   },
   captions: {
     files: [
-      { id: 'en', json: './audio/vo/en/cc.json' },
-      { id: 'fr', json: './audio/vo/fr/cc.json' },
+      { id: 'en', json: 'audio/vo/en/cc.json' },
+      { id: 'fr', json: 'audio/vo/fr/cc.json' },
     ],
     backgroundAlpha: 0.5,
     backgroundColor: 0x0,

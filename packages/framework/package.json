@@ -92,12 +92,14 @@
   "peerDependencies": {
     "@pixi/sound": "^6.0.1",
     "gsap": "^3.12.5",
-    "pixi.js": "8.9.1"
+    "pixi.js": "8.10.1"
   },
   "dependencies": {
     "@assetpack/core": "^1.4.0",
     "@clack/prompts": "^0.8.2",
     "@esotericsoftware/spine-core": "~4.2.76",
+    "@pixi/devtools": "^2.0.1",
+    "@pixi/layout": "^3.0.2",
     "@pixi/sound": "^6.0.1",
     "@types/stats.js": "^0.17.3",
     "@typescript-eslint/typescript-estree": "^8.19.1",
@@ -106,7 +108,8 @@
     "gsap": "^3.12.5",
     "kleur": "^4.1.5",
     "npm-run-all": "^4.1.5",
-    "pixi.js": "8.9.1",
+    "pixi-filters": "^6.1.2",
+    "pixi.js": "8.10.1",
     "prettier": "^3.2.5",
     "relishinc-prettier": "github:relishinc/prettier",
     "rimraf": "^5.0.5",

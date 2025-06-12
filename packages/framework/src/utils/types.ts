@@ -134,6 +134,8 @@ export type AppSize = {
   screenHeight: number;
 };
 
+export type Ease<T extends string = string> = Record<T, gsap.EaseFunction>;
+
 // from gsap
 export type EaseString =
   | 'none'

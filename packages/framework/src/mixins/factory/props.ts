@@ -1,3 +1,4 @@
+import type { LayoutOptions } from '@pixi/layout';
 import { GraphicsContext, HTMLTextStyleOptions, TextStyleOptions } from 'pixi.js';
 import { ContainerConfig } from '../../display';
 import { ParticleContainerConfig } from '../../display/ParticleContainer';
@@ -34,7 +35,11 @@ export interface VisibilityProps {
   visible: boolean;
 }
 
-export interface ExistingProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {}
+export interface LayoutProps {
+  layout: boolean | Partial<LayoutOptions> | null | undefined;
+}
+
+export interface ExistingProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps, LayoutProps {}
 
 export interface GraphicsProps extends AbstractProps, PositionProps, ScaleProps, PivotProps, VisibilityProps {}
 
@@ -42,7 +47,13 @@ export interface SvgProps extends GraphicsProps {
   ctx: string | GraphicsContext;
 }
 
-export interface SpriteProps extends AbstractProps, TextureProps, ScaleProps, PositionProps, VisibilityProps {
+export interface SpriteProps
+  extends AbstractProps,
+    TextureProps,
+    ScaleProps,
+    PositionProps,
+    VisibilityProps,
+    LayoutProps {
   anchor: PointLike;
 }
 
@@ -81,7 +92,12 @@ export interface TilingSpriteProps extends SpriteProps {
   roundPixels?: boolean;
 }
 
-export interface AnimatedSpriteAnimationProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps {
+export interface AnimatedSpriteAnimationProps
+  extends AbstractProps,
+    ScaleProps,
+    PositionProps,
+    VisibilityProps,
+    LayoutProps {
   texturePrefix: string;
   sheet: SpriteSheetLike;
   startIndex: number;
@@ -93,7 +109,7 @@ export interface AnimatedSpriteAnimationProps extends AbstractProps, ScaleProps,
   animationSpeed: number;
 }
 
-export interface AnimatedSpriteProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps {
+export interface AnimatedSpriteProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps, LayoutProps {
   sheet: SpriteSheetLike;
   texturePrefix: string;
   zeroPad: number;
@@ -106,7 +122,7 @@ export interface AnimatedSpriteProps extends AbstractProps, ScaleProps, Position
   startIndex: number;
 }
 
-export interface TextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {
+export interface TextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps, LayoutProps {
   text: string;
   anchor: PointLike;
   resolution: number;
@@ -114,7 +130,7 @@ export interface TextProps extends AbstractProps, PositionProps, ScaleProps, Vis
   style: Partial<TextStyleOptions>;
 }
 
-export interface HTMLTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {
+export interface HTMLTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps, LayoutProps {
   text: string;
   anchor: PointLike;
   resolution: number;
@@ -132,6 +148,7 @@ export interface ContainerProps
     ScaleProps,
     PivotProps,
     VisibilityProps,
+    LayoutProps,
     ContainerConfig {}
 
 export interface ParticleContainerProps extends AbstractProps, ParticleContainerConfig {}
@@ -147,7 +164,7 @@ type SpineData = {
   skel?: boolean;
 };
 
-export interface SpineProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps {
+export interface SpineProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps, LayoutProps {
   data: string | SpineData;
   autoUpdate: boolean;
   animationName: string;
@@ -156,6 +173,13 @@ export interface SpineProps extends AbstractProps, ScaleProps, PositionProps, Vi
   paused: boolean;
 }
 
-interface _ButtonProps extends AbstractProps, ScaleProps, PositionProps, PivotProps, VisibilityProps, ButtonConfig {}
+interface _ButtonProps
+  extends AbstractProps,
+    ScaleProps,
+    PositionProps,
+    PivotProps,
+    VisibilityProps,
+    ButtonConfig,
+    LayoutProps {}
 
 export type ButtonProps = WithRequiredProps<_ButtonProps, 'textures'>;

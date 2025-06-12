@@ -54,69 +54,96 @@ export default class PauseScene extends BaseScene {
 
   public async initialize() {
     await super.initialize();
-    this.ui = this.add.uiCanvas({ useAppSize: true });
+    this.ui = this.add.uiCanvas({ label: 'UI', useAppSize: true });
 
-    this.container = this.add.flexContainer({
-      flexDirection: 'column',
-      gap: 20,
-      justifyContent: 'center',
+    this.container = this.ui.addElement(
+      this.make.flexContainer({
+        layout: {
+          flexDirection: 'column',
+          justifyContent: 'center',
+          width: 800,
+          gap: 20,
+        },
+      }),
+      { align: 'center' },
+    );
+
+    const animatedContainer = this.container.add.flexContainer({
+      layout: { gap: 50, width: 500, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' },
     });
 
-    const gsapContainer = this.container.add.container();
-
-    this.gsapAnimated = gsapContainer.add.sprite({ asset: 'static/jar', scale: 0.25, anchor: 0.5 });
-
-    gsapContainer.add.text({
+    animatedContainer.add.text({
       text: 'Animated with GSAP',
       anchor: [1, 0.5],
       pivot: [140, 0],
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 24, align: 'right' },
+      layout: { applySizeDirectly: true },
     });
 
-    const tickerContainer = this.container.add.container();
+    this.gsapAnimated = animatedContainer.add.sprite({
+      asset: 'static/jar',
+      scale: 0.25,
+      anchor: 0.5,
+      layout: {
+        applySizeDirectly: true,
+      },
+    });
 
-    this.tickerAnimated = tickerContainer.add.sprite({ asset: 'static/jar', scale: 0.25, anchor: 0.5 });
-
-    tickerContainer.add.text({
+    animatedContainer.add.text({
       text: 'Animated with Pixi Ticker',
       anchor: [1, 0.5],
       pivot: [140, 0],
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 24, align: 'right' },
+      layout: true,
     });
 
-    gsap.to(this.gsapAnimated.pivot, {
-      x: 200,
-      duration: 1,
-      ease: 'power2.inOut',
-      yoyo: true,
-      repeat: -1,
+    this.tickerAnimated = animatedContainer.add.sprite({
+      asset: 'static/jar',
+      scale: 0.25,
+      anchor: 0.5,
+      layout: { applySizeDirectly: true },
     });
+
+    this.addAnimation(
+      gsap.to(this.gsapAnimated, {
+        x: 200,
+        duration: 1,
+        ease: 'power2.inOut',
+        yoyo: true,
+        repeat: -1,
+      }),
+    );
 
     // Add button container
     this.buttonContainer = this.ui.addElement(
       this.make.flexContainer({
+        x: -20,
         flexDirection: 'column',
         gap: 20,
+        label: 'Button Container',
+        layout: { paddingBottom: 30, paddingRight: 100, width: 256 },
       }),
-      { align: 'bottom right', padding: { bottom: 60, right: 20 } },
+      { align: 'bottom right' },
     );
 
     // Add music button
     const musicButton = this.buttonContainer.add.button({
       scale: 0.5,
       cursor: 'pointer',
+      label: 'Music Button',
       textures: {
         default: 'btn/blue',
         hover: 'btn/yellow',
         disabled: 'btn/grey',
         active: 'btn/red',
       },
+      layout: { height: 70, width: 256 },
       sheet: 'required/ui',
       accessibleTitle: 'Toggle Music',
       accessibleHint: 'Press to toggle background music',
     });
 
-    musicButton.add.text({
+    musicButton.addLabel({
       text: 'Toggle Music',
       anchor: 0.5,
       resolution: 2,
@@ -136,18 +163,20 @@ export default class PauseScene extends BaseScene {
     const pauseButton = this.buttonContainer.add.button({
       scale: 0.5,
       cursor: 'pointer',
+      label: 'Pause Button',
       textures: {
         default: 'btn/blue',
         hover: 'btn/yellow',
         disabled: 'btn/grey',
         active: 'btn/red',
       },
+      layout: { height: 70 },
       sheet: 'required/ui',
       accessibleTitle: 'Toggle Pause',
       accessibleHint: 'Press to toggle pause state',
     });
 
-    pauseButton.add.text({
+    pauseButton.addLabel({
       text: 'Toggle Pause',
       anchor: 0.5,
       resolution: 2,
@@ -171,28 +200,30 @@ export default class PauseScene extends BaseScene {
     // timers
 
     // Create a count-up timer
-    const timerContainer = this.container.add.container();
-    const stopwatch = this.app.timers.createTimer({
+    const timerContainer = this.container.add.flexContainer({
+      gap: 20,
+      layout: { width: 600, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between', paddingTop: 80 },
+    });
+
+    this.app.timers.createTimer({
       autoStart: true,
       onTick: this._updateStopWatch,
     });
 
     timerContainer.add.text({
       text: 'Stopwatch (TimerPlugin)',
-      anchor: [1, 0.5],
-      pivot: [140, 0],
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 24, align: 'right' },
+      layout: true,
     });
 
     this.stopwatchDisplay = timerContainer.add.text({
       text: '00:00:00',
-      anchor: 0.5,
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
+      layout: true,
     });
 
     // Create a countdown timer
-    const countdownContainer = this.container.add.container();
-    const countdown = this.app.timers.createTimer({
+    this.app.timers.createTimer({
       duration: 5000, // 5 seconds
       autoStart: true,
       useWorker: true,
@@ -203,16 +234,13 @@ export default class PauseScene extends BaseScene {
       },
     });
 
-    countdownContainer.add.text({
+    timerContainer.add.text({
       text: 'Countdown (TimerPlugin)',
-      anchor: [1, 0.5],
-      pivot: [140, 0],
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 24, align: 'right' },
     });
 
-    this.countdownDisplay = countdownContainer.add.text({
+    this.countdownDisplay = timerContainer.add.text({
       text: '00:00:00',
-      anchor: 0.5,
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
     });
 
@@ -220,17 +248,16 @@ export default class PauseScene extends BaseScene {
       text: ``,
       anchor: 0,
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontSize: 24, align: 'left' },
+      layout: { applySizeDirectly: true },
     });
 
-    this.ui.addElement(this.pauseInfo, { align: 'bottom left', padding: { bottom: 30, left: 20 } });
+    this.ui.addElement(this.pauseInfo, { align: 'bottom left' });
   }
 
   _updatePauseInfo() {
     this.pauseInfo.text = `<p style="background-color: #000000; backround-opacity: 0.5; padding: 10px; border-radius: 5px;">App is paused with the following configuration:<br><strong>Audio:</strong> <span style="color: #00ff00;">${this.config.pauseAudio}</span><br><strong>Animations:</strong> <span style="color: #00ff00;">${this.config.pauseAnimations}</span> <br><strong>Ticker:</strong> <span style="color: #00ff00;">${this.config.pauseTicker}</span> <br><strong>Timers:</strong> <span style="color: #00ff00;">${this.config.pauseTimers}</span></p>`;
 
     this.pauseInfo.visible = this.app.paused;
-
-    this.ui.layout();
   }
 
   _updateStopWatch(elapsed: number) {
@@ -281,10 +308,10 @@ export default class PauseScene extends BaseScene {
   }
 
   update() {
-    this.tickerAnimated.pivot.x += 3 * this.tickerAnimationConfig.direction;
-    if (this.tickerAnimated.pivot.x >= 200) {
+    this.tickerAnimated.x += 3 * this.tickerAnimationConfig.direction;
+    if (this.tickerAnimated.x >= 200) {
       this.tickerAnimationConfig.direction = -1;
-    } else if (this.tickerAnimated.pivot.x <= 0) {
+    } else if (this.tickerAnimated.x <= 0) {
       this.tickerAnimationConfig.direction = 1;
     }
   }

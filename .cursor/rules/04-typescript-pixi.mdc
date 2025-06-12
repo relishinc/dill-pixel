@@ -3,7 +3,7 @@ description:
 globs: 
 alwaysApply: false
 ---
- # TypeScript and Pixi.js Best Practices
+# TypeScript and Pixi.js Best Practices
 
 ## TypeScript Guidelines
 - Leverage TypeScript's strong typing for all game objects and Pixi.js elements

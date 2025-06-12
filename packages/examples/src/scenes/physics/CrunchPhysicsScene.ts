@@ -501,6 +501,9 @@ export default class CrunchPhysicsScene extends BaseScene {
     this.app.actionContext = 'game';
     this.physicsContainer = this.add.container();
     this._addBg();
+    this._addBg({ x: 1, y: 0 });
+    this._addBg({ x: 0, y: -1 }, true);
+    this._addBg({ x: 1, y: -1 }, true);
 
     // Initialize physics with boundary from config
     await this.physics.initialize({
@@ -620,14 +623,16 @@ export default class CrunchPhysicsScene extends BaseScene {
   // });
   // }
 
-  _addBg() {
-    for (let i = 1; i <= 4; i++) {
-      this.physicsContainer.add.sprite({
-        sheet: 'jumper',
-        asset: `Background/bg_layer${i}`,
+  _addBg(offset: { x: number; y: number } = { x: 0, y: 0 }, onlyOne: boolean = false) {
+    const ctr = this.physicsContainer.add.container();
+    for (let i = 1; i <= (onlyOne ? 1 : 4); i++) {
+      ctr.add.sprite({
+        asset: `bg_layer${i}`,
         anchor: [0.5, 0],
+        roundPixels: true,
       });
     }
+    ctr.position.set(offset.x * ctr.width - 2, offset.y * ctr.height + 2);
   }
 
   protected _createPlayer(): void {

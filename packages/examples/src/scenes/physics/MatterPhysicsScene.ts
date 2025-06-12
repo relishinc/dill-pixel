@@ -1,7 +1,7 @@
 import BaseScene from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
 import { Entity, default as MatterPhysics } from '@dill-pixel/plugin-matter-physics';
-import { Container, Logger, ParticleContainer, UICanvas } from 'dill-pixel';
+import { Container, ParticleContainer, UICanvas } from 'dill-pixel';
 import { FederatedPointerEvent, Particle, ParticleOptions, Rectangle, Text, Texture } from 'pixi.js';
 
 export const id = 'matter-physics';
@@ -150,16 +150,6 @@ export default class MatterPhysicsScene extends BaseScene {
     );
 
     this._handleDebugChanged();
-
-    setTimeout(() => {
-      Logger.log('pausing physics');
-      this.app.pause({ pauseOther: [this.physics] });
-    }, 2000);
-
-    setTimeout(() => {
-      Logger.log('resuming physics');
-      this.app.resume();
-    }, 4000);
   }
 
   _drop(e: FederatedPointerEvent) {
@@ -209,7 +199,6 @@ export default class MatterPhysicsScene extends BaseScene {
               }),
         });
       }
-      entity.offset = [0, 50];
       entity.position.set(pos.x, pos.y);
       this.level.add.existing(entity);
       this._entities.push(entity);

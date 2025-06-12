@@ -1,10 +1,11 @@
-import { Bounds, ContainerChild, Graphics, IRenderLayer, Container as PIXIContainer, Rectangle } from 'pixi.js';
+import type { LayoutOptions } from '@pixi/layout';
+import { ContainerChild, Graphics, IRenderLayer, Container as PIXIContainer, Rectangle } from 'pixi.js';
 import { Application } from '../core/Application';
-import { Container } from '../display/Container';
+import { Container } from '../display';
 import { Factory, WithSignals } from '../mixins';
 import type { Padding, PointLike, Size, SizeLike } from '../utils';
-import { bindAllMethods, ensurePadding, Logger, resolvePadding, resolveSizeLike } from '../utils';
-import type { IFlexContainer } from './FlexContainer';
+import { bindAllMethods, ensurePadding, Logger, resolveSizeLike } from '../utils';
+import { FlexContainer, type IFlexContainer } from './FlexContainer';
 
 export type UICanvasEdge =
   | 'top right'
@@ -40,15 +41,25 @@ export type UICanvasConfig = {
   padding: Padding;
   size: Size;
   useAppSize: boolean;
+  layout?: boolean | Partial<LayoutOptions> | null | undefined;
+  autoLayoutChildren?: boolean;
 };
 
-export const UICanvasConfigKeys: (keyof UICanvasConfig)[] = ['debug', 'padding', 'size', 'useAppSize'];
+export const UICanvasConfigKeys: (keyof UICanvasConfig)[] = ['debug', 'padding', 'size', 'useAppSize', 'layout'];
 
 export type UICanvasProps = {
   debug: boolean;
   padding: Partial<Padding> | PointLike;
   size?: SizeLike;
   useAppSize?: boolean;
+  layout: boolean | Partial<LayoutOptions> | null | undefined;
+  autoLayoutChildren?: boolean;
+};
+
+const defaultLayout = {
+  flexGrow: 0,
+  flexShrink: 0,
+  autoLayoutChildren: true,
 };
 
 const _UICanvas = WithSignals(Factory());
@@ -60,37 +71,238 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
   protected settingsMap = new Map<PIXIContainer, UICanvasChildSettings>();
   protected _childMap = new Map<PIXIContainer, PIXIContainer>();
   protected _debugGraphics: Graphics;
-  protected _inner: Container;
   private _reparentAddedChild: boolean = true;
   private _disableAddChildError: boolean = false;
+  private _positionContainers: Map<UICanvasEdge, Container>;
+
+  public topRow: FlexContainer;
+  public middleRow: FlexContainer;
+  public bottomRow: FlexContainer;
 
   constructor(config: Partial<UICanvasProps>) {
     super();
-    // Bind all methods of this class to the current instance.
+
     bindAllMethods(this);
+    this._positionContainers = new Map();
     this.config = {
       debug: config.debug === true,
       padding: ensurePadding(config?.padding ?? 0),
       size: config.size !== undefined ? resolveSizeLike(config.size) : { width: 0, height: 0 },
       useAppSize: config.useAppSize === true,
+      autoLayoutChildren: config.autoLayoutChildren ?? true,
     };
-    this._disableAddChildError = true;
-    this._inner = this.add.container({ x: this.config.padding.left, y: this.config.padding.top });
-    this._disableAddChildError = false;
+
+    if (config.layout) {
+      if (typeof config.layout === 'boolean') {
+        this.config.layout = config.layout;
+      } else {
+        this.config.layout = { ...defaultLayout, ...config.layout };
+      }
+    } else {
+      this.config.layout = { ...defaultLayout };
+    }
+
+    if (this.config.useAppSize) {
+      this.config.size = this.app.size;
+    }
+    this.layout = {
+      width: this.config.size.width,
+      height: this.config.size.height,
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      ...(typeof this.config.layout === 'object' ? this.config.layout : {}),
+    };
+
+    // Position the container to account for padding
+    this.on('childRemoved', this._childRemoved);
+    this.on('childAdded', this._childAdded);
+    this.once('added', this._added);
 
     this.addSignalConnection(this.app.onResize.connect(this.resize));
 
-    this.on('childRemoved', this._childRemoved);
-    this.once('added', this._added);
+    this._initializeLayout();
+    this.updateLayout();
   }
 
-  protected _bounds: Bounds;
+  private _initializeLayout() {
+    this._disableAddChildError = true;
+    // Create top row
+    this.topRow = this.add.flexContainer({
+      label: 'Top Row',
+      layout: {
+        width: '100%',
+        height: 'auto',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+      },
+    });
 
-  get bounds(): Bounds {
-    if (!this._bounds) {
-      this._bounds = this.getBounds();
-    }
-    return this._bounds;
+    // Create middle row
+    this.middleRow = this.add.flexContainer({
+      label: 'Middle Row',
+      layout: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      },
+    });
+
+    // Create bottom row
+    this.bottomRow = this.add.flexContainer({
+      label: 'Bottom Row',
+      layout: {
+        width: '100%',
+        height: 'auto',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end',
+      },
+    });
+
+    this._disableAddChildError = false;
+
+    // Create the 9 actual position containers
+    const topLeft = this._createPositionContainer(
+      this.topRow,
+      {
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        flexGrow: 1,
+        flexShrink: 0,
+      },
+      'top-left',
+    );
+    const topCenter = this._createPositionContainer(
+      this.topRow,
+      {
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        flexGrow: 1,
+        flexShrink: 0,
+      },
+      'top-center',
+    );
+    const topRight = this._createPositionContainer(
+      this.topRow,
+      {
+        justifyContent: 'flex-end',
+        alignItems: 'flex-start',
+        flexGrow: 1,
+        flexShrink: 0,
+      },
+      'top-right',
+    );
+
+    const middleLeft = this._createPositionContainer(
+      this.middleRow,
+      {
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        flexDirection: 'row',
+        flexGrow: 1,
+        flexShrink: 0,
+      },
+      'middle-left',
+    );
+    const center = this._createPositionContainer(
+      this.middleRow,
+      {
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        flexGrow: 1,
+        flexShrink: 0,
+      },
+      'center',
+    );
+    const middleRight = this._createPositionContainer(
+      this.middleRow,
+      {
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        flexDirection: 'row',
+        flexGrow: 1,
+        flexShrink: 0,
+      },
+      'middle-right',
+    );
+
+    const bottomLeft = this._createPositionContainer(
+      this.bottomRow,
+      {
+        justifyContent: 'flex-end',
+        alignItems: 'flex-start',
+        flexDirection: 'column',
+        flexGrow: 1,
+        flexShrink: 0,
+      },
+      'bottom-left',
+    );
+    const bottomCenter = this._createPositionContainer(
+      this.bottomRow,
+      {
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        flexGrow: 1,
+        flexShrink: 0,
+        flexDirection: 'column',
+      },
+      'bottom-center',
+    );
+    const bottomRight = this._createPositionContainer(
+      this.bottomRow,
+      {
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+        flexDirection: 'column',
+        flexGrow: 1,
+        flexShrink: 0,
+      },
+      'bottom-right',
+    );
+
+    // Map all edge variants to the appropriate containers
+    this._positionContainers.set('top left', topLeft);
+    this._positionContainers.set('left top', topLeft);
+
+    this._positionContainers.set('top center', topCenter);
+    this._positionContainers.set('top', topCenter);
+
+    this._positionContainers.set('top right', topRight);
+    this._positionContainers.set('right top', topRight);
+
+    this._positionContainers.set('left center', middleLeft);
+    this._positionContainers.set('left', middleLeft);
+    this._positionContainers.set('left bottom', bottomLeft);
+
+    this._positionContainers.set('center', center);
+
+    this._positionContainers.set('right center', middleRight);
+    this._positionContainers.set('right', middleRight);
+    this._positionContainers.set('right bottom', bottomRight);
+
+    this._positionContainers.set('bottom left', bottomLeft);
+
+    this._positionContainers.set('bottom center', bottomCenter);
+    this._positionContainers.set('bottom', bottomCenter);
+
+    this._positionContainers.set('bottom right', bottomRight);
+  }
+
+  private _createPositionContainer(parent: FlexContainer, layout: Partial<LayoutOptions>, label: string): Container {
+    const container = parent.add.container({
+      layout: {
+        width: 'auto',
+        height: 'auto',
+        ...layout,
+      },
+    });
+    container.label = label;
+    container.on('childAdded', this.updateLayout);
+    container.on('childRemoved', this.updateLayout);
+    return container;
   }
 
   protected _canvasChildren: PIXIContainer[] = [];
@@ -106,71 +318,95 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
     return Application.getInstance() as T;
   }
 
+  destroy() {
+    this.canvasChildren?.forEach((child) => {
+      child.off('layout', this.updateLayout);
+    });
+
+    this.children.forEach((child) => {
+      child.off('layout', this.updateLayout);
+    });
+
+    this.off('childAdded', this.updateLayout);
+    this.off('childRemoved', this.updateLayout);
+
+    this._positionContainers.forEach((container) => {
+      container.off('childAdded', this.updateLayout);
+      container.off('childRemoved', this.updateLayout);
+    });
+
+    super.destroy();
+  }
+
   set size(value: SizeLike) {
-    this.config.useAppSize = false;
     this.config.size = value === undefined ? { width: 0, height: 0 } : resolveSizeLike(value);
-    this.resize();
+
+    this.layout = { width: this.config.size.width, height: this.config.size.height };
+
+    this.updateLayout();
   }
 
   set padding(value: Partial<Padding> | PointLike) {
     this.config.padding = ensurePadding(value);
-    this._inner.position.set(this.config.padding.left, this.config.padding.top);
-    this.resize();
+    // Update position to account for padding
+    this.layout = {
+      paddingLeft: this.config.padding.left,
+      paddingTop: this.config.padding.top,
+      paddingRight: this.config.padding.right,
+      paddingBottom: this.config.padding.bottom,
+    };
+    this.updateLayout();
   }
 
   private static isFlexContainer(child: PIXIContainer): boolean {
-    return (child as any)?.flexChildren !== undefined;
+    return child instanceof FlexContainer;
   }
 
   /**
    * Removes all the children from the container
-   * Override because we need to ensure it returns the proper re-parented children
    */
-  public removeChildren = (beginIndex?: number, endIndex?: number) => {
-    return this._inner.removeChildren(beginIndex, endIndex);
+  public removeChildren = (beginIndex?: number, endIndex?: number): PIXIContainer[] => {
+    return super.removeChildren(beginIndex, endIndex) as PIXIContainer[];
   };
 
   /**
    * Removes a child from the container at the specified index
-   * Override because we need to remove from the inner container
    */
   public removeChildAt = <U extends PIXIContainer | IRenderLayer>(index: number): U => {
-    return this._inner.removeChildAt(index) as U;
+    return super.removeChildAt(index) as U;
   };
 
   /**
    * Adds a child to the container at the specified index
-   * Override because we need to ensure it sets the child index properly
    */
-  public addChildAt = <U extends PIXIContainer | IRenderLayer>(child: U, index: number) => {
-    const newChild = this._inner.add.existing(child);
-    this._inner.setChildIndex(newChild, index);
-    return newChild;
+  public addChildAt = <U extends PIXIContainer | IRenderLayer>(child: U, index: number): U => {
+    const newChild = this.add.existing(child);
+    if (newChild instanceof PIXIContainer) {
+      super.setChildIndex(newChild, index);
+    }
+    return newChild as U;
   };
 
   /**
    * Sets the index of the child in the container
-   * Override because we need to ensure it targets the parent container that we added
    */
-  public setChildIndex = <U extends PIXIContainer>(child: U, index: number) => {
-    this._inner.setChildIndex(child, index);
-    this.layout();
+  public setChildIndex = <U extends PIXIContainer>(child: U, index: number): void => {
+    super.setChildIndex(child, index);
+    this.updateLayout();
   };
 
   /**
    * Gets the index of a child in the container
-   * Override because we need to ensure it targets the parent container that we added
    */
-  public getChildIndex = <U extends PIXIContainer>(child: U) => {
-    return this._inner.getChildIndex(child);
+  public getChildIndex = <U extends PIXIContainer>(child: U): number => {
+    return super.getChildIndex(child);
   };
 
   /**
    * Gets the child at the specified index
-   * Override due to re-parenting
    */
-  public getChildAt = <U extends PIXIContainer | IRenderLayer>(index: number) => {
-    return (this._inner.getChildAt(index) as PIXIContainer)?.getChildAt(0) as U;
+  public getChildAt = <U extends PIXIContainer | IRenderLayer>(index: number): U => {
+    return super.getChildAt(index) as U;
   };
 
   public addChild<U extends (ContainerChild | IRenderLayer)[]>(...children: U): U[0] {
@@ -182,38 +418,47 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
       children,
       `will be added using the default 'top left' alignment'.`,
     );
-    return this._inner.addChild(...children);
+    return super.addChild(...children);
   }
 
   /**
    * Removes one or more children from the container
-   * Override because we need to ensure it returns the proper re-parented children
    */
   public removeChild(...children: (PIXIContainer | IRenderLayer)[]): PIXIContainer {
     if (this._reparentAddedChild) {
       children.forEach((child) => {
         const actualChild = this._childMap.get(child as PIXIContainer) as PIXIContainer;
         if (actualChild) {
-          return this._inner.removeChild(actualChild);
+          return super.removeChild(actualChild);
         }
         return undefined;
       });
     } else {
-      return this._inner.removeChild(...(children as PIXIContainer[]));
+      return super.removeChild(...(children as PIXIContainer[]));
     }
     return children[0] as PIXIContainer;
   }
 
   public resize() {
-    const _size = this.config.useAppSize ? this.app.size : this.config.size;
+    console.log('UICanvas:: Resizing', this.config.useAppSize);
+    if (this.config.useAppSize) {
+      Logger.log('UICanvas:: Resizing to app size', this.app.size);
+      this.size = { width: this.app.size.width, height: this.app.size.height };
+      this.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
+    } else {
+      this.updateLayout();
+    }
+  }
 
-    this._displayBounds = this.__calculateBounds(_size);
-    this._outerBounds = this.__calculateOuterBounds(_size);
+  public updateLayout() {
+    this.app.renderer.layout.update(this);
 
-    this.layout();
+    this._positionContainers.forEach((container) => {
+      this.app.renderer.layout.update(container);
+    });
 
     if (this.config.useAppSize) {
-      this.position.set(-_size.width * 0.5, -_size.height * 0.5);
+      this.position.set(-this.config.size.width * 0.5, -this.config.size.height * 0.5);
     }
 
     if (this.config.debug) {
@@ -221,71 +466,50 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
     }
   }
 
-  public layout() {
-    this._inner.children.forEach((child) => {
-      const childObj = child as PIXIContainer;
-      const settings = this.settingsMap.get(childObj);
-      if (settings) {
-        this.applySettings(childObj, settings);
-      }
-    });
-  }
-
   public addElement<U extends PIXIContainer = PIXIContainer>(
     child: PIXIContainer,
     settings?: Partial<UICanvasChildProps>,
   ): U {
-    const container = this._inner.add.container();
-    container.addChild(child);
-    const bounds = container.getLocalBounds();
-    if (bounds.x < 0) {
-      container.pivot.x = bounds.x;
-    }
-    if (bounds.y < 0) {
-      container.pivot.y = bounds.y;
-    }
-    if ((child as any)?.flexChildren) {
-      this.addSignalConnection((child as unknown as IFlexContainer).onLayoutComplete.connect(this.layout));
+    const position = settings?.align ?? 'top left';
+    const container = this._positionContainers.get(position);
+
+    if (!container) {
+      Logger.error(`UICanvas:: Invalid position "${position}" for element`);
+      return child as U;
     }
 
-    this.settingsMap.set(container, {
-      align: settings?.align ?? 'top left',
+    if (UICanvas.isFlexContainer(child as PIXIContainer)) {
+      this.addSignalConnection((child as unknown as IFlexContainer).onLayoutComplete.connect(this.updateLayout));
+    }
+
+    this.settingsMap.set(child, {
+      align: position,
       padding: settings?.padding ? ensurePadding(settings.padding) : { top: 0, left: 0, bottom: 0, right: 0 },
     });
 
     this._childMap.set(child, container);
     this._canvasChildren = Array.from(this._childMap.keys());
 
-    this.resize();
+    container.add.existing(child);
+    this._childAdded(child);
+
     return child as U;
   }
 
-  /**
-   * Ensure we don't leave empty containers after setting child indices or adding / removing children
-   * @protected
-   */
-  protected cleanup() {
-    if (this.canvasChildren.length === this.children.length) return;
-    // remove any children that are not in the flex children list
-    this.children.forEach((child) => {
-      if (this.config.debug && child === this._debugGraphics) return;
-      if (!(child as PIXIContainer)?.children?.length) {
-        super.removeChild(child);
+  private _childAdded(child: PIXIContainer) {
+    if (this.config.autoLayoutChildren) {
+      if (!child.layout) {
+        child.layout = true;
       }
-    });
-  }
-
-  private __calculateBounds(_size: Size): Rectangle {
-    return new Rectangle(
-      0,
-      0,
-      _size.width - this.config.padding.left - this.config.padding.right,
-      _size.height - this.config.padding.top - this.config.padding.bottom,
-    );
-  }
-
-  private __calculateOuterBounds(_size: Size): Rectangle {
-    return new Rectangle(0, 0, _size.width, _size.height);
+      if (!child.layout?.style?.width) {
+        child.layout = { width: 'auto' };
+      }
+      if (!child.layout?.style?.height) {
+        child.layout = { height: 'auto' };
+      }
+    }
+    child.on('layout', this.updateLayout);
+    this.updateLayout();
   }
 
   private _childRemoved(child: any) {
@@ -295,125 +519,67 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
   }
 
   private _added() {
-    this.layout();
-  }
-
-  private applySettings(child: PIXIContainer, settings: UICanvasChildSettings) {
-    if (!settings) return;
-    const displayWidth = this._displayBounds.width;
-    const displayHeight = this._displayBounds.height;
-
-    const firstChild = (child as PIXIContainer).getChildAt(0);
-
-    const childWidth = UICanvas.isFlexContainer(firstChild as PIXIContainer)
-      ? (firstChild as unknown as IFlexContainer).containerWidth || child.width
-      : child.width;
-    const childHeight = UICanvas.isFlexContainer(firstChild as PIXIContainer)
-      ? (firstChild as unknown as IFlexContainer).containerHeight || child.height
-      : child.height;
-
-    switch (settings.align) {
-      case 'top right':
-        child.x = displayWidth - childWidth;
-        child.y = 0;
-        break;
-      case 'top left':
-        child.x = 0;
-        child.y = 0;
-        break;
-      case 'top center':
-      case 'top':
-        child.x = (displayWidth - childWidth) / 2;
-        child.y = 0;
-        break;
-      case 'bottom right':
-        child.x = displayWidth - childWidth;
-        child.y = displayHeight - childHeight;
-        break;
-      case 'bottom left':
-        child.x = 0;
-        child.y = displayHeight - childHeight;
-        break;
-      case 'bottom center':
-      case 'bottom':
-        child.x = (displayWidth - child.width) / 2;
-        child.y = displayHeight - childHeight;
-        break;
-      case 'left top':
-        child.x = 0;
-        child.y = 0;
-        break;
-      case 'left bottom':
-        child.x = 0;
-        child.y = displayHeight - childHeight;
-        break;
-      case 'left center':
-      case 'left':
-        child.x = 0;
-        child.y = (displayHeight - childHeight) / 2;
-        break;
-      case 'right top':
-        child.x = displayWidth - childWidth;
-        child.y = 0;
-        break;
-      case 'right bottom':
-        child.x = displayWidth;
-        child.y = displayHeight;
-        break;
-      case 'right center':
-      case 'right':
-        child.x = displayWidth - childWidth;
-        child.y = (displayHeight - childHeight) / 2;
-        break;
-      case 'center':
-        child.x = (displayWidth - childWidth) / 2;
-        child.y = (displayHeight - childHeight) / 2;
-        break;
-    }
-    child.x +=
-      resolvePadding(settings.padding.left, displayWidth) - resolvePadding(settings.padding.right, displayWidth);
-
-    child.y +=
-      resolvePadding(settings.padding.top, displayHeight) - resolvePadding(settings.padding.bottom, displayHeight);
+    this.updateLayout();
   }
 
   private drawDebug() {
-    if (!this._debugGraphics) {
-      this._disableAddChildError = true;
-      this._debugGraphics = this._inner.add.graphics();
-      this._disableAddChildError = false;
+    if (!this._debugGraphics && this.parent) {
+      this._debugGraphics = this.make.graphics({
+        layout: false,
+        eventMode: 'none',
+      });
+      this.parent.addChild(this._debugGraphics);
+      this._debugGraphics.layout = false;
     }
+    this._outerBounds = new Rectangle(0, 0, this.config.size.width, this.config.size.height);
+
+    if (this._debugGraphics) {
+      this._debugGraphics.position.set(this.position.x, this.position.y);
+    }
+
+    this._displayBounds = new Rectangle(
+      this.config.padding.left,
+      this.config.padding.top,
+      this.config.size.width - this.config.padding.right - this.config.padding.left,
+      this.config.size.height - this.config.padding.bottom - this.config.padding.top,
+    );
+
+    const centerX = this._outerBounds.x + this._outerBounds.width / 2;
+    const centerY = this._outerBounds.y + this._outerBounds.height / 2;
+
     this._debugGraphics
       .clear()
-      .rect(0, 0, this._displayBounds.width, this._displayBounds.height)
+      // Outer area
+      .rect(this._outerBounds.x, this._outerBounds.y, this._outerBounds.width, this._outerBounds.height)
       .stroke({
         width: 1,
         color: 0xff0000,
         alpha: 0.5,
         pixelLine: true,
       })
-      .rect(-this.config.padding.left, -this.config.padding.top, this._outerBounds.width, this._outerBounds.height)
+      // Inner area
+      .rect(this._displayBounds.x, this._displayBounds.y, this._displayBounds.width, this._displayBounds.height)
+      .stroke({
+        width: 1,
+        color: 0x00ff00,
+        alpha: 0.5,
+        pixelLine: true,
+      })
+      // Center crosshairs
+      .moveTo(centerX, centerY - 10)
+      .lineTo(centerX, centerY + 10)
       .stroke({
         width: 1,
         color: 0xff0000,
         alpha: 0.5,
         pixelLine: true,
       })
-      .moveTo(this._displayBounds.width / 2, this._displayBounds.height / 2 - 10)
-      .lineTo(this._displayBounds.width / 2, this._displayBounds.height / 2 + 10)
+      .moveTo(centerX - 10, centerY)
+      .lineTo(centerX + 10, centerY)
       .stroke({
         width: 1,
         color: 0xff0000,
         alpha: 0.5,
-        pixelLine: true,
-      })
-      .moveTo(this._displayBounds.width / 2 - 10, this._displayBounds.height / 2)
-      .lineTo(this._displayBounds.width / 2 + 10, this._displayBounds.height / 2)
-      .stroke({
-        width: 1,
-        color: 0xff0000,
-        alpha: 0.5,
-        pixelLine: true,
       });
   }
 }

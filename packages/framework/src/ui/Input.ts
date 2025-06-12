@@ -378,18 +378,44 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
       },
     };
 
+    if (this.options.layout && typeof this.options.layout === 'object') {
+      this.layout = { ...this.options.layout };
+    } else {
+      this.layout = { transformOrigin: 'top left' };
+    }
+
     if (!this.options.placeholder) {
       this.options.placeholder = {
         color: Number(this.options.style?.fill) ?? 0x666666,
       };
     }
 
-    this._inner = this.add.container();
+    this._inner = this.add.container({
+      layout: { position: 'relative', top: 0, left: 0, width: '100%', height: '100%' },
+    });
     this.addBg();
 
-    this._inputContainer = this._inner.add.container({ y: -2 });
-    this._placeholderContainer = this._inner.add.container({ y: -2 });
-    this._placeholderContainer.interactiveChildren = false;
+    this._inputContainer = this._inner.add.container({
+      y: -2,
+      layout: {
+        position: 'absolute',
+        transformOrigin: 'top left',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+      },
+    });
+    this._placeholderContainer = this._inner.add.container({
+      y: -2,
+      layout: {
+        position: 'absolute',
+        inset: 0,
+        transformOrigin: 'top left',
+        width: '100%',
+        height: '100%',
+      },
+    });
+    this._placeholderContainer.eventMode = 'none';
     this.addSelection();
     this.addCaret();
     this.addInput();
@@ -674,26 +700,28 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
         const tx = this.input.x;
         const ty = this.input.y;
         if (this.options.placeholder.animationOnType) {
-          gsap.to(this.placeholder, {
-            x: tx,
-            y: ty,
-            tint: 0xffffff,
-            alpha: this.options.placeholder.alpha ?? 1,
-            duration: this.options.placeholder.animationOnType.duration || 0.4,
-            ease: this.options.placeholder.animationOnType.ease || 'sine.in',
-            overwrite: true,
-            onComplete: () => {
-              this._placeholderPositioned = false;
-              this._placeholderAnimating = false;
-            },
-          });
-          gsap.to(this.placeholder.scale, {
-            x: 1,
-            y: 1,
-            duration: this.options.placeholder.animationOnType.duration || 0.4,
-            ease: this.options.placeholder.animationOnType.ease || 'sine.out',
-            overwrite: true,
-          });
+          this.addAnimation([
+            gsap.to(this.placeholder, {
+              x: tx,
+              y: ty,
+              tint: 0xffffff,
+              alpha: this.options.placeholder.alpha ?? 1,
+              duration: this.options.placeholder.animationOnType.duration || 0.4,
+              ease: this.options.placeholder.animationOnType.ease || 'sine.in',
+              overwrite: true,
+              onComplete: () => {
+                this._placeholderPositioned = false;
+                this._placeholderAnimating = false;
+              },
+            }),
+            gsap.to(this.placeholder.scale, {
+              x: 1,
+              y: 1,
+              duration: this.options.placeholder.animationOnType.duration || 0.4,
+              ease: this.options.placeholder.animationOnType.ease || 'sine.out',
+              overwrite: true,
+            }),
+          ]);
         } else {
           this.placeholder.x = tx;
           this.placeholder.y = ty;
@@ -725,25 +753,29 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
           }
 
           if (this.options.placeholder.animationOnType) {
-            gsap.to(this.placeholder, {
-              x: tx,
-              y: ty,
-              duration: this.options.placeholder.animationOnType.duration || 0.4,
-              ease: this.options.placeholder.animationOnType.ease || 'none',
-              tint: this.options.placeholder.animationOnType.tint ?? null,
-              alpha: this.options.placeholder.animationOnType.alpha ?? this.options.placeholder.alpha ?? 1,
-              overwrite: true,
-            });
+            this.addAnimation(
+              gsap.to(this.placeholder, {
+                x: tx,
+                y: ty,
+                duration: this.options.placeholder.animationOnType.duration || 0.4,
+                ease: this.options.placeholder.animationOnType.ease || 'none',
+                tint: this.options.placeholder.animationOnType.tint ?? null,
+                alpha: this.options.placeholder.animationOnType.alpha ?? this.options.placeholder.alpha ?? 1,
+                overwrite: true,
+              }),
+            );
 
             if (this.options.placeholder.scaleOnType) {
               const scale = resolvePointLike(this.options.placeholder.scaleOnType);
-              gsap.to(this.placeholder.scale, {
-                x: scale.x,
-                y: scale.y,
-                duration: this.options.placeholder.animationOnType.duration || 0.4,
-                ease: this.options.placeholder.animationOnType.ease || 'none',
-                overwrite: true,
-              });
+              this.addAnimation(
+                gsap.to(this.placeholder.scale, {
+                  x: scale.x,
+                  y: scale.y,
+                  duration: this.options.placeholder.animationOnType.duration || 0.4,
+                  ease: this.options.placeholder.animationOnType.ease || 'none',
+                  overwrite: true,
+                }),
+              );
             }
           } else {
             this.placeholder.x = tx;
@@ -852,6 +884,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
       label: 'input',
       resolution: 2,
       roundPixels: true,
+      layout: false,
     });
   }
 
@@ -866,6 +899,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
       resolution: 2,
       label: 'placeholder',
       roundPixels: true,
+      layout: true,
     });
 
     this.placeholder.style.align = this.input.style.align;
@@ -972,6 +1006,7 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
         overwrite: true,
       },
     );
+    this.addAnimation(this.cursorAnimation);
   }
 
   protected validate() {
@@ -1109,8 +1144,8 @@ export class Input extends Focusable(Interactive(WithSignals(Container))) {
 
   private _showCloneOverlay() {
     this.cloneOverlay.pivot.y = -20;
-    gsap.to(this.cloneOverlay, { duration: 0.5, alpha: 0.8, ease: 'sine.out', delay: 0.1 });
-    gsap.to(this.cloneOverlay.pivot, { duration: 0.5, y: 0, ease: 'sine.out', delay: 0.1 });
+    this.addAnimation(gsap.to(this.cloneOverlay, { duration: 0.5, alpha: 0.8, ease: 'sine.out', delay: 0.1 }));
+    this.addAnimation(gsap.to(this.cloneOverlay.pivot, { duration: 0.5, y: 0, ease: 'sine.out', delay: 0.1 }));
   }
 
   private _positionCloneOverlay() {

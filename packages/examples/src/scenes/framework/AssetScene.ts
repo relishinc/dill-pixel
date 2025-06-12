@@ -1,5 +1,6 @@
 import BaseScene from '@/scenes/BaseScene';
 import { FlexContainer, SceneAssets } from 'dill-pixel';
+import { Sprite } from 'pixi.js';
 
 export const id = 'assets';
 export const debug = {
@@ -11,6 +12,9 @@ export default class AssetScene extends BaseScene {
   title = 'Asset Scene';
   subtitle = 'Asset loading from different sources';
   container: FlexContainer;
+  pickle: Sprite;
+  jar: Sprite;
+  zilla: Sprite;
 
   public get assets(): SceneAssets {
     return {
@@ -37,16 +41,39 @@ export default class AssetScene extends BaseScene {
   public async initialize() {
     await super.initialize();
     this.container = this.add.flexContainer({
-      gap: 50,
+      gap: 0,
       justifyContent: 'center',
       alignItems: 'center',
-      flexWrap: 'wrap',
+      flexWrap: 'nowrap',
     });
-    this.container.add.sprite({
+    this.pickle = this.container.add.sprite({
       asset: 'https://reli.sh/wp-content/uploads/2023/10/tech-pickle-300x300.webp',
     });
-    this.container.add.sprite({ asset: 'static/jar', scale: 0.4 });
-    this.container.add.sprite({ asset: 'zilla' });
+    this.jar = this.container.add.sprite({ asset: 'static/jar', scale: 0.5 });
+    this.zilla = this.container.add.sprite({ asset: 'zilla' });
+  }
+
+  async start() {
+    // const pickleTween = this.app.anim.to(this.pickle, {
+    //   pixi: { anchor: 0.5, scale: 2, saturation: 0 },
+    //   yoyo: true,
+    //   repeat: -1,
+    //   duration: 1,
+    //   ease: EaseType.CustomInOut,
+    // });
+    // const jarTween = this.app.anim.to(this.jar, {
+    //   pixi: { anchor: 0.5, scale: 0.7, saturation: 0 },
+    //   yoyo: true,
+    //   repeat: -1,
+    //   duration: 1,
+    //   ease: EaseType.Custom,
+    // });
+    // this.app.addAnimation([pickleTween, jarTween], 'AssetScene');
+    // toy with animations pause / resume
+    // await wait(1.5);
+    // this.app.animation.pauseAll('AssetScene');
+    // await wait(1.5);
+    // this.app.animation.playAll('AssetScene');
   }
 
   resize() {
