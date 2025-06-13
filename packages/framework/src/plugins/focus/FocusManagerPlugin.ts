@@ -237,7 +237,6 @@ export interface IFocusManagerPlugin extends IPlugin {
   onFocusManagerDeactivated: Signal<() => void>;
   onFocusLayerChange: Signal<(currentLayerId: string | number) => void>;
   onFocusChange: Signal<(detail: FocusChangeDetail) => void>;
-
   enabled: boolean;
 
   restart(): void;
@@ -767,7 +766,6 @@ export class FocusManagerPlugin extends Plugin<Application, FocusManagerPluginOp
 
   private _updateOutliner() {
     if (this._focusTarget) {
-      this._focusOutliner.position.set(this._focusTarget.position.x, this._focusTarget.position.y);
       this._focusOutliner.draw(this._focusTarget);
     } else {
       this._focusOutliner.clear();

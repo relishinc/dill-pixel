@@ -96,7 +96,7 @@ export default class RiveScene extends BaseScene {
       width: 720,
       height: 720,
       flexGrow: 0,
-      flexShrink: 1,
+      flexShrink: 0,
     };
 
     this.animation.onReady.connect(this._handleReady);
@@ -108,7 +108,7 @@ export default class RiveScene extends BaseScene {
 
   _addReaction(artboardName: string) {
     const reactionInstance = new RiveEntity({
-      asset: 'reactions',
+      asset: 'reactions_v3',
       interactive: true,
       autoPlay: true,
       cursor: 'pointer',

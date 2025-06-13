@@ -1,6 +1,5 @@
 import BaseScene from '@/scenes/BaseScene';
 import { SpineAnimation } from 'dill-pixel';
-import { TrackEntry } from 'dill-pixel/plugins/spine/pixi-spine';
 
 export const id = 'spine';
 export const debug = {
@@ -61,9 +60,5 @@ export default class SpineScene extends BaseScene {
     }
     this.animIndex = (this.animIndex + 1) % this.hero.animationNames.length;
     this.hero.setAnimation(this.hero.animationNames[this.animIndex], true);
-  }
-
-  private _handleComplete(entry: TrackEntry) {
-    console.log('complete', entry, 'islooping', entry.loop);
   }
 }

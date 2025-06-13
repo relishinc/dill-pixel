@@ -252,10 +252,6 @@ export class Button extends _Button implements IButton {
     return this.view.getBounds().clone();
   }
 
-  public getFocusPosition() {
-    return [-this.width * 0.5, -this.height * 0.5];
-  }
-
   addIsDownCallback(callbackId: string, callback: () => void) {
     this._isDownCallbacks.set(callbackId, callback);
     this._checkIsDownCallbacks();

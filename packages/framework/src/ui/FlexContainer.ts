@@ -1,5 +1,5 @@
 import type { ContainerLike } from '../utils';
-import { bindAllMethods, pluck } from '../utils';
+import { bindAllMethods } from '../utils';
 
 import type { Layout, LayoutOptions, NumberValue } from '@pixi/layout';
 import type { DestroyOptions } from 'pixi.js';
@@ -10,38 +10,13 @@ import { Signal } from '../signals';
 
 const _FlexContainer = WithSignals(Factory());
 
-export const LayoutOptionsKeys: (keyof LayoutOptions)[] = [
-  'width',
-  'height',
-  'flexDirection',
-  'alignItems',
-  'justifyContent',
-  'flexWrap',
-  'gap',
-  'flexGrow',
-  'flexShrink',
-  'alignContent',
-  'objectFit',
-  'borderRadius',
-  'backgroundColor',
-  'borderColor',
-  'transformOrigin',
-  'borderWidth',
-  'borderTopWidth',
-  'borderRightWidth',
-  'borderBottomWidth',
-  'borderLeftWidth',
-  'borderTopWidth',
-  'borderRightWidth',
-  'borderBottomWidth',
-  'borderLeftWidth',
-];
-
 export interface FlexContainerConfig extends LayoutOptions {
   bindTo: ContainerLike;
   bindToAppSize: boolean;
-  layout: boolean | Partial<LayoutOptions> | null | undefined;
   autoLayoutChildren: boolean;
+  layout: boolean | Partial<LayoutOptions> | null | undefined;
+  layoutWidth: SizeNumber;
+  layoutHeight: SizeNumber;
 }
 
 export const FlexContainerConfigKeys: (keyof FlexContainerConfig)[] = [
@@ -94,9 +69,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
     this.config = Object.assign({ ...defaultConfig }, config);
 
     // pluck the LayoutOptions from the config
-    const layoutOptions = pluck(config, LayoutOptionsKeys);
-
-    const layout = { ...defaultLayout, ...layoutOptions };
+    const layout = { ...defaultLayout, ...config };
 
     if (config.layout && typeof config.layout === 'object') {
       this.layout = { ...layout, ...config.layout };
@@ -104,6 +77,12 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
       this.layout = { ...layout };
     } else if (config.layout === false) {
       this.layout = null;
+    }
+
+    if (this.config.bindToAppSize) {
+      this.layout = { width: this.app.size.width, height: this.app.size.height };
+    } else if (this.config.bindTo) {
+      this.layout = { width: this.config.bindTo.width, height: this.config.bindTo.height };
     }
 
     // Add an event listener for the 'added' event.
@@ -252,8 +231,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
     if (this.config.bindToAppSize || this.config.bindTo) {
       if (this.config.bindToAppSize) {
         this.size = this.app.size;
-      }
-      if (this.config.bindTo) {
+      } else if (this.config.bindTo) {
         this.size = [this.config.bindTo.width, this.config.bindTo.height];
       }
     } else {

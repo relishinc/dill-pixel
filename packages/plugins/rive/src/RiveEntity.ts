@@ -64,7 +64,6 @@ export class RiveEntity extends WithSignals(Container) {
   constructor(public options: RiveOptions) {
     super({ autoResize: false, autoUpdate: false, priority: -1 });
     this._debug = options.debug ?? false;
-
     this.initEvents(options!.interactive ?? false);
     if (options.autoInit !== false) {
       void this.initialize();
@@ -197,6 +196,7 @@ export class RiveEntity extends WithSignals(Container) {
           asset: Texture.from(this._canvas, false),
           anchor: this.options?.anchor ?? 0,
           scale: this.options?.scale ?? 1,
+          layout: false,
         });
       } else {
         this._view.texture.source.update();

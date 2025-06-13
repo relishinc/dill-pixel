@@ -1,8 +1,8 @@
 import type { Spine } from 'dill-pixel';
 import { Container, Interactive } from 'dill-pixel';
 
-import { Rectangle } from 'pixi.js';
 import { gsap } from 'gsap';
+import { Rectangle } from 'pixi.js';
 
 /**
  * Spine-animated cauldron, with some dynamic functionality, like

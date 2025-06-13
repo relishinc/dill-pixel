@@ -173,18 +173,10 @@ export type AssetJson =
   | 'audio/vo/en/cc.json'
   | 'audio/vo/fr/cc'
   | 'audio/vo/fr/cc.json'
-  | 'cauldron-skeleton.json'
-  | 'dragon-skeleton.json'
   | 'fr'
   | 'fr.json'
-  | 'hero.json'
-  | 'heroes.json'
   | 'locales/fr'
-  | 'locales/fr.json'
-  | 'spine/cauldron-skeleton.json'
-  | 'spine/dragon-skeleton.json'
-  | 'spine/hero.json'
-  | 'spine/heroes.json';
+  | 'locales/fr.json';
 
 /**
  * Available Spine animation names in the asset manifest
@@ -192,14 +184,6 @@ export type AssetJson =
  * const spine: AssetSpine = 'spine/hero';
  */
 export type AssetSpine = 
-  | 'cauldron-skeleton.atlas'
-  | 'dragon-skeleton.atlas'
-  | 'hero.atlas'
-  | 'heroes.atlas'
-  | 'spine/cauldron-skeleton.atlas'
-  | 'spine/dragon-skeleton.atlas'
-  | 'spine/hero.atlas'
-  | 'spine/heroes.atlas'
   | 'spine/spineboy-pro.atlas'
   | 'spine/spineboy-pro.skel'
   | 'spineboy-pro.atlas'
