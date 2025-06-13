@@ -36,10 +36,10 @@ export default class TextScene extends BaseScene {
         leading: -10,
         textBaseline: 'bottom',
       },
-      layout: true,
+      layout: {
+        isLeaf: true,
+      },
     });
-
-    text.pivot.y = -25;
 
     this.textContainer.add.htmlText({
       text: 'HTML text with <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strikethrough</s>, and <span style="color:white; background-color: black">some</span> <span style="color: #8ac733">different</span> <span style="color: pink">colors</span>.',

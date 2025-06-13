@@ -47,7 +47,16 @@ export default class FirebaseAdapterScene extends BaseScene {
     // add a focus layer
     this.app.focus.addFocusLayer(this.id);
 
-    this.list = this.add.flexContainer({ gap: 50, flexDirection: 'column', alignItems: 'center' });
+    this.list = this.add.flexContainer({
+      bindToAppSize: true,
+      layout: {
+        gap: 50,
+        paddingTop: 110,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+    });
 
     // create inputs
     this.createInputs();
@@ -55,7 +64,12 @@ export default class FirebaseAdapterScene extends BaseScene {
     // add a container for some buttons
     this.buttonContainer = this.list.add.flexContainer({
       gap: 10,
-      flexDirection: this.app.size.width < 600 ? 'column' : 'row',
+      layout: {
+        justifyContent: 'center',
+        width: '100%',
+        flexGrow: 0,
+        flexShrink: 0,
+      },
     });
 
     // add a save button
@@ -109,14 +123,10 @@ export default class FirebaseAdapterScene extends BaseScene {
     this.app.focus.sortFocusablesByPosition();
   }
 
-  start() {
-    this.resize();
-  }
-
   resize() {
     super.resize();
-    this.list.y = -this.app.size.height * 0.5 + 160;
-    this.buttonContainer.flexDirection = this.app.size.width < 600 ? 'column' : 'row';
+    this.list.x = -this.app.size.width * 0.5;
+    this.list.y = -this.app.size.height * 0.5;
   }
 
   private _sendSaveScoreAction() {
@@ -171,15 +181,19 @@ export default class FirebaseAdapterScene extends BaseScene {
 
   private createButton(label: string, color: string, callback: () => void) {
     const btn = this.make.button({
-      scale: 0.4,
+      scale: 0.5,
       cursor: 'pointer',
       textures: { default: `btn/${color}`, hover: 'btn/yellow', disabled: 'btn/grey', active: 'btn/red' },
       sheet: 'ui',
       accessibleTitle: label,
       accessibleHint: `Press me to play a sound`,
+      layout: {
+        width: 256,
+        height: 70,
+      },
     });
 
-    btn.add.text({
+    btn.addLabel({
       text: label,
       anchor: 0.5,
       style: { fill: 0xffffff, fontWeight: 'bold', fontSize: 48, align: 'center' },
@@ -199,6 +213,11 @@ export default class FirebaseAdapterScene extends BaseScene {
     this.inputContainer = this.list.add.flexContainer({
       gap: 10,
       flexDirection: 'column',
+      layout: {
+        width: 381,
+        flexGrow: 0,
+        flexShrink: 0,
+      },
     });
 
     // add inputs
@@ -228,11 +247,28 @@ export default class FirebaseAdapterScene extends BaseScene {
       placeholder: {
         text: placeholder,
       },
+      layout: {
+        width: '100%',
+        height: 50,
+        flexGrow: 0,
+        flexShrink: 0,
+      },
     });
   }
 
   private createScoreboard() {
-    const scoreboardContainer = this.list.add.flexContainer({ gap: 10, flexDirection: 'column' });
+    const scoreboardContainer = this.list.add.flexContainer({
+      gap: 10,
+      flexDirection: 'column',
+      layout: {
+        width: '100%',
+        alignItems: 'center',
+        height: 500,
+        overflow: 'scroll',
+        flexGrow: 0,
+        flexShrink: 0,
+      },
+    });
 
     // scoreboard heading
     this.scoreboardHeading = scoreboardContainer.add.text({

@@ -54,23 +54,32 @@ export default class RiveScene extends BaseScene {
     });
     this.mainContainer = this.add.flexContainer({
       gap: 20,
-      flexDirection: 'row',
-      width: this.app.size.width,
-      height: this.app.size.height,
       x: -this.app.size.width * 0.5,
       y: -this.app.size.height * 0.5,
       alignItems: 'center',
       justifyContent: 'center',
+      bindToAppSize: true,
+      layout: { paddingTop: 110, paddingBottom: 30 },
     });
+
     this.reactionsList = this.mainContainer.add.flexContainer({
-      gap: 0,
-      flexDirection: 'column',
+      layout: {
+        flexDirection: 'column',
+        width: 165,
+        flexGrow: 0,
+        flexShrink: 0,
+        height: `100%`,
+        justifyContent: 'center',
+      },
+      label: 'Reactions List',
     });
 
     this._addReaction('love');
     this._addReaction('mindblown');
     this._addReaction('onfire');
     this._addReaction('bullseye');
+
+    this.app.renderer.layout.update(this.reactionsList);
 
     this.animation = new RiveEntity({
       asset: 'marty',
@@ -80,6 +89,15 @@ export default class RiveScene extends BaseScene {
       anchor: 0,
       scale: 0.9,
     });
+
+    this.animation.label = 'Marty';
+
+    this.animation.layout = {
+      width: 720,
+      height: 720,
+      flexGrow: 0,
+      flexShrink: 1,
+    };
 
     this.animation.onReady.connect(this._handleReady);
     this.animation.onPlay.connect((animations) => {
@@ -98,6 +116,14 @@ export default class RiveScene extends BaseScene {
       scale: 0.2,
       artboard: artboardName,
     });
+    reactionInstance.layout = {
+      applySizeDirectly: true,
+      width: 165,
+      height: 150,
+      flexGrow: 0,
+      flexShrink: 0,
+      transformOrigin: 'center center',
+    };
 
     reactionInstance.onReady.connect(() => {
       reactionInstance.on('pointerover', this._handleHover);
@@ -152,7 +178,7 @@ export default class RiveScene extends BaseScene {
 
   resize() {
     super.resize();
-    this.mainContainer.size = [this.app.size.width, this.app.size.height - 130];
-    this.mainContainer.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5 + 110);
+    this.mainContainer.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
+    this.reactionsList.layoutHeight = '100%';
   }
 }
