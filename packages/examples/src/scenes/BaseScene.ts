@@ -47,7 +47,7 @@ export default class BaseScene extends Scene<V8Application> {
       justifyContent: 'flex-start',
       x: -this.app.size.width * 0.5,
       y: -this.app.size.height * 0.5,
-      label: 'header',
+      label: 'Header',
     });
 
     this._title = this.titleContainer.add.text({
@@ -88,7 +88,7 @@ export default class BaseScene extends Scene<V8Application> {
     }
 
     if (this.titleContainer) {
-      this.titleContainer.containerWidth = this.app.size.width;
+      this.titleContainer.layoutWidth = this.app.size.width;
       this.titleContainer.x = -this.app.size.width * 0.5;
       this.titleContainer.y = -this.app.size.height * 0.5 + 20;
     }

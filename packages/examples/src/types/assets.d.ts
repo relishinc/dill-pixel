@@ -22,6 +22,8 @@ export type AssetBundles =
  */
 export type AssetTextures = 
   | 'KumbhSansBlack.png'
+  | 'Zilla'
+  | 'Zilla.webp'
   | 'bg_layer1'
   | 'bg_layer1.png'
   | 'bg_layer2'
@@ -45,10 +47,16 @@ export type AssetTextures =
   | 'required/bitmap-fonts/KumbhSansBlack.png'
   | 'required/jar'
   | 'required/jar.png'
+  | 'static/Zilla'
+  | 'static/Zilla.webp'
   | 'static/jar'
   | 'static/jar.png'
   | 'static/logo'
   | 'static/logo.svg'
+  | 'static/tech-pickle-300x300'
+  | 'static/tech-pickle-300x300.webp'
+  | 'tech-pickle-300x300'
+  | 'tech-pickle-300x300.webp'
   | 'wordmark'
   | 'wordmark.svg';
 

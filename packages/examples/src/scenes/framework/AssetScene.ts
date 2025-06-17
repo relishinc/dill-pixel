@@ -1,5 +1,5 @@
 import BaseScene from '@/scenes/BaseScene';
-import { FlexContainer, SceneAssets } from 'dill-pixel';
+import { FlexContainer, Logger, SceneAssets } from 'dill-pixel';
 import { Sprite } from 'pixi.js';
 
 export const id = 'assets';
@@ -41,16 +41,22 @@ export default class AssetScene extends BaseScene {
   public async initialize() {
     await super.initialize();
     this.container = this.add.flexContainer({
-      gap: 0,
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexWrap: 'nowrap',
+      layout: {
+        gap: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexWrap: 'nowrap',
+      },
+      label: 'Main Container',
     });
     this.pickle = this.container.add.sprite({
       asset: 'static/tech-pickle-300x300.webp',
+      label: 'Pickle',
     });
-    this.jar = this.container.add.sprite({ asset: 'static/jar', scale: 0.5 });
-    this.zilla = this.container.add.sprite({ asset: 'zilla' });
+    this.jar = this.container.add.sprite({ asset: 'static/jar', scale: 0.5, label: 'Jar' });
+    this.zilla = this.container.add.sprite({ asset: 'zilla', label: 'Zilla' });
+
+    Logger.log('PATHS', this.app.getAllPaths());
   }
 
   async start() {

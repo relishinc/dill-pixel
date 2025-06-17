@@ -1,6 +1,6 @@
 import BaseScene from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
-import { Button, FlexContainer, formatTime, PauseConfig, SceneAssets, UICanvas } from 'dill-pixel';
+import { Button, FlexContainer, formatTime, Logger, PauseConfig, SceneAssets, UICanvas } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { HTMLText, Sprite, Text } from 'pixi.js';
 export const id = 'pause';
@@ -64,6 +64,7 @@ export default class PauseScene extends BaseScene {
           width: 800,
           gap: 20,
         },
+        label: 'Main Container',
       }),
       { align: 'center' },
     );
@@ -77,16 +78,13 @@ export default class PauseScene extends BaseScene {
       anchor: [1, 0.5],
       pivot: [140, 0],
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 24, align: 'right' },
-      layout: { applySizeDirectly: true },
     });
 
     this.gsapAnimated = animatedContainer.add.sprite({
       asset: 'static/jar',
       scale: 0.25,
       anchor: 0.5,
-      layout: {
-        applySizeDirectly: true,
-      },
+      layout: { applySizeDirectly: true },
     });
 
     animatedContainer.add.text({
@@ -94,7 +92,6 @@ export default class PauseScene extends BaseScene {
       anchor: [1, 0.5],
       pivot: [140, 0],
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 24, align: 'right' },
-      layout: true,
     });
 
     this.tickerAnimated = animatedContainer.add.sprite({
@@ -117,11 +114,16 @@ export default class PauseScene extends BaseScene {
     // Add button container
     this.buttonContainer = this.ui.addElement(
       this.make.flexContainer({
-        x: -20,
-        flexDirection: 'column',
-        gap: 20,
         label: 'Button Container',
-        layout: { paddingBottom: 30, paddingRight: 100, width: 256 },
+        x: -20,
+        layout: {
+          flexDirection: 'column',
+          gap: 20,
+
+          paddingBottom: 30,
+          paddingRight: 100,
+          width: 256,
+        },
       }),
       { align: 'bottom right' },
     );
@@ -141,13 +143,12 @@ export default class PauseScene extends BaseScene {
       sheet: 'required/ui',
       accessibleTitle: 'Toggle Music',
       accessibleHint: 'Press to toggle background music',
-    });
-
-    musicButton.addLabel({
-      text: 'Toggle Music',
-      anchor: 0.5,
-      resolution: 2,
-      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
+      textLabel: {
+        text: 'Toggle Music',
+        anchor: 0.5,
+        resolution: 2,
+        style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
+      },
     });
 
     musicButton.onClick.connect(async () => {
@@ -244,20 +245,21 @@ export default class PauseScene extends BaseScene {
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
     });
 
-    this.pauseInfo = this.make.htmlText({
+    this.pauseInfo = this.add.htmlText({
       text: ``,
-      anchor: 0,
+      anchor: [0, 1],
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontSize: 24, align: 'left' },
-      layout: { applySizeDirectly: true },
     });
 
-    this.ui.addElement(this.pauseInfo, { align: 'bottom left' });
+    Logger.log('PATHS', this.app.getAllPaths());
   }
 
   _updatePauseInfo() {
     this.pauseInfo.text = `<p style="background-color: #000000; backround-opacity: 0.5; padding: 10px; border-radius: 5px;">App is paused with the following configuration:<br><strong>Audio:</strong> <span style="color: #00ff00;">${this.config.pauseAudio}</span><br><strong>Animations:</strong> <span style="color: #00ff00;">${this.config.pauseAnimations}</span> <br><strong>Ticker:</strong> <span style="color: #00ff00;">${this.config.pauseTicker}</span> <br><strong>Timers:</strong> <span style="color: #00ff00;">${this.config.pauseTimers}</span></p>`;
 
     this.pauseInfo.visible = this.app.paused;
+
+    this.ui.updateLayout();
   }
 
   _updateStopWatch(elapsed: number) {
@@ -274,7 +276,11 @@ export default class PauseScene extends BaseScene {
   }
 
   onPauseToggle(pauseButton: Button) {
-    (pauseButton.getChildAt(1) as Text).text = this.config.isPaused ? 'Resume App' : 'Pause App';
+    const text = pauseButton.getChildAt(1) as Text;
+    if (!text) {
+      return;
+    }
+    text.text = this.config.isPaused ? 'Resume App' : 'Pause App';
     pauseButton.setTexture('default', this.config.isPaused ? 'btn/red' : 'btn/blue');
   }
 
@@ -289,11 +295,17 @@ export default class PauseScene extends BaseScene {
   }
 
   onMusicToggle(musicButton: Button) {
+    console.log('onMusicToggle', musicButton);
+    const text = musicButton.getChildAt(1) as Text;
     if (this.app.audio.isPlaying('Night at the Beach', 'music')) {
-      (musicButton.getChildAt(1) as Text).text = 'Stop Music';
+      if (text) {
+        text.text = 'Stop Music';
+      }
       musicButton.setTexture('default', 'btn/red');
     } else {
-      (musicButton.getChildAt(1) as Text).text = 'Play Music';
+      if (text) {
+        text.text = 'Play Music';
+      }
       musicButton.setTexture('default', 'btn/blue');
     }
   }
@@ -319,6 +331,9 @@ export default class PauseScene extends BaseScene {
   resize() {
     super.resize();
     this.container.x = 200;
+    this.pauseInfo.x = -this.app.size.width * 0.5 + 10;
+    this.pauseInfo.y = this.app.size.height * 0.5;
+    this.ui.updateLayout();
   }
 
   destroy() {
