@@ -21,7 +21,9 @@ export class Actor extends _Actor {
 
   click() {
     this._view.tint = 0xff0000;
-    this.animateFromTo({ y: this._originalY }, { y: 400, yoyo: true, repeat: -1, duration: 1, ease: 'sine.inOut' });
+    this.addAnimation(
+      this.animateFromTo({ y: this._originalY }, { y: 400, yoyo: true, repeat: -1, duration: 1, ease: 'sine.inOut' }),
+    );
   }
 
   blur() {

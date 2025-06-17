@@ -1,4 +1,4 @@
-import { ActionDetail, Button, FlexContainer, PopupConfig, wait } from 'dill-pixel';
+import { ActionDetail, Button, FlexContainer, PopupConfig } from 'dill-pixel';
 
 import { ExamplePopup } from '@/popups/ExamplePopup';
 import BaseScene from '@/scenes/BaseScene';
@@ -36,9 +36,8 @@ export default class PopupScene extends BaseScene {
       flexWrap: 'wrap',
       justifyContent: 'center',
       alignItems: 'center',
-      width: this.app.size.width,
-      x: -this.app.size.width * 0.5,
       label: 'Popup Buttons',
+      x: this.app.size.width,
     });
 
     this.addButton('Popup 1', () => {
@@ -62,12 +61,7 @@ export default class PopupScene extends BaseScene {
         backing: { color: 'red' },
       }),
     );
-    this.addSignalConnection(
-      this.app.actions('show_popup').connect(this._handleShowPopup),
-      this.app.signal.onHidePopup.connect(() => {
-        this.app.func.setActionContext('game');
-      }),
-    );
+    this.addSignalConnection(this.app.actions('show_popup').connect(this._handleShowPopup));
   }
 
   public async start() {
@@ -77,12 +71,6 @@ export default class PopupScene extends BaseScene {
   async _handleShowPopup(action: ActionDetail<PopupConfig<{ title: string }>>) {
     if (action.data?.id) {
       this.showPopup(action.data?.id, action.data);
-      if (action.data?.id === 'one') {
-        await wait(2);
-        this.app.func.showPopup('two', {
-          data: { title: `Example Popup 2` },
-        });
-      }
     }
   }
 
@@ -121,14 +109,13 @@ export default class PopupScene extends BaseScene {
       data: { title: `Example Popup ${popupId}` },
     },
   ) {
-    void this.app.func.showPopup(popupId, config);
+    this.app.func.showPopup(popupId, config);
   }
 
   resize() {
     super.resize();
-    this.buttonContainer.containerWidth = this.app.size.width;
+    this.buttonContainer.layoutWidth = this.app.size.width;
     this.buttonContainer.x = -this.app.size.width * 0.5;
-
-    console.log(this.buttonContainer.getChildAt(0).getFastGlobalBounds());
+    this.buttonContainer.y = -this.buttonContainer.height * 0.5;
   }
 }

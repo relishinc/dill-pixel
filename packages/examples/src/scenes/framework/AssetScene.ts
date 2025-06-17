@@ -30,9 +30,9 @@ export default class AssetScene extends BaseScene {
           },
           {
             alias: 'zilla',
-            src: 'https://reli.sh/wp-content/themes/parent/build/images/Zilla.png',
+            src: 'static/Zilla.webp',
           },
-          'https://reli.sh/wp-content/uploads/2023/10/tech-pickle-300x300.webp',
+          'static/tech-pickle-300x300.webp',
         ],
       },
     };
@@ -47,7 +47,7 @@ export default class AssetScene extends BaseScene {
       flexWrap: 'nowrap',
     });
     this.pickle = this.container.add.sprite({
-      asset: 'https://reli.sh/wp-content/uploads/2023/10/tech-pickle-300x300.webp',
+      asset: 'static/tech-pickle-300x300.webp',
     });
     this.jar = this.container.add.sprite({ asset: 'static/jar', scale: 0.5 });
     this.zilla = this.container.add.sprite({ asset: 'zilla' });

@@ -9,7 +9,7 @@
     "cache": "rimraf .cache",
     "start": "run-s cache && vite --open",
     "dev": "run-s cache && vite --open",
-    "build": "vite build",
+    "build": "pnpm run clean && vite build",
     "types": "tsc",
     "preview": "pnpm run clean && pnpm run build && vite preview --open",
     "lint": "eslint src --ext .ts",

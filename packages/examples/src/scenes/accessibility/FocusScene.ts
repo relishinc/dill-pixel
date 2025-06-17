@@ -1,7 +1,7 @@
 import { Actor } from '@/entities/Actor';
 import BaseScene from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
-import { Button, FlexContainer, Logger } from 'dill-pixel';
+import { Button, FlexContainer, Logger, scaleToWidth } from 'dill-pixel';
 import { Text } from 'pixi.js';
 
 export const id = 'focus';
@@ -166,7 +166,6 @@ export default class FocusScene extends BaseScene {
 
     this.connectAction(
       this.app.actions('toggle_pause').connect(() => {
-        console.log(this.app.paused);
         if (this.app.paused) {
           this.actor1.pauseAnimations();
         } else {
@@ -193,6 +192,11 @@ export default class FocusScene extends BaseScene {
 
     this.actorList.x = -this.app.size.width * 0.5;
     this.list.x = -this.app.size.width * 0.5;
+
+    scaleToWidth(this.list, this.app.size.width);
+    if (this.list.scale.x > 1) {
+      this.list.scale.set(1, 1);
+    }
   }
 
   private _updateFocusLayerLabel() {

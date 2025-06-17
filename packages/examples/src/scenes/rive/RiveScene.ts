@@ -52,6 +52,7 @@ export default class RiveScene extends BaseScene {
         this.animation.resume();
       }
     });
+
     this.mainContainer = this.add.flexContainer({
       gap: 20,
       x: -this.app.size.width * 0.5,
@@ -72,6 +73,15 @@ export default class RiveScene extends BaseScene {
         justifyContent: 'center',
       },
       label: 'Reactions List',
+    });
+
+    const martyContainer = this.mainContainer.add.container({
+      layout: {
+        width: 720,
+        height: 720,
+        flexGrow: 0,
+        flexShrink: 0,
+      },
     });
 
     this._addReaction('love');
@@ -103,7 +113,9 @@ export default class RiveScene extends BaseScene {
     this.animation.onPlay.connect((animations) => {
       console.log('play', animations);
     });
-    this.mainContainer.add.existing(this.animation);
+    martyContainer.add.existing(this.animation);
+
+    this.mainContainer.updateLayout();
   }
 
   _addReaction(artboardName: string) {

@@ -130,8 +130,7 @@ export default class UICanvasScene extends BaseScene {
     let flex = this.make.flexContainer({
       gap: 20,
       alignItems: 'flex-end',
-      height: 48,
-      width: 500,
+      justifyContent: 'center',
     });
     flex.add.text({ text: 'bottom 1', style: whiteTextStyle(24) });
     flex.add.text({ text: 'bottom 2', style: whiteTextStyle(48) });
@@ -142,12 +141,11 @@ export default class UICanvasScene extends BaseScene {
       gap: 30,
       alignItems: 'center',
       flexDirection: 'column',
-      height: 48,
-      width: 500,
     });
     flex.add.text({ text: 'center 1', style: whiteTextStyle(24) });
     flex.add.text({ text: 'center 2', style: whiteTextStyle(24) });
     flex.add.text({ text: 'center 3', style: whiteTextStyle(24) });
+
     this.ui.addElement(flex, { align: 'center' });
   }
 
