@@ -1,6 +1,6 @@
 import BaseScene from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
-import { Button, FlexContainer, formatTime, Logger, PauseConfig, SceneAssets, UICanvas } from 'dill-pixel';
+import { Button, FlexContainer, formatTime, PauseConfig, SceneAssets, UICanvas } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { HTMLText, Sprite, Text } from 'pixi.js';
 export const id = 'pause';
@@ -250,8 +250,6 @@ export default class PauseScene extends BaseScene {
       anchor: [0, 1],
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontSize: 24, align: 'left' },
     });
-
-    Logger.log('PATHS', this.app.getAllPaths());
   }
 
   _updatePauseInfo() {

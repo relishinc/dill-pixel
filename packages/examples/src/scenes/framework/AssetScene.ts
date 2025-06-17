@@ -1,5 +1,5 @@
 import BaseScene from '@/scenes/BaseScene';
-import { FlexContainer, Logger, SceneAssets } from 'dill-pixel';
+import { FlexContainer, SceneAssets } from 'dill-pixel';
 import { Sprite } from 'pixi.js';
 
 export const id = 'assets';
@@ -55,8 +55,6 @@ export default class AssetScene extends BaseScene {
     });
     this.jar = this.container.add.sprite({ asset: 'static/jar', scale: 0.5, label: 'Jar' });
     this.zilla = this.container.add.sprite({ asset: 'zilla', label: 'Zilla' });
-
-    Logger.log('PATHS', this.app.getAllPaths());
   }
 
   async start() {
