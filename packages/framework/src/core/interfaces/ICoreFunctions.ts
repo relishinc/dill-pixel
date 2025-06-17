@@ -1,3 +1,4 @@
+import type { Container as PIXIContainer } from 'pixi.js';
 import type { IScene } from '../../display';
 import type {
   ActionMap,
@@ -62,4 +63,11 @@ export interface ICoreFunctions {
   loadSceneAssets(scene: IScene, background?: boolean): Promise<void>;
   unloadSceneAssets(scene: IScene): Promise<void>;
   loadRequired(): Promise<void>;
+
+  // LookupPlugin
+  getChildAtPath(path: string): PIXIContainer | undefined;
+  getChildrenAtPaths(paths: string[]): PIXIContainer[];
+  getPathForChild(container: PIXIContainer): string;
+  getPathsForChildren(containers: PIXIContainer[]): string[];
+  getAllPaths(): string[];
 }

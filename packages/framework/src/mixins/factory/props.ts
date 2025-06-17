@@ -36,7 +36,7 @@ export interface VisibilityProps {
 }
 
 export interface LayoutProps {
-  layout: boolean | Partial<LayoutOptions> | null | undefined;
+  layout?: Omit<LayoutOptions, 'target'> | null | boolean;
 }
 
 export interface ExistingProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps, LayoutProps {}

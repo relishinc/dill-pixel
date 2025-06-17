@@ -30,16 +30,16 @@ export const controls = defineControls(actions, buttons);
 
 /** User config */
 export type Data = {
+  space: string;
   dill: string;
-  pixel: number;
 };
 
 export const config = defineConfig<Data>({
   id: '__APPLICATION_NAME__',
   data: {
     initial: {
+      space: 'junk',
       dill: 'pixel',
-      pixel: 0,
     },
     backupKeys: [],
     backupAll: false,

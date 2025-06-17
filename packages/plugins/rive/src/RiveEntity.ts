@@ -131,31 +131,35 @@ export class RiveEntity extends WithSignals(Container) {
 
   async initialize() {
     await this.initRive(this.options.asset).then(() => {
-      this.loadArtboard(this.options.artboard);
-      this.loadStateMachine(this.options.stateMachine);
-      this.playAnimation(this.options.animation);
-      if (this.options.fit) {
-        this.fit = this.options.fit;
-      }
-      if (this.options.align) {
-        this.align = this.options.align;
-      }
-      if (this.options.maxWidth) {
-        this.maxWidth = this.options.maxWidth;
-      }
-      if (this.options.maxHeight) {
-        this.maxHeight = this.options.maxHeight;
-      }
-      if (this.options.maxHeight !== undefined || this.options.maxWidth !== undefined) {
-        this.updateSize();
-      }
+      try {
+        this.loadArtboard(this.options.artboard);
+        this.loadStateMachine(this.options.stateMachine);
+        this.playAnimation(this.options.animation);
 
-      if (this.options.autoPlay) {
-        this.enable();
-      } else this.update();
+        if (this.options.fit) {
+          this.fit = this.options.fit;
+        }
+        if (this.options.align) {
+          this.align = this.options.align;
+        }
+        if (this.options.maxWidth) {
+          this.maxWidth = this.options.maxWidth;
+        }
+        if (this.options.maxHeight) {
+          this.maxHeight = this.options.maxHeight;
+        }
+        if (this.options.maxHeight !== undefined || this.options.maxWidth !== undefined) {
+          this.updateSize();
+        }
+
+        if (this.options.autoPlay) {
+          this.enable();
+        } else this.update();
+        this.onReady.emit(this.rive);
+      } catch (error) {
+        console.error(error);
+      }
     });
-
-    this.onReady.emit(this.rive);
   }
 
   /**

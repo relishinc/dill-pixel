@@ -223,9 +223,8 @@ export const defaultFactoryMethods = {
     return entity;
   },
   flexContainer: (props?: Partial<FlexContainerProps>): FlexContainer => {
-    const config = pluck(props ?? {}, FlexContainerConfigKeys);
     const otherProps = omitKeys<FlexContainerProps, keyof FlexContainerConfig>(FlexContainerConfigKeys, props ?? {});
-    const entity = new FlexContainer(config);
+    const entity = new FlexContainer(props as Partial<FlexContainerConfig>);
     if (!otherProps) return entity;
     const { position, x, y, pivot, scale, scaleX, scaleY, ...rest } = otherProps;
     resolvePosition({ position, x, y }, entity);
@@ -236,7 +235,7 @@ export const defaultFactoryMethods = {
   },
   uiCanvas: (props?: Partial<UICanvasFactoryProps>): UICanvas => {
     const config = pluck(props ?? {}, UICanvasConfigKeys);
-    const otherProps = omitKeys<FlexContainerProps, keyof UICanvasConfig>(UICanvasConfigKeys, props ?? {});
+    const otherProps = omitKeys<UICanvasFactoryProps, keyof UICanvasConfig>(UICanvasConfigKeys, props ?? {});
     const entity = new UICanvas(config);
     if (!otherProps) return entity;
     const { position, x, y, pivot, scale, scaleX, scaleY, ...rest } = otherProps;

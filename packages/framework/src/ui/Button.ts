@@ -12,7 +12,7 @@ import {
 import { type LayoutOptions } from '@pixi/layout';
 import type { IApplication } from '../core';
 import { Application } from '../core/Application';
-import { Factory, Focusable, Interactive, type TextProps, WithSignals } from '../mixins';
+import { Factory, Focusable, HTMLTextProps, Interactive, type TextProps, WithSignals } from '../mixins';
 import { Signal } from '../signals';
 import { bindAllMethods, SpriteSheetLike, TextureLike } from '../utils';
 
@@ -66,11 +66,12 @@ export type ButtonConfig = {
     down?: ButtonActionOrCallback;
     click?: ButtonActionOrCallback;
   };
+  textLabel?: Partial<TextProps | HTMLTextProps> & { type?: 'text' | 'html' | 'bitmap' };
   cursor: Cursor;
   disabledCursor: Cursor;
   sheet: SpriteSheetLike;
   enabled: boolean;
-  layout?: Partial<LayoutOptions>; // Allow layout configuration to be passed through
+  layout?: Omit<LayoutOptions, 'target'> | null | boolean;
 };
 
 export const ButtonConfigKeys: (keyof ButtonConfig)[] = [
@@ -82,6 +83,7 @@ export const ButtonConfigKeys: (keyof ButtonConfig)[] = [
   'sheet',
   'enabled',
   'layout',
+  'textLabel',
 ];
 
 // Create a new class that extends Container and includes the Interactive and Focusable mixins.
@@ -163,6 +165,10 @@ export class Button extends _Button implements IButton {
       this.app.renderer.layout.update(this);
     }
 
+    if (this.config.textLabel) {
+      this.addLabel(this.config.textLabel);
+    }
+
     // Set up interaction handlers.
     // make them high priority so they run before any other interaction handlers
     this.addSignalConnection(
@@ -204,12 +210,24 @@ export class Button extends _Button implements IButton {
     }
   }
 
-  public addLabel<T extends Text | HTMLText | BitmapText>(config: Partial<TextProps> | T): T {
+  public addLabel<T extends Text | HTMLText | BitmapText>(
+    config: (Partial<TextProps | HTMLTextProps> & { type?: 'text' | 'html' | 'bitmap' }) | T,
+  ): T {
     if (config instanceof Text || config instanceof HTMLText || config instanceof BitmapText) {
-      this._textLabel = this.add.existing(config);
+      this._textLabel = this.add.existing(config) as T;
       this._textLabel.layout = false;
     } else {
-      this._textLabel = this.add.text({ ...config, layout: false });
+      switch (config.type) {
+        case 'bitmap':
+          this._textLabel = this.add.bitmapText({ ...config, layout: false }) as BitmapText;
+          break;
+        case 'html':
+          this._textLabel = this.add.htmlText({ ...config, layout: false }) as HTMLText;
+          break;
+        default:
+          this._textLabel = this.add.text({ ...config, layout: false }) as Text;
+          break;
+      }
     }
 
     this.positionLabel();

@@ -2,6 +2,7 @@ import type { ImportList } from '../utils';
 import { AssetsPlugin } from './AssetsPlugin';
 import { FullScreenPlugin } from './FullScreenPlugin';
 import { KeyboardPlugin } from './KeyboardPlugin';
+import { LookupPlugin } from './LookupPlugin';
 import type { IPlugin } from './Plugin';
 import { PopupManagerPlugin } from './PopupManagerPlugin';
 import { ResizerPlugin } from './ResizerPlugin';
@@ -15,6 +16,11 @@ import { i18nPlugin } from './i18nPlugin';
 import { InputPlugin } from './input';
 
 export const defaultPlugins: ImportList<IPlugin> = [
+  {
+    id: 'lookup',
+    module: LookupPlugin,
+    namedExport: 'LookupPlugin',
+  },
   {
     id: 'webEvents',
     module: WebEventsPlugin,

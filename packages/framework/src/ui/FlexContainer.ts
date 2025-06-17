@@ -1,47 +1,21 @@
-import type { ContainerLike } from '../utils';
-import { bindAllMethods } from '../utils';
-
-import type { Layout, LayoutOptions, NumberValue } from '@pixi/layout';
-import type { DestroyOptions } from 'pixi.js';
+import type { Layout, LayoutOptions } from '@pixi/layout';
 import { Container as PIXIContainer } from 'pixi.js';
 import { Application } from '../core/Application';
+import { Container } from '../display';
 import { Factory, WithSignals } from '../mixins';
 import { Signal } from '../signals';
+import { bindAllMethods, type ContainerLike } from '../utils';
 
 const _FlexContainer = WithSignals(Factory());
 
-export interface FlexContainerConfig extends LayoutOptions {
-  bindTo: ContainerLike;
-  bindToAppSize: boolean;
-  autoLayoutChildren: boolean;
-  layout: boolean | Partial<LayoutOptions> | null | undefined;
-  layoutWidth: SizeNumber;
-  layoutHeight: SizeNumber;
+export interface FlexContainerConfig {
+  bindTo?: ContainerLike;
+  bindToAppSize?: boolean;
+  autoLayoutChildren?: boolean;
+  layout?: Omit<LayoutOptions, 'target'> | null | boolean;
 }
 
-export const FlexContainerConfigKeys: (keyof FlexContainerConfig)[] = [
-  'bindTo',
-  'bindToAppSize',
-  'autoLayoutChildren',
-  'layout',
-];
-
-const defaultLayout = {
-  flexGrow: 1,
-  flexShrink: 1,
-};
-
-const defaultConfig = {
-  bindTo: null,
-  autoLayoutChildren: true,
-};
-
-export interface IFlexContainer {
-  onLayoutComplete: Signal<() => void>;
-  debug: boolean;
-  config: FlexContainerConfig;
-  layout: Layout | null;
-}
+export const FlexContainerConfigKeys: (keyof FlexContainerConfig)[] = ['bindTo', 'bindToAppSize', 'autoLayoutChildren'];
 
 export type FlexWrap = 'wrap' | 'nowrap' | 'wrap-reverse' | undefined;
 export type FlexDirection = 'row' | 'column' | 'row-reverse' | 'column-reverse' | undefined;
@@ -55,68 +29,107 @@ export type JustifyContent =
   | 'flex-end'
   | undefined;
 
-export type SizeNumber = NumberValue | 'auto' | 'intrinsic';
+export type SizeNumber = number | 'auto' | 'intrinsic';
+
 export class FlexContainer<T extends Application = Application> extends _FlexContainer {
-  public onLayoutComplete: Signal<() => void> = new Signal<() => void>();
-  public debug: boolean = false;
-  public config: FlexContainerConfig;
+  public onLayoutComplete = new Signal<() => void>();
+  public config: Partial<FlexContainerConfig>;
 
   constructor(config: Partial<FlexContainerConfig> = {}) {
     super();
 
-    // Bind all methods of this class to the current instance.
     bindAllMethods(this);
-    this.config = Object.assign({ ...defaultConfig }, config);
 
-    // pluck the LayoutOptions from the config
-    const layout = { ...defaultLayout, ...config };
+    this.config = {
+      autoLayoutChildren: true,
+      ...config,
+    };
 
-    if (config.layout && typeof config.layout === 'object') {
-      this.layout = { ...layout, ...config.layout };
-    } else if (config.layout === true) {
-      this.layout = { ...layout };
-    } else if (config.layout === false) {
-      this.layout = null;
-    }
+    // Set up layout
+    this.layout = this.createLayout(config);
 
-    if (this.config.bindToAppSize) {
-      this.layout = { width: this.app.size.width, height: this.app.size.height };
-    } else if (this.config.bindTo) {
-      this.layout = { width: this.config.bindTo.width, height: this.config.bindTo.height };
-    }
-
-    // Add an event listener for the 'added' event.
-    this.on('added', this._added);
+    // Set up event listeners
+    this.on('added', this.handleAdded);
     this.on('childAdded', this.handleChildAdded);
     this.on('childRemoved', this.handleChildRemoved);
 
-    this.addSignalConnection(this.app.onResize.connect(this.resize));
-
-    this._updateLayout();
+    if (this.config.bindToAppSize) {
+      this.app.onResize.connect(this.handleResize);
+    }
   }
 
-  protected _flexChildren: PIXIContainer[] = [];
+  private createLayout(config: Partial<FlexContainerConfig>): Omit<LayoutOptions, 'target'> | null | boolean {
+    if (config?.layout === true) {
+      config.layout = {};
+    }
+    const layout: Omit<LayoutOptions, 'target'> | null | boolean = { ...(config?.layout ?? {}) };
 
-  get flexChildren() {
-    return this._flexChildren;
+    if (this.config.bindToAppSize) {
+      layout.width = this.app.size.width;
+      layout.height = this.app.size.height;
+    } else if (this.config.bindTo) {
+      layout.width = this.config.bindTo.width;
+      layout.height = this.config.bindTo.height;
+    }
+
+    return layout;
   }
 
+  private handleAdded = () => {
+    this.updateLayout();
+  };
+
+  private handleChildAdded = (child: PIXIContainer) => {
+    if (this.config.autoLayoutChildren && !(child.layout as Layout | boolean)) {
+      child.layout = { isLeaf: true };
+    }
+    child.on('layout', this.updateLayout);
+    Container.childAdded(child);
+    this.updateLayout();
+  };
+
+  private handleChildRemoved = (child: PIXIContainer) => {
+    Container.childRemoved(child);
+    this.updateLayout();
+  };
+
+  private handleResize = () => {
+    if (this.config.bindToAppSize) {
+      this.layout = {
+        width: this.app.size.width,
+        height: this.app.size.height,
+      };
+    }
+    this.updateLayout();
+  };
+
+  public updateLayout() {
+    if (!this.app?.renderer) return;
+    this.app.renderer.layout.update(this);
+    this.onLayoutComplete.emit();
+  }
+
+  public get app(): T {
+    return Application.getInstance() as T;
+  }
+
+  // Convenience getters/setters for common layout properties
   get gap(): number {
     return this.layout?._styles?.yoga?.gap ?? 0;
   }
 
   set gap(value: number) {
     this.layout = { gap: value };
-    this._updateLayout();
+    this.updateLayout();
   }
 
-  get flexWrap(): 'wrap' | 'nowrap' | 'wrap-reverse' | undefined {
+  get flexWrap(): FlexWrap {
     return this.layout?._styles?.yoga?.flexWrap;
   }
 
   set flexWrap(value: FlexWrap) {
     this.layout = { flexWrap: value };
-    this._updateLayout();
+    this.updateLayout();
   }
 
   get flexDirection(): FlexDirection {
@@ -125,7 +138,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
 
   set flexDirection(value: FlexDirection) {
     this.layout = { flexDirection: value };
-    this._updateLayout();
+    this.updateLayout();
   }
 
   get alignItems(): AlignItems {
@@ -134,7 +147,7 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
 
   set alignItems(value: AlignItems) {
     this.layout = { alignItems: value };
-    this._updateLayout();
+    this.updateLayout();
   }
 
   get justifyContent(): JustifyContent {
@@ -143,133 +156,54 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
 
   set justifyContent(value: JustifyContent) {
     this.layout = { justifyContent: value };
-    this._updateLayout();
-  }
-
-  get containerHeight(): SizeNumber {
-    return this.layout?._styles?.yoga?.height as number;
-  }
-
-  set containerHeight(value: SizeNumber) {
-    this.layout = { height: value };
-    this._updateLayout();
-  }
-
-  get containerWidth(): SizeNumber {
-    return this.layout?._styles?.yoga?.width as SizeNumber;
-  }
-
-  set containerWidth(value: SizeNumber) {
-    this.layout = { width: value };
-    this._updateLayout();
+    this.updateLayout();
   }
 
   get size(): { width: SizeNumber; height: SizeNumber } {
-    return { width: this.containerWidth, height: this.containerHeight };
+    return {
+      width: this.layout?._styles?.yoga?.width as SizeNumber,
+      height: this.layout?._styles?.yoga?.height as SizeNumber,
+    };
   }
 
   set size(size: { width: SizeNumber; height: SizeNumber } | [SizeNumber, SizeNumber] | SizeNumber) {
     if (Array.isArray(size)) {
       size = { width: size[0], height: size[1] };
     }
-    if (typeof size === 'number') {
-      size = { width: size, height: size };
-    } else if (typeof size === 'string') {
+    if (typeof size === 'number' || typeof size === 'string') {
       size = { width: size, height: size };
     }
-    this.layout = { width: size.width, height: size.height };
-    this._updateLayout();
-  }
-
-  set layout(value: Omit<LayoutOptions, 'target'> | null | boolean) {
-    super.layout = value;
-    this._updateLayout();
-  }
-
-  get layout(): Layout | null {
-    return super.layout;
-  }
-
-  set layoutWidth(value: SizeNumber) {
-    this.layout = { width: value };
-    this._updateLayout();
+    this.layout = { ...size };
+    this.updateLayout();
   }
 
   get layoutWidth(): SizeNumber {
     return this.layout?._styles?.yoga?.width as SizeNumber;
   }
 
-  set layoutHeight(value: SizeNumber) {
-    this.layout = { height: value };
-    this._updateLayout();
+  set layoutWidth(width: SizeNumber) {
+    this.layout = { width };
+    this.updateLayout();
   }
 
   get layoutHeight(): SizeNumber {
     return this.layout?._styles?.yoga?.height as SizeNumber;
   }
 
-  /**
-   * Get the application instance.
-   */
-  public get app(): T {
-    return Application.getInstance() as T;
+  set layoutHeight(height: SizeNumber) {
+    this.layout = { height };
+    this.updateLayout();
   }
 
-  destroy(_options?: DestroyOptions | boolean) {
-    this.off('added', this._added);
+  destroy() {
+    this.off('added', this.handleAdded);
     this.off('childAdded', this.handleChildAdded);
     this.off('childRemoved', this.handleChildRemoved);
 
-    super.destroy(_options);
-  }
-
-  added() {
-    this._updateLayout();
-  }
-
-  resize() {
-    if (this.config.bindToAppSize || this.config.bindTo) {
-      if (this.config.bindToAppSize) {
-        this.size = this.app.size;
-      } else if (this.config.bindTo) {
-        this.size = [this.config.bindTo.width, this.config.bindTo.height];
-      }
-    } else {
-      this._updateLayout();
+    if (this.config.bindToAppSize) {
+      this.app.onResize.disconnect(this.handleResize);
     }
-  }
 
-  updateLayout() {
-    this._updateLayout();
-  }
-
-  protected handleChildAdded(_child: PIXIContainer) {
-    if (this.config.autoLayoutChildren) {
-      if (!_child.layout) {
-        _child.layout = true;
-      }
-      if (!_child.layout?.style?.width) {
-        _child.layout = { width: 'auto' };
-      }
-      if (!_child.layout?.style?.height) {
-        _child.layout = { height: 'auto' };
-      }
-    }
-    _child.on('layout', this._updateLayout);
-    this._updateLayout();
-  }
-
-  protected handleChildRemoved(_child: PIXIContainer) {
-    void _child;
-    this._updateLayout();
-  }
-
-  private _updateLayout() {
-    this.app.renderer.layout.update(this);
-    this.onLayoutComplete.emit();
-  }
-
-  private _added() {
-    this.added();
+    super.destroy();
   }
 }

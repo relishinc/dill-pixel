@@ -1,4 +1,4 @@
-import { DestroyOptions, Sprite, Texture, Ticker } from 'pixi.js';
+import { DestroyOptions, Container as PIXIContainer, Sprite, Texture, Ticker } from 'pixi.js';
 import { Animated, Factory, WithSignals } from '../mixins';
 
 import type { IApplication } from '../core';
@@ -44,6 +44,11 @@ export interface IContainer {
 
   added(): Promise<void> | void;
 
+  removed(): Promise<void> | void;
+
+  childAdded(child: PIXIContainer): Promise<void> | void;
+  childRemoved(child: PIXIContainer): Promise<void> | void;
+
   resize(size?: Size): void;
 
   update(ticker?: Ticker | number): void;
@@ -73,6 +78,17 @@ export class Container<A extends Application = Application>
 
   private __config: ContainerConfig;
 
+  public static onGlobalChildAdded = new Signal<(child: PIXIContainer) => void>();
+  public static onGlobalChildRemoved = new Signal<(child: PIXIContainer) => void>();
+
+  public static childAdded(child: PIXIContainer) {
+    Container.onGlobalChildAdded.emit(child);
+  }
+
+  public static childRemoved(child: PIXIContainer) {
+    Container.onGlobalChildRemoved.emit(child);
+  }
+
   /**
    * The constructor for the Container class.
    * @param config - The configuration for the container.
@@ -85,6 +101,8 @@ export class Container<A extends Application = Application>
     // Add an event listener for the 'added' event.
     this.on('added', this._added);
     this.on('removed', this._removed);
+    this.on('childAdded', this._childAdded);
+    this.on('childRemoved', this._childRemoved);
   }
 
   /**
@@ -155,6 +173,10 @@ export class Container<A extends Application = Application>
    */
   public added() {}
 
+  public childAdded(child: PIXIContainer) {
+    void child;
+  }
+
   destroy(options?: DestroyOptions): void {
     this.app.animation.killAll(this.animationContext);
     if (this.__config.autoUpdate) {
@@ -165,6 +187,10 @@ export class Container<A extends Application = Application>
   }
 
   public removed() {}
+
+  public childRemoved(child: PIXIContainer) {
+    void child;
+  }
 
   protected __resizeBackground() {
     this.__background.width = this.app.size.width;
@@ -195,6 +221,16 @@ export class Container<A extends Application = Application>
     }
 
     this.removed();
+  }
+
+  private _childAdded(child: PIXIContainer) {
+    Container.childAdded(child);
+    this.childAdded(child);
+  }
+
+  private _childRemoved(child: PIXIContainer) {
+    Container.childRemoved(child);
+    this.childRemoved(child);
   }
 
   protected addAnimation(

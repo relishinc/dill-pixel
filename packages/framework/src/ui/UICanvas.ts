@@ -5,7 +5,7 @@ import { Container } from '../display';
 import { Factory, WithSignals } from '../mixins';
 import type { Padding, PointLike, Size, SizeLike } from '../utils';
 import { bindAllMethods, ensurePadding, Logger, resolveSizeLike } from '../utils';
-import { FlexContainer, type IFlexContainer } from './FlexContainer';
+import { FlexContainer } from './FlexContainer';
 
 export type UICanvasEdge =
   | 'top right'
@@ -41,7 +41,7 @@ export type UICanvasConfig = {
   padding: Padding;
   size: Size;
   useAppSize: boolean;
-  layout?: boolean | Partial<LayoutOptions> | null | undefined;
+  layout?: Omit<LayoutOptions, 'target'> | null | boolean;
   autoLayoutChildren?: boolean;
 };
 
@@ -52,7 +52,7 @@ export type UICanvasProps = {
   padding: Partial<Padding> | PointLike;
   size?: SizeLike;
   useAppSize?: boolean;
-  layout: boolean | Partial<LayoutOptions> | null | undefined;
+  layout?: Omit<LayoutOptions, 'target'> | null | boolean;
   autoLayoutChildren?: boolean;
 };
 
@@ -128,7 +128,7 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
     this._disableAddChildError = true;
     // Create top row
     this.topRow = this.add.flexContainer({
-      label: 'Top Row',
+      label: 'Top',
       layout: {
         width: '100%',
         height: 'auto',
@@ -140,7 +140,7 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
 
     // Create middle row
     this.middleRow = this.add.flexContainer({
-      label: 'Middle Row',
+      label: 'Middle',
       layout: {
         width: '100%',
         flexDirection: 'row',
@@ -151,7 +151,7 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
 
     // Create bottom row
     this.bottomRow = this.add.flexContainer({
-      label: 'Bottom Row',
+      label: 'Bottom',
       layout: {
         width: '100%',
         height: 'auto',
@@ -169,10 +169,10 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
       {
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
-        flexGrow: 1,
+        flexGrow: 0,
         flexShrink: 0,
       },
-      'top-left',
+      'Left',
     );
     const topCenter = this._createPositionContainer(
       this.topRow,
@@ -182,17 +182,17 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
         flexGrow: 1,
         flexShrink: 0,
       },
-      'top-center',
+      'Center',
     );
     const topRight = this._createPositionContainer(
       this.topRow,
       {
         justifyContent: 'flex-end',
         alignItems: 'flex-start',
-        flexGrow: 1,
+        flexGrow: 0,
         flexShrink: 0,
       },
-      'top-right',
+      'Right',
     );
 
     const middleLeft = this._createPositionContainer(
@@ -201,10 +201,10 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
         justifyContent: 'flex-start',
         alignItems: 'center',
         flexDirection: 'row',
-        flexGrow: 1,
+        flexGrow: 0,
         flexShrink: 0,
       },
-      'middle-left',
+      'Left',
     );
     const center = this._createPositionContainer(
       this.middleRow,
@@ -215,7 +215,7 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
         flexGrow: 1,
         flexShrink: 0,
       },
-      'center',
+      'Center',
     );
     const middleRight = this._createPositionContainer(
       this.middleRow,
@@ -223,44 +223,44 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
         justifyContent: 'flex-end',
         alignItems: 'center',
         flexDirection: 'row',
-        flexGrow: 1,
+        flexGrow: 0,
         flexShrink: 0,
       },
-      'middle-right',
+      'Right',
     );
 
     const bottomLeft = this._createPositionContainer(
       this.bottomRow,
       {
-        justifyContent: 'flex-end',
-        alignItems: 'flex-start',
-        flexDirection: 'column',
-        flexGrow: 1,
+        justifyContent: 'flex-start',
+        alignItems: 'flex-end',
+        flexDirection: 'row',
+        flexGrow: 0,
         flexShrink: 0,
       },
-      'bottom-left',
+      'Left',
     );
     const bottomCenter = this._createPositionContainer(
       this.bottomRow,
       {
-        justifyContent: 'flex-end',
-        alignItems: 'center',
+        justifyContent: 'center',
+        alignItems: 'flex-end',
         flexGrow: 1,
         flexShrink: 0,
-        flexDirection: 'column',
+        flexDirection: 'row',
       },
-      'bottom-center',
+      'Center',
     );
     const bottomRight = this._createPositionContainer(
       this.bottomRow,
       {
         justifyContent: 'flex-end',
         alignItems: 'flex-end',
-        flexDirection: 'column',
-        flexGrow: 1,
+        flexDirection: 'row',
+        flexGrow: 0,
         flexShrink: 0,
       },
-      'bottom-right',
+      'Right',
     );
 
     // Map all edge variants to the appropriate containers
@@ -302,6 +302,7 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
     container.label = label;
     container.on('childAdded', this.updateLayout);
     container.on('childRemoved', this.updateLayout);
+    container.on('layout', this.updateLayout);
     return container;
   }
 
@@ -479,7 +480,7 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
     }
 
     if (UICanvas.isFlexContainer(child as PIXIContainer)) {
-      this.addSignalConnection((child as unknown as IFlexContainer).onLayoutComplete.connect(this.updateLayout));
+      this.addSignalConnection((child as unknown as FlexContainer).onLayoutComplete.connect(this.updateLayout));
     }
 
     this.settingsMap.set(child, {
@@ -509,6 +510,7 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
       }
     }
     child.on('layout', this.updateLayout);
+    Container.childAdded(child);
     this.updateLayout();
   }
 
@@ -516,6 +518,7 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
     this.settingsMap.delete(child);
     this._childMap.delete(child as PIXIContainer);
     this._canvasChildren = Array.from(this._childMap.keys());
+    Container.childRemoved(child);
   }
 
   private _added() {

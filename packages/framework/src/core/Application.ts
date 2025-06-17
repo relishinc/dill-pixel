@@ -19,7 +19,14 @@ import type {
   IWebEventsPlugin,
 } from '../plugins';
 
-import type { AssetInitOptions, AssetsManifest, DestroyOptions, Renderer, RendererDestroyOptions } from 'pixi.js';
+import type {
+  AssetInitOptions,
+  AssetsManifest,
+  DestroyOptions,
+  Container as PIXIContainer,
+  Renderer,
+  RendererDestroyOptions,
+} from 'pixi.js';
 import { Assets, isMobile, Application as PIXIPApplication, Point, TextStyle } from 'pixi.js';
 import type { DataSchema, IDataAdapter, IStorageAdapter, IStore } from '../store';
 import { DataAdapter, Store } from '../store';
@@ -34,6 +41,7 @@ import { defaultPlugins } from '../plugins/defaults';
 import { type IDevToolsPlugin } from '../plugins/DevToolsPlugin';
 import { IFullScreenPlugin } from '../plugins/FullScreenPlugin';
 import { type IGSAPPlugin } from '../plugins/GSAPPlugin';
+import { ILookupPlugin } from '../plugins/LookupPlugin';
 import { ITimerPlugin } from '../plugins/TimerPlugin';
 import { Signal } from '../signals';
 
@@ -129,6 +137,7 @@ export class Application<
   protected _plugins: Map<string, IPlugin> = new Map();
   // default plugins
   protected _assetManager: IAssetsPlugin;
+  protected _lookup: ILookupPlugin;
   protected _sceneManager: ISceneManagerPlugin;
   protected _webEventsManager: IWebEventsPlugin;
   protected _fullScreenPlugin: IFullScreenPlugin;
@@ -362,6 +371,33 @@ export class Application<
   protected _center = new Point(0, 0);
   public get center(): Point {
     return this._center;
+  }
+
+  get lookup(): ILookupPlugin {
+    if (!this._lookup) {
+      this._lookup = this.getPlugin<ILookupPlugin>('lookup');
+    }
+    return this._lookup;
+  }
+
+  public getChildAtPath(path: string): PIXIContainer | undefined {
+    return this.lookup.getChildAtPath(path);
+  }
+
+  public getPathForChild(container: PIXIContainer): string {
+    return this.lookup.getPathForChild(container);
+  }
+
+  public getChildrenAtPaths(...paths: string[]): PIXIContainer[] {
+    return this.lookup.getChildrenAtPaths(...paths);
+  }
+
+  public getPathsForChildren(...containers: PIXIContainer[]): string[] {
+    return this.lookup.getPathsForChildren(...containers);
+  }
+
+  public getAllPaths(): string[] {
+    return this.lookup.getAllPaths();
   }
 
   public get assets(): IAssetsPlugin {
@@ -981,7 +1017,7 @@ export class Application<
       this._addSplash();
     }
     if (this.scenes.transition) {
-      this.scenes.transition.label = 'SceneManager:: Transition';
+      this.scenes.transition.label = 'Transition';
       this.stage.addChild(this.scenes.transition);
     }
 
@@ -998,7 +1034,7 @@ export class Application<
 
   private _addSplash() {
     if (this.scenes.splash.view) {
-      this.scenes.splash.view.label = 'SceneManager:: Splash';
+      this.scenes.splash.view.label = 'Splash';
       this.stage.addChild(this.scenes.splash.view);
     }
   }
