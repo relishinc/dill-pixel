@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-rive",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Rive",
   "files": [
     "lib",
@@ -31,12 +31,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "dill-pixel": "5.0.0",
+    "dill-pixel": "5.0.1",
     "vite": "6.1.1",
     "vite-plugin-dts": "^4.5.3"
   },
   "peerDependencies": {
-    "dill-pixel": "5.0.0",
+    "dill-pixel": "5.0.1",
     "pixi.js": "8.10.1"
   },
   "dependencies": {
