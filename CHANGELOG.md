@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.0.2](https://github.com/relishinc/dill-pixel/compare/v5.0.1...v5.0.2) (2025-06-18)
+
+
+### Bug Fixes
+
+* default template splash ([690ed37](https://github.com/relishinc/dill-pixel/commit/690ed37bb1c6da107791167a5e279c00df076b38))
+
 ## [5.0.1](https://github.com/relishinc/dill-pixel/compare/v5.0.0...v5.0.1) (2025-06-18)
 
 
