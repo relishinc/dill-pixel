@@ -1,4 +1,6 @@
 import { defineActions, defineButtons, defineConfig, defineContexts, defineControls } from 'dill-pixel';
+// uncomment this to use the splash screen
+// import { Splash } from './Splash';
 
 /** Default template */
 // TODO: Add custom contexts here if desired
@@ -36,6 +38,10 @@ export type Data = {
 
 export const config = defineConfig<Data>({
   id: '__APPLICATION_NAME__',
+  // uncomment this to use the splash screen
+  // splash: {
+  //   view: Splash,
+  // },
   data: {
     initial: {
       space: 'junk',

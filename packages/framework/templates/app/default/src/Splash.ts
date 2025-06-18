@@ -1,6 +1,7 @@
 import { FlexContainer, SceneTransition } from 'dill-pixel';
-import { Sprite, Text, Texture } from 'pixi.js';
 import { gsap } from 'gsap';
+import { Sprite, Text } from 'pixi.js';
+import { COLOR_GREEN } from './utils/Constants';
 
 export class Splash extends SceneTransition {
   private _labelPercent: Text;
@@ -13,18 +14,17 @@ export class Splash extends SceneTransition {
   }
 
   added() {
-    this._bg = this.add.sprite({
-      asset: Texture.WHITE,
-      tint: 0x1f2937,
-      width: this.app.size.width,
-      height: this.app.size.height,
-      anchor: 0.5,
+    this._bg = this.addColoredBackground({
+      color: COLOR_GREEN,
     });
     this._textContainer = this.add.flexContainer({
-      gap: 10,
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
+      bindToAppSize: true,
+      layout: {
+        gap: 10,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
     });
     this._textContainer.add.text({
       text: 'Loading...',
@@ -53,12 +53,10 @@ export class Splash extends SceneTransition {
 
   update() {
     this._labelPercent.text = `${Math.round(this._percent)}%`;
-    this._labelPercent.resolution = 2;
-    this._textContainer.layout();
   }
 
   resize() {
-    this._bg.setSize(this.app.size.width, this.app.size.height);
+    this._textContainer.position.set(-this.app.size.width / 2, -this.app.size.height / 2);
   }
 
   protected override handleLoadProgress(progress: number) {
