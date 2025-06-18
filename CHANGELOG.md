@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.0.1](https://github.com/relishinc/dill-pixel/compare/v5.0.0...v5.0.1) (2025-06-18)
+
+
+### Bug Fixes
+
+* default template uses new layout system ([2d40e52](https://github.com/relishinc/dill-pixel/commit/2d40e522119aecf78bf35871e46f8b561eb15ed5))
+
 ## [5.0.0](https://github.com/relishinc/dill-pixel/compare/v4.24.0...v5.0.0) (2025-06-18)
 
 
