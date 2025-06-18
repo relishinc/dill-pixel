@@ -4,21 +4,23 @@ title: Layout
 
 import { Aside } from '@astrojs/starlight/components';
 
-Dill pixel provides two main ways to handle layouts in your game: `FlexContainer` and `UICanvas`. These classes offer different approaches to positioning and organizing UI elements.
+Dill pixel provides two main ways to handle layouts in your game: `FlexContainer` and `UICanvas`. These classes offer different approaches to positioning and organizing UI elements, both powered by the robust **@pixi/layout** system.
 
 ## FlexContainer
 
-The FlexContainer provides a flexible box layout model similar to CSS Flexbox. It's ideal for creating dynamic layouts that need to adapt to different screen sizes or content.
+The FlexContainer provides a flexible box layout model similar to CSS Flexbox, built on top of **@pixi/layout**. It's ideal for creating dynamic layouts that need to adapt to different screen sizes or content.
 
 ### Basic Usage
 
 ```ts
 // Create a flex container
 const flexContainer = this.add.flexContainer({
-  gap: 10,
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'flex-start',
+  layout: {
+    gap: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
 });
 // Add items to the container
 flexContainer.add.text({ text: 'Item 1', style: textStyle });
@@ -28,61 +30,165 @@ flexContainer.add.text({ text: 'Item 3', style: textStyle });
 
 ### Configuration Options
 
-The FlexContainer supports several layout properties:
-
-- `flexDirection`: Controls the direction of items ('row' | 'column')
-- `flexWrap`: Determines if items should wrap ('wrap' | 'nowrap')
-- `alignItems`: Aligns items on the cross axis ('center' | 'flex-start' | 'flex-end')
-- `justifyContent`: Aligns items on the main axis ('center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly')
-- `gap`: Space between items (number)
+The FlexContainer supports several configuration options:
 
 ```ts
 const container = this.add.flexContainer({
-  width: 800,
-  height: 200,
-  gap: 20,
-  flexDirection: 'row',
-  flexWrap: 'wrap',
-  alignItems: 'center',
-  justifyContent: 'space-between',
+  // Layout properties (passed to @pixi/layout)
+  layout: {
+    width: 800,
+    height: 200,
+    gap: 20,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  // Auto-layout children (default: true)
+  autoLayoutChildren: true,
+  // Bind to app size for responsive layouts
+  bindToAppSize: false,
+  // Bind to another container's size
+  bindTo: someContainer,
+});
+```
+
+#### Layout Properties
+
+The `layout` property accepts any valid **@pixi/layout** options:
+
+- `flexDirection`: Controls the direction of items ('row' | 'column' | 'row-reverse' | 'column-reverse')
+- `flexWrap`: Determines if items should wrap ('wrap' | 'nowrap' | 'wrap-reverse')
+- `alignItems`: Aligns items on the cross axis ('center' | 'flex-start' | 'flex-end' | 'stretch' | 'baseline')
+- `justifyContent`: Aligns items on the main axis ('center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly')
+- `gap`: Space between items (number)
+- `width`/`height`: Container dimensions (number | 'auto' | 'intrinsic' | percentage string)
+- `padding`: Inner spacing (number | object with top/left/bottom/right)
+- `margin`: Outer spacing (number | object with top/left/bottom/right)
+
+### Convenience Properties
+
+FlexContainer provides convenient getters and setters for common layout properties:
+
+```ts
+// Direct property access (updates layout automatically)
+container.gap = 15;
+container.flexDirection = 'column';
+container.alignItems = 'center';
+container.justifyContent = 'space-between';
+
+// Size control
+container.size = { width: 400, height: 300 };
+container.size = [400, 300]; // Array format
+container.size = 400; // Square format
+
+// Individual dimensions
+container.layoutWidth = 'auto';
+container.layoutHeight = 200;
+```
+
+### Auto-Layout Children
+
+When `autoLayoutChildren` is true (default), child elements are automatically configured for layout:
+
+```ts
+const container = this.add.flexContainer({
+  autoLayoutChildren: true, // default
+  layout: { flexDirection: 'row', gap: 10 },
+});
+
+// Children are automatically given layout properties
+const child = container.add.text({ text: 'Auto-layout text' });
+// child.layout is automatically set to { isLeaf: true }
+```
+
+### Responsive Layouts
+
+Bind containers to app size or other containers for responsive behavior:
+
+```ts
+// Bind to application size
+const responsiveContainer = this.add.flexContainer({
+  bindToAppSize: true,
+  layout: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
+// Bind to another container
+const childContainer = this.add.flexContainer({
+  bindTo: parentContainer,
+  layout: { width: '100%', height: 'auto' },
 });
 ```
 
 ### Nested Containers
 
-FlexContainers can be nested to create more complex layouts:
+FlexContainers can be nested to create complex layouts:
 
 ```ts
 const mainContainer = this.add.flexContainer({
-  flexDirection: 'column',
-  gap: 20,
+  layout: {
+    flexDirection: 'column',
+    gap: 20,
+    width: '100%',
+    height: '100%',
+  },
 });
+
 const topRow = mainContainer.add.flexContainer({
-  flexDirection: 'row',
-  gap: 10,
-  alignItems: 'center',
+  layout: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+    width: '100%',
+    height: 'auto',
+  },
 });
+
 topRow.add.text({ text: 'Row 1 Item 1' });
 topRow.add.text({ text: 'Row 1 Item 2' });
+
 const bottomRow = mainContainer.add.flexContainer({
-  flexDirection: 'row',
-  gap: 10,
-  alignItems: 'center',
+  layout: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+    width: '100%',
+    height: 'auto',
+  },
 });
+
 bottomRow.add.text({ text: 'Row 2 Item 1' });
 bottomRow.add.text({ text: 'Row 2 Item 2' });
 ```
 
+### Layout Events
+
+FlexContainer emits layout events you can listen to:
+
+```ts
+const container = this.add.flexContainer({
+  layout: { flexDirection: 'row', gap: 10 },
+});
+
+container.onLayoutComplete.connect(() => {
+  console.log('Layout calculation complete');
+});
+```
+
 <Aside type="tip">
-  FlexContainer automatically handles the positioning of child elements whenever they are added, removed, or when the
-  container's properties change.
+  FlexContainer uses **@pixi/layout** under the hood, which provides high-performance layout calculations and automatic
+  updates when properties change.
 </Aside>
 
 ---
 
 ## UICanvas
 
-The UICanvas provides edge-based alignment for UI elements, making it perfect for HUD elements, menus, and other screen-anchored UI components.
+The UICanvas provides edge-based alignment for UI elements using a sophisticated 9-grid system, making it perfect for HUD elements, menus, and other screen-anchored UI components. It's built on top of FlexContainer internally.
 
 ### Basic Usage
 
@@ -91,20 +197,66 @@ The UICanvas provides edge-based alignment for UI elements, making it perfect fo
 const ui = this.add.uiCanvas({
   useAppSize: true, // Bind to application size
   debug: true, // Show alignment guides
+  autoLayoutChildren: true, // Auto-configure child layouts
 });
+
 // Add elements with alignment
 ui.addElement(this.make.text({ text: 'Top Left' }), { align: 'top left' });
 ui.addElement(this.make.text({ text: 'Bottom Right' }), { align: 'bottom right' });
 ```
 
+### Configuration Options
+
+```ts
+const ui = this.add.uiCanvas({
+  // Visual debugging
+  debug: false,
+  // Canvas padding
+  padding: { top: 20, left: 20, bottom: 20, right: 20 },
+  // Manual size (ignored if useAppSize is true)
+  size: { width: 800, height: 600 },
+  // Bind to application size
+  useAppSize: true,
+  // Layout configuration for the main container
+  layout: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  // Auto-configure child layouts
+  autoLayoutChildren: true,
+});
+```
+
+### Internal Structure
+
+UICanvas creates a sophisticated 9-grid layout system using FlexContainers:
+
+```ts
+// UICanvas internally creates:
+// - topRow: FlexContainer (top alignment)
+// - middleRow: FlexContainer (middle alignment)
+// - bottomRow: FlexContainer (bottom alignment)
+
+// Each row contains position containers for left/center/right alignment
+// This creates 9 total positioning zones
+```
+
 ### Alignment Options
 
-UICanvas supports various edge alignments:
+UICanvas supports various edge alignments mapped to the 9-grid system:
 
-- Cardinal directions: 'top', 'bottom', 'left', 'right'
-- Corners: 'top left', 'top right', 'bottom left', 'bottom right'
-- Center positions: 'top center', 'bottom center', 'left center', 'right center'
-- Absolute center: 'center'
+- **Corners**: 'top left', 'top right', 'bottom left', 'bottom right'
+- **Edges**: 'top', 'bottom', 'left', 'right'
+- **Centers**: 'top center', 'bottom center', 'left center', 'right center'
+- **Absolute center**: 'center'
+
+```ts
+// All these alignments work:
+ui.addElement(element1, { align: 'top left' });
+ui.addElement(element2, { align: 'left top' }); // Same as above
+ui.addElement(element3, { align: 'center' });
+ui.addElement(element4, { align: 'bottom right' });
+```
 
 ### Adding Padding
 
@@ -115,112 +267,115 @@ ui.addElement(this.make.text({ text: 'Padded Corner' }), {
   align: 'top right',
   padding: { top: 20, right: 20 },
 });
+
+// Padding can also be specified as a point-like object
+ui.addElement(someElement, {
+  align: 'bottom left',
+  padding: { x: 10, y: 10 }, // Applies to left/right and top/bottom
+});
 ```
 
 ### Combining with FlexContainer
 
-UICanvas and FlexContainer can be used together for complex layouts:
+UICanvas and FlexContainer work seamlessly together:
 
 ```ts
 const ui = this.add.uiCanvas({ useAppSize: true });
+
 // Create a flex container for a bottom toolbar
 const toolbar = this.make.flexContainer({
-  gap: 20,
-  alignItems: 'center',
-  height: 48,
+  layout: {
+    gap: 20,
+    alignItems: 'center',
+    height: 48,
+    width: 'auto',
+    flexDirection: 'row',
+  },
 });
+
 toolbar.add.text({ text: 'Button 1' });
 toolbar.add.text({ text: 'Button 2' });
 toolbar.add.text({ text: 'Button 3' });
+
 // Add the flex container to the UI canvas
-ui.addElement(toolbar, { align: 'bottom' });
+ui.addElement(toolbar, { align: 'bottom center' });
+```
+
+### Layout Updates and Performance
+
+UICanvas automatically handles layout updates through the **@pixi/layout** system:
+
+```ts
+const ui = this.add.uiCanvas({ useAppSize: true });
+
+// Layout updates happen automatically when:
+// - Elements are added or removed
+// - App is resized (if useAppSize is true)
+// - Child elements change their layout properties
+// - Manual updateLayout() is called
+
+ui.updateLayout(); // Force layout update if needed
 ```
 
 <Aside type="tip">
-  Use the debug option (`debug: true`) when setting up your layouts to see alignment boundaries and padding areas.
+  Use the debug option (`debug: true`) when setting up your layouts to see alignment boundaries, padding areas, and the
+  9-grid structure.
 </Aside>
 
-## Handling Anchored Elements
+## Advanced Layout Features
 
-`FlexContainer` and `UICanvas` use a sophisticated system to handle elements with anchors or pivot points. When a child is added to a `FlexContainer` or `UICanvas`, it's automatically wrapped in an inner container to ensure consistent positioning:
+### Auto-Layout Children
+
+Both FlexContainer and UICanvas support automatic layout configuration for children:
 
 ```ts
 const container = this.add.flexContainer({
-  flexDirection: 'row',
-  gap: 10,
+  autoLayoutChildren: true, // default
+  layout: { flexDirection: 'row' },
 });
 
-// This sprite has an anchor point of 0.5 (centered)
-const sprite = this.add.sprite({
-  texture: 'myTexture',
-  anchor: 0.5,
-});
-
-container.add.existing(sprite); // Will be wrapped automatically
+// When autoLayoutChildren is true:
+// - Children automatically get layout properties
+// - Width and height are set to 'auto' if not specified
+// - Children are marked as layout leaves for optimization
 ```
 
-#### How It Works
+### Layout Property Types
 
-When a child is added to a FlexContainer, the following process occurs:
-
-1. The child is wrapped in an inner container
-2. The inner container's bounds are calculated
-3. The container's pivot is adjusted to ensure consistent positioning:
+The layout system supports various value types for dimensions:
 
 ```ts
-protected handleChildAdded(child: any) {
-  // Create inner container
-  const container = this.add.container();
-  container.add.existing(child);
-
-  // Calculate and adjust for bounds
-  const bounds = container.getLocalBounds();
-  if (bounds.x < 0) {
-    container.pivot.x = bounds.x;
-  }
-  if (bounds.y < 0) {
-    container.pivot.y = bounds.y;
-  }
-
-  // Track the relationship between child and container
-  this._childMap.set(child, container);
-}
+const container = this.add.flexContainer({
+  layout: {
+    width: 400, // Fixed pixel width
+    height: 'auto', // Auto-size to content
+    maxWidth: '80%', // Percentage of parent
+    minHeight: 100, // Minimum size constraint
+    flexGrow: 1, // Flex grow factor
+    flexShrink: 0, // Flex shrink factor
+  },
+});
 ```
 
-<Aside type="tip">
-  This wrapping system ensures that elements with different anchor points or pivots align correctly within the flex
-  layout, similar to how CSS Flexbox handles elements with different transform origins.
-</Aside>
+### Performance Optimization
 
-#### Implications
+The **@pixi/layout** integration provides several performance benefits:
 
-- **Accessing Children**: When you need to access a child element, be aware it's wrapped in a container
-- **Positioning**: All positioning is handled relative to the top-left corner of the inner container
-- **Layout Updates**: Changes to the child's anchor or pivot will be automatically accommodated by the container system
-
-#### Example with Mixed Elements
+1. **Efficient Updates**: Only recalculates when properties change
+2. **Batched Calculations**: Layout updates are batched for performance
+3. **Optimized Rendering**: Reduces unnecessary draw calls
+4. **Memory Efficient**: Reuses layout calculations where possible
 
 ```ts
-const flexContainer = this.add.flexContainer({
-  flexDirection: 'row',
-  gap: 20,
-  alignItems: 'center',
+// Layout updates are automatically optimized
+const container = this.add.flexContainer({
+  layout: { flexDirection: 'row', gap: 10 },
 });
 
-// Centered sprite
-const centeredSprite = this.add.sprite({
-  texture: 'icon',
-  anchor: 0.5,
-});
-
-// Text with default anchor (0,0)
-const text = this.add.text({
-  text: 'Label',
-});
-
-// Both will be centered espite different anchors
-flexContainer.add.existing(centeredSprite);
-flexContainer.add.existing(text);
+// Multiple property changes are batched
+container.gap = 20;
+container.flexDirection = 'column';
+// Layout recalculation happens once, not twice
 ```
 
 ## Best Practices
@@ -232,10 +387,23 @@ flexContainer.add.existing(text);
 
 2. **Performance**:
 
-   - Minimize nested containers to reduce layout calculations
-   - Use `size` constraints when possible to help optimize layout calculations
+   - Keep `autoLayoutChildren: true` unless you need manual control
+   - Use appropriate size constraints (`width: 'auto'` vs fixed values)
+   - Minimize deep nesting of layout containers
 
 3. **Responsive Design**:
 
    - Use `useAppSize: true` with UICanvas for responsive layouts
-   - Combine FlexContainer's `flexWrap` with appropriate sizing for adaptive layouts
+   - Leverage percentage values and 'auto' sizing for adaptive layouts
+   - Use `bindToAppSize` or `bindTo` for reactive container sizing
+
+4. **Layout Properties**:
+
+   - Prefer the `layout` object over individual property setters for multiple changes
+   - Use percentage strings ('50%') for responsive sizing
+   - Leverage 'auto' and 'intrinsic' sizing for content-driven layouts
+
+5. **Debugging**:
+   - Use `debug: true` to visualize layout boundaries
+   - Monitor layout events for performance debugging
+   - Use the browser's performance tools to profile layout calculations
