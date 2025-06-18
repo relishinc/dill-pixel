@@ -37,12 +37,12 @@ const AVAILABLE_PLUGINS = [
     description: 'Google Analytics integration',
   },
   {
-    name: '@dill-pixel/plugin-physics-crunch',
+    name: '@dill-pixel/plugin-crunch-physics',
     displayName: 'Crunch Physics',
     description: 'Crunch physics engine integration',
   },
   {
-    name: '@dill-pixel/plugin-physics-matter',
+    name: '@dill-pixel/plugin-matter-physics',
     displayName: 'Matter Physics',
     description: 'Matter.js physics engine integration',
   },
