@@ -1,2 +1,2 @@
-export const version = '4.24.0';
-export const riveVersion = '2.26.7';
+export const version = '5.0.0';
+export const riveVersion = '2.30.0';
