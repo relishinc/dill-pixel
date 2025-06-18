@@ -92,8 +92,7 @@ const _Button = Focusable(Interactive(WithSignals(Factory())));
 /**
  * @class
  * @extends {Container}
- * @implements {IFocusable, IButton}
- * @description A class representing a button.
+ *  A class representing a button.
  */
 export class Button extends _Button implements IButton {
   // signals
@@ -185,7 +184,7 @@ export class Button extends _Button implements IButton {
   protected _enabled: boolean;
 
   /**
-   * @description Sets the enabled state of the button.
+   *  Sets the enabled state of the button.
    * @param {boolean} enabled - Whether the button is enabled.
    */
   public set enabled(enabled: boolean) {
@@ -292,7 +291,6 @@ export class Button extends _Button implements IButton {
   }
 
   /**
-   * @description Handles the pointer over event.
    * Sets the texture of the button to the hover texture and emits the onOver event.
    */
   protected handlePointerOver() {
@@ -319,7 +317,6 @@ export class Button extends _Button implements IButton {
   }
 
   /**
-   * @description Handles the pointer out event.
    * Sets the texture of the button to the default texture and emits the onOut event.
    */
   protected handlePointerOut() {
@@ -335,7 +332,6 @@ export class Button extends _Button implements IButton {
   }
 
   /**
-   * @description Handles the pointer down event.
    * Sets the isDown property to true and changes the texture of the button.
    */
   protected handlePointerDown(e: FederatedEvent) {
@@ -367,7 +363,6 @@ export class Button extends _Button implements IButton {
   }
 
   /**
-   * @description Handles the pointer up event.
    * Removes the keyup event listener and emits the onPress and onUp events.
    */
   protected handlePointerUp(e: FederatedEvent) {
@@ -402,7 +397,7 @@ export class Button extends _Button implements IButton {
   }
 
   /**
-   * @description Handles the pointer up event.
+   *  Handles the pointer up event.
    */
   protected handlePointerUpOutside(e: PointerEvent | FederatedPointerEvent) {
     if (!this._enabled || e.pointerId !== this._pointerId) {

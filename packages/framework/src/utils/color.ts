@@ -81,10 +81,10 @@ export class Color {
   }
 
   /**
-   * Creates a new Color that is linearly interpolated from @var pA to @var b .
+   * Creates a new Color that is linearly interpolated from  pA to  b .
    * @param pA The start Color.
    * @param b The end Color.
-   * @param pPerc The percentage on the path from @var pA to @var b .
+   * @param pPerc The percentage on the path from  pA to  b .
    * @returns The new Color.
    */
   public static lerp(pA: Color, b: Color, pPerc: number): Color {
@@ -92,10 +92,10 @@ export class Color {
   }
 
   /**
-   * Creates a new hex Color that is linearly interpolated from @var pA to @var b .
+   * Creates a new hex Color that is linearly interpolated from  pA to  b .
    * @param pA The first Color hex.
    * @param b The second Color hex.
-   * @param pPerc The percentage along the path from @var pA to @var b .
+   * @param pPerc The percentage along the path from  pA to  b .
    * @returns The new hex Color.
    */
   public static lerpHex(pA: number, b: number, pPerc: number): number {

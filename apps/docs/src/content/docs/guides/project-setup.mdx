@@ -1,3 +1,10 @@
+---
+title: Project Setup
+---
+
+import { Code, FileTree } from '@astrojs/starlight/components';
+import viteConfigJs from '../../../../../examples/hello-world/vite.config.mjs?raw';
+
 ## Organizing Files and Directories
 
 We recommend setting up your project directory as follows:
@@ -8,6 +15,7 @@ We recommend setting up your project directory as follows:
 - README.md
 - tsconfig.json
 - vite.config.mjs
+- dill-pixel.config.ts - configuration file for dill pixel
 - index.html
 - assets - configured for [assetpack](https://github.com/pixijs/assetpack) (example below)
   - audio\{m\}
@@ -28,7 +36,6 @@ We recommend setting up your project directory as follows:
     - animation.atlas
     - animations.png
 - **src**
-  - dill-pixel.config.ts - configuration file for dill pixel
   - index.ts
   - index.css
   - bootstrap.ts - where you initialize your game

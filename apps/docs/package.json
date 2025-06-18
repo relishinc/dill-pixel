@@ -11,15 +11,16 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/starlight": "^0.30.3",
-    "@astrojs/starlight-tailwind": "^3.0.0",
-    "@astrojs/tailwind": "^5.1.4",
-    "astro": "^5.1.2",
+    "@astrojs/starlight": "^0.34.4",
+    "@astrojs/starlight-tailwind": "^4.0.1",
+    "@astrojs/tailwind": "^6.0.2",
+    "@tailwindcss/vite": "^4.1.10",
+    "astro": "^5.9.4",
     "sharp": "^0.33.3",
-    "starlight-typedoc": "^0.12.1",
-    "tailwindcss": "^3.4.3",
-    "typedoc": "0.27.x",
-    "typedoc-plugin-markdown": "^4.6.0",
+    "starlight-typedoc": "^0.21.3",
+    "tailwindcss": "^4.1.10",
+    "typedoc": "0.28.5",
+    "typedoc-plugin-markdown": "^4.6.4",
     "typescript": "^5.4.5"
   }
 }

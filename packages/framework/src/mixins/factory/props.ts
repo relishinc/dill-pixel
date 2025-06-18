@@ -84,7 +84,6 @@ export interface TilingSpriteProps extends SpriteProps {
    */
   height?: number;
   /**
-   * @todo
    * @default false
    */
   applyAnchorToTexture?: boolean;

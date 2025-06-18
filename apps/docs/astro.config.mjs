@@ -1,22 +1,28 @@
 import starlightTypeDoc, { typeDocSidebarGroup } from 'starlight-typedoc';
 
 import starlight from '@astrojs/starlight';
-import tailwind from '@astrojs/tailwind';
 import { defineConfig } from 'astro/config';
+
+import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'http://docs.dillpixel.io',
   base: '/',
+
   integrations: [
     starlight({
       title: 'dill pixel',
       logo: {
         src: './src/assets/jar.png',
       },
-      social: {
-        github: 'https://github.com/relishinc/dill-pixel',
-      },
+      social: [
+        {
+          icon: 'github',
+          label: 'GitHub',
+          href: 'https://github.com/relishinc/dill-pixel',
+        },
+      ],
       editLink: {
         baseUrl: 'https://github.com/relishinc/dill-pixel/tree/docs',
       },
@@ -60,7 +66,7 @@ export default defineConfig({
             { label: 'Copy and Content', link: '/fundamentals/copy' },
             { label: 'Audio', link: '/fundamentals/audio' },
             { label: 'Timers', link: '/fundamentals/timers' },
-            { label: 'Pausing / Resuming', link: '/fundamentals/pausing' },
+            { label: 'Pausing/Resuming', link: '/fundamentals/pausing' },
             {
               label: 'Animation',
               items: [
@@ -124,8 +130,13 @@ export default defineConfig({
       ],
       customCss: ['./src/custom.css'],
     }),
-    tailwind(),
   ],
+
   outDir: './dist',
+
   exclude: ['./examples/**/*'],
+
+  vite: {
+    plugins: [tailwindcss()],
+  },
 });

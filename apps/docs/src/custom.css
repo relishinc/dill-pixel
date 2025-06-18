@@ -1,10 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap');
 
+@layer base, starlight, theme, components, utilities;
+
+@import '@astrojs/starlight-tailwind';
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
 :root {
   --sl-font: 'DM Sans';
-  --sl-color-black: #17181c;
-  --sl-color-bg-sidebar: #1f2937;
-  --sl-color-bg-nav: #1f2937;
 
   --sl-color-accent: #92cd3f;
   --sl-color-accent-high: #89be40;
@@ -17,13 +20,18 @@
   --sl-text-xs: 0.9rem;
 }
 
+:root[data-theme='dark'] {
+  --sl-color-black: #17181c;
+  --sl-color-bg-sidebar: #1f2937;
+  --sl-color-bg-nav: #1f2937;
+}
+
 :root[data-theme='light'],
 [data-theme='light'] ::backdrop {
   --sl-color-bg: white;
-  
   --sl-color-accent: #6ea81d;
-  --sl-color-accent-high: #8AC733;
-  --sl-color-accent-low: #8AC733;
+  --sl-color-accent-high: #8ac733;
+  --sl-color-accent-low: #8ac733;
 }
 
 .action {

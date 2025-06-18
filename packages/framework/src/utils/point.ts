@@ -1,12 +1,12 @@
-import {Point, PointLike} from 'pixi.js';
-import {PointLike as DillPixelPointLike} from './types';
-import {lerp} from './math';
+import { Point, PointLike } from 'pixi.js';
+import { lerp } from './math';
+import { PointLike as DillPixelPointLike } from './types';
 
 /**
  * Add the x and the y values of two Points together and return a new point.
  * @returns Point
- * @aram a
- * @aram b
+ * @param a
+ * @param b
  */
 export function add(a: PointLike, b: PointLike): Point {
   return new Point(a.x + b.x, a.y + b.y);
@@ -14,8 +14,8 @@ export function add(a: PointLike, b: PointLike): Point {
 
 /**
  * Increase the x,y of point A by the x,y of point B.
- * @aram a
- * @aram b
+ * @param a
+ * @param b
  */
 export function addToPoint(a: PointLike, b: PointLike): void {
   a.x += b.x;
@@ -24,8 +24,8 @@ export function addToPoint(a: PointLike, b: PointLike): void {
 
 /**
  * Subtract the x and the y values of point B from Point A and return a new point.
- * @aram a
- * @aram b
+ * @param a
+ * @param b
  */
 export function subtract(a: PointLike, b: PointLike): Point {
   return new Point(a.x - b.x, a.y - b.y);
@@ -33,8 +33,8 @@ export function subtract(a: PointLike, b: PointLike): Point {
 
 /**
  * Decrease the x,y of point A by the x,y of point B.
- * @aram a
- * @aram b
+ * @param a
+ * @param b
  */
 export function subtractFromPoint(a: PointLike, b: PointLike): void {
   a.x -= b.x;
@@ -43,8 +43,8 @@ export function subtractFromPoint(a: PointLike, b: PointLike): void {
 
 /**
  * Multply the x,y values of a point by the provided value.
- * @aram a
- * @aram pMult
+ * @param a
+ * @param pMult
  */
 export function multiply(a: PointLike, pMult: number): Point {
   const point: Point = new Point(a.x, a.y);
@@ -55,8 +55,8 @@ export function multiply(a: PointLike, pMult: number): Point {
 
 /**
  *
- * @aram pt
- * @aram percent
+ * @param pt
+ * @param percent
  */
 export function lerpPoint(pt: PointLike, percent: number): number {
   return lerp(pt.x, pt.y, percent);
@@ -64,8 +64,8 @@ export function lerpPoint(pt: PointLike, percent: number): number {
 
 /**
  * Get the distance between two points.
- * @aram a
- * @aram b
+ * @param a
+ * @param b
  */
 export function distance(a: PointLike, b: Point): number {
   return Math.sqrt(distanceSq(a, b));
@@ -73,8 +73,8 @@ export function distance(a: PointLike, b: Point): number {
 
 /**
  * Get the squared distance between two points.
- * @aram a
- * @aram b
+ * @param a
+ * @param b
  */
 export function distanceSq(a: PointLike, b: Point): number {
   return (b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y);
@@ -82,7 +82,7 @@ export function distanceSq(a: PointLike, b: Point): number {
 
 /**
  * Gets the magnitude of a point.
- * @aram pt
+ * @param pt
  */
 export function magnitude(pt: PointLike): number {
   return Math.sqrt(pt.x * pt.x + pt.y * pt.y);
