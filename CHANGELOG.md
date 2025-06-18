@@ -1,5 +1,29 @@
 # Changelog
 
+## [5.0.0](https://github.com/relishinc/dill-pixel/compare/v4.24.0...v5.0.0) (2025-06-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* updated to use pixi/layout yoga system, docs: UI
+
+### Features
+
+* added gsap plugin for managing animations ([f2bb899](https://github.com/relishinc/dill-pixel/commit/f2bb89992199ac9276f2aa258172ee2bd28ddacc))
+* added layout plugin, ([f2bb899](https://github.com/relishinc/dill-pixel/commit/f2bb89992199ac9276f2aa258172ee2bd28ddacc))
+* added LookupPlugin ([f281b58](https://github.com/relishinc/dill-pixel/commit/f281b5807e34850703ed2b0504fffdceb8929cd2))
+* added LookupPlugin ([8e62769](https://github.com/relishinc/dill-pixel/commit/8e627693690ea5393ee28ef9e271b1372541f138))
+* added pixi devtools plugin ([f2bb899](https://github.com/relishinc/dill-pixel/commit/f2bb89992199ac9276f2aa258172ee2bd28ddacc))
+* re-vamped flexcontainer, ([e3efc68](https://github.com/relishinc/dill-pixel/commit/e3efc6835609128d2c9c20dc37bb10c123d3b38b))
+* re-vamped UICanvas and FlexContainer to use new yoga layout ([f2bb899](https://github.com/relishinc/dill-pixel/commit/f2bb89992199ac9276f2aa258172ee2bd28ddacc))
+* updated to use pixi/layout yoga system, docs: UI ([476278b](https://github.com/relishinc/dill-pixel/commit/476278bc49ab77117e7e649816f39b2c60d6429e))
+
+
+### Bug Fixes
+
+* all scenes using layout where applicable ([7c3b86f](https://github.com/relishinc/dill-pixel/commit/7c3b86f6bfb3c55ff6cf77c7e4f6e32dc9f9f250))
+* cli fixes for plugin paths ([bd09b8f](https://github.com/relishinc/dill-pixel/commit/bd09b8f9f18018b220b12e841df477f26240f60d))
+
 ## [4.24.0](https://github.com/relishinc/dill-pixel/compare/v4.23.0...v4.24.0) (2025-05-28)
 
 
