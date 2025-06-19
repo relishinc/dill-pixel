@@ -17,10 +17,10 @@ export const assets = {
         alias: 'vehicles',
         src: 'https://cdn.rive.app/animations/vehicles.riv',
       },
-      { alias: 'reactions', src: 'static/reactions_v3.riv' },
-      { alias: 'skins', src: 'static/skins_demo.riv' },
-      { alias: 'cup', src: 'static/cup.riv' },
-      { alias: 'marty', src: 'static/marty.riv' },
+      { alias: 'reactions', src: '/static/reactions_v3.riv' },
+      { alias: 'skins', src: '/static/skins_demo.riv' },
+      { alias: 'cup', src: '/static/cup.riv' },
+      { alias: 'marty', src: '/static/marty.riv' },
     ],
   },
   autoUnload: true,
@@ -120,7 +120,7 @@ export default class RiveScene extends BaseScene {
 
   _addReaction(artboardName: string) {
     const reactionInstance = new RiveEntity({
-      asset: 'reactions_v3',
+      asset: 'reactions',
       interactive: true,
       autoPlay: true,
       cursor: 'pointer',
