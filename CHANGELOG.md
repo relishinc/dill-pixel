@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.0.3](https://github.com/relishinc/dill-pixel/compare/v5.0.2...v5.0.3) (2025-06-19)
+
+
+### Bug Fixes
+
+* lots of work on typing / intellisense for assets / textures / fonts / spine ([4f80225](https://github.com/relishinc/dill-pixel/commit/4f80225b7f5d3b00e793302040dac34e4228f955))
+* splash initialization ([4f80225](https://github.com/relishinc/dill-pixel/commit/4f80225b7f5d3b00e793302040dac34e4228f955))
+
 ## [5.0.2](https://github.com/relishinc/dill-pixel/compare/v5.0.1...v5.0.2) (2025-06-18)
 
 
