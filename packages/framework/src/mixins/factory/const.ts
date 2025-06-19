@@ -12,6 +12,7 @@ import {
 import { omitKeys, pluck, resolvePointLike, Spine, WithRequiredProps } from '../../utils';
 import {
   AnimatedSpriteProps,
+  BitmapTextProps,
   ButtonProps,
   ContainerProps,
   ExistingProps,
@@ -190,7 +191,7 @@ export const defaultFactoryMethods = {
     resolveUnknownKeys(unknowns, entity);
     return entity;
   },
-  bitmapText: (props?: Partial<TextProps>) => {
+  bitmapText: (props?: Partial<BitmapTextProps>) => {
     const options = pluck(props ?? {}, TextPropsKeys);
     const entity = new BitmapText(options);
     if (props?.position) {

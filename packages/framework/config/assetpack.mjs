@@ -84,12 +84,16 @@ const debounce = (func, wait) => {
 };
 
 // Function to generate TypeScript types from the manifest
-function generateAssetTypes(manifest) {
+async function generateAssetTypes(manifest) {
   // Extract all assets from bundles
   const assetsByType = {
     textures: new Set(),
     spritesheets: new Set(),
+    tpsFrames: new Set(),
     fonts: new Set(),
+    bitmapFonts: new Set(),
+    fontFamilies: new Set(),
+    bitmapFontFamilies: new Set(),
     audio: new Set(),
     json: new Set(),
     spine: new Set(),
@@ -100,11 +104,11 @@ function generateAssetTypes(manifest) {
   const bundleNames = new Set();
 
   // Process each bundle
-  bundles.forEach((bundle) => {
+  for (const bundle of bundles) {
     bundleNames.add(bundle.name);
 
     // Process each asset in the bundle
-    bundle.assets.forEach((asset) => {
+    for (const asset of bundle.assets) {
       const aliases = asset.alias || [];
       const srcs = Array.isArray(asset.src) ? asset.src : [asset.src];
       const firstSrc = srcs[0];
@@ -113,21 +117,54 @@ function generateAssetTypes(manifest) {
       // Add to appropriate category based on extension and data tags
       if (asset.data?.tags?.tps || (ext === '.json' && firstSrc.includes('sheet'))) {
         aliases.forEach((alias) => assetsByType.spritesheets.add(alias));
+
+        // Extract frame names from TPS JSON files
+        if (asset.data?.tags?.tps) {
+          try {
+            // Find the first .json file in the src array
+            const jsonSrc = srcs.find((src) => src.endsWith('.json'));
+            if (jsonSrc) {
+              // Construct the full path to the JSON file
+              const jsonPath = path.join(process.cwd(), 'public', 'assets', jsonSrc);
+
+              // Read and parse the JSON file
+              const jsonContent = await fs.promises.readFile(jsonPath, 'utf8');
+              const tpsData = JSON.parse(jsonContent);
+
+              // Extract frame names from the "frames" object
+              if (tpsData.frames) {
+                Object.keys(tpsData.frames).forEach((frameName) => {
+                  assetsByType.tpsFrames.add(frameName); // Add to separate category
+                });
+              }
+            }
+          } catch (error) {
+            Logger.warn(`Failed to load TPS frames from ${firstSrc}:`, error.message);
+          }
+        }
       } else if (ext === '.json' && !firstSrc.includes('atlas')) {
         aliases.forEach((alias) => assetsByType.json.add(alias));
       } else if (['.png', '.webp', '.jpg', '.jpeg', '.svg'].includes(ext)) {
         aliases.forEach((alias) => assetsByType.textures.add(alias));
       } else if (['.mp3', '.ogg', '.wav'].includes(ext)) {
         aliases.forEach((alias) => assetsByType.audio.add(alias));
-      } else if (['.ttf', '.woff', '.woff2', '.fnt'].includes(ext) || asset.data?.tags?.wf) {
+      } else if (['.ttf', '.woff', '.woff2'].includes(ext) || asset.data?.tags?.wf) {
         aliases.forEach((alias) => assetsByType.fonts.add(alias));
+        if (asset.data?.family) {
+          assetsByType.fontFamilies.add(asset.data.family); // Add family name
+        }
+      } else if (['.fnt'].includes(ext)) {
+        aliases.forEach((alias) => {
+          assetsByType.bitmapFonts.add(alias);
+          assetsByType.bitmapFontFamilies.add(alias); // Add family name
+        });
       } else if (['.atlas', '.skel', '.json'].some((e) => firstSrc.includes(e)) && firstSrc.includes('spine')) {
         aliases.forEach((alias) => assetsByType.spine.add(alias));
       } else if (ext === '.riv') {
         aliases.forEach((alias) => assetsByType.rive.add(alias));
       }
-    });
-  });
+    }
+  }
 
   // Convert Sets to sorted arrays for consistent output
   const types = Object.fromEntries(Object.entries(assetsByType).map(([key, value]) => [key, [...value].sort()]));
@@ -155,6 +192,13 @@ export type AssetTextures = ${types.textures.length ? `\n  | '${types.textures.j
  * const spritesheet: AssetSpritesheets = 'game/sheet';
  */
 export type AssetSpritesheets = ${types.spritesheets.length ? `\n  | '${types.spritesheets.join("'\n  | '")}'` : 'never'};
+
+/**
+ * Available TPS frame names from spritesheets
+ * @example
+ * const frame: AssetTPSFrames = 'btn/blue';
+ */
+export type AssetTPSFrames = ${types.tpsFrames.length ? `\n  | '${types.tpsFrames.join("'\n  | '")}'` : 'never'};
 
 /**
  * Available font names in the asset manifest
@@ -192,6 +236,20 @@ export type AssetSpine = ${types.spine.length ? `\n  | '${types.spine.join("'\n 
 export type AssetRive = ${types.rive.length ? `\n  | '${types.rive.join("'\n  | '")}'` : 'never'};
 
 /**
+ * Available font family names
+ * @example
+ * const fontFamily: AssetFontFamilies = 'KumbhSans';
+ */
+export type AssetFontFamilies = ${types.fontFamilies.length ? `\n  | '${types.fontFamilies.join("'\n  | '")}'` : 'never'};
+
+/**
+ * Available font family names
+ * @example
+ * const fontFamily: AssetFontFamilies = 'KumbhSans';
+ */
+export type AssetBitmapFontFamilies = ${types.bitmapFontFamilies.length ? `\n  | '${types.bitmapFontFamilies.join("'\n  | '")}'` : 'never'};
+
+/**
  * Union type of all asset names
  * @example
  * const asset: AssetAlias = 'game/wordmark';
@@ -199,7 +257,9 @@ export type AssetRive = ${types.rive.length ? `\n  | '${types.rive.join("'\n  | 
 export type AssetAlias = 
   | AssetTextures 
   | AssetSpritesheets 
+  | AssetTPSFrames
   | AssetFonts 
+  | AssetBitmapFonts
   | AssetAudio 
   | AssetJson
   | AssetSpine
@@ -223,11 +283,15 @@ export interface AssetManifest {
 export interface AssetTypes {
   textures: Record<AssetTextures, Texture>;
   spritesheets: Record<AssetSpritesheets, Spritesheet>;
+  tpsFrames: Record<AssetTPSFrames, Texture>;
   fonts: Record<AssetFonts, any>;
   audio: Record<AssetAudio, HTMLAudioElement>;
   json: Record<AssetJson, any>;
   spine: Record<AssetSpine, any>;
   rive: Record<AssetRive, any>;
+  fontFamilies: Record<AssetFontFamilies, any>;
+  bitmapFonts: Record<AssetBitmapFonts, any>;
+  bitmapFontFamilies: Record<AssetBitmapFontFamilies, any>;
 }
 
 /**
@@ -238,12 +302,17 @@ export interface AssetTypes {
 export type AssetTypeOf<T extends AssetAlias> = 
   T extends AssetTextures ? Texture :
   T extends AssetSpritesheets ? Spritesheet :
+  T extends AssetTPSFrames ? Texture :
   T extends AssetFonts ? any :
+  T extends AssetBitmapFonts ? any :
   T extends AssetAudio ? HTMLAudioElement :
   T extends AssetJson ? any :
   T extends AssetSpine ? any :
   T extends AssetRive ? any :
+  T extends AssetFontFamilies ? any :
+  T extends AssetBitmapFontFamilies ? any :
   never;
+  
 
 /**
  * Get the bundle name for a given asset
@@ -251,12 +320,28 @@ export type AssetTypeOf<T extends AssetAlias> =
  * type MyBundle = AssetBundleOf<'game/wordmark'>; // 'game'
  */
 export type AssetBundleOf<T extends AssetAlias> = Extract<AssetBundles, T extends \`\${infer B}/\${string}\` ? B : never>;
+
+/**
+ * Add type overrides to the framework
+ */
+declare module 'dill-pixel' {
+  interface AssetTypeOverrides {
+    TextureLike: AssetTextures;
+    TPSFrames: AssetTPSFrames; 
+    SpriteSheetLike: AssetSpritesheets;
+    SpineData: AssetSpine;
+    Spine: AssetSpine;
+    AudioLike: AssetAudio;
+    FontFamily: AssetFontFamilies;
+    BitmapFontFamily: AssetBitmapFontFamilies;
+  }
+}
 `;
 }
 
 // Function to write types file
 async function writeAssetTypes(manifest, outputDir) {
-  const types = generateAssetTypes(manifest);
+  const types = await generateAssetTypes(manifest);
   // Change output path to ./src/types/
   const srcTypesDir = path.join(process.cwd(), 'src', 'types');
 

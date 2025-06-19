@@ -3,7 +3,15 @@ import { GraphicsContext, HTMLTextStyleOptions, TextStyleOptions } from 'pixi.js
 import { ContainerConfig } from '../../display';
 import { ParticleContainerConfig } from '../../display/ParticleContainer';
 import { ButtonConfig, FlexContainerConfig, UICanvasProps } from '../../ui';
-import type { PointLike, SpriteSheetLike, TextureLike, WithRequiredProps } from '../../utils';
+import type {
+  BitmapFontFamilyLike,
+  FontFamilyLike,
+  PointLike,
+  SpineLike,
+  SpriteSheetLike,
+  TextureLike,
+  WithRequiredProps,
+} from '../../utils';
 
 export interface AbstractProps {
   [key: string]: any;
@@ -126,7 +134,15 @@ export interface TextProps extends AbstractProps, PositionProps, ScaleProps, Vis
   anchor: PointLike;
   resolution: number;
   roundPixels: boolean;
-  style: Partial<TextStyleOptions>;
+  style: Partial<Omit<TextStyleOptions, 'fontFamily'> & { fontFamily: FontFamilyLike }>;
+}
+
+export interface BitmapTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps, LayoutProps {
+  text: string;
+  anchor: PointLike;
+  resolution: number;
+  roundPixels: boolean;
+  style: Partial<Omit<TextStyleOptions, 'fontFamily'> & { fontFamily: BitmapFontFamilyLike }>;
 }
 
 export interface HTMLTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps, LayoutProps {
@@ -134,7 +150,7 @@ export interface HTMLTextProps extends AbstractProps, PositionProps, ScaleProps,
   anchor: PointLike;
   resolution: number;
   roundPixels: boolean;
-  style: Partial<HTMLTextStyleOptions>;
+  style: Partial<Omit<HTMLTextStyleOptions, 'fontFamily'> & { fontFamily: FontFamilyLike }>;
 }
 
 export interface OmittedTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {}
@@ -160,11 +176,11 @@ export interface UICanvasFactoryProps extends ContainerProps, UICanvasProps {}
 type SpineData = {
   skeleton: string;
   atlas: string;
-  skel?: boolean;
+  skel?: SpineLike;
 };
 
 export interface SpineProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps, LayoutProps {
-  data: string | SpineData;
+  data: SpineLike | SpineData;
   autoUpdate: boolean;
   animationName: string;
   trackIndex: number;

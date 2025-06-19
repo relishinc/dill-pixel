@@ -17,6 +17,7 @@ import type {
   IResizerPlugin,
   ISceneManagerPlugin,
   IWebEventsPlugin,
+  type PluginList,
 } from '../plugins';
 
 import type {
@@ -126,7 +127,7 @@ export class Application<
   public __dill_pixel_method_binding_root = true;
   // config
   public config: Partial<IApplicationOptions<D>>;
-  public plugins: ImportList<IPlugin>;
+  public plugins: PluginList;
   public storageAdapters: ImportList<IStorageAdapter>;
   public manifest: string | AssetsManifest | undefined;
   public onPause = new Signal<(config: PauseConfig) => void>();
@@ -639,7 +640,7 @@ export class Application<
 
     // internal setup
     await this._setup();
-    this.plugins = await generatePluginList<IPlugin>(this.config.plugins || []);
+    this.plugins = await generatePluginList(this.config.plugins || []);
 
     for (let i = 0; i < this.plugins.length; i++) {
       const listItem = this.plugins[i];
@@ -710,7 +711,7 @@ export class Application<
   }
 
   public getUnloadedPlugin(id: string): ImportListItem<IPlugin> | undefined {
-    return this.plugins?.find((plugin) => plugin.id === id);
+    return this.plugins?.find((plugin: IPlugin) => plugin.id === id);
   }
 
   async loadPlugin(listItem: ImportListItem, isDefault: boolean = false) {

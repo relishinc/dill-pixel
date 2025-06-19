@@ -11,6 +11,7 @@ import {
   createQueue,
   getDynamicModuleFromImportListItem,
   isDev,
+  Logger,
   Queue,
   SceneImportList,
   SceneImportListItem,
@@ -482,6 +483,10 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
       return Promise.resolve();
     }
     if (this.transition) {
+      if (!this.transition.initialized) {
+        await this.transition.initialize();
+        this.transition.initialized = true;
+      }
       this.transition.active = true;
       this.transition.renderable = true;
       this.transition.visible = true;
@@ -505,6 +510,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
 
   private async _showSplash() {
     if (this.splash.preload) {
+      Logger.log('preloading assets', this.splash.preload);
       if (this.splash.preload.assets) {
         await this.app.assets.loadAssets(this.splash.preload.assets, false);
       }
@@ -513,8 +519,11 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
       }
     }
     if (this.splash.view) {
+      await this.splash.view.initialize();
+      this.splash.view.resize(this.app.size);
       this.splash.view.active = true;
-      await this.splash.view?.enter();
+      this.splash.view.initialized = true;
+      await this.splash.view.enter();
     }
   }
 

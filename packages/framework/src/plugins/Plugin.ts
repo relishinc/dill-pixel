@@ -2,7 +2,7 @@ import type { IApplication, ICoreFunctions, ICoreSignals } from '../core';
 import { coreFunctionRegistry, coreSignalRegistry } from '../core';
 import { Application } from '../core/Application';
 import { SignalConnection, SignalConnections } from '../signals';
-import { bindAllMethods } from '../utils';
+import { bindAllMethods, ImportListItemModule } from '../utils';
 
 export interface IPlugin<O = any> {
   id: string;
@@ -26,10 +26,10 @@ export interface IPlugin<O = any> {
   registerCoreSignals(): void;
 }
 
-export interface PluginListItem<O = any> {
+export interface PluginListItem {
   id: string;
   path: string;
-  module: () => Promise<new () => IPlugin<O>>;
+  module?: ImportListItemModule<IPlugin>;
   assets?: string[];
   plugins?: string[];
 }

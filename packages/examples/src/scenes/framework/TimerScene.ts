@@ -41,23 +41,25 @@ export default class TimerScene extends BaseScene {
       this.make.flexContainer({
         flexDirection: 'column',
         gap: 50,
-        layout: { width: '100%' },
+        layout: { width: '100%', paddingLeft: 30, paddingRight: 30 },
       }),
       { align: 'center' },
     );
 
     // Stopwatch Section
     const stopwatchContainer = this.container.add.flexContainer({
-      gap: 20,
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: '100%',
+      layout: {
+        gap: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        flexWrap: 'wrap',
+      },
     });
 
     stopwatchContainer.add.text({
       text: 'Stopwatch',
       style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 24, align: 'right' },
-      layout: { applySizeDirectly: true },
     });
 
     this.stopwatchDisplay = stopwatchContainer.add.text({
@@ -69,10 +71,13 @@ export default class TimerScene extends BaseScene {
 
     // Countdown Section
     const countdownContainer = this.container.add.flexContainer({
-      gap: 20,
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: '100%',
+      layout: {
+        gap: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        flexWrap: 'wrap',
+      },
     });
 
     countdownContainer.add.text({

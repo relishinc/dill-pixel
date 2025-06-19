@@ -22,17 +22,17 @@ export default class AssetScene extends BaseScene {
         assets: [
           {
             alias: 'logo',
-            src: 'static/logo.svg',
+            src: '/static/logo.svg',
           },
           {
-            src: 'static/jar',
-            ext: 'png',
+            alias: 'staticJar',
+            src: '/static/jar.png',
           },
           {
             alias: 'zilla',
-            src: 'static/Zilla.webp',
+            src: '/static/Zilla.webp',
           },
-          'static/tech-pickle-300x300.webp',
+          '/static/tech-pickle-300x300.webp',
         ],
       },
     };
@@ -50,10 +50,10 @@ export default class AssetScene extends BaseScene {
       label: 'Main Container',
     });
     this.pickle = this.container.add.sprite({
-      asset: 'static/tech-pickle-300x300.webp',
+      asset: '/static/tech-pickle-300x300.webp',
       label: 'Pickle',
     });
-    this.jar = this.container.add.sprite({ asset: 'static/jar', scale: 0.5, label: 'Jar' });
+    this.jar = this.container.add.sprite({ asset: 'staticJar', scale: 0.5, label: 'Jar' });
     this.zilla = this.container.add.sprite({ asset: 'zilla', label: 'Zilla' });
   }
 

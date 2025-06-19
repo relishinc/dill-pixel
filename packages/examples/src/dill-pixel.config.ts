@@ -2,6 +2,7 @@ import EN from '@/locales/en';
 import { Transition } from '@/Transition';
 import { ExampleOutliner } from '@/ui/ExampleOutliner';
 import { defineActions, defineButtons, defineConfig, defineContexts, defineControls } from 'dill-pixel';
+import { Splash } from './Splash';
 import { FONT_KUMBH_SANS } from './utils/Constants';
 import { Eases } from './utils/Easing';
 
@@ -106,6 +107,12 @@ export type AnalyticsEvents = {
 
 export const config = defineConfig<Data>({
   id: 'V8Application',
+  splash: {
+    preload: {
+      bundles: ['splash'],
+    },
+    view: Splash,
+  },
   sceneTransition: Transition,
   defaultSceneLoadMethod: 'transitionExitEnter',
   useSpine: true,
@@ -115,6 +122,7 @@ export const config = defineConfig<Data>({
   defaultScene: 'assets',
   defaultTextStyle: {
     fontFamily: FONT_KUMBH_SANS,
+    fontSize: 24,
     fill: 0xffffff,
   },
   sceneGroupOrder: [

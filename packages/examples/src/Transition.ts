@@ -1,4 +1,4 @@
-import { SceneTransition } from 'dill-pixel';
+import { Logger, SceneTransition } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Sprite } from 'pixi.js';
 import { COLOR_BG } from './utils/Constants';
@@ -12,16 +12,15 @@ export class Transition extends SceneTransition {
     super(true);
   }
 
+  initialize() {
+    Logger.log('initialize transition');
+    this._bg = this.addColoredBackground({ color: COLOR_BG, alpha: 1 });
+    this._bg.visible = false;
+
+    this._jar = this.add.sprite({ asset: 'required/jar.png', anchor: 0.5, scale: 0.25, alpha: 0, pivot: [0, -40] });
+  }
+
   async enter() {
-    if (!this._bg) {
-      this._bg = this.addColoredBackground({ color: COLOR_BG, alpha: 1 });
-      this._bg.visible = false;
-    }
-
-    if (!this._jar) {
-      this._jar = this.add.sprite({ asset: 'required/jar.png', anchor: 0.5, scale: 0.25, alpha: 0, pivot: [0, -40] });
-    }
-
     const tl = gsap.timeline();
     tl.set(this._bg, { visible: true, x: -this.app.size.width * 0.6 });
     tl.to(

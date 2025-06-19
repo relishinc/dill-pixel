@@ -43,8 +43,8 @@ export default class PauseScene extends BaseScene {
       preload: {
         assets: [
           {
-            src: 'static/jar',
-            ext: 'png',
+            alias: 'staticJar',
+            src: '/static/jar.png',
           },
         ],
         bundles: ['audio', 'required/ui'],
@@ -81,7 +81,7 @@ export default class PauseScene extends BaseScene {
     });
 
     this.gsapAnimated = animatedContainer.add.sprite({
-      asset: 'static/jar',
+      asset: 'staticJar',
       scale: 0.25,
       anchor: 0.5,
       layout: { applySizeDirectly: true },
@@ -95,7 +95,7 @@ export default class PauseScene extends BaseScene {
     });
 
     this.tickerAnimated = animatedContainer.add.sprite({
-      asset: 'static/jar',
+      asset: 'staticJar',
       scale: 0.25,
       anchor: 0.5,
       layout: { applySizeDirectly: true },
@@ -202,8 +202,14 @@ export default class PauseScene extends BaseScene {
 
     // Create a count-up timer
     const timerContainer = this.container.add.flexContainer({
-      gap: 20,
-      layout: { width: 600, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between', paddingTop: 80 },
+      layout: {
+        gap: 20,
+        width: 600,
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        paddingTop: 80,
+      },
     });
 
     this.app.timers.createTimer({

@@ -1,4 +1,5 @@
-import { Sprite } from 'pixi.js';
+import { Sprite, Ticker } from 'pixi.js';
+import { type Size } from '../utils';
 import { Container } from './Container';
 
 export interface ISceneTransition extends Container {
@@ -23,10 +24,6 @@ export class SceneTransition extends Container {
 
   set active(value: boolean) {
     this._active = value;
-    if (this._active && !this.initialized) {
-      this.initialize();
-      this.initialized = true;
-    }
   }
 
   private _progress: number;
@@ -40,7 +37,12 @@ export class SceneTransition extends Container {
   }
 
   constructor(autoUpdate: boolean = false) {
-    super({ autoResize: true, autoUpdate, priority: -9999 });
+    super({ autoResize: true, autoUpdate: false, priority: -9999 });
+
+    if (autoUpdate) {
+      this.app.ticker.add(this._update);
+    }
+
     this.addSignalConnection(
       this.app.assets.onLoadStart.connect(this.handleLoadStart),
       this.app.assets.onLoadProgress.connect(this.handleLoadProgress),
@@ -48,8 +50,21 @@ export class SceneTransition extends Container {
     );
   }
 
-  public initialize() {
-    // set up the transition
+  public initialize(): void;
+  public async initialize(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  public resize(size: Size): void {
+    void size;
+  }
+
+  public destroy(): void {
+    this.app.ticker.remove(this._update);
+    this.initialized = false;
+    this._active = false;
+    this._progress = 0;
+    super.destroy();
   }
 
   /**
@@ -81,5 +96,13 @@ export class SceneTransition extends Container {
 
   protected handleLoadComplete() {
     // signifies the preloading phase is complete for the new scene
+  }
+
+  // check if initialized and active before calling update
+  // this way we're sure in the case of a Splash sccreen, all the assets are loaded and the scene is initialized
+  private _update(ticker: Ticker) {
+    if (this.active && this.initialized) {
+      this.update(ticker);
+    }
   }
 }

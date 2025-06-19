@@ -1,7 +1,7 @@
 import { FlexContainer, SceneTransition } from 'dill-pixel';
-import { Sprite, Text, Texture } from 'pixi.js';
-import { FONT_KUMBH_SANS } from '@/utils/Constants';
 import { gsap } from 'gsap';
+import { Sprite, Text } from 'pixi.js';
+import { FONT_KUMBH_SANS } from './utils/Constants';
 
 export class Splash extends SceneTransition {
   private _labelPercent: Text;
@@ -13,37 +13,51 @@ export class Splash extends SceneTransition {
     super(true);
   }
 
-  added() {
-    this._bg = this.add.sprite({
-      asset: Texture.WHITE,
-      tint: 0x1f2937,
-      width: this.app.size.width,
-      height: this.app.size.height,
-      anchor: 0.5,
+  initialize() {
+    this._bg = this.addColoredBackground({
+      color: 0x1f2937,
     });
+
     this._textContainer = this.add.flexContainer({
-      gap: 10,
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
+      bindToAppSize: true,
+      layout: {
+        gap: 10,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
     });
     this._textContainer.add.text({
       text: 'Loading...',
       style: {
         fontFamily: FONT_KUMBH_SANS,
-        fontWeight: 'bold',
-        fontSize: 36,
-        fill: 'white',
-        dropShadow: true,
+        dropShadow: {
+          color: 0x000000,
+          blur: 0,
+          angle: 90,
+          distance: 2,
+          alpha: 0.8,
+        },
       },
     });
     this._labelPercent = this._textContainer.add.text({
+      text: '0%',
+      anchor: 0.5,
+      layout: {
+        width: 100,
+        height: 100,
+      },
       style: {
-        fontFamily: FONT_KUMBH_SANS,
         fontWeight: 'bold',
         fontSize: 72,
-        fill: 'white',
-        dropShadow: true,
+        align: 'center',
+        dropShadow: {
+          color: 0x000000,
+          blur: 0,
+          angle: 90,
+          distance: 2,
+          alpha: 0.8,
+        },
       },
     });
   }
@@ -56,12 +70,10 @@ export class Splash extends SceneTransition {
 
   update() {
     this._labelPercent.text = `${Math.round(this._percent)}%`;
-    this._labelPercent.resolution = 2;
-    this._textContainer.layout();
   }
 
   resize() {
-    this._bg.setSize(this.app.size.width, this.app.size.height);
+    this._textContainer.position.set(-this.app.size.width / 2, -this.app.size.height / 2);
   }
 
   protected override handleLoadProgress(progress: number) {

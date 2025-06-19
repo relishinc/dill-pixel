@@ -84,7 +84,7 @@ export default class AudioScene extends BaseScene {
     this.addButton(this.musicButtons, 'Mischief', {
       sounds: { hover: 'hover' },
       actions: {
-        click: { id: 'music', data: { id: 'Mishief Stroll' } },
+        click: { id: 'music', data: { id: 'Mischief Stroll' } },
       },
     });
     this.addButton(this.musicButtons, 'Beach', {
@@ -141,7 +141,7 @@ export default class AudioScene extends BaseScene {
         default: this.app.audio.isPlaying((config?.actions?.click as ButtonAction)?.data?.id, 'music')
           ? 'btn/red'
           : 'btn/blue',
-        hover: 'btn/yellow',
+        hover: '',
         disabled: 'btn/grey',
         active: 'btn/red',
       },
