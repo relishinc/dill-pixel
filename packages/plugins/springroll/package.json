@@ -1,6 +1,6 @@
 {
   "name": "@dill-pixel/plugin-springroll",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "description": "SpringRoll (PBS)",
   "files": [
     "lib",
@@ -29,12 +29,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "dill-pixel": "5.0.2",
+    "dill-pixel": "5.0.3",
     "vite": "6.1.1",
     "vite-plugin-dts": "^4.5.3"
   },
   "peerDependencies": {
-    "dill-pixel": "5.0.2"
+    "dill-pixel": "5.0.3"
   },
   "dependencies": {
     "springroll": "github:SpringRoll/SpringRoll#2.7.0"

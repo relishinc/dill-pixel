@@ -330,7 +330,7 @@ importers:
         version: 0.15.28
     devDependencies:
       dill-pixel:
-        specifier: 5.0.1
+        specifier: 5.0.2
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -346,7 +346,7 @@ importers:
         version: 0.0.20
     devDependencies:
       dill-pixel:
-        specifier: 5.0.1
+        specifier: 5.0.2
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -365,7 +365,7 @@ importers:
         version: 8.10.1
     devDependencies:
       dill-pixel:
-        specifier: 5.0.1
+        specifier: 5.0.2
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -387,7 +387,7 @@ importers:
         version: 8.10.1
     devDependencies:
       dill-pixel:
-        specifier: 5.0.1
+        specifier: 5.0.2
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -406,7 +406,7 @@ importers:
         version: 8.10.1
     devDependencies:
       dill-pixel:
-        specifier: 5.0.1
+        specifier: 5.0.2
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -425,7 +425,7 @@ importers:
         version: 8.10.1
     devDependencies:
       dill-pixel:
-        specifier: 5.0.1
+        specifier: 5.0.2
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -441,7 +441,7 @@ importers:
         version: 2.26.4
     devDependencies:
       dill-pixel:
-        specifier: 5.0.1
+        specifier: 5.0.2
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -457,7 +457,7 @@ importers:
         version: github.com/SpringRoll/SpringRoll/70c01f21b17e6436f7aebd9e5b457384fb35a496
     devDependencies:
       dill-pixel:
-        specifier: 5.0.1
+        specifier: 5.0.2
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -476,7 +476,7 @@ importers:
         specifier: ^20.14.1
         version: 20.19.1
       dill-pixel:
-        specifier: 5.0.1
+        specifier: 5.0.2
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -495,7 +495,7 @@ importers:
         version: 2.50.0
     devDependencies:
       dill-pixel:
-        specifier: 5.0.1
+        specifier: 5.0.2
         version: link:../../framework
       vite:
         specifier: 6.1.1
