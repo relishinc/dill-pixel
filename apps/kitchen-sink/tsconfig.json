@@ -1,0 +1,49 @@
+{
+  "extends": "../../packages/framework/config/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "dill-pixel/*": ["../../packages/framework/src/*"],
+      "@dill-pixel/plugin-snap-physics/*": ["../../packages/plugins/physics-snap/src/*"],
+      "@dill-pixel/plugin-matter-physics/*": ["../../packages/plugins/physics-matter/src/*"],
+      "@dill-pixel/plugin-springroll/*": ["../../packages/plugins/springroll/src/*"],
+      "@dill-pixel/plugin-google-analytics/*": ["../../packages/plugins/google-analytics/src/*"],
+      "@dill-pixel/storage-adapter-firebase/*": ["../../packages/storage-adapters/firebase/src/*"],
+      "@dill-pixel/storage-adapter-supabase/*": ["../../packages/storage-adapters/supabase/src/*"]
+    },
+    "types": ["vite/client"]
+  },
+  "references": [
+    {
+      "path": "../../packages/framework"
+    },
+    {
+      "path": "../../packages/plugins/physics-snap"
+    },
+    {
+      "path": "../../packages/plugins/physics-matter"
+    },
+    {
+      "path": "../../packages/plugins/physics-crunch"
+    },
+    {
+      "path": "../../packages/plugins/rive"
+    },
+    {
+      "path": "../../packages/plugins/springroll"
+    },
+    {
+      "path": "../../packages/plugins/google-analytics"
+    },
+    {
+      "path": "../../packages/storage-adapters/firebase"
+    },
+    {
+      "path": "../../packages/storage-adapters/supabase"
+    }
+  ],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.json"],
+  "exclude": ["node_modules", "dist"]
+}
