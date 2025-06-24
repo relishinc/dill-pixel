@@ -1,8 +1,7 @@
 import { CustomEases } from '@/utils/Easing';
 import { defineActions, defineButtons, defineConfig, defineContexts, defineControls, defineData } from 'dill-pixel';
 import EN from './src/locales/en';
-import { Splash } from './src/Splash';
-import { Transition } from './src/Transition';
+import { Transition } from './src/scenes/Transition';
 import { ExampleOutliner } from './src/ui/ExampleOutliner';
 import { FONT_KUMBH_SANS } from './src/utils/Constants';
 import { V8Application } from './src/V8Application';
@@ -97,15 +96,9 @@ export const dataSchema = defineData({
   },
 });
 
-export const config = defineConfig({
+const config = defineConfig({
   id: 'V8Application',
   application: V8Application,
-  splash: {
-    preload: {
-      bundles: ['splash'],
-    },
-    view: Splash,
-  },
   sceneTransition: Transition,
   defaultSceneLoadMethod: 'transitionExitEnter',
   useSpine: true,
@@ -151,7 +144,7 @@ export const config = defineConfig({
   },
   assets: {
     preload: {
-      bundles: ['required', 'game'],
+      bundles: ['splash', 'required', 'game'],
     },
     background: {
       bundles: ['audio', 'spine'],
@@ -233,4 +226,6 @@ export const config = defineConfig({
   },
   resolution: 2,
 });
+
+export default config;
 /** End of User config */

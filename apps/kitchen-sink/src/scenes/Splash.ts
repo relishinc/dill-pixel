@@ -1,7 +1,7 @@
 import { FlexContainer, SceneTransition } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Sprite, Text } from 'pixi.js';
-import { FONT_KUMBH_SANS } from './utils/Constants';
+import { FONT_KUMBH_SANS } from '../utils/Constants';
 
 export class Splash extends SceneTransition {
   private _labelPercent: Text;
@@ -27,6 +27,7 @@ export class Splash extends SceneTransition {
         alignItems: 'center',
       },
     });
+
     this._textContainer.add.text({
       text: 'Loading...',
       style: {
@@ -44,8 +45,7 @@ export class Splash extends SceneTransition {
       text: '0%',
       anchor: 0.5,
       layout: {
-        width: 100,
-        height: 100,
+        isLeaf: true,
       },
       style: {
         fontWeight: 'bold',
@@ -63,13 +63,13 @@ export class Splash extends SceneTransition {
   }
 
   async exit() {
-    // ensure percentage completes
     await gsap.to(this, { _percent: 100, duration: 1, ease: 'sine.out' });
     return gsap.to(this, { alpha: 0, duration: 1, ease: 'sine.in' });
   }
 
   update() {
     this._labelPercent.text = `${Math.round(this._percent)}%`;
+    this._textContainer.updateLayout();
   }
 
   resize() {

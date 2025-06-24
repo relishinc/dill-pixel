@@ -1,12 +1,16 @@
 import type { Layout, LayoutOptions } from '@pixi/layout';
-import { Container as PIXIContainer } from 'pixi.js';
+import { BitmapText, Container as PIXIContainer, Text } from 'pixi.js';
 import { Application } from '../core/Application';
 import { Container } from '../display';
 import { Factory, WithSignals } from '../mixins';
 import { Signal } from '../signals';
-import { bindAllMethods, type ContainerLike } from '../utils';
+import { AppTypeOverrides, bindAllMethods, type ContainerLike } from '../utils';
 
 const _FlexContainer = WithSignals(Factory());
+
+export function isText(child: PIXIContainer): child is Text | BitmapText {
+  return child instanceof Text || child instanceof BitmapText;
+}
 
 export interface FlexContainerConfig {
   bindTo?: ContainerLike;
@@ -31,7 +35,7 @@ export type JustifyContent =
 
 export type SizeNumber = number | 'auto' | 'intrinsic';
 
-export class FlexContainer<T extends Application = Application> extends _FlexContainer {
+export class FlexContainer extends _FlexContainer {
   public onLayoutComplete = new Signal<() => void>();
   public config: Partial<FlexContainerConfig>;
 
@@ -75,23 +79,21 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
     return layout;
   }
 
-  private handleAdded = () => {
+  private handleAdded() {
     this.updateLayout();
-  };
-
-  private handleChildAdded = (child: PIXIContainer) => {
+  }
+  private handleChildAdded(child: PIXIContainer) {
     if (this.config.autoLayoutChildren && !(child.layout as Layout | boolean)) {
       child.layout = { isLeaf: true };
     }
-    child.on('layout', this.updateLayout);
     Container.childAdded(child);
     this.updateLayout();
-  };
+  }
 
-  private handleChildRemoved = (child: PIXIContainer) => {
+  private handleChildRemoved(child: PIXIContainer) {
     Container.childRemoved(child);
     this.updateLayout();
-  };
+  }
 
   private handleResize = () => {
     if (this.config.bindToAppSize) {
@@ -109,8 +111,8 @@ export class FlexContainer<T extends Application = Application> extends _FlexCon
     this.onLayoutComplete.emit();
   }
 
-  public get app(): T {
-    return Application.getInstance() as T;
+  public get app(): AppTypeOverrides['App'] {
+    return Application.getInstance();
   }
 
   // Convenience getters/setters for common layout properties

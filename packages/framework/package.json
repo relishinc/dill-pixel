@@ -26,6 +26,10 @@
       "types": "./lib/index.d.ts",
       "default": "./lib/dill-pixel.mjs"
     },
+    "./boot": {
+      "types": "./lib/boot.d.ts",
+      "default": "./lib/boot.mjs"
+    },
     "./config/assetpack": {
       "default": "./config/assetpack.mjs"
     },

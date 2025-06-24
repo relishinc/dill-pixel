@@ -1,7 +1,7 @@
 import { SceneTransition } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Sprite } from 'pixi.js';
-import { COLOR_BG } from './utils/Constants';
+import { COLOR_BG } from '../utils/Constants';
 
 export class Transition extends SceneTransition {
   private _timeline: gsap.core.Timeline;

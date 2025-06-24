@@ -481,13 +481,12 @@ export default class CrunchPhysicsPlugin extends Plugin<CrunchPhysicsOptions> im
     console.log(hello, 'background: rgba(31, 41, 55, 1);color: #74b64c');
   }
 
-  public async initialize(options?: Partial<CrunchPhysicsOptions>): Promise<void> {
+  public async initialize(options?: Partial<CrunchPhysicsOptions>, _app: IApplication): Promise<void> {
     this.hello();
     if (!options) {
       return;
     }
 
-    console.log({ options, app });
     this._options = { ...defaultOptions, ...options } as CrunchPhysicsOptions;
 
     this.enabled = true;
