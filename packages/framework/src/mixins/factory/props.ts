@@ -1,25 +1,34 @@
 import type { LayoutOptions } from '@pixi/layout';
-import { GraphicsContext, HTMLTextStyleOptions, TextStyleOptions } from 'pixi.js';
+import { GraphicsContext, HTMLTextStyleOptions, TextStyleOptions, type Texture } from 'pixi.js';
 import { ContainerConfig } from '../../display';
 import { ParticleContainerConfig } from '../../display/ParticleContainer';
 import { ButtonConfig, FlexContainerConfig, UICanvasProps } from '../../ui';
-import type {
-  BitmapFontFamilyLike,
-  FontFamilyLike,
-  PointLike,
-  SpineLike,
-  SpriteSheetLike,
-  TextureLike,
-  WithRequiredProps,
-} from '../../utils';
+import type { AssetTypeOverrides, PointLike, WithRequiredProps } from '../../utils';
+import { FilterBitmapFontNames, FilterCleanAssetNames, FilterSpineAssetNames } from '../../utils/typefilters';
+
+export type AssetTextures =
+  | FilterCleanAssetNames<AssetTypeOverrides['TextureLike']>
+  | AssetTypeOverrides['TPSFrames']
+  | (string & {})
+  | Texture;
+
+export type AssetSpritesheets = FilterCleanAssetNames<AssetTypeOverrides['SpriteSheetLike']> | (string & {});
+
+export type AssetAudio = FilterCleanAssetNames<AssetTypeOverrides['AudioLike']> | (string & {});
+
+export type AssetFontFamilies = FilterCleanAssetNames<AssetTypeOverrides['FontFamily']> | (string & {});
+
+export type AssetBitmapFontFamilies = FilterBitmapFontNames<AssetTypeOverrides['BitmapFontFamily']> | (string & {});
+
+export type AssetSpine = FilterSpineAssetNames<AssetTypeOverrides['SpineData']> | (string & {});
 
 export interface AbstractProps {
   [key: string]: any;
 }
 
 export interface TextureProps {
-  asset: TextureLike;
-  sheet: SpriteSheetLike;
+  asset: AssetTextures;
+  sheet: AssetSpritesheets;
 }
 
 export interface PositionProps {
@@ -106,7 +115,7 @@ export interface AnimatedSpriteAnimationProps
     VisibilityProps,
     LayoutProps {
   texturePrefix: string;
-  sheet: SpriteSheetLike;
+  sheet: AssetSpritesheets;
   startIndex: number;
   numFrames: number;
   zeroPad: number;
@@ -117,7 +126,7 @@ export interface AnimatedSpriteAnimationProps
 }
 
 export interface AnimatedSpriteProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps, LayoutProps {
-  sheet: SpriteSheetLike;
+  sheet: AssetSpritesheets;
   texturePrefix: string;
   zeroPad: number;
   animations: { [animationName: string]: Partial<AnimatedSpriteAnimationProps> };
@@ -129,12 +138,14 @@ export interface AnimatedSpriteProps extends AbstractProps, ScaleProps, Position
   startIndex: number;
 }
 
+export type DillPixelTextStyle = Partial<Omit<TextStyleOptions, 'fontFamily'> & { fontFamily: AssetFontFamilies }>;
+
 export interface TextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps, LayoutProps {
   text: string;
   anchor: PointLike;
   resolution: number;
   roundPixels: boolean;
-  style: Partial<Omit<TextStyleOptions, 'fontFamily'> & { fontFamily: FontFamilyLike }>;
+  style: DillPixelTextStyle;
 }
 
 export interface BitmapTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps, LayoutProps {
@@ -142,7 +153,7 @@ export interface BitmapTextProps extends AbstractProps, PositionProps, ScaleProp
   anchor: PointLike;
   resolution: number;
   roundPixels: boolean;
-  style: Partial<Omit<TextStyleOptions, 'fontFamily'> & { fontFamily: BitmapFontFamilyLike }>;
+  style: Partial<Omit<TextStyleOptions, 'fontFamily'> & { fontFamily: AssetBitmapFontFamilies }>;
 }
 
 export interface HTMLTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps, LayoutProps {
@@ -150,7 +161,7 @@ export interface HTMLTextProps extends AbstractProps, PositionProps, ScaleProps,
   anchor: PointLike;
   resolution: number;
   roundPixels: boolean;
-  style: Partial<Omit<HTMLTextStyleOptions, 'fontFamily'> & { fontFamily: FontFamilyLike }>;
+  style: Partial<Omit<HTMLTextStyleOptions, 'fontFamily'> & { fontFamily: AssetFontFamilies }>;
 }
 
 export interface OmittedTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {}
@@ -173,14 +184,8 @@ export interface FlexContainerProps extends ContainerProps, FlexContainerConfig 
 export interface UICanvasFactoryProps extends ContainerProps, UICanvasProps {}
 
 // spine
-type SpineData = {
-  skeleton: string;
-  atlas: string;
-  skel?: SpineLike;
-};
-
 export interface SpineProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps, LayoutProps {
-  data: SpineLike | SpineData;
+  data: AssetSpine;
   autoUpdate: boolean;
   animationName: string;
   trackIndex: number;

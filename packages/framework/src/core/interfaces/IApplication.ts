@@ -1,6 +1,5 @@
 import { AssetsManifest, Application as PIXIPApplication, Point } from 'pixi.js';
 import type {
-  Action,
   ActionSignal,
   IAssetsPlugin,
   IAudioManagerPlugin,
@@ -15,12 +14,11 @@ import type {
   ISceneManagerPlugin,
   IWebEventsPlugin,
 } from '../../plugins';
-import { ActionContext } from '../../plugins';
 import { IGSAPPlugin } from '../../plugins/GSAPPlugin';
 import { Signal } from '../../signals';
-import type { DataSchema, IDataAdapter, IStore } from '../../store';
-import type { Ease, Size } from '../../utils';
-import type { AppConfig } from '../types';
+import type { IDataAdapter, IStore } from '../../store';
+import type { AppTypeOverrides, Ease, Size } from '../../utils';
+import type { AppConfig, PauseConfig } from '../types';
 import type { ICoreFunctions } from './ICoreFunctions';
 import { ICoreSignals } from './ICoreSignals';
 
@@ -67,11 +65,7 @@ import { ICoreSignals } from './ICoreSignals';
  * main();
  * ```
  */
-export interface IApplication<
-  D extends DataSchema = DataSchema,
-  C extends ActionContext = ActionContext,
-  A extends Action = Action,
-> extends PIXIPApplication {
+export interface IApplication extends PIXIPApplication {
   /**
    * The application configuration object.
    * Contains settings for various aspects of the application, including plugins, assets, and scenes.
@@ -84,7 +78,7 @@ export interface IApplication<
    * }
    * ```
    */
-  readonly config: Partial<AppConfig<D>>;
+  readonly config: Partial<AppConfig>;
 
   /**
    * Environment variables available to the application.
@@ -273,7 +267,7 @@ export interface IApplication<
    * await app.data.set('playerStats', { health: 100, mana: 50 });
    * ```
    */
-  readonly data: IDataAdapter<D>;
+  readonly data: IDataAdapter;
 
   /**
    * The current context for dispatching actions.
@@ -284,7 +278,7 @@ export interface IApplication<
    * app.action('submitScore', { score: 1000 }); // Context will be included
    * ```
    */
-  actionContext: C;
+  actionContext: AppTypeOverrides['Contexts'];
 
   /**
    * A signal that emits when the application is paused.
@@ -323,7 +317,7 @@ export interface IApplication<
    * app.pause({ pauseAudio: true, pauseTimers: true });
    * ```
    */
-  pause(config?: import('../types').PauseConfig): void;
+  pause(config?: PauseConfig): void;
 
   /**
    * Resumes the application from a paused state.
@@ -418,7 +412,7 @@ export interface IApplication<
    * });
    * ```
    */
-  actions<TActionData = any>(action: A): ActionSignal<TActionData>;
+  actions<TActionData = any>(action: AppTypeOverrides['Actions']): ActionSignal<TActionData>;
 
   /**
    * Dispatches an action with optional data.
@@ -435,7 +429,7 @@ export interface IApplication<
    * app.action('updateScore', { points: 100 });
    * ```
    */
-  action<TActionData = any>(action: A, data?: TActionData): void;
+  action<TActionData = any>(action: AppTypeOverrides['Actions'], data?: TActionData): void;
 
   /**
    * Dispatches an action with optional data.
@@ -448,7 +442,7 @@ export interface IApplication<
    * app.sendAction('playerAction', { type: 'shoot', targetId: 'enemy123' });
    * ```
    */
-  sendAction<TActionData = any>(action: A, data?: TActionData): void;
+  sendAction<TActionData = any>(action: AppTypeOverrides['Actions'], data?: TActionData): void;
 
   /**
    * Checks if a specific action is currently considered active, usually based on input controls.
@@ -461,7 +455,7 @@ export interface IApplication<
    * }
    * ```
    */
-  isActionActive(action: A): boolean;
+  isActionActive(action: AppTypeOverrides['Actions']): boolean;
 
   // animation
   /**
@@ -550,7 +544,7 @@ export interface IApplication<
    * }
    * ```
    */
-  initialize(config: Partial<AppConfig<D>>, el?: HTMLElement): Promise<IApplication<D, C, A>>;
+  initialize(config: Partial<AppConfig>, el?: HTMLElement): Promise<AppTypeOverrides['App']>;
 
   /**
    * Runs any post-initialization setup tasks.

@@ -1,7 +1,10 @@
-import { Assets, Sprite, Spritesheet, Texture } from 'pixi.js';
+import { Assets, Graphics, Sprite, Spritesheet, Texture } from 'pixi.js';
 import { Logger, PointLike, resolvePointLike } from '../../utils';
 
+import { Application } from '../../core/Application';
 import { PositionProps, ScaleProps, TextureProps } from './props';
+
+let errorTexture: Texture | undefined;
 
 export function resolveUnknownKeys(props: any, entity: any) {
   for (const key in props) {
@@ -11,6 +14,24 @@ export function resolveUnknownKeys(props: any, entity: any) {
       Logger.error(`Error setting property ${key}`, e);
     }
   }
+}
+
+export function getErrorTexture() {
+  if (!errorTexture) {
+    const gfx = new Graphics();
+    gfx.rect(0, 0, 100, 100);
+    gfx.fill({ color: 0xff0000 });
+    gfx.stroke({ color: 0xffffff, width: 1, alignment: 0 });
+    // draw an X across the rectangle
+    gfx.moveTo(0, 0);
+    gfx.lineTo(100, 100);
+    gfx.moveTo(100, 0);
+    gfx.lineTo(0, 100);
+    gfx.stroke({ color: 0xffffff, width: 2, alignment: 0.5 });
+    errorTexture = Application.getInstance().renderer.generateTexture(gfx);
+    gfx.destroy();
+  }
+  return errorTexture;
 }
 
 export function resolveTexture(props?: Partial<TextureProps>): Texture {
@@ -26,11 +47,15 @@ export function resolveTexture(props?: Partial<TextureProps>): Texture {
     } else if (Assets.get(assetAsString)) {
       texture = Assets.get(assetAsString).texture!;
     } else {
-      throw new Error('Asset "' + asset + '" not loaded into Pixi cache');
+      Logger.error('Asset "' + asset + '" not loaded into Pixi cache');
+      texture = getErrorTexture();
+      //throw new Error('Asset "' + asset + '" not loaded into Pixi cache');
     }
   } else {
     if (!Assets.get(sheet)) {
-      throw new Error('Spritesheet "' + sheet + '" not loaded into Pixi cache');
+      // throw new Error('Spritesheet "' + sheet + '" not loaded into Pixi cache');
+      Logger.error('Spritesheet "' + sheet + '" not loaded into Pixi cache');
+      return getErrorTexture();
     } else {
       const spriteSheet: Spritesheet = Assets.get(sheet) as Spritesheet;
       const textures = spriteSheet.textures;
@@ -47,15 +72,18 @@ export function resolveTexture(props?: Partial<TextureProps>): Texture {
             }
           }
           if (texture === undefined) {
-            throw new Error(
+            Logger.error(
               'Asset "' + asset + '" not found inside spritesheet "' + asset + "' or any of its linked sheets",
             );
+            texture = getErrorTexture();
           }
         } else {
-          throw new Error('Asset "' + asset + '" not found inside spritesheet "' + sheet + "'");
+          Logger.error('Asset "' + asset + '" not found inside spritesheet "' + sheet + "'");
+          texture = getErrorTexture();
         }
       } else {
-        throw new Error('Spritesheet "' + sheet + '" loaded but textures arent?!');
+        Logger.error('Spritesheet "' + sheet + '" loaded but textures arent?!');
+        texture = getErrorTexture();
       }
     }
   }

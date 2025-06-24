@@ -1,12 +1,13 @@
 import { type RegisterSWOptions } from 'vite-plugin-pwa/types';
 import { sayHello } from '../hello';
 import type { PluginListItem } from '../plugins';
-import { DataSchema, type StorageAdapterListItem } from '../store';
-import type { SceneImportListItem } from '../utils';
+import { type StorageAdapterListItem } from '../store';
+import type { AppTypeOverrides, SceneImportListItem } from '../utils';
 import { checkWebGL } from '../webgl-check';
 import { Application } from './Application';
-import { IApplication } from './interfaces';
 import { AppConfig } from './types';
+
+type App = AppTypeOverrides['App'];
 
 interface DillPixelPWA {
   readonly info: any;
@@ -61,12 +62,11 @@ export async function documentReady() {
   });
 }
 
-export async function create<T extends IApplication = Application, D extends DataSchema = DataSchema>(
-  config: AppConfig<D> = { id: 'DillPixelApplication' },
-  ApplicationClass: new () => IApplication = Application,
+export async function create(
+  config: Partial<AppConfig> = { id: 'DillPixelApplication' },
   domElement: string | Window | HTMLElement = DEFAULT_GAME_CONTAINER_ID,
   speak: boolean = true,
-): Promise<T> {
+): Promise<App> {
   await documentReady();
   checkWebGL();
   if (speak) {
@@ -104,9 +104,10 @@ export async function create<T extends IApplication = Application, D extends Dat
   }
 
   config.container = el;
+  const ApplicationClass = config.application || Application;
   const instance = new ApplicationClass();
+  await instance.initialize(config, el);
 
-  await instance.initialize(config as AppConfig<DataSchema>, el);
   if (config.useLayout) {
     instance.stage.layout = {
       position: 'absolute',
@@ -119,5 +120,5 @@ export async function create<T extends IApplication = Application, D extends Dat
   // call postInitialize on the instance
   await instance.postInitialize();
   // return the app instance
-  return instance as T;
+  return instance as App;
 }

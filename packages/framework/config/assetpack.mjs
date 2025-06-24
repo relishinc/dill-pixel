@@ -4,6 +4,8 @@ import fs from 'node:fs';
 import process from 'node:process';
 import path from 'path';
 
+const DTS_FILE_NAME = 'dill-pixel-assets.d.ts';
+
 // Check if user config exists (synchronously)
 function hasUserAssetpackConfig() {
   const configPath = path.join(process.cwd(), '.assetpack.mjs');
@@ -208,6 +210,13 @@ export type AssetTPSFrames = ${types.tpsFrames.length ? `\n  | '${types.tpsFrame
 export type AssetFonts = ${types.fonts.length ? `\n  | '${types.fonts.join("'\n  | '")}'` : 'never'};
 
 /**
+ * Available font names in the asset manifest
+ * @example
+ * const font: AssetFonts = 'KumbhSans-Regular';
+ */
+export type AssetBitmapFonts = ${types.bitmapFonts.length ? `\n  | '${types.bitmapFonts.join("'\n  | '")}'` : 'never'};
+
+/**
  * Available audio names in the asset manifest
  * @example
  * const audio: AssetAudio = 'click';
@@ -330,7 +339,6 @@ declare module 'dill-pixel' {
     TPSFrames: AssetTPSFrames; 
     SpriteSheetLike: AssetSpritesheets;
     SpineData: AssetSpine;
-    Spine: AssetSpine;
     AudioLike: AssetAudio;
     FontFamily: AssetFontFamilies;
     BitmapFontFamily: AssetBitmapFontFamilies;
@@ -348,13 +356,13 @@ async function writeAssetTypes(manifest, outputDir) {
   try {
     // Ensure the directory exists
     await fs.promises.mkdir(srcTypesDir, { recursive: true });
-    const typesPath = path.join(srcTypesDir, 'assets.d.ts');
+    const typesPath = path.join(srcTypesDir, DTS_FILE_NAME);
     await fs.promises.writeFile(typesPath, types, 'utf8');
     Logger.info(`Dill Pixel assetpack plugin:: Generated types at ${typesPath}`);
   } catch (error) {
     Logger.error('Dill Pixel assetpack plugin:: Error writing types file:', error);
     // Fallback to original location if src folder doesn't exist
-    const typesPath = path.join(outputDir, 'assets.d.ts');
+    const typesPath = path.join(outputDir, DTS_FILE_NAME);
     await fs.promises.writeFile(typesPath, types, 'utf8');
     Logger.info(`Dill Pixel assetpack plugin:: Generated types at fallback location ${typesPath}`);
   }

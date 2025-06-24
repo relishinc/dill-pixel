@@ -35,8 +35,8 @@ export interface PluginListItem {
 }
 
 export class Plugin<A extends Application = Application, O = any> implements IPlugin<O> {
+  private readonly __dill_pixel_method_binding_root = true;
   // A collection of signal connections.
-  __dill_pixel_method_binding_root: boolean;
   protected _signalConnections: SignalConnections = new SignalConnections();
 
   protected _options: O;
@@ -47,7 +47,6 @@ export class Plugin<A extends Application = Application, O = any> implements IPl
 
   constructor(public id: string = 'Plugin') {
     bindAllMethods(this);
-    this.__dill_pixel_method_binding_root = true;
   }
 
   public get app(): A {

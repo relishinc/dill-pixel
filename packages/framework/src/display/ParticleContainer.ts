@@ -1,9 +1,8 @@
 import { DestroyOptions, ParticleContainerOptions, ParticleContainer as PIXIParticleContainer, Ticker } from 'pixi.js';
 
-import { IApplication } from '../core';
 import { Application } from '../core/Application';
 import { Signal } from '../signals';
-import type { Size } from '../utils';
+import type { AppTypeOverrides, Size } from '../utils';
 import { bindAllMethods } from '../utils';
 
 /**
@@ -19,7 +18,7 @@ export const ParticleContainerConfigKeys: (keyof ParticleContainerConfig)[] = ['
 const defaultConfig: ParticleContainerConfig = { autoUpdate: true, priority: 0 };
 
 export interface IParticleContainer {
-  app: IApplication;
+  app: AppTypeOverrides['App'];
 
   onDestroy: Signal<() => void>;
 
@@ -34,10 +33,7 @@ export interface IParticleContainer {
  * The Container class extends the _Container class (which includes the Animated and Factory mixins) and implements the IContainer interface.
  * It represents a container for PIXI.js display objects.
  */
-export class ParticleContainer<A extends Application = Application>
-  extends PIXIParticleContainer
-  implements IParticleContainer
-{
+export class ParticleContainer extends PIXIParticleContainer implements IParticleContainer {
   onDestroy: Signal<() => void> = new Signal();
   __dill_pixel_method_binding_root = true;
   private __config: ParticleContainerConfig;
@@ -59,8 +55,8 @@ export class ParticleContainer<A extends Application = Application>
   /**
    * Get the application instance.
    */
-  public get app(): A {
-    return Application.getInstance() as A;
+  public get app(): AppTypeOverrides['App'] {
+    return Application.getInstance() as AppTypeOverrides['App'];
   }
   /**
    * Update the container. This method is meant to be overridden by subclasses.

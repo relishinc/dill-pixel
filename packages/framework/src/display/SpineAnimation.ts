@@ -69,6 +69,7 @@ export class SpineAnimation<
     super();
     bindAllMethods(this);
     let data = props?.data;
+    let spineData: { skeleton: string; atlas: string } | string = '';
     if (typeof data === 'string') {
       // get the spine data from cache
       // check if '.json' is the last part of the asset string, and add it if not
@@ -78,10 +79,9 @@ export class SpineAnimation<
       } else {
         data = data.substring(0, data.length - 5);
       }
-      data = { skeleton: data + ext, atlas: data + '.atlas' };
+      spineData = { skeleton: data + ext, atlas: data + '.atlas' };
     }
-    this.spine = (window as any).Spine.from(data);
-
+    this.spine = (window as any).Spine.from(spineData);
     this.add.existing(this.spine);
 
     if (props) {

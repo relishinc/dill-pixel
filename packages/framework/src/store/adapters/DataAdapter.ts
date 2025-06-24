@@ -1,5 +1,5 @@
 import { Signal } from '../../signals';
-import { deepMerge, DeepPartial } from '../../utils';
+import { AppTypeOverrides, deepMerge, DeepPartial } from '../../utils';
 import { StorageAdapter } from './StorageAdapter';
 
 export type DataSchema = {
@@ -9,8 +9,8 @@ export type DataSchema = {
 /**
  * Interface for the options of the LocalStorageAdapter.
  */
-export interface IDataAdapterOptions<D extends DataSchema = DataSchema> {
-  initial: Partial<D>;
+export interface IDataAdapterOptions {
+  initial: Partial<AppTypeOverrides['Data']>;
   /**
    * The namespace to use for the keys in the local storage.
    */
@@ -26,7 +26,7 @@ export interface IDataAdapterOptions<D extends DataSchema = DataSchema> {
   /**
    * The keys to backup to local storage.
    */
-  backupKeys: Array<keyof D>;
+  backupKeys: Array<keyof AppTypeOverrides['Data']>;
 }
 
 export interface DataChangeSignalDetail {
@@ -36,23 +36,25 @@ export interface DataChangeSignalDetail {
   clear?: boolean;
 }
 
-export interface IDataAdapter<D extends DataSchema = DataSchema> {
-  get(): D;
-  get<K extends keyof D>(key: K): D[K] | undefined;
+type DataAdapterType = AppTypeOverrides['Data'];
+
+export interface IDataAdapter {
+  get(): DataAdapterType;
+  get<K extends keyof DataAdapterType>(key: K): DataAdapterType[K] | undefined;
   /**
    * Sets data for a specific key in storage.
    * @param {K} key - The key under which to save the data
    * @param {D[K]} data - The data to save
    * @returns {D} The updated data object
    */
-  set<K extends keyof D>(key: K, data: D[K]): D;
+  set<K extends keyof DataAdapterType>(key: K, data: DataAdapterType[K]): DataAdapterType;
   /**
    * Merges data into storage.
    * @param {DeepPartial<D>} data - The data object to set
    * @param {boolean} [merge] - Whether to merge with existing data
    * @returns {D} The updated data object
    */
-  set(data: DeepPartial<D>, merge?: boolean): D;
+  set(data: DeepPartial<DataAdapterType>, merge?: boolean): DataAdapterType;
   /**
    * Clears all data from storage.
    */
@@ -61,27 +63,33 @@ export interface IDataAdapter<D extends DataSchema = DataSchema> {
    * Clears data for a specific key from storage.
    * @param {K} key - The key from which to delete the data
    */
-  clear<K extends keyof D>(key: K): void;
+  clear<K extends keyof DataAdapterType>(key: K): void;
   /**
    * Increments a numeric property by a specified amount.
    * @param {K} key - The key of the property to increment
    * @param {number} amount - The amount to increment by (default: 1)
    * @returns {D[K]} The new value after incrementing
    */
-  increment<K extends keyof D & { [P in keyof D]: D[P] extends number ? P : never }[keyof D]>(
+  increment<
+    K extends keyof DataAdapterType &
+      { [P in keyof DataAdapterType]: DataAdapterType[P] extends number ? P : never }[keyof DataAdapterType],
+  >(
     key: K,
     amount?: number,
-  ): D[K];
+  ): DataAdapterType[K];
   /**
    * Concatenates a value or array of values to an array property.
    * @param {K} key - The key of the array property
    * @param {D[K] extends (infer E)[] ? E | E[] : never} value - The value(s) to concatenate
    * @returns {D[K]} The new array after concatenation
    */
-  concat<K extends keyof D & { [P in keyof D]: D[P] extends any[] ? P : never }[keyof D]>(
+  concat<
+    K extends keyof DataAdapterType &
+      { [P in keyof DataAdapterType]: DataAdapterType[P] extends any[] ? P : never }[keyof DataAdapterType],
+  >(
     key: K,
-    value: D[K] extends (infer E)[] ? E | E[] : never,
-  ): D[K];
+    value: DataAdapterType[K] extends (infer E)[] ? E | E[] : never,
+  ): DataAdapterType[K];
   /**
    * Appends a string to a string property.
    * @param {K} key - The key of the string property
@@ -89,37 +97,45 @@ export interface IDataAdapter<D extends DataSchema = DataSchema> {
    * @param {string} [separator] - The separator to use (default: '')
    * @returns {D[K]} The new string after concatenation
    */
-  append<K extends keyof D & { [P in keyof D]: D[P] extends string ? P : never }[keyof D]>(
+  append<
+    K extends keyof DataAdapterType &
+      { [P in keyof DataAdapterType]: DataAdapterType[P] extends string ? P : never }[keyof DataAdapterType],
+  >(
     key: K,
     value: string,
     separator?: string,
-  ): D[K];
+  ): DataAdapterType[K];
   /**
    * Returns a snapshot of the current data.
    * @returns {D} A snapshot of the current data
    */
-  snapshot(): D;
+  snapshot(): DataAdapterType;
   /**
    * Returns a snapshot of the current data for a specific key.
    * @param {K} key - The key of the data to snapshot
    * @returns {D[K]} A snapshot of the current data for the specified key
    */
-  snapshot<K extends keyof D>(key?: K): D[K];
+  snapshot<K extends keyof DataAdapterType>(key?: K): DataAdapterType[K];
   /**
    * Emits a signal when data changes.
    */
   onDataChange: Signal<(detail: DataChangeSignalDetail) => void>;
+  clearOnResume?: boolean;
+}
+
+export function defineData<T extends DataSchema>(data: T): T {
+  return data;
 }
 
 /**
  * A class representing a storage adapter that uses the local storage.
  */
-export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapter implements IDataAdapter<D> {
-  public data: D;
+export class DataAdapter extends StorageAdapter implements IDataAdapter {
+  public data: DataAdapterType;
 
   public onDataChange: Signal<(detail: DataChangeSignalDetail) => void> = new Signal();
 
-  private backupKeys: Array<keyof D> = [];
+  private backupKeys: Array<keyof DataAdapterType> = [];
   private backupAll: boolean = false;
   private namespace: string = '';
   private overrideWithLocalStorage: boolean = true;
@@ -136,7 +152,7 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
    * Destroys the adapter.
    */
   destroy() {
-    this.data = {} as D;
+    this.data = {} as DataAdapterType;
   }
 
   /**
@@ -144,9 +160,9 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
    * @param {IApplication} _app The application that the adapter belongs to.
    * @param {Partial<ILocalStorageAdapterOptions>} options The options to initialize the adapter with.
    */
-  public initialize(options?: Partial<IDataAdapterOptions<D>>): void {
+  public initialize(options?: Partial<AppTypeOverrides['Data']>): void {
     this.namespace = options?.namespace || this.app.appName;
-    this.data = (options?.initial as D) || ({} as D);
+    this.data = (options?.initial as DataAdapterType) || ({} as DataAdapterType);
     this.backupKeys = options?.backupKeys || [];
     this.backupAll = options?.backupAll || false;
     this.overrideWithLocalStorage = options?.overrideWithLocalStorage === false ? false : true;
@@ -159,13 +175,16 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
     }
   }
 
-  set<K extends keyof D>(key: K, data: D[K]): D;
-  set(data: DeepPartial<D>, merge?: boolean): D;
-  set<K extends keyof D>(keyOrData: K | DeepPartial<D>, dataOrMerge?: D[K] | boolean): D {
+  set<K extends keyof DataAdapterType>(key: K, data: DataAdapterType[K]): DataAdapterType;
+  set(data: DeepPartial<DataAdapterType>, merge?: boolean): DataAdapterType;
+  set<K extends keyof DataAdapterType>(
+    keyOrData: K | DeepPartial<DataAdapterType>,
+    dataOrMerge?: DataAdapterType[K] | boolean,
+  ): DataAdapterType {
     // Handle single key-value save
     if (typeof keyOrData === 'string' || typeof keyOrData === 'number' || typeof keyOrData === 'symbol') {
       const key = keyOrData;
-      const data = dataOrMerge as D[K];
+      const data = dataOrMerge as DataAdapterType[K];
 
       this.data[key] = data;
       if (this.backupAll || this.backupKeys.includes(key)) {
@@ -176,13 +195,13 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
     }
 
     // Handle bulk data set
-    const data = keyOrData as DeepPartial<D>;
+    const data = keyOrData as DeepPartial<DataAdapterType>;
     const merge = (dataOrMerge as boolean) ?? true;
 
     if (merge) {
       this.data = deepMerge({ ...this.data }, data);
     } else {
-      this.data = data as D;
+      this.data = data as DataAdapterType;
     }
 
     if (this.backupAll || this.backupKeys.length > 0) {
@@ -191,7 +210,7 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
 
     this.onDataChange.emit({
       key: Object.keys(data)?.length === 1 ? Object.keys(data)[0] : Object.keys(data),
-      value: data[Object.keys(data)[0]] as D[keyof D],
+      value: data[Object.keys(data)[0]] as DataAdapterType[keyof DataAdapterType],
     });
 
     return this.data;
@@ -204,9 +223,9 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
    * @param {K} [key] Optional key to load specific data
    * @returns {D | D[K] | undefined} The loaded data
    */
-  get(): D;
-  get<K extends keyof D>(key?: K): D[K] | undefined;
-  get<K extends keyof D>(key?: K): D[K] | D | undefined {
+  get(): DataAdapterType;
+  get<K extends keyof DataAdapterType>(key?: K): DataAdapterType[K] | undefined;
+  get<K extends keyof DataAdapterType>(key?: K): DataAdapterType[K] | DataAdapterType | undefined {
     if (key === undefined) {
       return this.data;
     }
@@ -220,14 +239,14 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
    * @param {number} amount The amount to increment by (default: 1)
    * @returns {D[K]} The new value after incrementing
    */
-  increment<K extends keyof D & { [P in keyof D]: D[P] extends number ? P : never }[keyof D]>(
-    key: K,
-    amount: number = 1,
-  ): D[K] {
+  increment<
+    K extends keyof DataAdapterType &
+      { [P in keyof DataAdapterType]: DataAdapterType[P] extends number ? P : never }[keyof DataAdapterType],
+  >(key: K, amount: number = 1): DataAdapterType[K] {
     const currentValue = this.data[key] || 0;
     const newValue = currentValue + amount;
-    this.set({ [key]: newValue } as DeepPartial<D>);
-    return newValue as D[K];
+    this.set({ [key]: newValue } as DeepPartial<DataAdapterType>);
+    return newValue as DataAdapterType[K];
   }
 
   /**
@@ -237,14 +256,14 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
    * @param {ElementType<D[K]> | ElementType<D[K]>[]} value The value(s) to concatenate
    * @returns {D[K]} The new array after concatenation
    */
-  concat<K extends keyof D & { [P in keyof D]: D[P] extends any[] ? P : never }[keyof D]>(
-    key: K,
-    value: D[K] extends (infer E)[] ? E | E[] : never,
-  ): D[K] {
+  concat<
+    K extends keyof DataAdapterType &
+      { [P in keyof DataAdapterType]: DataAdapterType[P] extends any[] ? P : never }[keyof DataAdapterType],
+  >(key: K, value: DataAdapterType[K] extends (infer E)[] ? E | E[] : never): DataAdapterType[K] {
     const currentValue = this.data[key];
     const newValue = [...currentValue, ...(Array.isArray(value) ? value : [value])];
-    this.set({ [key]: newValue } as DeepPartial<D>);
-    return newValue as D[K];
+    this.set({ [key]: newValue } as DeepPartial<DataAdapterType>);
+    return newValue as DataAdapterType[K];
   }
 
   /**
@@ -254,18 +273,17 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
    * @param {string} value The string to append
    * @returns {D[K]} The new string after concatenation
    */
-  append<K extends keyof D & { [P in keyof D]: D[P] extends string ? P : never }[keyof D]>(
-    key: K,
-    value: string,
-    separator: string = '',
-  ): D[K] {
+  append<
+    K extends keyof DataAdapterType &
+      { [P in keyof DataAdapterType]: DataAdapterType[P] extends string ? P : never }[keyof DataAdapterType],
+  >(key: K, value: string, separator: string = ''): DataAdapterType[K] {
     const currentValue = this.data[key];
     let newValue = value;
     if ((currentValue as string)?.length > 0) {
       newValue = currentValue + separator + value;
     }
-    this.set({ [key]: newValue } as DeepPartial<D>);
-    return newValue as D[K];
+    this.set({ [key]: newValue } as DeepPartial<DataAdapterType>);
+    return newValue as DataAdapterType[K];
   }
 
   /**
@@ -273,9 +291,9 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
    * @param {string} key The key from which to delete the data.
    */
   clear(): void;
-  clear<K extends keyof D>(key?: K): void {
+  clear<K extends keyof DataAdapterType>(key?: K): void {
     if (key === undefined) {
-      this.data = {} as D;
+      this.data = {} as DataAdapterType;
       localStorage.clear();
       this.onDataChange.emit({ key, clear: true });
     } else {
@@ -289,9 +307,9 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
    * Returns a snapshot of the current data.
    * @returns {D} A snapshot of the current data
    */
-  snapshot(): D;
-  snapshot<K extends keyof D>(key?: K): D[K];
-  snapshot<K extends keyof D>(key?: K): D[K] | D {
+  snapshot(): DataAdapterType;
+  snapshot<K extends keyof DataAdapterType>(key?: K): DataAdapterType[K];
+  snapshot<K extends keyof DataAdapterType>(key?: K): DataAdapterType[K] | DataAdapterType {
     if (key === undefined) {
       return JSON.parse(JSON.stringify(this.data));
     }
@@ -302,7 +320,7 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
    * Backs up specified keys or all data to local storage.
    * @param {Array<keyof D>} [keys] The keys to back up. If not provided, all data will be backed up.
    */
-  private backupToLocalStorage(keys?: Array<keyof D>): void {
+  private backupToLocalStorage(keys?: Array<keyof DataAdapterType>): void {
     const dataToBackup =
       keys && keys?.length > 0 ? Object.fromEntries(keys.map((key) => [key, this.data[key]])) : this.data;
 
@@ -315,8 +333,8 @@ export class DataAdapter<D extends DataSchema = DataSchema> extends StorageAdapt
    * Restores data from local storage for specified keys or all data.
    * @param {Array<keyof D>} [keys] The keys to restore. If not provided, all data will be restored.
    */
-  private restoreFromLocalStorage(keys?: Array<keyof D>): void {
-    const keysToRestore = keys && keys?.length > 0 ? keys : (Object.keys(this.data) as Array<keyof D>);
+  private restoreFromLocalStorage(keys?: Array<keyof DataAdapterType>): void {
+    const keysToRestore = keys && keys?.length > 0 ? keys : (Object.keys(this.data) as Array<keyof DataAdapterType>);
     keysToRestore.forEach((key) => {
       try {
         const loadedData = localStorage.getItem(`${this.namespace}-${String(key)}`);

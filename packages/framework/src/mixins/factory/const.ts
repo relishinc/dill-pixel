@@ -247,7 +247,8 @@ export const defaultFactoryMethods = {
     return entity;
   },
   spine: (props?: Partial<SpineProps>): Spine => {
-    let data = props?.data;
+    const data = props?.data;
+    let spineData: { skeleton: string; atlas: string } | string = '';
 
     if (typeof data === 'string') {
       // get the spine data from cache
@@ -256,11 +257,12 @@ export const defaultFactoryMethods = {
       if (ext !== '.json' && ext !== '.skel') {
         ext = '.json';
       } else {
-        data = data.substring(0, data.length - 5);
+        spineData = data.substring(0, data.length - 5);
       }
-      data = { skeleton: data + ext, atlas: data + '.atlas' };
+      spineData = { skeleton: data + ext, atlas: data + '.atlas' };
     }
-    const entity: Spine = (window as any).Spine.from(data);
+
+    const entity: Spine = (window as any).Spine.from(spineData);
     if (!props) return entity;
     if (props.autoUpdate !== undefined) entity.autoUpdate = props.autoUpdate;
     if (props.animationName) entity.state.setAnimation(props.trackIndex ?? 0, props.animationName, props.loop);

@@ -1,6 +1,5 @@
 import { Ticker } from 'pixi.js';
 import { PauseConfig } from '../core';
-import { Application } from '../core/Application';
 import { AssetLoadingOptions, Size } from '../utils';
 import type { IContainer } from './Container';
 import { Container } from './Container';
@@ -39,7 +38,7 @@ export interface SceneListItem {
   autoUnloadAssets: boolean;
 }
 
-export class Scene<T extends Application = Application> extends Container<T> implements IScene {
+export class Scene extends Container implements IScene {
   public readonly id: string;
   public autoUnloadAssets: boolean = false;
 

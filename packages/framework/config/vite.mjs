@@ -2,7 +2,7 @@ import { AST_NODE_TYPES, parse } from '@typescript-eslint/typescript-estree';
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
-import { mergeConfig } from 'vite';
+import { createLogger, mergeConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import { VitePWA } from 'vite-plugin-pwa';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
@@ -12,7 +12,195 @@ import wasm from 'vite-plugin-wasm';
 const env = process.env.NODE_ENV;
 const cwd = process.cwd();
 
+const logger = createLogger('dill-pixel-config');
+
 import { assetpackPlugin } from './assetpack.mjs';
+
+const DTS_FILE_NAME = 'dill-pixel-app.d.ts';
+
+function dillPixelConfigPlugin(isProject = true) {
+  const virtualModuleId = 'virtual:dill-pixel-config';
+  const resolvedVirtualModuleId = '\0' + virtualModuleId;
+
+  async function generateTypes() {
+    if (!isProject) return 'export {}';
+
+    const configPath = path.resolve(cwd, 'dill-pixel.config.ts');
+
+    let ast;
+    try {
+      const content = await fs.promises.readFile(configPath, 'utf-8');
+      if (!content.trim()) {
+        // This can happen during file saves, where the file is temporarily empty.
+        return '/* dill-pixel.config.ts is empty, skipping augmentation. */';
+      }
+      ast = parse(content, { jsx: false });
+    } catch (e) {
+      if (e.code === 'ENOENT') {
+        // This can happen during file saves that do a delete/recreate.
+        return '/* dill-pixel.config.ts not found, skipping augmentation. */';
+      }
+      console.error('[dill-pixel] Error parsing dill-pixel.config.ts:', e.message);
+      return '/* Error parsing dill-pixel.config.ts, skipping augmentation. See console for details. */';
+    }
+
+    let appClassName = 'Application';
+    let appImportPath = 'dill-pixel';
+    let dataTypeName = 'Record<string, any>';
+    let dataSchemaName = '';
+    let hasActions = false;
+    let hasContexts = false;
+
+    for (const node of ast.body) {
+      if (
+        node.type === AST_NODE_TYPES.ExportNamedDeclaration &&
+        node.declaration?.type === AST_NODE_TYPES.VariableDeclaration
+      ) {
+        // Find data schema
+        const dataDecl = node.declaration.declarations.find(
+          (d) => d.init?.type === AST_NODE_TYPES.CallExpression && d.init.callee.name === 'defineData',
+        );
+        if (dataDecl && dataDecl.id.type === AST_NODE_TYPES.Identifier) {
+          dataSchemaName = dataDecl.id.name;
+          dataTypeName = `typeof ${dataSchemaName}`;
+        }
+
+        // Find actions
+        if (node.declaration.declarations.some((d) => d.id.name === 'actions')) {
+          hasActions = true;
+        }
+
+        // Find contexts
+        if (node.declaration.declarations.some((d) => d.id.name === 'contexts')) {
+          hasContexts = true;
+        }
+
+        // Find defineConfig to get application class
+        const configDecl = node.declaration.declarations.find(
+          (d) => d.init?.type === AST_NODE_TYPES.CallExpression && d.init.callee.name === 'defineConfig',
+        );
+        if (configDecl?.init.type === AST_NODE_TYPES.CallExpression) {
+          const configObject = configDecl.init.arguments[0];
+          if (configObject?.type === AST_NODE_TYPES.ObjectExpression) {
+            const appProperty = configObject.properties.find(
+              (p) => p.type === AST_NODE_TYPES.Property && p.key.name === 'application',
+            );
+            if (appProperty?.value.type === AST_NODE_TYPES.Identifier) {
+              const importedAppName = appProperty.value.name;
+              const importDecl = ast.body.find(
+                (n) =>
+                  n.type === AST_NODE_TYPES.ImportDeclaration &&
+                  n.specifiers.some((s) => s.local.name === importedAppName),
+              );
+              if (importDecl) {
+                appClassName = importedAppName;
+                appImportPath = importDecl.source.value;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const configDir = path.dirname(configPath);
+    const dtsDir = path.resolve(configDir, 'src/types');
+
+    let relativeAppPath = appImportPath;
+    if (appImportPath.startsWith('.')) {
+      relativeAppPath = path.relative(dtsDir, path.resolve(configDir, appImportPath)).replace(/\\/g, '/');
+      if (relativeAppPath.endsWith('.ts')) {
+        relativeAppPath = relativeAppPath.slice(0, -3);
+      }
+    }
+
+    const relativeConfigPath = path.relative(dtsDir, configPath).replace(/\\/g, '/').replace(/\.ts$/, '');
+
+    const imports = [];
+    if (appClassName === 'Application') {
+      imports.push(`import type { Application } from 'dill-pixel';`);
+    }
+    if (fs.existsSync(configPath)) {
+      const configParts = [];
+      if (dataSchemaName) {
+        configParts.push(dataSchemaName);
+      }
+      if (hasActions) {
+        configParts.push('actions');
+      }
+      if (hasContexts) {
+        configParts.push('contexts');
+      }
+      if (configParts.length > 0) {
+        imports.push(`import type { ${configParts.join(', ')} } from '${relativeConfigPath}';`);
+      }
+    }
+    if (appClassName !== 'Application') {
+      imports.push(`import type { ${appClassName} } from '${relativeAppPath}';`);
+    }
+
+    return `
+// This file is auto-generated by dill-pixel. Do not edit.
+${imports.join('\n')}
+type AppData = ${dataTypeName};
+${hasActions ? 'type AppActionMap = typeof actions;' : 'type AppActionMap = Record<string, any>;'}
+${hasActions ? 'type AppActions = keyof AppActionMap;' : 'type AppActions = string;'}
+${hasContexts ? 'type AppContexts = (typeof contexts)[number];' : 'type AppContexts = string;'}
+
+/**
+ * Add type overrides to the framework
+ */
+declare module 'dill-pixel' {
+  interface AppTypeOverrides {
+    App: ${appClassName};
+    Data: AppData;
+    Contexts: AppContexts;
+    Actions: AppActions;
+    ActionMap: AppActionMap;
+  }
+}
+`;
+  }
+
+  async function build(msg = `Building ${DTS_FILE_NAME}`) {
+    logger.info(msg);
+    const types = await generateTypes();
+    const typesDir = path.resolve(cwd, 'src/types');
+    await fs.promises.mkdir(typesDir, { recursive: true });
+    await fs.promises.writeFile(path.join(typesDir, DTS_FILE_NAME), types, 'utf-8');
+  }
+
+  return {
+    name: 'vite-plugin-dill-pixel-config',
+    resolveId(id) {
+      if (id === virtualModuleId) {
+        return resolvedVirtualModuleId;
+      }
+    },
+    async load(id) {
+      if (id === resolvedVirtualModuleId) {
+        return generateTypes();
+      }
+    },
+    async buildStart() {
+      await build();
+    },
+    async configureServer(server) {
+      const configPath = path.resolve(cwd, DTS_FILE_NAME);
+      if (fs.existsSync(configPath)) {
+        server.watcher.add(configPath);
+        server.watcher.on(
+          'change',
+          async function (file) {
+            if (file === configPath) {
+              await build(`${DTS_FILE_NAME} changed, reloading...`);
+              server.ws.send({ type: 'full-reload' });
+            }
+          }.bind(this),
+        );
+      }
+    },
+  };
+}
 
 /** PLUGINS */
 function findRegistryAndLocal({ packagePrefix, localPaths, idPrefix = '', importPathPrefix = '@' }) {
@@ -520,6 +708,7 @@ const defaultConfig = {
     pluginListPlugin(),
     sceneListPlugin(),
     assetpackPlugin(),
+    dillPixelConfigPlugin(),
   ],
   resolve: {
     alias: {

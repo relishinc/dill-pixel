@@ -2,8 +2,6 @@ import { gsap } from 'gsap';
 import type { AppConfig, IApplication, IApplicationOptions, ICoreFunctions, ICoreSignals, PauseConfig } from '.';
 import { coreFunctionRegistry, coreSignalRegistry, generateAdapterList, generatePluginList } from '.';
 import type {
-  Action,
-  ActionContext,
   ActionSignal,
   IAssetsPlugin,
   IAudioManagerPlugin,
@@ -17,7 +15,6 @@ import type {
   IResizerPlugin,
   ISceneManagerPlugin,
   IWebEventsPlugin,
-  type PluginList,
 } from '../plugins';
 
 import type {
@@ -25,14 +22,13 @@ import type {
   AssetsManifest,
   DestroyOptions,
   Container as PIXIContainer,
-  Renderer,
   RendererDestroyOptions,
 } from 'pixi.js';
 import { Assets, isMobile, Application as PIXIPApplication, Point, TextStyle } from 'pixi.js';
-import type { DataSchema, IDataAdapter, IStorageAdapter, IStore } from '../store';
+import type { IDataAdapter, IStorageAdapter, IStore } from '../store';
 import { DataAdapter, Store } from '../store';
-import type { Ease, ImportList, ImportListItem, Size } from '../utils';
-import { bindAllMethods, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from '../utils';
+import type { AppTypeOverrides, Ease, ImportList, ImportListItem, Size } from '../utils';
+import { bindAllMethods, deepMerge, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from '../utils';
 
 import { createFactoryMethods, defaultFactoryMethods } from '../mixins';
 import type { IActionsPlugin } from '../plugins/actions';
@@ -45,6 +41,10 @@ import { type IGSAPPlugin } from '../plugins/GSAPPlugin';
 import { ILookupPlugin } from '../plugins/LookupPlugin';
 import { ITimerPlugin } from '../plugins/TimerPlugin';
 import { Signal } from '../signals';
+
+type App = AppTypeOverrides['App'];
+type AppContexts = AppTypeOverrides['Contexts'];
+type AppActions = AppTypeOverrides['Actions'];
 
 function getDefaultResolution() {
   return typeof window !== 'undefined' ? (window.devicePixelRatio > 1 ? 2 : 1) : 2;
@@ -113,21 +113,19 @@ const defaultPauseConfig: PauseConfig = {
   pauseTimers: false,
 };
 
-export class Application<
-    D extends DataSchema = DataSchema,
-    C extends ActionContext = ActionContext,
-    A extends Action = Action,
-    R extends Renderer = Renderer,
-  >
-  extends PIXIPApplication<R>
-  implements IApplication<D, C, A>
-{
+export class Application extends PIXIPApplication implements IApplication {
+  // static properties
   public static containerElement: HTMLElement;
-  protected static instance: IApplication<DataSchema, ActionContext, Action>;
-  public __dill_pixel_method_binding_root = true;
+
+  // singleton instance
+  public static instance: IApplication;
+
+  // method binding root
+  private readonly __dill_pixel_method_binding_root = true;
+
   // config
-  public config: Partial<IApplicationOptions<D>>;
-  public plugins: PluginList;
+  public config: Partial<IApplicationOptions>;
+  public plugins: ImportList<IPlugin>;
   public storageAdapters: ImportList<IStorageAdapter>;
   public manifest: string | AssetsManifest | undefined;
   public onPause = new Signal<(config: PauseConfig) => void>();
@@ -292,11 +290,11 @@ export class Application<
   }
 
   // actions
-  protected _actionsPlugin: IActionsPlugin<C>;
+  protected _actionsPlugin: IActionsPlugin<AppContexts>;
 
-  public get actionsPlugin(): IActionsPlugin<C> {
+  public get actionsPlugin(): IActionsPlugin<AppContexts> {
     if (!this._actionsPlugin) {
-      this._actionsPlugin = this.getPlugin<IActionsPlugin<C>>('actions');
+      this._actionsPlugin = this.getPlugin<IActionsPlugin<AppContexts>>('actions');
     }
     return this._actionsPlugin;
   }
@@ -461,11 +459,11 @@ export class Application<
     return this._audioManager;
   }
 
-  public get actionContext(): C {
+  public get actionContext(): AppContexts {
     return this.actionsPlugin.context;
   }
 
-  public set actionContext(context: C) {
+  public set actionContext(context: AppContexts) {
     this.actionsPlugin.context = context;
   }
 
@@ -536,13 +534,13 @@ export class Application<
   }
 
   get exec(): ICoreFunctions {
-    return coreFunctionRegistry;
+    return this.func;
   }
 
   // views
   protected _views: any[];
 
-  private get views(): any[] {
+  public get views(): any[] {
     if (!this._views) {
       this._views = [this.scenes.view, this.popups.view];
       if (this.scenes.splash.view) {
@@ -555,10 +553,15 @@ export class Application<
         this._views.push(this.captions.view);
       }
     }
+
     return this._views;
   }
 
-  public static getInstance<T extends Application = Application>(): T {
+  public static getInstance<T extends App = App>(): T {
+    if (!Application.instance) {
+      Logger.warn('Application not created yet');
+    }
+
     return Application.instance as T;
   }
 
@@ -577,18 +580,16 @@ export class Application<
   }
 
   public setContainer(container: HTMLElement) {
-    if (!Application.containerElement) {
-      Application.containerElement = container;
-    }
+    Application.containerElement = container;
   }
 
-  public async initialize(config: AppConfig<D>, el?: HTMLElement): Promise<IApplication<D, C, A>> {
+  public async initialize(config: Partial<AppConfig>, el?: HTMLElement): Promise<AppTypeOverrides['App']> {
     if (Application.instance) {
       throw new Error('Application is already initialized');
     }
-    Application.instance = this as unknown as IApplication<DataSchema, ActionContext, Action>;
-    this.config = Object.assign({ ...defaultApplicationOptions }, config as Partial<IApplicationOptions<D>>);
+    Application.instance = this as unknown as IApplication;
 
+    this.config = deepMerge(defaultApplicationOptions, config);
     this.signals.onResize = this.onResize;
 
     if (config.container) {
@@ -607,17 +608,11 @@ export class Application<
     }
 
     await this.boot(this.config);
-    await this.preInitialize(this.config);
     await this.initAssets();
 
     // initialize the pixi application
     await this.init(this.config);
     this.stage.label = 'Stage';
-
-    if (isDev) {
-      Logger.log('Initializing DevTools');
-      this.getPlugin<IDevToolsPlugin>('DevToolsPlugin').initializeDevTools(this);
-    }
 
     if (this.config.defaultTextStyle) {
       const style = { ...defaultApplicationOptions.defaultTextStyle, ...this.config.defaultTextStyle };
@@ -632,22 +627,18 @@ export class Application<
     } else {
       throw new Error('No element found to append the view to.');
     }
-
-    // register the default plugins
     await this.registerDefaultPlugins();
+
+    if (isDev) {
+      this.getPlugin<IDevToolsPlugin>('DevToolsPlugin').initializeDevTools(this);
+    }
 
     this.signals.onLoadRequiredComplete.connectOnce(this.requiredAssetsLoaded);
 
     // internal setup
     await this._setup();
-    this.plugins = await generatePluginList(this.config.plugins || []);
 
-    for (let i = 0; i < this.plugins.length; i++) {
-      const listItem = this.plugins[i];
-      if (listItem && listItem?.autoLoad !== false) {
-        await this.loadPlugin(listItem);
-      }
-    }
+    this.plugins = await generatePluginList(this.config.plugins || []);
 
     // register the applications custom plugins
     await this.registerPlugins();
@@ -681,7 +672,7 @@ export class Application<
 
     this._isBooting = false;
     // return the Application instance to the create method, if needed
-    return Application.instance as unknown as IApplication<D, C, A>;
+    return Application.instance as unknown as App;
   }
 
   public getPlugin<T extends IPlugin>(pluginName: string, debug: boolean = false): T {
@@ -693,11 +684,11 @@ export class Application<
   }
 
   async postInitialize(): Promise<void> {
-    await this._resize();
-
-    this._plugins.forEach((plugin) => {
-      plugin.postInitialize(this as unknown as IApplication<DataSchema>);
-    });
+    this.stage.addChild(...this.views);
+    // start plugins
+    for (const plugin of this._plugins.values()) {
+      plugin.postInitialize(this as unknown as IApplication);
+    }
 
     this.webEvents.onVisibilityChanged.connect((visible) => {
       if (visible) {
@@ -711,7 +702,7 @@ export class Application<
   }
 
   public getUnloadedPlugin(id: string): ImportListItem<IPlugin> | undefined {
-    return this.plugins?.find((plugin: IPlugin) => plugin.id === id);
+    return this.plugins.find((pluginItem) => pluginItem.id === id);
   }
 
   async loadPlugin(listItem: ImportListItem, isDefault: boolean = false) {
@@ -741,8 +732,8 @@ export class Application<
    *   player.jump(data.power);
    * });
    */
-  public actions<TActionData = any>(action: A): ActionSignal<TActionData> {
-    return this.actionsPlugin.getAction<TActionData>(action as Action);
+  public actions<TActionData = any>(action: AppActions): ActionSignal<TActionData> {
+    return this.actionsPlugin.getAction<TActionData>(action as string);
   }
 
   /**
@@ -754,8 +745,8 @@ export class Application<
    * // Send a 'jump' action with power data
    * app.sendAction('jump', { power: 100 });
    */
-  public sendAction<TActionData = any>(action: A, data?: TActionData) {
-    this.actionsPlugin.sendAction<TActionData>(action as Action, data);
+  public sendAction<TActionData = any>(action: AppActions, data?: TActionData) {
+    this.actionsPlugin.sendAction<TActionData>(action as string, data);
   }
 
   /**
@@ -768,8 +759,8 @@ export class Application<
    * // Send a 'jump' action with power data
    * app.action('jump', { power: 100 });
    */
-  public action<TActionData = any>(action: A, data?: TActionData) {
-    this.actionsPlugin.sendAction<TActionData>(action as Action, data);
+  public action<TActionData = any>(action: AppActions, data?: TActionData) {
+    this.sendAction(action, data);
   }
 
   /**
@@ -782,8 +773,8 @@ export class Application<
    *   player.updateSpeed(runningSpeed);
    * }
    */
-  public isActionActive(action: A): boolean {
-    return this.input.controls.isActionActive(action);
+  public isActionActive(action: AppActions): boolean {
+    return this.actionsPlugin.getActions()[action as string] !== undefined;
   }
 
   /**
@@ -800,37 +791,19 @@ export class Application<
    * @param {string} adapterId
    * @returns {IDataAdapter}
    */
-  public get data(): IDataAdapter<D> {
-    return this.store.getAdapter('data') as unknown as IDataAdapter<D>;
-  }
-  /**
-   * app hasn't been initialized yet
-   * @protected
-   * @example boot(){
-   *     console.log(this.appVersion);
-   * }
-   * returns {Promise<void> | void}
-   */
-  protected boot(config?: Partial<IApplicationOptions<D>>): Promise<void> | void;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected async boot(config?: Partial<IApplicationOptions<D>>): Promise<void> {
-    console.log(
-      `%c App info - %c${this.appName} | %cv${this.appVersion} `,
-      `background: rgba(31, 41, 55, 1); color: #74b64c`,
-      `background: rgba(31, 41, 55, 1); color: #74b64c; font-weight:bold`,
-      `background: rgba(31, 41, 55, 1); color: #74b64c; font-weight:bold`,
-    );
+  public get data(): IDataAdapter {
+    return this.store.getAdapter('data') as unknown as IDataAdapter;
   }
 
-  /**
-   * Pre-initialize the application
-   * This is called before the application is initialized
-   * should register any pixi extensions, etc
-   * @param {Partial<IApplicationOptions>} config
-   * @returns {Promise<void>}
-   * @protected
-   */
-  protected async preInitialize(config: Partial<IApplicationOptions<D>>): Promise<void> {
+  protected async boot(config?: Partial<IApplicationOptions>): Promise<void> {
+    this.config = { ...defaultApplicationOptions, ...config };
+    await this.preInitialize(this.config);
+  }
+
+  protected async preInitialize(config: Partial<IApplicationOptions>): Promise<void> {
+    const { id } = config;
+    this._appName = id!;
+
     if (isDev) {
       await this.loadPlugin({
         id: 'DevToolsPlugin',
@@ -838,6 +811,7 @@ export class Application<
         namedExport: 'DevToolsPlugin',
       });
     }
+
     if (config.useLayout) {
       await this.loadPlugin({
         id: 'LayoutPlugin',
@@ -857,9 +831,10 @@ export class Application<
         namedExport: 'SpinePlugin',
       });
     }
+
     if (this.config.useStore) {
       this._store = new Store();
-      this._store.initialize(this as unknown as IApplication<DataSchema>);
+      this._store.initialize(this as unknown as IApplication);
       this.registerDefaultStorageAdapters();
     }
   }
@@ -868,12 +843,12 @@ export class Application<
   protected async registerPlugin(plugin: IPlugin, options?: any) {
     if (this._plugins.has(plugin.id)) {
       Logger.error(`Plugin with id "${plugin.id}" already registered. Not registering.`);
-      return plugin.initialize(options, this as unknown as IApplication<DataSchema>);
+      return plugin.initialize(options, this as unknown as IApplication);
     }
     plugin.registerCoreFunctions();
     plugin.registerCoreSignals();
     this._plugins.set(plugin.id, plugin);
-    return plugin.initialize(options, this as unknown as IApplication<DataSchema>);
+    return plugin.initialize(options, this as unknown as IApplication);
   }
 
   protected async registerDefaultPlugins() {
@@ -906,14 +881,21 @@ export class Application<
   }
 
   protected async registerDefaultStorageAdapters() {
-    const dataAdapter = new DataAdapter();
-    await this.registerStorageAdapter(dataAdapter, this.config.data);
+    if (!this.storageAdapters?.length) {
+      const dataAdapter = new DataAdapter();
+      await this.registerStorageAdapter(dataAdapter, this.config.data);
+    }
   }
 
   protected async registerPlugins() {
-    // override this method to register custom plugins,
-    // or do it in the app config during bootstrap
-    return Promise.resolve();
+    if (!this.plugins?.length) {
+      return;
+    }
+    for (const p of this.plugins) {
+      if (p.autoLoad) {
+        await this.loadPlugin(p);
+      }
+    }
   }
 
   // storage
@@ -952,13 +934,11 @@ export class Application<
 
   protected async initAssets(): Promise<void> {
     const opts: Partial<AssetInitOptions> = this.config.assets?.initOptions || {};
-    if (this.config.assets?.manifest) {
-      let manifest = this.config.assets.manifest || opts.manifest;
-      if (isPromise(manifest)) {
-        manifest = await manifest;
-      }
-      opts.manifest = manifest as AssetsManifest;
+    let manifest = this.config.assets?.manifest || opts.manifest;
+    if (isPromise(manifest)) {
+      manifest = await manifest;
     }
+    opts.manifest = manifest as AssetsManifest;
     opts.basePath = opts.basePath || './assets';
     await Assets.init(opts);
     /** @ts-expect-error manifest is not a public property */

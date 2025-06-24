@@ -13,11 +13,13 @@ import type { ApplicationOptions, TextDropShadow, TextStyle } from 'pixi.js';
 import type { IScene, ISceneTransition, SceneTransition } from '../../display';
 import type { CaptionsOptions } from '../../plugins/captions';
 import { GSAPPluginOptions } from '../../plugins/GSAPPlugin';
-import type { DataSchema, IDataAdapterOptions } from '../../store';
+import type { IDataAdapterOptions } from '../../store';
 import type { PluginOrAdapterConfig } from '../config';
+import { IApplication } from './IApplication';
 
-export interface IApplicationOptions<D extends DataSchema = DataSchema> extends ApplicationOptions {
+export interface IApplicationOptions extends ApplicationOptions {
   id: string;
+  application?: new (...args: any[]) => IApplication;
   resizeToContainer: boolean;
   container: HTMLElement;
   logger: LoggerMode;
@@ -29,7 +31,7 @@ export interface IApplicationOptions<D extends DataSchema = DataSchema> extends 
   defaultDropShadow: TextDropShadow;
   storageAdapters: PluginOrAdapterConfig[];
   gsap: Partial<GSAPPluginOptions>;
-  data: Partial<IDataAdapterOptions<D>>;
+  data: Partial<IDataAdapterOptions>;
   plugins: PluginOrAdapterConfig[];
   assets: AssetLoadingOptions;
   sceneImportList: SceneImportListItem<IScene>[];

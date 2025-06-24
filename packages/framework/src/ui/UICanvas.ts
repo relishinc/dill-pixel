@@ -441,9 +441,7 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
   }
 
   public resize() {
-    console.log('UICanvas:: Resizing', this.config.useAppSize);
     if (this.config.useAppSize) {
-      Logger.log('UICanvas:: Resizing to app size', this.app.size);
       this.size = { width: this.app.size.width, height: this.app.size.height };
       this.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
     } else {
