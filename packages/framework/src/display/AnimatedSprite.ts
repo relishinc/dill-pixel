@@ -9,7 +9,7 @@ import {
   getPreviousMapEntry,
   getZeroPaddedNumber,
   Logger,
-  SpriteSheetLike,
+  type SpritesheetAsset,
 } from '../utils';
 
 export class AnimatedSprite extends PIXIAnimatedSprite {
@@ -90,7 +90,7 @@ export class AnimatedSprite extends PIXIAnimatedSprite {
     animationName: string,
     props?: Partial<AnimatedSpriteProps>,
     defaultTexturePrefix = '',
-    defaultSheet: SpriteSheetLike | undefined = undefined,
+    defaultSheet: SpritesheetAsset | undefined = undefined,
     defaultZeroPad?: number,
     defaultStartIndex?: number,
   ): Texture[] {

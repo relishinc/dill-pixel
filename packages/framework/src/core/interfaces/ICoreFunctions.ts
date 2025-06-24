@@ -12,10 +12,11 @@ import type {
 import { InputController } from '../../plugins';
 import type { IPopup, PopupConfig, PopupConstructor } from '../../ui';
 
-import { AppTypeOverrides } from '../../utils';
+import { type AppTypeOverrides } from '../../utils';
 
 type AppContexts = AppTypeOverrides['Contexts'];
 type AppActions = AppTypeOverrides['Actions'];
+type AppScenes = AppTypeOverrides['Scenes'];
 
 export interface ICoreFunctions {
   // FocusManagerPlugin
@@ -60,7 +61,7 @@ export interface ICoreFunctions {
   removeAllPopups(animate?: boolean): void;
 
   // SceneManagerPlugin
-  loadScene(sceneIdOrLoadSceneConfig: LoadSceneConfig | string): Promise<void>;
+  loadScene(sceneIdOrLoadSceneConfig: LoadSceneConfig | AppScenes): Promise<void>;
 
   // AssetsPlugin
   loadAssets(assets: string | string[]): Promise<void>;

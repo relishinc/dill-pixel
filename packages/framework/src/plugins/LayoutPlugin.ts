@@ -2,7 +2,6 @@ import '@pixi/layout';
 import { Layout } from '@pixi/layout';
 import '@pixi/layout/devtools';
 
-import { Logger } from '../utils';
 import { Plugin, type IPlugin } from './Plugin';
 
 /**
@@ -124,6 +123,5 @@ export class LayoutPlugin extends Plugin implements ILayoutPlugin {
         overflow: 'visible',
       },
     };
-    Logger.log('LayoutPlugin initialized');
   }
 }

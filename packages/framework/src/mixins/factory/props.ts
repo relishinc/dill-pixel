@@ -1,34 +1,25 @@
 import type { LayoutOptions } from '@pixi/layout';
-import { GraphicsContext, HTMLTextStyleOptions, TextStyleOptions, type Texture } from 'pixi.js';
+import { GraphicsContext, HTMLTextStyleOptions, TextStyleOptions } from 'pixi.js';
 import { ContainerConfig } from '../../display';
 import { ParticleContainerConfig } from '../../display/ParticleContainer';
 import { ButtonConfig, FlexContainerConfig, UICanvasProps } from '../../ui';
-import type { AssetTypeOverrides, PointLike, WithRequiredProps } from '../../utils';
-import { FilterBitmapFontNames, FilterCleanAssetNames, FilterSpineAssetNames } from '../../utils/typefilters';
-
-export type AssetTextures =
-  | FilterCleanAssetNames<AssetTypeOverrides['TextureLike']>
-  | AssetTypeOverrides['TPSFrames']
-  | (string & {})
-  | Texture;
-
-export type AssetSpritesheets = FilterCleanAssetNames<AssetTypeOverrides['SpriteSheetLike']> | (string & {});
-
-export type AssetAudio = FilterCleanAssetNames<AssetTypeOverrides['AudioLike']> | (string & {});
-
-export type AssetFontFamilies = FilterCleanAssetNames<AssetTypeOverrides['FontFamily']> | (string & {});
-
-export type AssetBitmapFontFamilies = FilterBitmapFontNames<AssetTypeOverrides['BitmapFontFamily']> | (string & {});
-
-export type AssetSpine = FilterSpineAssetNames<AssetTypeOverrides['SpineData']> | (string & {});
+import type {
+  BitmapFontFamilyAsset,
+  FontFamilyAsset,
+  PointLike,
+  SpineAsset,
+  SpritesheetAsset,
+  TextureAsset,
+  WithRequiredProps,
+} from '../../utils';
 
 export interface AbstractProps {
   [key: string]: any;
 }
 
 export interface TextureProps {
-  asset: AssetTextures;
-  sheet: AssetSpritesheets;
+  asset: TextureAsset;
+  sheet: SpritesheetAsset;
 }
 
 export interface PositionProps {
@@ -115,7 +106,7 @@ export interface AnimatedSpriteAnimationProps
     VisibilityProps,
     LayoutProps {
   texturePrefix: string;
-  sheet: AssetSpritesheets;
+  sheet: SpritesheetAsset;
   startIndex: number;
   numFrames: number;
   zeroPad: number;
@@ -126,7 +117,7 @@ export interface AnimatedSpriteAnimationProps
 }
 
 export interface AnimatedSpriteProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps, LayoutProps {
-  sheet: AssetSpritesheets;
+  sheet: SpritesheetAsset;
   texturePrefix: string;
   zeroPad: number;
   animations: { [animationName: string]: Partial<AnimatedSpriteAnimationProps> };
@@ -138,7 +129,7 @@ export interface AnimatedSpriteProps extends AbstractProps, ScaleProps, Position
   startIndex: number;
 }
 
-export type DillPixelTextStyle = Partial<Omit<TextStyleOptions, 'fontFamily'> & { fontFamily: AssetFontFamilies }>;
+export type DillPixelTextStyle = Partial<Omit<TextStyleOptions, 'fontFamily'> & { fontFamily: FontFamilyAsset }>;
 
 export interface TextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps, LayoutProps {
   text: string;
@@ -153,7 +144,7 @@ export interface BitmapTextProps extends AbstractProps, PositionProps, ScaleProp
   anchor: PointLike;
   resolution: number;
   roundPixels: boolean;
-  style: Partial<Omit<TextStyleOptions, 'fontFamily'> & { fontFamily: AssetBitmapFontFamilies }>;
+  style: Partial<Omit<TextStyleOptions, 'fontFamily'> & { fontFamily: BitmapFontFamilyAsset }>;
 }
 
 export interface HTMLTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps, LayoutProps {
@@ -161,7 +152,7 @@ export interface HTMLTextProps extends AbstractProps, PositionProps, ScaleProps,
   anchor: PointLike;
   resolution: number;
   roundPixels: boolean;
-  style: Partial<Omit<HTMLTextStyleOptions, 'fontFamily'> & { fontFamily: AssetFontFamilies }>;
+  style: Partial<Omit<HTMLTextStyleOptions, 'fontFamily'> & { fontFamily: FontFamilyAsset }>;
 }
 
 export interface OmittedTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {}
@@ -185,7 +176,7 @@ export interface UICanvasFactoryProps extends ContainerProps, UICanvasProps {}
 
 // spine
 export interface SpineProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps, LayoutProps {
-  data: AssetSpine;
+  data: SpineAsset;
   autoUpdate: boolean;
   animationName: string;
   trackIndex: number;

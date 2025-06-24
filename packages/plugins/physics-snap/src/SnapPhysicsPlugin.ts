@@ -1,10 +1,17 @@
-import { Application, IApplication, Logger, Plugin } from 'dill-pixel';
+import { type IApplication, type IPlugin, Logger, Plugin } from 'dill-pixel';
 import { Point } from 'pixi.js';
 import { pointExtras } from './extras';
 import { System } from './System';
 import { version } from './version';
 
-export interface ISnapPhysicsPlugin extends Plugin {
+export interface SnapPhysicsPluginOptions {
+  useSpatialHashGrid: boolean;
+  gridCellSize: number;
+  fps: number;
+  debug: boolean;
+}
+
+export interface ISnapPhysicsPlugin extends IPlugin<SnapPhysicsPluginOptions> {
   get system(): typeof System;
   get gridCellSize(): number;
   set gridCellSize(value: number);
@@ -14,13 +21,6 @@ export interface ISnapPhysicsPlugin extends Plugin {
   set fps(value: number);
 }
 
-type SnapPhysicsPluginOptions = {
-  useSpatialHashGrid: boolean;
-  gridCellSize: number;
-  fps: number;
-  debug: boolean;
-};
-
 const defaultOptions = {
   useSpatialHashGrid: false,
   gridCellSize: -1,
@@ -28,7 +28,7 @@ const defaultOptions = {
   debug: false,
 };
 
-export class SnapPhysicsPlugin extends Plugin<Application, SnapPhysicsPluginOptions> {
+export class SnapPhysicsPlugin extends Plugin<SnapPhysicsPluginOptions> {
   public readonly id = 'SnapPhysicsPlugin';
 
   get gridCellSize(): number {
@@ -81,10 +81,10 @@ export class SnapPhysicsPlugin extends Plugin<Application, SnapPhysicsPluginOpti
     super.destroy();
   }
 
-  public async initialize(app: IApplication, options?: Partial<SnapPhysicsPluginOptions>) {
+  public async initialize(options: Partial<SnapPhysicsPluginOptions>, _app: IApplication) {
     this._addMathExtras();
-    this._options = { ...defaultOptions, ...options };
-    this.system.app = app;
+    this._options = { ...defaultOptions, ...(options ?? {}) };
+    this.system.app = _app;
     this.system.plugin = this;
 
     if (this.options.useSpatialHashGrid && this.options.gridCellSize > 0) {

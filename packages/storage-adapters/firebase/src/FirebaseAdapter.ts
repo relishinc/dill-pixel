@@ -1,4 +1,4 @@
-import { Application, IApplication, isDev, IStorageAdapter, Logger, StorageAdapter } from 'dill-pixel';
+import { IApplication, isDev, IStorageAdapter, Logger, StorageAdapter } from 'dill-pixel';
 import type { FirebaseApp, FirebaseOptions } from 'firebase/app';
 import { initializeApp } from 'firebase/app';
 import type { DocumentData, Firestore, QueryConstraint } from 'firebase/firestore';
@@ -20,8 +20,10 @@ interface DocumentResult extends DocumentData {
   id: string;
   [key: string]: unknown;
 }
-
-export interface IFirebaseAdapter extends IStorageAdapter<Application, FirebaseOptions> {
+interface IFirebaseAdapterOptions extends FirebaseOptions {
+  debug?: boolean;
+}
+export interface IFirebaseAdapter extends IStorageAdapter<IFirebaseAdapterOptions, DocumentResult> {
   db: Firestore;
   firebaseApp: FirebaseApp;
 
@@ -44,15 +46,14 @@ export interface IFirebaseAdapter extends IStorageAdapter<Application, FirebaseO
   queryCollection(collectionName: string, ...queries: QueryConstraint[]): Promise<DocumentResult[]>;
 }
 
-interface IFirebaseAdapterOptions extends FirebaseOptions {
-  debug?: boolean;
-}
-
 /**
  * A class representing a storage adapter that uses Firebase.
  * @extends StorageAdapter
  */
-export class FirebaseAdapter extends StorageAdapter implements IFirebaseAdapter {
+export class FirebaseAdapter
+  extends StorageAdapter<IFirebaseAdapterOptions, DocumentResult>
+  implements IFirebaseAdapter
+{
   private _options: IFirebaseAdapterOptions;
 
   private _firebaseApp: FirebaseApp;

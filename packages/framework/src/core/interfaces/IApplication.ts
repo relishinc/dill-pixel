@@ -17,7 +17,7 @@ import type {
 import { IGSAPPlugin } from '../../plugins/GSAPPlugin';
 import { Signal } from '../../signals';
 import type { IDataAdapter, IStore } from '../../store';
-import type { AppTypeOverrides, Ease, Size } from '../../utils';
+import type { AppTypeOverrides, Eases, Size } from '../../utils';
 import type { AppConfig, PauseConfig } from '../types';
 import type { ICoreFunctions } from './ICoreFunctions';
 import { ICoreSignals } from './ICoreSignals';
@@ -520,7 +520,7 @@ export interface IApplication extends PIXIPApplication {
    * }
    * ```
    */
-  eases(namesOnly?: boolean): Ease | string[];
+  eases(namesOnly?: boolean): Eases | string[];
 
   // initialize
   /**

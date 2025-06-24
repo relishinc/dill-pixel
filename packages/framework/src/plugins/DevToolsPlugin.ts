@@ -1,6 +1,5 @@
 import { initDevtools } from '@pixi/devtools';
 import { Application } from 'pixi.js';
-import { Logger } from '../utils';
 import { Plugin, type IPlugin } from './Plugin';
 
 /**
@@ -72,9 +71,7 @@ export class DevToolsPlugin extends Plugin implements IDevToolsPlugin {
    * // No manual initialization required
    * ```
    */
-  async initialize() {
-    Logger.log('DevTools Plugin initialized');
-  }
+  async initialize() {}
 
   /**
    * Initializes and activates PIXI DevTools for the specified application.
@@ -101,7 +98,6 @@ export class DevToolsPlugin extends Plugin implements IDevToolsPlugin {
    * - The extension provides a "PIXI" tab with comprehensive debugging features
    */
   public initializeDevTools(app: Application) {
-    Logger.log('Initializing DevTools', app);
     initDevtools({ app });
   }
 }

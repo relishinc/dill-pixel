@@ -1,4 +1,4 @@
-import { Application, IApplication, IPlugin, isDev, Logger, Plugin, version } from 'dill-pixel';
+import { IApplication, IPlugin, isDev, Logger, Plugin, version } from 'dill-pixel';
 import { Container as PIXIContainer, Rectangle, Ticker } from 'pixi.js';
 import { Actor } from './Actor';
 import { Group } from './Group';
@@ -464,10 +464,7 @@ const defaultOptions: Partial<CrunchPhysicsOptions> = {
  * Implementation of the Crunch physics plugin.
  * See {@link ICrunchPhysicsPlugin} for detailed API documentation and examples.
  */
-export default class CrunchPhysicsPlugin
-  extends Plugin<Application, CrunchPhysicsOptions>
-  implements ICrunchPhysicsPlugin
-{
+export default class CrunchPhysicsPlugin extends Plugin<CrunchPhysicsOptions> implements ICrunchPhysicsPlugin {
   public system: System;
   public container: PIXIContainer;
   public enabled = false;
@@ -484,7 +481,7 @@ export default class CrunchPhysicsPlugin
     console.log(hello, 'background: rgba(31, 41, 55, 1);color: #74b64c');
   }
 
-  public async initialize(options?: Partial<CrunchPhysicsOptions>, app?: IApplication): Promise<void> {
+  public async initialize(options?: Partial<CrunchPhysicsOptions>): Promise<void> {
     this.hello();
     if (!options) {
       return;

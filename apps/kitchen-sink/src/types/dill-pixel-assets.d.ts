@@ -326,6 +326,15 @@ export type AssetFonts =
   | 'splash/fonts/KumbhSans-SemiBold.ttf';
 
 /**
+ * Available font names in the asset manifest
+ * @example
+ * const font: AssetFonts = 'KumbhSans-Regular';
+ */
+export type AssetBitmapFonts = 
+  | 'KumbhSansBlack.fnt'
+  | 'required/bitmap-fonts/KumbhSansBlack.fnt';
+
+/**
  * Available audio names in the asset manifest
  * @example
  * const audio: AssetAudio = 'click';
@@ -515,12 +524,11 @@ export type AssetBundleOf<T extends AssetAlias> = Extract<AssetBundles, T extend
  */
 declare module 'dill-pixel' {
   interface AssetTypeOverrides {
-    TextureLike: AssetTextures;
+    Texture: AssetTextures;
     TPSFrames: AssetTPSFrames; 
-    SpriteSheetLike: AssetSpritesheets;
+    SpriteSheet: AssetSpritesheets;
     SpineData: AssetSpine;
-    Spine: AssetSpine;
-    AudioLike: AssetAudio;
+    Audio: AssetAudio;
     FontFamily: AssetFontFamilies;
     BitmapFontFamily: AssetBitmapFontFamilies;
   }

@@ -1,15 +1,15 @@
-import { type Ease } from 'dill-pixel';
+import { type Eases } from 'dill-pixel';
 
-export enum EaseType {
+export enum Ease {
   Custom = 'custom',
   CustomInOut = 'customInOut',
 }
 
-export const Eases: Ease<EaseType> = {
-  [EaseType.Custom]: (progress: number): number => {
+export const CustomEases: Eases = {
+  [Ease.Custom]: (progress: number): number => {
     return 1 - Math.cos((progress * Math.PI) / 2);
   },
-  [EaseType.CustomInOut]: (progress: number): number => {
+  [Ease.CustomInOut]: (progress: number): number => {
     return progress ** 2 * (3 - 2 * progress); // smoothstep
   },
 };

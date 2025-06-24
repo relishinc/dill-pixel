@@ -40,6 +40,7 @@ export default class AssetScene extends BaseScene {
 
   public async initialize() {
     await super.initialize();
+
     this.container = this.add.flexContainer({
       layout: {
         gap: 0,
@@ -55,29 +56,6 @@ export default class AssetScene extends BaseScene {
     });
     this.jar = this.container.add.sprite({ asset: 'staticJar', scale: 0.5, label: 'Jar' });
     this.zilla = this.container.add.sprite({ asset: 'zilla', label: 'Zilla' });
-  }
-
-  async start() {
-    // const pickleTween = this.app.anim.to(this.pickle, {
-    //   pixi: { anchor: 0.5, scale: 2, saturation: 0 },
-    //   yoyo: true,
-    //   repeat: -1,
-    //   duration: 1,
-    //   ease: EaseType.CustomInOut,
-    // });
-    // const jarTween = this.app.anim.to(this.jar, {
-    //   pixi: { anchor: 0.5, scale: 0.7, saturation: 0 },
-    //   yoyo: true,
-    //   repeat: -1,
-    //   duration: 1,
-    //   ease: EaseType.Custom,
-    // });
-    // this.app.addAnimation([pickleTween, jarTween], 'AssetScene');
-    // toy with animations pause / resume
-    // await wait(1.5);
-    // this.app.animation.pauseAll('AssetScene');
-    // await wait(1.5);
-    // this.app.animation.playAll('AssetScene');
   }
 
   resize() {

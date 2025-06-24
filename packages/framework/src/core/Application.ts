@@ -27,7 +27,7 @@ import type {
 import { Assets, isMobile, Application as PIXIPApplication, Point, TextStyle } from 'pixi.js';
 import type { IDataAdapter, IStorageAdapter, IStore } from '../store';
 import { DataAdapter, Store } from '../store';
-import type { AppTypeOverrides, Ease, ImportList, ImportListItem, Size } from '../utils';
+import type { AppTypeOverrides, Eases, ImportList, ImportListItem, Size } from '../utils';
 import { bindAllMethods, deepMerge, getDynamicModuleFromImportListItem, isDev, isPromise, Logger } from '../utils';
 
 import { createFactoryMethods, defaultFactoryMethods } from '../mixins';
@@ -45,6 +45,8 @@ import { Signal } from '../signals';
 type App = AppTypeOverrides['App'];
 type AppContexts = AppTypeOverrides['Contexts'];
 type AppActions = AppTypeOverrides['Actions'];
+type AppPlugins = AppTypeOverrides['Plugins'];
+type AppStorageAdapters = AppTypeOverrides['StorageAdapters'];
 
 function getDefaultResolution() {
   return typeof window !== 'undefined' ? (window.devicePixelRatio > 1 ? 2 : 1) : 2;
@@ -354,7 +356,7 @@ export class Application extends PIXIPApplication implements IApplication {
    * @param namesOnly - If true, returns only the ease names.
    * @returns The registered eases or ease names.
    */
-  public eases(namesOnly: boolean = false): Ease | string[] {
+  public eases(namesOnly: boolean = false): Eases | string[] {
     const plugin = this.getPlugin<IGSAPPlugin>('GSAPPlugin');
     return namesOnly ? plugin.easeNames : plugin.eases;
   }
@@ -675,7 +677,7 @@ export class Application extends PIXIPApplication implements IApplication {
     return Application.instance as unknown as App;
   }
 
-  public getPlugin<T extends IPlugin>(pluginName: string, debug: boolean = false): T {
+  public getPlugin<T extends IPlugin>(pluginName: AppPlugins, debug: boolean = false): T {
     const plugin = this._plugins.get(pluginName) as T;
     if (!plugin && debug) {
       Logger.error(`Plugin with name "${pluginName}" not found.`);
@@ -782,7 +784,7 @@ export class Application extends PIXIPApplication implements IApplication {
    * @param {string} adapterId
    * @returns {IStorageAdapter}
    */
-  public getStorageAdapter(adapterId: string): IStorageAdapter {
+  public getStorageAdapter(adapterId: AppStorageAdapters): IStorageAdapter {
     return this.store.getAdapter(adapterId);
   }
 

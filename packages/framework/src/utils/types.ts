@@ -1,5 +1,6 @@
-import type { AssetInitOptions, AssetsManifest, AssetsPreferences, UnresolvedAsset } from 'pixi.js';
+import type { AssetInitOptions, AssetsManifest, AssetsPreferences, Texture, UnresolvedAsset } from 'pixi.js';
 import { Point } from 'pixi.js';
+import type { FilterBitmapFontNames, FilterCleanAssetNames, FilterSpineAssetNames } from './typefilters';
 
 /**
  * A generic constructor type.
@@ -130,7 +131,7 @@ export type AppSize = {
   screenHeight: number;
 };
 
-export type Ease<T extends string = string> = Record<T, gsap.EaseFunction>;
+export type Eases<T extends string = string> = Record<T, gsap.EaseFunction>;
 
 // from gsap
 export type EaseString =
@@ -287,3 +288,21 @@ export type DeepPartial<T> = {
 
 /* eslint-disable @typescript-eslint/no-empty-interface, @typescript-eslint/no-explicit-any */
 export interface AppTypeOverrides {}
+
+export type TextureAsset =
+  | FilterCleanAssetNames<AssetTypeOverrides['Texture']>
+  | AssetTypeOverrides['TPSFrames']
+  | (string & {})
+  | Texture;
+
+export type TPSFramesAsset = AssetTypeOverrides['TPSFrames'] & (string & {});
+
+export type SpritesheetAsset = FilterCleanAssetNames<AssetTypeOverrides['SpriteSheet']> | (string & {});
+
+export type AudioAsset = FilterCleanAssetNames<AssetTypeOverrides['Audio']> | (string & {});
+
+export type FontFamilyAsset = FilterCleanAssetNames<AssetTypeOverrides['FontFamily']> | (string & {});
+
+export type BitmapFontFamilyAsset = FilterBitmapFontNames<AssetTypeOverrides['BitmapFontFamily']> | (string & {});
+
+export type SpineAsset = FilterSpineAssetNames<AssetTypeOverrides['SpineData']> | (string & {});

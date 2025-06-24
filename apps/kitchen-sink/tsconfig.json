@@ -1,5 +1,5 @@
 {
-  "extends": "../../packages/framework/config/tsconfig.json",
+  "extends": "../../packages/framework/config/tsconfig.base.json",
   "compilerOptions": {
     "rootDir": ".",
     "baseUrl": ".",
@@ -13,7 +13,7 @@
       "@dill-pixel/storage-adapter-firebase/*": ["../../packages/storage-adapters/firebase/src/*"],
       "@dill-pixel/storage-adapter-supabase/*": ["../../packages/storage-adapters/supabase/src/*"]
     },
-    "types": ["vite/client"]
+    "types": ["vite/client", "vite-plugin-pwa/client"]
   },
   "references": [
     {
@@ -44,6 +44,6 @@
       "path": "../../packages/storage-adapters/supabase"
     }
   ],
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.json"],
+  "include": ["src", "dill-pixel.config.ts", "src/**/*.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

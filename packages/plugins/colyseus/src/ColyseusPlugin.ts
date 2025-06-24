@@ -1,7 +1,7 @@
 import { Schema } from '@colyseus/schema';
 import * as Colyseus from 'colyseus.js';
 import { Room } from 'colyseus.js';
-import type { Application, IApplication, IPlugin } from 'dill-pixel';
+import type { IApplication, IPlugin } from 'dill-pixel';
 import { Logger, Plugin } from 'dill-pixel';
 
 export type SchemaConstructor<T = Schema> = new (...args: any[]) => T;
@@ -10,7 +10,7 @@ export type ColyseusPluginOptions = {
   port: string;
 };
 
-export interface IColyseusPlugin extends IPlugin {
+export interface IColyseusPlugin extends IPlugin<ColyseusPluginOptions> {
   readonly client: Colyseus.Client;
 
   initialize(options?: Partial<ColyseusPluginOptions>, app?: IApplication): void;
@@ -28,7 +28,7 @@ export interface IColyseusPlugin extends IPlugin {
   joinById<T>(roomId: string, options?: Colyseus.JoinOptions, rootSchema?: SchemaConstructor<T>): Promise<Room<T>>;
 }
 
-export class ColyseusPlugin extends Plugin<Application, ColyseusPluginOptions> implements IColyseusPlugin {
+export class ColyseusPlugin extends Plugin<ColyseusPluginOptions> implements IColyseusPlugin {
   private _client: Colyseus.Client;
 
   get client(): Colyseus.Client {

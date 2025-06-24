@@ -1,4 +1,4 @@
-import { Logger, SceneTransition } from 'dill-pixel';
+import { SceneTransition } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Sprite } from 'pixi.js';
 import { COLOR_BG } from './utils/Constants';
@@ -13,7 +13,6 @@ export class Transition extends SceneTransition {
   }
 
   initialize() {
-    Logger.log('initialize transition');
     this._bg = this.addColoredBackground({ color: COLOR_BG, alpha: 1 });
     this._bg.visible = false;
 

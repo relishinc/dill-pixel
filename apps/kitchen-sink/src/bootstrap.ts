@@ -3,67 +3,14 @@ import 'dill-pixel-globals'; // required for globals like the scenes list
 // import 'dill-pixel-pwa'; // required for pwa
 // DillPixel.pwa.register();
 
-import { V8Application } from './V8Application';
-import { config } from './dill-pixel.config';
+import { config } from '../dill-pixel.config';
 
 /**
  * PWA
  */
 
 async function bootstrap() {
-  // add progress event listener (can be done before app creation for splash)
-  // window.addEventListener(DillPixelEvent.REQUIRED_ASSETS_START, () => {
-  //   console.log('assets start');
-  // });
-
-  // window.addEventListener(DillPixelEvent.REQUIRED_ASSETS_PROGRESS, (event) => {
-  //   const e = event as DillPixelProgressEvent;
-  //   console.log('assets progress', e.detail.progress);
-  // });
-
-  // window.addEventListener(DillPixelEvent.REQUIRED_ASSETS_COMPLETE, () => {
-  //   console.log('ASSETS COMPLETE');
-  // });
-
-  const app = await create<V8Application>(config, V8Application);
-
-  // full screen on pointer down
-  // app.stage.eventMode = 'static';
-  // app.stage.on('pointerdown', () => {
-  //   app.setFullScreenElement(document.body);
-  //   app.setFullScreen(true);
-  // });
-
-  /*
-  // test data adapter
-  app.data.clear();
-  let data = app.data.get();
-  console.log('data 1', JSON.stringify(data, null, 2));
-  app.data.set('foo', 'anthony');
-  let foo = app.data.get('foo');
-
-  console.log('foo', JSON.stringify(foo, null, 2));
-  app.data.set({ foo: 'baz', saved: 'adsf;kjdfgj' });
-
-  data = app.data.get();
-  foo = app.data.get('foo');
-
-  console.log('foo 2', JSON.stringify(foo, null, 2));
-  console.log('data 2', JSON.stringify(data, null, 2));
-
-  app.data.clear('foo');
-
-  foo = app.data.get('foo');
-  console.log('foo 3', JSON.stringify(foo, null, 2));
-
-  app.data.set({ foo: 'bar', list2: [1, 2] });
-  app.data.concat('list', ['hello', 'world', 'foo', 'bar', 'baz']);
-  app.data.concat('list2', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-  app.data.concat('list3', [{ bar: 'bar', baz: 5 }]);
-  app.data.increment('bar', 10);
-  app.data.append('saved', 'adsf;kjdfgj', ' ');
-  app.data.append('saved', 'more', '-');
-  */
+  const app = await create(config);
 
   function populateSidebar() {
     // populate sidebar

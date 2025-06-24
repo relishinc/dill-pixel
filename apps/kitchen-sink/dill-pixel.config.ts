@@ -1,10 +1,11 @@
-import EN from '@/locales/en';
-import { Transition } from '@/Transition';
-import { ExampleOutliner } from '@/ui/ExampleOutliner';
-import { defineActions, defineButtons, defineConfig, defineContexts, defineControls } from 'dill-pixel';
-import { Splash } from './Splash';
-import { FONT_KUMBH_SANS } from './utils/Constants';
-import { Eases } from './utils/Easing';
+import { CustomEases } from '@/utils/Easing';
+import { defineActions, defineButtons, defineConfig, defineContexts, defineControls, defineData } from 'dill-pixel';
+import EN from './src/locales/en';
+import { Splash } from './src/Splash';
+import { Transition } from './src/Transition';
+import { ExampleOutliner } from './src/ui/ExampleOutliner';
+import { FONT_KUMBH_SANS } from './src/utils/Constants';
+import { V8Application } from './src/V8Application';
 
 /** Default template */
 export const contexts = defineContexts(['default', 'game', 'menu', 'popup']);
@@ -44,8 +45,6 @@ export const actions = defineActions(contexts, {
 });
 
 /** Don't touch */
-export type Contexts = (typeof contexts)[number];
-export type ActionTypes = keyof typeof actions;
 /** Don't touch */
 
 const buttons = defineButtons(['A', 'B']);
@@ -81,32 +80,26 @@ export const controls = defineControls(actions, buttons, {
 });
 /** End of Default Template */
 
-type Foo = {
-  bar: string;
-  baz: number;
-};
-
-/** User config */
-export type Data = {
-  foo: string;
-  bar: number;
-  num: number;
-  saved: string;
-  list: string[];
-  list2: number[];
-  list3: Foo[];
-  baz: {
-    qux: boolean;
-    quux: string[];
-  };
-};
-
 export type AnalyticsEvents = {
   foo: { bar: string; baz: number; qux: boolean };
 };
 
-export const config = defineConfig<Data>({
+export const dataSchema = defineData({
+  foo: '',
+  bar: 0,
+  num: 0,
+  saved: '',
+  list: [] as string[],
+  list2: [] as number[],
+  baz: {
+    qux: false,
+    quux: [] as string[],
+  },
+});
+
+export const config = defineConfig({
   id: 'V8Application',
+  application: V8Application,
   splash: {
     preload: {
       bundles: ['splash'],
@@ -138,7 +131,7 @@ export const config = defineConfig<Data>({
     'Storage Adapters',
   ],
   gsap: {
-    eases: Eases,
+    eases: CustomEases,
   },
   data: {
     initial: {
@@ -146,7 +139,6 @@ export const config = defineConfig<Data>({
       saved: 'QUX',
       list: ['hello', 'world'],
       list2: [0, 1],
-      list3: [{ bar: 'bar', baz: 0 }],
     },
     backupKeys: [],
   },
@@ -217,7 +209,7 @@ export const config = defineConfig<Data>({
     locales: ['en', 'fr', 'fr-json'],
     files: [
       { id: 'en', module: EN },
-      { id: 'fr', module: () => import('@/locales/fr') },
+      { id: 'fr', module: () => import('./src/locales/fr') },
       { id: 'fr-json', json: 'locales/fr.json' },
     ],
   },

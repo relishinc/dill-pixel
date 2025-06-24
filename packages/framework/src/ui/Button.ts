@@ -14,7 +14,7 @@ import type { IApplication } from '../core';
 import { Application } from '../core/Application';
 import { Factory, Focusable, HTMLTextProps, Interactive, type TextProps, WithSignals } from '../mixins';
 import { Signal } from '../signals';
-import { bindAllMethods, SpriteSheetLike, TextureLike } from '../utils';
+import { bindAllMethods, type SpritesheetAsset, type TextureAsset } from '../utils';
 
 export type ButtonCallback = (() => void) | (() => Promise<void>);
 export type ButtonAction = { id: string | number; data?: any };
@@ -47,10 +47,10 @@ export interface IButton {
 export type ButtonConfig = {
   id: string;
   textures: {
-    default: TextureLike;
-    hover?: TextureLike;
-    active?: TextureLike;
-    disabled?: TextureLike;
+    default: TextureAsset;
+    hover?: TextureAsset;
+    active?: TextureAsset;
+    disabled?: TextureAsset;
   };
   sounds?: {
     hover?: string;
@@ -69,7 +69,7 @@ export type ButtonConfig = {
   textLabel?: Partial<TextProps | HTMLTextProps> & { type?: 'text' | 'html' | 'bitmap' };
   cursor: Cursor;
   disabledCursor: Cursor;
-  sheet: SpriteSheetLike;
+  sheet: SpritesheetAsset;
   enabled: boolean;
   layout?: Omit<LayoutOptions, 'target'> | null | boolean;
 };
@@ -139,7 +139,7 @@ export class Button extends _Button implements IButton {
         disabledCursor: 'not-allowed',
       },
       config,
-    );
+    ) as ButtonConfig;
 
     this.id = this.config.id;
 
@@ -278,7 +278,7 @@ export class Button extends _Button implements IButton {
     this._isDownCallbacks.delete(callbackId);
   }
 
-  setTexture(textureId: ButtonTextureId, texture: TextureLike) {
+  setTexture(textureId: ButtonTextureId, texture: TextureAsset) {
     this.config.textures[textureId] = texture;
     if (textureId === 'default') {
       this.view.texture = this.make.texture({

@@ -4,6 +4,7 @@ import { Application } from '../core/Application';
 import type { IScene, ISceneTransition, SceneTransition } from '../display';
 import { Signal } from '../signals';
 import {
+  type AppTypeOverrides,
   AssetTypes,
   bindAllMethods,
   BundleTypes,
@@ -11,13 +12,14 @@ import {
   createQueue,
   getDynamicModuleFromImportListItem,
   isDev,
-  Logger,
   Queue,
   SceneImportList,
   SceneImportListItem,
 } from '../utils';
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
+
+type AppScenes = AppTypeOverrides['Scenes'];
 
 export interface ISceneManagerPlugin extends IPlugin {
   isFirstScene: boolean;
@@ -28,7 +30,7 @@ export interface ISceneManagerPlugin extends IPlugin {
   splash: { view: ISceneTransition | null; hideWhen: SplashHideWhen; zOrder: SplashZOrder };
   transition?: ISceneTransition;
   currentScene: IScene;
-  readonly ids: string[];
+  readonly ids: AppScenes[];
   readonly defaultScene: string;
   readonly debugGroupsList: any[];
 
@@ -36,7 +38,7 @@ export interface ISceneManagerPlugin extends IPlugin {
 
   loadDefaultScene(): Promise<void>;
 
-  loadScene(sceneIdOrLoadSceneConfig: LoadSceneConfig | string): Promise<void>;
+  loadScene(sceneIdOrLoadSceneConfig: LoadSceneConfig | AppScenes): Promise<void>;
 
   getSceneFromHash(): string | null;
 }
@@ -63,7 +65,7 @@ export type SplashOptions = {
 };
 
 export type LoadSceneConfig = {
-  id: string;
+  id: AppScenes;
   method?: LoadSceneMethod;
 };
 
@@ -510,7 +512,6 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
 
   private async _showSplash() {
     if (this.splash.preload) {
-      Logger.log('preloading assets', this.splash.preload);
       if (this.splash.preload.assets) {
         await this.app.assets.loadAssets(this.splash.preload.assets, false);
       }

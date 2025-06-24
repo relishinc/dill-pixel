@@ -24,7 +24,6 @@ import {
   SpriteProps,
   SvgProps,
   TextProps,
-  TextPropsKeys,
   TilingSpriteProps,
   UICanvasFactoryProps,
 } from './props';
@@ -107,7 +106,7 @@ export const defaultFactoryMethods = {
   },
   animatedSprite: (props?: Partial<AnimatedSpriteProps>): AnimatedSprite => {
     const entity = new AnimatedSprite(props);
-    if (props?.position) {
+    if (props?.position || props?.x || props?.y) {
       resolvePosition({ position: props.position, x: props.x, y: props.y }, entity);
     }
     if (props?.scale) {
@@ -192,9 +191,17 @@ export const defaultFactoryMethods = {
     return entity;
   },
   bitmapText: (props?: Partial<BitmapTextProps>) => {
-    const options = pluck(props ?? {}, TextPropsKeys);
+    const options = props
+      ? {
+          text: props.text,
+          roundPixels: props.roundPixels,
+          style: props.style,
+          anchor: props.anchor ? resolvePointLike(props.anchor, true) : undefined,
+          pivot: props.pivot ? resolvePointLike(props.pivot, true) : undefined,
+        }
+      : {};
     const entity = new BitmapText(options);
-    if (props?.position) {
+    if (props?.position || props?.x || props?.y) {
       resolvePosition({ position: props.position, x: props.x, y: props.y }, entity);
     }
     if (props?.scale) {

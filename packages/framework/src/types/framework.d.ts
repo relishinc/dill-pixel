@@ -9,13 +9,16 @@ declare module '../utils/types' {
     Contexts: ActionContext;
     Actions: Action;
     ActionMap: Record<string, Action>;
+    Scenes: string;
+    Plugins: string;
+    StorageAdapters: string;
   }
   export interface AssetTypeOverrides {
-    TextureLike: string;
+    Texture: string;
     TPSFrames: string;
-    SpriteSheetLike: string;
+    SpriteSheet: string;
     SpineData: string;
-    AudioLike: string;
+    Audio: string;
     FontFamily: string;
     BitmapFontFamily: string;
   }
@@ -28,13 +31,16 @@ declare module 'dill-pixel' {
     Contexts: ActionContext;
     Actions: Action;
     ActionMap: Record<string, Action>;
+    Scenes: string;
+    Plugins: string;
+    StorageAdapters: string;
   }
   export interface AssetTypeOverrides {
-    TextureLike: string;
+    Texture: string;
     TPSFrames: string;
-    SpriteSheetLike: string;
+    SpriteSheet: string;
     SpineData: string;
-    AudioLike: string;
+    Audio: string;
     FontFamily: string;
     BitmapFontFamily: string;
   }

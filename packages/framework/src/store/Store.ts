@@ -1,5 +1,5 @@
 import type { IApplication } from '../core';
-import { Logger } from '../utils';
+import { type AppTypeOverrides, Logger } from '../utils';
 import type { IStorageAdapter } from './adapters';
 
 /**
@@ -9,6 +9,8 @@ type AdapterSaveConfig = {
   adapterId: string;
   awaitSave: boolean;
 };
+
+type AppStorageAdapters = AppTypeOverrides['StorageAdapters'];
 
 /**
  * Interface for the Store class.
@@ -20,18 +22,18 @@ export interface IStore {
 
   registerAdapter(adapter: IStorageAdapter, adapterOptions: any): void;
 
-  getAdapter<T extends IStorageAdapter = IStorageAdapter>(adapterId: string): T;
+  getAdapter<T extends IStorageAdapter = IStorageAdapter>(adapterId: AppStorageAdapters): T;
 
-  hasAdapter(adapterId: string): boolean;
+  hasAdapter(adapterId: AppStorageAdapters): boolean;
 
   save(
-    adapterId: string | string[] | Partial<AdapterSaveConfig>[],
+    adapterId: AppStorageAdapters | AppStorageAdapters[] | Partial<AdapterSaveConfig>[],
     key: string,
     data: any,
     awaitSave?: boolean,
   ): Promise<any>;
 
-  load(adapterId: string, key: string): Promise<any>;
+  load(adapterId: AppStorageAdapters, key: string): Promise<any>;
 }
 
 /**
@@ -39,7 +41,7 @@ export interface IStore {
  */
 export class Store implements IStore {
   private _app: IApplication;
-  private _adapters: Map<string, IStorageAdapter> = new Map<string, IStorageAdapter>();
+  private _adapters: Map<AppStorageAdapters, IStorageAdapter> = new Map<string, IStorageAdapter>();
 
   /**
    * Registers a new storage adapter with the store.
@@ -62,7 +64,7 @@ export class Store implements IStore {
    * @param {string} adapterId The ID of the adapter.
    * @returns {T} The adapter.
    */
-  getAdapter<T extends IStorageAdapter = IStorageAdapter>(adapterId: string): T {
+  getAdapter<T extends IStorageAdapter = IStorageAdapter>(adapterId: AppStorageAdapters): T {
     const adapter = this._adapters.get(adapterId);
     if (!adapter) {
       throw new Error(`Adapter ${adapterId} not found`);
@@ -75,7 +77,7 @@ export class Store implements IStore {
    * @param {string} adapterId The ID of the adapter.
    * @returns {boolean} True if the adapter is registered, false otherwise.
    */
-  hasAdapter(adapterId: string): boolean {
+  hasAdapter(adapterId: AppStorageAdapters): boolean {
     return this._adapters.has(adapterId);
   }
 
@@ -98,7 +100,7 @@ export class Store implements IStore {
    * @returns {Promise<any>} A promise that resolves with the result of the save operation.
    */
   async save(
-    adapterId: string | string[] | Partial<AdapterSaveConfig> | Partial<AdapterSaveConfig>[],
+    adapterId: AppStorageAdapters | AppStorageAdapters[] | Partial<AdapterSaveConfig> | Partial<AdapterSaveConfig>[],
     key: string,
     data: any,
     awaitSave = true,
@@ -149,7 +151,7 @@ export class Store implements IStore {
    * @param {string} key The key to load the data from.
    * @returns {Promise<any>} A promise that resolves with the loaded data.
    */
-  public async load(adapterId: string, key: string): Promise<any> {
+  public async load(adapterId: AppStorageAdapters, key: string): Promise<any> {
     const adapter = this._adapters.get(adapterId);
     if (!adapter) {
       throw new Error(`Adapter ${adapterId} not found`);
