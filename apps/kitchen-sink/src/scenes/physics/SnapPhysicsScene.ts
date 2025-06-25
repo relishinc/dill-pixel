@@ -1,6 +1,16 @@
 import { Platform, PlatformMovementConfigOpts } from '@/entities/snap/Platform';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
-import { Button, Camera, Container, delay, Joystick, UICanvas } from 'dill-pixel';
+import {
+  Button,
+  Camera,
+  Container,
+  delay,
+  Joystick,
+  type SceneAssets,
+  type SceneDebug,
+  type ScenePlugins,
+  UICanvas,
+} from 'dill-pixel';
 
 import { Door } from '@/entities/snap/Door';
 import { Player } from '@/entities/snap/Player';
@@ -10,14 +20,14 @@ import { GUIController } from 'dat.gui';
 import { gsap } from 'gsap';
 
 export const id = 'snap-physics';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Snap Physics',
   label: 'Level & Camera',
   order: 1,
 };
 
-export const plugins = ['snap-physics'];
-export const assets = {
+export const plugins: ScenePlugins = ['snap-physics'];
+export const assets: SceneAssets = {
   preload: {
     bundles: ['spine'],
   },

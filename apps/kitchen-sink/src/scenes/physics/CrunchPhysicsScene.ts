@@ -19,6 +19,9 @@ import {
   Container,
   intBetween,
   Joystick,
+  type SceneAssets,
+  type SceneDebug,
+  type ScenePlugins,
   Signal,
   UICanvas,
 } from 'dill-pixel';
@@ -28,14 +31,14 @@ import { FederatedPointerEvent, Point, Pool, Rectangle } from 'pixi.js';
 
 export const id = 'crunch-physics';
 
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Crunch Physics',
   label: 'Level & Camera',
   order: 6,
 };
 
-export const plugins = ['crunch-physics'];
-export const assets = {
+export const plugins: ScenePlugins = ['crunch-physics'];
+export const assets: SceneAssets = {
   preload: {
     bundles: ['kenney'],
   },
@@ -46,7 +49,7 @@ type PlatformData = {
   direction: number;
 };
 
-class Platform extends Solid<V8Application, PlatformData> {
+class Platform extends Solid<PlatformData> {
   type = 'Platform';
   private _player: Player | null = null;
 
@@ -535,9 +538,6 @@ export default class CrunchPhysicsScene extends BaseScene {
 
     // Platform 2 (moving)
     this.pf2 = this.createPlatform(400, 600, 200, 32, 'ground_grass');
-
-    // animate a point around a circle
-    const point = new Point(this.pf2.x, this.pf2.y);
 
     gsap.to(this.pf2, {
       y: 1200,

@@ -1,17 +1,17 @@
 import { BasicActor, CircActor, CircSolid, Projectile, RectActor, RectSolid } from '@/entities/snap/entities';
 import BaseScene from '@/scenes/BaseScene';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
-import { Container } from 'dill-pixel';
+import { Container, type SceneDebug, type ScenePlugins } from 'dill-pixel';
 
 export const id = 'snap-collisions';
 
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Snap Physics',
   label: 'Bodies & Collisions',
   order: 0,
 };
 
-export const plugins = ['snap-physics'];
+export const plugins: ScenePlugins = ['snap-physics'];
 
 export default class SnapCollisionsScene extends BaseScene {
   title = 'Snap Circle Collisions';

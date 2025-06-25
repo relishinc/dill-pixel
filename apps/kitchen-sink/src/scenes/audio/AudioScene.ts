@@ -1,10 +1,9 @@
-import { ActionDetail, Button, ButtonAction, ButtonConfig, FlexContainer } from 'dill-pixel';
+import { ActionDetail, Button, ButtonAction, ButtonConfig, FlexContainer, type SceneDebug } from 'dill-pixel';
 
 import BaseScene from '@/scenes/BaseScene';
-import { FONT_KUMBH_SANS } from '@/utils/Constants';
 
 export const id = 'audio';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Audio',
   label: 'Music & SFX',
 };
@@ -65,7 +64,7 @@ export default class AudioScene extends BaseScene {
     this.musicButtons.add.text({
       text: 'MUSIC',
       resolution: 2,
-      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontSize: 36, fontWeight: 'bold', align: 'center' },
+      style: { fill: 0xffffff, fontFamily: 'KumbhSans', fontSize: 36, fontWeight: 'bold', align: 'center' },
       layout: { height: 70 },
     });
 
@@ -103,7 +102,7 @@ export default class AudioScene extends BaseScene {
     this.sfxButtons.add.text({
       text: 'SFX',
       resolution: 2,
-      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontSize: 36, fontWeight: 'bold' },
+      style: { fill: 0xffffff, fontFamily: 'KumbhSans', fontSize: 36, fontWeight: 'bold' },
       layout: { height: 70 },
     });
     this.addButton(this.sfxButtons, 'Click', { sounds: { hover: 'hover', click: 'click' } });
@@ -145,7 +144,7 @@ export default class AudioScene extends BaseScene {
         disabled: 'btn/grey',
         active: 'btn/red',
       },
-      sheet: 'required/ui',
+      sheet: 'required',
       accessibleTitle: label,
       accessibleHint: `Press me to play a sound`,
       layout: { height: 70, width: 256 },
@@ -156,7 +155,7 @@ export default class AudioScene extends BaseScene {
       text: label,
       anchor: 0.5,
       resolution: 2,
-      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
+      style: { fill: 0xffffff, fontFamily: 'KumbhSans', fontWeight: 'bold', fontSize: 48, align: 'center' },
       layout: false,
     });
 

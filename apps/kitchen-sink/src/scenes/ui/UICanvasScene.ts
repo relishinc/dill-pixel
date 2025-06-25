@@ -1,17 +1,15 @@
 import BaseScene from '@/scenes/BaseScene';
-import { FONT_KUMBH_SANS } from '@/utils/Constants';
-import { UICanvas } from 'dill-pixel';
-import { TextStyleOptions } from 'pixi.js';
+import { TextStyle, UICanvas, type SceneDebug } from 'dill-pixel';
 
 export const id = 'ui-canvas';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'UI',
   label: 'UI Canvas',
   order: 4,
 };
 
-const whiteTextStyle = (size: number): Partial<TextStyleOptions> => ({
-  fontFamily: FONT_KUMBH_SANS,
+const whiteTextStyle = (size: number): Partial<TextStyle> => ({
+  fontFamily: 'KumbhSans',
   fontWeight: 'bold',
   fill: 0xffffff,
   fontSize: size ?? 24,

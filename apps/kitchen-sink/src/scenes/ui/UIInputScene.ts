@@ -1,9 +1,9 @@
-import { FlexContainer, Input } from 'dill-pixel';
+import { FlexContainer, Input, type SceneDebug } from 'dill-pixel';
 
 import BaseScene from '@/scenes/BaseScene';
 
 export const id = 'ui-input';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'UI',
   label: 'UI Input',
   order: 6,

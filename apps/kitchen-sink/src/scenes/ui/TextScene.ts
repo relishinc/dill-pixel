@@ -1,10 +1,10 @@
 import { FONT_KUMBH_SANS, FONT_KUMBH_SANS_BLACK } from '@/utils/Constants';
-import { FlexContainer, Size } from 'dill-pixel';
+import { FlexContainer, Size, type SceneDebug } from 'dill-pixel';
 import BaseScene from '../BaseScene';
 
 export const id = 'text';
 
-export const debug = {
+export const debug: SceneDebug = {
   label: 'Text',
   group: 'UI',
   order: 0,

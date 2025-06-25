@@ -1,13 +1,13 @@
 import BaseScene from '@/scenes/BaseScene';
-import { SpineAnimation } from 'dill-pixel';
+import { type SceneAssets, type SceneDebug, SpineAnimation } from 'dill-pixel';
 
 export const id = 'spine';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Display',
   label: 'Spine Animations',
 };
 
-export const assets = {
+export const assets: SceneAssets = {
   preload: {
     bundles: ['spine'],
   },

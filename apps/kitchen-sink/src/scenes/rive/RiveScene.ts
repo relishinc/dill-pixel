@@ -1,16 +1,16 @@
 import BaseScene from '@/scenes/BaseScene';
 import { RiveEntity } from '@dill-pixel/plugin-rive';
-import { FlexContainer } from 'dill-pixel';
+import { FlexContainer, type SceneAssets, type SceneDebug, type ScenePlugins } from 'dill-pixel';
 import { FederatedEvent } from 'pixi.js';
 
 export const id = 'rive';
 
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Rive',
   label: 'Rive (Various)',
 };
 
-export const assets = {
+export const assets: SceneAssets = {
   preload: {
     assets: [
       {
@@ -26,7 +26,7 @@ export const assets = {
   autoUnload: true,
 };
 
-export const plugins = ['rive'];
+export const plugins: ScenePlugins = ['rive'];
 
 export default class RiveScene extends BaseScene {
   public title = 'Rive';

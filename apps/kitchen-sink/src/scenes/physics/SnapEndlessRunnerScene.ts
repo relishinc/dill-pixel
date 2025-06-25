@@ -1,6 +1,14 @@
 import { Platform, PlatformConfig, PlatformMovementConfigOpts } from '@/entities/snap/Platform';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
-import { Button, Container, Joystick, UICanvas } from 'dill-pixel';
+import {
+  Button,
+  Container,
+  Joystick,
+  type SceneAssets,
+  type SceneDebug,
+  type ScenePlugins,
+  UICanvas,
+} from 'dill-pixel';
 
 import { Door } from '@/entities/snap/Door';
 import { EndlessRunner } from '@/entities/snap/EndlessRunner';
@@ -10,15 +18,15 @@ import { SegmentConfig } from '@/entities/snap/Segment';
 import BaseScene from '@/scenes/BaseScene';
 
 export const id = 'snap-endless-runner';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Snap Physics',
   label: 'Endless Runner',
   order: 3,
 };
 
-export const plugins = ['snap-physics'];
+export const plugins: ScenePlugins = ['snap-physics'];
 
-export const assets = {
+export const assets: SceneAssets = {
   preload: {
     bundles: ['spine'],
   },

@@ -1,9 +1,9 @@
 import BaseScene from '@/scenes/BaseScene';
-import { FlexContainer, SceneAssets } from 'dill-pixel';
+import { FlexContainer, type SceneAssets, type SceneDebug } from 'dill-pixel';
 import { Sprite } from 'pixi.js';
 
 export const id = 'assets';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Framework',
   label: 'Assets',
 };

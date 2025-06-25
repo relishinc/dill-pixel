@@ -1,18 +1,17 @@
 import { CircSolid, Projectile, RectSolid } from '@/entities/snap/entities';
 import BaseScene from '@/scenes/BaseScene';
-import { FONT_KUMBH_SANS } from '@/utils/Constants';
 import { Collision, default as SnapPhysics } from '@dill-pixel/plugin-snap-physics';
-import { bool, Container } from 'dill-pixel';
+import { bool, Container, type SceneDebug, type ScenePlugins } from 'dill-pixel';
 import { FederatedPointerEvent, Point, Pool, Text } from 'pixi.js';
 
 export const id = 'snap-projectiles';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Snap Physics',
   label: 'Projectiles',
   order: 2,
 };
 
-export const plugins = ['snap-physics'];
+export const plugins: ScenePlugins = ['snap-physics'];
 
 class Ball extends Projectile {
   type = 'Ball';
@@ -227,7 +226,7 @@ export default class SnapProjectileScene extends BaseScene {
     });
 
     this.countText = this.add.text({
-      style: { fontFamily: FONT_KUMBH_SANS, fill: 'white', fontSize: 18 },
+      style: { fontFamily: 'KumbhSans', fill: 'white', fontSize: 18 },
       x: -this.app.size.width * 0.5 + 30,
       y: -this.app.size.height * 0.5 + 120,
       text: `Balls: ${this._balls.length}`,

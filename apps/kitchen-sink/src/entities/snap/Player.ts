@@ -2,13 +2,12 @@ import { ActionDetail, PointLike, resolvePointLike, Signal, SpineAnimation } fro
 
 import { FX } from '@/entities/snap/FX';
 import { Portal, PortalEnterDetail } from '@/entities/snap/Portal';
-import { V8Application } from '@/V8Application';
 import { Collision, Entity, Actor as SnapActor, SnapBoundary } from '@dill-pixel/plugin-snap-physics';
 import { gsap } from 'gsap';
 import { Point, Rectangle } from 'pixi.js';
 import { Platform } from './Platform';
 
-export class Player extends SnapActor<any, V8Application> {
+export class Player extends SnapActor {
   declare view: SpineAnimation;
   type = 'Player';
   passThroughTypes = ['FX'];

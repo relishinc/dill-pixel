@@ -1,19 +1,18 @@
-import { AlignItems, clamp, FlexContainer, FlexDirection, FlexWrap, JustifyContent } from 'dill-pixel';
+import { AlignItems, clamp, FlexContainer, FlexDirection, FlexWrap, JustifyContent, type SceneDebug } from 'dill-pixel';
 import { Graphics, TextStyleOptions } from 'pixi.js';
 
 import BaseScene from '@/scenes/BaseScene';
-import { FONT_KUMBH_SANS } from '@/utils/Constants';
 import { GUIController } from 'dat.gui';
 
 export const id = 'flex-container';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'UI',
   label: 'Flex Container',
   order: 3,
 };
 
 const whiteTextStyle = (size: number): Partial<TextStyleOptions> => ({
-  fontFamily: FONT_KUMBH_SANS,
+  fontFamily: 'KumbhSans',
   fontWeight: 'bold',
   fill: 0xffffff,
   fontSize: size ?? 24,

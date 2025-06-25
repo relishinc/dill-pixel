@@ -9,21 +9,21 @@ import {
   Sensor,
   Solid,
 } from '@dill-pixel/plugin-crunch-physics';
-import { bool, Container, PointLike, Signal } from 'dill-pixel';
+import { bool, Container, PointLike, SceneDebug, ScenePlugins, Signal } from 'dill-pixel';
 import gsap from 'gsap';
 import { Graphics, Rectangle, Ticker } from 'pixi.js';
 
 export const id = 'endless-runner';
 
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Crunch Physics',
   label: 'Endless Runner',
   order: 7,
 };
 
-export const plugins = ['crunch-physics'];
+export const plugins: ScenePlugins = ['crunch-physics'];
 
-class Runner extends Actor<V8Application> {
+class Runner extends Actor {
   type = 'Runner';
   excludeCollisionTypes = new Set(['Coin']);
 
@@ -379,7 +379,7 @@ export default class CrunchEndlessRunnerScene extends BaseScene {
   };
 
   get physics(): ICrunchPhysicsPlugin {
-    return this.app.getPlugin('crunch-physics') as ICrunchPhysicsPlugin;
+    return this.app.getPlugin('crunch-physics') as unknown as ICrunchPhysicsPlugin;
   }
 
   configureGUI() {

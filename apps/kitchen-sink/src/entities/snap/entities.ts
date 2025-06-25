@@ -1,4 +1,3 @@
-import { V8Application } from '@/V8Application';
 import { Actor, Solid, WithVelocity } from '@dill-pixel/plugin-snap-physics';
 import { Signal, Size } from 'dill-pixel';
 import { Texture } from 'pixi.js';
@@ -12,7 +11,7 @@ type BasicActorConfig = {
   activeColor: number;
 };
 
-export class BasicActor<T extends BasicActorConfig = BasicActorConfig> extends Actor<T, V8Application> {
+export class BasicActor<T extends BasicActorConfig = BasicActorConfig> extends Actor<T> {
   static speed: number = 5;
   static onActivated = new Signal<(actor: BasicActor) => void>();
 

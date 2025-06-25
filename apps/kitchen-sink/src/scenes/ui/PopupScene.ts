@@ -1,11 +1,10 @@
-import { ActionDetail, Button, FlexContainer, PopupConfig } from 'dill-pixel';
+import { ActionDetail, Button, FlexContainer, PopupConfig, type SceneDebug } from 'dill-pixel';
 
 import { ExamplePopup } from '@/popups/ExamplePopup';
 import BaseScene from '@/scenes/BaseScene';
-import { FONT_KUMBH_SANS } from '@/utils/Constants';
 
 export const id = 'ui-popup';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'UI',
   label: 'Popups',
   order: 2,
@@ -90,7 +89,7 @@ export default class PopupScene extends BaseScene {
       text: label,
       anchor: 0.5,
       resolution: 2,
-      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
+      style: { fill: 0xffffff, fontFamily: 'KumbhSans', fontWeight: 'bold', fontSize: 48, align: 'center' },
     });
 
     this.addSignalConnection(btn.onClick.connect(callback));

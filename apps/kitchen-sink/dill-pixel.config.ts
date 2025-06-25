@@ -96,7 +96,7 @@ export const dataSchema = defineData({
   },
 });
 
-const config = defineConfig({
+export default defineConfig({
   id: 'V8Application',
   application: V8Application,
   sceneTransition: Transition,
@@ -227,5 +227,4 @@ const config = defineConfig({
   resolution: 2,
 });
 
-export default config;
 /** End of User config */

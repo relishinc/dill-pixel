@@ -1,18 +1,16 @@
 import BaseScene from '@/scenes/BaseScene';
-import { FONT_KUMBH_SANS } from '@/utils/Constants';
 import { Entity, default as MatterPhysics } from '@dill-pixel/plugin-matter-physics';
-import { Container, ParticleContainer, UICanvas } from 'dill-pixel';
+import { Container, ParticleContainer, type SceneDebug, type ScenePlugins, UICanvas } from 'dill-pixel';
 import { FederatedPointerEvent, Particle, ParticleOptions, Rectangle, Text, Texture } from 'pixi.js';
 
 export const id = 'matter-physics';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Matter Physics',
   label: 'Object Creation',
   order: 4,
 };
 
-export const plugins = ['matter-physics'];
-
+export const plugins: ScenePlugins = ['matter-physics'];
 class FlourishParticle extends Particle {
   direction: number;
   speed: number;
@@ -116,7 +114,7 @@ export default class MatterPhysicsScene extends BaseScene {
     this.level = this.add.container();
 
     this.countText = this.add.text({
-      style: { fontFamily: FONT_KUMBH_SANS, fill: 'white', fontSize: 18 },
+      style: { fontFamily: 'KumbhSans', fill: 'white', fontSize: 18 },
       x: -this.app.size.width * 0.5 + 30,
       y: -this.app.size.height * 0.5 + 120,
     });

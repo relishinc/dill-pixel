@@ -1,9 +1,9 @@
 import BaseScene from '@/scenes/BaseScene';
-import { ActionDetail, Button, FlexContainer } from 'dill-pixel';
+import { ActionDetail, Button, FlexContainer, type SceneDebug } from 'dill-pixel';
 import { Text } from 'pixi.js';
 
 export const id = 'voiceover';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Accessibility',
   label: 'Voiceovers & Captions',
 };
@@ -64,7 +64,6 @@ export default class VoiceoverScene extends BaseScene {
       justifyContent: 'center',
       layout: { width: this.app.size.width, flexWrap: 'wrap' },
     });
-    this.buttonContainer.debug = true;
     this.buttonContainer.label = 'ButtonContainer';
 
     this.voButtons = this.buttonContainer.add.flexContainer({
@@ -157,7 +156,7 @@ export default class VoiceoverScene extends BaseScene {
       scale: 0.5,
       cursor: 'pointer',
       textures: { default: 'btn/blue', hover: 'btn/yellow', disabled: 'btn/grey', active: 'btn/red' },
-      sheet: 'ui',
+      sheet: 'required',
       accessibleTitle: label,
       accessibleHint: `Press me to play a sound`,
       layout: { width: 256, height: 70 },

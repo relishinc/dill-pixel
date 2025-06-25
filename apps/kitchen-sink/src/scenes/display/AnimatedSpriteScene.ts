@@ -1,14 +1,13 @@
 import BaseScene from '@/scenes/BaseScene';
-import { FONT_KUMBH_SANS } from '@/utils/Constants';
-import { AnimatedSprite, capitalize, FlexContainer } from 'dill-pixel';
+import { AnimatedSprite, capitalize, FlexContainer, type SceneAssets, type SceneDebug } from 'dill-pixel';
 
 export const id = 'animated-sprites';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Display',
   label: 'Animated Sprites',
 };
 
-export const assets = {
+export const assets: SceneAssets = {
   preload: {
     bundles: ['platformer'],
   },
@@ -71,7 +70,7 @@ export default class AnimatedSpriteScene extends BaseScene {
     const title = charContainer.add.text({
       text: name,
       style: {
-        fontFamily: FONT_KUMBH_SANS,
+        fontFamily: 'KumbhSans',
         fontSize: 32,
         fontWeight: '700',
         fill: 0xffffff,
@@ -105,7 +104,7 @@ export default class AnimatedSpriteScene extends BaseScene {
     const label = charContainer.add.text({
       text: capitalize(sprite.currentAnimation),
       style: {
-        fontFamily: FONT_KUMBH_SANS,
+        fontFamily: 'KumbhSans',
         fontSize: 20,
         fill: 0xffffff,
       },

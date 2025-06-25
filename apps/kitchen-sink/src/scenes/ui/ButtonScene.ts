@@ -1,9 +1,9 @@
 import BaseScene from '@/scenes/BaseScene';
-import { Button, FlexContainer } from 'dill-pixel';
+import { Button, FlexContainer, type SceneDebug } from 'dill-pixel';
 import { type Text } from 'pixi.js';
 
 export const id = 'buttons';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'UI',
   label: 'Buttons',
   order: 1,

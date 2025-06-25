@@ -1,24 +1,23 @@
 import BaseScene from '@/scenes/BaseScene';
-import { V8Application } from '@/V8Application';
 import MatterPhysicsPlugin, { Entity, MatterBodyType } from '@dill-pixel/plugin-matter-physics';
-import { bool, Container, intBetween } from 'dill-pixel';
+import { bool, Container, intBetween, type SceneAssets, type SceneDebug, type ScenePlugins } from 'dill-pixel';
 import { DEG_TO_RAD, Rectangle, Texture } from 'pixi.js';
 export const id = 'matter-platformer';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Matter Physics',
   label: 'Platformer',
   order: 5,
 };
 
-export const plugins = ['matter-physics'];
+export const plugins: ScenePlugins = ['matter-physics'];
 
-export const assets = {
+export const assets: SceneAssets = {
   preload: {
     bundles: ['kenney'],
   },
 };
 
-class Player extends Entity<V8Application> {
+class Player extends Entity {
   bodyType: MatterBodyType = 'rectangle';
   debugColor = 0xfff000;
 

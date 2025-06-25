@@ -1,11 +1,10 @@
 import { Actor } from '@/entities/Actor';
 import BaseScene from '@/scenes/BaseScene';
-import { FONT_KUMBH_SANS } from '@/utils/Constants';
-import { Button, FlexContainer, Logger, scaleToWidth } from 'dill-pixel';
+import { Button, FlexContainer, Logger, scaleToWidth, type SceneDebug } from 'dill-pixel';
 import { Text } from 'pixi.js';
 
 export const id = 'focus';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Accessibility',
   label: 'Focus Management',
 };
@@ -32,7 +31,7 @@ export default class FocusScene extends BaseScene {
     this._focusLayerLabel = this.add.text({
       text: 'Focus layer:',
       resolution: 2,
-      style: { fill: 'white', fontFamily: FONT_KUMBH_SANS },
+      style: { fill: 'white', fontFamily: 'KumbhSans' },
       x: -this.app.center.x + 30,
       y: this.app.center.y - 100,
     });
@@ -158,9 +157,6 @@ export default class FocusScene extends BaseScene {
       }),
       this.app.keyboard.onKeyUp('F').connect(() => {
         this.app.focus.setFocusLayer(this.app.focus.currentLayerId === 'one' ? 'two' : 'one');
-      }),
-      this.app.keyboard.onKeyUp('S').connect(() => {
-        void this.app.scenes.loadScene({ id: 'TestScene2' });
       }),
     );
 

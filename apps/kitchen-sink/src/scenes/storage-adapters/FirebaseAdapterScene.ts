@@ -1,13 +1,13 @@
-import { ActionDetail, Button, FlexContainer, IFocusable, Input, Logger } from 'dill-pixel';
+import { ActionDetail, Button, FlexContainer, IFocusable, Input, Logger, type SceneDebug } from 'dill-pixel';
 import { collection, DocumentData, limit, onSnapshot, orderBy, QuerySnapshot, where } from 'firebase/firestore';
-import { Graphics, Text } from 'pixi.js';
+import { Container, Graphics, Text } from 'pixi.js';
 
 import { SimpleButton } from '@/popups/ExamplePopup';
 import BaseScene from '@/scenes/BaseScene';
 import { gsap } from 'gsap';
 
 export const id = 'firebase-adapter';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Storage Adapters',
   label: 'Firebase',
 };
@@ -306,7 +306,7 @@ export default class FirebaseAdapterScene extends BaseScene {
       const index = this.scores.indexOf(scoreToDelete);
       this.scores.splice(index, 1);
 
-      const scoreElement = this.scoreboard.getChildAt(index);
+      const scoreElement = this.scoreboard.getChildAt(index) as Container;
       gsap.to(scoreElement, {
         alpha: 0,
         x: -10,

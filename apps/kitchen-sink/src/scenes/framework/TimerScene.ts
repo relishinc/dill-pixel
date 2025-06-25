@@ -1,10 +1,9 @@
 import BaseScene from '@/scenes/BaseScene';
-import { FONT_KUMBH_SANS } from '@/utils/Constants';
-import { FlexContainer, formatTime, SceneAssets, Timer, UICanvas, wait } from 'dill-pixel';
+import { FlexContainer, formatTime, type SceneAssets, type SceneDebug, Timer, UICanvas, wait } from 'dill-pixel';
 import { Text } from 'pixi.js';
 
 export const id = 'timer';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'Framework',
   label: 'Timer',
 };
@@ -27,7 +26,7 @@ export default class TimerScene extends BaseScene {
   public get assets(): SceneAssets {
     return {
       preload: {
-        bundles: ['required/ui'],
+        bundles: ['required'],
       },
     };
   }
@@ -59,13 +58,13 @@ export default class TimerScene extends BaseScene {
 
     stopwatchContainer.add.text({
       text: 'Stopwatch',
-      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 24, align: 'right' },
+      style: { fill: 0xffffff, fontFamily: 'KumbhSans', fontWeight: 'bold', fontSize: 24, align: 'right' },
     });
 
     this.stopwatchDisplay = stopwatchContainer.add.text({
       text: '00:00:00',
       anchor: 0.5,
-      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
+      style: { fill: 0xffffff, fontFamily: 'KumbhSans', fontWeight: 'bold', fontSize: 48, align: 'center' },
       layout: { width: 300 },
     });
 
@@ -82,7 +81,7 @@ export default class TimerScene extends BaseScene {
 
     countdownContainer.add.text({
       text: 'Countdown',
-      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 24, align: 'right' },
+      style: { fill: 0xffffff, fontFamily: 'KumbhSans', fontWeight: 'bold', fontSize: 24, align: 'right' },
     });
 
     this.countdownDisplay = countdownContainer.add.text({
@@ -90,7 +89,7 @@ export default class TimerScene extends BaseScene {
       anchor: 0.5,
       style: {
         fill: 0xffffff,
-        fontFamily: FONT_KUMBH_SANS,
+        fontFamily: 'KumbhSans',
         fontWeight: 'bold',
         fontSize: 48,
         align: 'center',
@@ -106,7 +105,7 @@ export default class TimerScene extends BaseScene {
         default: 'btn/blue',
         hover: 'btn/yellow',
       },
-      sheet: 'required/ui',
+      sheet: 'required',
       accessibleTitle: 'Add 5 seconds to stopwatch',
       accessibleHint: 'Press to add 5 seconds to the stopwatch',
       layout: { width: 256, height: 70 },
@@ -118,7 +117,7 @@ export default class TimerScene extends BaseScene {
       resolution: 2,
       style: {
         fill: 0xffffff,
-        fontFamily: FONT_KUMBH_SANS,
+        fontFamily: 'KumbhSans',
         fontWeight: 'bold',
         fontSize: 48,
         align: 'center',
@@ -132,7 +131,7 @@ export default class TimerScene extends BaseScene {
         default: 'btn/red',
         hover: 'btn/yellow',
       },
-      sheet: 'required/ui',
+      sheet: 'required',
       accessibleTitle: 'Remove 5 seconds from stopwatch',
       accessibleHint: 'Press to remove 5 seconds from the stopwatch',
       layout: { width: 256, height: 70 },
@@ -142,7 +141,7 @@ export default class TimerScene extends BaseScene {
       text: '-5s',
       anchor: 0.5,
       resolution: 2,
-      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
+      style: { fill: 0xffffff, fontFamily: 'KumbhSans', fontWeight: 'bold', fontSize: 48, align: 'center' },
     });
 
     // Countdown Controls
@@ -154,7 +153,7 @@ export default class TimerScene extends BaseScene {
         default: 'btn/blue',
         hover: 'btn/yellow',
       },
-      sheet: 'required/ui',
+      sheet: 'required',
       accessibleTitle: 'Add 5 seconds to countdown',
       accessibleHint: 'Press to add 5 seconds to the countdown',
       layout: { width: 256, height: 70 },
@@ -164,7 +163,7 @@ export default class TimerScene extends BaseScene {
       text: '+5s',
       anchor: 0.5,
       resolution: 2,
-      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
+      style: { fill: 0xffffff, fontFamily: 'KumbhSans', fontWeight: 'bold', fontSize: 48, align: 'center' },
     });
 
     const removeCountdownBtn = countdownContainer.add.button({
@@ -174,7 +173,7 @@ export default class TimerScene extends BaseScene {
         default: 'btn/red',
         hover: 'btn/yellow',
       },
-      sheet: 'required/ui',
+      sheet: 'required',
       accessibleTitle: 'Remove 5 seconds from countdown',
       accessibleHint: 'Press to remove 5 seconds from the countdown',
       layout: { width: 256, height: 70 },
@@ -184,7 +183,7 @@ export default class TimerScene extends BaseScene {
       text: '-5s',
       anchor: 0.5,
       resolution: 2,
-      style: { fill: 0xffffff, fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fontSize: 48, align: 'center' },
+      style: { fill: 0xffffff, fontFamily: 'KumbhSans', fontWeight: 'bold', fontSize: 48, align: 'center' },
     });
 
     // Button Event Handlers

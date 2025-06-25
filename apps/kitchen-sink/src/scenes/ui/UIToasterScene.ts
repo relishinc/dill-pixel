@@ -1,9 +1,18 @@
 import BaseScene from '@/scenes/BaseScene';
-import { FONT_KUMBH_SANS } from '@/utils/Constants';
-import { Application, Button, FlexContainer, Toast, ToastConfig, Toaster, ToastType, UICanvasEdge } from 'dill-pixel';
+import {
+  Application,
+  Button,
+  FlexContainer,
+  Toast,
+  ToastConfig,
+  Toaster,
+  ToastType,
+  UICanvasEdge,
+  type SceneDebug,
+} from 'dill-pixel';
 import { Graphics, TextStyleOptions, Texture } from 'pixi.js';
 export const id = 'ui-toaster';
-export const debug = {
+export const debug: SceneDebug = {
   group: 'UI',
   label: 'UI Toaster',
   order: 5,
@@ -44,7 +53,7 @@ class ToastCloseButton extends Button {
     this.add.text({
       text: '×',
       style: {
-        fontFamily: FONT_KUMBH_SANS,
+        fontFamily: 'KumbhSans',
         fontSize: 20,
         fill: 0x0,
         fontWeight: 'bold',
@@ -67,7 +76,7 @@ class ToastCloseButton extends Button {
 }
 
 const whiteTextStyle = (size: number): Partial<TextStyleOptions> => ({
-  fontFamily: FONT_KUMBH_SANS,
+  fontFamily: 'KumbhSans',
   fontWeight: 'bold',
   fill: 0xffffff,
   fontSize: size ?? 24,
@@ -290,7 +299,7 @@ export default class UIToasterScene extends BaseScene {
       style: {
         fontSize: this.config.toast.fontSize,
         fill: this.config.toast.textColor,
-        fontFamily: FONT_KUMBH_SANS,
+        fontFamily: 'KumbhSans',
         fontWeight: 'bold',
         wordWrap: true,
       },
@@ -395,7 +404,7 @@ export default class UIToasterScene extends BaseScene {
           style: {
             fontSize: 24,
             fill: this.config.toast.textColor,
-            fontFamily: FONT_KUMBH_SANS,
+            fontFamily: 'KumbhSans',
             fontWeight: 'bold',
           },
         };
