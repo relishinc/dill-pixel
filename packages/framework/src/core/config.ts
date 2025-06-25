@@ -1,13 +1,16 @@
 import { IPlugin, PluginListItem } from '../plugins/Plugin';
 import { IStorageAdapter, StorageAdapterListItem } from '../store';
-import { ImportList, Logger } from '../utils';
+import { type AppTypeOverrides, ImportList, Logger } from '../utils';
 import { AppConfig } from './types';
 
-export type PluginOrAdapterConfig = string | [string, { autoLoad?: boolean; options?: any }];
+type PluginId = AppTypeOverrides['Plugins'];
+type StorageAdapterId = AppTypeOverrides['StorageAdapters'];
 
-export async function generatePluginList<T extends IPlugin = IPlugin>(
-  plugins: PluginOrAdapterConfig[],
-): Promise<ImportList<T>> {
+export type PluginConfig = PluginId | [PluginId, { autoLoad?: boolean; options?: any }];
+
+export type StorageAdapterConfig = StorageAdapterId | [StorageAdapterId, { autoLoad?: boolean; options?: any }];
+
+export async function generatePluginList<T extends IPlugin = IPlugin>(plugins: PluginConfig[]): Promise<ImportList<T>> {
   const pluginsList: PluginListItem[] = DillPixel.get('pluginsList') || [];
 
   return plugins
@@ -30,7 +33,7 @@ export async function generatePluginList<T extends IPlugin = IPlugin>(
 }
 
 export async function generateAdapterList<T extends IStorageAdapter = IStorageAdapter>(
-  adapters: PluginOrAdapterConfig[],
+  adapters: StorageAdapterConfig[],
 ): Promise<ImportList<T>> {
   const storageAdaptersList: StorageAdapterListItem[] = DillPixel.get('storageAdaptersList') || [];
 
