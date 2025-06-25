@@ -1,5 +1,13 @@
 # Changelog
 
+## [6.0.3](https://github.com/relishinc/dill-pixel/compare/v6.0.2...v6.0.3) (2025-06-25)
+
+
+### Bug Fixes
+
+* runtime & globals importing ([f96baef](https://github.com/relishinc/dill-pixel/commit/f96baeff3bbd33e8144b96965a5a90d60af4a132))
+* runtime & globals importing ([b69244b](https://github.com/relishinc/dill-pixel/commit/b69244b92526da2eaefdf0922f1a95c4f4df26c7))
+
 ## [6.0.2](https://github.com/relishinc/dill-pixel/compare/v6.0.1...v6.0.2) (2025-06-25)
 
 
