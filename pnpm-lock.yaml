@@ -327,7 +327,7 @@ importers:
         version: 0.15.28
     devDependencies:
       dill-pixel:
-        specifier: 5.0.3
+        specifier: 6.0.0
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -343,7 +343,7 @@ importers:
         version: 0.0.20
     devDependencies:
       dill-pixel:
-        specifier: 5.0.3
+        specifier: 6.0.0
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -362,7 +362,7 @@ importers:
         version: 8.10.2
     devDependencies:
       dill-pixel:
-        specifier: 5.0.3
+        specifier: 6.0.0
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -380,11 +380,11 @@ importers:
         specifier: ^0.20.0
         version: 0.20.0
       pixi.js:
-        specifier: 8.10.1
-        version: 8.10.1
+        specifier: 8.10.2
+        version: 8.10.2
     devDependencies:
       dill-pixel:
-        specifier: 5.0.3
+        specifier: 6.0.0
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -403,7 +403,7 @@ importers:
         version: 8.10.2
     devDependencies:
       dill-pixel:
-        specifier: 5.0.3
+        specifier: 6.0.0
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -422,7 +422,7 @@ importers:
         version: 8.10.2
     devDependencies:
       dill-pixel:
-        specifier: 5.0.3
+        specifier: 6.0.0
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -438,7 +438,7 @@ importers:
         version: 2.26.4
     devDependencies:
       dill-pixel:
-        specifier: 5.0.3
+        specifier: 6.0.0
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -454,7 +454,7 @@ importers:
         version: github.com/SpringRoll/SpringRoll/70c01f21b17e6436f7aebd9e5b457384fb35a496
     devDependencies:
       dill-pixel:
-        specifier: 5.0.3
+        specifier: 6.0.0
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -473,7 +473,7 @@ importers:
         specifier: ^20.14.1
         version: 20.19.1
       dill-pixel:
-        specifier: 5.0.3
+        specifier: 6.0.0
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -492,7 +492,7 @@ importers:
         version: 2.50.2
     devDependencies:
       dill-pixel:
-        specifier: 5.0.3
+        specifier: 6.0.0
         version: link:../../framework
       vite:
         specifier: 6.1.1
@@ -11153,21 +11153,6 @@ packages:
     dependencies:
       '@types/gradient-parser': 0.1.5
       pixi.js: 8.10.2
-    dev: false
-
-  /pixi.js@8.10.1:
-    resolution: {integrity: sha512-wjKJXawhTUxuyKIuwE3jK05eBh5I4GKy+YrRVniURFRkK7pYEvRvnV41dEqz6owSXav/YMXdG5783YDJeamiow==}
-    dependencies:
-      '@pixi/colord': 2.9.6
-      '@types/css-font-loading-module': 0.0.12
-      '@types/earcut': 3.0.0
-      '@webgpu/types': 0.1.62
-      '@xmldom/xmldom': 0.8.10
-      earcut: 3.0.1
-      eventemitter3: 5.0.1
-      gifuct-js: 2.1.2
-      ismobilejs: 1.1.1
-      parse-svg-path: 0.1.2
     dev: false
 
   /pixi.js@8.10.2:
