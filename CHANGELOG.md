@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.0.1](https://github.com/relishinc/dill-pixel/compare/v6.0.0...v6.0.1) (2025-06-25)
+
+
+### Bug Fixes
+
+* changed  to  and fixed imports in starter project ([fd7010a](https://github.com/relishinc/dill-pixel/commit/fd7010a30b019b8b9480e8f45d17fee2740a2128))
+
 ## [6.0.0](https://github.com/relishinc/dill-pixel/compare/v5.0.3...v6.0.0) (2025-06-25)
 
 
