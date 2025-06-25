@@ -13,8 +13,6 @@ node_modules
 
 .npmrc
 npm-debug.log*
-packages/examples/.cache
-packages/examples/node_modules
 
 #lib folders
 lib
@@ -28,9 +26,10 @@ packages/plugins/springroll/lib
 packages/plugins/rollbar/lib
 packages/storage-adapters/firebase/lib
 packages/storage-adapters/supabase/lib
-packages/examples/public/assets
-packages/examples/.assetpack
-packages/examples/.cache
-packages/examples/.env
+apps/kitchen-sink/public/assets
+apps/kitchen-sink/node_modules
+apps/kitchen-sink/.assetpack
+apps/kitchen-sink/.cache
+apps/kitchen-sink/.env
 
 .turbo

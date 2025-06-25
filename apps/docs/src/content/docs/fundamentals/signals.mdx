@@ -30,7 +30,7 @@ const priorities = {
 // MyScene.ts
 import { Signal } from 'dill-pixel';
 
-export default class MyScene extends Scene<MyApplication> {
+export default class MyScene extends Scene {
   initialize() {
     // Create a signal
     const onScoreChange = new Signal<(score: number) => void>();

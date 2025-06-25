@@ -84,19 +84,19 @@ export type AnalyticsEvents = {
 };
 
 export const dataSchema = defineData({
-  foo: '' satisfies string,
-  bar: 0 satisfies number,
-  num: 0 satisfies number,
-  saved: '' satisfies string,
+  foo: '',
+  bar: 0,
+  num: 0,
+  saved: '',
   list: [] as string[],
   list2: [] as number[],
   baz: {
-    qux: false satisfies boolean,
+    qux: false,
     quux: [] as string[],
   },
 });
 
-const config = defineConfig({
+export default defineConfig({
   id: 'V8Application',
   application: V8Application,
   sceneTransition: Transition,
@@ -227,5 +227,4 @@ const config = defineConfig({
   resolution: 2,
 });
 
-export default config;
 /** End of User config */

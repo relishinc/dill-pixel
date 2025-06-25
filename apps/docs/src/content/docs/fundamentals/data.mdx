@@ -20,28 +20,28 @@ Dill Pixel provides a robust data management system through its [DataAdapter](/a
 
 ## Basic Configuration
 
-Configure data management in your `dill-pixel.config.ts`:
+Configure data management in your `dill-pixel.config.ts`. The framework uses a `defineData` helper to ensure your data is fully type-safe.
 
 ```ts
-export type Data = {
-  score: number;
-  playerName: string;
+import { defineConfig, defineData } from 'dill-pixel';
+
+// 1. Define your data schema
+export const dataSchema = defineData({
+  score: 0,
+  playerName: '',
   settings: {
-    soundEnabled: boolean;
-    musicVolume: number;
-  };
-};
-export const config = defineConfig<Data>({
+    soundEnabled: true,
+    musicVolume: 0.5,
+  },
+});
+
+// 2. Add it to your main config
+export default defineConfig({
   // ... other config options
   data: {
-    // Initial data values
+    // Initial data values can override the schema defaults
     initial: {
-      score: 0,
-      playerName: '',
-      settings: {
-        soundEnabled: true,
-        musicVolume: 0.5,
-      },
+      playerName: 'Hero',
     },
     // Keys to backup to localStorage
     backupKeys: ['settings'],
@@ -52,6 +52,10 @@ export const config = defineConfig<Data>({
   },
 });
 ```
+
+<Aside>
+By using `defineData`, the framework automatically infers the shape of your data, providing type-safety and autocompletion wherever you access `this.app.data`, with no need for manual type definitions.
+</Aside>
 
 ## Data Manipulation Methods
 
@@ -93,9 +97,17 @@ You can also use the `merge` parameter to control the merge behavior. By default
 <Tabs>
 <TabItem label="dill-pixel.config.ts">
 <Code lang="ts" code={`
-// Initial data, set in dill-pixel.config.ts
-defineConfig<Data>({
-    // ... other config options
+import { defineConfig, defineData } from 'dill-pixel';
+
+export const dataSchema = defineData({
+  settings: {
+    sound: { enabled: true, volume: 0.5 },
+    display: { fullscreen: false },
+  },
+});
+
+// Initial data is now part of the main config
+export default defineConfig({
     data: {
       initial: {
         settings: {
@@ -134,10 +146,12 @@ defineConfig<Data>({
   With the `merge` parameter set to `false`, the entire data object is replaced. Be sure to include all required fields:
 </Aside>
 ```ts
-// Replace entire data object (no merge)
+// This example would fail with type-safety unless you provide all fields!
+// It's generally safer to use deep merging.
 this.app.data.set(
   {
     score: 0,
+    playerName: 'New Player',
     settings: {
       soundEnabled: true,
       musicVolume: 1.0,
@@ -248,31 +262,17 @@ this.app.data.append('stuff2', ['more', 'stuff'], ' ');
 </Aside>
 
 ## snapshot() Method
-
-The `snapshot()` method creates a deep copy of your game data, useful for:
-
-- Creating save states
-- Comparing data changes
-- Debugging
-- Implementing undo/redo functionality
-
-```ts
-// Get snapshot of all data
-const fullSnapshot = this.app.data.snapshot();
-
-// Get snapshot of specific field
-const scoreSnapshot = this.app.data.snapshot('score');
-```
-
-<Aside title="Deep Copy" type="tip">
-  The `snapshot()` method performs a deep copy using JSON serialization, ensuring that the returned data is completely
-  disconnected from the original data object. This means modifications to the snapshot won't affect the actual game
-  data.
-</Aside>
-
-### Example Use Cases
+The `snapshot()` method returns a deep copy of the data at a specific point in time, which is useful for debugging or comparing states.
 
 <Tabs>
+<TabItem label="src/scenes/MyScene.ts">
+```ts
+// Log data at specific points without worrying about reference issues
+console.log('Game state before battle:', this.app.data.snapshot());
+startBattle();
+console.log('Game state after battle:', this.app.data.snapshot());
+````
+</TabItem>
 <TabItem label="Save States">
 ```ts
 // Create a save point
@@ -280,17 +280,7 @@ const savePoint = this.app.data.snapshot();
 
 // Later, restore the save point
 this.app.data.set(savePoint, false); // false = don't merge
-
 ````
-</TabItem>
-<TabItem label="Debugging">
-```ts
-// Log data at specific points without worrying about reference issues
-console.log('Game state before battle:', this.app.data.snapshot());
-startBattle();
-console.log('Game state after battle:', this.app.data.snapshot());
-````
-
 </TabItem>
 </Tabs>
 

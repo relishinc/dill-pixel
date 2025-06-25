@@ -11,7 +11,7 @@ Actions are a powerful system for handling input and events in your game while m
 Contexts represent different states or modes of your game. For example:
 
 ```ts
-// src/dill-pixel.config.ts
+// dill-pixel.config.ts
 const contexts = defineContexts(['default', 'game', 'menu', 'popup']);
 ```
 
@@ -28,7 +28,7 @@ Common contexts include:
 Actions are defined with their allowed contexts using `defineActions`:
 
 ```ts
-// src/dill-pixel.config.ts
+// dill-pixel.config.ts
 const actions = defineActions(contexts, {
   // Action with specific contexts
   move_left: { context: ['game'] },
@@ -52,7 +52,7 @@ const actions = defineActions(contexts, {
 The action system supports touch controls through buttons and joysticks. Here's how to configure them:
 
 ```ts
-// src/dill-pixel.config.ts
+// dill-pixel.config.ts
 const buttons = defineButtons(['A', 'B']);
 ```
 
@@ -61,7 +61,7 @@ const buttons = defineButtons(['A', 'B']);
 Actions can be mapped to different input methods using `defineControls`:
 
 ```ts
-// src/dill-pixel.config.ts
+// dill-pixel.config.ts
 const controls = defineControls(actions, buttons, {
   keyboard: {
     down: {
@@ -94,7 +94,7 @@ In your game code, create and register button instances with the touch controls:
 ```ts
 import { MyApplication } from '@/MyApplication';
 import { Scene, Button } from 'dill-pixel';
-export default class GameScene extends Scene<MyApplication> {
+export default class GameScene extends Scene {
   initialize() {
     // Create buttons
     const jumpButton = this.add.button({
@@ -211,6 +211,11 @@ The following example demonstrates how the action system ensures that player mov
     Register the action in your `dill-pixel.config.ts` file:
     <Code
       code={`
+import { defineConfig, defineActions, defineContexts } from 'dill-pixel';
+
+// Define contexts
+const contexts = defineContexts(['game', 'pause', 'menu']);
+
 // Define actions with contexts
 const actions = defineActions(contexts, {
     move: { context: ['game'] },
@@ -219,9 +224,10 @@ const actions = defineActions(contexts, {
     select: { context: ['menu'] }
 });
 
-// ... later on, export the action types and contexts
-export type ActionTypes = keyof typeof actions;
-export type Contexts = (typeof contexts)[number];
+export default defineConfig({
+  // ... other config
+  actions,
+});
 `}
 lang="ts"
 />
@@ -232,8 +238,9 @@ lang="ts"
     <Code
       code={`
 import { Application } from 'dill-pixel';
-import { type ActionTypes, type AnalyticsEvents, type Contexts, type Data } from './dill-pixel.config';
-export class MyApplication extends Application<Data, Contexts, ActionTypes>P {}
+
+// No special generics needed! Types are augmented automatically.
+export class MyApplication extends Application {}
       `}
       lang="ts"
     />

@@ -1,27 +1,15 @@
-import { defineActions, defineButtons, defineConfig, defineContexts, defineControls } from 'dill-pixel';
+import { defineActions, defineButtons, defineConfig, defineContexts, defineControls, defineData } from 'dill-pixel';
+import { __APPLICATION_NAME__ } from './src/__APPLICATION_NAME__';
+/** Default template */
 // uncomment this to use the splash screen
 // import { Splash } from './Splash';
 
-/** Default template */
 // TODO: Add custom contexts here if desired
 // by default, we use the default contexts
 export const contexts = defineContexts(); // e.g.
 
 // TODO: Add actions here
-// examples below
-export const actions = defineActions(contexts, {
-  //pause: { context: '*' },
-  //close: { context: ['menu', 'popup'] },
-  //back: { context: ['menu'] },
-  //next: { context: ['menu'] },
-  //select: { context: ['menu', 'default'] },
-  //show_popup: { context: '*' },
-});
-
-/** Don't touch */
-export type Contexts = (typeof contexts)[number];
-export type ActionTypes = keyof typeof actions;
-/** Don't touch */
+export const actions = defineActions(contexts, {});
 
 // TODO: Add buttons here
 const buttons = defineButtons();
@@ -30,23 +18,20 @@ const buttons = defineButtons();
 export const controls = defineControls(actions, buttons);
 /** End of Default Template */
 
-/** User config */
-export type Data = {
-  space: string;
-  dill: string;
-};
+// TODO: Define your data schema here
+export const initialData = defineData({
+  tangy: 'dill',
+});
 
-export const config = defineConfig<Data>({
+export const config = defineConfig({
   id: '__APPLICATION_NAME__',
+  application: __APPLICATION_NAME__,
   // uncomment this to use the splash screen
   // splash: {
   //   view: Splash,
   // },
   data: {
-    initial: {
-      space: 'junk',
-      dill: 'pixel',
-    },
+    initial: initialData,
     backupKeys: [],
     backupAll: false,
   },

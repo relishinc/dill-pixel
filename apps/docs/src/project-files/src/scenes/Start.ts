@@ -26,7 +26,7 @@ export default class Start extends Base {
     this.container.add.text({
       text: 'Hello Dill Pixel',
       resolution: 2,
-      style: { fontFamily: 'KumbhSans', fontWeight: 'bold', fill: 0xffffff },
+      style: { fontFamily: 'Kumbh Sans', fontWeight: 'bold', fill: 0xffffff },
     });
 
     // from src/assets.json

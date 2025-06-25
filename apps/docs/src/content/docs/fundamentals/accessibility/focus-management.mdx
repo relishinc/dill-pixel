@@ -105,7 +105,7 @@ Configure the default outliner's appearance in your dill-pixel config:
 
 ```ts
 // dill-pixel.config.ts
-export const config = defineConfig({
+export default defineConfig({
   focus: {
     outliner: {
       color: 0x00ffff, // Cyan color (default)
@@ -149,7 +149,7 @@ You can create your own focus outliner by extending the base `FocusOutliner` cla
     import { defineConfig } from 'dill-pixel';
     import { MyCustomOutliner } from '@/components/MyCustomOutliner';
 
-    export const config = defineConfig({
+    export default defineConfig({
         //... rest ofyour config
         focus: {
             outliner: MyCustomOutliner, // Use custom outliner

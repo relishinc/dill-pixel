@@ -1,284 +1,67 @@
 ---
-title: Setting Up Your Game
-description: Installing the framework and initializing your application
+title: Setting Up Your Project
+description: How to install the framework and initialize your application.
 ---
 
-import {TabItem, Tabs} from '@astrojs/starlight/components';
+import { Aside, TabItem, Tabs } from '@astrojs/starlight/components';
 
-## Installing the framework
+Dill Pixel provides a command-line interface (CLI) to get you up and running with a new project in seconds. This is the recommended way to start.
+
+## Quick Start with the CLI
+
+To create a new project, run the following command in your terminal. This will scaffold a new Vite-powered project with all the necessary files and configurations.
 
 <Tabs>
-	<TabItem label={"npm"}>
+	<TabItem label="npm">
 		```bash
-		npm i dill-pixel
+		npm create dill-pixel@latest
 		```
 	</TabItem>
-	<TabItem label={"yarn"}>
+	<TabItem label="yarn">
 		```bash
-		yarn add dill-pixel
+		yarn create dill-pixel
 		```
 	</TabItem>
-	<TabItem label={"pnpm"}>
+	<TabItem label="pnpm">
 		```bash
-		pnpm install dill-pixel
+		pnpm create dill-pixel
 		```
 	</TabItem>
 </Tabs>
 
-## Setting up an application
+The CLI will prompt you for a project name and set up a new directory with a default template.
 
-### Initializing your Dill Pixel Application
-- Dill Pixel reccomends using [Vite](https://vitejs.dev/) to bundle your application.
-- The following is an example setup using Vite:
+## Project Structure
 
-#### Set up your project folder
-- we'll use `~/projects/dill-pixel-game` as an example
-- In your project directory, add the following files:
+The generated project contains a few key files for you to work with:
 
-<Tabs>
-<TabItem label="package.json">
-```json
-{
-  "name": "my-dill-pixel-game",
-  "version": "0.0.0",
-  "description": "My First Game with Dill Pixel",
-  "main": "index.html",
-  "scripts": {
-    "start": "vite",
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint src --ext .ts",
-    "lint-fix": "eslint src --ext .ts --fix",
-    "audio": "node src/audio/compress_audio.js",
-    "spritesheets": "node src/assets/images/export_spritesheets"
-  },
-  "author": "Me<me@myname.com>",
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "latest",
-    "@typescript-eslint/parser": "latest",
-    "prettier": "^3.0.3",
-    "relishinc-prettier": "github:relishinc/prettier",
-    "typescript": "^5.2.2",
-    "vite": "^4.2.1",
-    "vite-plugin-html": "^3.2.0",
-    "vite-plugin-singlefile": "^0.13.5",
-    "vite-plugin-static-copy": "^0.13.1",
-    "vite-plugin-top-level-await": "^1.3.1",
-    "vite-plugin-wasm": "^3.2.2"
-  },
-  "dependencies": {
-    "@pixi/ui": "^0.9.0",
-    "dill-pixel": "latest",
-  }
-}
-```
-</TabItem>
-<TabItem label="vite.config.js">
-```js
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { defineConfig, normalizePath } from 'vite';
-import { createHtmlPlugin } from 'vite-plugin-html';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
-import topLevelAwait from 'vite-plugin-top-level-await';
-import wasm from 'vite-plugin-wasm';
+- **/index.html**: The main entry point for the browser. You typically won't need to edit this.
+- **/dill-pixel.config.ts**: The heart of your application's configuration. This is where you define plugins, assets, scenes, and more.
+- **/src/index.ts**: The TypeScript entry point. Its only job is to start the framework.
+- **/src/main.ts** `(Optional)`: An optional file for running logic right after the application has been created.
+- **/src/scenes/**: Place your game scenes in this directory. They will be automatically discovered by the framework.
+- **/public/assets/**: Place your game assets here.
 
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
+<Aside>
+All the complex Vite and TypeScript configuration is handled for you by the `@dill-pixel/framework`. You don't need a `vite.config.js` in your project root unless you need to add other Vite plugins or deeply customize the build.
+</Aside>
 
-/** @type {import("vite").UserConfig} */
-export default defineConfig((config) => ({
-  ...config,
-  target: 'esnext',
-  cacheDir: '.cache',
-  logLevel: 'info',
-  base: process.env.NODE_ENV === 'development' ? '/' : './',
-  server: {
-    port: 3000,
-    host: true,
-    open: true,
-  },
-  preview: {
-    host: true,
-    port: 8080,
-  },
-  plugins: [
-    wasm(),
-    topLevelAwait(),
-    createHtmlPlugin(),
-    viteStaticCopy({
-      watch: { reloadPageOnChange: true },
-      targets: [
-        {
-          src: normalizePath(path.resolve(__dirname, './src/assets/images/spritesheets/_output/*')),
-          dest: './assets/images/spritesheets',
-        },
-        {
-          src: normalizePath(path.resolve(__dirname, './src/assets/images/static/**/*')),
-          dest: './assets/images/static',
-        },
-        {
-          src: normalizePath(path.resolve(__dirname, './src/assets/json/*')),
-          dest: './assets/json',
-        },
-        {
-          src: normalizePath(path.resolve(__dirname, './src/assets/fonts/*')),
-          dest: './assets/fonts',
-        },
-      ],
-    }),
-  ],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-      'dill-pixel': path.resolve(__dirname, '../src'),
-    },
-  },
-}));
-```
-</TabItem>
-<TabItem label="tsconfig.json">
-```json
-{
-  "compilerOptions": {
-    "rootDir": ".",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ]
-    },
-    "module": "ESNext",
-    "moduleResolution": "bundler"
-  },
-  "include": [
-    "**/*.ts"
-  ]
-}
+### Bootstrapping Your Game
 
-```
-</TabItem>
-<TabItem label="index.html">
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>My Dill Pixel Game</title>
-    <style>
-        @import url('src/index.css');
-    </style>
-</head>
-<body>
-<script type="module" src="src/index.ts" async defer></script>
-</body>
-</html>
-```
-</TabItem>
-<TabItem label="src/index.css">
-```css
-:root {
-    --app-height: 100%;
-}
+The entire startup process is handled by a single line in `src/index.ts`:
 
-body, html {
-    width: 100vw;
-    height: 100%;
-    height: var(--app-height);
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#game-container {
-    flex: none;
-    width: 100%;
-    height: 100%;
-    max-width: calc(100% - 20px);
-    max-height: calc(100% - 20px);
-    padding: 0;
-    border: none;
-    color: white;
-    position: relative;
-    overflow: hidden;
-    display: block;
-}
-
-canvas {
-    display: block;
-    margin: auto;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-```
-</TabItem>
-<TabItem label="src/index.ts">
-</TabItem>
-<TabItem label="src/Application.ts">
 ```ts
-import {
-  SplashScreen,
-} from '@/state';
-import {
-  Application as DillPixelApplication,
-  AssetMapData,
-  AssetType,
-  SplashScreen as DillPixelSplashScreen,
-  TextureAsset,
-  TransitionType,
-} from 'dill-pixel';
-
-export default class Application extends DillPixelApplication {
-  public get defaultState() {
-    return this.state.getStateFromHash() || PopupExample.NAME;
-  }
-
-  protected getFontsList(): {
-    family: string;
-    data?: {
-      weight?: number | string;
-    };
-  }[] {
-    return [{ family: 'arboria', data: { weight: 400 } }];
-  }
-
-  protected createSplashScreen(): DillPixelSplashScreen {
-    return new SplashScreen();
-  }
-
-  protected async setup() {
-    // add some setup specific functionality here, such as the State Manager using the hash to initialie a state
-    // when in development mode
-    // the boot sequence will wait for async setup to complete before continuing
-    this.state.useHash = process.env.NODE_ENV === 'development';
-  }
-
-  protected registerStates(): void {
-    this.state.register(LandingPage);
-  }
-
-  protected createAssetMap(): void {
-    this.addAssetGroup(DillPixelSplashScreen.NAME, SplashScreen.Assets);
-  }
-}
+// src/index.ts
+import('dill-pixel/boot');
 ```
-</TabItem>
-</Tabs>
+
+This tells the framework to:
+1. Load your `dill-pixel.config.ts`.
+2. Create the application instance you defined in the config.
+3. Initialize all plugins and systems.
+4. Optionally, run your `src/main.ts` file.
+
+This streamlined process lets you focus on building your game, not on bundler configuration.
 
 ## Start the dev server
 

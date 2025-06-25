@@ -1,0 +1,150 @@
+---
+title: Automatic Type-Safety
+---
+
+import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
+
+Dill Pixel is designed to provide a highly productive and type-safe development experience out of the box. The framework automatically generates TypeScript definition files based on your project's configuration and assets, giving you powerful IntelliSense and preventing common runtime errors.
+
+This happens in two key areas: Application-level types and Asset-level types.
+
+<Aside>
+  This entire process is handled automatically by the Vite plugins included in the framework. You don't need to
+  configure anything to enable it.
+</Aside>
+
+## Application Types
+
+The framework inspects your `dill-pixel.config.ts` and `src/scenes` directory to understand the structure of your application. It then generates a `src/types/dill-pixel-app.d.ts` file that uses TypeScript's [module augmentation](https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation) to override core framework types.
+
+This provides you with autocompletion for:
+
+- Scene IDs
+- Action names and contexts
+- Plugin and Storage Adapter IDs
+- Your custom `Application` class methods and properties.
+
+### Scene Transitions
+
+When you define scenes in `src/scenes`, their IDs are automatically added to the `AppScenes` type. This means you get full autocompletion when loading or transitioning to a scene.
+
+```ts
+// Assuming you have a scene in `src/scenes/MainMenu.ts`
+// with `export const id = 'main-menu';`
+
+// ✅ Correct: You'll get 'main-menu' in your IntelliSense list.
+this.app.scenes.loadScene('main-menu');
+
+// ❌ Incorrect: TypeScript will flag this as an error.
+this.app.scenes.loadScene('non-existent-scene');
+```
+
+### Actions and Contexts
+
+Actions and contexts defined in your `dill-pixel.config.ts` are used to generate `AppActions` and `AppContexts` types.
+
+<Tabs>
+<TabItem label="dill-pixel.config.ts">
+```ts
+export const contexts = defineContexts(['game', 'menu']);
+
+export const actions = defineActions(contexts, {
+  jump: { context: ['game'] },
+  open_menu: { context: '*' },
+});
+```
+</TabItem>
+<TabItem label="game.ts">
+```ts
+// From within a Container or Scene
+
+// ✅ Correct: 'jump' and 'open_menu' will be suggested.
+this.app.sendAction('jump');
+
+// ✅ Correct: The context 'game' will be suggested.
+this.app.actionContext = 'game';
+
+// ✅ Correct: The context 'menu' will be suggested.
+this.app.actionContext = 'menu';
+
+// ❌ Incorrect: TypeScript will throw an error.
+this.app.sendAction('invalid-action');
+
+````
+</TabItem>
+</Tabs>
+
+### Custom Application Class
+
+When you specify a custom `application` class in your config, the framework ensures that `this.app` is correctly typed to your class everywhere, giving you access to any custom methods you've added.
+
+<Tabs>
+<TabItem label="MyApplication.ts">
+```ts
+import { Application } from 'dill-pixel';
+
+export class MyApplication extends Application {
+  public saveGame() {
+    console.log('Game saved!');
+  }
+}
+````
+
+</TabItem>
+<TabItem label="SomeScene.ts">
+```ts
+import { Scene } from 'dill-pixel';
+export default class SomeScene extends Scene{
+  async start() {
+    // ✅ Correct: `saveGame` is available on `this.app`, so you get autocompletion.
+    await this.app.saveGame();
+  }
+}
+```
+</TabItem>
+</Tabs>
+
+## Asset Types
+
+Similarly, the framework watches your asset manifest (typically `public/assets/assets.json`) and generates a `src/types/dill-pixel-assets.d.ts` file. This file contains types for all your asset aliases.
+
+This gives you autocompletion when loading, retrieving, and using assets like textures, audio, and spritesheets.
+
+### Loading and Retrieving Assets
+
+All asset aliases from your manifest are available for type-safe loading and retrieval.
+
+
+### Using Textures and Audio
+
+The types flow through the entire framework, providing safety and autocompletion when using assets with other components.
+
+<Tabs>
+<TabItem label="Using a Texture">
+```ts
+// From within a Container or Scene
+
+// ✅ Correct: You get autocompletion for texture aliases here.
+const player = this.add.sprite({asset: 'player-sprite'});
+```
+</TabItem>
+<TabItem label="Playing Audio">
+```ts
+// From within a Container or Scene
+
+// ✅ Correct: You get autocompletion for audio aliases.
+this.app.audio.play('background-music');
+```
+</TabItem>
+<TabItem label="Using Spritesheet Frames">
+```ts
+// From within a Container or Scene
+
+// If you have a spritesheet packed with TexturePacker,
+// the frame names are also typed.
+// ✅ Correct: 'character/walk_01' is a known frame name.
+const spriteFromTPS = this.add.sprite({ texture: 'character/walk_01' });
+```
+</TabItem>
+</Tabs>
+```

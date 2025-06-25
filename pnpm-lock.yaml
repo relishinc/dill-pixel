@@ -57,6 +57,118 @@ importers:
         specifier: ^5.4.5
         version: 5.8.3
 
+  apps/kitchen-sink:
+    dependencies:
+      '@assetpack/core':
+        specifier: ^1.4.0
+        version: 1.4.0
+      '@dill-pixel/plugin-crunch-physics':
+        specifier: workspace:*
+        version: link:../../packages/plugins/physics-crunch
+      '@dill-pixel/plugin-google-analytics':
+        specifier: workspace:*
+        version: link:../../packages/plugins/google-analytics
+      '@dill-pixel/plugin-matter-physics':
+        specifier: workspace:*
+        version: link:../../packages/plugins/physics-matter
+      '@dill-pixel/plugin-rive':
+        specifier: workspace:*
+        version: link:../../packages/plugins/rive
+      '@dill-pixel/plugin-rollbar':
+        specifier: workspace:*
+        version: link:../../packages/plugins/rollbar
+      '@dill-pixel/plugin-snap-physics':
+        specifier: workspace:*
+        version: link:../../packages/plugins/physics-snap
+      '@dill-pixel/plugin-springroll':
+        specifier: workspace:*
+        version: link:../../packages/plugins/springroll
+      '@dill-pixel/storage-adapter-firebase':
+        specifier: workspace:*
+        version: link:../../packages/storage-adapters/firebase
+      '@dill-pixel/storage-adapter-supabase':
+        specifier: workspace:*
+        version: link:../../packages/storage-adapters/supabase
+      '@pixi/layout':
+        specifier: ^3.0.2
+        version: 3.0.2(@types/react@19.1.8)(pixi.js@8.10.1)(react@19.1.0)(yoga-layout@3.2.1)
+      '@pixi/sound':
+        specifier: ^6.0.1
+        version: 6.0.1(pixi.js@8.10.1)
+      '@vite-pwa/assets-generator':
+        specifier: ^1.0.0
+        version: 1.0.0
+      dat.gui:
+        specifier: ^0.7.9
+        version: 0.7.9
+      dill-pixel:
+        specifier: workspace:*
+        version: link:../../packages/framework
+      firebase:
+        specifier: ^10.12.2
+        version: 10.14.1
+      gsap:
+        specifier: 3.12.5
+        version: 3.12.5
+      npm-run-all:
+        specifier: 4.1.5
+        version: 4.1.5
+      pixi.js:
+        specifier: 8.10.1
+        version: 8.10.1
+      rimraf:
+        specifier: 5.0.5
+        version: 5.0.5
+      stats.js:
+        specifier: 0.17.0
+        version: 0.17.0
+      vite:
+        specifier: 6.1.1
+        version: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
+      vite-bundle-visualizer:
+        specifier: 1.2.1
+        version: 1.2.1(rollup@4.43.0)
+      vite-plugin-html:
+        specifier: 3.2.2
+        version: 3.2.2(vite@6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0))
+      vite-plugin-pwa:
+        specifier: ^1.0.0
+        version: 1.0.0(@vite-pwa/assets-generator@1.0.0)(vite@6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0))(workbox-build@7.3.0)(workbox-window@7.3.0)
+      vite-plugin-singlefile:
+        specifier: 2.0.3
+        version: 2.0.3(rollup@4.43.0)(vite@6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0))
+      vite-plugin-static-copy:
+        specifier: 2.2.0
+        version: 2.2.0(vite@6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0))
+      vite-plugin-top-level-await:
+        specifier: 1.4.4
+        version: 1.4.4(@swc/helpers@0.5.17)(rollup@4.43.0)(vite@6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0))
+      vite-plugin-wasm:
+        specifier: 3.3.0
+        version: 3.3.0(vite@6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0))
+      workbox-cacheable-response:
+        specifier: ^7.3.0
+        version: 7.3.0
+      workbox-core:
+        specifier: ^7.3.0
+        version: 7.3.0
+      workbox-expiration:
+        specifier: ^7.3.0
+        version: 7.3.0
+      workbox-routing:
+        specifier: ^7.3.0
+        version: 7.3.0
+      workbox-strategies:
+        specifier: ^7.3.0
+        version: 7.3.0
+      workbox-window:
+        specifier: ^7.3.0
+        version: 7.3.0
+    devDependencies:
+      '@types/dat.gui':
+        specifier: ^0.7.13
+        version: 0.7.13
+
   packages/framework:
     dependencies:
       '@assetpack/core':
@@ -107,9 +219,6 @@ importers:
       prettier:
         specifier: ^3.2.5
         version: 3.5.3
-      relishinc-prettier:
-        specifier: github:relishinc/prettier
-        version: https://codeload.github.com/relishinc/prettier/tar.gz/e7cf1d99ee73897d598ff02a1dad7bc8b7830be6(prettier@3.5.3)
       rimraf:
         specifier: ^5.0.5
         version: 5.0.5
@@ -2707,6 +2816,9 @@ packages:
   '@types/css-font-loading-module@0.0.12':
     resolution: {integrity: sha512-x2tZZYkSxXqWvTDgveSynfjq/T2HyiZHXb00j/+gy19yp70PHCizM48XFdjBCWH7eHBD0R5i/pw9yMBP/BH5uA==}
 
+  '@types/dat.gui@0.7.13':
+    resolution: {integrity: sha512-LmG4Pr0mbsB/1WVttf8xaHx45BvSBDGY5D9+0/9AZCbI4vvOguwBHZdKyJMxt5Yst8+icRSHKmr7ClV2u5ZtDA==}
+
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
 
@@ -3641,6 +3753,9 @@ packages:
   dargs@7.0.0:
     resolution: {integrity: sha512-2iy1EkLdlBzQGvbweYRFxmFath8+K7+AKB0TlhHWkNuH+TmovaMH/Wp7V7R4u7f4SnX3OgLsU9t1NI9ioDnUpg==}
     engines: {node: '>=8'}
+
+  dat.gui@0.7.9:
+    resolution: {integrity: sha512-sCNc1OHobc+Erc1HqiswYgHdVNpSJUlk/Hz8vzOCsER7rl+oF/4+v8GXFUyCgtXpoCX6+bnmg07DedLvBLwYKQ==}
 
   data-view-buffer@1.0.2:
     resolution: {integrity: sha512-EmKO5V3OLXh1rtK2wgXRansaK1/mtVdTUEiEI0W8RkvgT05kfxaH29PliLnpLP73yYO6142Q72QNa8Wx/A5CqQ==}
@@ -7074,6 +7189,13 @@ packages:
       '@vite-pwa/assets-generator':
         optional: true
 
+  vite-plugin-singlefile@2.0.3:
+    resolution: {integrity: sha512-OEBEwdX8nCGPSdtaB1D7rryYnT+YfPTS8ojL1TDyeUF+bWDCTfRriQqw6T0vl9EbKI/KMg7szN3awst6cLrKkA==}
+    engines: {node: '>18.0.0'}
+    peerDependencies:
+      rollup: ^4.24.3
+      vite: ^5.4.10
+
   vite-plugin-singlefile@2.2.0:
     resolution: {integrity: sha512-Ik1wXmJaGzeQtUeIV7JprDUqqy6DlLzXAY27Blei5peE4c9VJF+Kp9xWDJeuX0RJUZmFbIAuw1/RAh06A+Ql7w==}
     engines: {node: '>18.0.0'}
@@ -7081,16 +7203,32 @@ packages:
       rollup: ^4.35.0
       vite: ^5.4.11 || ^6.0.0
 
+  vite-plugin-static-copy@2.2.0:
+    resolution: {integrity: sha512-ytMrKdR9iWEYHbUxs6x53m+MRl4SJsOSoMu1U1+Pfg0DjPeMlsRVx3RR5jvoonineDquIue83Oq69JvNsFSU5w==}
+    engines: {node: ^18.0.0 || >=20.0.0}
+    peerDependencies:
+      vite: ^5.0.0 || ^6.0.0
+
   vite-plugin-static-copy@2.3.0:
     resolution: {integrity: sha512-LLKwhhHetGaCnWz4mas4qqjjguDka6/6b4+SeIohRroj8aCE7QTfiZECfPecslFQkWZ3HdQuq5kOPmWZjNYlKA==}
     engines: {node: ^18.0.0 || >=20.0.0}
     peerDependencies:
       vite: ^5.0.0 || ^6.0.0
 
+  vite-plugin-top-level-await@1.4.4:
+    resolution: {integrity: sha512-QyxQbvcMkgt+kDb12m2P8Ed35Sp6nXP+l8ptGrnHV9zgYDUpraO0CPdlqLSeBqvY2DToR52nutDG7mIHuysdiw==}
+    peerDependencies:
+      vite: '>=2.8'
+
   vite-plugin-top-level-await@1.5.0:
     resolution: {integrity: sha512-r/DtuvHrSqUVk23XpG2cl8gjt1aATMG5cjExXL1BUTcSNab6CzkcPua9BPEc9fuTP5UpwClCxUe3+dNGL0yrgQ==}
     peerDependencies:
       vite: '>=2.8'
+
+  vite-plugin-wasm@3.3.0:
+    resolution: {integrity: sha512-tVhz6w+W9MVsOCHzxo6SSMSswCeIw4HTrXEi6qL3IRzATl83jl09JVO1djBqPSwfjgnpVHNLYcaMbaDX5WB/pg==}
+    peerDependencies:
+      vite: ^2 || ^3 || ^4 || ^5
 
   vite-plugin-wasm@3.4.1:
     resolution: {integrity: sha512-ja3nSo2UCkVeitltJGkS3pfQHAanHv/DqGatdI39ja6McgABlpsZ5hVgl6wuR8Qx5etY3T5qgDQhOWzc5RReZA==}
@@ -10202,6 +10340,8 @@ snapshots:
 
   '@types/css-font-loading-module@0.0.12': {}
 
+  '@types/dat.gui@0.7.13': {}
+
   '@types/debug@4.1.12':
     dependencies:
       '@types/ms': 2.1.0
@@ -11359,6 +11499,8 @@ snapshots:
   cubic2quad@1.2.1: {}
 
   dargs@7.0.0: {}
+
+  dat.gui@0.7.9: {}
 
   data-view-buffer@1.0.2:
     dependencies:
@@ -15604,10 +15746,24 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  vite-plugin-singlefile@2.0.3(rollup@4.43.0)(vite@6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)):
+    dependencies:
+      micromatch: 4.0.8
+      rollup: 4.43.0
+      vite: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
+
   vite-plugin-singlefile@2.2.0(rollup@4.43.0)(vite@6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)):
     dependencies:
       micromatch: 4.0.8
       rollup: 4.43.0
+      vite: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
+
+  vite-plugin-static-copy@2.2.0(vite@6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)):
+    dependencies:
+      chokidar: 3.6.0
+      fast-glob: 3.3.3
+      fs-extra: 11.3.0
+      picocolors: 1.1.1
       vite: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
 
   vite-plugin-static-copy@2.3.0(vite@6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)):
@@ -15619,6 +15775,16 @@ snapshots:
       picocolors: 1.1.1
       vite: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
 
+  vite-plugin-top-level-await@1.4.4(@swc/helpers@0.5.17)(rollup@4.43.0)(vite@6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)):
+    dependencies:
+      '@rollup/plugin-virtual': 3.0.2(rollup@4.43.0)
+      '@swc/core': 1.12.1(@swc/helpers@0.5.17)
+      uuid: 10.0.0
+      vite: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
+    transitivePeerDependencies:
+      - '@swc/helpers'
+      - rollup
+
   vite-plugin-top-level-await@1.5.0(@swc/helpers@0.5.17)(rollup@4.43.0)(vite@6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)):
     dependencies:
       '@rollup/plugin-virtual': 3.0.2(rollup@4.43.0)
@@ -15628,6 +15794,10 @@ snapshots:
     transitivePeerDependencies:
       - '@swc/helpers'
       - rollup
+
+  vite-plugin-wasm@3.3.0(vite@6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)):
+    dependencies:
+      vite: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
 
   vite-plugin-wasm@3.4.1(vite@6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)):
     dependencies:

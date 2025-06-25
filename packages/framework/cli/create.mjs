@@ -197,7 +197,7 @@ function write_template_files(
   });
 
   // Update dill-pixel.config.ts with selected plugins and storage adapters
-  const configPath = `${cwd}/src/dill-pixel.config.ts`;
+  const configPath = `${cwd}/dill-pixel.config.ts`;
   let configContents = fs.readFileSync(configPath, 'utf-8');
 
   if (plugins && plugins.length > 0) {
@@ -229,7 +229,7 @@ function write_template_files(
     );
   }
 
-  fs.writeFileSync(configPath, configContents, 'utf-8');
+  fs.writeFileSync(configPath, configContents.replace(/__APPLICATION_NAME__/g, applicationName), 'utf-8');
 
   // Add selected plugins to dependencies
   if (plugins && plugins.length > 0) {
