@@ -968,7 +968,7 @@ function createDillPixelGlobalsPlugin() {
           import {sceneList} from 'virtual:dill-pixel-scenes';
           import {pluginsList} from 'virtual:dill-pixel-plugins';
           import {storageAdaptersList} from 'virtual:dill-pixel-storage-adapters';
-          
+
 
           globalThis.DillPixel = globalThis.DillPixel || {};
 
@@ -994,26 +994,6 @@ function createDillPixelGlobalsPlugin() {
           };
         `;
       }
-    },
-    config(config) {
-      const input = config.build?.rollupOptions?.input || 'index.html';
-      const inputs = Array.isArray(input) ? input : [input];
-
-      return {
-        build: {
-          rollupOptions: {
-            input: [entryId, ...inputs],
-            output: {
-              entryFileNames: (chunkInfo) => {
-                if (chunkInfo.facadeModuleId?.includes('dill-pixel-globals')) {
-                  return 'assets/dill-pixel-[hash].js';
-                }
-                return 'assets/[name]-[hash].js';
-              },
-            },
-          },
-        },
-      };
     },
   };
 }
