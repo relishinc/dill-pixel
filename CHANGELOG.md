@@ -1,5 +1,13 @@
 # Changelog
 
+## [6.0.2](https://github.com/relishinc/dill-pixel/compare/v6.0.1...v6.0.2) (2025-06-25)
+
+
+### Bug Fixes
+
+* tsconfig export ([dbe6480](https://github.com/relishinc/dill-pixel/commit/dbe6480b078129d1305b8ce4b3214f1a8e2e21ba))
+* tsconfig export, runtime import ([64f6233](https://github.com/relishinc/dill-pixel/commit/64f6233ad16b7cf37745ada77e6b74a480c50811))
+
 ## [6.0.1](https://github.com/relishinc/dill-pixel/compare/v6.0.0...v6.0.1) (2025-06-25)
 
 
