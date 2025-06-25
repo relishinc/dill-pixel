@@ -1,10 +1,10 @@
-import { Application, Container } from 'dill-pixel';
+import { Container } from 'dill-pixel';
 import { Bounds, Circle, Container as PIXIContianer, Point, Rectangle, Sprite } from 'pixi.js';
 import { ICollider } from './ICollider';
 import { System } from './System';
 import { EntityType, SnapBoundary } from './types';
 
-export class Entity<T = any, A extends Application = Application> extends Container<A> implements ICollider {
+export class Entity<T = any> extends Container implements ICollider {
   view: PIXIContianer;
   isActor: boolean = false;
   isSolid: boolean = false;

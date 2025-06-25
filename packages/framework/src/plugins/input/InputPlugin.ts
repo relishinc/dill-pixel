@@ -3,7 +3,6 @@ import { Action, DefaultActions } from '../actions';
 import { Controls } from './Controls';
 
 import { IApplication } from '../../core';
-import { Application } from '../../core/Application';
 import { Signal } from '../../signals';
 import type { IPlugin } from '../Plugin';
 import { Plugin } from '../Plugin';
@@ -36,7 +35,7 @@ const defaultOptions = {
   actions: DefaultActions,
 };
 
-export class InputPlugin extends Plugin<Application, InputManagerOptions> implements IInputPlugin {
+export class InputPlugin extends Plugin<InputManagerOptions> implements IInputPlugin {
   public readonly id = 'input';
 
   // controls

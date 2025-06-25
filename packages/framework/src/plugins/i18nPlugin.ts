@@ -1,5 +1,4 @@
 import { Assets } from 'pixi.js';
-import { Application } from '../core/Application';
 import { Signal } from '../signals';
 import type { ImportListItem, ImportListItemModule } from '../utils';
 import { getDynamicModuleFromImportListItem, Logger } from '../utils';
@@ -68,7 +67,7 @@ export interface Ii18nPlugin extends IPlugin {
 /**
  * i18n module class.
  */
-export class i18nPlugin extends Plugin<Application, i18nOptions> implements Ii18nPlugin {
+export class i18nPlugin extends Plugin<i18nOptions> implements Ii18nPlugin {
   public readonly id = 'i18n';
   public onLocaleChanged: Signal<(locale: string) => void> = new Signal<(locale: string) => void>();
 

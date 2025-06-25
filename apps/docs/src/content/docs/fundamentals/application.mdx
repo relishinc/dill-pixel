@@ -5,31 +5,28 @@ title: Application
 The Application class is the entry point for your game. It is responsible for initializing the game, loading assets, and managing the game loop.
 
 import { Aside, Code, TabItem, Tabs } from '@astrojs/starlight/components';
-import indexHtml from '../../../../../examples/hello-world/index.html?raw';
-import indexCss from '../../../../../examples/hello-world/src/index.css?raw';
+import indexHtml from '../../../project-files/index.html?raw';
+import indexCss from '../../../project-files/src/css/style.css?raw';
 
 The [Application](/api/classes/application) class is the entry point for your game. It is responsible for initializing the game, loading assets, and managing the game loop. It extends PIXI's Application class and implements core functionality through plugins and signals.
 
 ## Creating an Application
 
-The simplest way to create an application is using the `create` function:
-
-```ts
-import { create } from 'dill-pixel';
-
-const app = create({
-  width: 800,
-  height: 600,
-});
-```
+Creating an application is now a fully automated process. The framework handles the bootstrapping for you, so you can focus on your game's configuration and logic.
 
 ### Configuration
 
-Applications can be configured with various options in your `dill-pixel.config.ts` file:
+You configure your application in the `dill-pixel.config.ts` file. This is where you'll define core settings, plugins, and, importantly, specify your custom application class.
 
 ```ts
-// src/dill-pixel.config.ts
-export const config = defineConfig({
+// dill-pixel.config.ts
+import { defineConfig } from 'dill-pixel';
+import { MyApplication } from './MyApplication';
+
+export default defineConfig({
+  // Point to your custom Application class
+  application: MyApplication,
+
   // Core settings
   id: 'MyGame',
   resizeToContainer: true,
@@ -37,47 +34,48 @@ export const config = defineConfig({
 
   // Plugin configurations
   plugins: [
-    // Add your plugins here
     ['matter-physics', { autoLoad: false }],
     // ... other plugins
   ],
 
-  // Storage adapters
-  storageAdapters: ['firebase'],
-
-  // Internationalization
-  i18n: {
-    loadAll: true,
-    locales: ['en', 'fr'],
-    files: [
-      /* locale configs */
-    ],
-  },
+  // ... other configurations
 });
 ```
 
 ### Bootstrapping
 
-To bootstrap a custom application:
+The entire bootstrapping process is handled by a single import in your `src/index.ts` file. This special import dynamically loads the framework and starts your application based on your config file.
 
 ```ts
-// src/bootstrap.ts
-import { create } from 'dill-pixel';
-import { MyApplication } from './MyApplication';
-import { config } from '@/dill-pixel.config';
+// src/index.ts
+import('dill-pixel/boot');
+```
 
-async function bootstrap() {
-  await create<MyApplication>(config, MyApplication);
+This will automatically:
+
+1. Find your `dill-pixel.config.ts` file.
+2. Instantiate the `application` class you specified in the config.
+3. Initialize the application with your configuration.
+4. Look for an optional `src/main.ts` and execute its default export.
+
+### Application Logic Entry Point (Optional)
+
+For any logic that needs to run immediately after the application is created, you can create a `src/main.ts` file. The framework will automatically execute the default export of this file, passing the created `app` instance to it.
+
+```ts
+// src/main.ts
+import type { MyApplication } from './MyApplication';
+
+export default function main(app: MyApplication) {
+  // This code runs right after the app is created.
+  console.log('My application is ready!', app);
+
+  // You can set up initial scenes, connect to signals, etc.
+  app.scenes.load('mainMenu');
 }
-
-void bootstrap();
 ```
 
-Then, in `index.ts`, you can import the application and start it:
-
-```ts
-import '@/bootstrap';
-```
+If you don't need any post-initialization logic, or if you prefer to handle it within your `Application` class's `setup` method, you can simply omit the `src/main.ts` file.
 
 ## Core Features
 
@@ -105,7 +103,6 @@ Similarly, the Application provides core functions (defined in [ICoreFunctions](
 // Scene management
 app.exec.loadScene('gameScene');
 // also available as `app.func.loadScene('gameScene')` or via the SceneManagerPlugin `this.app.scenes.loadScene('gameScene')`
-
 // Popup management
 app.exec.showPopup('menuPopup');
 
@@ -137,9 +134,21 @@ export class MyScene extends Scene {
 
 ## Example Implementation
 
-Here's a complete example showing how to create a custom Application:
+Here's a complete example showing how to create a custom Application with the new streamlined process:
 
 <Tabs>
+   <TabItem label="dill-pixel.config.ts">
+```ts
+import { defineConfig } from 'dill-pixel';
+import { MyApplication } from './MyApplication';
+
+export default defineConfig({
+    id: 'MyApplication',
+    application: MyApplication, // Specify your custom application class
+    // ... other config ...
+});
+    ```
+  </TabItem>
     <TabItem label="index.html">
         <Code lang="html" code={indexHtml}/>
     </TabItem>
@@ -148,79 +157,37 @@ Here's a complete example showing how to create a custom Application:
     </TabItem>
     <TabItem label="src/index.ts">
         ```ts
-        import('@/bootstrap');
+        // That's it! This one line handles everything.
+        import('dill-pixel/boot');
         ```
     </TabItem>
-  <TabItem label="src/dill-pixel.config.ts">
-```ts
-import { defineActions, defineButtons, defineConfig, defineContexts, defineControls } from 'dill-pixel';
-
-export const contexts = defineContexts(['default', 'game', 'menu', 'popup']);
-
-export const actions = defineActions(contexts, {
-  toggle_pause: { context: '*' },
-});
-
-export type Contexts = (typeof contexts)[number];
-export type ActionTypes = keyof typeof actions;
-
-const buttons = defineButtons();
-
-export const controls = defineControls(actions, buttons, {
-  keyboard: {
-    up: {
-      pause: 'P',
-    },
-  },
-});
-
-export type Data = {};
-
-export const config = defineConfig<Data>({
-    id: 'MyApplication',
-    actions,
-    input: {
-        controls,
-    },
-    plugins: [],
-    storageAdapters: [],
-});
-    ```
-  </TabItem>
-  <TabItem label="src/bootstrap.ts">
-    ```ts
-    import { create } from 'dill-pixel';
-    import { MyApplication } from '@/MyApplication';
-    import { config } from '@/dill-pixel.config';
-
-    async function bootstrap() {
-      await create<MyApplication>(config, MyApplication);
-    }
-
-    void bootstrap();
-    ```
-
-  </TabItem>
+  
   <TabItem label="src/MyApplication.ts">
     ```ts
     import { Application } from 'dill-pixel';
-    import type { ActionTypes, Contexts, Data } from '@/dill-pixel.config';
 
-    export class MyApplication extends Application<Data, Contexts, ActionTypes> {
-        // do some custom stuff specific to your application here
+    export class MyApplication extends Application {
         setup() {
-        // Connect to core actions
-        this.actions('pause').connect(this.handlePause);
+          // This method is called automatically by the framework.
+          console.log('MyApplication setup complete!');
         }
 
-        public pause() {
-        // Send pause action
-        this.sendAction('pause');
+        public doSomethingCustom() {
+          console.log('Doing something special!');
         }
+    }
+    ```
 
-        private handlePause() {
-        // Handle pause action
-        }
+  </TabItem>
+  <TabItem label="src/main.ts">
+    ```ts
+    // main.ts is optional, but if you need to do something after the application is created, you can do it here.
+
+    import type { MyApplication } from '@/MyApplication';
+
+    export default async function main(app: MyApplication) {
+      console.log('main.ts executed!');
+      await app.doSomethingCustom();
     }
     ```
 
@@ -230,14 +197,10 @@ export const config = defineConfig<Data>({
     import { Scene } from 'dill-pixel';
     import type { MyApplication } from '@/MyApplication';
 
-    export default class Game extends Scene<MyApplication> {
-      // be sure to provide your Application class as a generic parameter in your scene or base scene - it will give you intellisense for your actions and contexts.
+    export default class Game extends Scene {
       initialize() {
-        // ...
-        this.app.actionContext = 'game'; // this is the context for your actions, you can define multiple contexts in your config. you'll get an intellisense list of your defined contexts
-
-        // you would get intellisense showing the custom "pause" method in the application class
-        this.app.pause();
+        // You get full intellisense for your custom application class
+        this.app.doSomethingCustom();
       }
     }
     ```

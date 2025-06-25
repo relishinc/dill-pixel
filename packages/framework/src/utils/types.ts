@@ -1,5 +1,6 @@
-import type { AssetInitOptions, AssetsManifest, AssetsPreferences, UnresolvedAsset } from 'pixi.js';
-import { Point, Texture } from 'pixi.js';
+import type { AssetInitOptions, AssetsManifest, AssetsPreferences, Texture, UnresolvedAsset } from 'pixi.js';
+import { Point } from 'pixi.js';
+import type { FilterBitmapFontNames, FilterCleanAssetNames, FilterSpineAssetNames } from './typefilters';
 
 /**
  * A generic constructor type.
@@ -13,11 +14,6 @@ export type Constructor<T = NonNullable<unknown>> = new (...args: any[]) => T;
  * @template K The keys of the properties that should be required.
  */
 export type WithRequiredProps<T, K extends keyof T> = Partial<T> & Pick<T, K>;
-
-/**
- * A type that represents a sprite sheet, which can be a string or undefined.
- */
-export type SpriteSheetLike = string | undefined;
 
 /**
  * A type that represents a size, with width and height properties.
@@ -50,66 +46,8 @@ export type ContainerLike = RectLike & { position: Point; getGlobalPosition: () 
 /**
  * A type that represents a texture, which can be a string or a Texture instance.
  */
-// export type TextureLike = string | Texture;
-
-type FilterCleanAssetNames<T> = T extends string
-  ? T extends `${string}/${string}`
-    ? never // Remove anything with slashes
-    : T extends `${string}.${string}`
-      ? never // Remove anything with file extensions
-      : T // Keep clean names
-  : never;
-
-type FilterSpineAssetNames<T> = T extends string
-  ? T extends `${string}.skel`
-    ? T extends `${string}/${infer FileName}.skel`
-      ? `${FileName}.skel` // Remove path but keep filename.skel: 'spine/spineboy-pro.skel' → 'spineboy-pro.skel'
-      : T // Keep as is if no path: 'spineboy-pro.skel' → 'spineboy-pro.skel'
-    : never // Only keep .skel files, ignore .atlas files
-  : never;
-
-type FilterBitmapFontNames<T> = T extends string
-  ? T extends `${string}.fnt`
-    ? T extends `${string}/${infer FileName}`
-      ? FileName extends `${string}/${infer DeepFileName}`
-        ? FilterBitmapFontNames<DeepFileName> // Recursively handle nested paths
-        : FileName extends `${infer Name}.fnt`
-          ? Name // Extract name without .fnt extension
-          : never
-      : T extends `${infer Name}.fnt`
-        ? Name // Handle case with no path
-        : never
-    : never // Only keep .fnt files
-  : never;
-
+/* eslint-disable @typescript-eslint/no-empty-interface, @typescript-eslint/no-explicit-any */
 export interface AssetTypeOverrides {}
-
-export type TextureLike = AssetTypeOverrides extends {
-  TextureLike: infer T;
-  TPSFrames: infer F;
-}
-  ? FilterCleanAssetNames<T> | F | Texture | (string & {}) // Filter T, don't filter F
-  : AssetTypeOverrides extends { TextureLike: infer T }
-    ? FilterCleanAssetNames<T> | Texture | (string & {})
-    : AssetTypeOverrides extends { TPSFrames: infer F }
-      ? F | Texture | (string & {})
-      : string | Texture;
-
-export type AudioLike = AssetTypeOverrides extends { AudioLike: infer T }
-  ? FilterCleanAssetNames<T> | (string & {})
-  : string;
-
-export type FontFamilyLike = AssetTypeOverrides extends { FontFamily: infer T }
-  ? FilterCleanAssetNames<T> | (string & {})
-  : string;
-
-export type BitmapFontFamilyLike = AssetTypeOverrides extends { BitmapFontFamily: infer T }
-  ? FilterBitmapFontNames<T> | (string & {})
-  : string;
-
-export type SpineLike = AssetTypeOverrides extends { SpineData: infer T }
-  ? FilterSpineAssetNames<T> | (string & {})
-  : string;
 
 export type ImportListItemModule<T> = (() => Promise<any>) | Promise<any> | Constructor<T> | T;
 
@@ -149,7 +87,11 @@ export type AssetLike = {
   src: string | string[];
   ext: AssetExtension;
 };
-export type BundleTypes = string | string[];
+export type BundleTypes =
+  | AssetTypeOverrides['Bundles']
+  | AssetTypeOverrides['Bundles'][]
+  | (string & {})
+  | (string & {})[];
 
 export type AssetTypes = string | string[] | UnresolvedAsset | UnresolvedAsset[] | AssetLike | AssetLike[];
 
@@ -193,7 +135,7 @@ export type AppSize = {
   screenHeight: number;
 };
 
-export type Ease<T extends string = string> = Record<T, gsap.EaseFunction>;
+export type Eases<T extends string = string> = Record<T, gsap.EaseFunction>;
 
 // from gsap
 export type EaseString =
@@ -347,3 +289,27 @@ export type { Spine } from '../plugins/spine/pixi-spine';
 export type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
 };
+
+/* eslint-disable @typescript-eslint/no-empty-interface, @typescript-eslint/no-explicit-any */
+export interface AppTypeOverrides {}
+
+export type TextureAsset =
+  | FilterCleanAssetNames<AssetTypeOverrides['Texture']>
+  | AssetTypeOverrides['TPSFrames']
+  | (string & {})
+  | Texture;
+
+export type TPSFramesAsset = AssetTypeOverrides['TPSFrames'] & (string & {});
+
+export type SpritesheetAsset = FilterCleanAssetNames<AssetTypeOverrides['SpriteSheet']> | (string & {});
+
+export type AudioAsset = FilterCleanAssetNames<AssetTypeOverrides['Audio']> | (string & {});
+
+export type FontFamilyAsset = FilterCleanAssetNames<AssetTypeOverrides['FontFamily']> | (string & {}) | (string[] & {});
+
+export type BitmapFontFamilyAsset =
+  | FilterBitmapFontNames<AssetTypeOverrides['BitmapFontFamily']>
+  | (string & {})
+  | (string[] & {});
+
+export type SpineAsset = FilterSpineAssetNames<AssetTypeOverrides['SpineData']> | (string & {});

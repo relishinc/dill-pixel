@@ -1,4 +1,4 @@
-import { Application, Container as DillPixelContainer, IPlugin, Plugin } from 'dill-pixel';
+import { Container as DillPixelContainer, IPlugin, Plugin } from 'dill-pixel';
 import Matter, { IEngineDefinition, IRunnerOptions } from 'matter-js';
 import { Container, Rectangle } from 'pixi.js';
 import { System } from './System';
@@ -32,10 +32,7 @@ const defaultOptions = {
   },
 };
 
-export class MatterPhysicsPlugin
-  extends Plugin<Application, MatterPhysicsPluginOptions>
-  implements IMatterPhysicPlugin
-{
+export class MatterPhysicsPlugin extends Plugin<MatterPhysicsPluginOptions> implements IMatterPhysicPlugin {
   get system(): typeof System {
     return System;
   }

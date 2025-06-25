@@ -1,4 +1,3 @@
-import { Application } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { Sensor } from './Sensor';
@@ -50,7 +49,7 @@ import { EntityData, PhysicsEntityType } from './types';
  * });
  * ```
  */
-export class Group<T extends Application = Application, D extends EntityData = EntityData> extends Entity<T, D> {
+export class Group<D extends EntityData = EntityData> extends Entity<D> {
   protected _visible: boolean = true;
 
   public entityType: PhysicsEntityType = 'Group';

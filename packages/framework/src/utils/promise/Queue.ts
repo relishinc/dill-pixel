@@ -108,7 +108,10 @@ export class Queue<T = any | void> {
       void this._next();
     } catch (error) {
       Logger.error("Queue didn't complete due to an error:", error, 'Cancelling Queue');
-      this._isCanceled = true;
+      // this._isCanceled = true;
+      // remove the current promise from the queue
+      this._promises.splice(this._currentIndex, 1);
+      void this._next();
     }
   }
 }

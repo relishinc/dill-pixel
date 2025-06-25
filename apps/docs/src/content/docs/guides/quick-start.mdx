@@ -4,66 +4,41 @@ title: Quick Start
 
 import { Aside, Code, FileTree, Steps, TabItem, Tabs } from '@astrojs/starlight/components';
 
-import indexHtml from '../../../../../examples/hello-world/index.html?raw';
-import packageJson from '../../../../../examples/hello-world/package.json?raw';
-import bootstrapTs from '../../../../../examples/hello-world/src/bootstrap.ts?raw';
-import indexCss from '../../../../../examples/hello-world/src/index.css?raw';
-import indexTs from '../../../../../examples/hello-world/src/index.ts?raw';
-import applicationTs from '../../../../../examples/hello-world/src/MyApplication.ts?raw';
-import baseSceneTs from '../../../../../examples/hello-world/src/scenes/BaseScene.ts?raw';
-import startSceneTs from '../../../../../examples/hello-world/src/scenes/StartScene.ts?raw';
+## Creating a New Project
 
-## Creating a New Project (CLI)
-
-The easiest way to get started with Dill Pixel is to use the CLI to create a new project. Run the following command in your terminal:
-
-```bash
-npx dill-pixel create my-application
-```
-
-<Aside type="tip">Replace `my-application` with whatever you'd like to name your project</Aside>
-
-This will create a new directory called `my-application` with all the necessary files and dependencies pre-configured.
-
-### Using PNPM (Recommended)
-
-<Aside type="tip">If you're using PNPM, you can use the following command instead:</Aside>
-
-```bash
-npx dill-pixel create my-application --use-pnpm
-```
-
-## Manual Installation
-
-If you prefer to set up your project manually, you can install the framework directly:
+The fastest way to get started with Dill Pixel is to use the `create-dill-pixel` command-line tool. This scaffolds a new project with a modern, production-ready setup.
 
 <Tabs>
-  <TabItem label={'npm'}>
-    <Code code={`npm i dill-pixel`} lang="bash" />
-  </TabItem>
-  <TabItem label={'yarn'}>
-    <Code code={`yarn add dill-pixel`} lang="bash" />
-  </TabItem>
-  <TabItem label={'pnpm'}>
-    <Code code={`pnpm install dill-pixel`} lang="bash" />
-  </TabItem>
+    <TabItem label="npm">
+        ```bash
+        npm create dill-pixel@latest
+        ```
+    </TabItem>
+    <TabItem label="yarn">
+        ```bash
+        yarn create dill-pixel
+        ```
+    </TabItem>
+    <TabItem label="pnpm">
+        ```bash
+        pnpm create dill-pixel
+        ```
+    </TabItem>
 </Tabs>
 
-## "Hello World" Example
-
 <Aside type="tip">
-  The entire source code for this example can be found in the [GitHub
-  repository](https://github.com/relishinc/dill-pixel/tree/main/apps/examples/hello-world)
+  This command will guide you through creating a new directory for your project with all the necessary files and dependencies pre-configured.
 </Aside>
 
 ## Project Structure
 
-When you create a new project using the CLI, it will generate the following file structure:
+When you create a new project, it will generate the following file structure:
 
 <FileTree>
 - package.json
 - tsconfig.json
 - vite.config.mjs
+- dill-pixel.config.ts
 - index.html
 - .assetpack.mjs
 - .eslintrc.json
@@ -71,54 +46,30 @@ When you create a new project using the CLI, it will generate the following file
 - .nvmrc
 - **src**
   - index.ts
-  - index.css
-  - bootstrap.ts
+  - main.ts (optional)
   - MyApplication.ts
-  - dill-pixel.config.ts
-  - Splash.ts
   - **scenes**
     - BaseScene.ts
     - StartScene.ts
   - **utils**
     - Constants.ts
-- **assets**
-  - **audio\{m\}**
-    - **music**
-      - Game_Over.ogg
-    - **sfx**
-      - click.ogg
-      - hover.ogg
-  - **required\{m\}**
-    - **ui\{tps\}**
-      - **btn**
-        - blue.png
-        - green.png
-      - **joystick**
-        - base.png
-        - handle.png
-  - **spine\{m\}**
-    - spineboy-pro.png
-    - spineboy-pro.atlas
-    - spineboy-pro.skel
+  - **css**
+    - style.css
+- **public**
+    - **assets**
+        - _asset folders..._
 </FileTree>
 
 ### Key Files and Directories
-
-- `src/MyApplication.ts`: Main application class extending from Dill Pixel's Application
-- `src/bootstrap.ts`: Initializes the game and handles core setup
-- `src/dill-pixel.config.ts`: Core game configuration including actions, controls, and data management
-- `src/Splash.ts`: Default loading screen implementation
-- `src/scenes/`: Contains all game scenes
-  - `BaseScene.ts`: Base scene class with shared functionality
-  - `StartScene.ts`: Initial game scene with "Hello Dill Pixel" example
-- `src/utils/Constants.ts`: Shared constants like fonts and colors
-- `.assetpack.mjs`: Asset processing configuration
-- `.eslintrc.json`: Code linting rules
-- `.prettierrc.json`: Code formatting rules
+- `dill-pixel.config.ts`: Core game configuration. This is where you define your scenes, assets, actions, and plugins.
+- `src/index.ts`: The main entry point for your application. It contains a single line to boot the framework.
+- `src/main.ts` (optional): If this file exists and has a default export, the framework will run it after the application is created. It's the perfect place for post-initialization logic.
+- `src/MyApplication.ts`: Your custom application class, which extends `dill-pixel`'s base `Application`.
+- `src/scenes/`: Contains all your game scenes. The framework automatically discovers them.
+- `public/assets/`: The home for all your game's assets (images, audio, etc.).
 
 <Aside type="tip">
-  The CLI creates a production-ready project structure with TypeScript, ESLint, Prettier, and asset management
-  pre-configured.
+  The CLI creates a production-ready project with TypeScript, ESLint, Prettier, and asset management pre-configured. You don't need to worry about setting up a build process.
 </Aside>
 
 ### Start the Dev Server

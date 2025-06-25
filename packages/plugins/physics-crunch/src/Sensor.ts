@@ -1,4 +1,3 @@
-import { Application } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { Solid } from './Solid';
@@ -63,7 +62,7 @@ import { EntityData, PhysicsEntityConfig, PhysicsEntityType, SensorOverlap, Vect
  * }
  * ```
  */
-export class Sensor<T extends Application = Application, D extends EntityData = EntityData> extends Entity<T, D> {
+export class Sensor<D extends EntityData = EntityData> extends Entity<D> {
   public readonly entityType: PhysicsEntityType = 'Sensor';
   /** Whether this sensor should be removed when culled */
   public shouldRemoveOnCull = false;

@@ -4,7 +4,7 @@ import { capitalize } from '../string';
 const colors = {
   log: 'background: #74b64c; color: black;',
   warn: 'background: yellow; color: black;',
-  error: 'background: orange; color: black;',
+  error: 'background: red; color: white;',
 };
 
 export type LoggerMode = 'development' | 'default' | 'disabled';

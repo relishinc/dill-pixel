@@ -1,0 +1,17 @@
+{
+  "name": "my-dill-pixel-application",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.html",
+  "scripts": {
+    "clean": "rimraf .cache",
+    "start": "pnpm dev",
+    "dev": "pnpm clean && vite",
+    "preview": "pnpm build && vite preview",
+    "build": "pnpm clean && vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dill-pixel": "latest"
+  }
+}

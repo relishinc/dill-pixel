@@ -12,6 +12,22 @@ export interface GSAPAnimationConfigExtended extends gsap.TweenVars {}
  */
 type GSAPEntity = gsap.core.Tween | gsap.core.Timeline;
 
+interface ShakeConfig {
+  duration: number;
+  intensity: number;
+  times: number;
+  x: boolean;
+  y: boolean;
+}
+
+const defaultShakeConfig: ShakeConfig = {
+  x: true,
+  y: true,
+  intensity: 3,
+  duration: 0.05,
+  times: 4,
+};
+
 /**
  * Interface for animated entities.
  */
@@ -43,7 +59,7 @@ export interface IAnimated {
   isAnimationPlaying(): boolean;
 
   //utility
-  shake(config?: { duration?: number; intensity?: number; times?: number }, instance?: any): gsap.core.Tween;
+  shake(config?: Partial<ShakeConfig>, instance?: any): gsap.core.Tween;
 
   pulse(config?: { duration?: number; intensity?: number; times?: number }, instance?: any): gsap.core.Tween;
 
@@ -224,25 +240,23 @@ export function Animated<TBase extends Constructor>(Base: TBase): TBase & Constr
      * @param instance
      * @returns GSAP Tween instance.
      */
-    public shake(
-      config: {
-        duration?: number;
-        intensity?: number;
-        times?: number;
-      } = {},
-      instance: any = this,
-    ): gsap.core.Tween {
-      const { duration = 0.05, intensity = 12, times = 41 } = config;
+    public shake(config: Partial<ShakeConfig>, instance: any = this): gsap.core.Tween {
+      const resolvedConfig = { ...defaultShakeConfig, ...config };
       const obj = { x: instance.x, y: instance.y };
       const origX = obj.x;
-
-      const repeat = times % 2 === 0 ? times + 1 : times;
+      const origY = obj.y;
+      const repeat = resolvedConfig.times % 2 === 0 ? resolvedConfig.times + 1 : resolvedConfig.times;
 
       const tween = gsap.to(instance, {
-        x: origX + gsap.utils.random(-Math.max(intensity, 2), Math.max(intensity, 2)),
+        x: resolvedConfig.x
+          ? origX + gsap.utils.random(-Math.max(resolvedConfig.intensity, 2), Math.max(resolvedConfig.intensity, 2))
+          : origX,
+        y: resolvedConfig.y
+          ? origY + gsap.utils.random(-Math.max(resolvedConfig.intensity, 2), Math.max(resolvedConfig.intensity, 2))
+          : origY,
         repeat,
         yoyo: true,
-        duration: duration,
+        duration: resolvedConfig.duration,
       });
       this._activeTweens.push(tween);
       return tween;

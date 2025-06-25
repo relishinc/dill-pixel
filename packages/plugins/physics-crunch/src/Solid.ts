@@ -1,4 +1,3 @@
-import { Application } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { Sensor } from './Sensor';
@@ -43,7 +42,7 @@ import { EntityData, PhysicsEntityConfig, PhysicsEntityType } from './types';
  * });
  * ```
  */
-export class Solid<T extends Application = Application, D extends EntityData = EntityData> extends Entity<T, D> {
+export class Solid<D extends EntityData = EntityData> extends Entity<D> {
   public readonly entityType: PhysicsEntityType = 'Solid';
   /** Whether this solid should be removed when culled (typically false) */
   public shouldRemoveOnCull = false;

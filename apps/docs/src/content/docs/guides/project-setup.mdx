@@ -2,65 +2,55 @@
 title: Project Setup
 ---
 
-import { Code, FileTree } from '@astrojs/starlight/components';
-import viteConfigJs from '../../../../../examples/hello-world/vite.config.mjs?raw';
+import { Aside, Code, FileTree } from '@astrojs/starlight/components';
 
 ## Organizing Files and Directories
 
-We recommend setting up your project directory as follows:
+A new project scaffolded with `create-dill-pixel` will have the following structure. This is the recommended setup for organizing your files.
 
 <FileTree>
-
 - package.json
-- README.md
 - tsconfig.json
-- vite.config.mjs
+- dill-pixel.config.ts
 - index.html
-- assets - configured for [assetpack](https://github.com/pixijs/assetpack) (example below)
-  - audio\{m\}
-    - music
-      - music.wav
-    - sfx
-      - click.ogg
-      - beep.ogg
-      - boop.wav
-  - ui\{tps\}
-    - button.png
-    - arrow.png
-  - game\{tps\}
-    - obstacle.png
-    - rocket.png
-  - spine\{m\}
-    - animation.skel
-    - animation.atlas
-    - animations.png
+- **public**
+    - **assets**
+        - **audio\{m\}**
+            - music
+            - sfx
+        - **game-assets\{tps\}**
+            - obstacle.png
+            - rocket.png
 - **src**
-  - dill-pixel.config.ts - configuration file for dill pixel
   - index.ts
-  - index.css
-  - bootstrap.ts - where you initialize your game
-  - MyApplication.ts - extends a dill pixel Application (optional)
-  - scenes - where your scenes are stored,<br/>- automatically registered with dill pixel
-    - Splash.ts
-    - Intro.ts
-    - Game.ts
-    - HighScores.ts
-  - locales - where you store your locale files
+  - main.ts (optional)
+  - MyApplication.ts
+  - **scenes**
+    - BaseScene.ts
+    - StartScene.ts
+  - **utils**
+    - Constants.ts
+  - **locales**
     - en.ts
-    - fr.ts
-  - gameobjects - where you store your game objects
-    - Player.ts
-    - Enemy.ts
-  - utils - where you store your utility functions
-    - utils.ts
-  - …
-
+  - **css**
+    - style.css
 </FileTree>
+
+- **dill-pixel.config.ts**: The main configuration file for your game.
+- **public/assets/**: The directory for all your game assets. This is watched by the asset pack system.
+- **src/index.ts**: The single entry point that boots the framework.
+- **src/MyApplication.ts**: Your optional custom `Application` class.
+- **src/scenes/**: The directory where all your game scenes live.
 
 ## Vite Configuration
 
-Dill Pixel uses Vite under the hood to compile your game and export it for both development and production environments.
+<Aside>
+The framework handles all the necessary Vite configuration internally. You do not need a `vite.config.mjs` file in your project's root unless you have a specific need to add custom Vite plugins or override the default build process.
+</Aside>
 
-The `vite.config.mjs` file in the root directory configures the build process. The default Vite configuration can be imported from the `dill-pixel` package, and should be sufficient for most projects.
+Dill Pixel uses Vite to compile your game for both development and production. The default Vite configuration is imported automatically from the `dill-pixel` package and is optimized for web game development, including features like:
 
-<Code code={viteConfigJs} lang="js" title="vite.config.mjs" />
+-   Top-level `await` support.
+-   WASM integration.
+-   Automatic asset bundling and type generation.
+-   Globals for scenes, plugins, and adapters.

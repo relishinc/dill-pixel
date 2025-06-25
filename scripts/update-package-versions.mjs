@@ -72,7 +72,7 @@ function updatePackageJson(packageJsonPath) {
 
 // Glob pattern to find package.json files
 const globPattern =
-  '{./packages/framework/package.json,./packages/plugins/*/package.json,./packages/storage-adapters/*/package.json,./packages/examples/package.json,./packages/templates/*/package.json}';
+  '{./packages/framework/package.json,./packages/plugins/*/package.json,./packages/storage-adapters/*/package.json,./apps/kitchen-sink/package.json,./packages/templates/*/package.json}';
 
 function run() {
   const files = glob.sync(globPattern);

@@ -1,16 +1,43 @@
 import { Ticker } from 'pixi.js';
 import { PauseConfig } from '../core';
-import { Application } from '../core/Application';
-import { AssetLoadingOptions, Size } from '../utils';
+import { type AppTypeOverrides, type AssetTypeOverrides, AssetLoadingOptions, Size } from '../utils';
 import type { IContainer } from './Container';
 import { Container } from './Container';
 
-export type SceneAssets = Omit<AssetLoadingOptions, 'manifest' | 'initOptions' | 'assetPreferences'>;
+type AppScenes = AppTypeOverrides['Scenes'];
+
+type SceneAssetsToLoad = {
+  assets?: (string | { alias: string; src: string | string[] })[];
+  bundles?: AssetTypeOverrides['Bundles'] | AssetTypeOverrides['Bundles'][];
+};
+
+export type SceneAssets = {
+  preload?: SceneAssetsToLoad;
+  background?: SceneAssetsToLoad;
+  autoUnload?: boolean;
+};
+
+export type ScenePlugins = AppTypeOverrides['Plugins'][];
+
+export type SceneDebug = {
+  label?: string;
+  group?: string;
+  order?: number;
+};
+
+export type SceneConfig = {
+  id?: string;
+  dynamic?: boolean;
+  active?: boolean;
+  assets?: SceneAssets;
+  plugins?: ScenePlugins;
+  debug?: SceneDebug;
+};
 
 export interface IScene extends IContainer {
-  id: string;
+  id: AppScenes;
   label?: string;
-  assets?: SceneAssets;
+  assets?: Omit<AssetLoadingOptions, 'manifest' | 'initOptions' | 'assetPreferences'>;
   autoUnloadAssets?: boolean;
 
   enter(): Promise<any>;
@@ -39,7 +66,7 @@ export interface SceneListItem {
   autoUnloadAssets: boolean;
 }
 
-export class Scene<T extends Application = Application> extends Container<T> implements IScene {
+export class Scene extends Container implements IScene {
   public readonly id: string;
   public autoUnloadAssets: boolean = false;
 

@@ -58,6 +58,7 @@ export default defineConfig({
           items: [
             { label: 'Overview', link: '/fundamentals/overview' },
             { label: 'Application', link: '/fundamentals/application' },
+            { label: 'Type-Safety', link: '/fundamentals/type-safety' },
             { label: 'Signals', link: '/fundamentals/signals' },
             { label: 'Assets', link: '/fundamentals/assets' },
             { label: 'Actions', link: '/fundamentals/actions' },

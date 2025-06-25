@@ -1,5 +1,6 @@
 import {
   Application,
+  type AppTypeOverrides,
   bindAllMethods,
   defaultFactoryMethods,
   PointLike,
@@ -61,7 +62,7 @@ import { resolveEntityPosition, resolveEntitySize } from './utils';
  * }
  * ```
  */
-export class Entity<A extends Application = Application, D extends EntityData = EntityData> {
+export class Entity<D extends EntityData = EntityData> {
   public readonly entityType: PhysicsEntityType;
   protected _id: string;
   /** Unique type identifier for this entity */
@@ -243,8 +244,8 @@ export class Entity<A extends Application = Application, D extends EntityData = 
   }
 
   /** Reference to the main application instance */
-  get app(): A {
-    return Application.getInstance() as A;
+  get app(): AppTypeOverrides['App'] {
+    return Application.getInstance();
   }
 
   /** Reference to the physics plugin */

@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "kitchen-sink:build": "turbo build --filter={./apps/kitchen-sink}",
+    "kitchen-sink:dev": "turbo dev --filter={./apps/kitchen-sink}",
     "framework:build": "turbo build --filter={./packages/framework}",
     "framework:publish": "cd packages/framework && npm publish",
     "framework:all": "pnpm framework:build && pnpm framework:publish",

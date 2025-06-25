@@ -1,4 +1,4 @@
-import type { Application, IApplication, IPlugin } from 'dill-pixel';
+import type { IApplication, IPlugin } from 'dill-pixel';
 import { isDev, Logger, omitKeys, Plugin } from 'dill-pixel';
 import { version } from './version';
 
@@ -12,15 +12,14 @@ export type GoogleAnalyticsPluginOptions = ConfigParams & {
 
 export type GAEvents = Record<string, unknown>;
 
-export interface IGoogleAnalyticsPlugin<E extends GAEvents = GAEvents>
-  extends IPlugin<Application, GoogleAnalyticsPluginOptions> {
+export interface IGoogleAnalyticsPlugin<E extends GAEvents = GAEvents> extends IPlugin<GoogleAnalyticsPluginOptions> {
   initialize(options: Partial<GoogleAnalyticsPluginOptions>, app: IApplication): void;
   gtag(...args: any[]): void;
   trackEvent<K extends keyof E>(eventName: K, eventData?: E[K]): void;
 }
 
 export class GoogleAnalyticsPlugin<E extends GAEvents = GAEvents>
-  extends Plugin<Application, GoogleAnalyticsPluginOptions>
+  extends Plugin<GoogleAnalyticsPluginOptions>
   implements IGoogleAnalyticsPlugin<E>
 {
   private _options: GoogleAnalyticsPluginOptions;

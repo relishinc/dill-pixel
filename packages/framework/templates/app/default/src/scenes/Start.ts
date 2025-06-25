@@ -1,5 +1,4 @@
 import Base from '@/scenes/Base';
-import { FONT_KUMBH_SANS } from '@/utils/Constants';
 import { FlexContainer } from 'dill-pixel';
 
 export const id = 'start';
@@ -27,7 +26,7 @@ export default class Start extends Base {
     this.container.add.text({
       text: 'Hello Dill Pixel',
       resolution: 2,
-      style: { fontFamily: FONT_KUMBH_SANS, fontWeight: 'bold', fill: 0xffffff },
+      style: { fontFamily: 'KumbhSans', fontWeight: 'bold', fill: 0xffffff },
     });
 
     // from src/assets.json

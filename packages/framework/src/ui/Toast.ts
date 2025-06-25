@@ -1,7 +1,7 @@
 import { gsap } from 'gsap';
-import { Graphics, Text, TextStyle } from 'pixi.js';
+import { Graphics, Text } from 'pixi.js';
 import { Container } from '../display/Container';
-import { WithSignals } from '../mixins';
+import { type TextStyle, WithSignals } from '../mixins';
 import { Signal } from '../signals';
 import { Button } from './Button';
 import { Toaster } from './Toaster';
@@ -55,7 +55,7 @@ export interface ToastConfig {
   /** Duration in milliseconds before auto-closing (if autoClose is true) */
   duration?: number;
   /** Custom text style options */
-  style?: Partial<TextStyle>;
+  style?: TextStyle;
   /** Width of the toast in pixels */
   width?: number;
   /** Height of the toast in pixels */

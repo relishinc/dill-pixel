@@ -16,10 +16,11 @@ interface ISupabaseAdapterOptions {
   debug?: boolean;
 }
 
-export interface ISupabaseAdapter<Database extends GenericSchema = any> extends IStorageAdapter {
+export interface ISupabaseAdapter<Database extends GenericSchema = any>
+  extends IStorageAdapter<ISupabaseAdapterOptions, Database> {
   client: SupabaseClient<Database>;
 
-  initialize(app: IApplication, options?: Partial<ISupabaseAdapterOptions>): void;
+  initialize(options: Partial<ISupabaseAdapterOptions>, _app: IApplication): void;
 
   save(tableId: string, data: any, method?: SaveMethod): Promise<any>;
 
@@ -32,7 +33,7 @@ export interface ISupabaseAdapter<Database extends GenericSchema = any> extends 
  * A class representing a storage adapter that uses Supabase.
  */
 export class SupabaseAdapter<Database extends GenericSchema = any>
-  extends StorageAdapter
+  extends StorageAdapter<ISupabaseAdapterOptions, Database>
   implements ISupabaseAdapter<Database>
 {
   private _options: ISupabaseAdapterOptions;
@@ -68,7 +69,7 @@ export class SupabaseAdapter<Database extends GenericSchema = any>
    * @param {ISupabaseAdapterOptions} options The options to initialize the adapter with.
    * @returns {void}
    */
-  public initialize(_app: IApplication, options: Partial<ISupabaseAdapterOptions> = {}): void {
+  public initialize(options: Partial<ISupabaseAdapterOptions> = {}, _app: IApplication): void {
     Logger.log('SupabaseAdapter initialized');
     const defaultConfig: ISupabaseAdapterOptions = {
       supabaseUrl: _app.env.VITE_SUPABASE_URL || _app.env.SUPABASE_URL,

@@ -1,4 +1,4 @@
-import type { IApplication, IPlugin } from 'dill-pixel';
+import type { IPlugin } from 'dill-pixel';
 
 import { isDev, Logger, Plugin, Signal } from 'dill-pixel';
 import * as springroll from 'springroll';
@@ -8,7 +8,7 @@ export interface SpringRollPluginOptions extends springroll.ApplicationConfig {
   debug?: boolean;
 }
 
-export interface ISpringRollPlugin extends IPlugin {
+export interface ISpringRollPlugin extends IPlugin<SpringRollPluginOptions> {
   // signals
   onPause: Signal<(result: boolean) => void>;
   onCaptionsMuted: Signal<(result: boolean) => void>;
@@ -33,7 +33,7 @@ export interface ISpringRollPlugin extends IPlugin {
   onColorVision: Signal<(result: string) => void>;
   onFullScreen: Signal<(result: boolean) => void>;
 
-  initialize(app: IApplication, options?: Partial<SpringRollPluginOptions>): void;
+  initialize(options: Partial<SpringRollPluginOptions>): void;
 }
 
 const defaultOptions: Partial<SpringRollPluginOptions> = {
@@ -51,8 +51,8 @@ const defaultOptions: Partial<SpringRollPluginOptions> = {
   debug: isDev,
 };
 
-export class SpringRollPlugin extends Plugin implements ISpringRollPlugin {
-  private _options: SpringRollPluginOptions;
+export class SpringRollPlugin extends Plugin<SpringRollPluginOptions> implements ISpringRollPlugin {
+  protected _options: SpringRollPluginOptions;
   private _springrollApplication: springroll.Application;
 
   // signals
@@ -79,7 +79,7 @@ export class SpringRollPlugin extends Plugin implements ISpringRollPlugin {
   onColorVision: Signal<(result: string) => void> = new Signal();
   onFullScreen: Signal<(result: boolean) => void> = new Signal();
 
-  async initialize(_app: IApplication, options: Partial<SpringRollPluginOptions>) {
+  async initialize(options: Partial<SpringRollPluginOptions>) {
     this._options = {
       features: { ...defaultOptions.features, ...(options?.features ?? {}) },
       hintPlayer: options?.hintPlayer ?? defaultOptions.hintPlayer,

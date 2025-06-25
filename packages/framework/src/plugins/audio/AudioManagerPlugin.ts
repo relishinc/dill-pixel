@@ -2,7 +2,7 @@ import { Options, PlayOptions, Sound, sound, SoundMap, SoundSourceMap } from '@p
 import { gsap } from 'gsap';
 import { Assets, AssetsManifest, UnresolvedAsset } from 'pixi.js';
 import { Signal } from '../../signals';
-import { AudioLike, Logger } from '../../utils';
+import { AudioAsset, Logger } from '../../utils';
 import type { IPlugin } from '../Plugin';
 import { Plugin } from '../Plugin';
 
@@ -71,13 +71,13 @@ export interface IAudioManagerPlugin<C extends ChannelName = ChannelName> extend
 
   createChannel(name: string): void;
 
-  play(soundId: AudioLike, channelName: C, options?: PlayOptions): Promise<IAudioInstance>;
+  play(soundId: AudioAsset, channelName: C, options?: PlayOptions): Promise<IAudioInstance>;
 
-  isPlaying(soundId: AudioLike, channelName: C): boolean;
+  isPlaying(soundId: AudioAsset, channelName: C): boolean;
 
-  load(soundId: AudioLike | AudioLike[], channelName: C, options?: PlayOptions): void;
+  load(soundId: AudioAsset | AudioAsset[], channelName: C, options?: PlayOptions): void;
 
-  stop(soundId: AudioLike, channelName: C): IAudioInstance | undefined;
+  stop(soundId: AudioAsset, channelName: C): IAudioInstance | undefined;
 
   setChannelVolume(channelName: C | C[], volume: number): void;
 
@@ -89,15 +89,15 @@ export interface IAudioManagerPlugin<C extends ChannelName = ChannelName> extend
 
   add(soundAsset: UnresolvedAsset): void;
 
-  fade(soundId: AudioLike, channelName: C, props?: gsap.TweenVars): Promise<gsap.core.Tween | null>;
+  fade(soundId: AudioAsset, channelName: C, props?: gsap.TweenVars): Promise<gsap.core.Tween | null>;
 
-  fadeIn(soundId: AudioLike, channelName: C, props?: gsap.TweenVars): Promise<gsap.core.Tween | null>;
+  fadeIn(soundId: AudioAsset, channelName: C, props?: gsap.TweenVars): Promise<gsap.core.Tween | null>;
 
-  fadeOut(soundId: AudioLike, channelName: C, props?: gsap.TweenVars): Promise<gsap.core.Tween | null>;
+  fadeOut(soundId: AudioAsset, channelName: C, props?: gsap.TweenVars): Promise<gsap.core.Tween | null>;
 
   crossFade(
-    outSoundId: AudioLike,
-    inSoundId: AudioLike,
+    outSoundId: AudioAsset,
+    inSoundId: AudioAsset,
     channelName: C,
     duration?: number,
   ): Promise<gsap.core.Tween | null>;
@@ -114,7 +114,7 @@ export interface IAudioManagerPlugin<C extends ChannelName = ChannelName> extend
 
   restore(): Promise<void>;
 
-  getAudioInstance(soundId: AudioLike, channelName: C): IAudioInstance | undefined;
+  getAudioInstance(soundId: AudioAsset, channelName: C): IAudioInstance | undefined;
 
   stopAll(fade?: boolean, duration?: number, props?: TweenVars): void;
 }
@@ -433,7 +433,7 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
    * @param {PlayOptions} options
    * @returns {Promise<IAudioInstance>}
    */
-  public async play(soundId: AudioLike, channelName: C = 'sfx' as C, options?: PlayOptions): Promise<IAudioInstance> {
+  public async play(soundId: AudioAsset, channelName: C = 'sfx' as C, options?: PlayOptions): Promise<IAudioInstance> {
     if (this._idMap.has(soundId)) {
       soundId = this._idMap.get(soundId) as string;
     }
@@ -465,11 +465,11 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
 
   /**
    * Stops a sound with the specified ID in the specified channel.
-   * @param {AudioLike} soundId
+   * @param {AudioAsset} soundId
    * @param {C} channelName
    * @returns {IAudioInstance | undefined}
    */
-  public stop(soundId: AudioLike, channelName: C = 'sfx' as C): IAudioInstance | undefined {
+  public stop(soundId: AudioAsset, channelName: C = 'sfx' as C): IAudioInstance | undefined {
     const channel = this._channels.get(channelName);
     if (channel) {
       return channel.remove(soundId);
@@ -480,13 +480,13 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
 
   /**
    * Fades in a sound with the specified ID in the specified channel.
-   * @param {AudioLike} soundId
+   * @param {AudioAsset} soundId
    * @param {C} channelName
    * @param {gsap.TweenVars} props
    * @returns {Promise<gsap.core.Tween | null>}
    */
   public async fadeIn(
-    soundId: AudioLike,
+    soundId: AudioAsset,
     channelName: C = 'music' as C,
     props: gsap.TweenVars,
   ): Promise<gsap.core.Tween | null> {
@@ -506,13 +506,13 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
 
   /**
    * Fades out a sound with the specified ID in the specified channel.
-   * @param {AudioLike} soundId
+   * @param {AudioAsset} soundId
    * @param {C} channelName
    * @param {Partial<gsap.TweenVars>} props
    * @returns {Promise<gsap.core.Tween | null>}
    */
   public async fadeOut(
-    soundId: AudioLike,
+    soundId: AudioAsset,
     channelName: C = 'music' as C,
     props: Partial<gsap.TweenVars> = { volume: 0 },
   ): Promise<gsap.core.Tween | null> {
@@ -531,15 +531,15 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
 
   /**
    * Crossfades between two sounds in the specified channel.
-   * @param {AudioLike} outSoundId
-   * @param {AudioLike} inSoundId
+   * @param {AudioAsset} outSoundId
+   * @param {AudioAsset} inSoundId
    * @param {ChannelName} channelName
    * @param {number} duration
    * @returns {Promise<gsap.core.Tween | null>}
    */
   public async crossFade(
-    outSoundId: AudioLike,
-    inSoundId: AudioLike,
+    outSoundId: AudioAsset,
+    inSoundId: AudioAsset,
     channelName: ChannelName = 'music',
     duration: number = 2,
   ): Promise<gsap.core.Tween | null> {
@@ -550,14 +550,14 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
 
   /**
    * Fades a sound with the specified ID in the specified channel.
-   * @param {AudioLike} soundId
+   * @param {AudioAsset} soundId
    * @param {ChannelName} channelName
    * @param {gsap.TweenVars} props
    * @param {boolean} stopOnComplete
    * @returns {Promise<gsap.core.Tween | null>}
    */
   public async fade(
-    soundId: AudioLike,
+    soundId: AudioAsset,
     channelName: ChannelName = 'music',
     props: gsap.TweenVars,
     stopOnComplete: boolean = false,
@@ -606,7 +606,7 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
     this.pause();
   }
 
-  public getAudioInstance(soundId: AudioLike, channelName: C = 'sfx' as C): IAudioInstance | undefined {
+  public getAudioInstance(soundId: AudioAsset, channelName: C = 'sfx' as C): IAudioInstance | undefined {
     const channel = this._channels.get(channelName);
     soundId = this._verifySoundId(soundId);
     if (channel) {
@@ -616,7 +616,7 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
     }
   }
 
-  public load(soundId: AudioLike | AudioLike[], channelName: C = 'sfx' as C, options?: PlayOptions): void {
+  public load(soundId: AudioAsset | AudioAsset[], channelName: C = 'sfx' as C, options?: PlayOptions): void {
     if (!Array.isArray(soundId)) {
       soundId = [soundId];
     }
@@ -651,17 +651,19 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
           }
         });
       });
-      gsap.to(playingSounds, {
-        volume: 0,
-        duration,
-        ...props,
-        onComplete: () => {
-          playingSounds.forEach((instance) => {
-            instance.stop();
-            instance.volume = instance.storedVolume;
-          });
-        },
-      });
+      if (playingSounds.length > 0) {
+        gsap.to(playingSounds, {
+          volume: 0,
+          duration,
+          ...props,
+          onComplete: () => {
+            playingSounds.forEach((instance) => {
+              instance.stop();
+              instance.volume = instance.storedVolume;
+            });
+          },
+        });
+      }
     } else {
       sound.stopAll();
     }
@@ -678,7 +680,7 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
     ];
   }
 
-  private _verifySoundId(soundId: AudioLike): string {
+  private _verifySoundId(soundId: AudioAsset): string {
     const originalSoundId = soundId;
     if (this._idMap.has(soundId)) {
       return this._idMap.get(soundId) as string;
@@ -718,7 +720,7 @@ export class AudioManagerPlugin<C extends ChannelName = ChannelName> extends Plu
     return soundId;
   }
 
-  private _findAndAddFromManifest(soundId: AudioLike, sound: Sound) {
+  private _findAndAddFromManifest(soundId: AudioAsset, sound: Sound) {
     const manifest = this.app.manifest;
     if (manifest === undefined || typeof manifest === 'string') {
       throw new Error('Manifest is not available');

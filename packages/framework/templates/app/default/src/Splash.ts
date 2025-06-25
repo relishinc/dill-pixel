@@ -17,6 +17,7 @@ export class Splash extends SceneTransition {
     this._bg = this.addColoredBackground({
       color: COLOR_GREEN,
     });
+
     this._textContainer = this.add.flexContainer({
       bindToAppSize: true,
       layout: {
@@ -26,6 +27,7 @@ export class Splash extends SceneTransition {
         alignItems: 'center',
       },
     });
+
     this._textContainer.add.text({
       text: 'Loading...',
       style: {
@@ -35,6 +37,7 @@ export class Splash extends SceneTransition {
         dropShadow: true,
       },
     });
+
     this._labelPercent = this._textContainer.add.text({
       style: {
         fontWeight: 'bold',
@@ -53,6 +56,7 @@ export class Splash extends SceneTransition {
 
   update() {
     this._labelPercent.text = `${Math.round(this._percent)}%`;
+    this._textContainer.updateLayout();
   }
 
   resize() {

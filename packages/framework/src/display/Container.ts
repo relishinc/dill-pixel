@@ -1,11 +1,10 @@
 import { DestroyOptions, Container as PIXIContainer, Sprite, Texture, Ticker } from 'pixi.js';
 import { Animated, Factory, WithSignals } from '../mixins';
 
-import type { IApplication } from '../core';
 import { Application } from '../core/Application';
 import { Signal } from '../signals';
 import { SignalOrder } from '../signals/Signal';
-import type { PointLike, Size } from '../utils';
+import type { AppTypeOverrides, PointLike, Size } from '../utils';
 import { bindAllMethods } from '../utils';
 
 /**
@@ -34,7 +33,7 @@ export type BackgroundConfig = {
  * Interface for the Container class.
  */
 export interface IContainer {
-  app: IApplication;
+  app: AppTypeOverrides['App'];
 
   animationContext: string | undefined;
 
@@ -60,12 +59,11 @@ export interface IContainer {
  * The Container class extends the _Container class (which includes the Animated and Factory mixins) and implements the IContainer interface.
  * It represents a container for PIXI.js display objects.
  */
-export class Container<A extends Application = Application>
-  extends Animated(WithSignals(Factory()))
-  implements IContainer
-{
-  onDestroy: Signal<() => void> = new Signal();
-  __dill_pixel_method_binding_root = true;
+export class Container extends Animated(WithSignals(Factory())) implements IContainer {
+  private readonly __dill_pixel_method_binding_root = true;
+
+  public onDestroy: Signal<() => void> = new Signal();
+
   protected __background: Sprite;
 
   protected _animationContext: string | undefined;
@@ -90,6 +88,13 @@ export class Container<A extends Application = Application>
   }
 
   /**
+   * Get the application instance.
+   */
+  public get app(): AppTypeOverrides['App'] {
+    return Application.getInstance();
+  }
+
+  /**
    * The constructor for the Container class.
    * @param config - The configuration for the container.
    */
@@ -103,13 +108,6 @@ export class Container<A extends Application = Application>
     this.on('removed', this._removed);
     this.on('childAdded', this._childAdded);
     this.on('childRemoved', this._childRemoved);
-  }
-
-  /**
-   * Get the application instance.
-   */
-  public get app(): A {
-    return Application.getInstance() as A;
   }
 
   public addColoredBackground(colorOrConfig: number | Partial<BackgroundConfig> = 0x0, alpha: number = 1): Sprite {

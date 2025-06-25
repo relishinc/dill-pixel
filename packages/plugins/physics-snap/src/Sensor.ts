@@ -1,11 +1,10 @@
-import { Application } from 'dill-pixel';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { System } from './System';
 import { Collision, EntityType } from './types';
 import { checkCollision } from './utils';
 
-export class Sensor<T = any, A extends Application = Application> extends Actor<T, A> {
+export class Sensor<T = any> extends Actor<T> {
   type = 'Sensor';
   isSensor = true;
   isColliding = false;

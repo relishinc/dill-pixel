@@ -1,6 +1,5 @@
 import type { AssetsPreferences, ResolvedAsset, UnresolvedAsset } from 'pixi.js';
 import { Assets } from 'pixi.js';
-import { Application } from '../core/Application';
 import type { IScene } from '../display';
 import { Signal } from '../signals';
 import {
@@ -105,7 +104,7 @@ function getAssetList(assets: AssetTypes): UnresolvedAsset[] | string[] {
   });
 }
 
-export class AssetsPlugin extends Plugin<Application, AssetLoadingOptions> implements IAssetsPlugin {
+export class AssetsPlugin extends Plugin<AssetLoadingOptions> implements IAssetsPlugin {
   public readonly id: string = 'assets';
   public onLoadStart: Signal<() => void> = new Signal();
   public onLoadProgress: Signal<(progress: number) => void> = new Signal();

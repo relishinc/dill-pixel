@@ -15,6 +15,7 @@
     "config/vite.mjs",
     "config/assetpack.mjs",
     "config/tsconfig.json",
+    "config/.prettierrc.json",
     "extras/css/accessibility.css",
     "extras/css/loader.css",
     "extras/css/fullscreen.css",
@@ -25,6 +26,10 @@
     ".": {
       "types": "./lib/index.d.ts",
       "default": "./lib/dill-pixel.mjs"
+    },
+    "./boot": {
+      "types": "./lib/boot.d.ts",
+      "default": "./lib/boot.mjs"
     },
     "./config/assetpack": {
       "default": "./config/assetpack.mjs"
@@ -92,7 +97,7 @@
   "peerDependencies": {
     "@pixi/sound": "^6.0.1",
     "gsap": "^3.12.5",
-    "pixi.js": "8.10.1"
+    "pixi.js": "8.10.2"
   },
   "dependencies": {
     "@assetpack/core": "^1.4.0",
@@ -109,9 +114,8 @@
     "kleur": "^4.1.5",
     "npm-run-all": "^4.1.5",
     "pixi-filters": "^6.1.2",
-    "pixi.js": "8.10.1",
+    "pixi.js": "8.10.2",
     "prettier": "^3.2.5",
-    "relishinc-prettier": "github:relishinc/prettier",
     "rimraf": "^5.0.5",
     "shelljs": "^0.8.5",
     "stats.js": "^0.17.0",

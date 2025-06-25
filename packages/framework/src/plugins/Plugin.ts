@@ -2,14 +2,14 @@ import type { IApplication, ICoreFunctions, ICoreSignals } from '../core';
 import { coreFunctionRegistry, coreSignalRegistry } from '../core';
 import { Application } from '../core/Application';
 import { SignalConnection, SignalConnections } from '../signals';
-import { bindAllMethods, ImportListItemModule } from '../utils';
+import { type AppTypeOverrides, bindAllMethods, ImportListItemModule } from '../utils';
 
 export interface IPlugin<O = any> {
   id: string;
 
   app: IApplication;
 
-  readonly options: Partial<O>;
+  readonly options: O;
 
   initialize(options: Partial<O>, app: IApplication): Promise<void> | void;
 
@@ -34,9 +34,9 @@ export interface PluginListItem {
   plugins?: string[];
 }
 
-export class Plugin<A extends Application = Application, O = any> implements IPlugin<O> {
+export class Plugin<O = any> implements IPlugin<O> {
+  private readonly __dill_pixel_method_binding_root = true;
   // A collection of signal connections.
-  __dill_pixel_method_binding_root: boolean;
   protected _signalConnections: SignalConnections = new SignalConnections();
 
   protected _options: O;
@@ -47,11 +47,10 @@ export class Plugin<A extends Application = Application, O = any> implements IPl
 
   constructor(public id: string = 'Plugin') {
     bindAllMethods(this);
-    this.__dill_pixel_method_binding_root = true;
   }
 
-  public get app(): A {
-    return Application.getInstance<A>();
+  public get app(): AppTypeOverrides['App'] {
+    return Application.getInstance();
   }
 
   public destroy(): void {

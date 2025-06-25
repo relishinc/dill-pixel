@@ -1,6 +1,5 @@
 import { Action, ActionContext, ActionDetail, ActionMap, ActionSignal } from '.';
 import { IApplication } from '../../core';
-import { Application } from '../../core/Application';
 import { Signal } from '../../signals';
 import { Logger } from '../../utils';
 import { IPlugin, Plugin } from '../Plugin';
@@ -20,7 +19,7 @@ export interface IActionsPluginOptions {
   actions: Partial<ActionMap>;
 }
 
-export class ActionsPlugin extends Plugin<Application, IActionsPluginOptions> implements IActionsPlugin {
+export class ActionsPlugin extends Plugin<IActionsPluginOptions> implements IActionsPlugin {
   public readonly id = 'actions';
   // signals
   public onActionContextChanged: Signal<(context: string | ActionContext) => void> = new Signal<

@@ -4,12 +4,12 @@ import { ContainerConfig } from '../../display';
 import { ParticleContainerConfig } from '../../display/ParticleContainer';
 import { ButtonConfig, FlexContainerConfig, UICanvasProps } from '../../ui';
 import type {
-  BitmapFontFamilyLike,
-  FontFamilyLike,
+  BitmapFontFamilyAsset,
+  FontFamilyAsset,
   PointLike,
-  SpineLike,
-  SpriteSheetLike,
-  TextureLike,
+  SpineAsset,
+  SpritesheetAsset,
+  TextureAsset,
   WithRequiredProps,
 } from '../../utils';
 
@@ -18,8 +18,8 @@ export interface AbstractProps {
 }
 
 export interface TextureProps {
-  asset: TextureLike;
-  sheet: SpriteSheetLike;
+  asset: TextureAsset;
+  sheet: SpritesheetAsset;
 }
 
 export interface PositionProps {
@@ -106,7 +106,7 @@ export interface AnimatedSpriteAnimationProps
     VisibilityProps,
     LayoutProps {
   texturePrefix: string;
-  sheet: SpriteSheetLike;
+  sheet: SpritesheetAsset;
   startIndex: number;
   numFrames: number;
   zeroPad: number;
@@ -117,7 +117,7 @@ export interface AnimatedSpriteAnimationProps
 }
 
 export interface AnimatedSpriteProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps, LayoutProps {
-  sheet: SpriteSheetLike;
+  sheet: SpritesheetAsset;
   texturePrefix: string;
   zeroPad: number;
   animations: { [animationName: string]: Partial<AnimatedSpriteAnimationProps> };
@@ -129,12 +129,14 @@ export interface AnimatedSpriteProps extends AbstractProps, ScaleProps, Position
   startIndex: number;
 }
 
+export type TextStyle = Partial<Omit<TextStyleOptions, 'fontFamily'> & { fontFamily: FontFamilyAsset }>;
+
 export interface TextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps, LayoutProps {
   text: string;
   anchor: PointLike;
   resolution: number;
   roundPixels: boolean;
-  style: Partial<Omit<TextStyleOptions, 'fontFamily'> & { fontFamily: FontFamilyLike }>;
+  style: TextStyle;
 }
 
 export interface BitmapTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps, LayoutProps {
@@ -142,7 +144,7 @@ export interface BitmapTextProps extends AbstractProps, PositionProps, ScaleProp
   anchor: PointLike;
   resolution: number;
   roundPixels: boolean;
-  style: Partial<Omit<TextStyleOptions, 'fontFamily'> & { fontFamily: BitmapFontFamilyLike }>;
+  style: Partial<Omit<TextStyleOptions, 'fontFamily'> & { fontFamily: BitmapFontFamilyAsset }>;
 }
 
 export interface HTMLTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps, LayoutProps {
@@ -150,7 +152,7 @@ export interface HTMLTextProps extends AbstractProps, PositionProps, ScaleProps,
   anchor: PointLike;
   resolution: number;
   roundPixels: boolean;
-  style: Partial<Omit<HTMLTextStyleOptions, 'fontFamily'> & { fontFamily: FontFamilyLike }>;
+  style: Partial<Omit<HTMLTextStyleOptions, 'fontFamily'> & { fontFamily: FontFamilyAsset }>;
 }
 
 export interface OmittedTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps {}
@@ -173,14 +175,8 @@ export interface FlexContainerProps extends ContainerProps, FlexContainerConfig 
 export interface UICanvasFactoryProps extends ContainerProps, UICanvasProps {}
 
 // spine
-type SpineData = {
-  skeleton: string;
-  atlas: string;
-  skel?: SpineLike;
-};
-
 export interface SpineProps extends AbstractProps, ScaleProps, PositionProps, VisibilityProps, LayoutProps {
-  data: SpineLike | SpineData;
+  data: SpineAsset;
   autoUpdate: boolean;
   animationName: string;
   trackIndex: number;

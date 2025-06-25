@@ -1,6 +1,5 @@
 import { Graphics } from 'pixi.js';
 
-import { Application } from '../core/Application';
 import { Container } from '../display';
 import type { Size } from '../utils';
 import type { IPlugin } from './Plugin';
@@ -45,7 +44,7 @@ const defaultOptions: ResizerPluginOptions = {
   debug: false,
 };
 
-export class ResizerPlugin extends Plugin<Application, ResizerPluginOptions> implements IResizerPlugin {
+export class ResizerPlugin extends Plugin<ResizerPluginOptions> implements IResizerPlugin {
   public readonly id = 'resizer';
   private _debugContainer: Container;
   private _gfx: Graphics;

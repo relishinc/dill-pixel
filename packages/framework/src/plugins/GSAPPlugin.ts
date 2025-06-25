@@ -2,15 +2,16 @@ import { gsap } from 'gsap';
 import { PixiPlugin } from 'gsap/PixiPlugin';
 import { BlurFilter, ColorMatrixFilter } from 'pixi.js';
 import { IApplication } from '../core';
-import { Logger, type Ease } from '../utils';
+import { Logger, type Eases } from '../utils';
 import { Plugin, type IPlugin } from './Plugin';
 
 /**
  * Configuration options for the GSAP plugin.
  */
+
 export interface GSAPPluginOptions {
   /** Custom easing functions to register with GSAP */
-  eases: Ease;
+  eases: Eases;
 }
 
 /**
@@ -28,7 +29,7 @@ export interface IGSAPPlugin extends IPlugin {
    * Object containing all registered custom eases, where keys are ease names and values are GSAP ease functions.
    * @readonly
    */
-  readonly eases: Record<string, gsap.EaseFunction>;
+  readonly eases: Eases;
 
   /**
    * The GSAP instance for creating animations.
@@ -84,7 +85,7 @@ export interface IGSAPPlugin extends IPlugin {
    * gsap.to(mySprite, { x: 200, duration: 1, ease: 'myBounce' });
    * ```
    */
-  registerCustomEase(name: string, ease: gsap.EaseFunction): Ease;
+  registerCustomEase(name: string, ease: gsap.EaseFunction): Record<string, gsap.EaseFunction>;
 
   /**
    * Registers multiple custom ease functions with GSAP in batch.
@@ -101,7 +102,7 @@ export interface IGSAPPlugin extends IPlugin {
    * });
    * ```
    */
-  registerEases(eases: Record<string, gsap.EaseFunction>): Ease;
+  registerEases(eases: Eases): Eases;
 
   /**
    * Retrieves a custom animation context (a Set of tweens/timelines) by its ID.
@@ -334,7 +335,7 @@ export class GSAPPlugin extends Plugin implements IGSAPPlugin {
    * Object containing all registered custom eases.
    * @readonly
    */
-  public get eases(): Ease {
+  public get eases(): Eases {
     return this.options.eases || {};
   }
 
@@ -407,7 +408,7 @@ export class GSAPPlugin extends Plugin implements IGSAPPlugin {
    * gsap.to(mySprite, { x: 100, duration: 1, ease: 'elasticOut' });
    * ```
    */
-  public registerCustomEase(name: string, ease: gsap.EaseFunction): Ease {
+  public registerCustomEase(name: string, ease: gsap.EaseFunction): Record<string, gsap.EaseFunction> {
     gsap.registerEase(name, ease);
 
     if (!this.options.eases) {
@@ -435,7 +436,7 @@ export class GSAPPlugin extends Plugin implements IGSAPPlugin {
    * });
    * ```
    */
-  public registerEases(eases: Ease): Ease {
+  public registerEases(eases: Eases): Eases {
     for (const [name, ease] of Object.entries(eases)) {
       this.registerCustomEase(name, ease);
     }

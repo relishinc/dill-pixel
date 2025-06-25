@@ -7,17 +7,25 @@ import {
   ResizerPluginOptions,
   SplashOptions,
 } from '../../plugins';
-import type { AssetLoadingOptions, LoggerMode, SceneImportList, SceneImportListItem } from '../../utils';
+import type {
+  AppTypeOverrides,
+  AssetLoadingOptions,
+  LoggerMode,
+  SceneImportList,
+  SceneImportListItem,
+} from '../../utils';
 
 import type { ApplicationOptions, TextDropShadow, TextStyle } from 'pixi.js';
 import type { IScene, ISceneTransition, SceneTransition } from '../../display';
 import type { CaptionsOptions } from '../../plugins/captions';
 import { GSAPPluginOptions } from '../../plugins/GSAPPlugin';
-import type { DataSchema, IDataAdapterOptions } from '../../store';
-import type { PluginOrAdapterConfig } from '../config';
+import type { IDataAdapterOptions } from '../../store';
+import type { PluginConfig, StorageAdapterConfig } from '../config';
+import { IApplication } from './IApplication';
 
-export interface IApplicationOptions<D extends DataSchema = DataSchema> extends ApplicationOptions {
+export interface IApplicationOptions extends ApplicationOptions {
   id: string;
+  application?: new (...args: any[]) => IApplication;
   resizeToContainer: boolean;
   container: HTMLElement;
   logger: LoggerMode;
@@ -27,10 +35,10 @@ export interface IApplicationOptions<D extends DataSchema = DataSchema> extends 
   useVoiceover: boolean;
   defaultTextStyle: Partial<TextStyle>;
   defaultDropShadow: TextDropShadow;
-  storageAdapters: PluginOrAdapterConfig[];
+  storageAdapters: StorageAdapterConfig[];
   gsap: Partial<GSAPPluginOptions>;
-  data: Partial<IDataAdapterOptions<D>>;
-  plugins: PluginOrAdapterConfig[];
+  data: Partial<IDataAdapterOptions>;
+  plugins: PluginConfig[];
   assets: AssetLoadingOptions;
   sceneImportList: SceneImportListItem<IScene>[];
   scenes: SceneImportList<IScene>;
@@ -40,7 +48,7 @@ export interface IApplicationOptions<D extends DataSchema = DataSchema> extends 
   input: Partial<InputManagerOptions>;
   focus: Partial<FocusManagerPluginOptions>;
   splash: Partial<SplashOptions>;
-  defaultScene: string;
+  defaultScene: AppTypeOverrides['Scenes'];
   sceneTransition: ISceneTransition | typeof SceneTransition;
   defaultSceneLoadMethod: LoadSceneMethod;
   showSceneDebugMenu: boolean;

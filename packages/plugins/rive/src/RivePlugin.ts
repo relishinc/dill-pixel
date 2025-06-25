@@ -1,5 +1,5 @@
 import Rive, { RiveCanvas } from '@rive-app/canvas-advanced-lite';
-import { Application, IPlugin, Plugin } from 'dill-pixel';
+import { IPlugin, Plugin } from 'dill-pixel';
 import { BrowserAdapter, checkExtension, extensions, ExtensionType, LoaderParserPriority } from 'pixi.js';
 import { riveVersion, version } from './version';
 
@@ -20,7 +20,7 @@ const defaultOptions = {
   wasmPath: 'https://unpkg.com/@rive-app/canvas-advanced-lite@2.26.1/rive.wasm',
 };
 
-export class RivePlugin extends Plugin<Application, RivePluginOptions> implements IRivePlugin {
+export class RivePlugin extends Plugin<RivePluginOptions> implements IRivePlugin {
   public static ID: string;
   public readonly id = 'rive';
   public rive: RiveCanvas;

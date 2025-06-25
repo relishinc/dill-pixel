@@ -1,5 +1,4 @@
 import { Assets, Container, Ticker } from 'pixi.js';
-import { Application } from '../../core/Application';
 import type { ImportListItem, ImportListItemModule, Padding, PointLike } from '../../utils';
 import { ensurePadding, getDynamicModuleFromImportListItem, isDev, Logger } from '../../utils';
 import type { IAudioInstance } from '../audio';
@@ -108,7 +107,7 @@ export interface ICaptionsPlugin extends IPlugin {
 /**
  * i18n module class.
  */
-export class CaptionsPlugin extends Plugin<Application, CaptionsOptions> implements ICaptionsPlugin {
+export class CaptionsPlugin extends Plugin<CaptionsOptions> implements ICaptionsPlugin {
   public readonly id = 'captions';
   public view: Container = new Container();
   public renderer: ICaptionRenderer;

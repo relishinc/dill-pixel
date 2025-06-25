@@ -9,8 +9,14 @@ import type {
   KeySignal,
   LoadSceneConfig,
 } from '../../plugins';
-import { ActionContext, InputController } from '../../plugins';
+import { InputController } from '../../plugins';
 import type { IPopup, PopupConfig, PopupConstructor } from '../../ui';
+
+import { type AppTypeOverrides } from '../../utils';
+
+type AppContexts = AppTypeOverrides['Contexts'];
+type AppActions = AppTypeOverrides['Actions'];
+type AppScenes = AppTypeOverrides['Scenes'];
 
 export interface ICoreFunctions {
   // FocusManagerPlugin
@@ -37,11 +43,11 @@ export interface ICoreFunctions {
   isGamepadActive(gamepad: Gamepad): boolean;
 
   // ActionsPlugin;
-  getAction<T = any>(action: string): ActionSignal<T>;
+  getAction<T = any>(action: AppActions): ActionSignal<T>;
   getActions(): ActionMap;
-  sendAction<T = any>(actionId: string | number, data?: T): void;
-  setActionContext(context: string | ActionContext): string; // in Application.ts
-  actions<T = any>(action: string): ActionSignal<T>; // in Application.ts
+  sendAction<T = any>(actionId: AppActions, data?: T): void;
+  setActionContext(context: AppContexts): string; // in Application.ts
+  actions<T = any>(action: AppActions): ActionSignal<T>; // in Application.ts
 
   // KeyboardPlugin
   onKeyDown(key?: string): KeySignal;
@@ -55,7 +61,7 @@ export interface ICoreFunctions {
   removeAllPopups(animate?: boolean): void;
 
   // SceneManagerPlugin
-  loadScene(sceneIdOrLoadSceneConfig: LoadSceneConfig | string): Promise<void>;
+  loadScene(sceneIdOrLoadSceneConfig: LoadSceneConfig | AppScenes): Promise<void>;
 
   // AssetsPlugin
   loadAssets(assets: string | string[]): Promise<void>;
