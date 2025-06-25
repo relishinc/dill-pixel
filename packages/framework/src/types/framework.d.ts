@@ -21,6 +21,7 @@ declare module '../utils/types' {
     Audio: string;
     FontFamily: string;
     BitmapFontFamily: string;
+    Bundles: string;
   }
 }
 
@@ -43,5 +44,6 @@ declare module 'dill-pixel' {
     Audio: string;
     FontFamily: string;
     BitmapFontFamily: string;
+    Bundles: string;
   }
 }

@@ -285,6 +285,7 @@ declare module 'dill-pixel' {
     Audio: AssetAudio;
     FontFamily: AssetFontFamilies;
     BitmapFontFamily: AssetBitmapFontFamilies;
+    Bundles: AssetBundles;
   }
 }
 `;

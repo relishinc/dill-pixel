@@ -87,7 +87,11 @@ export type AssetLike = {
   src: string | string[];
   ext: AssetExtension;
 };
-export type BundleTypes = string | string[];
+export type BundleTypes =
+  | AssetTypeOverrides['Bundles']
+  | AssetTypeOverrides['Bundles'][]
+  | (string & {})
+  | (string & {})[];
 
 export type AssetTypes = string | string[] | UnresolvedAsset | UnresolvedAsset[] | AssetLike | AssetLike[];
 
