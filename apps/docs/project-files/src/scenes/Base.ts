@@ -1,4 +1,3 @@
-import { COLOR_SLATE } from '@/utils/Constants';
 import { Scene } from 'dill-pixel';
 
 // include this scene in the bundle
@@ -18,7 +17,7 @@ export const active = false;
 export default class Base extends Scene {
   constructor() {
     super();
-    this.addColoredBackground(COLOR_SLATE);
+    this.addColoredBackground(0xffffff);
 
     // // for enter / exit animations you could start the scene with 0 opacity, and fade in / out
     // this.alpha = 0;

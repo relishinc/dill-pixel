@@ -31,9 +31,6 @@ interface DillPixelGlobal {
 }
 
 declare global {
-  const __DILL_PIXEL_APP_NAME: string;
-  const __DILL_PIXEL_APP_VERSION: string | number;
-
   const DillPixel: DillPixelGlobal;
   const registerSW: (options: RegisterSWOptions) => void;
   interface Window {

@@ -134,9 +134,7 @@ export default defineConfig({
   ],
 
   outDir: './dist',
-
-  exclude: ['./examples/**/*'],
-
+  exclude: ['./src/project-files/**/*', './project-files/**/*'],
   vite: {
     plugins: [tailwindcss()],
   },

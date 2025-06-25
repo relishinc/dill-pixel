@@ -1,10 +1,5 @@
-import { CustomEases } from '@/utils/Easing';
 import { defineActions, defineButtons, defineConfig, defineContexts, defineControls, defineData } from 'dill-pixel';
-import EN from './src/locales/en';
-import { Transition } from './src/scenes/Transition';
-import { ExampleOutliner } from './src/ui/ExampleOutliner';
-import { FONT_KUMBH_SANS } from './src/utils/Constants';
-import { V8Application } from './src/V8Application';
+import { MyApplication } from './src/MyApplication';
 
 /** Default template */
 export const contexts = defineContexts(['default', 'game', 'menu', 'popup']);
@@ -98,33 +93,13 @@ export const dataSchema = defineData({
 
 export default defineConfig({
   id: 'V8Application',
-  application: V8Application,
-  sceneTransition: Transition,
-  defaultSceneLoadMethod: 'transitionExitEnter',
+  application: MyApplication,
   useSpine: true,
-  useLayout: true,
-  showSceneDebugMenu: true,
-  useVoiceover: true,
-  defaultScene: 'assets',
+  defaultScene: 'start',
   defaultTextStyle: {
-    fontFamily: FONT_KUMBH_SANS,
+    fontFamily: 'KumbhSans',
     fontSize: 24,
     fill: 0xffffff,
-  },
-  sceneGroupOrder: [
-    'Framework',
-    'Display',
-    'Audio',
-    'UI',
-    'Accessibility',
-    'Snap Physics',
-    'Crunch Physics',
-    'Matter Physics',
-    'Rive',
-    'Storage Adapters',
-  ],
-  gsap: {
-    eases: CustomEases,
   },
   data: {
     initial: {
@@ -134,9 +109,6 @@ export default defineConfig({
       list2: [0, 1],
     },
     backupKeys: [],
-  },
-  focus: {
-    outliner: ExampleOutliner,
   },
   actions,
   input: {
@@ -197,34 +169,12 @@ export default defineConfig({
     ],
   ],
   storageAdapters: ['firebase'],
-  i18n: {
-    loadAll: true,
-    locales: ['en', 'fr', 'fr-json'],
-    files: [
-      { id: 'en', module: EN },
-      { id: 'fr', module: () => import('./src/locales/fr') },
-      { id: 'fr-json', json: 'locales/fr.json' },
-    ],
-  },
-  captions: {
-    files: [
-      { id: 'en', json: 'audio/vo/en/cc.json' },
-      { id: 'fr', json: 'audio/vo/fr/cc.json' },
-    ],
-    backgroundAlpha: 0.5,
-    backgroundColor: 0x0,
-    textColor: 0xffffff,
-    maxWidth: 0.4,
-  },
-  autoDensity: false,
-  resizeToContainer: true,
   resizer: {
     minWidth: 500,
     minHeight: 768,
     letterbox: false,
     center: false,
   },
-  resolution: 2,
 });
 
 /** End of User config */

@@ -1,5 +1,5 @@
-import Base from '@/scenes/Base';
 import { FlexContainer } from 'dill-pixel';
+import Base from './Base';
 
 export const id = 'start';
 export const debug = {
