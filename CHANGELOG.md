@@ -1,5 +1,28 @@
 # Changelog
 
+## [6.0.0](https://github.com/relishinc/dill-pixel/compare/v5.0.3...v6.0.0) (2025-06-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* new repo structure
+* zero-config bootstrapping, dill-pixel.config.ts in project root, automagical typings
+
+### Features
+
+* more generated typings ([76bac9a](https://github.com/relishinc/dill-pixel/commit/76bac9adf5bfed36ac0d6172e5fbaf6e946f8553))
+* more magical typing / augmentation ([1c3cae6](https://github.com/relishinc/dill-pixel/commit/1c3cae674bed116a545365baf015b23dba765924))
+* new repo structure ([77f3bb8](https://github.com/relishinc/dill-pixel/commit/77f3bb8f328c9243a25b418a10e87f3b3617fd8b))
+* strong typing asset bundles in dill-pixel.config.ts ([599bfc6](https://github.com/relishinc/dill-pixel/commit/599bfc6f284146c43879a09fcf5039bfe7f6200a))
+* strong typing plugins & adapters in dill-pixel.config.ts ([aae896b](https://github.com/relishinc/dill-pixel/commit/aae896b33e63995ea0f23c13ce810d4ab3a76d86))
+* zero-config bootstrapping, dill-pixel.config.ts in project root, automagical typings ([2505816](https://github.com/relishinc/dill-pixel/commit/2505816aa2274f08ce062d01f860c65fc8b0a0ce))
+
+
+### Bug Fixes
+
+* default app template ([9977649](https://github.com/relishinc/dill-pixel/commit/9977649368a70f753ac4ed01cef7eb331febdd79))
+* strong typings for scene exports ([2ab9600](https://github.com/relishinc/dill-pixel/commit/2ab9600d52ef01e3a3e347d6414fe43b0791cc8b))
+
 ## [5.0.3](https://github.com/relishinc/dill-pixel/compare/v5.0.2...v5.0.3) (2025-06-19)
 
 
