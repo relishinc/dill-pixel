@@ -1099,6 +1099,7 @@ const defaultConfig = {
     //   },
     // },
     rollupOptions: {
+      external: ['dill-pixel-globals'],
       output: {
         manualChunks: {
           gsap: ['gsap'],

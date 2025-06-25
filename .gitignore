@@ -31,5 +31,7 @@ apps/kitchen-sink/node_modules
 apps/kitchen-sink/.assetpack
 apps/kitchen-sink/.cache
 apps/kitchen-sink/.env
+apps/cli-test-app/
 
 .turbo
+

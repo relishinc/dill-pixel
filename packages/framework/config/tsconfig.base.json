@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
+    "types": ["vite/client", "vite-plugin-pwa/client"],
     "outDir": "dist",
     "target": "ESNext",
     "useDefineForClassFields": true,
@@ -20,6 +23,6 @@
     "noImplicitReturns": true,
     "skipLibCheck": true
   },
-  "include": ["./src/**/*.ts"],
-  "exclude": [".cache"]
+  "include": ["dill-pixel.config.ts", "src", "src/**/*.d.ts"],
+  "exclude": [".cache", "node_modules", "dist"]
 }
