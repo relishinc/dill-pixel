@@ -1,10 +1,28 @@
 {
-  "extends": "dill-pixel/config/tsconfig.json",
   "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "types": ["vite/client", "vite-plugin-pwa/client"],
+    "outDir": "dist",
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "strictPropertyInitialization": false,
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "bundler",
+    "strict": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true
   },
-  "include": ["./src/**/*.ts"],
-  "exclude": ["./node_modules"]
+  "include": ["dill-pixel.config.ts", "src", "src/**/*.d.ts"],
+  "exclude": [".cache", "node_modules", "dist"]
 }

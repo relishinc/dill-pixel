@@ -15,7 +15,14 @@ export default defineConfig({
       fileName: (format, entryName) => (entryName === 'index' ? `dill-pixel.mjs` : `${entryName}.mjs`),
     },
     rollupOptions: {
-      external: ['pixi.js', 'gsap', 'dill-pixel-globals'],
+      external: [
+        'pixi.js',
+        'gsap',
+        'virtual:dill-pixel-config',
+        'virtual:dill-pixel-scenes',
+        'virtual:dill-pixel-plugins',
+        'virtual:dill-pixel-storage-adapters',
+      ],
     },
   },
   plugins: [dts({ copyDtsFiles: true })],

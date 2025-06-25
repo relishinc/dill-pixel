@@ -584,22 +584,22 @@ declare module 'dill-pixel' {
 
   return {
     name: 'vite-plugin-dill-pixel-config',
+    enforce: 'pre',
     resolveId(id) {
       if (id === virtualModuleId) {
         return resolvedVirtualModuleId;
       }
     },
-    async load(id) {
+    load(id) {
       if (id === resolvedVirtualModuleId) {
-        return generateTypes();
+        return `export { default } from '/dill-pixel.config.ts';`;
       }
     },
     async buildStart() {
-      if (isProject) {
-        await build();
-      }
+      if (!isProject) return;
+      await build('Generating types from dill-pixel.config.ts');
     },
-    async configureServer(server) {
+    configureServer(server) {
       if (!isProject) return;
 
       const configPath = path.resolve(cwd, 'dill-pixel.config.ts');
@@ -950,54 +950,6 @@ export function sceneListPlugin(isProject = true) {
   };
 }
 
-function createDillPixelGlobalsPlugin() {
-  const entryId = 'dill-pixel-globals';
-  const resolvedEntryId = '\0' + entryId;
-
-  return {
-    name: 'vite-virtual-entry',
-    enforce: 'pre',
-    resolveId(id) {
-      if (id === entryId) {
-        return resolvedEntryId;
-      }
-    },
-    load(id) {
-      if (id === resolvedEntryId) {
-        return `
-          import {sceneList} from 'virtual:dill-pixel-scenes';
-          import {pluginsList} from 'virtual:dill-pixel-plugins';
-          import {storageAdaptersList} from 'virtual:dill-pixel-storage-adapters';
-
-
-          globalThis.DillPixel = globalThis.DillPixel || {};
-
-          try {
-            globalThis.DillPixel.APP_NAME = __DILL_PIXEL_APP_NAME;
-            globalThis.DillPixel.APP_VERSION = __DILL_PIXEL_APP_VERSION;
-          } catch (e) {
-            console.error('Failed to set app name and version', e);
-          }
-
-          globalThis.DillPixel.sceneList = sceneList;
-          globalThis.DillPixel.pluginsList = pluginsList;
-          globalThis.DillPixel.storageAdaptersList = storageAdaptersList;
-
-          // Extract IDs for easier access
-          globalThis.DillPixel.sceneIds = sceneList.map(scene => scene.id);
-          globalThis.DillPixel.pluginIds = pluginsList.map(plugin => plugin.id);
-          globalThis.DillPixel.storageAdapterIds = storageAdaptersList.map(adapter => adapter.id);
-
-          globalThis.DillPixel.get = function(key) {
-            globalThis.DillPixel = globalThis.DillPixel || {};
-            return key ? globalThis.DillPixel[key] : globalThis.DillPixel;
-          };
-        `;
-      }
-    },
-  };
-}
-
 function createDillPixelPWAPlugin() {
   const entryId = 'dill-pixel-pwa';
   const resolvedEntryId = '\0' + entryId;
@@ -1114,7 +1066,6 @@ const defaultConfig = {
     wasm(),
     topLevelAwait(),
     createHtmlPlugin(),
-    createDillPixelGlobalsPlugin(),
     viteStaticCopy({
       targets: [
         {

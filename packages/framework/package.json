@@ -37,9 +37,6 @@
     "./config/vite": {
       "default": "./config/vite.mjs"
     },
-    "./config/tsconfig.json": {
-      "default": "./config/tsconfig.base.json"
-    },
     "./extras/css/accessibility.css": {
       "default": "./extras/css/accessibility.css"
     },
