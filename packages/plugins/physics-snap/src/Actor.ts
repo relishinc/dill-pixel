@@ -1,4 +1,3 @@
-import { Application } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Circle, Point, Rectangle } from 'pixi.js';
 import { Entity } from './Entity';
@@ -6,7 +5,7 @@ import { System } from './System';
 import { Collision, EntityType } from './types';
 import { checkCollision } from './utils';
 
-export class Actor<T = any, A extends Application = Application> extends Entity<T, A> {
+export class Actor<T = any> extends Entity<T> {
   type = 'Actor';
   isActor = true;
   passThroughTypes: EntityType[] = [];

@@ -411,6 +411,8 @@ function dillPixelConfigPlugin(isProject = true) {
     let hasActions = false;
     let hasContexts = false;
 
+    let configObject;
+
     for (const node of ast.body) {
       if (
         node.type === AST_NODE_TYPES.ExportNamedDeclaration &&
@@ -440,24 +442,34 @@ function dillPixelConfigPlugin(isProject = true) {
           (d) => d.init?.type === AST_NODE_TYPES.CallExpression && d.init.callee.name === 'defineConfig',
         );
         if (configDecl?.init.type === AST_NODE_TYPES.CallExpression) {
-          const configObject = configDecl.init.arguments[0];
-          if (configObject?.type === AST_NODE_TYPES.ObjectExpression) {
-            const appProperty = configObject.properties.find(
-              (p) => p.type === AST_NODE_TYPES.Property && p.key.name === 'application',
-            );
-            if (appProperty?.value.type === AST_NODE_TYPES.Identifier) {
-              const importedAppName = appProperty.value.name;
-              const importDecl = ast.body.find(
-                (n) =>
-                  n.type === AST_NODE_TYPES.ImportDeclaration &&
-                  n.specifiers.some((s) => s.local.name === importedAppName),
-              );
-              if (importDecl) {
-                appClassName = importedAppName;
-                appImportPath = importDecl.source.value;
-              }
-            }
-          }
+          configObject = configDecl.init.arguments[0];
+        }
+      } else if (
+        node.type === AST_NODE_TYPES.ExportDefaultDeclaration &&
+        node.declaration.type === AST_NODE_TYPES.CallExpression &&
+        node.declaration.callee.name === 'defineConfig'
+      ) {
+        configObject = node.declaration.arguments[0];
+      }
+    }
+
+    if (configObject?.type === AST_NODE_TYPES.ObjectExpression) {
+      const appProperty = configObject.properties.find(
+        (p) =>
+          p.type === AST_NODE_TYPES.Property &&
+          p.key.name === 'application' &&
+          p.value.type === AST_NODE_TYPES.Identifier,
+      );
+
+      if (appProperty) {
+        const importedAppName = appProperty.value.name;
+        const importDecl = ast.body.find(
+          (n) =>
+            n.type === AST_NODE_TYPES.ImportDeclaration && n.specifiers.some((s) => s.local.name === importedAppName),
+        );
+        if (importDecl) {
+          appClassName = importedAppName;
+          appImportPath = importDecl.source.value;
         }
       }
     }

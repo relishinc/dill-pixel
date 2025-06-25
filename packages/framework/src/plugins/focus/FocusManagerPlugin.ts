@@ -1,6 +1,5 @@
 import { Bounds, Container, Point, PointerEvents } from 'pixi.js';
 import { IApplication } from '../../core';
-import { Application } from '../../core/Application';
 import { Signal } from '../../signals';
 import type { Constructor, PointLike as DillPixelPointLike } from '../../utils';
 import { bindMethods, getLastMapEntry, getPreviousMapEntry, Logger } from '../../utils';
@@ -272,7 +271,7 @@ export interface IFocusManagerPlugin extends IPlugin {
   sortFocusablesByPosition(): void;
 }
 
-export class FocusManagerPlugin extends Plugin<Application, FocusManagerPluginOptions> implements IFocusManagerPlugin {
+export class FocusManagerPlugin extends Plugin<FocusManagerPluginOptions> implements IFocusManagerPlugin {
   public override readonly id: string = 'focus';
   public readonly view = new Container();
   // signals

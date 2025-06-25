@@ -1,17 +1,43 @@
 import { Ticker } from 'pixi.js';
 import { PauseConfig } from '../core';
-import { type AppTypeOverrides, AssetLoadingOptions, Size } from '../utils';
+import { type AppTypeOverrides, type AssetTypeOverrides, AssetLoadingOptions, Size } from '../utils';
 import type { IContainer } from './Container';
 import { Container } from './Container';
 
 type AppScenes = AppTypeOverrides['Scenes'];
 
-export type SceneAssets = Omit<AssetLoadingOptions, 'manifest' | 'initOptions' | 'assetPreferences'>;
+type SceneAssetsToLoad = {
+  assets?: (string | { alias: string; src: string | string[] })[];
+  bundles?: AssetTypeOverrides['Bundles'] | AssetTypeOverrides['Bundles'][];
+};
+
+export type SceneAssets = {
+  preload?: SceneAssetsToLoad;
+  background?: SceneAssetsToLoad;
+  autoUnload?: boolean;
+};
+
+export type ScenePlugins = AppTypeOverrides['Plugins'][];
+
+export type SceneDebug = {
+  label?: string;
+  group?: string;
+  order?: number;
+};
+
+export type SceneConfig = {
+  id?: string;
+  dynamic?: boolean;
+  active?: boolean;
+  assets?: SceneAssets;
+  plugins?: ScenePlugins;
+  debug?: SceneDebug;
+};
 
 export interface IScene extends IContainer {
   id: AppScenes;
   label?: string;
-  assets?: SceneAssets;
+  assets?: Omit<AssetLoadingOptions, 'manifest' | 'initOptions' | 'assetPreferences'>;
   autoUnloadAssets?: boolean;
 
   enter(): Promise<any>;

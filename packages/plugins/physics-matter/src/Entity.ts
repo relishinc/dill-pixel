@@ -1,4 +1,4 @@
-import { Application, Container, PointLike, resolvePointLike, resolveSizeLike, Size, SizeLike } from 'dill-pixel';
+import { Container, PointLike, resolvePointLike, resolveSizeLike, Size, SizeLike } from 'dill-pixel';
 import Matter, { Bodies, Body, IBodyDefinition, Vector } from 'matter-js';
 
 import { Container as PIXIContainer } from 'pixi.js';
@@ -29,7 +29,7 @@ export type EntityConfig = {
   offset?: PointLike;
 };
 
-export class Entity<T extends Application = Application> extends Container<T> implements IMatterPhysicsObject {
+export class Entity extends Container implements IMatterPhysicsObject {
   public static readonly DEFAULT_DEBUG_COLOR: number = 0x29c5f6;
   body: Matter.Body;
   public view: PIXIContainer;

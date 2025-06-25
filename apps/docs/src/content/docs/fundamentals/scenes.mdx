@@ -23,7 +23,7 @@ and for now we'll just add custom `enter` and `exit` methods that will fade all 
 
 Next, let's create a `StartScene` that extends our `BaseScene`:
 
-<Code code={startSceneTs} lang="ts" title="src/scenes/StartScene.ts" />
+<Code code={startSceneTs} lang="ts" title="src/scenes/Start.ts" />
 
 ## Configuring Scenes
 
@@ -41,6 +41,49 @@ export const debug = {
   group: 'Game', // the scene's group in the debug panel (optional)
 };
 ```
+
+### Strongly-typing Scene exports
+
+To get autocompletion and type-checking for your scene exports, you can use the helper types exported from `dill-pixel`. This is especially useful for `assets` and `plugins` where you can get autocompletion for bundle names and plugin IDs.
+
+Here's how you can type your exports:
+
+<Code
+  code={`import type { SceneAssets, ScenePlugins, SceneDebug } from 'dill-pixel';
+
+export const id = 'my-scene';
+
+// will autocomplete with object properties and available bundle names
+export const assets: SceneAssets = {
+    preload: {
+      bundles: ['game'],
+    },
+    autoUnload: true,
+};
+
+// will autocomplete with available plugin ids
+export const plugins: ScenePlugins = ['my-plugin']; 
+
+// will autocomplete with debug object properties
+export const debug: SceneDebug = {
+    group: 'My Game',
+    label: 'My Awesome Scene',
+};`}
+  lang="ts"
+  title="src/scenes/MyScene.ts"
+/>
+
+<Aside>
+  You can also use the `SceneConfig` type to type all exports at once, but typing them individually is often cleaner.
+  <Code
+    code={`import type { SceneConfig } from 'dill-pixel';
+
+export const assets: SceneConfig['assets'] = { /* ... */ };
+export const plugins: SceneConfig['plugins'] = [ /* ... */ ];
+export const debug: SceneConfig['debug'] = { /* ... */ };`}
+    lang="ts"
+  />
+</Aside>
 
 ## Switching Between Scenes
 

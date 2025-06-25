@@ -3,15 +3,14 @@ import { Application } from '../core/Application';
 import type { SpineProps } from '../mixins';
 import { Factory, WithSignals } from '../mixins';
 import { Signal } from '../signals';
-import { bindAllMethods, Spine } from '../utils';
+import { type AppTypeOverrides, bindAllMethods, Spine } from '../utils';
 
 const _SpineAnimation = WithSignals(Factory());
 
-export interface ISpineAnimation<ANames extends string = string, A extends Application = Application>
-  extends InstanceType<typeof _SpineAnimation> {
+export interface ISpineAnimation<ANames extends string = string> extends InstanceType<typeof _SpineAnimation> {
   readonly spine: Spine;
   readonly animationNames: ANames[];
-  readonly app: A;
+  readonly app: AppTypeOverrides['App'];
   readonly onAnimationComplete: Signal<(entry: TrackEntry) => void>;
   readonly onAnimationStart: Signal<(entry: TrackEntry) => void>;
   readonly onAnimationInterrupt: Signal<(entry: TrackEntry) => void>;
@@ -27,10 +26,7 @@ export interface ISpineAnimation<ANames extends string = string, A extends Appli
   togglePause(): void;
 }
 
-export class SpineAnimation<
-  ANames extends string = string,
-  A extends Application = Application,
-> extends _SpineAnimation {
+export class SpineAnimation<ANames extends string = string> extends _SpineAnimation {
   spine: Spine;
   paused: boolean;
 
@@ -46,8 +42,8 @@ export class SpineAnimation<
 
   protected _stateListener: AnimationStateListener;
 
-  get app(): A {
-    return Application.getInstance() as A;
+  get app(): AppTypeOverrides['App'] {
+    return Application.getInstance();
   }
 
   get animationNames(): ANames[] {

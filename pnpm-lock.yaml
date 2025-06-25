@@ -91,10 +91,10 @@ importers:
         version: link:../../packages/storage-adapters/supabase
       '@pixi/layout':
         specifier: ^3.0.2
-        version: 3.0.2(@types/react@19.1.8)(pixi.js@8.10.1)(react@19.1.0)(yoga-layout@3.2.1)
+        version: 3.0.2(@types/react@19.1.8)(pixi.js@8.10.2)(react@19.1.0)(yoga-layout@3.2.1)
       '@pixi/sound':
         specifier: ^6.0.1
-        version: 6.0.1(pixi.js@8.10.1)
+        version: 6.0.1(pixi.js@8.10.2)
       '@vite-pwa/assets-generator':
         specifier: ^1.0.0
         version: 1.0.0
@@ -114,8 +114,8 @@ importers:
         specifier: 4.1.5
         version: 4.1.5
       pixi.js:
-        specifier: 8.10.1
-        version: 8.10.1
+        specifier: 8.10.2
+        version: 8.10.2
       rimraf:
         specifier: 5.0.5
         version: 5.0.5
@@ -182,13 +182,13 @@ importers:
         version: 4.2.83
       '@pixi/devtools':
         specifier: ^2.0.1
-        version: 2.0.1(pixi.js@8.10.1)
+        version: 2.0.1(pixi.js@8.10.2)
       '@pixi/layout':
         specifier: ^3.0.2
-        version: 3.0.2(@types/react@19.1.8)(pixi.js@8.10.1)(react@19.1.0)(yoga-layout@3.2.1)
+        version: 3.0.2(@types/react@19.1.8)(pixi.js@8.10.2)(react@19.1.0)(yoga-layout@3.2.1)
       '@pixi/sound':
         specifier: ^6.0.1
-        version: 6.0.1(pixi.js@8.10.1)
+        version: 6.0.1(pixi.js@8.10.2)
       '@types/stats.js':
         specifier: ^0.17.3
         version: 0.17.4
@@ -212,10 +212,10 @@ importers:
         version: 4.1.5
       pixi-filters:
         specifier: ^6.1.2
-        version: 6.1.3(pixi.js@8.10.1)
+        version: 6.1.3(pixi.js@8.10.2)
       pixi.js:
-        specifier: 8.10.1
-        version: 8.10.1
+        specifier: 8.10.2
+        version: 8.10.2
       prettier:
         specifier: ^3.2.5
         version: 3.5.3
@@ -328,7 +328,7 @@ importers:
     devDependencies:
       dill-pixel:
         specifier: 5.0.2
-        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.1))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.1)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
+        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.2))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.2)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
       vite:
         specifier: 6.1.1
         version: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
@@ -344,7 +344,7 @@ importers:
     devDependencies:
       dill-pixel:
         specifier: 5.0.2
-        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.1))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.1)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
+        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.2))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.2)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
       vite:
         specifier: 6.1.1
         version: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
@@ -358,12 +358,12 @@ importers:
         specifier: ^3.12.5
         version: 3.12.5
       pixi.js:
-        specifier: 8.10.1
-        version: 8.10.1
+        specifier: 8.10.2
+        version: 8.10.2
     devDependencies:
       dill-pixel:
         specifier: 5.0.2
-        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.1))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.1)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
+        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.2))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.2)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
       vite:
         specifier: 6.1.1
         version: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
@@ -380,12 +380,12 @@ importers:
         specifier: ^0.20.0
         version: 0.20.0
       pixi.js:
-        specifier: 8.10.1
-        version: 8.10.1
+        specifier: 8.10.2
+        version: 8.10.2
     devDependencies:
       dill-pixel:
         specifier: 5.0.2
-        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.1))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.1)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
+        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.2))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.2)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
       vite:
         specifier: 6.1.1
         version: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
@@ -399,12 +399,12 @@ importers:
         specifier: ^3.12.5
         version: 3.12.5
       pixi.js:
-        specifier: 8.10.1
-        version: 8.10.1
+        specifier: 8.10.2
+        version: 8.10.2
     devDependencies:
       dill-pixel:
         specifier: 5.0.2
-        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.1))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.1)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
+        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.2))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.2)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
       vite:
         specifier: 6.1.1
         version: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
@@ -418,12 +418,12 @@ importers:
         specifier: ^2.26.1
         version: 2.30.0
       pixi.js:
-        specifier: 8.10.1
-        version: 8.10.1
+        specifier: 8.10.2
+        version: 8.10.2
     devDependencies:
       dill-pixel:
         specifier: 5.0.2
-        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.1))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.1)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
+        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.2))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.2)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
       vite:
         specifier: 6.1.1
         version: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
@@ -439,7 +439,7 @@ importers:
     devDependencies:
       dill-pixel:
         specifier: 5.0.2
-        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.1))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.1)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
+        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.2))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.2)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
       vite:
         specifier: 6.1.1
         version: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
@@ -455,7 +455,7 @@ importers:
     devDependencies:
       dill-pixel:
         specifier: 5.0.2
-        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.1))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.1)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
+        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.2))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.2)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
       vite:
         specifier: 6.1.1
         version: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
@@ -474,7 +474,7 @@ importers:
         version: 20.19.1
       dill-pixel:
         specifier: 5.0.2
-        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.1))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.1)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
+        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.2))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.2)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
       vite:
         specifier: 6.1.1
         version: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
@@ -493,7 +493,7 @@ importers:
     devDependencies:
       dill-pixel:
         specifier: 5.0.2
-        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.1))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.1)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
+        version: 5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.2))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.2)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1)
       vite:
         specifier: 6.1.1
         version: 6.1.1(@types/node@20.19.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.0)(yaml@2.8.0)
@@ -5955,8 +5955,8 @@ packages:
     peerDependencies:
       pixi.js: '>=8.0.0-0'
 
-  pixi.js@8.10.1:
-    resolution: {integrity: sha512-wjKJXawhTUxuyKIuwE3jK05eBh5I4GKy+YrRVniURFRkK7pYEvRvnV41dEqz6owSXav/YMXdG5783YDJeamiow==}
+  pixi.js@8.10.2:
+    resolution: {integrity: sha512-utRKxzTwNsIhaxOikxIBxKPfxuOyVkPvdYipY23ZEyWSYhONosrQlcB9nymeIcbsrsuSdwExX0eTnHTDjTN3UQ==}
 
   pkg-types@1.3.1:
     resolution: {integrity: sha512-/Jm5M4RvtBFVkKWRu2BLUTNP8/M2a+UwuAX+ae4770q1qVGtfjG+WTCupoZixokjmHiry8uI+dlY8KXYV5HVVQ==}
@@ -9874,24 +9874,24 @@ snapshots:
 
   '@pixi/colord@2.9.6': {}
 
-  '@pixi/devtools@2.0.1(pixi.js@8.10.1)':
+  '@pixi/devtools@2.0.1(pixi.js@8.10.2)':
     dependencies:
-      pixi.js: 8.10.1
+      pixi.js: 8.10.2
 
-  '@pixi/layout@3.0.2(@types/react@19.1.8)(pixi.js@8.10.1)(react@19.1.0)(yoga-layout@3.2.1)':
+  '@pixi/layout@3.0.2(@types/react@19.1.8)(pixi.js@8.10.2)(react@19.1.0)(yoga-layout@3.2.1)':
     dependencies:
-      pixi.js: 8.10.1
+      pixi.js: 8.10.2
       yoga-layout: 3.2.1
     optionalDependencies:
-      '@pixi/react': 8.0.2(@types/react@19.1.8)(pixi.js@8.10.1)(react@19.1.0)
+      '@pixi/react': 8.0.2(@types/react@19.1.8)(pixi.js@8.10.2)(react@19.1.0)
     transitivePeerDependencies:
       - '@types/react'
       - react
 
-  '@pixi/react@8.0.2(@types/react@19.1.8)(pixi.js@8.10.1)(react@19.1.0)':
+  '@pixi/react@8.0.2(@types/react@19.1.8)(pixi.js@8.10.2)(react@19.1.0)':
     dependencies:
       its-fine: 2.0.0(@types/react@19.1.8)(react@19.1.0)
-      pixi.js: 8.10.1
+      pixi.js: 8.10.2
       react: 19.1.0
       react-reconciler: 0.31.0(react@19.1.0)
     transitivePeerDependencies:
@@ -9900,9 +9900,9 @@ snapshots:
 
   '@pixi/runner@7.4.3': {}
 
-  '@pixi/sound@6.0.1(pixi.js@8.10.1)':
+  '@pixi/sound@6.0.1(pixi.js@8.10.2)':
     dependencies:
-      pixi.js: 8.10.1
+      pixi.js: 8.10.2
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -11634,14 +11634,14 @@ snapshots:
 
   diff@5.2.0: {}
 
-  dill-pixel@5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.1))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.1)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1):
+  dill-pixel@5.0.2(@pixi/sound@6.0.1(pixi.js@8.10.2))(@types/node@20.19.1)(gsap@3.12.5)(jiti@2.4.2)(lightningcss@1.30.1)(pixi.js@8.10.2)(rollup@4.43.0)(terser@5.43.0)(workbox-build@7.3.0)(yaml@2.8.0)(yoga-layout@3.2.1):
     dependencies:
       '@assetpack/core': 1.4.0
       '@clack/prompts': 0.8.2
       '@esotericsoftware/spine-core': 4.2.83
-      '@pixi/devtools': 2.0.1(pixi.js@8.10.1)
-      '@pixi/layout': 3.0.2(@types/react@19.1.8)(pixi.js@8.10.1)(react@19.1.0)(yoga-layout@3.2.1)
-      '@pixi/sound': 6.0.1(pixi.js@8.10.1)
+      '@pixi/devtools': 2.0.1(pixi.js@8.10.2)
+      '@pixi/layout': 3.0.2(@types/react@19.1.8)(pixi.js@8.10.2)(react@19.1.0)(yoga-layout@3.2.1)
+      '@pixi/sound': 6.0.1(pixi.js@8.10.2)
       '@types/stats.js': 0.17.4
       '@typescript-eslint/typescript-estree': 8.34.1(typescript@5.8.3)
       '@vite-pwa/assets-generator': 1.0.0
@@ -11649,8 +11649,8 @@ snapshots:
       gsap: 3.12.5
       kleur: 4.1.5
       npm-run-all: 4.1.5
-      pixi-filters: 6.1.3(pixi.js@8.10.1)
-      pixi.js: 8.10.1
+      pixi-filters: 6.1.3(pixi.js@8.10.2)
+      pixi.js: 8.10.2
       prettier: 3.5.3
       relishinc-prettier: https://codeload.github.com/relishinc/prettier/tar.gz/e7cf1d99ee73897d598ff02a1dad7bc8b7830be6(prettier@3.5.3)
       rimraf: 5.0.5
@@ -14329,12 +14329,12 @@ snapshots:
     dependencies:
       pngjs: 3.4.0
 
-  pixi-filters@6.1.3(pixi.js@8.10.1):
+  pixi-filters@6.1.3(pixi.js@8.10.2):
     dependencies:
       '@types/gradient-parser': 0.1.5
-      pixi.js: 8.10.1
+      pixi.js: 8.10.2
 
-  pixi.js@8.10.1:
+  pixi.js@8.10.2:
     dependencies:
       '@pixi/colord': 2.9.6
       '@types/css-font-loading-module': 0.0.12

@@ -1,4 +1,3 @@
-import { Application } from 'dill-pixel';
 import { Entity } from './Entity';
 import { Solid } from './Solid';
 import {
@@ -69,7 +68,7 @@ import {
  * }
  * ```
  */
-export class Actor<T extends Application = Application, D extends EntityData = EntityData> extends Entity<T, D> {
+export class Actor<D extends EntityData = EntityData> extends Entity<D> {
   public readonly entityType: PhysicsEntityType = 'Actor';
 
   /** Current velocity in pixels per second */

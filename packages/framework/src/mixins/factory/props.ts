@@ -129,14 +129,14 @@ export interface AnimatedSpriteProps extends AbstractProps, ScaleProps, Position
   startIndex: number;
 }
 
-export type DillPixelTextStyle = Partial<Omit<TextStyleOptions, 'fontFamily'> & { fontFamily: FontFamilyAsset }>;
+export type TextStyle = Partial<Omit<TextStyleOptions, 'fontFamily'> & { fontFamily: FontFamilyAsset }>;
 
 export interface TextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps, LayoutProps {
   text: string;
   anchor: PointLike;
   resolution: number;
   roundPixels: boolean;
-  style: DillPixelTextStyle;
+  style: TextStyle;
 }
 
 export interface BitmapTextProps extends AbstractProps, PositionProps, ScaleProps, VisibilityProps, LayoutProps {

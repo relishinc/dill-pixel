@@ -3,7 +3,7 @@ import { ContainerChild, Graphics, IRenderLayer, Container as PIXIContainer, Rec
 import { Application } from '../core/Application';
 import { Container } from '../display';
 import { Factory, WithSignals } from '../mixins';
-import type { Padding, PointLike, Size, SizeLike } from '../utils';
+import type { AppTypeOverrides, Padding, PointLike, Size, SizeLike } from '../utils';
 import { bindAllMethods, ensurePadding, Logger, resolveSizeLike } from '../utils';
 import { FlexContainer } from './FlexContainer';
 
@@ -64,7 +64,7 @@ const defaultLayout = {
 
 const _UICanvas = WithSignals(Factory());
 
-export class UICanvas<T extends Application = Application> extends _UICanvas {
+export class UICanvas extends _UICanvas {
   public config: UICanvasConfig;
   protected _outerBounds: Rectangle;
   protected _displayBounds: Rectangle;
@@ -315,8 +315,8 @@ export class UICanvas<T extends Application = Application> extends _UICanvas {
   /**
    * Get the application instance.
    */
-  public get app(): T {
-    return Application.getInstance() as T;
+  public get app(): AppTypeOverrides['App'] {
+    return Application.getInstance();
   }
 
   destroy() {

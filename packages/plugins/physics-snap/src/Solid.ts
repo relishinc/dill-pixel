@@ -1,10 +1,10 @@
-import { Application, filterSet } from 'dill-pixel';
+import { filterSet } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Actor } from './Actor';
 import { Entity } from './Entity';
 import { System } from './System';
 
-export class Solid<T = any, A extends Application = Application> extends Entity<T, A> {
+export class Solid<T = any> extends Entity<T> {
   type = 'Solid';
   isSolid = true;
   riding: Set<Actor> = new Set();

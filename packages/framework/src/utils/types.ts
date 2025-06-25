@@ -305,8 +305,11 @@ export type SpritesheetAsset = FilterCleanAssetNames<AssetTypeOverrides['SpriteS
 
 export type AudioAsset = FilterCleanAssetNames<AssetTypeOverrides['Audio']> | (string & {});
 
-export type FontFamilyAsset = FilterCleanAssetNames<AssetTypeOverrides['FontFamily']> | (string & {});
+export type FontFamilyAsset = FilterCleanAssetNames<AssetTypeOverrides['FontFamily']> | (string & {}) | (string[] & {});
 
-export type BitmapFontFamilyAsset = FilterBitmapFontNames<AssetTypeOverrides['BitmapFontFamily']> | (string & {});
+export type BitmapFontFamilyAsset =
+  | FilterBitmapFontNames<AssetTypeOverrides['BitmapFontFamily']>
+  | (string & {})
+  | (string[] & {});
 
 export type SpineAsset = FilterSpineAssetNames<AssetTypeOverrides['SpineData']> | (string & {});

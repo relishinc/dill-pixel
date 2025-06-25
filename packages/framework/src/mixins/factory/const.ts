@@ -37,7 +37,6 @@ import {
 } from './utils';
 
 import { BitmapText, Graphics, HTMLText, Sprite, Text, TilingSprite } from 'pixi.js';
-import { Application } from '../../core/Application';
 import {
   ParticleContainer,
   ParticleContainerConfig,
@@ -281,10 +280,8 @@ export const defaultFactoryMethods = {
     resolveUnknownKeys(rest, entity);
     return entity;
   },
-  spineAnimation: <ANames extends string = string, A extends Application = Application>(
-    props?: Partial<SpineProps>,
-  ): SpineAnimation<ANames, A> => {
-    const entity = new SpineAnimation<ANames, A>(props);
+  spineAnimation: <ANames extends string = string>(props?: Partial<SpineProps>): SpineAnimation<ANames> => {
+    const entity = new SpineAnimation<ANames>(props);
     if (!props) return entity;
     const { position, x, y, anchor, pivot, scale, scaleX, scaleY, ...rest } = props;
     resolvePosition({ position, x, y }, entity);

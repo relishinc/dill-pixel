@@ -1,4 +1,4 @@
-import type { Layout, LayoutOptions } from '@pixi/layout';
+import type { Layout, LayoutOptions, NumberValue } from '@pixi/layout';
 import { BitmapText, Container as PIXIContainer, Text } from 'pixi.js';
 import { Application } from '../core/Application';
 import { Container } from '../display';
@@ -33,7 +33,7 @@ export type JustifyContent =
   | 'flex-end'
   | undefined;
 
-export type SizeNumber = number | 'auto' | 'intrinsic';
+export type SizeNumber = NumberValue | 'auto' | 'intrinsic';
 
 export class FlexContainer extends _FlexContainer {
   public onLayoutComplete = new Signal<() => void>();
