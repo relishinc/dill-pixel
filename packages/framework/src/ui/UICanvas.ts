@@ -82,6 +82,10 @@ export class UICanvas extends _UICanvas {
   constructor(config: Partial<UICanvasProps>) {
     super();
 
+    if (!this.app.config.useLayout) {
+      Logger.error('You must set useLayout to true in your app config to use UICanvas');
+    }
+
     bindAllMethods(this);
     this._positionContainers = new Map();
     this.config = {
@@ -450,6 +454,7 @@ export class UICanvas extends _UICanvas {
   }
 
   public updateLayout() {
+    if (!this.app.renderer.layout) return;
     this.app.renderer.layout.update(this);
 
     this._positionContainers.forEach((container) => {

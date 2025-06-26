@@ -4,7 +4,7 @@
   "private": true,
   "main": "index.html",
   "scripts": {
-    "clean": "rimraf .cache",
+    "clean": "rimraf .assetpack .cache dist",
     "start": "~PACKAGE_MANAGER~ clean && vite",
     "dev": "~PACKAGE_MANAGER~ clean && vite",
     "preview": "~PACKAGE_MANAGER~ build && vite preview",

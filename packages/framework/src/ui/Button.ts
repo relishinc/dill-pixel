@@ -161,7 +161,9 @@ export class Button extends _Button implements IButton {
 
     if (this.layout?.style.transformOrigin !== 'top left') {
       this.layout = { transformOrigin: 'top left' };
-      this.app.renderer.layout.update(this);
+      if (this.app.renderer.layout) {
+        this.app.renderer.layout.update(this);
+      }
     }
 
     if (this.config.textLabel) {

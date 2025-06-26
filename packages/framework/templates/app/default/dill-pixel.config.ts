@@ -2,7 +2,7 @@ import { defineActions, defineButtons, defineConfig, defineContexts, defineContr
 import { __APPLICATION_NAME__ } from './src/__APPLICATION_NAME__';
 /** Default template */
 // uncomment this to use the splash screen
-// import { Splash } from './Splash';
+// import { Splash } from '@/scenes/Splash';
 
 // TODO: Add custom contexts here if desired
 // by default, we use the default contexts
@@ -30,6 +30,7 @@ export default defineConfig({
   // splash: {
   //   view: Splash,
   // },
+  useLayout: true,
   data: {
     initial: initialData,
     backupKeys: [],

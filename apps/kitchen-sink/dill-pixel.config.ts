@@ -102,7 +102,7 @@ export default defineConfig({
   sceneTransition: Transition,
   defaultSceneLoadMethod: 'transitionExitEnter',
   useSpine: true,
-  useLayout: true,
+  useLayout: false,
   showSceneDebugMenu: true,
   useVoiceover: true,
   defaultScene: 'assets',

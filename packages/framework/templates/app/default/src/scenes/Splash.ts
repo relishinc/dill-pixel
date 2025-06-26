@@ -1,7 +1,7 @@
+import { COLOR_GREEN } from '@/utils/Constants';
 import { FlexContainer, SceneTransition } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Sprite, Text } from 'pixi.js';
-import { COLOR_GREEN } from './utils/Constants';
 
 export class Splash extends SceneTransition {
   private _labelPercent: Text;
