@@ -69,9 +69,8 @@ import type { MyApplication } from './MyApplication';
 export default function main(app: MyApplication) {
   // This code runs right after the app is created.
   console.log('My application is ready!', app);
-
-  // You can set up initial scenes, connect to signals, etc.
-  app.scenes.load('mainMenu');
+  // you can access the application instance via `app`
+  // if you need to do something specific after the application is created, you can do it here.
 }
 ```
 
