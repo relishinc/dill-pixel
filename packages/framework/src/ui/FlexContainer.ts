@@ -4,7 +4,7 @@ import { Application } from '../core/Application';
 import { Container } from '../display';
 import { Factory, WithSignals } from '../mixins';
 import { Signal } from '../signals';
-import { AppTypeOverrides, bindAllMethods, Logger, type ContainerLike } from '../utils';
+import { AppTypeOverrides, bindAllMethods, type ContainerLike } from '../utils';
 
 const _FlexContainer = WithSignals(Factory());
 
@@ -43,7 +43,7 @@ export class FlexContainer extends _FlexContainer {
     super();
 
     if (!this.app.config.useLayout) {
-      Logger.error('You must set useLayout to true in your app config to use FlexContainer');
+      throw new Error('You must set useLayout to true in your app config to use FlexContainer');
     }
 
     bindAllMethods(this);

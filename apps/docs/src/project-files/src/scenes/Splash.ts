@@ -1,4 +1,3 @@
-import { COLOR_GREEN } from '@/utils/Constants';
 import { FlexContainer, SceneTransition } from 'dill-pixel';
 import { gsap } from 'gsap';
 import { Sprite, Text } from 'pixi.js';
@@ -15,7 +14,7 @@ export class Splash extends SceneTransition {
 
   initialize() {
     this._bg = this.addColoredBackground({
-      color: COLOR_GREEN,
+      color: 0x00ff00, // green,
     });
     this._textContainer = this.add.flexContainer({
       bindToAppSize: true,
@@ -45,12 +44,6 @@ export class Splash extends SceneTransition {
     });
   }
 
-  async exit() {
-    // ensure percentage completes
-    await gsap.to(this, { _percent: 100, duration: 1, ease: 'sine.out' });
-    return gsap.to(this, { alpha: 0, duration: 1, ease: 'sine.in' });
-  }
-
   update() {
     this._labelPercent.text = `${Math.round(this._percent)}%`;
     this._textContainer.updateLayout(); // update the flex layout
@@ -60,8 +53,14 @@ export class Splash extends SceneTransition {
     this._textContainer.position.set(-this.app.size.width / 2, -this.app.size.height / 2);
   }
 
-  override handleLoadProgress(progress: number) {
+  handleLoadProgress(progress: number) {
     super.handleLoadProgress(progress);
     gsap.to(this, { _percent: Math.ceil(this.progress * 100), duration: 1, ease: 'sine.out' });
+  }
+
+  async exit() {
+    // ensure percentage completes
+    await gsap.to(this, { _percent: 100, duration: 1, ease: 'sine.out' });
+    return gsap.to(this, { alpha: 0, duration: 1, ease: 'sine.in' });
   }
 }

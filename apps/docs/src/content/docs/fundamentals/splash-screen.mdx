@@ -1,0 +1,49 @@
+---
+title: Splash Screen
+---
+import { Aside, Code, Steps } from '@astrojs/starlight/components';
+
+import splashTs from '../../../project-files/src/scenes/Splash.ts?raw';
+import dillPixelConfigTs from '../../../project-files/dill-pixel.config.ts?raw';
+
+The splash screen is the first thing a user sees when your game loads. You can create a custom splash screen to show loading progress or display your branding.
+
+## Custom Splash Screen
+
+<Steps>
+  <ol>
+    <li>
+      <div>
+        Create a `Splash.ts` file in the `src/scenes` folder. This will be displayed when the game starts. Similar to a Scene,
+        there are `initialize()`, `added()`, `enter()` and `exit()` methods to control how the screen is revealed and hidden. It also contains a `update()` method that runs every tick, and a `handleLoadProgress()` method that can be used to update the progress of the loading screen. For
+        simplicity's sake we're just creating a green background and adding a title that can be clicked to take us to
+        the next screen:
+        <Code code={splashTs} lang="ts" title="src/Splash.ts" />
+      </div>
+    </li>
+    <li>
+      In `./dill-pixel-config.ts`, import your `Splash` class:
+
+      ```ts
+      import Splash from '@/Splash';
+      ```
+
+      and set the set the `splash` property to
+      ```json
+      { ... // other config
+        splash: {
+          view: Splash
+        }
+    	...
+      }
+      ```
+
+      your `dill-pixel.config.ts` should now look like this:
+      <Code code={dillPixelConfigTs} lang="ts" title="dill-pixel.config.ts" />
+    </li>
+    <li>
+      in `index.html`, you can remove the `loader.css` import, as we're no longer using it.
+    </li>
+
+  </ol>
+</Steps> 

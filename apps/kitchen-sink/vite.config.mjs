@@ -1,12 +1,12 @@
 // import { withPWA } from 'dill-pixel/config/vite';
-import { extendConfig } from 'dill-pixel/config/vite';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'url';
+import { defineConfig } from 'vite';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export default extendConfig({
+export default defineConfig({
   resolve: {
     alias: {
       'dill-pixel': path.resolve(__dirname, '../../packages/framework/src'),

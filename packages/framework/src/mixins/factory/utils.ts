@@ -11,7 +11,7 @@ export function resolveUnknownKeys(props: any, entity: any) {
     try {
       (entity as any)[key] = props[key];
     } catch (e) {
-      Logger.error(`Error setting property ${key}`, e);
+      Logger.warn(`Error setting property ${key}`, e);
     }
   }
 }

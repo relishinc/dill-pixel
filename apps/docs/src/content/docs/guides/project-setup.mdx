@@ -14,26 +14,29 @@ A new project scaffolded with `create-dill-pixel` will have the following struct
 - vite.config.mjs
 - dill-pixel.config.ts
 - index.html
-- **public**
-    - **assets**
-        - **audio\{m\}**
-            - music
-            - sfx
-        - **game-assets\{tps\}**
-            - obstacle.png
-            - rocket.png
-- **src**
+- assets (configured for assetpack)
+  - audio\{m\}
+      - music
+        - background.mp3
+      - sfx
+        - click.mp3
+  - game-assets (configured for assetpack)
+      - obstacle.png
+      - rocket.png
+- public (optional)
+  - ... files will get copied from here to the dist folder
+- src
   - index.ts
   - main.ts (optional)
   - MyApplication.ts
-  - **scenes**
+  - scenes
     - BaseScene.ts
     - StartScene.ts
-  - **utils**
+  - utils
     - Constants.ts
-  - **locales**
+  - locales
     - en.ts
-  - **css**
+  - css
     - style.css
 </FileTree>
 

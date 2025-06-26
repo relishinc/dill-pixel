@@ -1,0 +1,81 @@
+---
+title: Finding Instances By Path
+---
+import { Aside } from '@astrojs/starlight/components';
+
+As your game grows, keeping track of all your game objects (or "instances") can become challenging. Dill Pixel provides a `LookupPlugin` that allows you to find any container in your scene tree using a simple string path, as long as the containers in the hierarchy have `label` properties assigned to them.
+
+## Accessing the Plugin methods
+
+You can access the `LookupPlugin` instance from any scene or container via `this.app.lookup`. Its core methods are also available on the `app` instance: 
+
+- `this.app.getChildAtPath(path: string)`
+- `this.app.getPathForChild(container: PIXIContainer)`
+- `this.app.getChildrenAtPaths(...paths: string[])`
+- `this.app.getPathsForChildren(...containers: PIXIContainer[])`
+- `this.app.getAllPaths()`
+
+## How it Works
+
+The lookup plugin automatically listens for containers being added to and removed from the stage. When a container with a `label` is added, the plugin constructs a path for it by joining the labels of its parents with a `/`.
+
+For a hierarchy like this:
+- Scene (no label)
+    - UILayer (`label: 'ui'`)
+        - Menu (`label: 'menu'`)
+            - StartButton (`label: 'start-button'`)
+
+The path for the `StartButton` would be `ui/menu/start-button`.
+
+## Scene Example
+
+Here's an example of how you might use the `LookupPlugin` in a game `Scene` to find and interact with objects.
+
+```ts
+import { Scene } from 'dill-pixel';
+import gsap from 'gsap';
+import { Sprite } from 'pixi.js';
+
+export const id = 'game'; // the scene's id becomes its container's label
+
+export default class GameScene extends Scene {
+  public async initialize() {
+    const player = this.add.sprite({
+      asset: 'player-ship',
+      label: 'player', // player's path will be 'game/player'
+    });
+    player.position.set(100, 100);
+
+    const hud = this.add.container({ label: 'hud' }); // hud's path will be 'game/hud'
+    
+    const healthBar = hud.add.sprite({
+      asset: 'health-bar',
+      label: 'health-bar', // health bar's path will be 'game/hud/health-bar'
+    });
+
+    // Later...
+    this.takeDamage(25);
+  }
+
+  public takeDamage(amount: number) {
+    // Find the player and health bar using their paths
+    const player = this.app.getChildAtPath('game/player') as Sprite;
+    const healthBar = this.app.getChildAtPath('game/hud/health-bar') as Sprite;
+
+    if (player && healthBar) {
+      player.alpha = 0.5; // Flash the player
+      gsap.to(player, { alpha: 1, duration: 0.5 });
+
+      // Update health bar width
+      const newWidth = healthBar.width - amount;
+      gsap.to(healthBar, { width: newWidth, duration: 0.3 });
+    }
+  }
+}
+
+```
+
+In this example:
+1. We create a `player` sprite and a `health-bar` sprite, both with labels. The health bar is inside a container also with a label.
+2. The path to the health bar becomes `hud/health-bar`.
+3. In the `takeDamage` method, we can easily find both the player and the health bar from anywhere without needing to store direct references to them. This can be very useful for decoupling parts of your game logic. 

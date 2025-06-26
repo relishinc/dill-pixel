@@ -59,6 +59,7 @@ export default class TimerScene extends BaseScene {
     stopwatchContainer.add.text({
       text: 'Stopwatch',
       style: { fill: 0xffffff, fontFamily: 'KumbhSans', fontWeight: 'bold', fontSize: 24, align: 'right' },
+      layout: { width: 200 },
     });
 
     this.stopwatchDisplay = stopwatchContainer.add.text({
@@ -82,6 +83,7 @@ export default class TimerScene extends BaseScene {
     countdownContainer.add.text({
       text: 'Countdown',
       style: { fill: 0xffffff, fontFamily: 'KumbhSans', fontWeight: 'bold', fontSize: 24, align: 'right' },
+      layout: { width: 200 },
     });
 
     this.countdownDisplay = countdownContainer.add.text({

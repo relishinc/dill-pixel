@@ -652,7 +652,7 @@ export class Application extends PIXIPApplication implements IApplication {
       for (let i = 0; i < this.storageAdapters.length; i++) {
         const listItem = this.storageAdapters[i];
         if (this.store.hasAdapter(listItem.id)) {
-          Logger.error(`Storage Adapter with id "${listItem.id}" already registered. Not registering.`);
+          Logger.warn(`Storage Adapter with id "${listItem.id}" already registered. Not registering.`);
           continue;
         }
         const storageAdapter = await getDynamicModuleFromImportListItem(listItem);
@@ -680,7 +680,7 @@ export class Application extends PIXIPApplication implements IApplication {
   public getPlugin<T extends IPlugin>(pluginName: AppPlugins, debug: boolean = false): T {
     const plugin = this._plugins.get(pluginName) as T;
     if (!plugin && debug) {
-      Logger.error(`Plugin with name "${pluginName}" not found.`);
+      Logger.warn(`Plugin with name "${pluginName}" not found.`);
     }
     return plugin;
   }
@@ -843,7 +843,7 @@ export class Application extends PIXIPApplication implements IApplication {
   // plugins
   protected async registerPlugin(plugin: IPlugin, options?: any) {
     if (this._plugins.has(plugin.id)) {
-      Logger.error(`Plugin with id "${plugin.id}" already registered. Not registering.`);
+      Logger.warn(`Plugin with id "${plugin.id}" already registered. Not registering.`);
       return plugin.initialize(options, this as unknown as IApplication);
     }
     plugin.registerCoreFunctions();

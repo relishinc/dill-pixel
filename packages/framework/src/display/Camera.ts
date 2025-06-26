@@ -4,7 +4,7 @@ import { Application } from '../core/Application';
 import type { KeyboardEventDetail } from '../plugins';
 import { Signal } from '../signals';
 import type { ContainerLike, PointLike } from '../utils';
-import { bindAllMethods, Logger, resolvePointLike } from '../utils';
+import { bindAllMethods, resolvePointLike } from '../utils';
 
 type CameraConfig = {
   container: Container;
@@ -137,7 +137,7 @@ export class Camera extends Container implements ICamera {
   set lerp(value: number) {
     // if the value is less than 0 or greater than 1, clamp it to the range [0, 1], and log an error
     if (value < 0 || value > 1) {
-      Logger.error('Camera lerp value must be in the range [0, 1]');
+      throw new Error('Camera lerp value must be in the range [0, 1]');
     }
     this._lerp = Math.max(0, Math.min(value, 1));
   }

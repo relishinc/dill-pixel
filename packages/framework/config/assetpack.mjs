@@ -76,6 +76,7 @@ export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfi
   let mode;
   let ap;
   let apConfig;
+  let isBuilding = false;
 
   async function getConfig() {
     if (!apConfig) {
@@ -103,6 +104,8 @@ export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfi
       }
     },
     buildStart: async () => {
+      if (isBuilding) return;
+      isBuilding = true;
       // Load config if not already loaded
       await getConfig();
       if (mode === 'serve') {
@@ -112,6 +115,7 @@ export function assetpackPlugin(manifestUrl = defaultManifestUrl, pixiPipesConfi
       } else {
         await new AssetPack(apConfig).run();
       }
+      isBuilding = false;
     },
     buildEnd: async () => {
       if (ap) {

@@ -4,6 +4,10 @@ title: Layout
 
 import { Aside } from '@astrojs/starlight/components';
 
+<Aside type="caution">
+  To use `FlexContainer` or `UICanvas`, you must enable the PixiJS Layout plugin by setting `useLayout: true` in your `dill-pixel.config.ts` file. This loads the `@pixi/layout` package and makes it available to your game.
+</Aside>
+
 Dill pixel provides two main ways to handle layouts in your game: `FlexContainer` and `UICanvas`. These classes offer different approaches to positioning and organizing UI elements, both powered by the robust **@pixi/layout** system.
 
 ## FlexContainer

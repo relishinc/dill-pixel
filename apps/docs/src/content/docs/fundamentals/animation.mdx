@@ -1,0 +1,125 @@
+---
+title: Animation with GSAP and the GSAPPlugin
+---
+import { Aside, Steps } from '@astrojs/starlight/components';
+
+Dill Pixel integrates the GreenSock Animation Platform (GSAP) for high-performance animations, accessible through the `GSAPPlugin`. This powerful tool is automatically initialized and provides an optimized workflow for animating PIXI.js objects.
+
+<Aside type="note">
+  The GSAP plugin automatically registers `PixiPlugin` to handle properties like `x`, `y`, `scale`, `rotation`, and `alpha` efficiently. It also supports animating PIXI filters like `BlurFilter` and `ColorMatrixFilter`.
+</Aside>
+
+## Accessing the Plugin
+
+You can access the `GSAPPlugin` instance from any scene or container via `this.app.animation`.
+
+```ts
+// Animate a sprite
+const tween = gsap.to(mySprite, {
+  x: 100,
+  duration: 1,
+  ease: 'power2.out'
+});
+
+this.app.animation.addAnimation(tween, 'my-context');
+```
+<Aside type="note">
+  The application aliases some core functions from the `GSAPPlugin` instance to make it easier to use.
+
+  - `this.app.animation` is an alias for the plugin instance
+  - `this.app.addAnimation` is an alias for `this.app.animation.addAnimation`
+  - `this.app.eases` is an alias for `this.app.animation.eases`, and lists all the registered custom eases.
+</Aside>
+
+## Animation Contexts
+
+A key feature of the `GSAPPlugin` is animation contexts, which allow you to group related animations together. This makes it easy to manage their lifecycle—pausing, resuming, or killing them all at once. This is not the same as a `gsap.Context`.
+
+You can add an animation to a context using `this.app.addAnimation(animation, contextId)`.
+
+## Scene Example
+
+Here's an example of how to use the `GSAPPlugin` within a `Scene` to create entry and exit animations for UI elements, managing them within a context.
+
+```ts
+import { Scene } from 'dill-pixel';
+import { gsap } from 'gsap';
+
+export const id = 'menu';
+
+export default class MenuScene extends Scene {
+  public async initialize() {
+    // add title
+    const title = this.add.text({
+      anchor: 0.5,
+      y: -100,
+      text: 'My Game',
+      style: { align: 'center', fontFamily: 'KumbhSans', fontSize: 80, fill: 0xffffff },
+    });
+
+    // add start button
+    const startButton = this.add.button({
+      x: -128,
+      anchor: 0.5,
+      scale: 0.5,
+      cursor: 'pointer',
+      textures: { default: 'btn/blue' },
+      sheet: 'ui',
+      textLabel: {
+        text: 'Start',
+        style: { fontFamily: 'KumbhSans', fontSize: 42, fontWeight: 'bold', fill: 0xffffff },
+      },
+    });
+
+    // add animations in a gsap timeline
+    const tl = gsap.timeline({ delay: 0.5 });
+    tl.addLabel('start');
+    tl.from(
+      [startButton, title],
+      {
+        pixi: {
+          alpha: 0,
+        },
+        duration: 1.5,
+        ease: 'power2.out',
+        stagger: 0.25,
+      },
+      'start',
+    );
+    tl.from(
+      [startButton, title],
+      {
+        pixi: {
+          y: '-=100',
+        },
+        duration: 0.5,
+        ease: 'bounce.out',
+        stagger: 0.25,
+      },
+      'start',
+    );
+
+    // Add animations to the context
+    // (in this case, the id of the scene is used as the context)
+    this.app.addAnimation(tl, this.id);
+    startButton.onClick.connectOnce(this.handleStartClick);
+  }
+
+  destroy() {
+    // ensure animations are killed when the scene is destroyed
+    this.app.animation.killAll(this.id);
+    super.destroy();
+  }
+
+  private handleStartClick() {
+    this.app.scenes.loadScene('game');
+  }
+}
+
+```
+
+In this example:
+1.  We define a unique context ID for our menu animations.
+2.  In `initialize`, we set the initial properties of the UI elements for their entrance animation.
+3.  We create several `gsap` tweens and add them all to our context.
+4.  When the start button is clicked or when the scene exits, we call `killAll` with our context ID to stop and clean up only the animations associated with this menu. 

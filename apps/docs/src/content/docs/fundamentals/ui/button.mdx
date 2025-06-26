@@ -35,17 +35,16 @@ export type ButtonConfig = {
   sounds?: {
     hover?: string;
     out?: string;
-    up?: string;
     down?: string;
     click?: string;
   };
   actions?: {
     hover?: ButtonActionOrCallback;
     out?: ButtonActionOrCallback;
-    up?: ButtonActionOrCallback;
     down?: ButtonActionOrCallback;
     click?: ButtonActionOrCallback;
   };
+  textLabel?: { text: string; style?: object; type?: 'text' | 'html' | 'bitmap' };
   cursor: Cursor;
   disabledCursor: Cursor;
   sheet: SpriteSheetLike;
@@ -79,24 +78,75 @@ button.onOver.connect(() => {}); // Pointer entered
 button.onOut.connect(() => {}); // Pointer exited
 ```
 
-## Adding Content
+## Adding a Label
 
-You can add child elements to buttons using the factory methods:
+You can easily add a text label to a button, either at creation time using the `textLabel` configuration property, or after creation using the `addLabel()` method. The label will be automatically centered on the button.
+
+### Using the `textLabel` configuration
+
+The easiest way to add a label is to pass it in the button's configuration.
 
 ```ts
 const button = this.add.button({
   textures: { default: 'btn/blue' },
+  sheet: 'ui',
+  textLabel: {
+    text: 'Click Me',
+    style: {
+      fontSize: 60,
+      fill: 0xffffff,
+    },
+  },
+});
+```
+The `textLabel` property accepts any valid `Text`, `HTMLText`, or `BitmapText` properties. You can specify the type of text using the `type` property (`'text'`, `'html'`, or `'bitmap'`). The default is `'text'`.
+
+### Using the `addLabel()` method
+
+You can also add or replace a label after the button has been created using the `addLabel` method.
+
+```ts
+const button = this.add.button({
+  textures: { default: 'btn/blue' },
+  sheet: 'ui',
 });
 
-// Add text label
-button.add.text({
+// Add a text label
+const label = button.addLabel({
   text: 'Click Me',
-  anchor: 0.5,
   style: {
     fontSize: 60,
     fill: 0xffffff,
   },
 });
+
+// You can update the label's properties later
+label.text = 'Clicked!';
+```
+
+The `addLabel` method returns the created text object, so you can store a reference to it for later manipulation.
+
+### Accessing the Label
+
+You can also access the label at any time using the `textLabel` getter on the button instance. This is useful if you created the label using the `textLabel` configuration option and didn't store a reference to it.
+
+```ts
+const button = this.add.button({
+  textures: { default: 'btn/blue' },
+  sheet: 'ui',
+  textLabel: {
+    text: 'Initial Text',
+    style: {
+      fontSize: 60,
+      fill: 0xffffff,
+    },
+  },
+});
+
+// Access the label later
+if (button.textLabel) {
+    button.textLabel.text = 'New Text';
+}
 ```
 
 ## Focus Management
@@ -141,14 +191,12 @@ export default class MenuScene extends Scene {
         hover: 'btn/yellow',
         disabled: 'btn/grey',
       },
+      textLabel: {
+        text: 'Play',
+        style: { fontSize: 60, fill: 0xffffff },
+      },
       accessibleTitle: 'Play Game',
       scale: 0.65,
-    });
-
-    playButton.add.text({
-      text: 'Play',
-      anchor: 0.5,
-      style: { fontSize: 60, fill: 0xffffff },
     });
 
     playButton.onClick.connectOnce(() => {

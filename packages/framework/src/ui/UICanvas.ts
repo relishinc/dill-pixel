@@ -83,7 +83,7 @@ export class UICanvas extends _UICanvas {
     super();
 
     if (!this.app.config.useLayout) {
-      Logger.error('You must set useLayout to true in your app config to use UICanvas');
+      throw new Error('You must set useLayout to true in your app config to use UICanvas');
     }
 
     bindAllMethods(this);

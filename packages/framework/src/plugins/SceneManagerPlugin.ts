@@ -16,6 +16,7 @@ import {
   SceneImportList,
   SceneImportListItem,
 } from '../utils';
+import { triggerViteError } from '../utils/vite';
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
 
@@ -228,6 +229,7 @@ export class SceneManagerPlugin extends Plugin implements ISceneManagerPlugin {
     // check if the scene item exists
     const sceneItem = this.list.find((scene) => scene.id === newSceneId);
     if (!sceneItem) {
+      triggerViteError({ message: `Scene item not found for id ${newSceneId}` });
       throw new Error(`Scene item not found  for id ${newSceneId}`);
     }
 

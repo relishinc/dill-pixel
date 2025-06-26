@@ -8,7 +8,6 @@ import {
   getNextMapEntry,
   getPreviousMapEntry,
   getZeroPaddedNumber,
-  Logger,
   type SpritesheetAsset,
 } from '../utils';
 
@@ -131,8 +130,7 @@ export class AnimatedSprite extends PIXIAnimatedSprite {
 
   setAnimation(animationName: string, autoPlay: boolean = true) {
     if (!this._animations.has(animationName)) {
-      Logger.error(`Animation ${animationName} does not exist`);
-      return;
+      throw new Error(`Animation ${animationName} does not exist`);
     }
     this.textures = this._animations.get(animationName) as Texture[];
     this.currentAnimation = animationName;

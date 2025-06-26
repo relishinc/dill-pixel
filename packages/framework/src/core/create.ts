@@ -3,6 +3,7 @@ import { sayHello } from '../hello';
 import type { PluginListItem } from '../plugins';
 import { type StorageAdapterListItem } from '../store';
 import type { AppTypeOverrides, SceneImportListItem } from '../utils';
+import { triggerViteError } from '../utils/vite';
 import { checkWebGL } from '../webgl-check';
 import { Application } from './Application';
 import { AppConfig } from './types';
@@ -59,6 +60,52 @@ export async function documentReady() {
   });
 }
 
+function addErrorHandler() {
+  // This guard ensures these listeners only run during development
+  if (import.meta.env.DEV) {
+    /**
+     * Listen for standard runtime errors that are not caught.
+     */
+    window.addEventListener('error', (event) => {
+      // Prevent the default browser console error log
+      event.preventDefault();
+
+      triggerViteError({
+        message: event.message,
+        // The error object might contain a more detailed stack trace
+        stack: event.error?.stack,
+        id: event.filename,
+        line: event.lineno,
+        column: event.colno,
+      });
+    });
+
+    /**
+     * Listen for unhandled promise rejections (e.g., from async functions).
+     */
+    window.addEventListener('unhandledrejection', (event) => {
+      // Prevent the default browser console error log
+      event.preventDefault();
+
+      const error = event.reason;
+
+      // The 'reason' can be any value, so we handle Error objects specifically
+      if (error instanceof Error) {
+        triggerViteError({
+          message: error.message,
+          stack: error.stack,
+          // Note: stack parsing would be needed to get file/line for promise rejections
+        });
+      } else {
+        // Handle cases where a non-error value is rejected
+        triggerViteError({
+          message: `Unhandled promise rejection: ${String(event.reason)}`,
+        });
+      }
+    });
+  }
+}
+
 export async function create(
   config: Partial<AppConfig> = { id: 'DillPixelApplication' },
   domElement: string | Window | HTMLElement = DEFAULT_GAME_CONTAINER_ID,
@@ -69,6 +116,7 @@ export async function create(
   if (speak) {
     sayHello();
   }
+  addErrorHandler();
   let el: HTMLElement | null = null;
   if (typeof domElement === 'string') {
     el = document.getElementById(domElement);

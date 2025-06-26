@@ -1,4 +1,4 @@
-import { Logger } from '../console';
+import { triggerViteError } from '../vite';
 
 /**
  * Creates a new Queue with the given promises.
@@ -106,8 +106,8 @@ export class Queue<T = any | void> {
       this._results.push(result);
       this._currentIndex++;
       void this._next();
-    } catch (error) {
-      Logger.error("Queue didn't complete due to an error:", error, 'Cancelling Queue');
+    } catch (error: any) {
+      triggerViteError({ message: "Queue didn't complete due to an error:", stack: error.stack, id: error.id });
       // this._isCanceled = true;
       // remove the current promise from the queue
       this._promises.splice(this._currentIndex, 1);

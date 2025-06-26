@@ -51,7 +51,7 @@ export class Store implements IStore {
    */
   async registerAdapter(adapter: IStorageAdapter, adapterOptions: any): Promise<void> {
     if (this._adapters.has(adapter.id)) {
-      Logger.error(`Storage Adapter with id "${adapter.id}" already registered. Not registering.`);
+      Logger.warn(`Storage Adapter with id "${adapter.id}" already registered. Not registering.`);
       return Promise.resolve();
     }
     this._adapters.set(adapter.id, adapter);

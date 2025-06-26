@@ -6,14 +6,12 @@ import { Aside, Code, FileTree, Steps, TabItem, Tabs } from '@astrojs/starlight/
 
 import indexHtml from '../../../project-files/index.html?raw';
 import packageJson from '../../../project-files/package.json?raw';
-import dillPixelConfigTs from '../../../project-files/dill-pixel.config.ts?raw';
 import indexCss from '../../../project-files/src/css/style.css?raw';
 import indexTs from '../../../project-files/src/index.ts?raw';
 import applicationTs from '../../../project-files/src/MyApplication.ts?raw';
 import baseSceneTs from '../../../project-files/src/scenes/Base.ts?raw';
 import gameSceneTs from '../../../project-files/src/scenes/Game.ts?raw';
 import startSceneTs from '../../../project-files/src/scenes/Start.ts?raw';
-import splashTs from '../../../project-files/src/scenes/Splash.ts?raw';
 import viteConfigJs from '../../../project-files/vite.config.mjs?raw';
 
 In the [Quick Start guide](./quick-start), we learned how to set up a very simple project using dill pixel.
@@ -23,46 +21,6 @@ Now let's go through the process of creating a basic game.
   The entire source code for this sample game can be found in the [GitHub
   repository](https://github.com/relishinc/dill-pixel/tree/main/docs/examples/simple-game)
 </Aside>
-
-## Custom Splash Screen
-
-<Steps>
-  <ol>
-    <li>
-      <div>
-        Create a `Splash.ts` file in the `src` folder. This will be displayed when the game starts. Similar to a Scene,
-        there are `added()`, `enter()` and `exit()` methods to control how the screen is revealed and hidden. It also contains a `update()` method that runs every tick, and a `handleLoadProgress()` method that can be used to update the progress of the loading screen. For
-        simplicity's sake we're just creating a green background and adding a title that can be clicked to take us to
-        the next screen:
-        <Code code={splashTs} lang="ts" title="src/Splash.ts" />
-      </div>
-    </li>
-    <li>
-      In `./dill-pixel-config.ts`, import your `Splash` class:
-
-      ```ts
-      import Splash from '@/Splash';
-      ```
-
-      and set the set the `splash` property to
-      ```json
-      { ... // other config
-        splash: {
-          view: Splash
-        }
-    	...
-      }
-      ```
-
-      your `dill-pixel.config.ts` should now look like this:
-      <Code code={dillPixelConfigTs} lang="ts" title="dill-pixel.config.ts" />
-    </li>
-    <li>
-      in `index.html`, you can remove the `loader.css` import, as we're no longer using it.
-    </li>
-
-  </ol>
-</Steps>
 
 ## Create Scenes
 

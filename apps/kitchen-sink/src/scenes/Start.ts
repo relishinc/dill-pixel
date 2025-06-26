@@ -69,16 +69,14 @@ export default class Start extends Base {
       },
     });
 
-    // btn.onClick.connectOnce(() => {
-    //   this.app.scenes.loadScene('assets');
-    // });
+    btn.onClick.connectOnce(() => {
+      this.app.scenes.loadScene('assets');
+    });
 
     this.app.focus.add(btn);
   }
 
-  start() {
-    // start the scene's jobs here
-  }
+  start() {}
 
   resize() {
     super.resize();

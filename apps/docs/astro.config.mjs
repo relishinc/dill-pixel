@@ -47,9 +47,9 @@ export default defineConfig({
         {
           label: 'Guides',
           items: [
-            { label: 'Creating a Game', link: '/guides/creating-game' },
             { label: 'Project Setup', link: '/guides/project-setup' },
             { label: 'CLI', link: '/guides/cli' },
+            { label: 'Creating a Game', link: '/guides/creating-game' },
             { label: 'Examples', link: '/guides/examples' },
           ],
         },
@@ -58,23 +58,31 @@ export default defineConfig({
           items: [
             { label: 'Overview', link: '/fundamentals/overview' },
             { label: 'Application', link: '/fundamentals/application' },
+            { label: 'Splash Screen', link: '/fundamentals/splash-screen' },
             { label: 'Type-Safety', link: '/fundamentals/type-safety' },
             { label: 'Signals', link: '/fundamentals/signals' },
             { label: 'Assets', link: '/fundamentals/assets' },
-            { label: 'Actions', link: '/fundamentals/actions' },
+
             { label: 'Scenes', link: '/fundamentals/scenes' },
             { label: 'Data', link: '/fundamentals/data' },
             { label: 'Copy and Content', link: '/fundamentals/copy' },
             { label: 'Audio', link: '/fundamentals/audio' },
             { label: 'Timers', link: '/fundamentals/timers' },
             { label: 'Pausing/Resuming', link: '/fundamentals/pausing' },
+            { label: 'Finding Instances by Path', link: '/fundamentals/finding-instances-by-path' },
+            {
+              label: 'User Input',
+              items: [{ label: 'Contexts & Actions', link: '/fundamentals/actions' }],
+            },
             {
               label: 'Animation',
               items: [
+                { label: 'GSAP', link: '/fundamentals/animation' },
                 { label: 'Animated Sprite', link: '/fundamentals/animation/animated-sprite' },
                 { label: 'Spine', link: '/fundamentals/animation/spine' },
               ],
             },
+
             {
               label: 'UI',
               items: [

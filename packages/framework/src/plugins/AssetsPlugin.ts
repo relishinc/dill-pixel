@@ -9,7 +9,6 @@ import {
   BundleTypes,
   DillPixelEvent,
   isDev,
-  Logger,
   SceneImportListItem,
 } from '../utils';
 import type { IPlugin } from './Plugin';
@@ -401,8 +400,8 @@ export class AssetsPlugin extends Plugin<AssetLoadingOptions> implements IAssets
     }
     try {
       this.app.canvas.dispatchEvent(event);
-    } catch (error) {
-      Logger.error('Error dispatching web event', error);
+    } catch (error: any) {
+      throw new Error('Error dispatching web event', { cause: error });
     }
   }
 }

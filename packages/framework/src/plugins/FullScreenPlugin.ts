@@ -310,8 +310,7 @@ export class FullScreenPlugin extends Plugin implements IFullScreenPlugin {
   private _requestFullscreen() {
     const element = this._fullScreenElement || Application.containerElement;
     if (!element) {
-      Logger.error('No element available for fullscreen mode');
-      return;
+      throw new Error('No element available for fullscreen mode');
     }
 
     const fullscreenElement = element as HTMLElement;

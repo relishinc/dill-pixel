@@ -119,6 +119,14 @@ export class Button extends _Button implements IButton {
   private _textLabel?: Text | HTMLText | BitmapText;
 
   /**
+   * The text label of the button.
+   * @returns {Text | HTMLText | BitmapText | undefined} The text label instance.
+   */
+  get textLabel() {
+    return this._textLabel;
+  }
+
+  /**
    * @constructor
    * @param {Partial<ButtonConfig>} config - The configuration for the button.
    */
@@ -380,9 +388,6 @@ export class Button extends _Button implements IButton {
     this.view.texture = this.make.texture({ asset: this.config.textures.default, sheet: this.config.sheet });
     this.onUp.emit();
 
-    if (this.config.actions?.up) {
-      this._doAction(this.config.actions.up);
-    }
     this._pointerId = undefined;
   }
 
