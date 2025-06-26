@@ -100,13 +100,12 @@ Similarly, the Application provides core functions (defined in [ICoreFunctions](
 
 ```ts
 // Scene management
-app.exec.loadScene('gameScene');
-// also available as `app.func.loadScene('gameScene')` or via the SceneManagerPlugin `this.app.scenes.loadScene('gameScene')`
-// Popup management
-app.exec.showPopup('menuPopup');
+app.scenes.loadScene('game');
+// also available as `app.exec.loadScene('game')`
 
-// Asset loading
-app.exec.loadAssets(['sprite1', 'sprite2']);
+// Popup management
+app.popups.showPopup('menuPopup');
+// also available as `app.exec.loadScene('game')`
 ```
 
 ## Using `this.app` in Containers and Scenes
@@ -117,7 +116,7 @@ Both [Container](/api/classes/container) and [Scene](/api/classes/scene) classes
 export class MyScene extends Scene {
   initialize() {
     // Access core functions
-    this.app.exec.loadAssets(['required-assets']);
+    this.app.assets.loadBundles('required');
 
     // Listen to signals
     this.app.onResize.connect(this.handleResize);

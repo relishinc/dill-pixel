@@ -41,7 +41,7 @@ export interface IAssetsPlugin extends IPlugin {
     reportProgress?: boolean,
   ): Promise<void>;
 
-  loadBundles(bundle: string | string[], reportProgress?: boolean): Promise<void>;
+  loadBundles(bundle: BundleTypes, reportProgress?: boolean): Promise<void>;
 
   loadSceneAssets(scene: IScene | SceneImportListItem<any>, background?: boolean): Promise<void>;
 
@@ -228,7 +228,7 @@ export class AssetsPlugin extends Plugin<AssetLoadingOptions> implements IAssets
     return Promise.resolve();
   }
 
-  public async loadBundles(bundles: string | string[], reportProgress: boolean = true) {
+  public async loadBundles(bundles: BundleTypes, reportProgress: boolean = true) {
     await Assets.loadBundle(bundles, reportProgress ? this._handleLoadProgress : undefined);
     this._markBundlesLoaded(bundles);
     return Promise.resolve();

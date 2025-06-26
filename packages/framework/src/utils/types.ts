@@ -1,5 +1,6 @@
 import type { AssetInitOptions, AssetsManifest, AssetsPreferences, Texture, UnresolvedAsset } from 'pixi.js';
 import { Point } from 'pixi.js';
+import { SceneAssets } from '../display';
 import type { FilterBitmapFontNames, FilterCleanAssetNames, FilterSpineAssetNames } from './typefilters';
 
 /**
@@ -115,7 +116,7 @@ type SceneItemOptions = {
   debugGroup?: string;
   debugOrder: number;
   plugins?: string[];
-  assets?: AssetLoadingOptions;
+  assets?: SceneAssets;
   autoUnloadAssets?: boolean;
 };
 

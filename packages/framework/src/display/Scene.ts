@@ -1,6 +1,6 @@
 import { Ticker } from 'pixi.js';
 import { PauseConfig } from '../core';
-import { type AppTypeOverrides, type AssetTypeOverrides, AssetLoadingOptions, Size } from '../utils';
+import { type AppTypeOverrides, type AssetTypeOverrides, Size } from '../utils';
 import type { IContainer } from './Container';
 import { Container } from './Container';
 
@@ -37,7 +37,7 @@ export type SceneConfig = {
 export interface IScene extends IContainer {
   id: AppScenes;
   label?: string;
-  assets?: Omit<AssetLoadingOptions, 'manifest' | 'initOptions' | 'assetPreferences'>;
+  assets?: SceneAssets;
   autoUnloadAssets?: boolean;
 
   enter(): Promise<any>;
@@ -61,8 +61,8 @@ export interface SceneListItem {
     label?: string;
     group?: string;
   };
-  assets?: string[];
-  plugins?: string[];
+  assets?: SceneAssets;
+  plugins?: ScenePlugins;
   autoUnloadAssets: boolean;
 }
 
@@ -100,13 +100,13 @@ export class Scene extends Container implements IScene {
    * }
    * ```
    */
-  private _assets: AssetLoadingOptions;
+  private _assets: SceneAssets;
 
-  get assets(): AssetLoadingOptions {
+  get assets(): SceneAssets {
     return this._assets;
   }
 
-  set assets(value: AssetLoadingOptions) {
+  set assets(value: SceneAssets) {
     this._assets = value;
   }
 
