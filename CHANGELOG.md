@@ -1,5 +1,14 @@
 # Changelog
 
+## [6.0.7](https://github.com/relishinc/dill-pixel/compare/v6.0.6...v6.0.7) (2025-06-26)
+
+
+### Bug Fixes
+
+* application views stack ordering, ([c9d8826](https://github.com/relishinc/dill-pixel/commit/c9d8826ca418a909cd5d2e43faca3406c8debc1c))
+* layout triggering in FlexContainer & UICanvas, ([c9d8826](https://github.com/relishinc/dill-pixel/commit/c9d8826ca418a909cd5d2e43faca3406c8debc1c))
+* some layout fixes in kitchen sink example ([c9d8826](https://github.com/relishinc/dill-pixel/commit/c9d8826ca418a909cd5d2e43faca3406c8debc1c))
+
 ## [6.0.6](https://github.com/relishinc/dill-pixel/compare/v6.0.5...v6.0.6) (2025-06-26)
 
 
