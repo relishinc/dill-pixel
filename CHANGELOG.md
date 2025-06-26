@@ -1,5 +1,18 @@
 # Changelog
 
+## [6.2.0](https://github.com/relishinc/dill-pixel/compare/v6.1.0...v6.2.0) (2025-06-26)
+
+
+### Features
+
+* error overlay, ([5910e6b](https://github.com/relishinc/dill-pixel/commit/5910e6b0295f86597187bd7cf48c03b2b0a0fa49))
+
+
+### Bug Fixes
+
+* button props ([5910e6b](https://github.com/relishinc/dill-pixel/commit/5910e6b0295f86597187bd7cf48c03b2b0a0fa49))
+* vite config for build & preview, ([5910e6b](https://github.com/relishinc/dill-pixel/commit/5910e6b0295f86597187bd7cf48c03b2b0a0fa49))
+
 ## [6.1.0](https://github.com/relishinc/dill-pixel/compare/v6.0.10...v6.1.0) (2025-06-26)
 
 
