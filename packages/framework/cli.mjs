@@ -9,6 +9,7 @@ import { compress } from './cli/audio/index.mjs';
 import { create } from './cli/create.mjs';
 import { installPeerDeps } from './cli/install-peerdeps.mjs';
 import { update } from './cli/update.mjs';
+import { runBuild, runPreview, startDevServer } from './cli/vite.mjs';
 import { generateVoiceoverCSV } from './cli/voiceover/index.mjs';
 
 const currentVersion = process.versions.node;
@@ -30,7 +31,6 @@ const hr = () => {
 };
 
 if (!(!args[0] || args[0] === 'version')) {
-} else {
   console.log(bold(green(`Dill Pixel ${version}`)));
 }
 
@@ -39,13 +39,23 @@ if (args.length === 0) {
   process.exit(1);
 }
 
-let pkg, cwd, newVersion, voInputDir, voCSVDirectory, audioDirectory, captionsCSVDirectory, captionsOutputDirectory;
+let pkg, newVersion, voInputDir, voCSVDirectory, audioDirectory, captionsCSVDirectory, captionsOutputDirectory;
 
 switch (args[0]) {
   case 'install':
     await installPeerDeps();
     break;
   case 'version':
+    break;
+  case 'dev':
+  case 'start':
+    await startDevServer();
+    break;
+  case 'build':
+    await runBuild();
+    break;
+  case 'preview':
+    await runPreview();
     break;
   case 'create': {
     let packageManager = 'npm'; // Default to npm

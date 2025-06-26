@@ -44,7 +44,6 @@ export default class Start extends Base {
 
     const btn = this.container.add.button({
       label: 'Button',
-      anchor: 0.5,
       cursor: 'pointer',
       y: 50,
       textures: {

@@ -1221,6 +1221,6 @@ function extendConfig(userConfig = {}) {
   return mergeConfig(defaultConfig, userConfig);
 }
 
-export { extendConfig, noAssetpackConfig, withPWA };
+export { defaultConfig, extendConfig, noAssetpackConfig, withPWA };
 
 export default defaultConfig;
