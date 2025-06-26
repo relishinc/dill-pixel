@@ -1,6 +1,7 @@
 #dill-pixel-game-container {
   position: relative;
 }
+
 #dill-pixel-game-container::before,
 #dill-pixel-game-container::after {
   pointer-events: none;

@@ -104,7 +104,7 @@ export default defineConfig({
   useLayout: true,
   showSceneDebugMenu: true,
   useVoiceover: true,
-  defaultScene: 'assets',
+  defaultScene: 'start',
   defaultTextStyle: {
     fontFamily: 'KumbhSans',
     fontSize: 24,

@@ -14,7 +14,7 @@ import type { IApplication } from '../core';
 import { Application } from '../core/Application';
 import { Factory, Focusable, HTMLTextProps, Interactive, type TextProps, WithSignals } from '../mixins';
 import { Signal } from '../signals';
-import { bindAllMethods, type SpritesheetAsset, type TextureAsset } from '../utils';
+import { AudioAsset, bindAllMethods, type SpritesheetAsset, type TextureAsset } from '../utils';
 
 export type ButtonCallback = (() => void) | (() => Promise<void>);
 export type ButtonAction = { id: string | number; data?: any };
@@ -53,16 +53,14 @@ export type ButtonConfig = {
     disabled?: TextureAsset;
   };
   sounds?: {
-    hover?: string;
-    out?: string;
-    up?: string;
-    down?: string;
-    click?: string;
+    hover?: AudioAsset;
+    out?: AudioAsset;
+    down?: AudioAsset;
+    click?: AudioAsset;
   };
   actions?: {
     hover?: ButtonActionOrCallback;
     out?: ButtonActionOrCallback;
-    up?: ButtonActionOrCallback;
     down?: ButtonActionOrCallback;
     click?: ButtonActionOrCallback;
   };
@@ -215,9 +213,11 @@ export class Button extends _Button implements IButton {
     config: (Partial<TextProps | HTMLTextProps> & { type?: 'text' | 'html' | 'bitmap' }) | T,
   ): T {
     if (config instanceof Text || config instanceof HTMLText || config instanceof BitmapText) {
+      config.anchor.set(0.5, 0.5);
       this._textLabel = this.add.existing(config) as T;
       this._textLabel.layout = false;
     } else {
+      config.anchor = 0.5;
       switch (config.type) {
         case 'bitmap':
           this._textLabel = this.add.bitmapText({ ...config, layout: false }) as BitmapText;
@@ -330,6 +330,10 @@ export class Button extends _Button implements IButton {
       return;
     }
     this.view.texture = this.make.texture({ asset: this.config.textures.default, sheet: this.config.sheet });
+
+    if (this.config.sounds?.out) {
+      void this.app.audio.play(this.config.sounds.out, 'sfx');
+    }
     this.onOut.emit();
   }
 
@@ -375,9 +379,7 @@ export class Button extends _Button implements IButton {
 
     this.view.texture = this.make.texture({ asset: this.config.textures.default, sheet: this.config.sheet });
     this.onUp.emit();
-    if (this.config.sounds?.up) {
-      void this.app.audio.play(this.config.sounds.up, 'sfx');
-    }
+
     if (this.config.actions?.up) {
       this._doAction(this.config.actions.up);
     }
@@ -412,12 +414,6 @@ export class Button extends _Button implements IButton {
     this.isOver = false;
     this.onUpOutside.emit();
 
-    if (this.config.sounds?.up) {
-      void this.app.audio.play(this.config.sounds.up, 'sfx');
-    }
-    if (this.config.actions?.up) {
-      this._doAction(this.config.actions.up);
-    }
     this._pointerId = undefined;
   }
 

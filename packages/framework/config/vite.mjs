@@ -316,11 +316,15 @@ async function writeAssetTypes(manifest, outputDir) {
 export function assetTypesPlugin(manifestUrl = 'assets.json') {
   let viteServer;
   let manifestWatcher;
-  let initialBuild = false;
+  let ispPwaEnabled = false;
 
-  async function watchManifest() {
+  async function generate(manifestUrl) {
     try {
       const manifestPath = path.join(process.cwd(), 'public', 'assets', manifestUrl);
+      if (!fs.existsSync(manifestPath)) {
+        logger.warn(`Dill Pixel asset types plugin:: manifest not found at ${manifestPath}, skipping type generation`);
+        return;
+      }
       const manifest = JSON.parse(await fs.promises.readFile(manifestPath, 'utf8'));
       await writeAssetTypes(manifest, path.dirname(manifestPath));
       logger.info('Dill Pixel asset types plugin:: manifest changed, reloading browser...');
@@ -330,36 +334,34 @@ export function assetTypesPlugin(manifestUrl = 'assets.json') {
     }
   }
 
-  const debouncedHandleManifestChange = debounce(watchManifest, 100);
+  const debouncedHandleManifestChange = debounce(generate, 300);
 
   return {
     name: 'vite-plugin-asset-types',
+    config(config) {
+      ispPwaEnabled = config.plugins.some((p) => p.name === 'vite-plugin-pwa');
+    },
     async buildStart() {
-      initialBuild = true;
-      // Try to generate types on build start if manifest exists
-      try {
-        const manifestPath = path.join(process.cwd(), 'public', 'assets', manifestUrl);
-        if (fs.existsSync(manifestPath)) {
-          const manifest = JSON.parse(await fs.promises.readFile(manifestPath, 'utf8'));
-          await writeAssetTypes(manifest, path.dirname(manifestPath));
-        }
-      } catch (error) {
-        // Ignore errors on build start, manifest might not exist yet
-      }
+      // a short delay to allow assetpack to generate the manifest
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      await generate(manifestUrl);
     },
     configureServer(server) {
       viteServer = server;
 
       // Watch for manifest changes in development
       const manifestPath = path.join(process.cwd(), 'public', 'assets', manifestUrl);
-      if (fs.existsSync(manifestPath)) {
-        logger.info(`Dill Pixel asset types plugin:: watching manifest at ${manifestPath}`);
-        manifestWatcher = fs.watch(manifestPath, async (eventType) => {
-          if (initialBuild && eventType === 'change') {
-            await debouncedHandleManifestChange();
-          }
-        });
-      }
+      server.watcher.add(manifestPath);
+      logger.info(`Dill Pixel asset types plugin:: watching manifest at ${manifestPath}`);
+
+      const handleChange = async (file) => {
+        if (file === manifestPath) {
+          await debouncedHandleManifestChange(manifestUrl);
+        }
+      };
+
+      server.watcher.on('add', handleChange);
+      server.watcher.on('change', handleChange);
     },
     async buildEnd() {
       manifestWatcher?.close();
@@ -373,6 +375,12 @@ export function assetTypesPlugin(manifestUrl = 'assets.json') {
         }
       } catch (error) {
         logger.error('Dill Pixel asset types plugin:: Error generating types during build:', error);
+      }
+    },
+    async closeBundle() {
+      if (ispPwaEnabled && env !== 'development') {
+        logger.info('Dill Pixel asset types plugin:: PWA enabled, generating types one last time after bundle');
+        await generate(manifestUrl);
       }
     },
   };
@@ -619,12 +627,8 @@ declare module 'dill-pixel' {
         server.ws.send({ type: 'full-reload' });
       };
 
-      if (fs.existsSync(configPath)) {
-        server.watcher.add(configPath);
-      }
-      if (fs.existsSync(scenesDir)) {
-        server.watcher.add(scenesDir);
-      }
+      server.watcher.add(configPath);
+      server.watcher.add(scenesDir);
 
       server.watcher.on('change', handleFileChange);
       server.watcher.on('add', handleFileChange);

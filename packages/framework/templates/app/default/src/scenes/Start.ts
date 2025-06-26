@@ -10,6 +10,8 @@ export default class Start extends Base {
   private container: FlexContainer;
 
   initialize() {
+    this.app.focus.addFocusLayer(this.id);
+
     // a layout container
     this.container = this.add.flexContainer({
       label: 'Main Container',
@@ -37,6 +39,36 @@ export default class Start extends Base {
       anchor: 0.5,
       layout: { applySizeDirectly: true, width: 150, height: 150, aspectRatio: 590 / 664, flexGrow: 0, flexShrink: 0 },
     });
+
+    const btn = this.container.add.button({
+      label: 'Button',
+      anchor: 0.5,
+      cursor: 'pointer',
+      y: 50,
+      textures: {
+        default: 'btn/blue',
+        hover: 'btn/yellow',
+        disabled: 'btn/grey',
+        active: 'btn/red',
+      },
+      textLabel: {
+        text: 'Click me',
+        style: { fontFamily: 'KumbhSans', fontSize: 32, fill: 0xffffff },
+      },
+      layout: {
+        transformOrigin: 'top left',
+        width: 256,
+        height: 70,
+        applySizeDirectly: true,
+        isLeaf: true,
+      },
+      sounds: {
+        click: 'click',
+        hover: 'hover',
+      },
+    });
+
+    this.app.focus.add(btn);
   }
 
   start() {

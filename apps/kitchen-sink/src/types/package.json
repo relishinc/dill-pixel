@@ -1,0 +1,22 @@
+{
+  "name": "cli-test-app",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.html",
+  "scripts": {
+    "clean": "rimraf .assetpack .cache dist",
+    "start": "pnpm clean && vite",
+    "dev": "pnpm clean && vite",
+    "preview": "pnpm build && vite preview",
+    "build": "pnpm clean && vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dill-pixel": "file:/Users/anthony/www/dill-pixel/packages/framework"
+  },
+  "peerDependencies": {
+    "@pixi/sound": "^6.0.1",
+    "gsap": "^3.12.5",
+    "pixi.js": "^8.10.2"
+  }
+}
