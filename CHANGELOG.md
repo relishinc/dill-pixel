@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.0.9](https://github.com/relishinc/dill-pixel/compare/v6.0.8...v6.0.9) (2025-06-26)
+
+
+### Bug Fixes
+
+* css loader defaults ([f732aee](https://github.com/relishinc/dill-pixel/commit/f732aee08225e97e0c03578816db76f32e207bfa))
+
 ## [6.0.8](https://github.com/relishinc/dill-pixel/compare/v6.0.7...v6.0.8) (2025-06-26)
 
 
