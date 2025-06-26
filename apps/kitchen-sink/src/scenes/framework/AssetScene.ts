@@ -40,10 +40,9 @@ export default class AssetScene extends BaseScene {
 
   public async initialize() {
     await super.initialize();
-
     this.container = this.add.flexContainer({
       layout: {
-        gap: 0,
+        gap: 25,
         justifyContent: 'center',
         alignItems: 'center',
         flexWrap: 'nowrap',
@@ -54,7 +53,15 @@ export default class AssetScene extends BaseScene {
       asset: '/static/tech-pickle-300x300.webp',
       label: 'Pickle',
     });
-    this.jar = this.container.add.sprite({ asset: 'staticJar', scale: 0.5, label: 'Jar' });
+
+    this.jar = this.container.add.sprite({
+      asset: 'staticJar',
+      label: 'Jar',
+      scale: 0.5,
+      anchor: 0.5,
+      layout: { applySizeDirectly: true, width: 150, height: 150, aspectRatio: 590 / 664 },
+    });
+
     this.zilla = this.container.add.sprite({ asset: 'zilla', label: 'Zilla' });
   }
 

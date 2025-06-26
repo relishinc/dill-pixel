@@ -125,7 +125,11 @@ export class UICanvas extends _UICanvas {
     this.addSignalConnection(this.app.onResize.connect(this.resize));
 
     this._initializeLayout();
-    this.updateLayout();
+    this._updateLayout();
+  }
+
+  private _updateLayout() {
+    this.app.ticker.addOnce(this.updateLayout);
   }
 
   private _initializeLayout() {
@@ -304,9 +308,9 @@ export class UICanvas extends _UICanvas {
       },
     });
     container.label = label;
-    container.on('childAdded', this.updateLayout);
-    container.on('childRemoved', this.updateLayout);
-    container.on('layout', this.updateLayout);
+    container.on('childAdded', this._updateLayout);
+    container.on('childRemoved', this._updateLayout);
+    container.on('layout', this._updateLayout);
     return container;
   }
 
@@ -325,19 +329,19 @@ export class UICanvas extends _UICanvas {
 
   destroy() {
     this.canvasChildren?.forEach((child) => {
-      child.off('layout', this.updateLayout);
+      child.off('layout', this._updateLayout);
     });
 
     this.children.forEach((child) => {
-      child.off('layout', this.updateLayout);
+      child.off('layout', this._updateLayout);
     });
 
-    this.off('childAdded', this.updateLayout);
-    this.off('childRemoved', this.updateLayout);
+    this.off('childAdded', this._updateLayout);
+    this.off('childRemoved', this._updateLayout);
 
     this._positionContainers.forEach((container) => {
-      container.off('childAdded', this.updateLayout);
-      container.off('childRemoved', this.updateLayout);
+      container.off('childAdded', this._updateLayout);
+      container.off('childRemoved', this._updateLayout);
     });
 
     super.destroy();
@@ -360,7 +364,7 @@ export class UICanvas extends _UICanvas {
       paddingRight: this.config.padding.right,
       paddingBottom: this.config.padding.bottom,
     };
-    this.updateLayout();
+    this._updateLayout();
   }
 
   private static isFlexContainer(child: PIXIContainer): boolean {
@@ -397,7 +401,7 @@ export class UICanvas extends _UICanvas {
    */
   public setChildIndex = <U extends PIXIContainer>(child: U, index: number): void => {
     super.setChildIndex(child, index);
-    this.updateLayout();
+    this._updateLayout();
   };
 
   /**
@@ -449,7 +453,7 @@ export class UICanvas extends _UICanvas {
       this.size = { width: this.app.size.width, height: this.app.size.height };
       this.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
     } else {
-      this.updateLayout();
+      this._updateLayout();
     }
   }
 
@@ -483,7 +487,7 @@ export class UICanvas extends _UICanvas {
     }
 
     if (UICanvas.isFlexContainer(child as PIXIContainer)) {
-      this.addSignalConnection((child as unknown as FlexContainer).onLayoutComplete.connect(this.updateLayout));
+      this.addSignalConnection((child as unknown as FlexContainer).onLayoutComplete.connect(this._updateLayout));
     }
 
     this.settingsMap.set(child, {
@@ -512,9 +516,9 @@ export class UICanvas extends _UICanvas {
         child.layout = { height: 'auto' };
       }
     }
-    child.on('layout', this.updateLayout);
+    child.on('layout', this._updateLayout);
     Container.childAdded(child);
-    this.updateLayout();
+    this._updateLayout();
   }
 
   private _childRemoved(child: any) {
@@ -525,7 +529,7 @@ export class UICanvas extends _UICanvas {
   }
 
   private _added() {
-    this.updateLayout();
+    this._updateLayout();
   }
 
   private drawDebug() {

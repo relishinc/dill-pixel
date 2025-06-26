@@ -43,14 +43,15 @@ export default class ButtonScene extends BaseScene {
       layout: { height: 91, width: 332 },
       scale: 0.65,
     });
-    this.playSoundLabel = this.playSoundButton.addLabel<Text>({
+    this.playSoundLabel = this.playSoundButton.addLabel({
+      type: 'text',
       text: 'Play Sound A',
       anchor: 0.5,
       style: {
         fontSize: 60,
         fill: 0xffffff,
       },
-    });
+    }) as Text;
     this.playSoundButton.onClick.connect(this.onClickPlaySoundA);
 
     // create 'toggle enabled' button, which toggles the interactability of the 'play sound' button

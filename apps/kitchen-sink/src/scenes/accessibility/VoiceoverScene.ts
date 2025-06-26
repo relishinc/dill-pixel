@@ -156,7 +156,7 @@ export default class VoiceoverScene extends BaseScene {
       scale: 0.5,
       cursor: 'pointer',
       textures: { default: 'btn/blue', hover: 'btn/yellow', disabled: 'btn/grey', active: 'btn/red' },
-      sheet: 'required',
+      sheet: 'ui',
       accessibleTitle: label,
       accessibleHint: `Press me to play a sound`,
       layout: { width: 256, height: 70 },

@@ -2,7 +2,8 @@ import { gsap } from 'gsap';
 import { PixiPlugin } from 'gsap/PixiPlugin';
 import { BlurFilter, ColorMatrixFilter } from 'pixi.js';
 import { IApplication } from '../core';
-import { Logger, type Eases } from '../utils';
+import { Signal } from '../signals';
+import { type Eases } from '../utils';
 import { Plugin, type IPlugin } from './Plugin';
 
 /**
@@ -243,6 +244,20 @@ export interface IGSAPPlugin extends IPlugin {
    * ```
    */
   clearGlobal(): void;
+
+  // signals
+  onPlayAll: Signal<(contextId: string) => void>;
+  onPauseAll: Signal<(contextId: string) => void>;
+  onKillAll: Signal<(contextId: string) => void>;
+  onRevertAll: Signal<(contextId: string) => void>;
+  onClear: Signal<(detail: { contextId: string; kill: boolean }) => void>;
+  onClearAll: Signal<(kill: boolean) => void>;
+  onKillGlobal: Signal<() => void>;
+  onRevertGlobal: Signal<() => void>;
+  onClearGlobal: Signal<(kill: boolean) => void>;
+  onEaseRegistered: Signal<(detail: { name: string; ease: gsap.EaseFunction }) => void>;
+  onEasesRegistered: Signal<(eases: Eases) => void>;
+  onAnimationAddded: Signal<(detail: { animation: gsap.core.Tween | gsap.core.Timeline; contextId: string }) => void>;
 }
 
 /**
@@ -316,6 +331,22 @@ export class GSAPPlugin extends Plugin implements IGSAPPlugin {
 
   /** Plugin identifier for framework registration */
   public readonly id = 'GSAPPlugin';
+
+  // signals
+  public onPlayAll = new Signal<(contextId: string) => void>();
+  public onPauseAll = new Signal<(contextId: string) => void>();
+  public onKillAll = new Signal<(contextId: string) => void>();
+  public onRevertAll = new Signal<(contextId: string) => void>();
+  public onClear = new Signal<(detail: { contextId: string; kill: boolean }) => void>();
+  public onClearAll = new Signal<(kill: boolean) => void>();
+  public onKillGlobal = new Signal<() => void>();
+  public onRevertGlobal = new Signal<() => void>();
+  public onClearGlobal = new Signal<(kill: boolean) => void>();
+  public onEaseRegistered = new Signal<(detail: { name: string; ease: gsap.EaseFunction }) => void>();
+  public onEasesRegistered = new Signal<(eases: Eases) => void>();
+  public onAnimationAddded = new Signal<
+    (detail: { animation: gsap.core.Tween | gsap.core.Timeline; contextId: string }) => void
+  >();
 
   /** Global animation context reference for quick access */
   private _globalContext: AnimationContext;
@@ -415,6 +446,7 @@ export class GSAPPlugin extends Plugin implements IGSAPPlugin {
       this.options.eases = {};
     }
     this.options.eases[name] = ease;
+    this.onEaseRegistered.emit({ name, ease });
     return { [name]: ease };
   }
 
@@ -440,6 +472,7 @@ export class GSAPPlugin extends Plugin implements IGSAPPlugin {
     for (const [name, ease] of Object.entries(eases)) {
       this.registerCustomEase(name, ease);
     }
+    this.onEasesRegistered.emit(eases);
     return this.eases;
   }
 
@@ -485,11 +518,16 @@ export class GSAPPlugin extends Plugin implements IGSAPPlugin {
     const ctx = this._animationContexts.get(contextId);
     if (ctx) {
       if (Array.isArray(animation)) {
-        animation.forEach((anim) => ctx.add(anim));
+        animation.forEach((anim) => {
+          ctx.add(anim);
+          this.onAnimationAddded.emit({ animation: anim, contextId });
+        });
       } else {
         ctx.add(animation);
+        this.onAnimationAddded.emit({ animation, contextId });
       }
     }
+
     return animation;
   }
 
@@ -550,6 +588,8 @@ export class GSAPPlugin extends Plugin implements IGSAPPlugin {
         animation.play();
       });
     }
+
+    this.onPlayAll.emit(contextId ?? 'all');
   }
 
   /**
@@ -580,6 +620,8 @@ export class GSAPPlugin extends Plugin implements IGSAPPlugin {
     } else {
       this._animationContexts.get(contextId)?.forEach((animation) => animation.pause());
     }
+
+    this.onPauseAll.emit(contextId ?? 'all');
   }
 
   /**
@@ -609,13 +651,13 @@ export class GSAPPlugin extends Plugin implements IGSAPPlugin {
       this._animationContexts.clear(); // Clear all tracked animations from all contexts
       this.createGlobalContext(); // Re-initialize the global context and its tracking
     } else {
-      Logger.log('killAll', contextId);
       const contextAnimations = this._animationContexts.get(contextId);
       if (contextAnimations) {
         contextAnimations.forEach((animation) => animation.kill());
       }
       this.clear(contextId); // Remove the specific context from tracking
     }
+    this.onKillAll.emit(contextId ?? 'all');
   }
 
   /**
@@ -642,6 +684,8 @@ export class GSAPPlugin extends Plugin implements IGSAPPlugin {
     } else {
       this._animationContexts.get(contextId)?.forEach((animation) => animation.revert());
     }
+
+    this.onRevertAll.emit(contextId ?? 'all');
   }
 
   /**
@@ -665,6 +709,8 @@ export class GSAPPlugin extends Plugin implements IGSAPPlugin {
       this.killAll(contextId);
     }
     this._animationContexts.delete(contextId);
+
+    this.onClear.emit({ contextId, kill });
   }
 
   /**
@@ -688,6 +734,8 @@ export class GSAPPlugin extends Plugin implements IGSAPPlugin {
     }
     this._animationContexts.clear();
     this.createGlobalContext(); // Re-initialize the global context tracking
+
+    this.onClearAll.emit(kill);
   }
 
   /**
@@ -710,6 +758,8 @@ export class GSAPPlugin extends Plugin implements IGSAPPlugin {
       globalAnimations.forEach((anim) => anim.kill());
       globalAnimations.clear();
     }
+
+    this.onKillGlobal.emit();
   }
 
   /**
@@ -731,6 +781,8 @@ export class GSAPPlugin extends Plugin implements IGSAPPlugin {
     if (globalAnimations) {
       globalAnimations.forEach((anim) => anim.revert());
     }
+
+    this.onRevertGlobal.emit();
   }
 
   /**
@@ -753,5 +805,7 @@ export class GSAPPlugin extends Plugin implements IGSAPPlugin {
       this.killGlobal();
     }
     this._globalContext.clear();
+
+    this.onClearGlobal.emit(kill);
   }
 }

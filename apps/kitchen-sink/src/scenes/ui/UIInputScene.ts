@@ -29,12 +29,15 @@ export default class UIScene extends BaseScene {
     this.app.focus.addFocusLayer(this.id);
 
     this.list = this.add.flexContainer({
-      flexDirection: 'column',
-      gap: 30,
-      justifyContent: 'center',
-      alignItems: 'center',
       alpha: 0,
-      layout: { width: this.app.size.width },
+      layout: {
+        flexDirection: 'column',
+        gap: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: this.app.size.width,
+        paddingTop: 200,
+      },
     });
 
     const input = this.list.add.existing(
@@ -176,7 +179,7 @@ export default class UIScene extends BaseScene {
 
   resize() {
     super.resize();
-    this.list.layout = { width: this.app.size.width, paddingTop: 150 };
+    this.list.layoutWidth = this.app.size.width;
     this.list.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
   }
 }

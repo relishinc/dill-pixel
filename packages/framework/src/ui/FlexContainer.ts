@@ -86,20 +86,25 @@ export class FlexContainer extends _FlexContainer {
   private handleAdded() {
     this.updateLayout();
   }
+
+  private _updateLayout() {
+    this.app.ticker.addOnce(this.updateLayout);
+  }
+
   private handleChildAdded(child: PIXIContainer) {
     if (this.config.autoLayoutChildren && !(child.layout as Layout | boolean)) {
       child.layout = { isLeaf: true };
     }
     Container.childAdded(child);
-    this.updateLayout();
+    this._updateLayout();
   }
 
   private handleChildRemoved(child: PIXIContainer) {
     Container.childRemoved(child);
-    this.updateLayout();
+    this._updateLayout();
   }
 
-  private handleResize = () => {
+  private handleResize() {
     if (this.config.bindToAppSize) {
       this.layout = {
         width: this.app.size.width,
@@ -107,7 +112,7 @@ export class FlexContainer extends _FlexContainer {
       };
     }
     this.updateLayout();
-  };
+  }
 
   public updateLayout() {
     if (!this.app?.renderer.layout) return;

@@ -3,7 +3,6 @@ import { defineActions, defineButtons, defineConfig, defineContexts, defineContr
 import EN from './src/locales/en';
 import { Transition } from './src/scenes/Transition';
 import { ExampleOutliner } from './src/ui/ExampleOutliner';
-import { FONT_KUMBH_SANS } from './src/utils/Constants';
 import { V8Application } from './src/V8Application';
 
 /** Default template */
@@ -102,16 +101,17 @@ export default defineConfig({
   sceneTransition: Transition,
   defaultSceneLoadMethod: 'transitionExitEnter',
   useSpine: true,
-  useLayout: false,
+  useLayout: true,
   showSceneDebugMenu: true,
   useVoiceover: true,
   defaultScene: 'assets',
   defaultTextStyle: {
-    fontFamily: FONT_KUMBH_SANS,
+    fontFamily: 'KumbhSans',
     fontSize: 24,
     fill: 0xffffff,
   },
   sceneGroupOrder: [
+    'Start',
     'Framework',
     'Display',
     'Audio',

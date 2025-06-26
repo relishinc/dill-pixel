@@ -153,7 +153,7 @@ export class Button extends _Button implements IButton {
     // Create a sprite with the default texture and add it to the container.
     this.view = this.add.sprite({
       asset: this.config.textures.default,
-      sheet: this.config.sheet,
+      sheet: this.config.sheet ?? undefined,
     });
 
     this.cursor = this.config.cursor;
@@ -199,13 +199,13 @@ export class Button extends _Button implements IButton {
     if (this._enabled) {
       this.view.texture = this.make.texture({
         asset: this.config.textures.default,
-        sheet: this.config.sheet,
+        sheet: this.config.sheet ?? undefined,
       });
       this.onEnabled.emit();
     } else {
       this.view.texture = this.make.texture({
         asset: this.config.textures.disabled || this.config.textures.default,
-        sheet: this.config.sheet,
+        sheet: this.config.sheet ?? undefined,
       });
       this.onDisabled.emit();
     }

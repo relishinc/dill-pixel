@@ -686,7 +686,6 @@ export class Application extends PIXIPApplication implements IApplication {
   }
 
   async postInitialize(): Promise<void> {
-    this.stage.addChild(...this.views);
     // start plugins
     for (const plugin of this._plugins.values()) {
       plugin.postInitialize(this as unknown as IApplication);
@@ -999,6 +998,7 @@ export class Application extends PIXIPApplication implements IApplication {
     if (this.scenes.splash?.view && this.scenes.splash.zOrder === 'top') {
       this._addSplash();
     }
+
     if (this.scenes.transition) {
       this.scenes.transition.label = 'Transition';
       this.stage.addChild(this.scenes.transition);

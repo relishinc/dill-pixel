@@ -273,7 +273,7 @@ export interface IFocusManagerPlugin extends IPlugin {
 
 export class FocusManagerPlugin extends Plugin<FocusManagerPluginOptions> implements IFocusManagerPlugin {
   public override readonly id: string = 'focus';
-  public readonly view = new Container();
+  public readonly view = new Container({ label: 'FocusManager' });
   // signals
   public onFocusManagerActivated: Signal<() => void> = new Signal<() => void>();
   public onFocusManagerDeactivated: Signal<() => void> = new Signal<() => void>();

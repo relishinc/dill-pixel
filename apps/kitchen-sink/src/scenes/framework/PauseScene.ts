@@ -147,7 +147,7 @@ export default class PauseScene extends BaseScene {
         active: 'btn/red',
       },
       layout: { height: 70, width: 256 },
-      sheet: 'required',
+      sheet: 'ui',
       accessibleTitle: 'Toggle Music',
       accessibleHint: 'Press to toggle background music',
       textLabel: {
@@ -179,7 +179,7 @@ export default class PauseScene extends BaseScene {
         active: 'btn/red',
       },
       layout: { height: 70 },
-      sheet: 'required',
+      sheet: 'ui',
       accessibleTitle: 'Toggle Pause',
       accessibleHint: 'Press to toggle pause state',
     });

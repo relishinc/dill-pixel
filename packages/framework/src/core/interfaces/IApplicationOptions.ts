@@ -15,8 +15,9 @@ import type {
   SceneImportListItem,
 } from '../../utils';
 
-import type { ApplicationOptions, TextDropShadow, TextStyle } from 'pixi.js';
+import type { ApplicationOptions, TextDropShadow } from 'pixi.js';
 import type { IScene, ISceneTransition, SceneTransition } from '../../display';
+import { TextStyle } from '../../mixins';
 import type { CaptionsOptions } from '../../plugins/captions';
 import { GSAPPluginOptions } from '../../plugins/GSAPPlugin';
 import type { IDataAdapterOptions } from '../../store';

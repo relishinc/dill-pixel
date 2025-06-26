@@ -92,7 +92,7 @@ export default class AudioScene extends BaseScene {
         disabled: 'btn/grey',
         active: 'btn/red',
       },
-      sheet: 'required',
+      sheet: 'ui',
       accessibleTitle: label,
       accessibleHint: `Press me to play a sound`,
       ...config,

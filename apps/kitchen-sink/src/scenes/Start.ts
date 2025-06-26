@@ -1,15 +1,18 @@
-import Base from '@/scenes/Base';
-import { FlexContainer } from 'dill-pixel';
+import { FlexContainer, type SceneDebug } from 'dill-pixel';
+import Base from './BaseScene';
 
 export const id = 'start';
-export const debug = {
-  label: 'Start Scene',
+export const debug: SceneDebug = {
+  label: 'Hello World',
+  group: 'Start',
 };
 
 export default class Start extends Base {
+  title = 'Hello World';
   private container: FlexContainer;
 
-  initialize() {
+  async initialize() {
+    await super.initialize();
     // a layout container
     this.container = this.add.flexContainer({
       label: 'Main Container',
@@ -29,7 +32,6 @@ export default class Start extends Base {
     });
 
     // from src/assets.json
-    // maintain the jar's aspect ratio while scaling it in the layout container
     this.container.add.sprite({
       asset: 'jar',
       label: 'Jar',
@@ -44,6 +46,7 @@ export default class Start extends Base {
   }
 
   resize() {
+    super.resize();
     // the layout container binds to the app size,
     // but we still need to center it
     this.container.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);

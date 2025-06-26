@@ -15,6 +15,7 @@ type AppActions = keyof AppActionMap;
 // Scenes
 type AppScenes = 
   | 'base'
+  | 'start'
   | 'focus'
   | 'voiceover'
   | 'audio'
