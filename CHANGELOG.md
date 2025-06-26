@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.0.6](https://github.com/relishinc/dill-pixel/compare/v6.0.5...v6.0.6) (2025-06-26)
+
+
+### Bug Fixes
+
+* Scene instance assets typings ([0ff6e5f](https://github.com/relishinc/dill-pixel/commit/0ff6e5fc0650b9705e03a5b78bf90725dac7270e))
+
 ## [6.0.5](https://github.com/relishinc/dill-pixel/compare/v6.0.4...v6.0.5) (2025-06-26)
 
 
