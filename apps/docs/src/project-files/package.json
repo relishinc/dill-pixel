@@ -12,6 +12,6 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "dill-pixel": "workspace:*"
+    "dill-pixel": "latest"
   }
 }

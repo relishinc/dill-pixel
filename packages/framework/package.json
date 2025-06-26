@@ -27,10 +27,6 @@
       "types": "./lib/index.d.ts",
       "default": "./lib/dill-pixel.mjs"
     },
-    "./runtime": {
-      "types": "./lib/runtime.d.ts",
-      "default": "./lib/runtime.mjs"
-    },
     "./config/assetpack": {
       "default": "./config/assetpack.mjs"
     },

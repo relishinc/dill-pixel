@@ -8,21 +8,11 @@ export default defineConfig({
     sourcemap: true,
     lib: {
       formats: ['es'],
-      entry: {
-        index: path.resolve(__dirname, 'src/index.ts'),
-        runtime: path.resolve(__dirname, 'src/runtime.ts'),
-      },
-      fileName: (format, entryName) => (entryName === 'index' ? `dill-pixel.mjs` : `${entryName}.mjs`),
+      entry: path.resolve(__dirname, 'src/index.ts'),
+      fileName: () => `dill-pixel.mjs`,
     },
     rollupOptions: {
-      external: [
-        'pixi.js',
-        'gsap',
-        'virtual:dill-pixel-config',
-        'virtual:dill-pixel-scenes',
-        'virtual:dill-pixel-plugins',
-        'virtual:dill-pixel-storage-adapters',
-      ],
+      external: ['pixi.js', 'gsap'],
     },
   },
   plugins: [dts({ copyDtsFiles: true })],

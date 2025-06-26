@@ -1,14 +1,4 @@
 {
   "extends": "astro/tsconfigs/strict",
-  "compilerOptions": {
-    "paths": {
-      "dill-pixel/*": ["../../packages/framework/src/*"]
-    }
-  },
-  "references": [
-    {
-      "path": "../../packages/framework"
-    }
-  ],
-  "exclude": ["../kitchen-sink/**/*", "../../packages/framework/**/*"]
+  "exclude": ["../kitchen-sink/**/*", "../../packages/framework/**/*", "src/project-files"]
 }

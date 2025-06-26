@@ -18,23 +18,20 @@ export default class Start extends Base {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 25,
+        gap: 20,
       },
     });
 
     // some title text
     this.container.add.text({
       text: 'Hello Dill Pixel',
-      resolution: 2,
-      style: { fontFamily: 'KumbhSans', fontWeight: 'bold', fill: 0xffffff },
+      style: { fontFamily: 'KumbhSans', fontSize: 48, fill: 0xffffff },
     });
 
     // from src/assets.json
     this.container.add.sprite({
-      asset: 'jar.png',
-      scale: 0.25,
-      anchor: 0.5,
-      layout: { applySizeDirectly: true },
+      asset: 'jar',
+      scale: 0.5,
     });
   }
 

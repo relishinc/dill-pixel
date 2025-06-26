@@ -590,9 +590,12 @@ declare module 'dill-pixel' {
         return resolvedVirtualModuleId;
       }
     },
-    load(id) {
+    async load(id) {
       if (id === resolvedVirtualModuleId) {
-        return `export { default } from '/dill-pixel.config.ts';`;
+        return `
+          const configModule = await import('/dill-pixel.config.ts');
+          export default configModule.default;
+        `;
       }
     },
     async buildStart() {
@@ -950,20 +953,84 @@ export function sceneListPlugin(isProject = true) {
   };
 }
 
+function createDillPixelRuntimePlugin() {
+  const virtualModuleId = 'dill-pixel-runtime';
+  const resolvedVirtualModuleId = '\0' + virtualModuleId;
+
+  return {
+    name: 'vite-plugin-dill-pixel-runtime',
+    enforce: 'pre',
+    resolveId(id) {
+      if (id === virtualModuleId) {
+        return resolvedVirtualModuleId;
+      }
+    },
+    load(id) {
+      if (id === resolvedVirtualModuleId) {
+        return `
+          import { pluginsList } from 'virtual:dill-pixel-plugins';
+          import { sceneList } from 'virtual:dill-pixel-scenes';
+          import { storageAdaptersList } from 'virtual:dill-pixel-storage-adapters';
+          import { create } from 'dill-pixel';
+
+          (globalThis).DillPixel = (globalThis).DillPixel || {};
+
+          try {
+            (globalThis).DillPixel.APP_NAME = __DILL_PIXEL_APP_NAME;
+            (globalThis).DillPixel.APP_VERSION = __DILL_PIXEL_APP_VERSION;
+          } catch (e) {
+            console.error('Failed to set app name and version', e);
+          }
+
+          (globalThis).DillPixel.sceneList = sceneList;
+          (globalThis).DillPixel.pluginsList = pluginsList;
+          (globalThis).DillPixel.storageAdaptersList = storageAdaptersList;
+
+          (globalThis).DillPixel.sceneIds = sceneList.map((scene) => scene.id);
+          (globalThis).DillPixel.pluginIds = pluginsList.map((plugin) => plugin.id);
+          (globalThis).DillPixel.storageAdapterIds = storageAdaptersList.map((adapter) => adapter.id);
+
+          (globalThis).DillPixel.get = function (key) {
+            (globalThis).DillPixel = (globalThis).DillPixel || {};
+            return key ? (globalThis).DillPixel[key] : (globalThis).DillPixel;
+          };
+
+          async function bootstrap() {
+            const configModule = await import('virtual:dill-pixel-config');
+            const config = configModule.default;
+            (globalThis).DillPixel.config = config;
+            const app = await create(config);
+            const mains = import.meta.glob('/src/main.ts', { eager: true });
+            const mainPath = Object.keys(mains)[0];
+
+            if (mainPath) {
+              const mainModule = mains[mainPath];
+              if (mainModule && typeof mainModule.default === 'function') {
+                await mainModule.default(app);
+              }
+            }
+          }
+          bootstrap();
+        `;
+      }
+    },
+  };
+}
+
 function createDillPixelPWAPlugin() {
   const entryId = 'dill-pixel-pwa';
-  const resolvedEntryId = '\0' + entryId;
+  const resolvedVirtualModuleId = '\0' + entryId;
 
   return {
     name: 'vite-virtual-entry',
     enforce: 'pre',
     resolveId(id) {
       if (id === entryId) {
-        return resolvedEntryId;
+        return resolvedVirtualModuleId;
       }
     },
     load(id) {
-      if (id === resolvedEntryId) {
+      if (id === resolvedVirtualModuleId) {
         return `
           import {pwaInfo} from 'virtual:pwa-info';
           import {registerSW} from 'virtual:pwa-register';
@@ -1041,15 +1108,6 @@ const defaultConfig = {
   build: {
     minify: 'esbuild',
     sourcemap: env === 'development',
-    // terserOptions: {
-    //   compress: {
-    //     unused: env === 'production',
-    //     dead_code: env === 'production',
-    //     drop_console: env === 'production',
-    //     drop_debugger: env === 'production',
-    //     pure_funcs: env === 'production',
-    //   },
-    // },
     rollupOptions: {
       external: ['dill-pixel-globals'],
       output: {
@@ -1066,6 +1124,7 @@ const defaultConfig = {
     wasm(),
     topLevelAwait(),
     createHtmlPlugin(),
+    createDillPixelRuntimePlugin(),
     viteStaticCopy({
       targets: [
         {

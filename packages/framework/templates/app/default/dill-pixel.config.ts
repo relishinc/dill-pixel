@@ -23,7 +23,7 @@ export const initialData = defineData({
   tangy: 'dill',
 });
 
-export const config = defineConfig({
+export default defineConfig({
   id: '__APPLICATION_NAME__',
   application: __APPLICATION_NAME__,
   // uncomment this to use the splash screen

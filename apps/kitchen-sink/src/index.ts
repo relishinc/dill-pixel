@@ -1,1 +1,1 @@
-import('dill-pixel/runtime');
+import('dill-pixel-runtime');
