@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.0.4](https://github.com/relishinc/dill-pixel/compare/v6.0.3...v6.0.4) (2025-06-26)
+
+
+### Bug Fixes
+
+* boostrap process (dill-pixel-runtime generation in vite), ([94d8d93](https://github.com/relishinc/dill-pixel/commit/94d8d9368fa2d491ea8f4b88c3c971b16222c459))
+
 ## [6.0.3](https://github.com/relishinc/dill-pixel/compare/v6.0.2...v6.0.3) (2025-06-25)
 
 
