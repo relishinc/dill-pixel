@@ -24,21 +24,77 @@ import { defineConfig } from 'dill-pixel';
 import { MyApplication } from './MyApplication';
 
 export default defineConfig({
+  /**
+   * Core settings
+   */
+  id: 'MyGame',
   // Point to your custom Application class
   application: MyApplication,
-
-  // Core settings
-  id: 'MyGame',
+  /**
+   * Optional settings
+   */
+  useLayout: true,
+  useSpine: true,
+  // The scene to load by default
+  defaultScene: 'start',
+  // Your Resize settings
   resizeToContainer: true,
-  resolution: 2,
-
-  // Plugin configurations
+  resizer: {
+    minWidth: 500,
+    minHeight: 768,
+    letterbox: false,
+    center: false,
+  },
+  // The default text style to use for all text objects
+  defaultTextStyle: {
+    fontFamily: 'Arial',
+    fontSize: 24,
+    fill: 0xffffff,
+  },
+  // Your custom data
+  data: {
+    initial: {
+      foo: 'bar',
+    },
+    backupKeys: ['foo'],
+  },
+  // Your required assets to preload
+  assets: {
+    preload: {
+      bundles: [ 'required'],
+    },
+    background: {
+      bundles: ['audio'],
+    },
+  },
+  // Your Plugins
   plugins: [
     ['matter-physics', { autoLoad: false }],
     // ... other plugins
   ],
-
-  // ... other configurations
+  // Your Storage Adapters
+  storageAdapters: ['firebase'],
+  // your localization settings
+  i18n: {
+    loadAll: true,
+    locales: ['en', 'fr'],
+    files: [
+      { id: 'en', module: () => import('./src/locales/en') },
+      { id: 'fr', module: () => import('./src/locales/fr') },
+    ],
+  },
+   // Your custom GSAP eases
+  gsap: {
+    eases: {
+      custom: (progress: number): number => {
+        return 1 - Math.cos((progress * Math.PI) / 2);
+      },
+      customInOut: (progress: number): number => {
+        return progress ** 2 * (3 - 2 * progress); // smoothstep
+      },
+    },
+  },
+  // ... and more ...
 });
 ```
 
