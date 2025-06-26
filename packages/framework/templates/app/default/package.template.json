@@ -5,10 +5,10 @@
   "main": "index.html",
   "scripts": {
     "clean": "rimraf .assetpack .cache dist",
-    "start": "dill-pixel start",
-    "dev": "dill-pixel dev",
-    "preview": "dill-pixel preview",
-    "build": "dill-pixel build",
+    "start": "~PACKAGE_MANAGER~ clean && dill-pixel start",
+    "dev": "~PACKAGE_MANAGER~ clean && dill-pixel dev",
+    "preview": "~PACKAGE_MANAGER~ clean && dill-pixel preview",
+    "build": "~PACKAGE_MANAGER~ clean && dill-pixel build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
