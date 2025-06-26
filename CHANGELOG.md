@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.1](https://github.com/relishinc/dill-pixel/compare/v6.2.0...v6.2.1) (2025-06-26)
+
+
+### Bug Fixes
+
+* preview cli script ([942a418](https://github.com/relishinc/dill-pixel/commit/942a418d1e6d2cdc576da1c5ae7ad03d406556f4))
+
 ## [6.2.0](https://github.com/relishinc/dill-pixel/compare/v6.1.0...v6.2.0) (2025-06-26)
 
 
