@@ -11,6 +11,7 @@ A new project scaffolded with `create-dill-pixel` will have the following struct
 <FileTree>
 - package.json
 - tsconfig.json
+- vite.config.mjs
 - dill-pixel.config.ts
 - index.html
 - **public**
@@ -45,7 +46,7 @@ A new project scaffolded with `create-dill-pixel` will have the following struct
 ## Vite Configuration
 
 <Aside>
-The framework handles all the necessary Vite configuration internally. You do not need a `vite.config.mjs` file in your project's root unless you have a specific need to add custom Vite plugins or override the default build process.
+The framework handles all the necessary Vite configuration internally. You do not need additional configuration in your `vite.config.mjs` unless you have a specific need to add custom Vite plugins or override the default build process.
 </Aside>
 
 Dill Pixel uses Vite to compile your game for both development and production. The default Vite configuration is imported automatically from the `dill-pixel` package and is optimized for web game development, including features like:
