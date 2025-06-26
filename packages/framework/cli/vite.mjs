@@ -49,6 +49,7 @@ export async function runBuild() {
 
 export async function runPreview() {
   const config = await getMergedViteConfig('build', 'production');
+  await build(config);
   const server = await preview(config);
   server.printUrls();
 }

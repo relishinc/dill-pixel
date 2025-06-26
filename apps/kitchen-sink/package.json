@@ -9,7 +9,7 @@
     "dev": "pnpm clean && dill-pixel dev",
     "build": "pnpm clean && dill-pixel build",
     "types": "tsc",
-    "preview": "pnpm run build && vite preview --open",
+    "preview": "pnpm clean && dill-pixel preview",
     "lint": "eslint src --ext .ts",
     "lint-fix": "eslint src --ext .ts --fix",
     "visualize": "npx vite-bundle-visualizer -c vite.config.mjs",
