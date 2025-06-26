@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.0.10](https://github.com/relishinc/dill-pixel/compare/v6.0.9...v6.0.10) (2025-06-26)
+
+
+### Bug Fixes
+
+* improved asset typings generation, fix: improved button labels ([e6cfdc0](https://github.com/relishinc/dill-pixel/commit/e6cfdc091a87caf66286717ea1e2bc51441df417))
+
 ## [6.0.9](https://github.com/relishinc/dill-pixel/compare/v6.0.8...v6.0.9) (2025-06-26)
 
 
