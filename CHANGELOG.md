@@ -1,5 +1,17 @@
 # Changelog
 
+## [6.1.0](https://github.com/relishinc/dill-pixel/compare/v6.0.10...v6.1.0) (2025-06-26)
+
+
+### Features
+
+* remove the need for user to have a vite.config file ([996e86c](https://github.com/relishinc/dill-pixel/commit/996e86c8cdb8ab0ca3768f70936156a500ef28b4))
+
+
+### Bug Fixes
+
+* added clean instructions in template package.json, removed vite.config from default template ([b9ccc6d](https://github.com/relishinc/dill-pixel/commit/b9ccc6d9b7098ae48596b832fb8ab2ec22a820d4))
+
 ## [6.0.10](https://github.com/relishinc/dill-pixel/compare/v6.0.9...v6.0.10) (2025-06-26)
 
 
