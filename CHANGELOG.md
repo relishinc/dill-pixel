@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.0.5](https://github.com/relishinc/dill-pixel/compare/v6.0.4...v6.0.5) (2025-06-26)
+
+
+### Bug Fixes
+
+* default template fixes, warnings in FlexContainer & UICanvas when useLayout=false in config ([5faf327](https://github.com/relishinc/dill-pixel/commit/5faf327f3b0890c56ba7dee5ec154bef956b4ce2))
+
 ## [6.0.4](https://github.com/relishinc/dill-pixel/compare/v6.0.3...v6.0.4) (2025-06-26)
 
 
