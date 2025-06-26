@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.0.8](https://github.com/relishinc/dill-pixel/compare/v6.0.7...v6.0.8) (2025-06-26)
+
+
+### Bug Fixes
+
+* framework scripts location ([f472373](https://github.com/relishinc/dill-pixel/commit/f472373c3c2ac75304a28c8cd4c3d7bb21e211ac))
+
 ## [6.0.7](https://github.com/relishinc/dill-pixel/compare/v6.0.6...v6.0.7) (2025-06-26)
 
 
