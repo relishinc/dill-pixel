@@ -1,5 +1,13 @@
 # Changelog
 
+## [6.2.2](https://github.com/relishinc/dill-pixel/compare/v6.2.1...v6.2.2) (2025-06-27)
+
+
+### Bug Fixes
+
+* imports in default template, chore: upgrade gsap ([dfacb0d](https://github.com/relishinc/dill-pixel/commit/dfacb0d1d269093b1a2df88bd4ca689576f58c1d))
+* new scene in default template ([8c80bf0](https://github.com/relishinc/dill-pixel/commit/8c80bf04b473a979a55e5467aa0bdcac6a9f1155))
+
 ## [6.2.1](https://github.com/relishinc/dill-pixel/compare/v6.2.0...v6.2.1) (2025-06-26)
 
 
