@@ -36,7 +36,7 @@
   },
   "peerDependencies": {
     "dill-pixel": "6.2.1",
-    "gsap": "^3.12.5",
+    "gsap": "^3.13.0",
     "pixi.js": "8.10.2"
   }
 }

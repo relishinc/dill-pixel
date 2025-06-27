@@ -16,7 +16,7 @@
   },
   "peerDependencies": {
     "@pixi/sound": "^6.0.1",
-    "gsap": "^3.12.5",
+    "gsap": "^3.13.0",
     "pixi.js": "^8.10.2"
   }
 }

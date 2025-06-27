@@ -1,12 +1,12 @@
 import Base from '@/scenes/Base';
 import { FlexContainer } from 'dill-pixel';
 
-export const id = 'start';
+export const id = 'game';
 export const debug = {
-  label: 'Start',
+  label: 'Game',
 };
 
-export default class Start extends Base {
+export default class Game extends Base {
   private container: FlexContainer;
 
   initialize() {
@@ -26,18 +26,8 @@ export default class Start extends Base {
 
     // some title text
     this.container.add.text({
-      text: 'Hello Dill Pixel',
+      text: 'My Game',
       style: { fontFamily: 'KumbhSans', fontSize: 48, fill: 0xffffff },
-    });
-
-    // from src/assets.json
-    // maintain the jar's aspect ratio while scaling it in the layout container
-    this.container.add.sprite({
-      asset: 'jar',
-      label: 'Jar',
-      scale: 0.5,
-      anchor: 0.5,
-      layout: { applySizeDirectly: true, width: 150, height: 150, aspectRatio: 590 / 664, flexGrow: 0, flexShrink: 0 },
     });
 
     const btn = this.container.add.button({
@@ -52,11 +42,10 @@ export default class Start extends Base {
         active: 'btn/red',
       },
       textLabel: {
-        text: 'Click me',
+        text: 'Play',
         style: { fontFamily: 'KumbhSans', fontSize: 32, fill: 0xffffff },
       },
       layout: {
-        transformOrigin: 'top left',
         width: 256,
         height: 70,
         applySizeDirectly: true,
@@ -67,6 +56,8 @@ export default class Start extends Base {
         hover: 'hover',
       },
     });
+
+    btn.onClick.connectOnce(() => this.app.scenes.loadScene('game'));
 
     this.app.focus.add(btn);
   }

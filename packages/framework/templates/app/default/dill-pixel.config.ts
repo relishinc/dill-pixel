@@ -1,5 +1,5 @@
+import { __APPLICATION_NAME__ } from '@/__APPLICATION_NAME__';
 import { defineActions, defineButtons, defineConfig, defineContexts, defineControls, defineData } from 'dill-pixel';
-import { __APPLICATION_NAME__ } from './src/__APPLICATION_NAME__';
 /** Default template */
 // uncomment this to use the splash screen
 // import { Splash } from '@/scenes/Splash';
@@ -30,6 +30,8 @@ export default defineConfig({
   // splash: {
   //   view: Splash,
   // },
+  defaultSceneLoadMethod: 'immediate',
+  defaultScene: 'start',
   useLayout: true,
   data: {
     initial: initialData,
