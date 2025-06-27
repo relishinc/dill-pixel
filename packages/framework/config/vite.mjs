@@ -28,6 +28,8 @@ const debounce = (func, wait) => {
   };
 };
 
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 // Function to generate TypeScript types from the manifest
 async function generateAssetTypes(manifest) {
   // Extract all assets from bundles
@@ -343,8 +345,9 @@ export function assetTypesPlugin(manifestUrl = 'assets.json') {
     },
     async buildStart() {
       // a short delay to allow assetpack to generate the manifest
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await delay(500);
       await generate(manifestUrl);
+      await delay(500);
     },
     configureServer(server) {
       viteServer = server;
@@ -376,6 +379,7 @@ export function assetTypesPlugin(manifestUrl = 'assets.json') {
       } catch (error) {
         logger.error('Dill Pixel asset types plugin:: Error generating types during build:', error);
       }
+      await delay(500);
     },
     async closeBundle() {
       if (ispPwaEnabled && env !== 'development') {
@@ -502,7 +506,7 @@ function dillPixelConfigPlugin(isProject = true) {
     });
 
     // Generate union types for IDs
-    const sceneIds = scenes.map((s) => s.id);
+    const sceneIds = scenes.filter((s) => s.active !== false).map((s) => s.id);
     const pluginIds = plugins.map((p) => p.id);
     const storageAdapterIds = storageAdapters.map((a) => a.id);
 

@@ -3,6 +3,7 @@ import type { AppConfig, IApplication, IApplicationOptions, ICoreFunctions, ICor
 import { coreFunctionRegistry, coreSignalRegistry, generateAdapterList, generatePluginList } from '.';
 import type {
   ActionSignal,
+  AppScenes,
   IAssetsPlugin,
   IAudioManagerPlugin,
   IControls,
@@ -15,6 +16,7 @@ import type {
   IResizerPlugin,
   ISceneManagerPlugin,
   IWebEventsPlugin,
+  LoadSceneConfig,
 } from '../plugins';
 
 import type {
@@ -413,6 +415,10 @@ export class Application extends PIXIPApplication implements IApplication {
       this._sceneManager = this.getPlugin<ISceneManagerPlugin>('scenes');
     }
     return this._sceneManager;
+  }
+
+  public loadScene(scene: LoadSceneConfig | AppScenes) {
+    this.scenes.loadScene(scene);
   }
 
   public get webEvents(): IWebEventsPlugin {

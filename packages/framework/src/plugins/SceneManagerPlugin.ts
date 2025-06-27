@@ -20,7 +20,7 @@ import { triggerViteError } from '../utils/vite';
 import type { IPlugin } from './Plugin';
 import { Plugin } from './Plugin';
 
-type AppScenes = AppTypeOverrides['Scenes'];
+export type AppScenes = AppTypeOverrides['Scenes'];
 
 export interface ISceneManagerPlugin extends IPlugin {
   isFirstScene: boolean;

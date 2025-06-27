@@ -1,5 +1,4 @@
 import BaseScene from '@/scenes/BaseScene';
-import { V8Application } from '@/V8Application';
 import {
   Actor,
   CollisionLayer,
@@ -162,7 +161,7 @@ class Runner extends Actor {
   }
 }
 
-class Coin extends Sensor<V8Application> {
+class Coin extends Sensor {
   type = 'Coin';
   public collidableTypes = ['Runner'];
   public collected = false;
@@ -197,7 +196,7 @@ class Coin extends Sensor<V8Application> {
   }
 }
 
-class Segment extends Group<V8Application> {
+class Segment extends Group {
   public coins: Array<{ coin: Coin; offsetX: number; offsetY: number }> = [];
   public width: number;
   public animations: Set<gsap.core.Tween> = new Set();

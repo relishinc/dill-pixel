@@ -1,6 +1,5 @@
 import BaseScene from '@/scenes/BaseScene';
 import { FONT_KUMBH_SANS } from '@/utils/Constants';
-import { V8Application } from '@/V8Application';
 import {
   Actor,
   ActorCollisionResult,
@@ -70,7 +69,7 @@ class Platform extends Solid<PlatformData> {
   }
 }
 
-class Player extends Actor<V8Application> {
+class Player extends Actor {
   declare view: AnimatedSprite;
   type = 'Player';
   _active = false;
@@ -235,7 +234,7 @@ class Player extends Actor<V8Application> {
   }
 }
 
-class FX extends Actor<V8Application> {
+class FX extends Actor {
   static ASSETS = ['beige', 'blue', 'brown', 'darkBrown', 'darkGrey', 'green', 'pink'];
 
   type = 'FX';
@@ -265,7 +264,7 @@ class FX extends Actor<V8Application> {
   }
 }
 
-class Portal extends Sensor<V8Application> {
+class Portal extends Sensor {
   private static PORTAL_SIZE = 48;
   type = 'Portal';
   collidableTypes = ['Player', 'FX'];

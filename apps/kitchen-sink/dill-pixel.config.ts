@@ -1,9 +1,9 @@
+import { KitchenSinkApplication } from '@/KitchenSinkApplication';
+import EN from '@/locales/en';
+import { Transition } from '@/scenes/Transition';
+import { ExampleOutliner } from '@/ui/ExampleOutliner';
 import { CustomEases } from '@/utils/Easing';
 import { defineActions, defineButtons, defineConfig, defineContexts, defineControls, defineData } from 'dill-pixel';
-import EN from './src/locales/en';
-import { Transition } from './src/scenes/Transition';
-import { ExampleOutliner } from './src/ui/ExampleOutliner';
-import { V8Application } from './src/V8Application';
 
 /** Default template */
 export const contexts = defineContexts(['default', 'game', 'menu', 'popup']);
@@ -96,8 +96,8 @@ export const dataSchema = defineData({
 });
 
 export default defineConfig({
-  id: 'V8Application',
-  application: V8Application,
+  id: 'KitchenSinkApplication',
+  application: KitchenSinkApplication,
   sceneTransition: Transition,
   defaultSceneLoadMethod: 'transitionExitEnter',
   useSpine: true,

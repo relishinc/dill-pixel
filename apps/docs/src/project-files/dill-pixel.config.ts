@@ -92,7 +92,7 @@ export const dataSchema = defineData({
 });
 
 export default defineConfig({
-  id: 'V8Application',
+  id: 'MyApplication',
   application: MyApplication,
   useSpine: true,
   defaultScene: 'start',

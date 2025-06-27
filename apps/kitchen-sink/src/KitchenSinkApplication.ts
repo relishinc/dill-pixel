@@ -2,7 +2,8 @@ import { IGoogleAnalyticsPlugin } from '@dill-pixel/plugin-google-analytics/Goog
 import { IFirebaseAdapter } from '@dill-pixel/storage-adapter-firebase';
 import { Application } from 'dill-pixel';
 import { AnalyticsEvents } from 'dill-pixel.config';
-export class V8Application extends Application {
+
+export class KitchenSinkApplication extends Application {
   get firebase(): IFirebaseAdapter {
     return this.store.getAdapter('firebase') as unknown as IFirebaseAdapter;
   }

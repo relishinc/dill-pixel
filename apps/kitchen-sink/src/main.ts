@@ -1,6 +1,6 @@
-import type { V8Application } from './V8Application';
+import type { KitchenSinkApplication } from '@/KitchenSinkApplication';
 
-function populateSidebar(app: V8Application) {
+function populateSidebar(app: KitchenSinkApplication) {
   // populate sidebar
   const sidebar = document.getElementById('sidebar');
   let nav = sidebar?.querySelector('nav');
@@ -61,6 +61,8 @@ function populateSidebar(app: V8Application) {
   checkHash();
 }
 
-export default async function main(app: V8Application) {
+export default async function main(app: KitchenSinkApplication) {
   populateSidebar(app);
+
+  foo;
 }
