@@ -52,7 +52,7 @@ export default class Start extends Base {
         active: 'btn/red',
       },
       textLabel: {
-        text: 'Click me',
+        text: 'Play',
         style: { fontFamily: 'KumbhSans', fontSize: 32, fill: 0xffffff },
       },
       layout: {
@@ -68,16 +68,23 @@ export default class Start extends Base {
       },
     });
 
+    btn.onClick.connectOnce(() => this.app.scenes.loadScene('game'));
+
     this.app.focus.add(btn);
   }
 
-  start() {
-    // start the scene's jobs here
+  destroy() {
+    super.destroy();
+    // clean up the scene when it gets removed
   }
 
   resize() {
     // the layout container binds to the app size,
     // but we still need to center it
     this.container.position.set(-this.app.size.width * 0.5, -this.app.size.height * 0.5);
+  }
+
+  start() {
+    // start the scene's jobs here
   }
 }
