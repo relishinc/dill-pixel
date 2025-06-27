@@ -6,6 +6,14 @@
 ### Bug Fixes
 
 * text positioning in default template ([f27f132](https://github.com/relishinc/dill-pixel/commit/f27f1328baf69af3167b5b1e3a9bc72a317b436c))
+* version number ([eedab05](https://github.com/relishinc/dill-pixel/commit/eedab057f115c47d6cbb0c564903e065556a3208))
+
+## [6.2.3](https://github.com/relishinc/dill-pixel/compare/v6.2.2...v6.2.3) (2025-06-27)
+
+
+### Bug Fixes
+
+* text positioning in default template ([f27f132](https://github.com/relishinc/dill-pixel/commit/f27f1328baf69af3167b5b1e3a9bc72a317b436c))
 
 ## [6.2.2](https://github.com/relishinc/dill-pixel/compare/v6.2.1...v6.2.2) (2025-06-27)
 
