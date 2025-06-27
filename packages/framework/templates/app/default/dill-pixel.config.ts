@@ -57,4 +57,5 @@ export default defineConfig({
     minHeight: 768,
   },
 });
+
 /** End of User config */
