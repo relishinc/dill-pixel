@@ -1,6 +1,6 @@
 {
   "name": "dill-pixel-kitchen-sink",
-  "version": "6.2.1",
+  "version": "6.2.2",
   "description": "Examples of Dill Pixel Features (V8)",
   "main": "index.html",
   "scripts": {
